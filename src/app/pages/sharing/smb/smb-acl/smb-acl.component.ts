@@ -4,8 +4,9 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import {
-  concatMap, forkJoin, from, Observable, of,
+  concatMap, firstValueFrom, forkJoin, mergeMap, Observable, of, from,
 } from 'rxjs';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
@@ -17,6 +18,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
+import { SmbBothComboboxProvider } from 'app/modules/ix-forms/classes/smb-both-combobox-provider';
 import { SmbGroupComboboxProvider } from 'app/modules/ix-forms/classes/smb-group-combobox-provider';
 import { SmbUserComboboxProvider } from 'app/modules/ix-forms/classes/smb-user-combobox-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -27,11 +29,12 @@ import { WebSocketService } from 'app/services/ws.service';
 
 interface FormAclEntry {
   ae_who_sid: string;
-  ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
+  ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | NfsAclTag.Both | null;
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
-  user: number | null;
-  group: number | null;
+  user: string | number | null;
+  group: string | number | null;
+  both: string | number | null;
 }
 
 @UntilDestroy()
@@ -79,6 +82,7 @@ export class SmbAclComponent implements OnInit {
 
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
+  readonly bothProvider = new SmbBothComboboxProvider(this.userService, 'uid', 'gid');
   readonly userProvider = new SmbUserComboboxProvider(this.userService, 'uid');
   protected groupProvider: SmbGroupComboboxProvider;
 
@@ -108,6 +112,7 @@ export class SmbAclComponent implements OnInit {
       this.formBuilder.group({
         ae_who_sid: [''],
         ae_who: [null as never],
+        both: [null as never],
         user: [null as never],
         group: [null as never],
         ae_perm: [null as SmbSharesecPermission],
@@ -122,9 +127,10 @@ export class SmbAclComponent implements OnInit {
 
   onSubmit(): void {
     this.isLoading = true;
-    const acl = this.getAclEntriesFromForm();
 
-    this.ws.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])
+    of(undefined)
+      .pipe(mergeMap(() => this.getAclEntriesFromForm()))
+      .pipe(mergeMap((acl) => this.ws.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -148,11 +154,13 @@ export class SmbAclComponent implements OnInit {
           this.shareAclName = shareAcl.share_name;
           shareAcl.share_acl.forEach((ace, i) => {
             this.addAce();
+
             this.form.controls.entries.at(i).patchValue({
               ae_who_sid: ace.ae_who_sid,
               ae_who: ace.ae_who_id?.id_type || ace.ae_who_str as NfsAclTag.Everyone,
               ae_perm: ace.ae_perm,
               ae_type: ace.ae_type,
+              both: ace.ae_who_id?.id_type !== NfsAclTag.Everyone ? ace.ae_who_id?.id : null,
               group: ace.ae_who_id?.id_type !== NfsAclTag.Everyone ? ace.ae_who_id?.id : null,
               user: ace.ae_who_id?.id_type !== NfsAclTag.Everyone ? ace.ae_who_id?.id : null,
             });
@@ -166,22 +174,38 @@ export class SmbAclComponent implements OnInit {
       });
   }
 
-  private getAclEntriesFromForm(): SmbSharesecAce[] {
-    return this.form.value.entries.map((ace) => {
-      const whoId = ace.ae_who === NfsAclTag.UserGroup ? ace.group : ace.user;
+  private async getAclEntriesFromForm(): Promise<SmbSharesecAce[]> {
+    const results = [] as SmbSharesecAce[];
+    for (const ace of this.form.value.entries) {
+      let whoIdOrName = ace.both;
+      if (ace.ae_who === NfsAclTag.User) {
+        whoIdOrName = ace.user;
+      } else if (ace.ae_who === NfsAclTag.UserGroup) {
+        whoIdOrName = ace.group;
+      }
 
       const result = { ae_perm: ace.ae_perm, ae_type: ace.ae_type } as SmbSharesecAce;
 
-      if (ace.ae_who !== this.nfsAclTag.Everyone) {
-        result.ae_who_id = { id_type: ace.ae_who, id: whoId };
-      }
-
       if (ace.ae_who === NfsAclTag.Everyone) {
         result.ae_who_sid = 'S-1-1-0';
-      }
+      } else {
+        let id: number;
+        if (_.isNumber(whoIdOrName)) {
+          id = Number(whoIdOrName);
+        } else if (ace.ae_who === NfsAclTag.UserGroup) {
+          id = (await firstValueFrom(this.userService.getGroupByName(whoIdOrName.toString())))
+            .gr_gid;
+        } else {
+          id = (await firstValueFrom(this.userService.getUserByName(whoIdOrName.toString())))
+            .pw_uid;
+        }
 
-      return result;
-    });
+        // TODO: Backend does not yet support BOTH value
+        result.ae_who_id = { id_type: ace.ae_who === NfsAclTag.Both ? NfsAclTag.UserGroup : ace.ae_who, id };
+      }
+      results.push(result);
+    }
+    return results;
   }
 
   private initialValueDataFromAce(
