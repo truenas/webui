@@ -74,7 +74,7 @@
     <div class="overlay" [class.isdark]="isOpenSecondaryMenu" (click)="toggleMenu()"></div>
 
     <!-- App content -->
-    <div class="rightside-content-hold" [class.has-footer]="hasConsoleFooter$ | async">
+    <div class="rightside-content-hold" [class.has-console-footer]="hasConsoleFooter$ | async">
       <ix-default-page-header></ix-default-page-header>
       <router-outlet></router-outlet>
     </div>

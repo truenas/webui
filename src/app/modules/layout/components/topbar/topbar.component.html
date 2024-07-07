@@ -21,7 +21,7 @@
       </div>
     </a>
 
-    <div class="topbar-mobile-footer">
+    <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter$ | async">
       <ix-logo></ix-logo>
 
       <button
