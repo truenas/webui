@@ -29,6 +29,7 @@ const columns = createTable<TestTableData>([
   }),
 ], {
   rowTestId: (row) => 'row' + row.numberField.toString(),
+  ariaLabels: (row) => ['Column', row.stringField],
 });
 
 let headers: HTMLDivElement[];

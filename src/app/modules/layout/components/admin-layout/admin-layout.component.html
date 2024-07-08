@@ -1,12 +1,4 @@
-<mat-sidenav-container
-  class="app-side-nav-container"
-  fxLayout="row"
-  ngClass.xs="xs"
-  ngClass.sm="sm"
-  ngClass.md="md"
-  ngClass.lg="lg"
-  ngClass.xl="xl"
->
+<mat-sidenav-container class="app-side-nav-container">
   <!-- Main side navigation -->
   <mat-sidenav
     class="sidebar-panel not-alerts"
@@ -82,7 +74,7 @@
     <div class="overlay" [class.isdark]="isOpenSecondaryMenu" (click)="toggleMenu()"></div>
 
     <!-- App content -->
-    <div class="rightside-content-hold" [class.has-footer]="hasConsoleFooter$ | async">
+    <div class="rightside-content-hold" [class.has-console-footer]="hasConsoleFooter$ | async">
       <ix-default-page-header></ix-default-page-header>
       <router-outlet></router-outlet>
     </div>

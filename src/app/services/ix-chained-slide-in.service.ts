@@ -1,5 +1,6 @@
 import { ComponentType } from '@angular/cdk/portal';
 import { Injectable, Type } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
 import {
@@ -23,6 +24,7 @@ export interface ChainedComponent {
   close$: Subject<ChainedComponentResponse>;
   wide: boolean;
   data: unknown;
+  isComponentAlive?: boolean;
 }
 
 export interface ChainedComponentResponse<T = unknown> {
@@ -36,18 +38,20 @@ export interface ChainedComponentSerialized {
   close$: Subject<ChainedComponentResponse>;
   data?: unknown;
   wide?: boolean;
+  isComponentAlive?: boolean;
 }
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState> {
   readonly components$: Observable<ChainedComponentSerialized[]> = this.select(
-    (state) => this.mapToSerializedArray(state.components),
+    (state) => this.getAliveComponents(state.components),
   );
 
   readonly isTopComponentWide$ = this.select((state) => {
-    return !!(this.mapToSerializedArray(state.components).pop()?.wide);
+    return !!(this.getAliveComponents(state.components).pop()?.wide);
   });
 
   constructor(private focusService: FocusService) {
@@ -69,7 +73,8 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
 
   private pushComponentToStore = this.updater((state, chainedComponentInfo: ChainedComponent) => {
     const newMap = new Map(state.components);
-    newMap.set(UUID.UUID(), {
+    const componentId = UUID.UUID();
+    newMap.set(componentId, {
       ...chainedComponentInfo,
     });
     return {
@@ -89,6 +94,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
       wide,
       data,
       close$,
+      isComponentAlive: true,
     });
     this.focusService.captureCurrentFocus();
     return close$.asObservable().pipe(tap(() => this.focusService.restoreFocus()));
@@ -96,7 +102,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
 
   popComponent = this.updater((state, id: string) => {
     const newMap = new Map(state.components);
-    newMap.delete(id);
+    newMap.set(id, { ...newMap.get(id), isComponentAlive: false });
     this.focusOnTheCloseButton();
     return {
       components: newMap,
@@ -114,11 +120,17 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     const newMap = new Map(state.components);
     const popped = newMap.get(swapInfo.swapComponentId);
     const close$ = popped.close$;
-    newMap.set(UUID.UUID(), {
+    const componentId = UUID.UUID();
+    newMap.set(componentId, {
       component: swapInfo.component,
       wide: swapInfo.wide,
       data: swapInfo.data,
       close$,
+      isComponentAlive: true,
+    });
+    newMap.set(swapInfo.swapComponentId, {
+      ...popped,
+      isComponentAlive: false,
     });
     this.focusOnTheCloseButton();
     return {
@@ -134,8 +146,15 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
         close$: componentInfo.close$,
         wide: componentInfo.wide,
         data: componentInfo.data,
+        isComponentAlive: componentInfo.isComponentAlive,
       } as ChainedComponentSerialized;
     });
+  }
+
+  getAliveComponents(components: Map<string, ChainedComponent>): ChainedComponentSerialized[] {
+    return this.mapToSerializedArray(components).filter(
+      (component) => component.isComponentAlive,
+    );
   }
 
   private focusOnTheCloseButton(): void {

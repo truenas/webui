@@ -9,10 +9,9 @@ export const vmListElements = {
       synonyms: [T('VM'), T('Virtualization')],
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add VM')],
       anchor: 'add-vm',
       synonyms: [
-        T('Add VM'),
         T('Create VM'),
         T('New VM'),
         T('VM'),

@@ -11,25 +11,27 @@
       [required]="true"
     ></ix-select>
 
-    <ix-combobox
-      *ngIf="isUserTag"
-      formControlName="user"
-      [label]="'User' | translate"
-      [tooltip]="tooltips.user | translate"
-      [provider]="userProvider"
-      [allowCustomValue]="true"
-      [required]="true"
-    ></ix-combobox>
+    @if (isUserTag) {
+      <ix-combobox
+        formControlName="user"
+        [label]="'User' | translate"
+        [tooltip]="tooltips.user | translate"
+        [provider]="userProvider"
+        [allowCustomValue]="true"
+        [required]="true"
+      ></ix-combobox>
+    }
 
-    <ix-combobox
-      *ngIf="isGroupTag"
-      formControlName="group"
-      [label]="'Group' | translate"
-      [tooltip]="tooltips.group | translate"
-      [provider]="groupProvider"
-      [allowCustomValue]="true"
-      [required]="true"
-    ></ix-combobox>
+    @if (isGroupTag) {
+      <ix-combobox
+        formControlName="group"
+        [label]="'Group' | translate"
+        [tooltip]="tooltips.group | translate"
+        [provider]="groupProvider"
+        [allowCustomValue]="true"
+        [required]="true"
+      ></ix-combobox>
+    }
 
     <ix-radio-group
       formControlName="type"
@@ -52,22 +54,24 @@
         [options]="permissionTypes$"
         [inlineFields]="true"
       ></ix-radio-group>
-      <ix-select
-        *ngIf="arePermissionsBasic"
-        formControlName="basicPermission"
-        [label]="'Permissions' | translate"
-        [tooltip]="tooltips.basicPermission | translate"
-        [required]="true"
-        [options]="basicPermissions$"
-      ></ix-select>
-      <ix-checkbox-list
-        *ngIf="!arePermissionsBasic"
-        formControlName="advancedPermissions"
-        [label]="'Permissions' | translate"
-        [tooltip]="tooltips.advancedPermissions | translate"
-        [options]="advancedPermissions$"
-        [inlineFields]="true"
-      ></ix-checkbox-list>
+      @if (arePermissionsBasic) {
+        <ix-select
+          formControlName="basicPermission"
+          [label]="'Permissions' | translate"
+          [tooltip]="tooltips.basicPermission | translate"
+          [required]="true"
+          [options]="basicPermissions$"
+        ></ix-select>
+      }
+      @if (!arePermissionsBasic) {
+        <ix-checkbox-list
+          formControlName="advancedPermissions"
+          [label]="'Permissions' | translate"
+          [tooltip]="tooltips.advancedPermissions | translate"
+          [options]="advancedPermissions$"
+          [inlineFields]="true"
+        ></ix-checkbox-list>
+      }
     </ix-fieldset>
     <ix-fieldset [title]="'Flags' | translate">
       <ix-radio-group
@@ -78,23 +82,25 @@
         [options]="flagTypes$"
         [inlineFields]="true"
       ></ix-radio-group>
-      <ix-radio-group
-        *ngIf="areFlagsBasic"
-        formControlName="basicFlag"
-        [label]="'Flags' | translate"
-        [tooltip]="tooltips.basicFlag | translate"
-        [required]="true"
-        [options]="basicFlags$"
-        [inlineFields]="true"
-      ></ix-radio-group>
-      <ix-checkbox-list
-        *ngIf="!areFlagsBasic"
-        formControlName="advancedFlags"
-        [label]="'Flags' | translate"
-        [tooltip]="tooltips.advancedFlags | translate"
-        [options]="advancedFlags$"
-        [inlineFields]="true"
-      ></ix-checkbox-list>
+      @if (areFlagsBasic) {
+        <ix-radio-group
+          formControlName="basicFlag"
+          [label]="'Flags' | translate"
+          [tooltip]="tooltips.basicFlag | translate"
+          [required]="true"
+          [options]="basicFlags$"
+          [inlineFields]="true"
+        ></ix-radio-group>
+      }
+      @if (!areFlagsBasic) {
+        <ix-checkbox-list
+          formControlName="advancedFlags"
+          [label]="'Flags' | translate"
+          [tooltip]="tooltips.advancedFlags | translate"
+          [options]="advancedFlags$"
+          [inlineFields]="true"
+        ></ix-checkbox-list>
+      }
     </ix-fieldset>
   </div>
 </form>

@@ -1,47 +1,52 @@
 <div class="full-width container has-tooltip">
-  <ix-label
-    *ngIf="label || tooltip"
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
-  ></ix-label>
+  @if (label || tooltip) {
+    <ix-label
+      [label]="label"
+      [tooltip]="tooltip"
+      [required]="required"
+    ></ix-label>
+  }
 
   <div class="input-container" [class.disabled]="isDisabled">
     <mat-select
       [required]="required"
       [disabled]="isDisabled"
+      [aria-label]="label"
       [ixTest]="[controlDirective.name, 'presets']"
       [(ngModel)]="crontab"
       (blur)="onTouched()"
     >
-      <mat-option
-        *ngFor="let preset of defaultPresets"
-        class="schedule-option"
-        [ixTest]="[controlDirective.name, 'presets', preset.label]"
-        [value]="preset.value"
-        (onSelectionChange)="onOptionSelectionChange($event)"
-      >
-        {{ preset.label | translate }}
-        <span class="crontab">({{ preset.value }})</span>&nbsp;
-        <span class="preset-description">{{ preset.description }}</span>
-      </mat-option>
-      <mat-option
-        *ngIf="customCrontab"
-        class="schedule-option"
-        [value]="customCrontab"
-        [ixTest]="[controlDirective.name, 'presets', customCrontab]"
-        (onSelectionChange)="onOptionSelectionChange($event)"
-      >
-        {{ 'Custom' | translate }}
-        <span class="crontab">({{ customCrontab }})</span>
-        <span class="preset-description">
-          {{ customCrontab | crontabExplanation }}
-        </span>
-      </mat-option>
+      @for (preset of defaultPresets; track preset) {
+        <mat-option
+          class="schedule-option"
+          [ixTest]="[controlDirective.name, 'presets', preset.label]"
+          [value]="preset.value"
+          [attr.aria-label]="preset.label"
+          (onSelectionChange)="onOptionSelectionChange($event)"
+        >
+          {{ preset.label | translate }}
+          <span class="crontab">({{ preset.value }})</span>&nbsp;
+          <span class="preset-description">{{ preset.description }}</span>
+        </mat-option>
+      }
+      @if (customCrontab) {
+        <mat-option
+          class="schedule-option"
+          [value]="customCrontab"
+          [ixTest]="[controlDirective.name, 'presets', 'custom']"
+          (onSelectionChange)="onOptionSelectionChange($event)"
+        >
+          {{ 'Custom' | translate }}
+          <span class="crontab">({{ customCrontab }})</span>
+          <span class="preset-description">
+            {{ customCrontab | crontabExplanation }}
+          </span>
+        </mat-option>
+      }
       <mat-option
         class="schedule-option"
         [value]="customValue"
-        [ixTest]="[controlDirective.name, 'presets', customValue]"
+        [ixTest]="[controlDirective.name, 'create-custom']"
         (onSelectionChange)="onOptionSelectionChange($event)"
       >
         {{ 'Create' | translate }}

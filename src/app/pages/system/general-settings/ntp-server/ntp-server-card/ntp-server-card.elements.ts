@@ -10,10 +10,9 @@ export const ntpServerElements = {
       anchor: 'ntp-card',
     },
     addNtpServer: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add NTP Server')],
       anchor: 'add-ntp-server',
       synonyms: [
-        T('Add NTP Server'),
         T('Create NTP Server'),
         T('New NTP Server'),
         T('NTP Server'),

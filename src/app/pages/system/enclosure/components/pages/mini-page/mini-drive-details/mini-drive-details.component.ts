@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { enclosureDiskStatusLabels } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 @Component({
@@ -9,6 +10,8 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 })
 export class MiniDriveDetailsComponent {
   readonly selectedSlot = this.store.selectedSlot;
+
+  readonly enclosureDiskStatusLabels = enclosureDiskStatusLabels;
 
   constructor(
     private store: EnclosureStore,

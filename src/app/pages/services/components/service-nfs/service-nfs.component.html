@@ -18,14 +18,15 @@
           [tooltip]="tooltips.servers_auto"
         ></ix-checkbox>
 
-        <ix-input
-          *ngIf="!form.controls.servers_auto.value"
-          formControlName="servers"
-          type="number"
-          [label]="'Specify number of threads manually' | translate"
-          [required]="true"
-          [tooltip]="tooltips.servers"
-        ></ix-input>
+        @if (!form.controls.servers_auto.value) {
+          <ix-input
+            formControlName="servers"
+            type="number"
+            [label]="'Specify number of threads manually' | translate"
+            [required]="true"
+            [tooltip]="tooltips.servers"
+          ></ix-input>
+        }
       </ix-fieldset>
 
       <div class="two-columns">
@@ -108,23 +109,25 @@
           </button>
         </div>
         <div class="add-spn-container">
-          <ix-tooltip
-            *ngIf="isAddSpnVisible && isAddSpnDisabled"
-            [header]="'Add SPN' | translate"
-            [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
-          ></ix-tooltip>
+          @if (isAddSpnVisible && isAddSpnDisabled) {
+            <ix-tooltip
+              [header]="'Add SPN' | translate"
+              [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
+            ></ix-tooltip>
+          }
           <ng-container *ixRequiresRoles="requiredRoles">
-            <button
-              *ngIf="isAddSpnVisible"
-              mat-button
-              type="button"
-              color="primary"
-              ixTest="add-spn"
-              [disabled]="isAddSpnDisabled"
-              (click)="addSpn()"
-            >
-              {{ 'Add SPN' | translate }}
-            </button>
+            @if (isAddSpnVisible) {
+              <button
+                mat-button
+                type="button"
+                color="primary"
+                ixTest="add-spn"
+                [disabled]="isAddSpnDisabled"
+                (click)="addSpn()"
+              >
+                {{ 'Add SPN' | translate }}
+              </button>
+            }
           </ng-container>
         </div>
       </ix-form-actions>

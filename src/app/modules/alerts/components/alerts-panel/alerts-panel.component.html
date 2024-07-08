@@ -36,41 +36,43 @@
   </div>
 </div>
 
-<div *ngIf="isLoading$ | async; else loaded">
-  <mat-progress-bar
-    class="loading-indicator"
-    color="primary"
-    mode="indeterminate"
-  ></mat-progress-bar>
-</div>
-<ng-template #loaded>
-  <!-- TODO: Consider extracting into its own component -->
-  <div *ngIf="error$ | async as error" class="error">
-    <ix-icon class="icon" color="accent" name="cancel"></ix-icon>
-    <h4 class="message">
-      <span class="error-word">{{ 'Error:' | translate }}</span>
-      {{ error }}
-    </h4>
+@if (isLoading$ | async) {
+  <div>
+    <mat-progress-bar
+      class="loading-indicator"
+      color="primary"
+      mode="indeterminate"
+    ></mat-progress-bar>
   </div>
-
-  <div *appLet="unreadAlerts$ | async as unreadAlerts">
-    <div *ngIf="!unreadAlerts.length; else hasUnreadAlerts" class="no-alerts">
-      <ix-icon class="icon" name="info"></ix-icon>
-      <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
+} @else {
+  <!-- TODO: Consider extracting into its own component -->
+  @if (error$ | async; as error) {
+    <div class="error">
+      <ix-icon class="icon" color="accent" name="cancel"></ix-icon>
+      <h4 class="message">
+        <span class="error-word">{{ 'Error:' | translate }}</span>
+        {{ error }}
+      </h4>
     </div>
-
-    <ng-template #hasUnreadAlerts>
-      <div class="alert-list unread-alerts">
-        <div
-          *ngFor="let alert of unreadAlerts; last as last; trackBy: trackByAlertId"
-          class="alert"
-          role="listitem"
-          [class.alert-last]="last"
-        >
-          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
-        </div>
+  }
+  <div *appLet="unreadAlerts$ | async as unreadAlerts">
+    @if (!unreadAlerts.length) {
+      <div class="no-alerts">
+        <ix-icon class="icon" name="info"></ix-icon>
+        <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
       </div>
-
+    } @else {
+      <div class="alert-list unread-alerts">
+        @for (alert of unreadAlerts; track trackByAlertId($index, alert); let last = $last) {
+          <div
+            class="alert"
+            role="listitem"
+            [class.alert-last]="last"
+          >
+            <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+          </div>
+        }
+      </div>
       <button
         matRipple
         class="button-row"
@@ -79,22 +81,21 @@
       >
         {{ 'Dismiss All Alerts' | translate }}
       </button>
-    </ng-template>
+    }
   </div>
-
   <div *appLet="dismissedAlerts$ | async as dismissedAlerts">
-    <ng-container *ngIf="dismissedAlerts.length">
+    @if (dismissedAlerts.length) {
       <div class="alert-list dismissed-alerts">
-        <div
-          *ngFor="let alert of dismissedAlerts; last as last; trackBy: trackByAlertId"
-          class="alert"
-          role="listitem"
-          [class.alert-last]="last"
-        >
-          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
-        </div>
+        @for (alert of dismissedAlerts; track trackByAlertId($index, alert); let last = $last) {
+          <div
+            class="alert"
+            role="listitem"
+            [class.alert-last]="last"
+          >
+            <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+          </div>
+        }
       </div>
-
       <button
         class="button-row"
         matRipple
@@ -103,6 +104,6 @@
       >
         {{ 'Re-Open All Alerts' | translate }}
       </button>
-    </ng-container>
+    }
   </div>
-</ng-template>
+}

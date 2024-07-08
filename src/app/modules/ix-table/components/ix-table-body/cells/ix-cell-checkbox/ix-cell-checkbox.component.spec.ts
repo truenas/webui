@@ -23,6 +23,7 @@ describe('IxCellCheckboxComponent', () => {
     spectator.component.propertyName = 'booleanField';
     spectator.component.setRow({ booleanField: true });
     spectator.component.rowTestId = (row) => 'checkbox-' + row.booleanField.toString();
+    spectator.component.ariaLabels = () => ['Label 1', 'Label 2'];
     spectator.detectChanges();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -37,5 +38,10 @@ describe('IxCellCheckboxComponent', () => {
 
     expect(await checkbox.isChecked()).toBe(false);
     expect(spectator.component.onRowCheck).toHaveBeenCalledWith({ booleanField: true }, false);
+  });
+
+  it('gets aria label correctly', () => {
+    const ariaLabel = spectator.component.getAriaLabel(spectator.component.getRow());
+    expect(ariaLabel).toBe('Label 1 Label 2');
   });
 });

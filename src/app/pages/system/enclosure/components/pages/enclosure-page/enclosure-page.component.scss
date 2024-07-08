@@ -1,5 +1,15 @@
 @import 'scss-imports/cssvars';
 
+mat-card-content {
+  position: relative;
+}
+
+ix-fake-progress-bar {
+  height: 2px;
+  position: absolute;
+  top: 0;
+}
+
 .not-supported {
   margin: 0 auto;
   text-align: center;
@@ -33,6 +43,14 @@
 
   ::ng-deep .mat-mdc-card {
     margin: 0;
+  }
+
+  ::ng-deep .view-container .container {
+    ix-sas-expander-status-view,
+    ix-enclosure-view,
+    ix-disks-overview {
+      min-height: 55vh;
+    }
   }
 
   .container {

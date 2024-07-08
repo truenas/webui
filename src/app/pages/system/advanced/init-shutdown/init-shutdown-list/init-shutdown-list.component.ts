@@ -86,6 +86,7 @@ export class InitShutdownListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'init-shutdown-' + row.command + '-' + row.type,
+    ariaLabels: (row) => [row.command, this.translate.instant('Init/Shutdown Script')],
   });
 
   constructor(

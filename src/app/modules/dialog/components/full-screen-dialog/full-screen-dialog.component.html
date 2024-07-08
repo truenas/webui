@@ -3,11 +3,12 @@
     <div class="title">{{ title | translate }}</div>
     <p class="message">{{ message | translate }}</p>
   </div>
-  <button
-    *ngIf="data.showClose"
-    mat-button
-    color="primary"
-    ixTest="close-full-screen"
-    (click)="close()"
-  >{{ 'Continue' | translate }}</button>
+  @if (data.showClose) {
+    <button
+      mat-button
+      color="primary"
+      ixTest="close-full-screen"
+      (click)="close()"
+    >{{ 'Continue' | translate }}</button>
+  }
 </div>

@@ -1,4 +1,3 @@
-import { NgSwitch, NgSwitchCase } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -18,9 +17,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FlexModule,
-    NgSwitch,
     IxIconModule,
-    NgSwitchCase,
     TranslateModule,
     MatTooltip,
     MatProgressSpinner,

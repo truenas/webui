@@ -63,6 +63,7 @@
     >
       <ix-list-item
         *ngFor="let element of getFormArray.controls; let i = index"
+        [label]="dynamicSchema.title | translate"
         [canDelete]="!isAllListControlsDisabled"
         (delete)="removeControl(i)"
       >

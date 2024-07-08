@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { chain } from 'lodash';
+import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
 @Component({
@@ -27,6 +28,8 @@ export class MiniDisksOverviewComponent {
   });
 
   protected readonly failedDisks = computed(() => {
-    return this.slots().filter((slot) => slot.status !== 'OK').length;
+    return this.slots()
+      .filter((slot) => slot.pool_info?.disk_status === EnclosureDiskStatus.Faulted)
+      .length;
   });
 }

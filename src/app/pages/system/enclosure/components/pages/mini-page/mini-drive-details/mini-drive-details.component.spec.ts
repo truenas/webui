@@ -1,6 +1,8 @@
 import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   MiniDriveDetailsComponent,
 } from 'app/pages/system/enclosure/components/pages/mini-page/mini-drive-details/mini-drive-details.component';
@@ -15,6 +17,7 @@ describe('MiniDriveDetailsComponent', () => {
     serial: '12345',
     pool_info: {
       pool_name: 'pool1',
+      disk_status: EnclosureDiskStatus.Online,
     },
   } as DashboardEnclosureSlot;
 
@@ -23,6 +26,9 @@ describe('MiniDriveDetailsComponent', () => {
 
   const createComponent = createComponentFactory({
     component: MiniDriveDetailsComponent,
+    imports: [
+      MapValuePipe,
+    ],
     providers: [
       mockProvider(EnclosureStore, {
         selectedSlot: selectedSlotSignal,
@@ -51,6 +57,10 @@ describe('MiniDriveDetailsComponent', () => {
 
   it('shows disk rotation rate', () => {
     expect(getItemValue('Rotation Rate:')).toMatch('7200 RPM');
+  });
+
+  it('shows disk status', () => {
+    expect(getItemValue('Status:')).toMatch('Online');
   });
 
   it('unselects a slot when X is pressed', () => {

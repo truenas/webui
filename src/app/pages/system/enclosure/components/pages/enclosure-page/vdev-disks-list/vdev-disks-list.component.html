@@ -1,28 +1,22 @@
-<div
-  *ngIf="!selectedSlot()?.dev"
-  class="container"
->{{ 'Empty drive cage' | translate }}</div>
+@if (!selectedSlot()?.dev) {
+  <div class="container">{{ 'Empty drive cage' | translate }}</div>
+}
 
-<div
-  *ngIf="selectedSlot()?.dev && !selectedSlot()?.pool_info"
-  class="container"
->{{ 'No vdev info for this disk' | translate }}</div>
+@if (selectedSlot()?.dev && !selectedSlot()?.pool_info) {
+  <div class="container">{{ 'No vdev info for this disk' | translate }}</div>
+}
 
-<ng-container *ngIf="selectedSlot()?.pool_info?.vdev_disks?.length">
-  <div
-    class="container"
-  >
-    <div
-      *ngFor="let disk of selectedSlot()?.pool_info.vdev_disks"
-      class="disk-name"
-    >
-      <div
-        class="disk-circle"
-        [class.selected]="disk.dev === selectedSlot()?.dev"
-      ></div>{{ disk.dev }}
-
-      <!-- TODO: Not properly implemented -->
-      <!-- [style.background]="selectedSlot().highlightColor" -->
-    </div>
+@if (selectedSlot()?.pool_info?.vdev_disks?.length) {
+  <div class="container">
+    @for (disk of selectedSlot()?.pool_info.vdev_disks; track disk) {
+      <div class="disk-name">
+        <div
+          class="disk-circle"
+          [class.selected]="disk.dev === selectedSlot()?.dev"
+        ></div>{{ disk.dev }}
+        <!-- TODO: Not properly implemented -->
+        <!-- [style.background]="selectedSlot().highlightColor" -->
+      </div>
+    }
   </div>
-</ng-container>
+}

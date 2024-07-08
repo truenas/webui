@@ -13,6 +13,7 @@
       type="button"
       class="add-btn"
       [ixTest]="['add-item', label]"
+      [attr.aria-label]="'Add {item}' | translate: { item: label }"
       (click)="addItem()"
     >
       {{ 'Add' | translate }}

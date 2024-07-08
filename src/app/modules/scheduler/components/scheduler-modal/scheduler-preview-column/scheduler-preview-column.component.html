@@ -25,10 +25,11 @@
     <strong>{{ 'System Time Zone:' | translate }}</strong> {{ timezone }}
   </div>
 
-  <ix-scheduler-date-examples
-    *ngIf="cronPreview && !isPastMonth"
-    class="schedule-example-section"
-    [cronPreview]="cronPreview"
-    [startDate]="startDate"
-  ></ix-scheduler-date-examples>
+  @if (cronPreview && !isPastMonth) {
+    <ix-scheduler-date-examples
+      class="schedule-example-section"
+      [cronPreview]="cronPreview"
+      [startDate]="startDate"
+    ></ix-scheduler-date-examples>
+  }
 </div>

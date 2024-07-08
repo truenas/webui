@@ -1,12 +1,13 @@
 <ix-fieldset [title]="'Transport Options' | translate" [formGroup]="form">
-  <ix-ssh-credentials-select
-    *ngIf="!isLocal"
-    formControlName="ssh_credentials"
-    [label]="'SSH Connection' | translate"
-    [required]="true"
-    [tooltip]="helptext.ssh_credentials_tooltip | translate"
-  ></ix-ssh-credentials-select>
-  <ng-container *ngIf="isNetcat">
+  @if (!isLocal) {
+    <ix-ssh-credentials-select
+      formControlName="ssh_credentials"
+      [label]="'SSH Connection' | translate"
+      [required]="true"
+      [tooltip]="helptext.ssh_credentials_tooltip | translate"
+    ></ix-ssh-credentials-select>
+  }
+  @if (isNetcat) {
     <ix-select
       formControlName="netcat_active_side"
       [label]="'Netcat Active Side' | translate"
@@ -36,8 +37,8 @@
       [label]="'Netcat Active Side Connect Address' | translate"
       [tooltip]="helptext.netcat_passive_side_connect_address_tooltip | translate"
     ></ix-input>
-  </ng-container>
-  <ng-container *ngIf="isSsh">
+  }
+  @if (isSsh) {
     <ix-select
       formControlName="compression"
       [label]="'Stream Compression' | translate"
@@ -52,7 +53,7 @@
       [parse]="formatter.memorySizeParsing"
       [tooltip]="helptext.speed_limit_tooltip | translate"
     ></ix-input>
-  </ng-container>
+  }
   <ix-checkbox
     formControlName="large_block"
     [label]="'Allow Blocks Larger than 128KB' | translate"

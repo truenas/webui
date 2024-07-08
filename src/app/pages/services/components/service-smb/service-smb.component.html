@@ -42,79 +42,88 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <ix-fieldset *ngIf="!isBasicMode" [title]="'Other Options' | translate">
-        <ix-select
-          formControlName="unixcharset"
-          [label]="'UNIX Charset' | translate"
-          [tooltip]="tooltips.unixcharset | translate"
-          [options]="unixCharsetOptions$"
-        ></ix-select>
+      @if (!isBasicMode) {
+        <ix-fieldset [title]="'Other Options' | translate">
+          <ix-select
+            formControlName="unixcharset"
+            [label]="'UNIX Charset' | translate"
+            [tooltip]="tooltips.unixcharset | translate"
+            [options]="unixCharsetOptions$"
+          ></ix-select>
 
-        <ix-select
-          formControlName="loglevel"
-          [label]="'Log Level' | translate"
-          [tooltip]="tooltips.loglevel | translate"
-          [options]="logLevelOptions$"
-        ></ix-select>
+          <ix-select
+            formControlName="encryption"
+            [label]="'Transport Encryption Behavior' | translate"
+            [options]="encryptionOptions$"
+            [required]="true"
+          ></ix-select>
 
-        <ix-checkbox
-          formControlName="syslog"
-          [label]="'Use Syslog Only' | translate"
-          [tooltip]="tooltips.syslog | translate"
-        ></ix-checkbox>
+          <ix-select
+            formControlName="loglevel"
+            [label]="'Log Level' | translate"
+            [tooltip]="tooltips.loglevel | translate"
+            [options]="logLevelOptions$"
+          ></ix-select>
 
-        <ix-checkbox
-          formControlName="localmaster"
-          [label]="'Local Master' | translate"
-          [tooltip]="tooltips.localmaster | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="aapl_extensions"
-          [label]="'Enable Apple SMB2/3 Protocol Extensions' | translate"
-          [tooltip]="tooltips.aapl_extensions | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="multichannel"
-          [label]="'Multichannel' | translate"
-          [tooltip]="tooltips.multichannel | translate"
+          <ix-checkbox
+            formControlName="syslog"
+            [label]="'Use Syslog Only' | translate"
+            [tooltip]="tooltips.syslog | translate"
           ></ix-checkbox>
 
-        <ix-combobox
-          formControlName="admin_group"
-          [label]="'Administrators Group' | translate"
-          [tooltip]="tooltips.admin_group"
-          [provider]="adminGroupProvider"
-        ></ix-combobox>
+          <ix-checkbox
+            formControlName="localmaster"
+            [label]="'Local Master' | translate"
+            [tooltip]="tooltips.localmaster | translate"
+          ></ix-checkbox>
 
-        <ix-select
-          formControlName="guest"
-          [label]="'Guest Account' | translate"
-          [tooltip]="tooltips.guest | translate"
-          [options]="guestAccountOptions$"
-        ></ix-select>
+          <ix-checkbox
+            formControlName="aapl_extensions"
+            [label]="'Enable Apple SMB2/3 Protocol Extensions' | translate"
+            [tooltip]="tooltips.aapl_extensions | translate"
+          ></ix-checkbox>
 
-        <ix-input
-          formControlName="filemask"
-          [label]="'File Mask' | translate"
-          [tooltip]="tooltips.filemask | translate"
-        ></ix-input>
+          <ix-checkbox
+            formControlName="multichannel"
+            [label]="'Multichannel' | translate"
+            [tooltip]="tooltips.multichannel | translate"
+          ></ix-checkbox>
 
-        <ix-input
-          formControlName="dirmask"
-          [label]="'Directory Mask' | translate"
-          [tooltip]="tooltips.dirmask | translate"
-        ></ix-input>
+          <ix-combobox
+            formControlName="admin_group"
+            [label]="'Administrators Group' | translate"
+            [tooltip]="tooltips.admin_group"
+            [provider]="adminGroupProvider"
+          ></ix-combobox>
 
-        <ix-select
-          formControlName="bindip"
-          [label]="'Bind IP Addresses' | translate"
-          [tooltip]="tooltips.bindip | translate"
-          [options]="bindIpAddressOptions$"
-          [multiple]="true"
-        ></ix-select>
-      </ix-fieldset>
+          <ix-select
+            formControlName="guest"
+            [label]="'Guest Account' | translate"
+            [tooltip]="tooltips.guest | translate"
+            [options]="guestAccountOptions$"
+          ></ix-select>
+
+          <ix-input
+            formControlName="filemask"
+            [label]="'File Mask' | translate"
+            [tooltip]="tooltips.filemask | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="dirmask"
+            [label]="'Directory Mask' | translate"
+            [tooltip]="tooltips.dirmask | translate"
+          ></ix-input>
+
+          <ix-select
+            formControlName="bindip"
+            [label]="'Bind IP Addresses' | translate"
+            [tooltip]="tooltips.bindip | translate"
+            [options]="bindIpAddressOptions$"
+            [multiple]="true"
+          ></ix-select>
+        </ix-fieldset>
+      }
 
       <ix-form-actions>
         <button

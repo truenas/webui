@@ -36,7 +36,7 @@
             [tooltip]="tooltips.v3 | translate"
           ></ix-checkbox>
 
-          <ng-container *ngIf="isV3SupportEnabled">
+          @if (isV3SupportEnabled) {
             <ix-input
               formControlName="v3_username"
               [label]="'Username' | translate"
@@ -72,7 +72,7 @@
               [label]="'Privacy Passphrase' | translate"
               [tooltip]="tooltips.v3_privpassphrase | translate"
             ></ix-input>
-          </ng-container>
+          }
         </ix-fieldset>
       </div>
 

@@ -2,26 +2,31 @@ import { Injectable } from '@angular/core';
 import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class SmbValidationService {
   private noSmbUsersError = this.translate.instant('TrueNAS server must be joined to Active Directory or have at least one local SMB user before creating an SMB share');
   private nameExistsError = this.translate.instant('Share with this name already exists');
-  private errorText: string;
+  private wasNoSmbUsersWarningShown = false;
 
   constructor(
     private ws: WebSocketService,
+    private dialogService: DialogService,
     private translate: TranslateService,
   ) { }
 
-  validate = (originalName?: string) => {
+  validate = (originalName?: string): (control: AbstractControl<string>) => Observable<ValidationErrors | null> => {
+    this.wasNoSmbUsersWarningShown = false;
     return (control: AbstractControl<string>): Observable<ValidationErrors | null> => {
       return control.valueChanges.pipe(
         debounceTime(300),
@@ -33,31 +38,50 @@ export class SmbValidationService {
           }
 
           return this.ws.call('sharing.smb.share_precheck', [{ name: value }]).pipe(
-            catchError((error: { reason: string }) => {
-              this.errorText = this.extractError(error.reason);
-
-              return of({
-                customValidator: {
-                  message: this.errorText,
-                },
-                preCheckFailed: true,
-              });
-            }),
-            switchMap((response) => {
-              return response === null
-                ? of(null)
-                : of({
-                  customValidator: {
-                    message: this.errorText,
-                  },
-                  preCheckFailed: true,
-                });
-            }),
+            switchMap((response) => this.handleError(response)),
+            catchError((error: { reason: string }) => this.handleError(error)),
           );
         }),
       );
     };
   };
+
+  private handleError(error: { reason: string }): Observable<ValidationErrors | null> {
+    if (error === null) {
+      return of(null);
+    }
+
+    const errorText = this.extractError(error.reason);
+
+    if (errorText === this.noSmbUsersError) {
+      this.showNoSmbUsersWarning();
+      return of(null);
+    }
+
+    return of({
+      customValidator: {
+        message: errorText,
+      },
+      preCheckFailed: true,
+    });
+  }
+
+  private showNoSmbUsersWarning(): void {
+    if (this.wasNoSmbUsersWarningShown) {
+      return;
+    }
+    this.wasNoSmbUsersWarningShown = true;
+    this.dialogService
+      .confirm({
+        title: this.translate.instant('Warning'),
+        message: this.noSmbUsersError,
+        hideCheckbox: true,
+        buttonText: this.translate.instant('Close'),
+        hideCancel: true,
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe();
+  }
 
   private extractError(error: string): string {
     if (error.includes(this.noSmbUsersError)) {

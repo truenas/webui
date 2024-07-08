@@ -8,6 +8,11 @@ export const syslogCardElements = {
     syslog: {
       anchor: 'syslog-card',
     },
+    configure: {
+      anchor: 'syslog-settings',
+      hierarchy: [T('Configure Syslog')],
+      synonyms: [T('Syslog Settings')],
+    },
     level: {
       hierarchy: [T('Syslog Level')],
     },

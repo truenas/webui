@@ -27,6 +27,10 @@
       place-content: space-around;
       position: fixed;
       width: 100%;
+
+      &.has-console-footer {
+        bottom: 47px;
+      }
     }
 
     .topbar-button-right {

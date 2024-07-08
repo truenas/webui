@@ -19,6 +19,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['nfs-share', 'add']"
+        [attr.aria-label]="'Add NFS Share' | translate"
         (click)="openForm()"
       >
         {{ 'Add' | translate }}
@@ -49,14 +50,15 @@
     ></tbody>
   </ix-table>
 
-  <a
-    *ngIf="nfsShares.length > 4"
-    class="view-all"
-    [ixTest]="['nfs-share', 'view-all']"
-    [routerLink]="['/sharing', 'nfs']"
-  >
-    <span>
-      {{ 'View All' | translate }}
-    </span>
-  </a>
+  @if (nfsShares.length > 4) {
+    <a
+      class="view-all"
+      [ixTest]="['nfs-share', 'view-all']"
+      [routerLink]="['/sharing', 'nfs']"
+    >
+      <span>
+        {{ 'View All' | translate }}
+      </span>
+    </a>
+  }
 </mat-card>

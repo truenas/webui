@@ -1,19 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { take } from 'rxjs/operators';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { Role } from 'app/enums/role.enum';
+import { finalize } from 'rxjs';
+import { DirectoryServiceState, directoryServiceStateLabels } from 'app/enums/directory-service-state.enum';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-
-interface DirectoryServicesMonitorRow {
-  name: string;
-  state: DirectoryServiceState;
-  id: string;
-}
 
 @UntilDestroy()
 @Component({
@@ -23,19 +16,16 @@ interface DirectoryServicesMonitorRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DirectoryServicesMonitorComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly isLoading = signal(false);
+  protected readonly serviceName = signal<string>('');
+  protected readonly state = signal<DirectoryServiceState | null>(null);
 
-  displayedColumns: string[] = ['icon', 'name', 'state'];
-  dataSource: DirectoryServicesMonitorRow[] = [];
-  isLoading = false;
-
-  readonly DirectoryServiceState = DirectoryServiceState;
+  protected readonly DirectoryServiceState = DirectoryServiceState;
+  protected readonly directoryServiceStateLabels = directoryServiceStateLabels;
 
   constructor(
     private ws: WebSocketService,
-    private router: Router,
-    private dialogRef: MatDialogRef<DirectoryServicesMonitorComponent>,
-    private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -43,19 +33,21 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   }
 
   getStatus(): void {
-    this.isLoading = true;
-    this.ws.call('directoryservices.get_state').pipe(take(1), untilDestroyed(this)).subscribe((state) => {
-      this.isLoading = false;
-      this.dataSource = [
-        { name: 'Active Directory', state: state.activedirectory, id: 'activedirectory' },
-        { name: 'LDAP', state: state.ldap, id: 'ldap' },
-      ];
-      this.cdr.markForCheck();
-    });
-  }
-
-  goTo(el: string): void {
-    this.dialogRef.close();
-    this.router.navigate([`/directoryservice/${el}`]);
+    this.isLoading.set(true);
+    this.ws.call('directoryservices.get_state')
+      .pipe(
+        this.errorHandler.catchError(),
+        finalize(() => this.isLoading.set(false)),
+        untilDestroyed(this),
+      )
+      .subscribe((state) => {
+        if (state.ldap !== DirectoryServiceState.Disabled) {
+          this.serviceName.set('LDAP');
+          this.state.set(state.ldap);
+        } else {
+          this.serviceName.set('Active Directory');
+          this.state.set(state.activedirectory);
+        }
+      });
   }
 }

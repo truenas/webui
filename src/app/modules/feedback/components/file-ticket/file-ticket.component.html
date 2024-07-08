@@ -36,15 +36,16 @@
       [label]="'Attach additional images' | translate"
     ></ix-checkbox>
 
-    <ix-file-input
-      *ngIf="form.controls.attach_images.value"
-      formControlName="images"
-      class="attach-images"
-      [label]="'Attach images (optional)' | translate"
-      [tooltip]="'Select images you want attach to review' | translate"
-      [multiple]="true"
-      [acceptedFiles]="acceptedFiles"
-    ></ix-file-input>
+    @if (form.controls.attach_images.value) {
+      <ix-file-input
+        formControlName="images"
+        class="attach-images"
+        [label]="'Attach images (optional)' | translate"
+        [tooltip]="'Select images you want attach to review' | translate"
+        [multiple]="true"
+        [acceptedFiles]="acceptedFiles"
+      ></ix-file-input>
+    }
   </form>
 </mat-dialog-content>
 

@@ -141,6 +141,7 @@ export class DatasetQuotasListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => `${this.helpTextKey}-quota-` + row.name + this.emptyValue + row.obj_quota,
+    ariaLabels: (row) => [row.name, this.translate.instant('Dataset Quota')],
   });
 
   quotas: DatasetQuota[] = [];

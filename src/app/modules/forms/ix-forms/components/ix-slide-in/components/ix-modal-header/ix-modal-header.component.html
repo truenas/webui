@@ -1,8 +1,4 @@
-<div
-  class="ix-slidein-title-bar"
-  fxLayout="row"
-  fxLayoutAlign="space-between center"
->
+<div class="ix-slidein-title-bar">
   <h3 class="ix-formtitle">
     {{ title() | translate }}
     <ix-readonly-badge *ngIf="requiredRoles()?.length && !(hasRequiredRoles() | async)"></ix-readonly-badge>
@@ -13,6 +9,8 @@
       tabindex="0"
       name="cancel"
       id="ix-close-icon"
+      type="button"
+      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title }"
       (click)="close()"
       (keydown.enter)="close()"
     ></ix-icon>

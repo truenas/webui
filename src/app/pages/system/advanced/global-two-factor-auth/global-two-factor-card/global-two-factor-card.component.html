@@ -7,6 +7,7 @@
         id="global-two-factor-auth"
         mat-button
         [ixTest]="['two-factor-auth', 'configure']"
+        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed(twoFactorAuthConfig)"
       >
         {{ 'Configure' | translate }}

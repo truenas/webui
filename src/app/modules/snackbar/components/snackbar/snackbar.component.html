@@ -1,16 +1,18 @@
-<ng-container *ngIf="config.icon">
+@if (config.icon) {
   <ix-icon class="icon" [name]="config.icon" [style.color]="iconColor"></ix-icon>
-</ng-container>
+}
 
 <div class="message">{{ config.message | translate }}</div>
 
-<div *ngIf="config.button" class="action">
-  <button
-    mat-button
-    type="button"
-    ixTest="snackbar-button"
-    (click)="config.button.action()"
-  >
-    {{ config.button.title | translate }}
-  </button>
-</div>
+@if (config.button) {
+  <div class="action">
+    <button
+      mat-button
+      type="button"
+      ixTest="snackbar-button"
+      (click)="config.button.action()"
+    >
+      {{ config.button.title | translate }}
+    </button>
+  </div>
+}

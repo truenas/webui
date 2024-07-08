@@ -20,31 +20,33 @@
         ></ix-input>
       </ix-fieldset>
 
-      <ix-fieldset
-        *ngIf="quotaType === DatasetQuotaType.User"
-        [title]="'Apply Quotas to Selected Users' | translate"
-      >
-        <ix-chips
-          formControlName="users"
-          [label]="'Apply To Users' | translate"
-          [tooltip]="tooltips.users"
-          [required]="true"
-          [autocompleteProvider]="usersProvider"
-        ></ix-chips>
-      </ix-fieldset>
+      @if (quotaType === DatasetQuotaType.User) {
+        <ix-fieldset
+          [title]="'Apply Quotas to Selected Users' | translate"
+        >
+          <ix-chips
+            formControlName="users"
+            [label]="'Apply To Users' | translate"
+            [tooltip]="tooltips.users"
+            [required]="true"
+            [autocompleteProvider]="usersProvider"
+          ></ix-chips>
+        </ix-fieldset>
+      }
 
-      <ix-fieldset
-        *ngIf="quotaType === DatasetQuotaType.Group"
-        [title]="'Apply Quotas to Selected Groups' | translate"
-      >
-        <ix-chips
-          formControlName="groups"
-          [label]="'Apply To Groups' | translate"
-          [tooltip]="tooltips.groups"
-          [required]="true"
-          [autocompleteProvider]="groupProvider"
-        ></ix-chips>
-      </ix-fieldset>
+      @if (quotaType === DatasetQuotaType.Group) {
+        <ix-fieldset
+          [title]="'Apply Quotas to Selected Groups' | translate"
+        >
+          <ix-chips
+            formControlName="groups"
+            [label]="'Apply To Groups' | translate"
+            [tooltip]="tooltips.groups"
+            [required]="true"
+            [autocompleteProvider]="groupProvider"
+          ></ix-chips>
+        </ix-fieldset>
+      }
 
       <ix-form-actions>
         <button

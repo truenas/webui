@@ -25,15 +25,31 @@ describe('IxCellDateComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    spectator.component.propertyName = 'dateField';
-    spectator.component.setRow({ dateField: new Date('2023-07-12 09:10:00') });
-    spectator.component.rowTestId = () => '';
-    spectator.detectChanges();
+  describe('date provided', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      spectator.component.propertyName = 'dateField';
+      spectator.component.setRow({ dateField: new Date('2023-07-12 09:10:00') });
+      spectator.component.rowTestId = () => '';
+      spectator.detectChanges();
+    });
+
+    it('shows default format datetime in template', () => {
+      expect(spectator.element.textContent.trim()).toBe('2023-07-11 23:10:00');
+    });
   });
 
-  it('shows default format datetime in template', () => {
-    expect(spectator.element.textContent.trim()).toBe('2023-07-11 23:10:00');
+  describe('no date provided', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      spectator.component.propertyName = 'dateField';
+      spectator.component.setRow({ dateField: null });
+      spectator.component.rowTestId = () => '';
+      spectator.detectChanges();
+    });
+
+    it('shows default format datetime in template', () => {
+      expect(spectator.element.textContent.trim()).toBe('N/A');
+    });
   });
 });

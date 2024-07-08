@@ -58,12 +58,13 @@
             [tooltip]="tooltips.recursive | translate"
           ></ix-checkbox>
 
-          <ix-checkbox
-            *ngIf="isRecursive$ | async"
-            formControlName="traverse"
-            [label]="'Apply permissions to child datasets' | translate"
-            [tooltip]="tooltips.traverse | translate"
-          ></ix-checkbox>
+          @if (isRecursive$ | async) {
+            <ix-checkbox
+              formControlName="traverse"
+              [label]="'Apply permissions to child datasets' | translate"
+              [tooltip]="tooltips.traverse | translate"
+            ></ix-checkbox>
+          }
         </ix-fieldset>
       </div>
 
@@ -89,16 +90,17 @@
         </button>
 
         <ng-container *ixRequiresRoles="requiredRoles">
-          <button
-            *ngIf="canSetAcl"
-            class="set-acl-button"
-            mat-button
-            type="button"
-            ixTest="set-acl"
-            (click)="onSetAclPressed()"
-          >
-            {{ 'Set ACL' | translate }}
-          </button>
+          @if (canSetAcl) {
+            <button
+              class="set-acl-button"
+              mat-button
+              type="button"
+              ixTest="set-acl"
+              (click)="onSetAclPressed()"
+            >
+              {{ 'Set ACL' | translate }}
+            </button>
+          }
         </ng-container>
       </div>
     </form>

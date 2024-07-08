@@ -3,9 +3,7 @@
   class="multi-error-dialog"
   mat-dialog-content
 >
-  <ng-container
-    *ngFor="let error of errors"
-  >
+  @for (error of errors; track error) {
     <ix-error-template
       class="error-template"
       [title]="error.title"
@@ -14,7 +12,7 @@
       [logs]="error.logs"
     ></ix-error-template>
     <mat-divider></mat-divider>
-  </ng-container>
+  }
 
 </div>
 <div mat-dialog-actions>

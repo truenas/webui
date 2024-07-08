@@ -19,6 +19,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['smb-share', 'add']"
+        [attr.aria-label]="'Add SMB Share' | translate"
         (click)="openForm()"
       >
         {{ 'Add' | translate }}
@@ -49,14 +50,15 @@
     ></tbody>
   </ix-table>
 
-  <a
-    *ngIf="smbShares.length > 4"
-    class="view-all"
-    [ixTest]="['smb-share', 'view-all']"
-    [routerLink]="['/sharing', 'smb']"
-  >
-    <span>
-      {{ 'View All' | translate }}
-    </span>
-  </a>
+  @if (smbShares.length > 4) {
+    <a
+      class="view-all"
+      [ixTest]="['smb-share', 'view-all']"
+      [routerLink]="['/sharing', 'smb']"
+    >
+      <span>
+        {{ 'View All' | translate }}
+      </span>
+    </a>
+  }
 </mat-card>

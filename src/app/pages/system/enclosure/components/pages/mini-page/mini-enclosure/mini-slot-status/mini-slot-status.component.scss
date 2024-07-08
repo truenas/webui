@@ -1,0 +1,29 @@
+.status-icon {
+  display: inline-block;
+  line-height: normal;
+  margin-bottom: 4px;
+  margin-right: 2px;
+  vertical-align: middle;
+
+  &.status-offline,
+  &.status-unavailable,
+  &.status-removed {
+    color: var(--grey);
+  }
+
+  &.status-online {
+    color: var(--green);
+  }
+
+  &.status-degraded {
+    color: var(--orange);
+  }
+
+  &.status-faulted {
+    color: var(--red);
+  }
+
+  &.status-unknown {
+    color: var(--yellow);
+  }
+}

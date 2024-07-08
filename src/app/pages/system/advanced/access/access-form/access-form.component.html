@@ -13,11 +13,12 @@
           [label]="'Token Lifetime' | translate"
           [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
         ></ix-input>
-        <ix-checkbox
-          *ngIf="isEnterprise"
-          formControlName="ds_auth"
-          [label]="'Allow Directory Service users to access WebUI' | translate"
-        ></ix-checkbox>
+        @if (isEnterprise) {
+          <ix-checkbox
+            formControlName="ds_auth"
+            [label]="'Allow Directory Service users to access WebUI' | translate"
+          ></ix-checkbox>
+        }
       </ix-fieldset>
 
       <ix-form-actions>

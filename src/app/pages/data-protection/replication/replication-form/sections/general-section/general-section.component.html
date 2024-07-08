@@ -5,14 +5,15 @@
     [required]="true"
     [tooltip]="helptext.name_tooltip | translate"
   ></ix-input>
-  <ix-select
-    *ngIf="!isLocal"
-    formControlName="direction"
-    [label]="'Direction' | translate"
-    [required]="true"
-    [options]="directions$"
-    [tooltip]="helptext.direction_tooltip | translate"
-  ></ix-select>
+  @if (!isLocal) {
+    <ix-select
+      formControlName="direction"
+      [label]="'Direction' | translate"
+      [required]="true"
+      [options]="directions$"
+      [tooltip]="helptext.direction_tooltip | translate"
+    ></ix-select>
+  }
   <ix-select
     formControlName="transport"
     [label]="'Transport' | translate"
@@ -20,12 +21,13 @@
     [options]="transports$"
     [tooltip]="helptext.transport_tooltip | translate"
   ></ix-select>
-  <ix-checkbox
-    *ngIf="!isLocal"
-    formControlName="sudo"
-    [label]="'Use Sudo For ZFS Commands' | translate"
-    [tooltip]="helptext.sudo_tooltip | translate"
-  ></ix-checkbox>
+  @if (!isLocal) {
+    <ix-checkbox
+      formControlName="sudo"
+      [label]="'Use Sudo For ZFS Commands' | translate"
+      [tooltip]="helptext.sudo_tooltip | translate"
+    ></ix-checkbox>
+  }
   <ix-input
     formControlName="retries"
     type="number"

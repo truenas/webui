@@ -6,19 +6,21 @@
     [required]="true"
     [options]="scheduleMethodOptions$"
   ></ix-radio-group>
-  <ix-scheduler
-    *ngIf="form.controls.schedule_picker.enabled"
-    formControlName="schedule_picker"
-    [required]="true"
-    [label]="helptext.schedule_placeholder | translate"
-    [tooltip]="helptext.schedule_tooltip| translate"
-  ></ix-scheduler>
-  <ix-checkbox
-    *ngIf="form.controls.readonly.enabled"
-    formControlName="readonly"
-    [label]="helptext.readonly_placeholder | translate"
-    [tooltip]="helptext.readonly_tooltip | translate"
-  ></ix-checkbox>
+  @if (form.controls.schedule_picker.enabled) {
+    <ix-scheduler
+      formControlName="schedule_picker"
+      [required]="true"
+      [label]="helptext.schedule_placeholder | translate"
+      [tooltip]="helptext.schedule_tooltip| translate"
+    ></ix-scheduler>
+  }
+  @if (form.controls.readonly.enabled) {
+    <ix-checkbox
+      formControlName="readonly"
+      [label]="helptext.readonly_placeholder | translate"
+      [tooltip]="helptext.readonly_tooltip | translate"
+    ></ix-checkbox>
+  }
   <ix-radio-group
     formControlName="retention_policy"
     [label]="helptext.retention_policy_placeholder | translate"
@@ -27,20 +29,22 @@
     [options]="retentionPolicyOptions$"
   ></ix-radio-group>
   <div class="lifetime">
-    <ix-input
-      *ngIf="form.controls.lifetime_value.enabled"
-      class="value"
-      formControlName="lifetime_value"
-      type="number"
-      [required]="true"
-    ></ix-input>
-    <ix-select
-      *ngIf="form.controls.lifetime_unit.enabled"
-      class="unit"
-      formControlName="lifetime_unit"
-      [options]="lifetimeUnitOptions$"
-      [required]="true"
-    ></ix-select>
+    @if (form.controls.lifetime_value.enabled) {
+      <ix-input
+        class="value"
+        formControlName="lifetime_value"
+        type="number"
+        [required]="true"
+      ></ix-input>
+    }
+    @if (form.controls.lifetime_unit.enabled) {
+      <ix-select
+        class="unit"
+        formControlName="lifetime_unit"
+        [options]="lifetimeUnitOptions$"
+        [required]="true"
+      ></ix-select>
+    }
   </div>
 
   <ix-form-actions>
