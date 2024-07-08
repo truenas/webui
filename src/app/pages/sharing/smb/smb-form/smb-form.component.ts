@@ -427,8 +427,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   submit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
     const smbShare = this.form.value;
 
     if (!smbShare.timemachine_quota || !smbShare.timemachine) {
