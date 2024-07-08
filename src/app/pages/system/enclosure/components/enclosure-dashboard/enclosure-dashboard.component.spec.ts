@@ -10,7 +10,6 @@ import {
   EnclosureDashboardComponent,
 } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('EnclosureDashboardComponent', () => {
   let spectator: SpectatorRouting<EnclosureDashboardComponent>;
@@ -29,7 +28,7 @@ describe('EnclosureDashboardComponent', () => {
       }),
     ],
     providers: [
-      mockProvider(WebSocketService),
+      // mockProvider(WebSocketService),
       // mockWebSocket([
       //   mockCall('jbof.licensed', 5),
       // ]),
