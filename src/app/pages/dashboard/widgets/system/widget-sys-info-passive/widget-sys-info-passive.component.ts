@@ -62,7 +62,6 @@ export class WidgetSysInfoPassiveComponent {
   });
   isLoaded = computed(() => this.systemInfo());
 
-  // this.localeService.getDateAndTime(generalConfig.timezone)?.[0]
   constructor(
     private resources: WidgetResourcesService,
     private dialog: DialogService,
