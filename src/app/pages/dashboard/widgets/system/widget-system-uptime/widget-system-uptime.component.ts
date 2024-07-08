@@ -9,6 +9,7 @@ import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
 import { systemUptimeWidget } from 'app/pages/dashboard/widgets/system/widget-system-uptime/widget-system-uptime.definition';
+import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'ix-widget-system-uptime',
@@ -40,10 +41,12 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
   });
 
   datetime = computed(() => {
-    return this.loadedSystemInfo().datetime.$date + (this.realElapsedSeconds() * 1000);
+    const [dateValue, timeValue] = this.localeService.getDateAndTime(this.loadedSystemInfo().timezone);
+    return new Date(`${dateValue} ${timeValue}`).getTime() + (this.realElapsedSeconds() * 1000);
   });
 
   constructor(
     private resources: WidgetResourcesService,
+    private localeService: LocaleService,
   ) {}
 }

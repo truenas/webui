@@ -23,6 +23,7 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
 import { DragHandleComponent } from 'app/pages/dashboard-old/components/drag-handle/drag-handle.component';
 import { SimpleFailoverBtnComponent } from 'app/pages/dashboard-old/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard-old/components/widget-sys-info/widget-sys-info.component';
+import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import {
   selectCanFailover, selectHaInfoState,
@@ -102,6 +103,9 @@ describe('WidgetSysInfoComponent', () => {
         getProductType: () => ProductType.ScaleEnterprise,
         isEnterprise$: of(true),
         updateRunning: of(false),
+      }),
+      mockProvider(LocaleService, {
+        getDateAndTime: () => ['2024-03-15', '10:34:11'],
       }),
       provideMockStore({
         selectors: [
