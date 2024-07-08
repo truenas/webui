@@ -21,7 +21,7 @@ describe('EnclosureHeaderComponent', () => {
     component: EnclosureHeaderComponent,
     shallow: true,
     providers: [
-      // mockProvider(MatDialog),
+      mockProvider(MatDialog),
       mockProvider(EnclosureStore, {
         enclosureLabel: () => 'My Enclosure',
         selectedEnclosure: () => ({
