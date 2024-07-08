@@ -53,6 +53,7 @@ const columns = createTable<TestTableData>([
   }),
 ], {
   rowTestId: (row) => 'row-' + row.numberField.toString(),
+  ariaLabels: (row) => ['Column', row.stringField],
 });
 
 describe('IxTableBodyComponent', () => {

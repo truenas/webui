@@ -6,6 +6,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['self-encrypted-drive', 'configure']"
+        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}

@@ -16,6 +16,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['sessions', 'configure']"
+        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}
@@ -31,12 +32,14 @@
           {{ asDuration(tokenLifetime) }}
         </span>
       </mat-list-item>
-      <mat-list-item *ngIf="isEnterprise">
-        <span class="label">{{ 'Allow Directory Service users to access WebUI' | translate }}:</span>
-        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
-          {{ generalConfig | yesNo }}
-        </span>
-      </mat-list-item>
+      @if (isEnterprise) {
+        <mat-list-item>
+          <span class="label">{{ 'Allow Directory Service users to access WebUI' | translate }}:</span>
+          <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+            {{ generalConfig | yesNo }}
+          </span>
+        </mat-list-item>
+      }
     </mat-list>
   </mat-card-content>
 

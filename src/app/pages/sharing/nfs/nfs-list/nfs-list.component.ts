@@ -123,6 +123,7 @@ export class NfsListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'nfs-share-' + row.path + '-' + row.comment,
+    ariaLabels: (row) => [row.path, this.translate.instant('NFS Share')],
   });
 
   constructor(

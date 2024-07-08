@@ -1,15 +1,21 @@
 <div class="container">
-  <h1 *ngIf="selectedSlot().dev">{{ selectedSlot().dev }}</h1>
-  <span *ngIf="selectedSlot().pool_info">
-    <span class="title">{{ 'Topology' | translate }}:</span>
-    <span class="value">{{ selectedSlot().pool_info.vdev_name }}</span>
-  </span>
-  <span *ngIf="selectedSlot().pool_info">
-    <span class="title">{{ 'Category' | translate }}:</span>
-    <span class="value">
-      {{ selectedSlot().pool_info.vdev_type | mapValue: vdevTypeLabels | translate }}
+  @if (selectedSlot().dev) {
+    <h1>{{ selectedSlot().dev }}</h1>
+  }
+  @if (selectedSlot().pool_info) {
+    <span>
+      <span class="title">{{ 'Topology' | translate }}:</span>
+      <span class="value">{{ selectedSlot().pool_info.vdev_name }}</span>
     </span>
-  </span>
+  }
+  @if (selectedSlot().pool_info) {
+    <span>
+      <span class="title">{{ 'Category' | translate }}:</span>
+      <span class="value">
+        {{ selectedSlot().pool_info.vdev_type | mapValue: vdevTypeLabels | translate }}
+      </span>
+    </span>
+  }
   <span>
     <span class="title">{{ 'Slot' | translate }}:</span>
     <span class="value">{{ selectedSlot().drive_bay_number }}</span>

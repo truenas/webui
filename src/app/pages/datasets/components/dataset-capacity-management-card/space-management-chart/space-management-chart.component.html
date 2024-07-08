@@ -18,42 +18,43 @@
     </span>
   </h3>
   <div class="legend-wrapper">
-    <div *ngIf="dataset.usedbydataset.parsed" class="legend-list-item">
-      <span class="legend-label">
-        <span
-          class="legend-swatch"
-          [style.background-color]="swatchColors?.usedbydataset?.backgroundColor"
-        ></span>
-        {{ 'Data Written' | translate }}
-      </span>
-      <span class="legend-value">
-        {{ dataset.usedbydataset.parsed | ixFileSize }}
-        <ng-container *ngIf="dataset.usedbydataset.parsed">
-          ({{ dataset.usedbydataset.parsed / dataset.used.parsed | percent }})
-        </ng-container>
-      </span>
-    </div>
-    <ng-container *ngIf="!isZvol">
-      <div *ngIf="dataset.usedbychildren.parsed" class="legend-list-item">
+    @if (dataset.usedbydataset.parsed) {
+      <div class="legend-list-item">
         <span class="legend-label">
           <span
             class="legend-swatch"
-            [style.background-color]="swatchColors?.usedbychildren?.backgroundColor"
+            [style.background-color]="swatchColors?.usedbydataset?.backgroundColor"
           ></span>
-          {{ 'Children' | translate }}
+          {{ 'Data Written' | translate }}
         </span>
         <span class="legend-value">
-          {{
-            dataset.usedbychildren.parsed
-              | ixFileSize
-          }}
-          <ng-container *ngIf="dataset.usedbychildren.parsed">
-            ({{
-              dataset.usedbychildren.parsed / dataset.used.parsed | percent
-            }})
-          </ng-container>
+          {{ dataset.usedbydataset.parsed | ixFileSize }}
+          @if (dataset.usedbydataset.parsed) {
+            ({{ dataset.usedbydataset.parsed / dataset.used.parsed | percent }})
+          }
         </span>
       </div>
-    </ng-container>
+    }
+
+    @if (!isZvol) {
+      @if (dataset.usedbychildren.parsed) {
+        <div class="legend-list-item">
+          <span class="legend-label">
+            <span
+              class="legend-swatch"
+              [style.background-color]="swatchColors?.usedbychildren?.backgroundColor"
+            ></span>
+            {{ 'Children' | translate }}
+          </span>
+          <span class="legend-value">
+            {{dataset.usedbychildren.parsed| ixFileSize
+            }}
+            @if (dataset.usedbychildren.parsed) {
+              ({{ dataset.usedbychildren.parsed / dataset.used.parsed | percent }})
+            }
+          </span>
+        </div>
+      }
+    }
   </div>
 </div>

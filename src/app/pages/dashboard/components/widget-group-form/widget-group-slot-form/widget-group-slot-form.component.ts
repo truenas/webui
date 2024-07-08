@@ -248,7 +248,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
 
     if (
       !slotConfig?.type
-      || !widgetRegistry[slotConfig.type as WidgetType]?.settingsComponent
+      || !widgetRegistry[slotConfig.type]?.settingsComponent
     ) {
       return;
     }

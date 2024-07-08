@@ -5,9 +5,10 @@
         tabindex="0"
         class="mobile-back-button"
         ixTest="disk-details-back"
+        [attr.aria-label]="'Back' | translate"
         (click)="onCloseMobileDetails()"
         (keydown.enter)="onCloseMobileDetails()"
-      >
+        >
         <ix-icon name="mdi-chevron-left"></ix-icon>
       </a>
       {{ 'Task Details for {task}' | translate: { task: backup.description } }}
@@ -25,10 +26,9 @@
 
     <ix-cloud-backup-stats [backup]="backup"></ix-cloud-backup-stats>
 
-    <ix-cloud-backup-excluded-paths
-      *ngIf="backup.exclude?.length"
-      [backup]="backup"
-    ></ix-cloud-backup-excluded-paths>
+    @if (backup.exclude?.length) {
+      <ix-cloud-backup-excluded-paths [backup]="backup"></ix-cloud-backup-excluded-paths>
+    }
 
     <ix-cloud-backup-snapshots [backup]="backup"></ix-cloud-backup-snapshots>
   </div>

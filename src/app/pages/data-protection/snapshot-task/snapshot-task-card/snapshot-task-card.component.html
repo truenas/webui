@@ -11,6 +11,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['snapshot-task', 'add']"
+        [attr.aria-label]="'Add Snapshot Task' | translate"
         (click)="openForm()"
       >
         {{ 'Add' | translate }}

@@ -1696,22 +1696,6 @@
   },
   {
     "hierarchy": [
-      "Datasets"
-    ],
-    "synonyms": [
-      "Manage Datasets"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "datasets",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "Directory Services",
       "Idmap",
       "Add Idmap"
@@ -2694,10 +2678,10 @@
     "hierarchy": [
       "Shares",
       "NFS",
-      "Create NFS Share"
+      "Add NFS Share"
     ],
     "synonyms": [
-      "Add NFS Share",
+      "Create NFS Share",
       "New NFS Share",
       "Create Share",
       "Add Share",
@@ -2712,7 +2696,7 @@
       "nfs"
     ],
     "routerLink": null,
-    "anchor": "create-nfs-share",
+    "anchor": "add-nfs-share",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2754,11 +2738,11 @@
     "hierarchy": [
       "Shares",
       "SMB",
-      "Create SMB Share"
+      "Add SMB Share"
     ],
     "synonyms": [
       "Samba",
-      "Add SMB Share",
+      "Create SMB Share",
       "New SMB Share",
       "Create Share",
       "Add Share",
@@ -2773,7 +2757,7 @@
       "smb"
     ],
     "routerLink": null,
-    "anchor": "create-smb-share",
+    "anchor": "add-smb-share",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3186,6 +3170,28 @@
       "System",
       "Advanced",
       "Access",
+      "Configure Access"
+    ],
+    "synonyms": [
+      "Access Settings"
+    ],
+    "requiredRoles": [
+      "AUTH_SESSIONS_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "access-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Access",
       "Token Lifetime"
     ],
     "synonyms": [
@@ -3240,6 +3246,27 @@
     "hierarchy": [
       "System",
       "Advanced",
+      "Configure Allowed IP Addresses"
+    ],
+    "synonyms": [
+      "Allowed IP Addresses Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "allowed-addresses-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
       "Audit"
     ],
     "synonyms": [],
@@ -3250,6 +3277,28 @@
     ],
     "routerLink": null,
     "anchor": "audit-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Audit",
+      "Configure Audit"
+    ],
+    "synonyms": [
+      "Audit Settings"
+    ],
+    "requiredRoles": [
+      "SYSTEM_AUDIT_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "audit-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3357,6 +3406,28 @@
     ],
     "routerLink": null,
     "anchor": "console-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Console",
+      "Configure Console"
+    ],
+    "synonyms": [
+      "Console Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "console-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3516,6 +3587,29 @@
       "System",
       "Advanced",
       "Global Two Factor Authentication",
+      "Configure Global Two Factor Authentication"
+    ],
+    "synonyms": [
+      "Global Two Factor Authentication Settings",
+      "2FA Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "global-two-factor-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Global Two Factor Authentication",
       "Global 2FA Enable"
     ],
     "synonyms": [
@@ -3635,6 +3729,28 @@
       "System",
       "Advanced",
       "Isolated GPU Device(s)",
+      "Configure Isolated GPU Devices"
+    ],
+    "synonyms": [
+      "Isolated GPU Devices Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "isolated-gpus-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Isolated GPU Device(s)",
       "GPUs"
     ],
     "synonyms": [],
@@ -3670,6 +3786,28 @@
       "System",
       "Advanced",
       "Kernel",
+      "Configure Kernel"
+    ],
+    "synonyms": [
+      "Kernel Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "kernel-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Kernel",
       "Enable Kernel Debug"
     ],
     "synonyms": [],
@@ -3697,6 +3835,28 @@
     ],
     "routerLink": null,
     "anchor": "replication-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Replication",
+      "Configure Replication"
+    ],
+    "synonyms": [
+      "Replication Settings"
+    ],
+    "requiredRoles": [
+      "REPLICATION_TASK_CONFIG_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "replication-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3756,6 +3916,28 @@
       "System",
       "Advanced",
       "Self-Encrypting Drive",
+      "Configure Self-Encrypting Drive"
+    ],
+    "synonyms": [
+      "Self-Encrypting Drive Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "sed-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Self-Encrypting Drive",
       "ATA Security User"
     ],
     "synonyms": [
@@ -3806,6 +3988,28 @@
     ],
     "routerLink": null,
     "anchor": "storage-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Storage",
+      "Configure Storage"
+    ],
+    "synonyms": [
+      "Storage Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "storage-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3907,6 +4111,28 @@
     ],
     "routerLink": null,
     "anchor": "syslog-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Syslog",
+      "Configure Syslog"
+    ],
+    "synonyms": [
+      "Syslog Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "syslog-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4235,7 +4461,7 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "configure-email",
+    "anchor": "email-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4292,6 +4518,26 @@
     ],
     "routerLink": null,
     "anchor": "gui-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "GUI Settings"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "gui-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4489,6 +4735,24 @@
       "System",
       "General",
       "Localization"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "localization-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Localization",
+      "Localization Settings"
     ],
     "synonyms": [],
     "requiredRoles": [],

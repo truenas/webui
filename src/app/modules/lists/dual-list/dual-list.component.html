@@ -10,7 +10,9 @@
     [cdkDropListConnectedTo]="[memberList]"
     (cdkDropListDropped)="drop($event)"
   >
-    <div *ngIf="title1" class="list-title">{{ title1 }}</div>
+    @if (title1) {
+      <div class="list-title">{{ title1 }}</div>
+    }
     <mat-list [attr.aria-label]="title1">
       <mat-list-item
         *ngFor="let item of availableItems.totalItems"
@@ -31,10 +33,11 @@
 
   <div class="container-buttons">
     <div [style.margin-bottom.px]="5" (click)="select()">
-      <div *ngIf="templateArrowRight; else arrowRight">
-        <ng-container [ngTemplateOutlet]="templateArrowRight"></ng-container>
-      </div>
-      <ng-template #arrowRight>
+      @if (templateArrowRight) {
+        <div>
+          <ng-container [ngTemplateOutlet]="templateArrowRight"></ng-container>
+        </div>
+      } @else {
         <button
           mat-flat-button
           class="dual-list-action-btn"
@@ -43,13 +46,14 @@
         >
           <ix-icon name="arrow_forward" class="arrow"></ix-icon>
         </button>
-      </ng-template>
+      }
     </div>
     <div (click)="return()">
-      <div *ngIf="templateArrowLeft; else arrowLeft">
-        <ng-container [ngTemplateOutlet]="templateArrowLeft"></ng-container>
-      </div>
-      <ng-template #arrowLeft>
+      @if (templateArrowLeft) {
+        <div>
+          <ng-container [ngTemplateOutlet]="templateArrowLeft"></ng-container>
+        </div>
+      } @else {
         <button
           mat-flat-button
           class="dual-list-action-btn"
@@ -58,7 +62,7 @@
         >
           <ix-icon name="arrow_back" class="arrow"></ix-icon>
         </button>
-      </ng-template>
+      }
     </div>
   </div>
 
@@ -73,7 +77,9 @@
     [cdkDropListConnectedTo]="[userList]"
     (cdkDropListDropped)="drop($event)"
   >
-    <div *ngIf="title2" class="list-title">{{ title2 }}</div>
+    @if (title2) {
+      <div class="list-title">{{ title2 }}</div>
+    }
     <mat-list [attr.aria-label]="title2">
       <mat-list-item
         *ngFor="let item of selectedItems.totalItems"

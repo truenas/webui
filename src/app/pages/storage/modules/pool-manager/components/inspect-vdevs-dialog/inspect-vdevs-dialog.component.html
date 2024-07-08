@@ -4,12 +4,13 @@
       <div class="left-pane">
         <div class="header dialog-header"><h3>{{ 'Inspect VDEVs' | translate }}</h3></div>
         <mat-nav-list>
-          <mat-list-item
-            *ngFor="let type of presentTypes"
-            class="vdev-type"
-            [class.selected]="type === selectedType"
-            (click)="selectType(type)"
-          >{{ getTypeLabel(type) | translate }}</mat-list-item>
+          @for (type of presentTypes; track type) {
+            <mat-list-item
+              class="vdev-type"
+              [class.selected]="type === selectedType"
+              (click)="selectType(type)"
+            >{{ getTypeLabel(type) | translate }}</mat-list-item>
+          }
         </mat-nav-list>
       </div>
       <mat-divider class="divider" [vertical]="true"></mat-divider>
@@ -22,6 +23,7 @@
             mat-dialog-close
             class="close-icon"
             ixTest="close-button"
+            [aria-label]="'Close Inspect VDEVs Dialog' | translate"
           >
             <ix-icon name="clear"></ix-icon>
           </button>
@@ -29,12 +31,13 @@
 
         <mat-divider class="header-divider"></mat-divider>
         <div class="vdevs-container">
-          <ix-manual-selection-vdev
-            *ngFor="let vdev of vdevs"
-            [vdev]="vdev"
-            [layout]="layout"
-            [enclosures]="data.enclosures"
-          ></ix-manual-selection-vdev>
+          @for (vdev of vdevs; track vdev) {
+            <ix-manual-selection-vdev
+              [vdev]="vdev"
+              [layout]="layout"
+              [enclosures]="data.enclosures"
+            ></ix-manual-selection-vdev>
+          }
         </div>
       </div>
     </div>

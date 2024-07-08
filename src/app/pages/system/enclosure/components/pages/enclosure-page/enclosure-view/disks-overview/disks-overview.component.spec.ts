@@ -1,9 +1,13 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import { EnclosureDiskStatus, EnclosureElementType, EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
-import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import {
+  DashboardEnclosure,
+  DashboardEnclosureElements,
+  DashboardEnclosureSlot,
+} from 'app/interfaces/enclosure.interface';
 import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { DisksOverviewDetailsComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-details/disks-overview-details.component';
 import { DisksOverviewTilesComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-tiles/disks-overview-tiles.component';
@@ -27,8 +31,8 @@ const fakeDeviceSlot = {
     pool_name: 'test pool',
     disk_status: EnclosureDiskStatus.Online,
     disk_read_errors: 0,
-    disk_write_errors: 0,
-    disk_checksum_errors: 0,
+    disk_write_errors: 1,
+    disk_checksum_errors: 2,
     vdev_name: 'stripe',
     vdev_type: VdevType.Data,
     vdev_disks: [
@@ -51,16 +55,16 @@ const fakeSelectedEnclosure = {
     },
     [EnclosureElementType.SasExpander]: {
       2: {
-        status: 'OK',
+        status: EnclosureStatus.Ok,
         descriptor: '',
-      },
+      } as DashboardEnclosureSlot,
       3: {
-        status: 'OK',
+        status: EnclosureStatus.Ok,
         descriptor: '',
-      },
+      } as DashboardEnclosureSlot,
     },
-  },
-} as unknown as DashboardEnclosure;
+  } as DashboardEnclosureElements,
+} as DashboardEnclosure;
 
 describe('DisksOverviewComponent', () => {
   let spectator: Spectator<DisksOverviewComponent>;
@@ -74,6 +78,9 @@ describe('DisksOverviewComponent', () => {
       mockProvider(EnclosureStore, {
         selectedEnclosure: () => fakeSelectedEnclosure,
         selectedSlot: () => fakeDeviceSlot,
+        selectedEnclosureSlots: () => {
+          return Object.values(fakeSelectedEnclosure.elements[EnclosureElementType.ArrayDeviceSlot]);
+        },
       }),
     ],
     declarations: [
@@ -111,8 +118,11 @@ describe('DisksOverviewComponent', () => {
           { label: 'Pool', value: 'test pool' },
           { label: 'Model', value: 'HUH721212AL4200' },
           { label: 'Serial', value: '8HG7MW3H' },
-          { label: 'Status', value: 'ONLINE' },
           { label: 'Rotation Rate', value: '7200 RPM' },
+          { label: 'Status', value: 'ONLINE' },
+          { label: 'Read Errors', value: '0' },
+          { label: 'Write Errors', value: '1' },
+          { label: 'Checksum Errors', value: '2' },
         ],
       );
     });
@@ -126,6 +136,9 @@ describe('DisksOverviewComponent', () => {
             selectedEnclosure: () => fakeSelectedEnclosure,
             selectedSlot: () => null as DashboardEnclosureSlot,
             selectedView: () => null as EnclosureView,
+            selectedEnclosureSlots: () => {
+              return Object.values(fakeSelectedEnclosure.elements[EnclosureElementType.ArrayDeviceSlot]);
+            },
           }),
         ],
       });

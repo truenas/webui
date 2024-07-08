@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import {
   MiniDisksOverviewComponent,
@@ -13,32 +14,29 @@ describe('MiniDisksOverviewComponent', () => {
 
   let getItemValue: (name: string) => string;
 
-  // TODO: Rework how statuses are handled.
   beforeEach(() => {
     spectator = createComponent({
       props: {
         slots: [
           {
             dev: 'sda',
-            status: 'FAILED',
           },
           {
             dev: 'sdb',
-            status: 'OK',
             pool_info: {
+              disk_status: EnclosureDiskStatus.Online,
               pool_name: 'pool1',
             },
           },
           {
             dev: 'sdc',
-            status: 'OK',
             pool_info: {
+              disk_status: EnclosureDiskStatus.Faulted,
               pool_name: 'pool2',
             },
           },
           {
             dev: null,
-            status: 'OK',
           },
         ] as DashboardEnclosureSlot[],
       },

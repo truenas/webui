@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
@@ -25,7 +24,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
-    NgIf,
   ],
 })
 export class CopyButtonComponent {

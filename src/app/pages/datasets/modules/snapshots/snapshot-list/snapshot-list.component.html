@@ -1,15 +1,14 @@
 <ix-page-header [pageTitle]="pageTitle">
-  <mat-spinner
-    *ngIf="loadingExtraColumns$ | async; else slider"
-    [diameter]="30"
-  ></mat-spinner>
-
-  <ng-template #slider>
+  @if (loadingExtraColumns$ | async) {
+    <mat-spinner
+      [diameter]="30"
+    ></mat-spinner>
+  } @else {
     <ix-slide-toggle
       [formControl]="showExtraColumnsControl"
       [label]="'Show extra columns' | translate"
     ></ix-slide-toggle>
-  </ng-template>
+  }
 
   <ix-search-input1
     [value]="filterString"
@@ -27,29 +26,28 @@
   </button>
 </ix-page-header>
 
-<div
-  *ngIf="selectedSnapshots.length"
-  class="batch-actions-toolbar"
->
-  <div class="title">
-    <strong>{{ 'Batch Operations' | translate }}</strong>
-  </div>
+@if (selectedSnapshots.length) {
+  <div class="batch-actions-toolbar">
+    <div class="title">
+      <strong>{{ 'Batch Operations' | translate }}</strong>
+    </div>
 
-  <div class="actions">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      matTooltipPosition="below"
-      ixTest="delete-selected"
-      [matTooltip]="'Delete selections' | translate"
-      [disabled]="!selectionHasItems"
-      (click)="doBatchDelete(selectedSnapshots)"
-    >
-      <ix-icon name="delete"></ix-icon>
-      {{ 'Delete' | translate }}
-    </button>
+    <div class="actions">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        matTooltipPosition="below"
+        ixTest="delete-selected"
+        [matTooltip]="'Delete selections' | translate"
+        [disabled]="!selectionHasItems"
+        (click)="doBatchDelete(selectedSnapshots)"
+      >
+        <ix-icon name="delete"></ix-icon>
+        {{ 'Delete' | translate }}
+      </button>
+    </div>
   </div>
-</div>
+}
 
 <ix-table
   class="table"

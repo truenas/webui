@@ -6,6 +6,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['audit', 'configure']"
+        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}

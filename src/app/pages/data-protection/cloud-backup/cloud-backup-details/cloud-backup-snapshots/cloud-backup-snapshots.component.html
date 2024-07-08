@@ -5,28 +5,28 @@
     </h3>
   </mat-card-header>
 
-  <ix-table
-    *ngIf="!(dataProvider.isLoading$ | async); else loading"
-    class="table"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-  >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></tbody>
-  </ix-table>
+  @if (!(dataProvider.isLoading$ | async)) {
+    <ix-table
+      class="table"
+      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <thead
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></thead>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></tbody>
+    </ix-table>
+  } @else {
+    <div class="spinner-container">
+      <mat-spinner [diameter]="40"></mat-spinner>
+    </div>
+  }
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
 </mat-card>
 
-<ng-template #loading>
-  <div class="spinner-container">
-    <mat-spinner [diameter]="40"></mat-spinner>
-  </div>
-</ng-template>

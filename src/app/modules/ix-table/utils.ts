@@ -14,9 +14,13 @@ function convertStringToId(inputString: string): string {
 
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
-  config: { rowTestId: (row: T) => string },
+  config: { rowTestId: (row: T) => string; ariaLabels: (row: T) => string[] },
 ): Column<T, ColumnComponent<T>>[] {
-  return columns.map((column) => ({ ...column, rowTestId: (row) => convertStringToId(config.rowTestId(row)) }));
+  return columns.map((column) => ({
+    ...column,
+    rowTestId: (row) => convertStringToId(config.rowTestId(row)),
+    ariaLabels: (row) => config.ariaLabels(row),
+  }));
 }
 
 export function filterTableRows<T>(filter: TableFilter<T>): T[] {

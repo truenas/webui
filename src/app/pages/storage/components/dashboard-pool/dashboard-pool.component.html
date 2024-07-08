@@ -1,65 +1,68 @@
-<div *ngIf="!isLoading; else loadingSkeleton">
-  <div class="pool-header">
-    <h2 class="pool-name">{{ pool.name }}</h2>
-    <div class="pool-actions">
-      <ng-container *ngIf="!pool.is_upgraded">
+@if (!isLoading) {
+  <div>
+    <div class="pool-header">
+      <h2 class="pool-name">{{ pool.name }}</h2>
+      <div class="pool-actions">
+        @if (!pool.is_upgraded) {
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-button
+            color="primary"
+            [ixTest]="['upgrade-pool', pool.name]"
+            (click)="onUpgrade()"
+          >
+            {{ 'Upgrade' | translate }}
+          </button>
+        }
+
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
-          color="primary"
-          [ixTest]="['upgrade-pool', pool.name]"
-          (click)="onUpgrade()"
+          [ixTest]="['export', pool.name]"
+          [ixUiSearch]="searchableElements.elements.exportDisconnect"
+          (click)="onExport()"
         >
-          {{ 'Upgrade' | translate }}
+          {{ 'Export/Disconnect' | translate }}
         </button>
-      </ng-container>
 
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['export', pool.name]"
-        [ixUiSearch]="searchableElements.elements.exportDisconnect"
-        (click)="onExport()"
-      >
-        {{ 'Export/Disconnect' | translate }}
-      </button>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          [ixTest]="['expand', pool.name]"
+          [ixUiSearch]="searchableElements.elements.expand"
+          (click)="onExpand()"
+        >
+          {{ 'Expand' | translate }}
+        </button>
+      </div>
+    </div>
 
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['expand', pool.name]"
-        [ixUiSearch]="searchableElements.elements.expand"
-        (click)="onExpand()"
-      >
-        {{ 'Expand' | translate }}
-      </button>
+    <div
+      gdGap="8px"
+      gdColumns="calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(25% - 6px)"
+      gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
+      gdColumns.lt-md="auto"
+    >
+      <ix-topology-card
+        [poolState]="pool"
+        [disks]="disks"
+      ></ix-topology-card>
+
+      @if (rootDataset) {
+        <ix-pool-usage-card
+          [poolState]="pool"
+          [rootDataset]="rootDataset"
+        ></ix-pool-usage-card>
+      }
+
+      <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
+      <ix-disk-health-card
+        [poolState]="pool"
+        [disks]="disks"
+      ></ix-disk-health-card>
     </div>
   </div>
-
-  <div
-    gdGap="8px"
-    gdColumns="calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(25% - 6px)"
-    gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
-    gdColumns.lt-md="auto"
-  >
-    <ix-topology-card
-      [poolState]="pool"
-      [disks]="disks"
-    ></ix-topology-card>
-    <ix-pool-usage-card
-      *ngIf="rootDataset"
-      [poolState]="pool"
-      [rootDataset]="rootDataset"
-    ></ix-pool-usage-card>
-    <ix-zfs-health-card [pool]="pool"></ix-zfs-health-card>
-    <ix-disk-health-card
-      [poolState]="pool"
-      [disks]="disks"
-    ></ix-disk-health-card>
-  </div>
-</div>
-
-<ng-template #loadingSkeleton>
+} @else {
   <div class="skeleton-content">
     <div class="pool-header">
       <ngx-skeleton-loader></ngx-skeleton-loader>
@@ -70,15 +73,19 @@
       gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
       gdColumns.lt-md="auto"
     >
-      <mat-card *ngFor="let _ of counter(4)" class="card">
-        <mat-card-content>
-          <ngx-skeleton-loader
-            *ngFor="let _ of counter(5)"
-            fxLayout="column"
-            fxLayoutAlign="center"
-          ></ngx-skeleton-loader>
-        </mat-card-content>
-      </mat-card>
+      @for (_ of counter(4); track _) {
+        <mat-card class="card">
+          <mat-card-content>
+            @for (_ of counter(5); track _) {
+              <ngx-skeleton-loader
+                fxLayout="column"
+                fxLayoutAlign="center"
+              ></ngx-skeleton-loader>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
     </div>
   </div>
-</ng-template>
+}
+

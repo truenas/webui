@@ -10,9 +10,11 @@
   align-items: center;
   background-color: var(--bg2);
   border-bottom: 2px solid var(--lines);
+  display: flex;
   height: 75px;
   margin: 0 -20px;
   padding: 0 30px;
+  place-content: center space-between;
 }
 
 .ix-formtitle {

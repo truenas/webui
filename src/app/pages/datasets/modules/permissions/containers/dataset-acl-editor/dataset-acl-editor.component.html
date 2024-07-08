@@ -1,16 +1,14 @@
 <mat-card class="card card-square">
-  <mat-spinner
-    *ngIf="isLoading; else loaded"
-    class="spinner"
-    [diameter]="40"
-  ></mat-spinner>
-
-  <ng-template #loaded>
+  @if (isLoading) {
+    <mat-spinner
+      class="spinner"
+      [diameter]="40"
+    ></mat-spinner>
+  } @else {
     <mat-card-header class="header">
       <mat-card-title class="header-title">
         {{ 'ACL Editor' | translate }}
       </mat-card-title>
-
       <div class="dataset-path">
         <label class="header-label">{{ 'Path' | translate }}:</label>
         <div>{{ datasetPath }}</div>
@@ -80,14 +78,14 @@
                   [tooltip]="helptext.dataset_acl_recursive_tooltip | translate"
                 ></ix-checkbox>
 
-                <ix-checkbox
-                  *ngIf="saveParameters.get('recursive').value"
-                  formControlName="traverse"
-                  [label]="helptext.dataset_acl_traverse_placeholder | translate"
-                  [tooltip]="helptext.dataset_acl_traverse_tooltip | translate"
-                ></ix-checkbox>
+                @if (saveParameters.get('recursive').value) {
+                  <ix-checkbox
+                    formControlName="traverse"
+                    [label]="helptext.dataset_acl_traverse_placeholder | translate"
+                    [tooltip]="helptext.dataset_acl_traverse_tooltip | translate"
+                  ></ix-checkbox>
+                }
               </div>
-
               <div class="control-buttons">
                 <button
                   *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
@@ -101,18 +99,17 @@
                   {{ 'Save Access Control List' | translate }}
                 </button>
               </div>
-
               <div class="control-buttons">
-                <a
-                  *ngIf="acl.trivial; else stripButton"
-                  mat-button
-                  class="action"
-                  ixTest="edit-permissions"
-                  [routerLink]="['/datasets', getDatasetPath(), 'permissions', 'edit']"
-                >
-                  {{ 'Permissions Editor' | translate }}
-                </a>
-                <ng-template #stripButton>
+                @if (acl.trivial) {
+                  <a
+                    mat-button
+                    class="action"
+                    ixTest="edit-permissions"
+                    [routerLink]="['/datasets', getDatasetPath(), 'permissions', 'edit']"
+                  >
+                    {{ 'Permissions Editor' | translate }}
+                  </a>
+                } @else {
                   <button
                     *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
                     mat-button
@@ -123,7 +120,7 @@
                   >
                     {{ 'Strip ACL' | translate }}
                   </button>
-                </ng-template>
+                }
               </div>
 
               <h4 class="presets-label">Presets</h4>
@@ -150,17 +147,18 @@
           </div>
         </div>
         <div class="column-right">
-          <ng-container *ngIf="acl.acl[selectedAceIndex] as selectedAce">
-            <ix-edit-nfs-ace
-              *ngIf="isNfsAcl; else posixAcl"
-              [ace]="selectedAce | cast"
-            ></ix-edit-nfs-ace>
-            <ng-template #posixAcl>
+          @if (acl.acl[selectedAceIndex]; as selectedAce) {
+            @if (isNfsAcl) {
+              <ix-edit-nfs-ace
+                [ace]="selectedAce | cast"
+              ></ix-edit-nfs-ace>
+            } @else {
               <ix-edit-posix-ace [ace]="selectedAce | cast"></ix-edit-posix-ace>
-            </ng-template>
-          </ng-container>
+            }
+          }
         </div>
       </div>
     </div>
-  </ng-template>
+  }
+
 </mat-card>

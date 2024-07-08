@@ -1,1 +1,3 @@
-<ix-icon *ngIf="diskIcon" [name]="diskIcon"></ix-icon>
+@if (diskIcon) {
+  <ix-icon [name]="diskIcon"></ix-icon>
+}
