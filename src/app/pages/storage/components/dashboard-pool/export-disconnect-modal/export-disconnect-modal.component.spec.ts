@@ -46,12 +46,12 @@ const warningUnknownState = 'is in the database but not connected to the machine
 const warningSysDataset = 'This pool contains the system dataset';
 
 const expectedAttachmentLines = [
-  'type1: partA  partB  part1  part2  part3',
-  'type2: partX  partY  part4  part5  part6',
+  'type1: partA partB part1 part2 part3',
+  'type2: partX partY part4 part5 part6',
 ];
 
 const expectedProcessLines = [
-  'process name 1  process name 2',
+  'process name 1 process name 2',
   'pid1 - cmdline1  pid2 - cmdline2',
 ];
 
@@ -118,14 +118,12 @@ describe('ExportDisconnectModalComponent', () => {
         });
 
         it('warnings block should contain pool name', () => {
-          const element = spectator.fixture.nativeElement as HTMLElement;
-          expect(element.querySelector('.warnings-block')).toContainText(data.pool.name);
+          expect(spectator.query('.warnings-block')).toContainText(data.pool.name);
         });
 
         expectedWarnings.forEach((expectedText) => {
           it(`contains ${expectedText}`, () => {
-            const element = spectator.fixture.nativeElement as HTMLElement;
-            expect(element.querySelector('.warnings-block')).toContainText(expectedText);
+            expect(spectator.query('.warnings-block')).toContainText(expectedText);
           });
         });
       });
@@ -145,21 +143,19 @@ describe('ExportDisconnectModalComponent', () => {
     });
 
     it('must contain pool name', () => {
-      const element = spectator.fixture.nativeElement as HTMLElement;
-
-      expect(element.querySelector('.pool-summary')).toContainText(fakeData.pool.name);
+      expect(spectator.query('.pool-summary')).toContainText(fakeData.pool.name);
     });
 
     it('must contain attachments', () => {
-      const element = spectator.fixture.nativeElement as HTMLElement;
-
-      expectedAttachmentLines.forEach((expectedLine) => expect(element.querySelector('.pool-summary')).toHaveText(expectedLine));
+      expectedAttachmentLines.forEach((expectedLine) => {
+        expect(spectator.query('.pool-summary')).toHaveText(expectedLine);
+      });
     });
 
     it('must contain processes', () => {
-      const element = spectator.fixture.nativeElement as HTMLElement;
-
-      expectedProcessLines.forEach((expectedLine) => expect(element.querySelector('.pool-summary')).toHaveText(expectedLine));
+      expectedProcessLines.forEach((expectedLine) => {
+        expect(spectator.query('.pool-summary')).toHaveText(expectedLine);
+      });
     });
   });
 

@@ -1,6 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { LazyLoadImageDirective } from 'ng-lazyload-image';
-import { MockDirective } from 'ng-mocks';
+import { LazyLoadImageDirective, LazyLoadImageModule } from 'ng-lazyload-image';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 
 describe('AppCardLogoComponent', () => {
@@ -8,9 +7,7 @@ describe('AppCardLogoComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppCardLogoComponent,
-    declarations: [
-      MockDirective(LazyLoadImageDirective),
-    ],
+    imports: [LazyLoadImageModule],
   });
 
   beforeEach(() => {
@@ -19,6 +16,10 @@ describe('AppCardLogoComponent', () => {
         url: 'https://www.seti.org/logo.png',
       },
     });
+  });
+
+  it('shows default image', () => {
+    expect(spectator.query('img')).toHaveAttribute('src', 'assets/images/truenas_scale_ondark_favicon.png');
   });
 
   it('shows app logo', () => {

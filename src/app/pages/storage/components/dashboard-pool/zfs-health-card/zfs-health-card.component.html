@@ -5,7 +5,7 @@
       <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
-    <ng-container *ngIf="!wasScanInitiated; else runningScanControls">
+    @if (!wasScanInitiated) {
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
@@ -15,10 +15,8 @@
       >
         {{ 'Scrub' | translate }}
       </button>
-    </ng-container>
-
-    <ng-template #runningScanControls>
-      <ng-container *ngIf="isScrub; else disabledButton">
+    } @else {
+      @if (isScrub) {
         <ng-container *ixRequiresRoles="requiredRoles">
           <div class="controls">
             <button
@@ -28,15 +26,15 @@
             >
               {{ 'Stop Scrub' | translate }}
             </button>
-            <button
-              *ngIf="isScrubPaused; else pauseButton"
-              mat-button
-              ixTest="resume-scrub"
-              (click)="onResumeScrub()"
-            >
-              {{ 'Resume Scrub' | translate }}
-            </button>
-            <ng-template #pauseButton>
+            @if (isScrubPaused) {
+              <button
+                mat-button
+                ixTest="resume-scrub"
+                (click)="onResumeScrub()"
+              >
+                {{ 'Resume Scrub' | translate }}
+              </button>
+            } @else {
               <button
                 mat-button
                 ixTest="pause-scrub"
@@ -44,15 +42,14 @@
               >
                 {{ 'Pause Scrub' | translate }}
               </button>
-            </ng-template>
+            }
           </div>
         </ng-container>
-      </ng-container>
-
-      <ng-template #disabledButton>
+      } @else {
         <button mat-button disabled ixTest="scrub-disabled">{{ 'Scrub' | translate }}</button>
-      </ng-template>
-    </ng-template>
+      }
+    }
+
   </mat-card-header>
 
   <mat-card-content fxLayout="column" fxFlex="100">
@@ -86,41 +83,45 @@
       </a>
     </div>
 
-    <ng-container *ngIf="scan?.function">
-      <div *ngIf="wasScanInitiated; else scanResults" class="scan-in-progress">
-        <div class="scan-description">
-          <span class="scan-label">
-            {{ scanLabel }}
-          </span>
-          {{ scan.percentage / 100 | percent: '1.2-2' }}
-        </div>
-        <div *ngIf="scan.total_secs_left && !isScrubPaused" class="time-left">
-          {{ timeLeftString }}
-        </div>
-        <mat-progress-bar
-          class="progress"
-          [value]="scan.percentage"
-        ></mat-progress-bar>
-      </div>
-
-      <ng-template #scanResults>
-        <div *ngIf="scan.end_time?.$date" class="details-item">
-          <div class="label">{{ 'Last Scan' | translate }}:</div>
-          <div class="value">
-            {{ scanExplanation | translate: { date: (scan.end_time.$date | formatDateTime) } }}
+    @if (scan?.function) {
+      @if (wasScanInitiated) {
+        <div class="scan-in-progress">
+          <div class="scan-description">
+            <span class="scan-label">
+              {{ scanLabel }}
+            </span>
+            {{ scan.percentage / 100 | percent: '1.2-2' }}
           </div>
+          @if (scan.total_secs_left && !isScrubPaused) {
+            <div class="time-left">
+              {{ timeLeftString }}
+            </div>
+          }
+          <mat-progress-bar
+            class="progress"
+            [value]="scan.percentage"
+          ></mat-progress-bar>
         </div>
-
+      } @else {
+        @if (scan.end_time?.$date) {
+          <div class="details-item">
+            <div class="label">{{ 'Last Scan' | translate }}:</div>
+            <div class="value">
+              {{ scanExplanation | translate: { date: (scan.end_time.$date | formatDateTime) } }}
+            </div>
+          </div>
+        }
         <div class="details-item">
           <div class="label">{{ 'Last Scan Errors' | translate }}:</div>
           <div class="value">{{ scan.errors | number }}</div>
         </div>
-
-        <div *ngIf="scanDuration" class="details-item">
-          <div class="label">{{ 'Last Scan Duration' | translate }}:</div>
-          <div class="value">{{ scanDuration }}</div>
-        </div>
-      </ng-template>
-    </ng-container>
+        @if (scanDuration) {
+          <div class="details-item">
+            <div class="label">{{ 'Last Scan Duration' | translate }}:</div>
+            <div class="value">{{ scanDuration }}</div>
+          </div>
+        }
+      }
+    }
   </mat-card-content>
 </mat-card>

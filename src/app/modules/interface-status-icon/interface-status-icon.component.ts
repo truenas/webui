@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, ViewChild,
   computed,
@@ -25,7 +24,6 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    NgIf,
     MatTooltipModule,
     IxIconModule,
   ],

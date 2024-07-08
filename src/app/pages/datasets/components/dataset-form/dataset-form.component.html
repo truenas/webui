@@ -12,17 +12,19 @@
         [parent]="parentDataset"
         (formValidityChange)="isNameAndOptionsValid = $event"
       ></ix-name-and-options>
-      <ix-quotas-section
-        *ngIf="isAdvancedMode && isNew"
-        [parent]="parentDataset"
-        (formValidityChange)="isQuotaValid = $event"
-      ></ix-quotas-section>
-      <ix-encryption-section
-        *ngIf="isNew"
-        [parent]="parentDataset"
-        [advancedMode]="isAdvancedMode"
-        (formValidityChange)="isEncryptionValid = $event"
-      ></ix-encryption-section>
+      @if (isAdvancedMode && isNew) {
+        <ix-quotas-section
+          [parent]="parentDataset"
+          (formValidityChange)="isQuotaValid = $event"
+        ></ix-quotas-section>
+      }
+      @if (isNew) {
+        <ix-encryption-section
+          [parent]="parentDataset"
+          [advancedMode]="isAdvancedMode"
+          (formValidityChange)="isEncryptionValid = $event"
+        ></ix-encryption-section>
+      }
       <ix-other-options-section
         [existing]="existingDataset"
         [parent]="parentDataset"

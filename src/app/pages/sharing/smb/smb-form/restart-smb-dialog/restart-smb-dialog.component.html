@@ -3,10 +3,18 @@
   <div>
     <p>{{ helptext.restartPt1 | translate }}</p>
     <ul>
-      <li *ngIf="data.homeshare">{{ homeShareMessage | translate }}</li>
-      <li *ngIf="data.timemachine">{{ timemachineMessage | translate }}</li>
-      <li *ngIf="data.hosts">{{ hostsMessage | translate }}</li>
-      <li *ngIf="data.path">{{ pathMessage | translate }}</li>
+      @if (data.homeshare) {
+        <li>{{ homeShareMessage | translate }}</li>
+      }
+      @if (data.timemachine) {
+        <li>{{ timemachineMessage | translate }}</li>
+      }
+      @if (data.hosts) {
+        <li>{{ hostsMessage | translate }}</li>
+      }
+      @if (data.path) {
+        <li>{{ pathMessage | translate }}</li>
+      }
     </ul>
 
     <p><strong>{{ helptext.restartPt2 }}</strong></p>

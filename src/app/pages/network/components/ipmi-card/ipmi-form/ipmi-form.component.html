@@ -7,7 +7,7 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ng-container *ngIf="remoteControllerOptions">
+      @if (remoteControllerOptions) {
         <ix-fieldset [title]="helptext.ipmi_remote_controller | translate">
           <ix-radio-group
             formControlName="apply_remote"
@@ -17,7 +17,7 @@
           </ix-radio-group>
         </ix-fieldset>
         <mat-divider></mat-divider>
-      </ng-container>
+      }
 
       <ix-fieldset [title]="helptext.ipmi_configuration | translate">
         <ix-checkbox
@@ -93,14 +93,13 @@
           ixTest="toggle-identify-light"
           (click)="toggleFlashing()"
         >
-          <ng-container *ngIf="!isFlashing">
-            <ix-icon name="highlight"></ix-icon>
-            {{ 'Flash Identify Light' | translate }}
-          </ng-container>
-          <ng-container *ngIf="isFlashing">
+          @if (isFlashing) {
             <ix-icon name="highlight"></ix-icon>
             {{ 'Stop Flashing' | translate }}
-          </ng-container>
+          } @else {
+            <ix-icon name="highlight"></ix-icon>
+            {{ 'Flash Identify Light' | translate }}
+          }
         </button>
       </mat-card-actions>
     </form>

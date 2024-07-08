@@ -28,7 +28,36 @@
 }
 
 .value-caption {
-  margin-left: 5px;
+  margin-left: 2px;
+}
+
+.card-content {
+  display: flex;
+  flex: 1 1 100%;
+  gap: 10px;
+
+  .left,
+  .right {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .left {
+    flex: 1 1 40%;
+    justify-content: flex-end;
+
+    .gauge {
+      margin-left: unset;
+      margin-right: 8px;
+    }
+  }
+
+  .right {
+    display: flex;
+    flex: 1 1 60%;
+    flex-direction: column;
+  }
 }
 
 .link {

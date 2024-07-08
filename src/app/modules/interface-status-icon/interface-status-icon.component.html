@@ -1,12 +1,12 @@
-<ix-icon
-  *ngIf="isLinkUp(); else disabledIcon"
-  #stateIcon
-  name="ix:network_upload_download"
-  [id]="elementId"
-  [matTooltip]="tooltipText()"
-></ix-icon>
-
-<ng-template #disabledIcon>
+@if (isLinkUp()) {
+  <ix-icon
+    #stateIcon
+    name="ix:network_upload_download"
+    [id]="elementId"
+    [matTooltip]="tooltipText()"
+  ></ix-icon>
+} @else {
   <ix-icon name="ix:network_upload_download_disabled"></ix-icon>
-</ng-template>
+}
+
 

@@ -3,32 +3,35 @@
   [class.large]="conf?.large"
   [class.compact]="conf?.compact"
 >
-  <div
-    *ngIf="!isLoading"
-    class="icon-div"
-  >
-    <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
-  </div>
-  <div *ngIf="isLoading">
-    <mat-spinner [diameter]="40"></mat-spinner>
-  </div>
-  <div *ngIf="!isLoading">
-    <h3 class="empty-title">{{ conf.title | translate }}</h3>
-
-    <p *ngIf="conf.message && !conf.compact" class="empty-message">
-      {{ conf.message | translate }}
-    </p>
-
-    <ng-container *ngIf="conf.button && !conf.compact">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        class="empty-action"
-        mat-button
-        [ixTest]="[conf.button.label]"
-        (click)="doAction()"
-      >
-        {{ conf.button.label | translate }}
-      </button>
-    </ng-container>
-  </div>
+  @if (!isLoading) {
+    <div class="icon-div">
+      <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
+    </div>
+  }
+  @if (isLoading) {
+    <div>
+      <mat-spinner [diameter]="40"></mat-spinner>
+    </div>
+  }
+  @if (!isLoading) {
+    <div>
+      <h3 class="empty-title">{{ conf.title | translate }}</h3>
+      @if (conf.message && !conf.compact) {
+        <p class="empty-message">
+          {{ conf.message | translate }}
+        </p>
+      }
+      @if (conf.button && !conf.compact) {
+        <button
+          *ixRequiresRoles="requiredRoles"
+          class="empty-action"
+          mat-button
+          [ixTest]="[conf.button.label]"
+          (click)="doAction()"
+        >
+          {{ conf.button.label | translate }}
+        </button>
+      }
+    </div>
+  }
 </div>

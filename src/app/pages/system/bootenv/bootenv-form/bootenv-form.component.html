@@ -15,7 +15,7 @@
           [tooltip]="tooltips.name"
         ></ix-input>
 
-        <ng-container *ngIf="operation === Operations.Clone">
+        @if (operation === Operations.Clone) {
           <ix-input
             formControlName="source"
             [label]="'Source' | translate"
@@ -23,7 +23,7 @@
             [tooltip]="tooltips.source"
             [class]="Operations.Clone"
           ></ix-input>
-        </ng-container>
+        }
       </ix-fieldset>
 
       <ix-form-actions>

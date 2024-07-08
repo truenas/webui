@@ -4,8 +4,10 @@ import { LayoutService } from 'app/services/layout.service';
 @Component({
   selector: 'ix-default-page-header',
   template: `
-    <ix-page-header *ngIf="!(hasCustomPageHeader$ | async)" [default]="true"></ix-page-header>
-  `,
+    @if (!(hasCustomPageHeader$ | async)) {
+      <ix-page-header [default]="true"></ix-page-header>
+    }
+    `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DefaultPageHeaderComponent {

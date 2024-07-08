@@ -1,8 +1,12 @@
+import { NgIf } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
+  ChangeDetectionStrategy, Component, inject, input,
+  signal,
 } from '@angular/core';
-import { StateChange } from 'ng-lazyload-image';
-import { officialCatalog, appImagePlaceholder } from 'app/constants/catalog.constants';
+import {
+  LAZYLOAD_IMAGE_HOOKS, LazyLoadImageModule, ScrollHooks, StateChange,
+} from 'ng-lazyload-image';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { LayoutService } from 'app/services/layout.service';
 
 @Component({
@@ -10,27 +14,24 @@ import { LayoutService } from 'app/services/layout.service';
   templateUrl: './app-card-logo.component.html',
   styleUrls: ['./app-card-logo.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, LazyLoadImageModule],
+  providers: [{ provide: LAZYLOAD_IMAGE_HOOKS, useClass: ScrollHooks }],
 })
 export class AppCardLogoComponent {
   readonly url = input<string>();
+  protected wasLogoLoaded = signal(false);
 
-  wasLogoLoaded = false;
+  private layoutService = inject(LayoutService);
 
   readonly scrollTarget = this.layoutService.getContentContainer();
-  readonly officialCatalog = officialCatalog;
   readonly appImagePlaceholder = appImagePlaceholder;
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private layoutService: LayoutService,
-  ) {}
 
   onLogoLoaded(event: StateChange): void {
     if (event.reason !== 'loading-succeeded') {
       return;
     }
 
-    this.wasLogoLoaded = true;
-    this.cdr.detectChanges();
+    this.wasLogoLoaded.set(true);
   }
 }

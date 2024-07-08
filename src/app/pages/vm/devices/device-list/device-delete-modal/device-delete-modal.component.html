@@ -9,24 +9,26 @@
       [innerHTML]="'Delete <b>{deviceType} {device}</b>' | translate: { device: device.id, deviceType: device.dtype }"
     ></p>
 
-    <ng-container *ngIf="device.dtype === VmDeviceType.Disk">
+    @if (device.dtype === VmDeviceType.Disk) {
       <ix-checkbox
         formControlName="zvol"
         [label]="'Delete zvol device' | translate"
       ></ix-checkbox>
 
-      <ix-input
-        *ngIf="form.value.zvol"
-        formControlName="zvolConfirm"
-        [label]="zvolConfirmLabelText"
-      ></ix-input>
-    </ng-container>
+      @if (form.value.zvol) {
+        <ix-input
+          formControlName="zvolConfirm"
+          [label]="zvolConfirmLabelText"
+        ></ix-input>
+      }
+    }
 
-    <ix-checkbox
-      *ngIf="device.dtype === VmDeviceType.Raw"
-      formControlName="raw_file"
-      [label]="'Delete raw file' | translate"
-    ></ix-checkbox>
+    @if (device.dtype === VmDeviceType.Raw) {
+      <ix-checkbox
+        formControlName="raw_file"
+        [label]="'Delete raw file' | translate"
+      ></ix-checkbox>
+    }
 
     <ix-checkbox
       formControlName="force"

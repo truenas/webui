@@ -101,7 +101,7 @@ describe('WidgetSystemUptimeComponent', () => {
     });
 
     it('shows an error when System Uptime cannot be determined', () => {
-      expect(spectator.fixture.nativeElement).toHaveExactTrimmedText('Error');
+      expect(spectator.fixture.nativeElement).toHaveExactTrimmedText('Fatal error');
     });
   });
 });

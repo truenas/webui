@@ -10,62 +10,73 @@
       <span class="job-description">
         {{ job().description ? job().description : job().method }}
       </span>
-      <small *ngIf="job().state === JobState.Running" class="job-progress-percent">
-        {{ job().progress.percent || 0 | number: '1.2-2' }}%
-      </small>
+      @if (job().state === JobState.Running) {
+        <small class="job-progress-percent">
+          {{ job().progress.percent || 0 | number: '1.2-2' }}%
+        </small>
+      }
     </div>
 
-    <mat-progress-bar
-      *ngIf="job().state === JobState.Running"
-      class="job-progress"
-      [value]="job().progress.percent"
-      [mode]="job().progress.percent ? 'determinate' : 'indeterminate'"
-    ></mat-progress-bar>
+    @if (job().state === JobState.Running) {
+      <mat-progress-bar
+        class="job-progress"
+        [value]="job().progress.percent"
+        [mode]="job().progress.percent ? 'determinate' : 'indeterminate'"
+      ></mat-progress-bar>
+    }
 
-    <div [ngSwitch]="job().state">
-      <ng-container *ngSwitchCase="JobState.Running">
-        <div *ngIf="job()?.progress?.description" class="job-progress-description">
-          {{ job().progress.description }}
-        </div>
-        <div *ngIf="!job()?.progress?.description" class="job-time">
-          {{ 'Started' | translate }}:
-          <strong>
-            {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
-          </strong>
-        </div>
-      </ng-container>
-      <ng-container *ngSwitchCase="JobState.Waiting">
-        <div class="job-time">
-          {{ 'Waiting' | translate }}:
-          <strong>
-            {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
-          </strong>
-        </div>
-      </ng-container>
-      <ng-container *ngSwitchCase="JobState.Failed">
-        <div class="job-time">
-          {{ 'Stopped' | translate }}:
-          <strong>
-            {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
-          </strong>
-        </div>
-      </ng-container>
-    </div>
-
-    <div *ngIf="job().credentials">
-      <div class="job-credentials">
-        {{
-          'Created by: {creationSource} ({creationType})' | translate: {
-            creationSource: getCredentialsCreationSource(job().credentials),
-            creationType: (job().credentials.type | mapValue: credentialTypeLabels | translate)
+    <div>
+      @switch (job().state) {
+        @case (JobState.Running) {
+          @if (job()?.progress?.description) {
+            <div class="job-progress-description">
+              {{ job().progress.description }}
+            </div>
           }
+          @if (!job()?.progress?.description) {
+            <div class="job-time">
+              {{ 'Started' | translate }}:
+              <strong>
+                {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
+              </strong>
+            </div>
+          }
+        }
+        @case (JobState.Waiting) {
+          <div class="job-time">
+            {{ 'Waiting' | translate }}:
+            <strong>
+              {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
+            </strong>
+          </div>
+        }
+        @case (JobState.Failed) {
+          <div class="job-time">
+            {{ 'Stopped' | translate }}:
+            <strong>
+              {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
+            </strong>
+          </div>
+        }
+      }
+    </div>
+
+    @if (job().credentials) {
+      <div>
+        <div class="job-credentials">
+          {{
+          'Created by: {creationSource} ({creationType})' | translate: {
+          creationSource: getCredentialsCreationSource(job().credentials),
+          creationType: (job().credentials.type | mapValue: credentialTypeLabels | translate)
+        }
         }}
       </div>
     </div>
-  </div>
+  }
+</div>
 
+@if (job().state === JobState.Running && job().abortable) {
   <button
-    *ngIf="job().state === JobState.Running && job().abortable"
     class="job-button-abort"
     mat-icon-button
     type="button"
@@ -75,9 +86,10 @@
   >
     <ix-icon name="mdi-stop-circle" class="job-icon-abort"></ix-icon>
   </button>
+}
 
+@if (job().state === JobState.Waiting) {
   <button
-    *ngIf="job().state === JobState.Waiting"
     mat-icon-button
     type="button"
     [ixTest]="['waiting', job().description, job().method]"
@@ -85,9 +97,10 @@
   >
     <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
   </button>
+}
 
+@if (job().state === JobState.Failed) {
   <button
-    *ngIf="job().state === JobState.Failed"
     mat-icon-button
     type="button"
     [ixTest]="['failed', job().description, job().method]"
@@ -100,9 +113,10 @@
       [matTooltip]="job().error"
     ></ix-icon>
   </button>
+}
 
+@if (job().state === JobState.Success) {
   <button
-    *ngIf="job().state === JobState.Success"
     mat-icon-button
     type="button"
     [ixTest]="['success', job().description, job().method]"
@@ -110,4 +124,5 @@
   >
     <ix-icon name="mdi-check-circle" class="job-icon-success"></ix-icon>
   </button>
+}
 </div>

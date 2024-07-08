@@ -7,7 +7,11 @@
   </p>
 </div>
 <div *appLet="selectRunningJobs$ | async as jobs" class="jobs">
-  <div *ngIf="jobs.length">
-    <ix-job-item *ngFor="let job of jobs" [job]="job"></ix-job-item>
-  </div>
+  @if (jobs.length) {
+    <div>
+      @for (job of jobs; track job) {
+        <ix-job-item [job]="job"></ix-job-item>
+      }
+    </div>
+  }
 </div>

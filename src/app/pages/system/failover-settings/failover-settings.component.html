@@ -1,6 +1,8 @@
 <mat-card class="card" [ixUiSearch]="searchableElements.elements.failover">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    @if (isLoading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
 
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Failover Configuration' | translate">

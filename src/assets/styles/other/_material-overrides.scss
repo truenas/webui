@@ -218,4 +218,9 @@ html .ix-dark {
   .mat-mdc-select-arrow svg {
     fill: var(--fg2);
   }
+
+  .mat-mdc-slide-toggle .mdc-switch--disabled+label {
+    color: var(--fg2);
+    opacity: var(--disabled-opacity);
+  }
 }

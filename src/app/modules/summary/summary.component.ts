@@ -1,4 +1,3 @@
-import { NgForOf } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
@@ -13,7 +12,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    NgForOf,
     TestIdModule,
     TranslateModule,
   ],
