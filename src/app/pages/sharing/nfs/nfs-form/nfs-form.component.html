@@ -29,48 +29,50 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <ix-fieldset *ngIf="isAdvancedMode" [title]="'Access' | translate">
-        <ix-checkbox
-          formControlName="ro"
-          [label]="'Read Only' | translate"
-          [tooltip]="helptext.tooltip_ro | translate"
-        ></ix-checkbox>
+      @if (isAdvancedMode) {
+        <ix-fieldset [title]="'Access' | translate">
+          <ix-checkbox
+            formControlName="ro"
+            [label]="'Read Only' | translate"
+            [tooltip]="helptext.tooltip_ro | translate"
+          ></ix-checkbox>
 
-        <ix-combobox
-          formControlName="maproot_user"
-          [label]="'Maproot User' | translate"
-          [tooltip]="helptext.tooltip_maproot_user | translate"
-          [provider]="userProvider"
-        ></ix-combobox>
+          <ix-combobox
+            formControlName="maproot_user"
+            [label]="'Maproot User' | translate"
+            [tooltip]="helptext.tooltip_maproot_user | translate"
+            [provider]="userProvider"
+          ></ix-combobox>
 
-        <ix-combobox
-          formControlName="maproot_group"
-          [label]="'Maproot Group' | translate"
-          [tooltip]="helptext.tooltip_maproot_group | translate"
-          [provider]="groupProvider"
-        ></ix-combobox>
+          <ix-combobox
+            formControlName="maproot_group"
+            [label]="'Maproot Group' | translate"
+            [tooltip]="helptext.tooltip_maproot_group | translate"
+            [provider]="groupProvider"
+          ></ix-combobox>
 
-        <ix-combobox
-          formControlName="mapall_user"
-          [label]="'Mapall User' | translate"
-          [tooltip]="helptext.tooltip_mapall_user | translate"
-          [provider]="userProvider"
-        ></ix-combobox>
+          <ix-combobox
+            formControlName="mapall_user"
+            [label]="'Mapall User' | translate"
+            [tooltip]="helptext.tooltip_mapall_user | translate"
+            [provider]="userProvider"
+          ></ix-combobox>
 
-        <ix-combobox
-          formControlName="mapall_group"
-          [label]="'Mapall Group' | translate"
-          [tooltip]="helptext.tooltip_mapall_group | translate"
-          [provider]="groupProvider"
-        ></ix-combobox>
+          <ix-combobox
+            formControlName="mapall_group"
+            [label]="'Mapall Group' | translate"
+            [tooltip]="helptext.tooltip_mapall_group | translate"
+            [provider]="groupProvider"
+          ></ix-combobox>
 
-        <ix-select
-          formControlName="security"
-          [label]="'Security' | translate"
-          [options]="securityOptions$"
-          [multiple]="true"
-        ></ix-select>
-      </ix-fieldset>
+          <ix-select
+            formControlName="security"
+            [label]="'Security' | translate"
+            [options]="securityOptions$"
+            [multiple]="true"
+          ></ix-select>
+        </ix-fieldset>
+      }
 
       <ix-fieldset>
         <ix-list
@@ -80,18 +82,19 @@
           [formArray]="form.get('networks')"
           (add)="addNetworkControl()"
         >
-          <ix-list-item
-            *ngFor="let network of form.controls.networks.controls; let i = index"
-            [label]="'Networks' | translate"
-            (delete)="removeNetworkControl(i)"
-          >
-            <ix-ip-input-with-netmask
-              [required]="true"
-              [formControlName]="i"
-              [label]="'Network' | translate"
-              [tooltip]="helptext.tooltip_network | translate"
-            ></ix-ip-input-with-netmask>
-          </ix-list-item>
+          @for (network of form.controls.networks.controls; track network; let i = $index) {
+            <ix-list-item
+              [label]="'Networks' | translate"
+              (delete)="removeNetworkControl(i)"
+            >
+              <ix-ip-input-with-netmask
+                [required]="true"
+                [formControlName]="i"
+                [label]="'Network' | translate"
+                [tooltip]="helptext.tooltip_network | translate"
+              ></ix-ip-input-with-netmask>
+            </ix-list-item>
+          }
         </ix-list>
 
         <ix-list
@@ -101,18 +104,19 @@
           [formArray]="form.get('hosts')"
           (add)="addHostControl()"
         >
-          <ix-list-item
-            *ngFor="let network of form.controls.hosts.controls; let i = index"
-            [label]="'Hosts' | translate"
-            (delete)="removeHostControl(i)"
-          >
-            <ix-input
-              [required]="true"
-              [formControlName]="i"
-              [label]="'Authorized Hosts and IP addresses' | translate"
-              [tooltip]="helptext.tooltip_hosts | translate"
-            ></ix-input>
-          </ix-list-item>
+          @for (network of form.controls.hosts.controls; track network; let i = $index) {
+            <ix-list-item
+              [label]="'Hosts' | translate"
+              (delete)="removeHostControl(i)"
+            >
+              <ix-input
+                [required]="true"
+                [formControlName]="i"
+                [label]="'Authorized Hosts and IP addresses' | translate"
+                [tooltip]="helptext.tooltip_hosts | translate"
+              ></ix-input>
+            </ix-list-item>
+          }
         </ix-list>
       </ix-fieldset>
 

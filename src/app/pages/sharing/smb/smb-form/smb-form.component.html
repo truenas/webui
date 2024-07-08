@@ -43,146 +43,148 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <ix-fieldset *ngIf="isAdvancedMode" [title]="'Access' | translate">
-        <ix-checkbox
-          formControlName="acl"
-          [label]="helptextSharingSmb.placeholder_acl | translate"
-          [tooltip]="helptextSharingSmb.tooltip_acl | translate"
-        ></ix-checkbox>
+      @if (isAdvancedMode) {
+        <ix-fieldset [title]="'Access' | translate">
+          <ix-checkbox
+            formControlName="acl"
+            [label]="helptextSharingSmb.placeholder_acl | translate"
+            [tooltip]="helptextSharingSmb.tooltip_acl | translate"
+          ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="ro"
-          [label]="helptextSharingSmb.placeholder_ro | translate"
-          [tooltip]="helptextSharingSmb.tooltip_ro | translate"
-        ></ix-checkbox>
+          <ix-checkbox
+            formControlName="ro"
+            [label]="helptextSharingSmb.placeholder_ro | translate"
+            [tooltip]="helptextSharingSmb.tooltip_ro | translate"
+          ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="browsable"
-          [label]="helptextSharingSmb.placeholder_browsable | translate"
-          [tooltip]="helptextSharingSmb.tooltip_browsable | translate"
-        ></ix-checkbox>
+          <ix-checkbox
+            formControlName="browsable"
+            [label]="helptextSharingSmb.placeholder_browsable | translate"
+            [tooltip]="helptextSharingSmb.tooltip_browsable | translate"
+          ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="guestok"
-          [label]="helptextSharingSmb.placeholder_guestok | translate"
-          [tooltip]="helptextSharingSmb.tooltip_guestok | translate"
-        ></ix-checkbox>
+          <ix-checkbox
+            formControlName="guestok"
+            [label]="helptextSharingSmb.placeholder_guestok | translate"
+            [tooltip]="helptextSharingSmb.tooltip_guestok | translate"
+          ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="abe"
-          [label]="helptextSharingSmb.placeholder_abe | translate"
-          [tooltip]="helptextSharingSmb.tooltip_abe | translate"
-        ></ix-checkbox>
+          <ix-checkbox
+            formControlName="abe"
+            [label]="helptextSharingSmb.placeholder_abe | translate"
+            [tooltip]="helptextSharingSmb.tooltip_abe | translate"
+          ></ix-checkbox>
 
-        <ix-chips
-          formControlName="hostsallow"
-          [label]="helptextSharingSmb.placeholder_hostsallow | translate"
-          [tooltip]="hostsAllowTooltip"
-        ></ix-chips>
+          <ix-chips
+            formControlName="hostsallow"
+            [label]="helptextSharingSmb.placeholder_hostsallow | translate"
+            [tooltip]="hostsAllowTooltip"
+          ></ix-chips>
 
-        <ix-chips
-          formControlName="hostsdeny"
-          [label]="helptextSharingSmb.placeholder_hostsdeny | translate"
-          [tooltip]="helptextSharingSmb.tooltip_hostsdeny | translate"
-        ></ix-chips>
-      </ix-fieldset>
+          <ix-chips
+            formControlName="hostsdeny"
+            [label]="helptextSharingSmb.placeholder_hostsdeny | translate"
+            [tooltip]="helptextSharingSmb.tooltip_hostsdeny | translate"
+          ></ix-chips>
+        </ix-fieldset>
 
-      <ix-fieldset *ngIf="isAdvancedMode" formGroupName="audit" [title]="'Audit Logging' | translate">
-        <ix-checkbox
-          formControlName="enable"
-          [label]="helptextSharingSmb.placeholder_enabled | translate"
-          [tooltip]="helptextSharingSmb.tooltip_enabled_audit_log | translate"
-        ></ix-checkbox>
+        <ix-fieldset formGroupName="audit" [title]="'Audit Logging' | translate">
+          <ix-checkbox
+            formControlName="enable"
+            [label]="helptextSharingSmb.placeholder_enabled | translate"
+            [tooltip]="helptextSharingSmb.tooltip_enabled_audit_log | translate"
+          ></ix-checkbox>
 
-        <ix-chips
-          formControlName="watch_list"
-          hint="Keep this list empty to Watch All"
-          [label]="'Watch List' | translate"
-          [tooltip]="helptextSharingSmb.tooltip_watch_list | translate"
-          [autocompleteProvider]="groupProvider"
-          [allowNewEntries]="false"
-        ></ix-chips>
+          <ix-chips
+            formControlName="watch_list"
+            hint="Keep this list empty to Watch All"
+            [label]="'Watch List' | translate"
+            [tooltip]="helptextSharingSmb.tooltip_watch_list | translate"
+            [autocompleteProvider]="groupProvider"
+            [allowNewEntries]="false"
+          ></ix-chips>
 
-        <ix-chips
-          formControlName="ignore_list"
-          [label]="'Ignore List' | translate"
-          [tooltip]="helptextSharingSmb.tooltip_ignore_list | translate"
-          [autocompleteProvider]="groupProvider"
-          [allowNewEntries]="false"
-        ></ix-chips>
-      </ix-fieldset>
+          <ix-chips
+            formControlName="ignore_list"
+            [label]="'Ignore List' | translate"
+            [tooltip]="helptextSharingSmb.tooltip_ignore_list | translate"
+            [autocompleteProvider]="groupProvider"
+            [allowNewEntries]="false"
+          ></ix-chips>
+        </ix-fieldset>
 
-      <ix-fieldset *ngIf="isAdvancedMode" [title]="'Other Options' | translate">
-        <ix-checkbox
-          formControlName="home"
-          [label]="helptextSharingSmb.placeholder_home | translate"
-          [tooltip]="helptextSharingSmb.tooltip_home | translate"
-        ></ix-checkbox>
+        <ix-fieldset [title]="'Other Options' | translate">
+          <ix-checkbox
+            formControlName="home"
+            [label]="helptextSharingSmb.placeholder_home | translate"
+            [tooltip]="helptextSharingSmb.tooltip_home | translate"
+          ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="timemachine"
-          [label]="helptextSharingSmb.placeholder_timemachine | translate"
-          [tooltip]="helptextSharingSmb.tooltip_timemachine | translate"
-        ></ix-checkbox>
+          <ix-checkbox
+            formControlName="timemachine"
+            [label]="helptextSharingSmb.placeholder_timemachine | translate"
+            [tooltip]="helptextSharingSmb.tooltip_timemachine | translate"
+          ></ix-checkbox>
 
-        <div [hidden]="!form.get('timemachine').value">
+          <div [hidden]="!form.get('timemachine').value">
+            <ix-input
+              formControlName="timemachine_quota"
+              [label]="helptextSharingSmb.placeholder_timemachine_quota | translate"
+              [tooltip]="helptextSharingSmb.tooltip_timemachine_quota | translate"
+              [format]="formatter.memorySizeFormatting"
+              [parse]="formatter.memorySizeParsing"
+            ></ix-input>
+          </div>
+
+          <ix-checkbox
+            formControlName="afp"
+            [label]="helptextSharingSmb.placeholder_afp | translate"
+            [tooltip]="helptextSharingSmb.tooltip_afp | translate"
+          ></ix-checkbox>
+
+          <ix-checkbox
+            formControlName="shadowcopy"
+            [label]="helptextSharingSmb.placeholder_shadowcopy | translate"
+            [tooltip]="helptextSharingSmb.tooltip_shadowcopy | translate"
+          ></ix-checkbox>
+
+          <ix-checkbox
+            formControlName="recyclebin"
+            [label]="helptextSharingSmb.placeholder_recyclebin | translate"
+            [tooltip]="helptextSharingSmb.tooltip_recyclebin | translate"
+          ></ix-checkbox>
+
+          <ix-checkbox
+            formControlName="aapl_name_mangling"
+            [label]="helptextSharingSmb.placeholder_aapl_name_mangling | translate"
+            [tooltip]="helptextSharingSmb.tooltip_aapl_name_mangling | translate"
+          ></ix-checkbox>
+
+          <ix-checkbox
+            formControlName="streams"
+            [label]="helptextSharingSmb.placeholder_streams | translate"
+            [tooltip]="helptextSharingSmb.tooltip_streams | translate"
+          ></ix-checkbox>
+
+          <ix-checkbox
+            formControlName="durablehandle"
+            [label]="helptextSharingSmb.placeholder_durablehandle | translate"
+            [tooltip]="helptextSharingSmb.tooltip_durablehandle | translate"
+          ></ix-checkbox>
+
+          <ix-checkbox
+            formControlName="fsrvp"
+            [label]="helptextSharingSmb.placeholder_fsrvp | translate"
+            [tooltip]="helptextSharingSmb.tooltip_fsrvp | translate"
+          ></ix-checkbox>
+
           <ix-input
-            formControlName="timemachine_quota"
-            [label]="helptextSharingSmb.placeholder_timemachine_quota | translate"
-            [tooltip]="helptextSharingSmb.tooltip_timemachine_quota | translate"
-            [format]="formatter.memorySizeFormatting"
-            [parse]="formatter.memorySizeParsing"
+            formControlName="path_suffix"
+            [label]="helptextSharingSmb.placeholder_path_suffix | translate"
+            [tooltip]="helptextSharingSmb.tooltip_path_suffix | translate"
           ></ix-input>
-        </div>
-
-        <ix-checkbox
-          formControlName="afp"
-          [label]="helptextSharingSmb.placeholder_afp | translate"
-          [tooltip]="helptextSharingSmb.tooltip_afp | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="shadowcopy"
-          [label]="helptextSharingSmb.placeholder_shadowcopy | translate"
-          [tooltip]="helptextSharingSmb.tooltip_shadowcopy | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="recyclebin"
-          [label]="helptextSharingSmb.placeholder_recyclebin | translate"
-          [tooltip]="helptextSharingSmb.tooltip_recyclebin | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="aapl_name_mangling"
-          [label]="helptextSharingSmb.placeholder_aapl_name_mangling | translate"
-          [tooltip]="helptextSharingSmb.tooltip_aapl_name_mangling | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="streams"
-          [label]="helptextSharingSmb.placeholder_streams | translate"
-          [tooltip]="helptextSharingSmb.tooltip_streams | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="durablehandle"
-          [label]="helptextSharingSmb.placeholder_durablehandle | translate"
-          [tooltip]="helptextSharingSmb.tooltip_durablehandle | translate"
-        ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="fsrvp"
-          [label]="helptextSharingSmb.placeholder_fsrvp | translate"
-          [tooltip]="helptextSharingSmb.tooltip_fsrvp | translate"
-        ></ix-checkbox>
-
-        <ix-input
-          formControlName="path_suffix"
-          [label]="helptextSharingSmb.placeholder_path_suffix | translate"
-          [tooltip]="helptextSharingSmb.tooltip_path_suffix | translate"
-        ></ix-input>
-      </ix-fieldset>
+        </ix-fieldset>
+      }
 
       <ix-form-actions>
         <button

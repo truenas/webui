@@ -13,11 +13,11 @@
   display: flex;
   flex-direction: row;
 
+  > div {
+    flex: 1 1 50%;
+  }
+
   @media (max-width: $breakpoint-tablet) {
     display: block !important;
-
-    > div {
-      max-width: 100% !important;
-    }
   }
 }

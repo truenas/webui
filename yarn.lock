@@ -2673,10 +2673,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@ngneat/spectator@~18.0.1":
-  version "18.0.1"
-  resolved "https://registry.yarnpkg.com/@ngneat/spectator/-/spectator-18.0.1.tgz#dc2c22727909c6df93324f7a2624128f190b8d0d"
-  integrity sha512-AGv9lhzaLN7bkXdDV7CTrZnik4QUsH7Bkpnf0cXPlRe5eYJdRA6s+CskFRPnmoMNLtQskyVDZfIRq7RdMjTgsA==
+"@ngneat/spectator@~19.0.0":
+  version "19.0.0"
+  resolved "https://registry.yarnpkg.com/@ngneat/spectator/-/spectator-19.0.0.tgz#e93e7ca49a00adf0cb433e8ba44533db9f7b6db4"
+  integrity sha512-u3G0rpepKuwK9alYDxyTvQ5P8XK6MXiToL36O3Lt1Q3seUT6hkpbkAAGD/pG8r+cY+Wt5zM7P8cF+1m7vWUGUA==
   dependencies:
     "@testing-library/dom" "^8.11.0"
     jquery "3.6.4"
@@ -9811,10 +9811,10 @@ ng-lazyload-image@~9.1.3:
   dependencies:
     tslib "^2.3.0"
 
-ng-mocks@~14.12.1:
-  version "14.12.1"
-  resolved "https://registry.yarnpkg.com/ng-mocks/-/ng-mocks-14.12.1.tgz#a2d698c872616e0ceeefa08ecb4bd357ae85a7dd"
-  integrity sha512-5OdTYYOva7IkCCi6kTtgnII1hSfw+qYOM1ScrKhyo7iaI/ViV8xI4MGa89Ts7XnH6XqISSez2Un3zFSomkFpmg==
+ng-mocks@~14.13.0:
+  version "14.13.0"
+  resolved "https://registry.yarnpkg.com/ng-mocks/-/ng-mocks-14.13.0.tgz#7321443f5fea3215cb93eb6bdc6c1aed0ed68174"
+  integrity sha512-cQ6nUj/P+v7X52gYU6bAj/03iDKl2pzbPy2V0tx/d5lxME063Vxc190p6UPlJkbRIxcB+OqSALPgQvy83efzjw==
 
 ng-qrcode@~8.0.1:
   version "8.0.1"

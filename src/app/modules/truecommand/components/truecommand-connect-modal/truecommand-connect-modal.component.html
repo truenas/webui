@@ -23,8 +23,6 @@
   </div>
 
   <div mat-dialog-actions>
-    <span fxFlex></span>
-
     <button
       mat-button
       type="button"
@@ -36,20 +34,22 @@
       {{ 'Cancel' | translate }}
     </button>
 
-    <span *ngIf="isConnected">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        type="button"
-        class="mat-mdc-button mat-button action-btn"
-        id="cust_button_deregister"
-        ixTest="deregister"
-        [name]="helptext.tcDeregisterBtn + '_button'"
-        (click)="onDeregister()"
-      >
-        {{ helptext.tcDeregisterBtn | translate }}
-      </button>
-    </span>
+    @if (isConnected) {
+      <span>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="button"
+          class="mat-mdc-button mat-button action-btn"
+          id="cust_button_deregister"
+          ixTest="deregister"
+          [name]="helptext.tcDeregisterBtn + '_button'"
+          (click)="onDeregister()"
+        >
+          {{ helptext.tcDeregisterBtn | translate }}
+        </button>
+      </span>
+    }
 
     <button
       *ixRequiresRoles="requiredRoles"

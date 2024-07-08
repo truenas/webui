@@ -3,35 +3,36 @@
   <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 </ix-page-header>
 
-<div
-  *ngIf="selectedDisks.length"
-  class="batch-actions-toolbar"
-  [ixUiSearch]="searchableElements.elements.disks"
->
-  <div class="title">
-    <strong>{{ 'Batch Operations' | translate }}</strong>
-  </div>
+@if (selectedDisks.length) {
+  <div
+    class="batch-actions-toolbar"
+    [ixUiSearch]="searchableElements.elements.disks"
+  >
+    <div class="title">
+      <strong>{{ 'Batch Operations' | translate }}</strong>
+    </div>
+    <div class="actions">
+      <button
+        mat-button
+        ixTest="edit-selected"
+        (click)="edit(selectedDisks)"
+      >
+        <ix-icon name="edit"></ix-icon>
+        <span>{{ 'Edit Disk(s)' | translate }}</span>
+      </button>
 
-  <div class="actions">
-    <button
-      mat-button
-      ixTest="edit-selected"
-      (click)="edit(selectedDisks)"
-    >
-      <ix-icon name="edit"></ix-icon>
-      <span>{{ 'Edit Disk(s)' | translate }}</span>
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="manual-test-selected"
-      (click)="manualTest(selectedDisks)"
-    >
-      <ix-icon name="play_arrow"></ix-icon>
-      <span>{{ 'Manual Test' | translate }}</span>
-    </button>
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="manual-test-selected"
+        (click)="manualTest(selectedDisks)"
+      >
+        <ix-icon name="play_arrow"></ix-icon>
+        <span>{{ 'Manual Test' | translate }}</span>
+      </button>
+    </div>
   </div>
-</div>
+}
 
 <ix-table
   class="table"
@@ -51,13 +52,17 @@
     [isLoading]="dataProvider.isLoading$ | async"
   >
     <ng-template let-disk ix-table-details-row [dataProvider]="dataProvider">
-      <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
-        <div *ngFor="let column of hiddenColumns">
-          <b>{{ column.title | translate }}:</b>
-          <span>{{ column?.getValue?.(disk) || disk[column.propertyName] || ('N/A' | translate) }}</span>
-        </div>
-        <mat-divider></mat-divider>
-      </dl>
+      @if (hiddenColumns.length) {
+        <dl class="table-hidden-columns">
+          @for (column of hiddenColumns; track column) {
+            <div>
+              <b>{{ column.title | translate }}:</b>
+              <span>{{ column?.getValue?.(disk) || disk[column.propertyName] || ('N/A' | translate) }}</span>
+            </div>
+          }
+          <mat-divider></mat-divider>
+        </dl>
+      }
 
       <div class="table-details-row-actions">
         <button
@@ -69,7 +74,7 @@
           <span>{{ 'Edit' | translate }}</span>
         </button>
 
-        <ng-container *ngIf="isSmartSupported(disk)">
+        @if (isSmartSupported(disk)) {
           <button
             *ixRequiresRoles="requiredRoles"
             mat-button
@@ -87,9 +92,9 @@
             <ix-icon name="format_list_bulleted"></ix-icon>
             <span>{{ 'S.M.A.R.T. Test Results' | translate }}</span>
           </button>
-        </ng-container>
+        }
 
-        <ng-container *ngIf="isUnusedDisk(disk)">
+        @if (isUnusedDisk(disk)) {
           <button
             *ixRequiresRoles="requiredRoles"
             mat-button
@@ -99,7 +104,7 @@
             <ix-icon name="delete_sweep"></ix-icon>
             <span>{{ 'Wipe' | translate }}</span>
           </button>
-        </ng-container>
+        }
       </div>
     </ng-template>
   </tbody>

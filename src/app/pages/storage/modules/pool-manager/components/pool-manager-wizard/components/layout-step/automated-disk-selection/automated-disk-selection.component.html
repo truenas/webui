@@ -1,40 +1,42 @@
-<div *ngIf="canChangeLayout; else showLayoutInfo" class="layout-container">
-  <ix-select
-    [ixTestOverride]="['layout']"
-    [keepLastPart]="true"
-    [formControl]="layoutControl"
-    [label]="'Layout' | translate"
-    [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
-    [options]="vdevLayoutOptions$"
-    [required]="true"
-  ></ix-select>
-</div>
-<ng-template #showLayoutInfo>
-  <ix-input
-    *ngIf="isDataVdev || isMetadataVdev"
-    [ixTestOverride]="['layout']"
-    [keepLastPart]="true"
-    [formControl]="layoutControl"
-    [label]="'Layout' | translate"
-    [readonly]="true"
-    [tooltip]="dataLayoutTooltip"
-    [required]="false"
-  ></ix-input>
-</ng-template>
+@if (canChangeLayout) {
+  <div class="layout-container">
+    <ix-select
+      [ixTestOverride]="['layout']"
+      [keepLastPart]="true"
+      [formControl]="layoutControl"
+      [label]="'Layout' | translate"
+      [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
+      [options]="vdevLayoutOptions$"
+      [required]="true"
+    ></ix-select>
+  </div>
+} @else {
+  @if (isDataVdev || isMetadataVdev) {
+    <ix-input
+      [ixTestOverride]="['layout']"
+      [keepLastPart]="true"
+      [formControl]="layoutControl"
+      [label]="'Layout' | translate"
+      [readonly]="true"
+      [tooltip]="dataLayoutTooltip"
+      [required]="false"
+    ></ix-input>
+  }
+}
 
-<ix-draid-selection
-  *ngIf="usesDraidLayout; else normalSelection"
-  [layout]="layoutControl.value | cast"
-  [inventory]="inventory"
-  [type]="type"
-  [isStepActive]="isStepActive"
-></ix-draid-selection>
-
-<ng-template #normalSelection>
+@if (usesDraidLayout) {
+  <ix-draid-selection
+    [layout]="layoutControl.value | cast"
+    [inventory]="inventory"
+    [type]="type"
+    [isStepActive]="isStepActive"
+  ></ix-draid-selection>
+} @else {
   <ix-normal-selection
     [layout]="layoutControl.value"
     [inventory]="inventory"
     [type]="type"
     [isStepActive]="isStepActive"
   ></ix-normal-selection>
-</ng-template>
+}
+

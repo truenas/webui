@@ -1,13 +1,14 @@
 <table ixTest="summary-table">
-  <ng-container *ngFor="let section of summary()">
-    <tr
-      *ngFor="let item of section; let i = index"
-      class="summary-line"
-      [ixTest]="['summary', item.label]"
-      [class.section-start]="i === 0"
-    >
-      <td class="summary-line-label">{{ item.label | translate }}:</td>
-      <td class="summary-line-value">{{ item.value | translate }}</td>
-    </tr>
-  </ng-container>
+  @for (section of summary(); track section) {
+    @for (item of section; track item; let i = $index) {
+      <tr
+        class="summary-line"
+        [ixTest]="['summary', item.label]"
+        [class.section-start]="i === 0"
+      >
+        <td class="summary-line-label">{{ item.label | translate }}:</td>
+        <td class="summary-line-value">{{ item.value | translate }}</td>
+      </tr>
+    }
+  }
 </table>

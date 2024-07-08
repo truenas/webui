@@ -54,6 +54,6 @@ describe('WidgetOsVersionComponent', () => {
       ],
     });
 
-    expect(spectator.fixture.nativeElement).toHaveExactTrimmedText('Error');
+    expect(spectator.fixture.nativeElement).toHaveExactTrimmedText('Fatal error');
   });
 });

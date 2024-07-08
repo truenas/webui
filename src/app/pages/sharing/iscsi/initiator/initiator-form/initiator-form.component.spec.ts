@@ -160,7 +160,7 @@ describe('InitiatorFormComponent', () => {
   });
 
   it('loads connected initiators when Refresh button is pressed', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'REFRESH' }));
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Refresh' }));
     await button.click();
 
     expect(ws.call).toHaveBeenLastCalledWith('iscsi.global.sessions');

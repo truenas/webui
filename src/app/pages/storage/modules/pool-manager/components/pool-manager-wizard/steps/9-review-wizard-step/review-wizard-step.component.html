@@ -7,18 +7,20 @@
       <div class="value">{{ state.name || ('Not Set' | translate) }}</div>
     </div>
 
-    <div *ngIf="state.encryption" class="summary-item">
-      <div class="label">{{ 'Encryption' | translate }}</div>
-      <div class="value">{{ state.encryption }}</div>
-    </div>
+    @if (state.encryption) {
+      <div class="summary-item">
+        <div class="label">{{ 'Encryption' | translate }}</div>
+        <div class="value">{{ state.encryption }}</div>
+      </div>
+    }
   </div>
 </div>
 <div class="summary-row">
   <div class="summary-group topology-summary">
     <h4>{{ 'Topology Summary' | translate }}</h4>
 
-    <ng-container *ngIf="nonEmptyTopologyCategories.length; else noVdevs">
-      <ng-container *ngFor="let category of nonEmptyTopologyCategories">
+    @if (nonEmptyTopologyCategories.length) {
+      @for (category of nonEmptyTopologyCategories; track category[0]) {
         <div class="summary-item">
           <div class="label">
             {{ category[0] | mapValue: vdevTypeLabels | translate }}
@@ -27,12 +29,11 @@
             {{ category[1] | ixTopologyCategoryDescription: !isLimitedToOneLayout(category[0]) }}
           </div>
         </div>
-      </ng-container>
-    </ng-container>
-
-    <ng-template #noVdevs>
+      }
+    } @else {
       {{ 'No VDEVs added.' | translate }}
-    </ng-template>
+    }
+
   </div>
 
   <div class="summary-group">
@@ -43,32 +44,34 @@
       <div class="value">{{ totalCapacity$ | async | ixFileSize }}</div>
     </div>
 
-    <div
-      *ngIf="state.enclosureSettings.maximizeEnclosureDispersal || limitToEnclosureName"
-      class="summary-item"
-    >
-      <div class="label">{{ 'Dispersal Strategy' | translate }}</div>
-      <div class="value">
-        <ng-container *ngIf="state.enclosureSettings.maximizeEnclosureDispersal">
-          {{ 'Maximize Dispersal' | translate }}
-        </ng-container>
-        <ng-container *ngIf="limitToEnclosureName">
-          {{ 'Limit To {name} Enclosure' | translate: { name: limitToEnclosureName } }}
-        </ng-container>
+    @if (state.enclosureSettings.maximizeEnclosureDispersal || limitToEnclosureName) {
+      <div class="summary-item">
+        <div class="label">{{ 'Dispersal Strategy' | translate }}</div>
+        <div class="value">
+          @if (state.enclosureSettings.maximizeEnclosureDispersal) {
+            {{ 'Maximize Dispersal' | translate }}
+          }
+          @if (limitToEnclosureName) {
+            {{ 'Limit To {name} Enclosure' | translate: { name: limitToEnclosureName } }}
+          }
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>
 <div class="summary-row">
-  <div *ngIf="poolCreationErrors?.length">
-    <h4>{{ 'Warnings' | translate }}</h4>
-
-    <div *ngFor="let error of poolCreationErrors">
-      <div [class]="[error.severity, 'summary-item']">
-        {{ error.text }}
-      </div>
+  @if (poolCreationErrors?.length) {
+    <div>
+      <h4>{{ 'Warnings' | translate }}</h4>
+      @for (error of poolCreationErrors; track error.severity + error.text) {
+        <div>
+          <div [class]="[error.severity, 'summary-item']">
+            {{ error.text }}
+          </div>
+        </div>
+      }
     </div>
-  </div>
+  }
 </div>
 
 <div class="step-buttons">
@@ -82,25 +85,27 @@
     {{ 'Back' | translate }}
   </button>
 
-  <button
-    *ngIf="hasVdevs"
-    mat-button
-    type="button"
-    ixTest="inspect-vdevs"
-    (click)="onInspectVdevsPressed()"
-  >{{ 'Inspect VDEVs' | translate }}</button>
+  @if (hasVdevs) {
+    <button
+      mat-button
+      type="button"
+      ixTest="inspect-vdevs"
+      (click)="onInspectVdevsPressed()"
+    >{{ 'Inspect VDEVs' | translate }}</button>
+  }
 
-  <button
-    *ngIf="showStartOver"
-    mat-button
-    matStepperNext
-    color="error"
-    type="button"
-    ixTest="start-over"
-    (click)="startOver()"
-  >
-    {{ 'Start Over' | translate }}
-  </button>
+  @if (showStartOver) {
+    <button
+      mat-button
+      matStepperNext
+      color="error"
+      type="button"
+      ixTest="start-over"
+      (click)="startOver()"
+    >
+      {{ 'Start Over' | translate }}
+    </button>
+  }
 
   <button
     *ixRequiresRoles="[Role.FullAdmin]"

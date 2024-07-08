@@ -1,23 +1,25 @@
-<button
-  *ngIf="!jsonText() || !isValidJson()"
-  mat-icon-button
-  matTooltipPosition="above"
-  ixTest="copy-to-clipboard"
-  [matTooltip]="'Copy to Clipboard' | translate"
-  (click)="copyToClipboard()"
->
-  <ix-icon name="assignment"></ix-icon>
-</button>
+@if (!jsonText() || !isValidJson()) {
+  <button
+    mat-icon-button
+    matTooltipPosition="above"
+    ixTest="copy-to-clipboard"
+    [matTooltip]="'Copy to Clipboard' | translate"
+    (click)="copyToClipboard()"
+  >
+    <ix-icon name="assignment"></ix-icon>
+  </button>
+}
 
-<button
-  *ngIf="jsonText() && isValidJson()"
-  mat-icon-button
-  ixTest="copy-to-clipboard-menu"
-  [matTooltip]="'Copy to Clipboard' | translate"
-  [matMenuTriggerFor]="menu"
->
-  <ix-icon name="assignment"></ix-icon>
-</button>
+@if (jsonText() && isValidJson()) {
+  <button
+    mat-icon-button
+    ixTest="copy-to-clipboard-menu"
+    [matTooltip]="'Copy to Clipboard' | translate"
+    [matMenuTriggerFor]="menu"
+  >
+    <ix-icon name="assignment"></ix-icon>
+  </button>
+}
 <mat-menu #menu="matMenu">
   <button mat-menu-item ixTest="copy-text" (click)="copyToClipboard()">
     <span>{{ 'Copy Text' | translate }}</span>

@@ -8,6 +8,14 @@ export enum AppStatus {
   Stopping = 'STOPPING',
 }
 
+export const appStatusIcons = new Map<AppStatus, string>([
+  [AppStatus.Started, 'mdi-check-circle'],
+  [AppStatus.Starting, 'mdi-progress-wrench'],
+  [AppStatus.Deploying, 'mdi-progress-wrench'],
+  [AppStatus.Stopping, 'mdi-progress-wrench'],
+  [AppStatus.Stopped, 'mdi-stop-circle'],
+]);
+
 export const appStatusLabels = new Map<AppStatus, string>([
   [AppStatus.Started, T('Running')],
   [AppStatus.Starting, T('Starting')],

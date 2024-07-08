@@ -26,7 +26,7 @@
 </ix-page-header>
 
 <div [ixUiSearch]="searchableElements.elements.storageDashboard">
-  <ng-container *ngIf="arePoolsLoading">
+  @if (arePoolsLoading) {
     <ix-dashboard-pool
       class="pool"
       [isLoading]="true"
@@ -36,27 +36,29 @@
       class="pool"
       [isLoading]="true"
     ></ix-dashboard-pool>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="isEmptyPools && !arePoolsLoading">
+  @if (isEmptyPools && !arePoolsLoading) {
     <div class="entity-empty-wrapper">
       <ix-empty [conf]="entityEmptyConf" [requiredRoles]="requiredRoles"></ix-empty>
     </div>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="!isEmptyPools && !arePoolsLoading">
-    <ix-unused-resources
-      *ngIf="!isEmptyPools"
-      [pools]="pools$ | async"
-    ></ix-unused-resources>
+  @if (!isEmptyPools && !arePoolsLoading) {
+    @if (!isEmptyPools) {
+      <ix-unused-resources
+        [pools]="pools$ | async"
+      ></ix-unused-resources>
+    }
 
-    <ix-dashboard-pool
-      *ngFor="let pool of pools$ | async; let i = index"
-      class="pool"
-      [pool]="pool"
-      [disks]="getDisksForPool(pool)"
-      [isLoading]="areDisksLoading$ | async"
-      [rootDataset]="rootDatasets[pool.name]"
-    ></ix-dashboard-pool>
-  </ng-container>
+    @for (pool of pools$ | async; track pool; let i = $index) {
+      <ix-dashboard-pool
+        class="pool"
+        [pool]="pool"
+        [disks]="getDisksForPool(pool)"
+        [isLoading]="areDisksLoading$ | async"
+        [rootDataset]="rootDatasets[pool.name]"
+      ></ix-dashboard-pool>
+    }
+  }
 </div>

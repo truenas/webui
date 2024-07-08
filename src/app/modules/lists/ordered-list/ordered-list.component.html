@@ -1,9 +1,10 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+  ></ix-label>
+}
 
 <div
   class="container-items"
@@ -11,24 +12,26 @@
   [style.minHeight]="minHeight"
   [style.maxHeight]="maxHeight"
   (cdkDropListDropped)="drop($event)"
->
+  >
   <mat-list [attr.aria-label]="label">
-    <mat-list-item *ngFor="let item of items" cdkDrag>
-      <mat-slide-toggle
-        color="primary"
-        [checked]="isChecked(item.value)"
-        [disabled]="isDisabled"
-        [ixTest]="[controlDirective.name, item.label]"
-        [attr.aria-label]="item.label"
-        (change)="onCheckboxChanged(item.value)"
-        (blur)="onTouch()"
-      >
-        <div class="toggle-label">
-          <ix-icon name="drag_indicator"></ix-icon>
-          {{ item.label | translate }}
-        </div>
-      </mat-slide-toggle>
-    </mat-list-item>
+    @for (item of items; track item) {
+      <mat-list-item cdkDrag>
+        <mat-slide-toggle
+          color="primary"
+          [checked]="isChecked(item.value)"
+          [disabled]="isDisabled"
+          [ixTest]="[controlDirective.name, item.label]"
+          [attr.aria-label]="item.label"
+          (change)="onCheckboxChanged(item.value)"
+          (blur)="onTouch()"
+        >
+          <div class="toggle-label">
+            <ix-icon name="drag_indicator"></ix-icon>
+            {{ item.label | translate }}
+          </div>
+        </mat-slide-toggle>
+      </mat-list-item>
+    }
   </mat-list>
 </div>
 

@@ -3,18 +3,20 @@
     <h2>{{ 'End User License Agreement - TrueNAS' | translate }}</h2>
     <div [innerHTML]="eula"></div>
   </div>
-  <div *ngIf="eula">
-    <mat-divider></mat-divider>
-    <mat-card-actions id="button-row">
-      <button
-        id="back-to-support-button"
-        mat-flat-button
-        class="mat-mdc-button mat-button mat-primary"
-        ixTest="back-to-support"
-        [routerLink]="['/system/general']"
-      >
-        {{ 'Back to Support' | translate }}
-      </button>
-    </mat-card-actions>
-  </div>
+  @if (eula) {
+    <div>
+      <mat-divider></mat-divider>
+      <mat-card-actions id="button-row">
+        <button
+          id="back-to-support-button"
+          mat-flat-button
+          class="mat-mdc-button mat-button mat-primary"
+          ixTest="back-to-support"
+          [routerLink]="['/system/general']"
+        >
+          {{ 'Back to Support' | translate }}
+        </button>
+      </mat-card-actions>
+    </div>
+  }
 </mat-card>

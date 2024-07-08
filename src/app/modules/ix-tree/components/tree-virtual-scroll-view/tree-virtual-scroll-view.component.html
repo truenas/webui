@@ -14,13 +14,14 @@
 
 <ng-container treeNodeOutlet></ng-container>
 
-<button
-  *ngIf="isScrollTopButtonVisible"
-  mat-icon-button
-  class="scroll-top"
-  ixTest="scroll-to-top"
-  [matTooltip]="'Scroll to top' | translate"
-  (click)="scrollToTop()"
->
-  <ix-icon name="mdi-arrow-up"></ix-icon>
-</button>
+@if (isScrollTopButtonVisible) {
+  <button
+    mat-icon-button
+    class="scroll-top"
+    ixTest="scroll-to-top"
+    [matTooltip]="'Scroll to top' | translate"
+    (click)="scrollToTop()"
+  >
+    <ix-icon name="mdi-arrow-up"></ix-icon>
+  </button>
+}

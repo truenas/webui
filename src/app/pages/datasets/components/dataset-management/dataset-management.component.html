@@ -3,7 +3,7 @@
     <ix-empty [conf]="emptyConf()" [requiredRoles]="requiredRoles"></ix-empty>
   </div>
 } @else {
-  <div class="container" fxLayoutGap="16px">
+  <div class="container">
     <div class="table-container">
       @if (!showMobileDetails) {
         <ix-fake-progress-bar
@@ -17,6 +17,7 @@
           (search)="onSearch($event)"
         ></ix-search-input1>
       </div>
+
       <div
         #ixTreeHeader
         class="sticky-header"
