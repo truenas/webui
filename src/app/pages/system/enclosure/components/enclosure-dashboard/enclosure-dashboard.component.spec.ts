@@ -4,6 +4,7 @@ import {
   mockProvider,
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import {
   EnclosureDashboardComponent,
@@ -31,7 +32,7 @@ describe('EnclosureDashboardComponent', () => {
       //   mockCall('jbof.licensed', 5),
       // ]),
       mockProvider(MatDialog),
-      // mockAuth(),
+      mockAuth(),
     ],
   });
 
