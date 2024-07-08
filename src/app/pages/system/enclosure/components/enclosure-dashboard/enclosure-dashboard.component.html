@@ -1,5 +1,5 @@
 <ix-page-header>
-  @if (isJbofLicensed$ | async) {
+  
     <a
       mat-button
       ixTest="manage-expansion"
@@ -7,7 +7,6 @@
     >
       {{ 'NVMe-oF Expansion Shelves' | translate }}
     </a>
-  }
   @if (selectedEnclosure()) {
     <ix-view-elements-menu
       [enclosure]="selectedEnclosure()"
