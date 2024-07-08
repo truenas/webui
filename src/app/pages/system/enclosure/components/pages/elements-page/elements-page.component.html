@@ -2,11 +2,9 @@
   <ix-enclosure-header [title]="title()"></ix-enclosure-header>
 </mat-card-header>
 <mat-card-content>
-  <ix-empty
-    *ngIf="!viewElements(); else table"
-    [conf]="noView"
-  ></ix-empty>
-  <ng-template #table>
+  @if (!viewElements()) {
+    <ix-empty [conf]="noView"></ix-empty>
+  } @else {
     <ix-table>
       <thead
         ix-table-head
@@ -19,5 +17,5 @@
         [dataProvider]="dataProvider()"
       ></tbody>
     </ix-table>
-  </ng-template>
+  }
 </mat-card-content>

@@ -19,7 +19,7 @@
     [tooltip]="helptext.SNMPTrap_v3_tooltip | translate"
   ></ix-checkbox>
 
-  <ng-container *ngIf="isV3">
+  @if (isV3) {
     <ix-input
       formControlName="v3_username"
       [label]="'Username' | translate"
@@ -54,7 +54,7 @@
       [required]="true"
       [tooltip]="helptext.SNMPTrap_v3_privprotocol_tooltip | translate"
     ></ix-select>
-  </ng-container>
+  }
 
   <ix-input
     formControlName="community"

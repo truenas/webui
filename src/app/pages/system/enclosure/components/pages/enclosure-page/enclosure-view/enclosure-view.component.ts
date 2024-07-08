@@ -4,13 +4,13 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
-import { EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import {
   TintingFunction,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
+import { diskStatusTint } from 'app/pages/system/enclosure/utils/disk-status-tint.utils';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -46,17 +46,11 @@ export class EnclosureViewComponent {
 
   readonly slotTintFn = computed(() => {
     if (this.selectedView() === EnclosureView.DiskStatus) {
-      return this.diskStatusTint();
+      return diskStatusTint;
     }
 
     return this.poolTint();
   });
-
-  private diskStatusTint(): TintingFunction {
-    return (slot: DashboardEnclosureSlot) => {
-      return slot?.status === EnclosureStatus.Ok ? 'green' : 'red';
-    };
-  }
 
   // TODO: Pool colors need to stay consistent across multiple enclosures, so this needs to be moved to store.
   private poolTint(): TintingFunction {

@@ -9,14 +9,15 @@
           [label]="'All Disks' | translate"
         ></ix-checkbox>
 
-        <ix-select
-          *ngIf="!(isAllDisksSelected$ | async)"
-          formControlName="disks"
-          [label]="'Disks' | translate"
-          [tooltip]="tooltips.disks | translate"
-          [multiple]="true"
-          [options]="diskOptions$"
-        ></ix-select>
+        @if (!(isAllDisksSelected$ | async)) {
+          <ix-select
+            formControlName="disks"
+            [label]="'Disks' | translate"
+            [tooltip]="tooltips.disks | translate"
+            [multiple]="true"
+            [options]="diskOptions$"
+          ></ix-select>
+        }
 
         <ix-select
           formControlName="type"

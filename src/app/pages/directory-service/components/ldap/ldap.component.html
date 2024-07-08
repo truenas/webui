@@ -41,7 +41,7 @@
             [tooltip]="helptext.ldap_enable_tooltip | translate"
           ></ix-checkbox>
 
-          <ng-container *ngIf="isAdvancedMode">
+          @if (isAdvancedMode) {
             <ix-checkbox
               formControlName="anonbind"
               [label]="'Allow Anonymous Binding' | translate"
@@ -75,50 +75,52 @@
               [label]="'Disable LDAP User/Group Cache' | translate"
               [tooltip]="helptext.ldap_disable_fn_cache_tooltip | translate"
             ></ix-checkbox>
-          </ng-container>
+          }
         </ix-fieldset>
-        <ix-fieldset *ngIf="isAdvancedMode">
-          <ix-select
-            formControlName="kerberos_realm"
-            [label]="'Kerberos Realm' | translate"
-            [tooltip]="helptext.ldap_kerberos_realm_tooltip | translate"
-            [options]="kerberosRealms$"
-          ></ix-select>
+        @if (isAdvancedMode) {
+          <ix-fieldset>
+            <ix-select
+              formControlName="kerberos_realm"
+              [label]="'Kerberos Realm' | translate"
+              [tooltip]="helptext.ldap_kerberos_realm_tooltip | translate"
+              [options]="kerberosRealms$"
+            ></ix-select>
 
-          <ix-select
-            formControlName="kerberos_principal"
-            [label]="'Kerberos Principal' | translate"
-            [tooltip]="helptext.ldap_kerberos_principal_tooltip | translate"
-            [options]="kerberosPrincipals$"
-          ></ix-select>
+            <ix-select
+              formControlName="kerberos_principal"
+              [label]="'Kerberos Principal' | translate"
+              [tooltip]="helptext.ldap_kerberos_principal_tooltip | translate"
+              [options]="kerberosPrincipals$"
+            ></ix-select>
 
-          <ix-input
-            formControlName="timeout"
-            type="number"
-            [label]="'LDAP Timeout' | translate"
-            [tooltip]="helptext.ldap_timeout_tooltip | translate"
-          ></ix-input>
+            <ix-input
+              formControlName="timeout"
+              type="number"
+              [label]="'LDAP Timeout' | translate"
+              [tooltip]="helptext.ldap_timeout_tooltip | translate"
+            ></ix-input>
 
-          <ix-input
-            formControlName="dns_timeout"
-            type="number"
-            [label]="'DNS Timeout' | translate"
-            [tooltip]="helptext.ldap_dns_timeout_tooltip | translate"
-          ></ix-input>
+            <ix-input
+              formControlName="dns_timeout"
+              type="number"
+              [label]="'DNS Timeout' | translate"
+              [tooltip]="helptext.ldap_dns_timeout_tooltip | translate"
+            ></ix-input>
 
-          <ix-textarea
-            formControlName="auxiliary_parameters"
-            [label]="'Auxiliary Parameters' | translate"
-            [tooltip]="helptext.ldap_auxiliary_parameters_tooltip | translate"
-          ></ix-textarea>
+            <ix-textarea
+              formControlName="auxiliary_parameters"
+              [label]="'Auxiliary Parameters' | translate"
+              [tooltip]="helptext.ldap_auxiliary_parameters_tooltip | translate"
+            ></ix-textarea>
 
-          <ix-select
-            formControlName="schema"
-            [label]="'Schema' | translate"
-            [tooltip]="helptext.ldap_schema_tooltip | translate"
-            [options]="schemaOptions$"
-          ></ix-select>
-        </ix-fieldset>
+            <ix-select
+              formControlName="schema"
+              [label]="'Schema' | translate"
+              [tooltip]="helptext.ldap_schema_tooltip | translate"
+              [options]="schemaOptions$"
+            ></ix-select>
+          </ix-fieldset>
+        }
       </div>
 
       <ix-form-actions>

@@ -15,42 +15,46 @@
           [options]="includeExcludeOptions$"
         ></ix-radio-group>
 
-        <ix-explorer
-          *ngIf="isExcludePathsSelected"
-          formControlName="excludedPaths"
-          [required]="true"
-          [tooltip]="helptext.tooltips.excluded_paths"
-          [label]="'Excluded Paths' | translate"
-          [nodeProvider]="snapshotNodeProvider"
-          [multiple]="true"
-        ></ix-explorer>
+        @if (isExcludePathsSelected) {
+          <ix-explorer
+            formControlName="excludedPaths"
+            [required]="true"
+            [tooltip]="helptext.tooltips.excluded_paths"
+            [label]="'Excluded Paths' | translate"
+            [nodeProvider]="snapshotNodeProvider"
+            [multiple]="true"
+          ></ix-explorer>
+        }
 
-        <ix-input
-          *ngIf="isExcludeByPatternSelected"
-          formControlName="excludePattern"
-          [tooltip]="helptext.tooltips.pattern"
-          [label]="'Pattern' | translate"
-          [required]="true"
-        ></ix-input>
+        @if (isExcludeByPatternSelected) {
+          <ix-input
+            formControlName="excludePattern"
+            [tooltip]="helptext.tooltips.pattern"
+            [label]="'Pattern' | translate"
+            [required]="true"
+          ></ix-input>
+        }
 
-        <ix-explorer
-          *ngIf="isIncludeFromSubfolderSelected"
-          formControlName="subFolder"
-          [required]="true"
-          [label]="'Subfolder' | translate"
-          [nodeProvider]="snapshotNodeProvider"
-          [tooltip]="helptext.tooltips.sub_folder"
-        ></ix-explorer>
+        @if (isIncludeFromSubfolderSelected) {
+          <ix-explorer
+            formControlName="subFolder"
+            [required]="true"
+            [label]="'Subfolder' | translate"
+            [nodeProvider]="snapshotNodeProvider"
+            [tooltip]="helptext.tooltips.sub_folder"
+          ></ix-explorer>
+        }
 
-        <ix-explorer
-          *ngIf="isIncludeFromSubfolderSelected"
-          formControlName="includedPaths"
-          [root]="form.controls.subFolder.value || mntPath"
-          [label]="'Included Paths' | translate"
-          [nodeProvider]="snapshotNodeProvider"
-          [tooltip]="helptext.tooltips.included_paths"
-          [multiple]="true"
-        ></ix-explorer>
+        @if (isIncludeFromSubfolderSelected) {
+          <ix-explorer
+            formControlName="includedPaths"
+            [root]="form.controls.subFolder.value || mntPath"
+            [label]="'Included Paths' | translate"
+            [nodeProvider]="snapshotNodeProvider"
+            [tooltip]="helptext.tooltips.included_paths"
+            [multiple]="true"
+          ></ix-explorer>
+        }
       </ix-fieldset>
 
       <ix-fieldset [title]="'Local' | translate">

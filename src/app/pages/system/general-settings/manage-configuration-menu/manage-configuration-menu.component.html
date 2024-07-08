@@ -30,7 +30,7 @@
   >
     {{ 'Upload File' | translate }}
   </button>
-  <ng-container *ngIf="isSysAdmin$ | async">
+  @if (isSysAdmin$ | async) {
     <button
       *ixRequiresRoles="[Role.FullAdmin]"
       mat-menu-item
@@ -40,5 +40,5 @@
     >
       {{ 'Reset to Defaults' | translate }}
     </button>
-  </ng-container>
+  }
 </mat-menu>

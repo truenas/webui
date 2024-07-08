@@ -1,34 +1,38 @@
-<ix-page-header *ngIf="!inCard">
-  <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    color="primary"
-    ixTest="add-kerberos-keytabs"
-    [ixUiSearch]="searchableElements.elements.add"
-    (click)="doAdd()"
-  >
-    {{ 'Add' | translate }}
-  </button>
-</ix-page-header>
+@if (!inCard) {
+  <ix-page-header>
+    <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="primary"
+      ixTest="add-kerberos-keytabs"
+      [ixUiSearch]="searchableElements.elements.add"
+      (click)="doAdd()"
+    >
+      {{ 'Add' | translate }}
+    </button>
+  </ix-page-header>
+}
 
 <div class="table-container" [ixUiSearch]="searchableElements.elements.kerberosKeytabs">
-  <mat-toolbar *ngIf="inCard" class="table-header">
-    <div class="heading" [routerLink]="['/', 'directoryservice', 'kerberoskeytabs']">
-      <h3>{{ 'Kerberos Keytab' | translate }}</h3>
-      <ix-icon name="open_in_new"></ix-icon>
-    </div>
-    <div class="action">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="add-kerberos-keytabs"
-        (click)="doAdd()"
-      >
-        {{ 'Add' | translate }}
-      </button>
-    </div>
-  </mat-toolbar>
+  @if (inCard) {
+    <mat-toolbar class="table-header">
+      <div class="heading" [routerLink]="['/', 'directoryservice', 'kerberoskeytabs']">
+        <h3>{{ 'Kerberos Keytab' | translate }}</h3>
+        <ix-icon name="open_in_new"></ix-icon>
+      </div>
+      <div class="action">
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          ixTest="add-kerberos-keytabs"
+          (click)="doAdd()"
+        >
+          {{ 'Add' | translate }}
+        </button>
+      </div>
+    </mat-toolbar>
+  }
   <ix-table
     [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
@@ -46,5 +50,7 @@
     >
     </tbody>
   </ix-table>
-  <ix-table-pager *ngIf="paginator" [dataProvider]="dataProvider"></ix-table-pager>
+  @if (paginator) {
+    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  }
 </div>

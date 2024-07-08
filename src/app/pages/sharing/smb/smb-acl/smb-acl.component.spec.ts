@@ -109,26 +109,80 @@ describe('SmbAclComponent', () => {
     expect(title).toHaveText('Share ACL for myshare');
   });
 
-  it('shows user combobox when Who is user', async () => {
-    await entriesList.pressAddButton();
-    const newListItem = await entriesList.getLastListItem();
-    await newListItem.fillForm({
-      Who: 'User',
+  describe('user ace', () => {
+    it('shows user combobox when Who is user', async () => {
+      await entriesList.pressAddButton();
+      const newListItem = await entriesList.getLastListItem();
+      await newListItem.fillForm({
+        Who: 'User',
+      });
+
+      const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
+      expect(userSelect).toExist();
+
+      const entries = spectator.component.form.value.entries;
+      expect(entries[entries.length - 1]).toEqual(
+        expect.not.objectContaining({ user: 0 }),
+      );
     });
 
-    const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
-    expect(userSelect).toExist();
+    it('allows custom values in User combobox', async () => {
+      const newListItem = await entriesList.getLastListItem();
+      await newListItem.fillForm({
+        Who: 'User',
+      });
+
+      const fields = await newListItem.getControlHarnessesDict();
+
+      const userCombobox = fields['User'] as IxComboboxHarness;
+      await userCombobox.writeCustomValue('root');
+
+      const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
+      expect(userSelect).toExist();
+
+      const entries = spectator.component.form.value.entries;
+      expect(entries[entries.length - 1]).toEqual(
+        expect.objectContaining({ user: 0 }),
+      );
+    });
   });
 
-  it('shows group combobox when Who is group', async () => {
-    await entriesList.pressAddButton();
-    const newListItem = await entriesList.getLastListItem();
-    await newListItem.fillForm({
-      Who: 'Group',
+  describe('group ace', () => {
+    it('shows group combobox when Who is group', async () => {
+      await entriesList.pressAddButton();
+      const newListItem = await entriesList.getLastListItem();
+      await newListItem.fillForm({
+        Who: 'Group',
+      });
+
+      const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
+      expect(groupSelect).toExist();
+
+      const entries = spectator.component.form.value.entries;
+      expect(entries[entries.length - 1]).toEqual(
+        expect.not.objectContaining({ group: 1 }),
+      );
     });
 
-    const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
-    expect(groupSelect).toExist();
+    it('allows custom values in Group combobox', async () => {
+      const newListItem = await entriesList.getLastListItem();
+      await newListItem.fillForm({
+        Who: 'Group',
+      });
+
+      const fields = await newListItem.getControlHarnessesDict();
+
+      const groupCombobox = fields['Group'] as IxComboboxHarness;
+      await groupCombobox.writeCustomValue('wheel');
+
+      const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
+      expect(groupSelect).toExist();
+
+      const entries = spectator.component.form.value.entries;
+      expect(entries[entries.length - 1]).toEqual(
+        expect.objectContaining({ group: 1 }),
+      );
+    });
   });
 
   it('loads and shows current acl for a share', async () => {

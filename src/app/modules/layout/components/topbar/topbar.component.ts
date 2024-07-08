@@ -18,6 +18,7 @@ import { toolBarElements } from 'app/modules/layout/components/topbar/topbar.ele
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
@@ -38,7 +39,8 @@ export class TopbarComponent implements OnInit {
   tooltips = helptextTopbar.mat_tooltips;
   protected searchableElements = toolBarElements;
 
-  alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
+  readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
+  readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   constructor(
     public themeService: ThemeService,

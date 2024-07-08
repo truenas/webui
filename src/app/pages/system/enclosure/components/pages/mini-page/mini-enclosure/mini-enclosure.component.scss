@@ -30,20 +30,3 @@
     margin-bottom: 7px;
   }
 }
-
-.status-icon {
-  margin-bottom: 4px;
-  vertical-align: middle;
-
-  &.status-ok {
-    color: var(--green);
-  }
-
-  &.status-empty {
-    color: var(--accent);
-  }
-
-  &.status-error {
-    color: var(--red);
-  }
-}

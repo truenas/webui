@@ -9,31 +9,34 @@
     [label]="'Schedule' | translate"
     [tooltip]="helptext.schedule_tooltip | translate"
   ></ix-checkbox>
-  <ng-container *ngIf="form.value.schedule">
+  @if (form.value.schedule) {
     <ix-scheduler
       formControlName="schedule_picker"
       [label]="'Frequency' | translate"
       [tooltip]="helptext.schedule_picker_tooltip | translate"
     ></ix-scheduler>
-    <ix-select
-      *ngIf="form.value.schedule_picker === CronPresetValue.Hourly"
-      formControlName="schedule_begin"
-      [label]="'Begin' | translate"
-      [options]="timeOptions$"
-      [tooltip]="helptext.schedule_begin_tooltip | translate"
-    ></ix-select>
-    <ix-select
-      *ngIf="form.value.schedule_picker === CronPresetValue.Hourly"
-      formControlName="schedule_end"
-      [label]="'End' | translate"
-      [options]="timeOptions$"
-      [tooltip]="helptext.schedule_end_tooltip | translate"
-    ></ix-select>
-  </ng-container>
-  <ix-checkbox
-    *ngIf="form.value.schedule"
-    formControlName="only_matching_schedule"
-    [label]="'Only Replicate Snapshots Matching Schedule' | translate"
-    [tooltip]="helptext.only_matching_schedule_tooltip | translate"
-  ></ix-checkbox>
+    @if (form.value.schedule_picker === CronPresetValue.Hourly) {
+      <ix-select
+        formControlName="schedule_begin"
+        [label]="'Begin' | translate"
+        [options]="timeOptions$"
+        [tooltip]="helptext.schedule_begin_tooltip | translate"
+      ></ix-select>
+    }
+    @if (form.value.schedule_picker === CronPresetValue.Hourly) {
+      <ix-select
+        formControlName="schedule_end"
+        [label]="'End' | translate"
+        [options]="timeOptions$"
+        [tooltip]="helptext.schedule_end_tooltip | translate"
+      ></ix-select>
+    }
+  }
+  @if (form.value.schedule) {
+    <ix-checkbox
+      formControlName="only_matching_schedule"
+      [label]="'Only Replicate Snapshots Matching Schedule' | translate"
+      [tooltip]="helptext.only_matching_schedule_tooltip | translate"
+    ></ix-checkbox>
+  }
 </ix-fieldset>

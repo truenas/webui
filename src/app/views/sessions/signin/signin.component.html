@@ -10,46 +10,53 @@
     ></mat-progress-bar>
     <mat-card>
       <mat-card-content>
-        <div *ngIf="isConnected$ | async; else disconnected">
-          <div class="logo-wrapper">
-            <img
-              class="logo-bg"
-              alt="Logo image background of stars and sky at night"
-              src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x"
-            >
-            <ix-icon name="ix:logo_truenas_scale_full" class="logo"></ix-icon>
-          </div>
-
-          <div class="card-bottom">
-            <div *ngIf="canLogin$ | async" class="form-container">
-              <ix-signin-form *ngIf="wasAdminSet$ | async; else noAdminSet"></ix-signin-form>
-              <ng-template #noAdminSet>
-                <ix-set-admin-password-form></ix-set-admin-password-form>
-              </ng-template>
+        @if (isConnected$ | async) {
+          <div>
+            <div class="logo-wrapper">
+              <img
+                class="logo-bg"
+                alt="Logo image background of stars and sky at night"
+                src="assets/images/stars-sky-1200w.jpg"
+                srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x"
+              >
+              <ix-icon name="ix:logo_truenas_scale_full" class="logo"></ix-icon>
             </div>
 
-            <ng-container *ngIf="failover$ | async as failover">
-              <ix-failover-status
-                *ngIf="hasFailover$ | async"
-                class="failover-status"
-                [status]="failover.status"
-                [failoverIps]="failover.ips"
-                [disabledReasons]="failover.disabledReasons"
-              ></ix-failover-status>
-            </ng-container>
+            <div class="card-bottom">
+              @if (canLogin$ | async) {
+                <div class="form-container">
+                  @if (wasAdminSet$ | async) {
+                    <ix-signin-form></ix-signin-form>
+                  } @else {
+                    <ix-set-admin-password-form></ix-set-admin-password-form>
+                  }
+                </div>
+              }
 
-            <ix-true-command-status *ngIf="managedByTrueCommand$ | async"></ix-true-command-status>
-            <div class="ix-logo">
-              <img src="assets/images/ix_logo_full.png" alt="iX Systems">
+              @if (failover$ | async; as failover) {
+                @if (hasFailover$ | async) {
+                  <ix-failover-status
+                    class="failover-status"
+                    [status]="failover.status"
+                    [failoverIps]="failover.ips"
+                    [disabledReasons]="failover.disabledReasons"
+                  ></ix-failover-status>
+                }
+              }
+
+              @if (managedByTrueCommand$ | async) {
+                <ix-true-command-status></ix-true-command-status>
+              }
+              <div class="ix-logo">
+                <img src="assets/images/ix_logo_full.png" alt="iX Systems">
+              </div>
             </div>
           </div>
-        </div>
-        <ng-template #disconnected>
+        } @else {
           <ix-disconnected-message
             [hasFailover]="hasFailover$ | async"
           ></ix-disconnected-message>
-        </ng-template>
+        }
       </mat-card-content>
     </mat-card>
   </div>

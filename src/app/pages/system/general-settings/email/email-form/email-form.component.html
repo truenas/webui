@@ -14,7 +14,7 @@
           [options]="sendMethodOptions$"
         ></ix-radio-group>
 
-        <ng-container *ngIf="isSmtp; else gmailOauth">
+        @if (isSmtp) {
           <ix-input
             formControlName="fromemail"
             [label]="'From Email' | translate"
@@ -55,7 +55,7 @@
             [tooltip]="helptext.auth.smtp.tooltip | translate"
           ></ix-checkbox>
 
-          <ng-container *ngIf="hasSmtpAuthentication">
+          @if (hasSmtpAuthentication) {
             <ix-input
               formControlName="user"
               [label]="'Username' | translate"
@@ -69,30 +69,26 @@
               [label]="'Password' | translate"
               [tooltip]="helptext.pass.tooltip | translate"
             ></ix-input>
-          </ng-container>
-        </ng-container>
+          }
+        } @else {
+          <div class="oauth-message">
+            @if (hasOauthAuthorization) {
+              <ix-icon name="check_circle"></ix-icon>
+              {{ 'Gmail credentials have been applied.' | translate }}
+            } @else {
+              <ix-icon name="info"></ix-icon>
+              {{ 'Log in to Gmail to set up Oauth credentials.' | translate }}
+            }
+          </div>
+          <ix-oauth-button
+            testId="login-to-gmail"
+            [oauthType]="oauthType.Gmail"
+            [oauthUrl]="'https://truenas.com/oauth/gmail?origin='"
+            [isLoggedIn]="hasOauthAuthorization"
+            (loggedIn)="onLoggedIn($event)"
+          ></ix-oauth-button>
+      }
       </ix-fieldset>
-
-      <ng-template #gmailOauth>
-        <div class="oauth-message">
-          <ng-container *ngIf="hasOauthAuthorization; else logInToGmail">
-            <ix-icon name="check_circle"></ix-icon>
-            {{ 'Gmail credentials have been applied.' | translate }}
-          </ng-container>
-          <ng-template #logInToGmail>
-            <ix-icon name="info"></ix-icon>
-            {{ 'Log in to Gmail to set up Oauth credentials.' | translate }}
-          </ng-template>
-        </div>
-
-        <ix-oauth-button
-          testId="login-to-gmail"
-          [oauthType]="oauthType.Gmail"
-          [oauthUrl]="'https://truenas.com/oauth/gmail?origin='"
-          [isLoggedIn]="hasOauthAuthorization"
-          (loggedIn)="onLoggedIn($event)"
-        ></ix-oauth-button>
-      </ng-template>
 
       <div class="form-actions">
         <button

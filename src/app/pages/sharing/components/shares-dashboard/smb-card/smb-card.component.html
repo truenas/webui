@@ -50,14 +50,15 @@
     ></tbody>
   </ix-table>
 
-  <a
-    *ngIf="smbShares.length > 4"
-    class="view-all"
-    [ixTest]="['smb-share', 'view-all']"
-    [routerLink]="['/sharing', 'smb']"
-  >
-    <span>
-      {{ 'View All' | translate }}
-    </span>
-  </a>
+  @if (smbShares.length > 4) {
+    <a
+      class="view-all"
+      [ixTest]="['smb-share', 'view-all']"
+      [routerLink]="['/sharing', 'smb']"
+    >
+      <span>
+        {{ 'View All' | translate }}
+      </span>
+    </a>
+  }
 </mat-card>

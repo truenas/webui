@@ -12,7 +12,8 @@ import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { ChartsModule } from 'app/modules/charts/charts.module';
+import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
+import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
@@ -23,7 +24,11 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
+import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
+import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
   WidgetGroupControlsComponent,
@@ -45,6 +50,7 @@ import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widg
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { CpuChartGaugeComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-chart-gauge/cpu-chart-gauge.component';
 import { CpuCoreBarComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-core-bar/cpu-core-bar.component';
+import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
 import { GaugeChartComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/gauge-chart/gauge-chart.component';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
@@ -53,6 +59,7 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
   declarations: [
     DashboardComponent,
     ProductImageComponent,
+    NetworkChartComponent,
     CpuChartGaugeComponent,
     CpuCoreBarComponent,
     WidgetGroupComponent,
@@ -101,15 +108,20 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
       },
     }),
     IxDropGridModule,
-    ChartsModule,
     MatListModule,
     EmptyComponent,
     ImgFallbackModule,
     InterfaceStatusIconComponent,
     UptimePipe,
+    AppCardLogoComponent,
+    AppStatusCellComponent,
+    AppUpdateCellComponent,
     FormatDateTimePipe,
     IxFileSizePipe,
     CopyButtonComponent,
+    MapValuePipe,
+    ViewChartAreaComponent,
+    ViewChartGaugeComponent,
   ],
 })
 export class DashboardModule {

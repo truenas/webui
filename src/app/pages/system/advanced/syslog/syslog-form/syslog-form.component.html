@@ -34,7 +34,7 @@
           [options]="transportOptions$"
         ></ix-select>
 
-        <ng-container *ngIf="isTlsTransport$ | async">
+        @if (isTlsTransport$ | async) {
           <ix-select
             formControlName="syslog_tls_certificate"
             [label]="'Syslog TLS Certificate' | translate"
@@ -48,7 +48,7 @@
             [options]="certificateAuthorityOptions$"
             [required]="true"
           ></ix-select>
-        </ng-container>
+        }
 
         <ix-checkbox
           formControlName="syslog_audit"

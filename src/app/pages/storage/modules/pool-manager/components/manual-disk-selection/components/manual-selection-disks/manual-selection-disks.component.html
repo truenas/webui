@@ -54,21 +54,23 @@
         >
           <ix-icon name="ix:enclosure" [title]="'Enclosure' | translate"></ix-icon>
           <span class="group-name">{{ asEnclosureGroup(group).group }}</span>
-          <ix-icon
-            *ngIf="group.children.length"
-            [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
-          ></ix-icon>
+          @if (group.children.length) {
+            <ix-icon
+              [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
+            ></ix-icon>
+          }
         </div>
 
-        <ng-container
-          *ngIf="isExpanded(group)"
-          treeNodeOutlet
-        ></ng-container>
+        @if (isExpanded(group)) {
+          <ng-container treeNodeOutlet></ng-container>
+        }
       </ix-nested-tree-node>
     </ix-tree-view>
-    <div *ngIf="!dataSource.data.length" class="empty-tree">
-      {{ 'No unused disks' | translate }}
-    </div>
+    @if (!dataSource.data.length) {
+      <div class="empty-tree">
+        {{ 'No unused disks' | translate }}
+      </div>
+    }
   </div>
 </div>
 

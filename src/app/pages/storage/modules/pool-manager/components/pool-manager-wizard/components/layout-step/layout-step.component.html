@@ -2,19 +2,19 @@
   {{ description }}
 </div>
 
-<ix-automated-disk-selection
-  *ngIf="!topologyCategory.hasCustomDiskSelection; else customLayout"
-  class="content-container"
-  [limitLayouts]="limitLayouts"
-  [type]="type"
-  [canChangeLayout]="canChangeLayout"
-  [inventory]="inventory"
-  [isStepActive]="isStepActive"
-></ix-automated-disk-selection>
-
-<ng-template #customLayout>
+@if (!topologyCategory.hasCustomDiskSelection) {
+  <ix-automated-disk-selection
+    class="content-container"
+    [limitLayouts]="limitLayouts"
+    [type]="type"
+    [canChangeLayout]="canChangeLayout"
+    [inventory]="inventory"
+    [isStepActive]="isStepActive"
+  ></ix-automated-disk-selection>
+} @else {
   <ix-custom-layout-applied
     [type]="type"
     [vdevs]="topologyCategory.vdevs"
   ></ix-custom-layout-applied>
-</ng-template>
+}
+

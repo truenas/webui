@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
@@ -34,7 +33,6 @@ import { WebSocketService } from 'app/services/ws.service';
     MatProgressBar,
     MatButton,
     TranslateModule,
-    NgIf,
   ],
 })
 export class ExportButtonComponent<T, M extends ApiJobMethod> {

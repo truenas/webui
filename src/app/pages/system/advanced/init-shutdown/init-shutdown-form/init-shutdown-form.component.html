@@ -18,15 +18,14 @@
           [options]="typeOptions$"
         ></ix-select>
 
-        <ix-input
-          *ngIf="isCommand$ | async; else selectScript"
-          formControlName="command"
-          [label]="'Command' | translate"
-          [required]="true"
-          [tooltip]="tooltips.command | translate"
-        ></ix-input>
-
-        <ng-template #selectScript>
+        @if (isCommand$ | async) {
+          <ix-input
+            formControlName="command"
+            [label]="'Command' | translate"
+            [required]="true"
+            [tooltip]="tooltips.command | translate"
+          ></ix-input>
+        } @else {
           <ix-explorer
             formControlName="script"
             [label]="'Script' | translate"
@@ -34,7 +33,8 @@
             [tooltip]="tooltips.script | translate"
             [nodeProvider]="treeNodeProvider"
           ></ix-explorer>
-        </ng-template>
+        }
+
 
         <ix-select
           formControlName="when"

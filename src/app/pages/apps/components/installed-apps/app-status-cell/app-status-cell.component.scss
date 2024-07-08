@@ -1,11 +1,29 @@
 :host {
-  border: 2px solid transparent;
-  border-radius: 20px;
   box-sizing: border-box;
   display: flex;
-  font-weight: bold;
-  gap: 6px;
-  padding: 3px 18px;
+
+  &.has-icon {
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start;
+
+    ix-icon {
+      display: inline-flex;
+      line-height: 24px;
+    }
+
+    span {
+      color: var(--fg2);
+    }
+  }
+
+  &.has-cell {
+    border: 2px solid transparent;
+    border-radius: 20px;
+    font-weight: bold;
+    gap: 6px;
+    padding: 3px 18px;
+  }
 
   &.started {
     border-color: var(--green);

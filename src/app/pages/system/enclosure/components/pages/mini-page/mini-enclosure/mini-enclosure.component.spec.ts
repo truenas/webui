@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input, model,
 } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { EnclosureElementType, EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import {
   DashboardEnclosure,
@@ -14,6 +15,9 @@ import {
 import {
   MiniEnclosureComponent,
 } from 'app/pages/system/enclosure/components/pages/mini-page/mini-enclosure/mini-enclosure.component';
+import {
+  MiniSlotStatusComponent,
+} from 'app/pages/system/enclosure/components/pages/mini-page/mini-enclosure/mini-slot-status/mini-slot-status.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 // TODO: Not properly supported in ng-mocks yet https://github.com/help-me-mom/ng-mocks/issues/8634
@@ -55,6 +59,7 @@ describe('MiniEnclosureComponent', () => {
     component: MiniEnclosureComponent,
     declarations: [
       EnclosureSideStubComponent,
+      MockComponent(MiniSlotStatusComponent),
     ],
     providers: [
       mockProvider(EnclosureStore, {
@@ -84,7 +89,11 @@ describe('MiniEnclosureComponent', () => {
     expect(enclosureComponent.selectedSlot()).toBeNull();
   });
 
-  // TODO: Figure out disk status and show add a test case
+  it('shows disk statuses', () => {
+    const slotStatuses = spectator.queryAll(MiniSlotStatusComponent);
+    expect(slotStatuses).toHaveLength(3);
+    expect(slotStatuses[0].slot).toBe(enclosure.elements[EnclosureElementType.ArrayDeviceSlot][1]);
+  });
 
   it('selects a slot when it is clicked on in enclosure svg', () => {
     const enclosureComponent = spectator.query(EnclosureSideStubComponent);

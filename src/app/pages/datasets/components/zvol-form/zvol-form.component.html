@@ -48,12 +48,13 @@
           [options]="deduplicationOptions$"
           [required]="true"
         ></ix-select>
-        <ix-checkbox
-          *ngIf="form.controls.sparse.enabled"
-          formControlName="sparse"
-          [label]="helptext.zvol_sparse_placeholder | translate"
-          [tooltip]="helptext.zvol_sparse_tooltip | translate"
-        ></ix-checkbox>
+        @if (form.controls.sparse.enabled) {
+          <ix-checkbox
+            formControlName="sparse"
+            [label]="helptext.zvol_sparse_placeholder | translate"
+            [tooltip]="helptext.zvol_sparse_tooltip | translate"
+          ></ix-checkbox>
+        }
         <ix-select
           formControlName="readonly"
           [label]="helptext.zvol_readonly_placeholder | translate"
@@ -61,14 +62,15 @@
           [options]="readonlyOptions$"
           [required]="true"
         ></ix-select>
-        <ix-select
-          *ngIf="form.controls.volblocksize.enabled"
-          formControlName="volblocksize"
-          [label]="helptext.zvol_volblocksize_placeholder | translate"
-          [tooltip]="helptext.zvol_volblocksize_tooltip | translate"
-          [options]="volblocksizeOptions$"
-          [required]="true"
-        ></ix-select>
+        @if (form.controls.volblocksize.enabled) {
+          <ix-select
+            formControlName="volblocksize"
+            [label]="helptext.zvol_volblocksize_placeholder | translate"
+            [tooltip]="helptext.zvol_volblocksize_tooltip | translate"
+            [options]="volblocksizeOptions$"
+            [required]="true"
+          ></ix-select>
+        }
         <ix-select
           formControlName="snapdev"
           [label]="'Snapdev' | translate"
@@ -77,70 +79,80 @@
           [required]="true"
         ></ix-select>
       </ix-fieldset>
-      <ix-fieldset *ngIf="isNew" [title]="helptext.dataset_form_encryption.fieldset_title | translate">
-        <ix-checkbox
-          formControlName="inherit_encryption"
-          [label]="inheritEncryptPlaceholder | translate"
-          [tooltip]="helptext.dataset_form_encryption.inherit_checkbox_tooltip | translate"
-        ></ix-checkbox>
-        <ix-checkbox
-          *ngIf="!form.controls.inherit_encryption.value"
-          formControlName="encryption"
-          [label]="helptext.dataset_form_encryption.encryption_checkbox_placeholder | translate"
-          [tooltip]="helptext.dataset_form_encryption.encryption_checkbox_tooltip | translate"
-        ></ix-checkbox>
-        <ix-select
-          *ngIf="form.controls.encryption_type.enabled"
-          formControlName="encryption_type"
-          [label]="helptext.dataset_form_encryption.encryption_type_placeholder | translate"
-          [tooltip]="helptext.dataset_form_encryption.encryption_type_tooltip | translate"
-          [options]="encryptionTypeOptions$"
-          [required]="true"
-        ></ix-select>
-        <ix-checkbox
-          *ngIf="form.controls.generate_key.enabled"
-          formControlName="generate_key"
-          [label]="helptext.dataset_form_encryption.generate_key_checkbox_placeholder | translate"
-          [tooltip]="helptext.dataset_form_encryption.generate_key_checkbox_tooltip | translate"
-        ></ix-checkbox>
-        <ix-textarea
-          *ngIf="form.controls.key.enabled"
-          formControlName="key"
-          [label]="helptext.dataset_form_encryption.key_placeholder | translate"
-          [tooltip]="helptext.dataset_form_encryption.key_tooltip | translate"
-          [required]="true"
-        ></ix-textarea>
-        <ix-input
-          *ngIf="form.controls.passphrase.enabled"
-          formControlName="passphrase"
-          type="password"
-          [label]="helptext.dataset_form_encryption.passphrase_placeholder | translate"
-          [tooltip]="helptext.dataset_form_encryption.passphrase_tooltip | translate"
-          [required]="true"
-        ></ix-input>
-        <ix-input
-          *ngIf="form.controls.confirm_passphrase.enabled"
-          formControlName="confirm_passphrase"
-          type="password"
-          [label]="helptext.dataset_form_encryption.confirm_passphrase_placeholder | translate"
-          [required]="true"
-        ></ix-input>
-        <ix-input
-          *ngIf="form.controls.pbkdf2iters.enabled"
-          formControlName="pbkdf2iters"
-          [label]="helptext.dataset_form_encryption.pbkdf2iters_placeholder | translate"
-          [tooltip]="helptext.dataset_form_encryption.pbkdf2iters_tooltip | translate"
-          [required]="true"
-        ></ix-input>
-        <ix-select
-          *ngIf="form.controls.algorithm.enabled"
-          formControlName="algorithm"
-          [label]="helptext.dataset_form_encryption.algorithm_placeholder | translate"
-          [tooltip]="helptext.dataset_form_encryption.algorithm_tooltip | translate"
-          [options]="algorithmOptions$"
-          [required]="true"
-        ></ix-select>
-      </ix-fieldset>
+      @if (isNew) {
+        <ix-fieldset [title]="helptext.dataset_form_encryption.fieldset_title | translate">
+          <ix-checkbox
+            formControlName="inherit_encryption"
+            [label]="inheritEncryptPlaceholder | translate"
+            [tooltip]="helptext.dataset_form_encryption.inherit_checkbox_tooltip | translate"
+          ></ix-checkbox>
+          @if (!form.controls.inherit_encryption.value) {
+            <ix-checkbox
+              formControlName="encryption"
+              [label]="helptext.dataset_form_encryption.encryption_checkbox_placeholder | translate"
+              [tooltip]="helptext.dataset_form_encryption.encryption_checkbox_tooltip | translate"
+            ></ix-checkbox>
+          }
+          @if (form.controls.encryption_type.enabled) {
+            <ix-select
+              formControlName="encryption_type"
+              [label]="helptext.dataset_form_encryption.encryption_type_placeholder | translate"
+              [tooltip]="helptext.dataset_form_encryption.encryption_type_tooltip | translate"
+              [options]="encryptionTypeOptions$"
+              [required]="true"
+            ></ix-select>
+          }
+          @if (form.controls.generate_key.enabled) {
+            <ix-checkbox
+              formControlName="generate_key"
+              [label]="helptext.dataset_form_encryption.generate_key_checkbox_placeholder | translate"
+              [tooltip]="helptext.dataset_form_encryption.generate_key_checkbox_tooltip | translate"
+            ></ix-checkbox>
+          }
+          @if (form.controls.key.enabled) {
+            <ix-textarea
+              formControlName="key"
+              [label]="helptext.dataset_form_encryption.key_placeholder | translate"
+              [tooltip]="helptext.dataset_form_encryption.key_tooltip | translate"
+              [required]="true"
+            ></ix-textarea>
+          }
+          @if (form.controls.passphrase.enabled) {
+            <ix-input
+              formControlName="passphrase"
+              type="password"
+              [label]="helptext.dataset_form_encryption.passphrase_placeholder | translate"
+              [tooltip]="helptext.dataset_form_encryption.passphrase_tooltip | translate"
+              [required]="true"
+            ></ix-input>
+          }
+          @if (form.controls.confirm_passphrase.enabled) {
+            <ix-input
+              formControlName="confirm_passphrase"
+              type="password"
+              [label]="helptext.dataset_form_encryption.confirm_passphrase_placeholder | translate"
+              [required]="true"
+            ></ix-input>
+          }
+          @if (form.controls.pbkdf2iters.enabled) {
+            <ix-input
+              formControlName="pbkdf2iters"
+              [label]="helptext.dataset_form_encryption.pbkdf2iters_placeholder | translate"
+              [tooltip]="helptext.dataset_form_encryption.pbkdf2iters_tooltip | translate"
+              [required]="true"
+            ></ix-input>
+          }
+          @if (form.controls.algorithm.enabled) {
+            <ix-select
+              formControlName="algorithm"
+              [label]="helptext.dataset_form_encryption.algorithm_placeholder | translate"
+              [tooltip]="helptext.dataset_form_encryption.algorithm_tooltip | translate"
+              [options]="algorithmOptions$"
+              [required]="true"
+            ></ix-select>
+          }
+        </ix-fieldset>
+      }
 
       <ix-form-actions>
         <button

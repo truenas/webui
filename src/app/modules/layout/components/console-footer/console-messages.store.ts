@@ -13,7 +13,9 @@ export const initialConsoleMessagesState: ConsoleMessagesState = {
 };
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> implements OnDestroy {
   lines$ = this.select((state) => state.lines.join('\n'));
   lastThreeLogLines$ = this.select((state) => state.lines.slice(-3).join('\n'));
