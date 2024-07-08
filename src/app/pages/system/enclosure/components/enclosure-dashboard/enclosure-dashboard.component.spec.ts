@@ -4,6 +4,7 @@ import {
   mockProvider,
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import {
   EnclosureDashboardComponent,
@@ -27,9 +28,9 @@ describe('EnclosureDashboardComponent', () => {
       }),
     ],
     providers: [
-      // mockWebSocket([
-      //   mockCall('jbof.licensed', 5),
-      // ]),
+      mockWebSocket([
+        mockCall('jbof.licensed', 5),
+      ]),
       mockProvider(MatDialog),
       // mockAuth(),
     ],
