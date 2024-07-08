@@ -209,9 +209,14 @@ describe('ErrorHandlerService', () => {
         error: 'Odd error',
       });
 
-      expect(console.error).toHaveBeenCalledWith('Unknown error code', 510);
+      expect(console.error).toHaveBeenCalledWith({
+        ...httpError,
+        status: 510,
+        statusText: 'Bad Request',
+        error: 'Odd error',
+      });
 
-      expect(errorReport).toEqual({ message: 'Fatal error! Check logs.', title: 'Error (510)' });
+      expect(errorReport).toEqual({ message: 'This error occurred', title: 'Error (510)' });
     });
   });
 
