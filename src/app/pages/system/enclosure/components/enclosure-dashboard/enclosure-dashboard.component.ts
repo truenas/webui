@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { catchError, of } from 'rxjs';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -16,7 +17,11 @@ import { WebSocketService } from 'app/services/ws.service';
   ],
 })
 export class EnclosureDashboardComponent {
-  readonly isJbofLicensed$ = this.ws.call('jbof.licensed');
+  readonly isJbofLicensed$ = this.ws.call('jbof.licensed').pipe(catchError((error) => {
+    // eslint-disable-next-line no-console
+    console.log('got error', error);
+    return of(error);
+  }));
 
   readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
 
