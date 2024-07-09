@@ -1,0 +1,22 @@
+.line {
+  align-items: center;
+  display: flex;
+  margin-bottom: 2px;
+  min-width: 55px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .disk-circle {
+    border-radius: 50%;
+    display: inline-block;
+    height: 10px;
+    margin-right: 5px;
+    width: 10px;
+  }
+
+  .label {
+    display: inline-block;
+  }
+}

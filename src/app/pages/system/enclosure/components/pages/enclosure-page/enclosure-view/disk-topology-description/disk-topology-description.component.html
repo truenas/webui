@@ -1,23 +1,21 @@
-<div class="container">
-  @if (selectedSlot().dev) {
-    <h1>{{ selectedSlot().dev }}</h1>
-  }
-  @if (selectedSlot().pool_info) {
-    <span>
-      <span class="title">{{ 'Topology' | translate }}:</span>
-      <span class="value">{{ selectedSlot().pool_info.vdev_name }}</span>
+@if (selectedSlot().dev) {
+  <h1>{{ selectedSlot().dev }}</h1>
+}
+@if (selectedSlot().pool_info) {
+  <div>
+    <span class="title">{{ 'Topology' | translate }}:</span>
+    <span class="value">{{ selectedSlot().pool_info.vdev_name }}</span>
+  </div>
+}
+@if (selectedSlot().pool_info) {
+  <div>
+    <span class="title">{{ 'Category' | translate }}:</span>
+    <span class="value">
+      {{ selectedSlot().pool_info.vdev_type | mapValue: vdevTypeLabels | translate }}
     </span>
-  }
-  @if (selectedSlot().pool_info) {
-    <span>
-      <span class="title">{{ 'Category' | translate }}:</span>
-      <span class="value">
-        {{ selectedSlot().pool_info.vdev_type | mapValue: vdevTypeLabels | translate }}
-      </span>
-    </span>
-  }
-  <span>
-    <span class="title">{{ 'Slot' | translate }}:</span>
-    <span class="value">{{ selectedSlot().drive_bay_number }}</span>
-  </span>
+  </div>
+}
+<div>
+  <span class="title">{{ 'Slot' | translate }}:</span>
+  <span class="value">{{ selectedSlot().drive_bay_number }}</span>
 </div>
