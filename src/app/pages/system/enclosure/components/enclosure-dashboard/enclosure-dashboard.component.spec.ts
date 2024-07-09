@@ -5,12 +5,12 @@ import {
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import {
   EnclosureDashboardComponent,
 } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('EnclosureDashboardComponent', () => {
   let spectator: SpectatorRouting<EnclosureDashboardComponent>;
@@ -29,10 +29,9 @@ describe('EnclosureDashboardComponent', () => {
       }),
     ],
     providers: [
-      WebSocketService,
-      // mockWebSocket([
-      //   mockCall('jbof.licensed', 5),
-      // ]),
+      mockWebSocket([
+        mockCall('jbof.licensed', 5),
+      ]),
       mockProvider(MatDialog),
       mockAuth(),
     ],
