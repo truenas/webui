@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnDestroy, computed,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
+import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
+import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
+import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 
 @Component({
   selector: 'ix-mini-drive-temperatures',
@@ -6,6 +13,33 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './mini-drive-temperatures.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MiniDriveTemperaturesComponent {
+export class MiniDriveTemperaturesComponent implements OnDestroy {
+  protected temperature = toSignal(this.diskTemperatureService.temperature$);
 
+  readonly slots = computed(() => {
+    return getSlotsOfSide(this.store.selectedEnclosure(), EnclosureSide.Front);
+  });
+
+  readonly disks = computed(() => {
+    return this.slots().map((slot) => {
+      const value = this.temperature()?.values?.[slot.dev] || null;
+      const symbolText = `${this.temperature()?.symbolText}C`;
+      return {
+        dev: slot.dev,
+        temperature: value !== null ? `${value} ${symbolText}` : undefined,
+      };
+    });
+  });
+
+  constructor(
+    private store: EnclosureStore,
+    private diskTemperatureService: DiskTemperatureService,
+  ) {
+    this.diskTemperatureService.listenForTemperatureUpdates();
+    this.diskTemperatureService.diskTemperaturesSubscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.diskTemperatureService.diskTemperaturesUnsubscribe();
+  }
 }

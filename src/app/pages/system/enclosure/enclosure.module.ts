@@ -20,6 +20,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import {
   EnclosureHeaderComponent,
@@ -109,6 +110,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     NgxSkeletonLoaderModule,
     AppLoaderModule,
     DiskIconComponent,
+    TooltipComponent,
   ],
   declarations: [
     EnclosureDashboardComponent,
