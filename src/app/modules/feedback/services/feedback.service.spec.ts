@@ -94,20 +94,12 @@ describe('FeedbackService', () => {
     fileUploadService = spectator.inject(UploadService);
   });
 
-  describe('getHostId', () => {
-    it('return system host id from the store', async () => {
-      expect(await lastValueFrom(spectator.service.getHostId())).toBe('testHostId');
-    });
-  });
-
   describe('addDebugInfoToMessage', () => {
-    it('appends host ID and sentry session id to the error message', async () => {
+    it('appends sentry session id to the error message', async () => {
       const message = 'test message';
       const messageWithDebug = await lastValueFrom(spectator.service.addDebugInfoToMessage(message));
 
       expect(messageWithDebug).toBe('test message\n'
-        + '\n'
-        + 'Host ID: testHostId\n'
         + '\n'
         + 'Session ID: testSessionId');
     });
@@ -135,7 +127,7 @@ describe('FeedbackService', () => {
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Bug, data));
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: true,
-        body: 'Help me\n\nHost ID: testHostId\n\nSession ID: testSessionId',
+        body: 'Help me\n\nSession ID: testSessionId',
         title: 'Cannot shutdown',
         token: 'test-token',
         type: TicketType.Bug,
@@ -158,7 +150,7 @@ describe('FeedbackService', () => {
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Bug, data));
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: true,
-        body: 'Help me\n\nHost ID: testHostId\n\nSession ID: testSessionId',
+        body: 'Help me\n\nSession ID: testSessionId',
         title: 'Cannot shutdown',
         token: 'test-token',
         type: TicketType.Bug,
@@ -190,7 +182,7 @@ describe('FeedbackService', () => {
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Suggestion, data));
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: false,
-        body: 'test msg\n\nHost ID: testHostId\n\nSession ID: testSessionId',
+        body: 'test msg\n\nSession ID: testSessionId',
         title: 'test title',
         token: 'test-token',
         type: TicketType.Suggestion,
@@ -256,7 +248,7 @@ describe('FeedbackService', () => {
 
       const response = await lastValueFrom(spectator.service.createTicketLicensed(data));
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('support.new_ticket', [{
-        body: 'New request\n\nHost ID: testHostId\n\nSession ID: testSessionId',
+        body: 'New request\n\nSession ID: testSessionId',
         attach_debug: true,
         category: TicketCategory.Performance,
         cc: ['marcus@gmail.com'],

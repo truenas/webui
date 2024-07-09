@@ -32,7 +32,7 @@ import { UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
-import { selectSystemHostId, selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 type ReviewData = FileReviewComponent['form']['value'];
 type TicketData = FileTicketComponent['form']['value'];
@@ -57,10 +57,6 @@ export class FeedbackService {
     private dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
   ) {}
-
-  getHostId(): Observable<string> {
-    return this.store$.select(selectSystemHostId).pipe(filter(Boolean), take(1));
-  }
 
   createReview(data: ReviewData): Observable<unknown> {
     return this.prepareReview(data).pipe(
@@ -165,15 +161,11 @@ export class FeedbackService {
   }
 
   addDebugInfoToMessage(message: string): Observable<string> {
-    return combineLatest([
-      this.getHostId(),
-      this.sentryService.sessionId$,
-    ]).pipe(
+    return this.sentryService.sessionId$.pipe(
       take(1),
-      map(([hostId, sessionId]) => {
-        const hostText = `Host ID: ${hostId}`;
+      map((sessionId) => {
         const sessionText = `Session ID: ${sessionId}`;
-        return [message, hostText, sessionText].join('\n\n');
+        return [message, sessionText].join('\n\n');
       }),
     );
   }
