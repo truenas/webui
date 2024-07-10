@@ -27,7 +27,7 @@
     [value]="netmask"
     (selectionChange)="onNetmaskChange($event)"
   >
-    @for (option of netmaskOptions; track option) {
+    @for (option of netmaskOptions; track option.label) {
       <mat-option [value]="option.value" [ixTest]="['netmask', option.label]">
         {{ option.label | translate }}
       </mat-option>

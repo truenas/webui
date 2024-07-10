@@ -55,7 +55,7 @@
             --
           </mat-option>
         }
-        @for (option of opts; track option) {
+        @for (option of opts; track option.label) {
           <mat-option
             #ixOption
             matTooltipPosition="right"
