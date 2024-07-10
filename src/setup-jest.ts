@@ -30,7 +30,7 @@ import {
 import failOnConsole from 'jest-fail-on-console';
 import { MockProvider } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -41,6 +41,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 failOnConsole();
 
@@ -113,6 +114,32 @@ defineGlobalsInjections({
     mockProvider(ErrorHandlerService, {
       catchError: () => (source$: Observable<unknown>) => source$,
     }),
+    {
+      provide: WebSocketService,
+      useClass: class {
+        call(): Observable<unknown> {
+          return throwError(() => new Error('WebsocketService injection not provided'));
+        }
+        job(): Observable<unknown> {
+          return throwError(() => new Error('WebsocketService injection not provided'));
+        }
+        callAndSubscribe(): Observable<unknown> {
+          return throwError(() => new Error('WebsocketService injection not provided'));
+        }
+        startJob(): Observable<unknown> {
+          return throwError(() => new Error('WebsocketService injection not provided'));
+        }
+        subscribe(): Observable<unknown> {
+          return throwError(() => new Error('WebsocketService injection not provided'));
+        }
+        subscribeToLogs(): Observable<unknown> {
+          return throwError(() => new Error('WebsocketService injection not provided'));
+        }
+        clearSubscriptions(): Observable<unknown> {
+          return throwError(() => new Error('WebsocketService injection not provided'));
+        }
+      },
+    },
   ],
 });
 
