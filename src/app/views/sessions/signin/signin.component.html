@@ -11,6 +11,9 @@
     <mat-card>
       <mat-card-content>
         @if (isConnected$ | async) {
+          @if (loginBanner()) {
+            <h1>{{ loginBanner() }}</h1>
+          }
           <div>
             <div class="logo-wrapper">
               <img

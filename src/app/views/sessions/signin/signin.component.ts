@@ -1,6 +1,7 @@
 import {
   Component, OnInit, ChangeDetectionStrategy,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -24,6 +25,7 @@ export class SigninComponent implements OnInit {
   readonly hasLoadingIndicator$ = combineLatest([this.signinStore.isLoading$, this.isConnected$]).pipe(
     map(([isLoading, isConnected]) => isLoading || !isConnected),
   );
+  readonly loginBanner = toSignal(this.signinStore.loginBanner$);
 
   constructor(
     private wsManager: WebSocketConnectionService,

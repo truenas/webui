@@ -19,6 +19,11 @@
             [label]="'Allow Directory Service users to access WebUI' | translate"
           ></ix-checkbox>
         }
+        <ix-textarea
+          formControlName="login_banner"
+          [label]="'Login Banner' | translate"
+          [tooltip]="'When set, the following text will be shown prior to showing login page to the user' | translate"
+        ></ix-textarea>
       </ix-fieldset>
 
       <ix-form-actions>

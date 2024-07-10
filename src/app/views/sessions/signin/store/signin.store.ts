@@ -31,6 +31,7 @@ interface SigninState {
     ips?: string[];
     disabledReasons?: FailoverDisabledReason[];
   };
+  loginBanner: string;
 }
 
 const initialState: SigninState = {
@@ -38,11 +39,13 @@ const initialState: SigninState = {
   managedByTrueCommand: false,
   wasAdminSet: true,
   failover: null,
+  loginBanner: null,
 };
 
 @UntilDestroy()
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
+  loginBanner$ = this.select((state) => state.loginBanner);
   managedByTrueCommand$ = this.select((state) => state.managedByTrueCommand);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   failover$ = this.select((state) => state.failover);
@@ -82,6 +85,7 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => this.setLoadingState(true)),
+    switchMap(() => this.checkIfLoginBanner()),
     switchMap(() => {
       return forkJoin([
         this.checkIfAdminPasswordSet(),
@@ -175,6 +179,12 @@ export class SigninStore extends ComponentStore<SigninState> {
     }
 
     return '/dashboard';
+  }
+
+  private checkIfLoginBanner(): Observable<string> {
+    return this.ws.call('system.advanced.login_banner').pipe(
+      tap((loginBanner) => this.patchState({ loginBanner })),
+    );
   }
 
   private checkIfManagedByTrueCommand(): Observable<boolean> {
