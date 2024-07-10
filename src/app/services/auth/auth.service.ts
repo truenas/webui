@@ -47,7 +47,7 @@ export class AuthService {
    * time of a token generated with auth.generate_token. The 10 seconds
    * difference is to allow for delays in request send/receive
    */
-  readonly tokenRegenerationTimeMillis = 290 * 1000;
+  private readonly tokenRegenerationTimeMillis = 290 * 1000;
 
   private latestTokenGenerated$ = new ReplaySubject<string>(1);
   get authToken$(): Observable<string> {
@@ -225,7 +225,7 @@ export class AuthService {
 
   // TODO: See if we can move this somewhere, like in wsManager.
   // TODO: Rewrite tests not to rely on mocking this private method.
-  makeRequest<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
+  private makeRequest<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
     const uuid = UUID.UUID();
     const payload = {
       method,
