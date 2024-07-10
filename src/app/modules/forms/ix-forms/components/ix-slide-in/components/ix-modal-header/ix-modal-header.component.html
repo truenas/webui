@@ -1,10 +1,12 @@
 <div class="ix-slidein-title-bar">
   <h3 class="ix-formtitle">
     {{ title() | translate }}
-    <ix-readonly-badge *ngIf="requiredRoles()?.length && !(hasRequiredRoles() | async)"></ix-readonly-badge>
+    @if (requiredRoles()?.length && !(hasRequiredRoles() | async)) {
+      <ix-readonly-badge></ix-readonly-badge>
+    }
   </h3>
 
-  <ng-container *ngIf="!disableClose()">
+  @if (!disableClose()) {
     <ix-icon
       tabindex="0"
       name="cancel"
@@ -14,7 +16,9 @@
       (click)="close()"
       (keydown.enter)="close()"
     ></ix-icon>
-  </ng-container>
+  }
 </div>
 
-<mat-progress-bar *ngIf="loading()" mode="indeterminate"></mat-progress-bar>
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}

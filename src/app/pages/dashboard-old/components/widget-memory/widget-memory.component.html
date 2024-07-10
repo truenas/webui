@@ -20,7 +20,9 @@
             <h3 class="mat-card-title-text">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
-                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  @if (showReorderHandle) {
+                    <span class="grip"></span>
+                  }
                   <span>{{ 'Memory' | translate }}</span>
                 </div>
               </ix-drag-handle>
@@ -42,40 +44,57 @@
         </ix-drag-handle>
 
         <div *appLet="isMobile$ | async as isMobile" class="bar-chart-wrapper">
-          <div *ngIf="!memData" class="spinner-wrapper">
-            <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
-          </div>
+          @if (!memData) {
+            <div class="spinner-wrapper">
+              <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
+            </div>
+          }
 
           <div class="primary-stat-wrapper">
             <h1 class="memory-used">
-              <span *ngIf="memData">
-                <span>{{ memData.max }}</span>
-                <span class="memory-used-units">GiB</span>
-              </span>
+              @if (memData) {
+                <span>
+                  <span>{{ memData.max }}</span>
+                  <span class="memory-used-units">GiB</span>
+                </span>
+              }
             </h1>
             <div class="memory-used-caption">
-              <span *ngIf="memData">
-                {{ 'total available' | translate }}
-                <span *ngIf="ecc$ | async">(ECC)</span>
-              </span>
+              @if (memData) {
+                <span>
+                  {{ 'total available' | translate }}
+                  @if (ecc$ | async) {
+                    <span>(ECC)</span>
+                  }
+                </span>
+              }
             </div>
 
             <!-- Desktop Legend -->
-            <div *ngIf="!isMobile" class="memory-legend">
-              <div *ngIf="memData; else noLegend" class="memory-legend-values">
-                <div
-                  *ngFor="let legendItem of memData.data; let i = index"
-                  class="legend-item"
-                >
-                  <div
-                    class="legend-swatch"
-                    [style.background-color]="trustedSecurity(colorPattern[i])"
-                  ></div>
-                  <span class="label">{{ legendItem[0] }}:</span>
-                  {{ legendItem[1] }} GiB
-                </div>
+            @if (!isMobile) {
+              <div class="memory-legend">
+                @if (memData) {
+                  <div class="memory-legend-values">
+                    @for (legendItem of memData.data; track legendItem; let i = $index) {
+                      <div class="legend-item">
+                        <div
+                          class="legend-swatch"
+                          [style.background-color]="trustedSecurity(colorPattern[i])"
+                        ></div>
+                        <span class="label">{{ legendItem[0] }}:</span>
+                        {{ legendItem[1] }} GiB
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="no-memory-legend-values">
+                    <div class="legend-item chart-label">
+                      <span class="label"></span>
+                    </div>
+                  </div>
+                }
               </div>
-            </div>
+            }
           </div>
 
           <!-- Chart -->
@@ -84,34 +103,36 @@
           </div>
 
           <!-- Mobile Legend -->
-          <div *ngIf="isMobile" class="memory-legend">
-            <div class="list-subheader">
-              <span>{{ 'Legend' | translate }}</span>
+          @if (isMobile) {
+            <div class="memory-legend">
+              <div class="list-subheader">
+                <span>{{ 'Legend' | translate }}</span>
+              </div>
+              @if (memData) {
+                <mat-list>
+                  @for (listItem of memData.data; track listItem; let i = $index) {
+                    <mat-list-item class="legend-item">
+                      <div
+                        class="legend-swatch"
+                        [style.background-color]="trustedSecurity(colorPattern[i])"
+                      ></div>
+                      <span class="label">{{ listItem[0] }}:</span>
+                      <span class="value">{{ listItem[1] }} GiB</span>
+                    </mat-list-item>
+                  }
+                </mat-list>
+              } @else {
+                <div class="no-memory-legend-values">
+                  <div class="legend-item chart-label">
+                    <span class="label"></span>
+                  </div>
+                </div>
+              }
             </div>
-            <mat-list *ngIf="memData; else noLegend">
-              <mat-list-item
-                *ngFor="let listItem of memData.data; let i = index"
-                class="legend-item"
-              >
-                <div
-                  class="legend-swatch"
-                  [style.background-color]="trustedSecurity(colorPattern[i])"
-                ></div>
-                <span class="label">{{ listItem[0] }}:</span>
-                <span class="value">{{ listItem[1] }} GiB</span>
-              </mat-list-item>
-            </mat-list>
-          </div>
+          }
         </div>
       </mat-card-content>
     </mat-card>
   </div>
 </div>
 
-<ng-template #noLegend>
-  <div class="no-memory-legend-values">
-    <div class="legend-item chart-label">
-      <span class="label"></span>
-    </div>
-  </div>
-</ng-template>

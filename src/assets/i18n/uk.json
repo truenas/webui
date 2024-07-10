@@ -5126,7 +5126,6 @@
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "{n, plural, one {# GPU} other {# GPU}} ізольовано",
   "{n, plural, one {# core} other {# cores}}": "{n, plural, one {# core} other {# cores}}",
   "{n, plural, one {# thread} other {# threads}}": "{n, plural, one {# ядро} other {# ядер}}",
-  "{n}": "{n}",
   "{n} (applies to descendants)": "{n} (стосується нащадків)",
   "{n} RPM": "{n} rpm",
   "{n} from {dataset}": "{n} з {dataset}",

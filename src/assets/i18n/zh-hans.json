@@ -5128,7 +5128,6 @@
   "{key} Key": "{key} 键",
   "{n, plural, =0 {No Errors} one {# Error} other {# Errors}}": "{n, plural, =0 {No Errors} 1 {# Error} other {# Errors}}",
   "{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured": "{n, plural, =0 {No Tasks} 1 {# Task} other {# Tasks}} 配置",
-  "{n}": "{n}",
   "{n} (applies to descendants)": "{n} (适用于子集)",
   "{n} RPM": "{n} 转速",
   "{n} from {dataset}": "{n} 来自 {dataset}",

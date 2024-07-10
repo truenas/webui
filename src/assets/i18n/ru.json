@@ -3269,7 +3269,6 @@
   "{name} Devices": "",
   "{name} Sessions": "",
   "{name} and {n, plural, one {# other pool} other {# other pools}} are not healthy.": "",
-  "{n}": "",
   "{n} RPM": "",
   "{rate} RPM": "",
   "{seconds, plural, =1 {# second} other {# seconds}}": "",

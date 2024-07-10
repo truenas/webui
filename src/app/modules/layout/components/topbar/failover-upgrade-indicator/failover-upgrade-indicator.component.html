@@ -1,4 +1,4 @@
-<ng-container *ngIf="isPendingUpgrade$ | async">
+@if (isPendingUpgrade$ | async) {
   <button
     *ixRequiresRoles="requiredRoles"
     mat-icon-button
@@ -10,4 +10,4 @@
   >
     <ix-icon class="movement" name="update"></ix-icon>
   </button>
-</ng-container>
+}

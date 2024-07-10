@@ -3030,7 +3030,6 @@
   "{n, plural, one {Pool in Enclosure} other {Pools in Enclosure}}": "",
   "{n, plural, one {SAS Expander} other {SAS Expanders}}": "",
   "{name} and {n, plural, one {# other pool} other {# other pools}} are not healthy.": "",
-  "{n}": "",
   "{n} RPM": "",
   "{rate} RPM": "",
   "{tasks, plural, =1 {# received task} other {# received tasks}} this week": "",

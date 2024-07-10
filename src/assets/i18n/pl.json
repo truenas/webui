@@ -4990,7 +4990,6 @@
   "{name} Devices": "",
   "{name} Sessions": "",
   "{name} and {n, plural, one {# other pool} other {# other pools}} are not healthy.": "",
-  "{n}": "",
   "{n} (applies to descendants)": "",
   "{n} RPM": "",
   "{n} from {dataset}": "",
