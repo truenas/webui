@@ -133,8 +133,8 @@ export class NavigationService {
         },
         { name: T('Alert Settings'), state: 'alert-settings' },
         { name: T('Audit'), state: 'audit' },
-        { name: T('Enclosure'), state: 'oldviewenclosure', isVisible$: this.hasEnclosure$ },
-        { name: T('New Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
+        { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
+        { name: T('Enclosure (old)'), state: 'oldviewenclosure', isVisible$: this.hasEnclosure$ },
       ],
     },
   ];
