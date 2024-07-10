@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy, Component, OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,7 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
     EnclosureStore,
   ],
 })
-export class EnclosureDashboardComponent {
+export class EnclosureDashboardComponent implements OnDestroy {
   readonly isJbofLicensed$ = this.ws.call('jbof.licensed');
 
   readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
@@ -26,6 +26,7 @@ export class EnclosureDashboardComponent {
     private ws: WebSocketService,
   ) {
     this.enclosureStore.initiate();
+    this.enclosureStore.addListenerForDiskUpdates();
 
     this.route.paramMap
       .pipe(untilDestroyed(this))
@@ -37,5 +38,9 @@ export class EnclosureDashboardComponent {
 
         this.enclosureStore.selectEnclosure(enclosure);
       });
+  }
+
+  ngOnDestroy(): void {
+    this.enclosureStore.removeListenerForDiskUpdates();
   }
 }

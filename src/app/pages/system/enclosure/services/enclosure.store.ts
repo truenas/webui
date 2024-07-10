@@ -1,13 +1,16 @@
 import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
-import { switchMap, tap } from 'rxjs';
+import { Subject, switchMap, tap } from 'rxjs';
 import { delay, finalize, map } from 'rxjs/operators';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
+import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -29,6 +32,7 @@ const initialState: EnclosureState = {
   selectedSide: undefined, // Undefined means front or top and will be picked in EnclosureSideComponent.
 };
 
+@UntilDestroy()
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly isLoading = toSignal(
@@ -65,8 +69,11 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));
 
+  private disksUpdateSubscriptionId: string;
+
   constructor(
     private ws: WebSocketService,
+    private disksUpdateService: DisksUpdateService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
@@ -89,6 +96,31 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       }),
     );
   });
+
+  update = this.effect((origin$) => {
+    return origin$.pipe(
+      switchMap(() => {
+        return this.ws.call('webui.enclosure.dashboard').pipe(
+          tap((enclosures: DashboardEnclosure[]) => {
+            this.patchState({ enclosures });
+          }),
+          this.errorHandler.catchError(),
+        );
+      }),
+    );
+  });
+
+  addListenerForDiskUpdates(): void {
+    if (!this.disksUpdateSubscriptionId) {
+      const diskUpdatesTrigger$ = new Subject<Disk[]>();
+      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$, true);
+      diskUpdatesTrigger$.pipe(untilDestroyed(this)).subscribe(() => this.update());
+    }
+  }
+
+  removeListenerForDiskUpdates(): void {
+    this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
+  }
 
   selectEnclosure = this.updater((state, id: string) => {
     const index = state.enclosures.findIndex((enclosure) => enclosure.id === id);
