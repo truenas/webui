@@ -3,6 +3,8 @@
     <ix-disk-topology-description
       [selectedSlot]="selectedSlot()"
     ></ix-disk-topology-description>
+  } @else {
+    <h2>{{ 'Pools' | translate }}</h2>
   }
 </div>
 
@@ -26,8 +28,15 @@
 
 <div class="right-column">
   @if (selectedSlot()) {
-    <ix-vdev-disks-list
+    <ix-vdev-disks-legend
       [selectedSlot]="selectedSlot()"
-    ></ix-vdev-disks-list>
+      [poolColor]="poolColor()"
+      (diskClick)="onVdevDiskClicked($event)"
+    ></ix-vdev-disks-legend>
+  } @else {
+    <ix-pools-legend
+      [slots]="selectedEnclosureSlots()"
+      [poolColors]="poolColors()"
+    ></ix-pools-legend>
   }
 </div>

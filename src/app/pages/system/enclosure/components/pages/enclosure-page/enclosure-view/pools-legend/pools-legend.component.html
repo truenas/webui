@@ -1,0 +1,9 @@
+@for (item of legend(); track item[0]) {
+  <div class="line">
+    <div
+      class="disk-circle"
+      [style.background]="item[1]"
+    ></div>
+    <span class="label">{{ item[0] }}</span>
+  </div>
+}

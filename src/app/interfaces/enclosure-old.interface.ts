@@ -1,6 +1,6 @@
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { EnclosureElement, EnclosureSlotMetadata, EnclosureVdev } from 'app/interfaces/enclosure.interface';
+import { EnclosureElement, EnclosureSlotMetadata, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 
 /**
  * @deprecated
@@ -73,7 +73,7 @@ export interface EnclosureOldPool {
   disk_status: string;
   vdev_name: string;
   vdev_type: string;
-  vdev_disks: EnclosureVdev[];
+  vdev_disks: EnclosureVdevDisk[];
 }
 
 /**
