@@ -56,12 +56,12 @@
     (ixDropGridModelChange)="onGroupsReordered($event)"
   >
     @if (renderedGroups().length > 0) {
-      @for (group of renderedGroups(); track trackByFn(i, group); let i = $index) {
-        <div
-          class="group-slot"
-          ixDropGridItem
-          @groupRemovedTrigger
-        >
+      <div
+        *ngFor="let group of renderedGroups(); index as i; trackBy: trackByFn"
+        class="group-slot"
+        ixDropGridItem
+        @groupRemovedTrigger
+      >
           <div
             ixDrag
             class="group-container"
@@ -85,7 +85,7 @@
             ></ix-widget-group>
           </div>
         </div>
-      }
+      </div>
     } @else {
       <ix-empty [conf]="emptyDashboardConf"></ix-empty>
     }

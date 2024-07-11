@@ -1,7 +1,7 @@
 <div class="ix-table-expandable-row">
   @if (data()) {
     <dl class="details">
-      @for (option of data(); track option) {
+      @for (option of data(); track option.label) {
         <div>
           <dt>{{ option.label | translate }}:</dt>
           <dd>{{ option.value?.toString() || '–' }}</dd>

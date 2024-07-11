@@ -20,7 +20,7 @@
             class="list"
           >
             <div class="section-title">{{ 'Nameservers' | translate }}</div>
-            @for (nameserver of nameservers; track nameserver) {
+            @for (nameserver of nameservers; track nameserver.label) {
               <mat-list-item
                 [ixUiSearch]="networkConfigurationCardElements.elements.nameServers"
               >
