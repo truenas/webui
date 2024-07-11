@@ -36,7 +36,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 })
 export class WebSocketService {
   private readonly eventSubscribers = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
-  clearSubscriptions$ = new Subject<void>();
+  readonly clearSubscriptions$ = new Subject<void>();
 
   constructor(
     protected router: Router,

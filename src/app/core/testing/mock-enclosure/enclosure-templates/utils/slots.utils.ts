@@ -10,7 +10,7 @@ interface SlotMappingFunction {
 
 export function mapSlots(
   enclosures: DashboardEnclosure[],
-  mappingFunction: ({ slot, enclosure, index }: SlotMappingFunction) => DashboardEnclosureSlot,
+  mappingFunction: ({ slot, index }: SlotMappingFunction) => DashboardEnclosureSlot,
 ): DashboardEnclosure[] {
   return enclosures.map((enclosure) => {
     let i = -1;
@@ -29,17 +29,6 @@ export function mapSlots(
   });
 }
 
-export function countSlots(enclosures: DashboardEnclosure[]): number {
-  return enclosures.reduce((acc, enclosure) => {
-    return acc + Object.keys(enclosure.elements[EnclosureElementType.ArrayDeviceSlot]).length;
-  }, 0);
-}
-
-export function countSlotsBy(
-  enclosures: DashboardEnclosure[],
-  predicate: (slot: DashboardEnclosureSlot) => boolean,
-): number {
-  return enclosures.reduce((acc, enclosure) => {
-    return acc + Object.values(enclosure.elements[EnclosureElementType.ArrayDeviceSlot]).filter(predicate).length;
-  }, 0);
+export function countSlots(enclosure: DashboardEnclosure): number {
+  return Object.keys(enclosure.elements[EnclosureElementType.ArrayDeviceSlot]).length;
 }
