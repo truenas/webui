@@ -3,7 +3,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, catchError, filter, finalize, map, switchMap, tap,
+  Observable, catchError, filter, finalize, map, of, switchMap, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
 import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
@@ -57,7 +57,13 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   readonly entered = this.effect((trigger$) => {
     return trigger$.pipe(
       tap(() => this.toggleLoadingState(true)),
-      switchMap(() => this.authService.refreshUser()),
+      switchMap(() => {
+        if (this.state().groups === null) {
+          // Skip refresh user if first time dashboard loading
+          return of(null);
+        }
+        return this.authService.refreshUser();
+      }),
       switchMap(() => this.authService.user$.pipe(
         filter(Boolean),
         map((user) => user.attributes.dashState),
