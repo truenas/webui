@@ -85,7 +85,7 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => this.setLoadingState(true)),
-    switchMap(() => this.checkIfLoginBanner()),
+    switchMap(() => this.checkForLoginBanner()),
     switchMap(() => {
       return forkJoin([
         this.checkIfAdminPasswordSet(),
@@ -181,7 +181,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     return '/dashboard';
   }
 
-  private checkIfLoginBanner(): Observable<string> {
+  private checkForLoginBanner(): Observable<string> {
     return this.ws.call('system.advanced.login_banner').pipe(
       tap((loginBanner) => this.patchState({ loginBanner })),
     );

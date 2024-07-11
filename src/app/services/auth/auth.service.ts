@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
@@ -21,6 +21,7 @@ import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import {
   ApiCallMethod,
   ApiCallParams,
@@ -88,6 +89,7 @@ export class AuthService {
     private wsManager: WebSocketConnectionService,
     private store$: Store<AppState>,
     private ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.setupAuthenticationUpdate();
 
@@ -117,6 +119,7 @@ export class AuthService {
    * use of the lastGeneratedToken$ and setting token to null/undefined by mistake
    */
   clearAuthToken(): void {
+    this.window.sessionStorage.removeItem('loginBannerDismissed');
     this.latestTokenGenerated$.next(null);
     this.latestTokenGenerated$.complete();
     this.latestTokenGenerated$ = new ReplaySubject<string>(1);
@@ -143,6 +146,7 @@ export class AuthService {
 
   loginWithToken(): Observable<LoginResult> {
     if (!this.token) {
+      this.window.sessionStorage.removeItem('loginBannerDismissed');
       return of(LoginResult.NoToken);
     }
 
@@ -207,7 +211,7 @@ export class AuthService {
         // Check if user has access to webui.
         return this.getLoggedInUserInformation().pipe(
           switchMap((user) => {
-            if (!user.privilege || !user.privilege.webui_access) {
+            if (!user?.privilege?.webui_access) {
               this.isLoggedIn$.next(false);
               return of(LoginResult.NoAccess);
             }
