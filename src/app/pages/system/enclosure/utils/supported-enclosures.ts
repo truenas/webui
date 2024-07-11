@@ -44,10 +44,6 @@ const mini3E = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3-e-front.svg',
 };
 
-const mini3Xl = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3-xl-front.svg',
-};
-
 const eS12 = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/es12/es12-front.svg',
 };
@@ -72,6 +68,10 @@ const mini3xPlus = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/mini3x-plus/mini3x-plus-front.svg',
 };
 
+const mini3xlPlus = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3xl-plus/mini3xl-plus-front.svg',
+};
+
 export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.M30]: mSeries,
   [EnclosureModel.M40]: mSeries,
@@ -90,7 +90,7 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.Mini3EPlus]: mini3E,
   [EnclosureModel.Mini3X]: mini3x,
   [EnclosureModel.Mini3XPlus]: mini3xPlus,
-  [EnclosureModel.Mini3XlPlus]: mini3Xl,
+  [EnclosureModel.Mini3XlPlus]: mini3xlPlus,
   [EnclosureModel.Es12]: eS12,
   [EnclosureModel.Es24]: eS24,
   [EnclosureModel.Es60]: eS60,
