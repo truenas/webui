@@ -22,7 +22,6 @@ import {
 } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -43,6 +42,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -416,47 +416,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     const app = this.dataSource.find((installedApp) => installedApp.name === name);
     const job = this.appJobs.get(name);
 
-    let status: AppStatus;
-
-    if (!app) {
-      return null;
-    }
-    switch (app.status) {
-      case ChartReleaseStatus.Active:
-        status = AppStatus.Started;
-        break;
-      case ChartReleaseStatus.Deploying:
-        status = AppStatus.Deploying;
-        break;
-      case ChartReleaseStatus.Stopped:
-        status = AppStatus.Stopped;
-        break;
-    }
-
-    if (job) {
-      const [, params] = job.arguments;
-      if ([JobState.Waiting, JobState.Running].includes(job.state) && params.replica_count >= 1) {
-        status = AppStatus.Starting;
-      }
-      if ([JobState.Waiting, JobState.Running].includes(job.state) && params.replica_count === 0) {
-        status = AppStatus.Stopping;
-      }
-      if (
-        job.state === JobState.Success
-          && params.replica_count >= 1
-          && app.status !== ChartReleaseStatus.Deploying
-      ) {
-        status = AppStatus.Started;
-      }
-      if (
-        job.state === JobState.Success
-          && params.replica_count === 0
-          && app.status !== ChartReleaseStatus.Deploying
-      ) {
-        status = AppStatus.Stopped;
-      }
-    }
-    return status;
+    return getAppStatus(app, job);
   }
 
   // TODO: Rework this and getAppStatus above to be computed when dataSource is populated.

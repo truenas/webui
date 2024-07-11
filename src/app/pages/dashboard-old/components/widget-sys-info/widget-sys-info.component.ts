@@ -2,7 +2,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, Inject, Input, OnDestroy, OnInit,
+  Component, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,7 +14,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
-import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import {
@@ -23,6 +22,7 @@ import {
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { getMiniImagePath, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
+import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -100,7 +100,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private breakpointObserver: BreakpointObserver,
-    @Inject(WINDOW) private window: Window,
+    private localeService: LocaleService,
   ) {
     super();
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdateRunning: string) => {
@@ -132,6 +132,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         this.setProductImage();
         this.cdr.markForCheck();
       });
+  }
+
+  getDateTimeByTimezone(timeZone: string): number {
+    const [dateValue, timeValue] = this.localeService.getDateAndTime(timeZone);
+    return new Date(`${dateValue} ${timeValue}`).getTime();
   }
 
   getSystemInfo(): void {

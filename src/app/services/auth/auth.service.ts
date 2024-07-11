@@ -47,7 +47,7 @@ export class AuthService {
    * time of a token generated with auth.generate_token. The 10 seconds
    * difference is to allow for delays in request send/receive
    */
-  readonly tokenRegenerationTimeMillis = 290 * 1000;
+  private readonly tokenRegenerationTimeMillis = 290 * 1000;
 
   private latestTokenGenerated$ = new ReplaySubject<string>(1);
   get authToken$(): Observable<string> {

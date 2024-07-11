@@ -9811,10 +9811,10 @@ ng-lazyload-image@~9.1.3:
   dependencies:
     tslib "^2.3.0"
 
-ng-mocks@~14.12.1:
-  version "14.12.1"
-  resolved "https://registry.yarnpkg.com/ng-mocks/-/ng-mocks-14.12.1.tgz#a2d698c872616e0ceeefa08ecb4bd357ae85a7dd"
-  integrity sha512-5OdTYYOva7IkCCi6kTtgnII1hSfw+qYOM1ScrKhyo7iaI/ViV8xI4MGa89Ts7XnH6XqISSez2Un3zFSomkFpmg==
+ng-mocks@~14.13.0:
+  version "14.13.0"
+  resolved "https://registry.yarnpkg.com/ng-mocks/-/ng-mocks-14.13.0.tgz#7321443f5fea3215cb93eb6bdc6c1aed0ed68174"
+  integrity sha512-cQ6nUj/P+v7X52gYU6bAj/03iDKl2pzbPy2V0tx/d5lxME063Vxc190p6UPlJkbRIxcB+OqSALPgQvy83efzjw==
 
 ng-qrcode@~8.0.1:
   version "8.0.1"
