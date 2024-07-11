@@ -52,6 +52,10 @@ const mini3Xl = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3-xl-front.svg',
 };
 
+const eS12 = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/es12/es12-front.svg',
+};
+
 export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.M30]: mSeries,
   [EnclosureModel.M40]: mSeries,
@@ -73,4 +77,5 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.Mini3X]: mini3X,
   [EnclosureModel.Mini3XPlus]: mini3X,
   [EnclosureModel.Mini3XlPlus]: mini3Xl,
+  [EnclosureModel.Es12]: eS12,
 };
