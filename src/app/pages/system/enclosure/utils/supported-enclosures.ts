@@ -76,6 +76,11 @@ const mini3xlPlus = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/mini3xl-plus/mini3xl-plus-front.svg',
 };
 
+const r20 = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/r20/r20-front.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/r20/r20-rear.svg',
+};
+
 export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.M30]: mSeries,
   [EnclosureModel.M40]: mSeries,
@@ -100,4 +105,5 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.Es60]: eS60,
   [EnclosureModel.Es102]: eS102,
   [EnclosureModel.R10]: r10,
+  [EnclosureModel.R20]: r20,
 };
