@@ -29,13 +29,14 @@
     ></ix-widget-editor-group>
   </div>
 
-  <ix-widget-group-slot-form
-    *ngIf="selectedSlot()"
-    [slotConfig]="selectedSlot()"
-    (validityChange)="updateSlotValidation($event)"
-    (settingsChange)="updateSlotSettings($event)"
-  ></ix-widget-group-slot-form>
-  
+  @if (selectedSlot()) {
+    <ix-widget-group-slot-form
+      [slotConfig]="selectedSlot()"
+      (validityChange)="updateSlotValidation($event)"
+      (settingsChange)="updateSlotSettings($event)"
+    ></ix-widget-group-slot-form>
+  }
+
   <ix-form-actions>
     <button
       mat-button

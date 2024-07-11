@@ -1,88 +1,91 @@
-<div *ngIf="(loggedInUser$ | async) as user" class="user-menu-wrapper">
-  <button
-    name="Settings"
-    mat-icon-button
-    class="topbar-button-right"
-    ixTest="user-menu"
-    [matTooltip]="tooltips.settings | translate"
-    [ixUiSearch]="searchableElements.elements.userMenu"
-    [matMenuTriggerFor]="userMenu"
-  >
-    <span
-      *ngIf="user?.pw_name"
-      class="username"
-      [matTooltip]="user.pw_name"
+@if ((loggedInUser$ | async); as user) {
+  <div class="user-menu-wrapper">
+    <button
+      name="Settings"
+      mat-icon-button
+      class="topbar-button-right"
+      ixTest="user-menu"
+      [matTooltip]="tooltips.settings | translate"
+      [ixUiSearch]="searchableElements.elements.userMenu"
       [matMenuTriggerFor]="userMenu"
     >
-      {{ user.pw_name }}
-    </span>
-
-    <ix-icon name="account_circle"></ix-icon>
-  </button>
-
-  <mat-menu #userMenu="matMenu">
-    <button
-      *ngIf="user?.account_attributes.includes(AccountAttribute.Local)"
-      name="settings-change-password"
-      mat-menu-item
-      ixTest="change-password"
-      [ixUiSearch]="searchableElements.elements.changePassword"
-      (click)="openChangePasswordDialog()"
-    >
-      <ix-icon name="dialpad"></ix-icon>
-      {{ 'Change Password' | translate }}
+      @if (user?.pw_name) {
+        <span
+          class="username"
+          [matTooltip]="user.pw_name"
+          [matMenuTriggerFor]="userMenu"
+        >
+          {{ user.pw_name }}
+        </span>
+      }
+      <ix-icon name="account_circle"></ix-icon>
     </button>
 
-    <button
-      name="settings-2fa"
-      mat-menu-item
-      ixTest="2fa"
-      (click)="onTwoFactorAuth()"
-    >
-      <ix-icon name="ix:two_factor_auth"></ix-icon>
-      {{ 'Two-Factor Authentication' | translate }}
-    </button>
+    <mat-menu #userMenu="matMenu">
+      @if (user?.account_attributes.includes(AccountAttribute.Local)) {
+        <button
+          name="settings-change-password"
+          mat-menu-item
+          ixTest="change-password"
+          [ixUiSearch]="searchableElements.elements.changePassword"
+          (click)="openChangePasswordDialog()"
+        >
+          <ix-icon name="dialpad"></ix-icon>
+          {{ 'Change Password' | translate }}
+        </button>
+      }
 
-    <a name="settings-api" ixTest="api-keys" mat-menu-item [routerLink]="['/apikeys']">
-      <ix-icon name="laptop"></ix-icon>
-      {{ 'API Keys' | translate }}
-    </a>
+      <button
+        name="settings-2fa"
+        mat-menu-item
+        ixTest="2fa"
+        (click)="onTwoFactorAuth()"
+      >
+        <ix-icon name="ix:two_factor_auth"></ix-icon>
+        {{ 'Two-Factor Authentication' | translate }}
+      </button>
 
-    <a
-      name="settings-guide"
-      mat-menu-item
-      href="https://www.truenas.com/docs/"
-      target="_blank"
-      ixTest="guide"
-      [ixUiSearch]="searchableElements.elements.guide"
-    >
-      <ix-icon name="library_books"></ix-icon>
-      {{ 'Guide' | translate }}
-    </a>
+      <a name="settings-api" ixTest="api-keys" mat-menu-item [routerLink]="['/apikeys']">
+        <ix-icon name="laptop"></ix-icon>
+        {{ 'API Keys' | translate }}
+      </a>
 
-    <button
-      name="settings-about"
-      mat-menu-item
-      ixTest="about"
-      [ixUiSearch]="searchableElements.elements.about"
-      (click)="onShowAbout()"
-    >
-      <ix-icon name="info_outline"></ix-icon>
-      {{ 'About' | translate }}
-    </button>
+      <a
+        name="settings-guide"
+        mat-menu-item
+        href="https://www.truenas.com/docs/"
+        target="_blank"
+        ixTest="guide"
+        [ixUiSearch]="searchableElements.elements.guide"
+      >
+        <ix-icon name="library_books"></ix-icon>
+        {{ 'Guide' | translate }}
+      </a>
 
-    <!-- Inline styles because mat-menu contents are rendered outside of the component -->
-    <mat-divider style="margin: 5px 0;"></mat-divider>
+      <button
+        name="settings-about"
+        mat-menu-item
+        ixTest="about"
+        [ixUiSearch]="searchableElements.elements.about"
+        (click)="onShowAbout()"
+      >
+        <ix-icon name="info_outline"></ix-icon>
+        {{ 'About' | translate }}
+      </button>
 
-    <button
-      name="power-log-out"
-      mat-menu-item
-      ixTest="log-out"
-      [ixUiSearch]="searchableElements.elements.logOut"
-      (click)="onSignOut()"
-    >
-      <ix-icon name="exit_to_app"></ix-icon>
-      {{ 'Log Out' | translate }}
-    </button>
-  </mat-menu>
-</div>
+      <!-- Inline styles because mat-menu contents are rendered outside of the component -->
+      <mat-divider style="margin: 5px 0;"></mat-divider>
+
+      <button
+        name="power-log-out"
+        mat-menu-item
+        ixTest="log-out"
+        [ixUiSearch]="searchableElements.elements.logOut"
+        (click)="onSignOut()"
+      >
+        <ix-icon name="exit_to_app"></ix-icon>
+        {{ 'Log Out' | translate }}
+      </button>
+    </mat-menu>
+  </div>
+}

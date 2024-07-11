@@ -1,97 +1,105 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
-      <ng-container *ngIf="isFilesystem">
+      @if (isFilesystem) {
         {{ 'Dataset Space Management' | translate }}
-      </ng-container>
-      <ng-container *ngIf="isZvol">
+      }
+      @if (isZvol) {
         {{ 'Zvol Space Management' | translate }}
-      </ng-container>
+      }
     </h3>
-    <ng-container
-     *ngIf="!isZvol"
-    >
+    @if (!isZvol) {
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
         ixTest="edit-quotas"
         (click)="editDataset()"
       >{{ 'Edit' | translate }}</button>
-    </ng-container>
+    }
   </mat-card-header>
   <mat-card-content>
     <ix-space-management-chart [dataset]="dataset"></ix-space-management-chart>
 
     <div class="chart-extra">
-      <ng-container *ngIf="!isZvol">
-        <div *ngIf="dataset?.refreservation?.parsed" class="details-item">
-          <div class="label">{{ 'Reserved for Dataset' | translate }}:</div>
-          <div class="value">
-            {{ dataset.refreservation.parsed | ixFileSize }}
+      @if (!isZvol) {
+        @if (dataset?.refreservation?.parsed) {
+          <div class="details-item">
+            <div class="label">{{ 'Reserved for Dataset' | translate }}:</div>
+            <div class="value">
+              {{ dataset.refreservation.parsed | ixFileSize }}
+            </div>
           </div>
-        </div>
-        <div *ngIf="dataset?.reservation?.parsed" class="details-item">
-          <div class="label">
-            {{ 'Reserved for Dataset & Children' | translate }}:
+        }
+        @if (dataset?.reservation?.parsed) {
+          <div class="details-item">
+            <div class="label">
+              {{ 'Reserved for Dataset & Children' | translate }}:
+            </div>
+            <div class="value">
+              {{ dataset.reservation.parsed | ixFileSize }}
+            </div>
           </div>
-          <div class="value">
-            {{ dataset.reservation.parsed | ixFileSize }}
-          </div>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="isZvol">
+        }
+      }
+
+      @if (isZvol) {
         <div class="details-item">
           <div class="label">{{ 'Provisioning Type' | translate }}:</div>
-          <div *ngIf="dataset.thick_provisioned" class="value">
-            {{ 'Thick' | translate }}
-          </div>
-          <div *ngIf="!dataset.thick_provisioned" class="value">
-            {{ 'Sparse' | translate }}
-          </div>
+          @if (dataset.thick_provisioned) {
+            <div class="value">
+              {{ 'Thick' | translate }}
+            </div>
+          }
+          @if (!dataset.thick_provisioned) {
+            <div class="value">
+              {{ 'Sparse' | translate }}
+            </div>
+          }
         </div>
-        <div *ngIf="dataset?.volsize?.parsed" class="details-item">
-          <div class="label">{{ 'Volume Size' | translate }}:</div>
-          <div class="value">
-            {{ dataset.volsize.parsed | ixFileSize }}
+        @if (dataset?.volsize?.parsed) {
+          <div class="details-item">
+            <div class="label">{{ 'Volume Size' | translate }}:</div>
+            <div class="value">
+              {{ dataset.volsize.parsed | ixFileSize }}
+            </div>
           </div>
-        </div>
-      </ng-container>
+        }
+      }
     </div>
 
     <div class="details">
       <div class="details-item">
         <div class="label">
-          <ng-container *ngIf="isFilesystem">
+          @if (isFilesystem) {
             {{ 'Space Available to Dataset' | translate }}:
-          </ng-container>
-          <ng-container *ngIf="isZvol">
+          }
+          @if (isZvol) {
             {{ 'Space Available to Zvol' | translate }}:
-          </ng-container>
+          }
         </div>
         <div class="value">
           {{ dataset.available.parsed | ixFileSize }}
         </div>
       </div>
-      <div *ngIf="(isFilesystem && hasQuota) || hasRefQuota" class="details-item">
-        <div class="label">{{ 'Applied Dataset Quota' | translate }}:</div>
-        <div *ngIf="hasQuota; else refquotaValue" class="value">
-          {{
-            '{n} (applies to descendants)' | translate : {
-              n: dataset.quota.parsed | ixFileSize
-            }
-          }}
-        </div>
-        <ng-template #refquotaValue>
-          <div class="value">
-            {{
-              '{n}' | translate : {
-                n: dataset.refquota.parsed | ixFileSize
+      @if ((isFilesystem && hasQuota) || hasRefQuota) {
+        <div class="details-item">
+          <div class="label">{{ 'Applied Dataset Quota' | translate }}:</div>
+          @if (hasQuota) {
+            <div class="value">
+              {{
+                '{n} (applies to descendants)' | translate : {
+                n: dataset.quota.parsed | ixFileSize
               }
-            }}
-          </div>
-        </ng-template>
-      </div>
-      <div *ngIf="hasInheritedQuotas" class="details-item">
+              }}
+            </div>
+          } @else {
+            <div class="value">
+              {{ dataset.refquota.parsed | ixFileSize }}
+            </div>
+          }
+        </div>
+     }@if (hasInheritedQuotas) {
+      <div class="details-item">
         <div class="label">{{ 'Inherited Quotas' | translate }}:</div>
         <div class="value">
           {{
@@ -108,50 +116,60 @@
           {{ 'Go To Dataset' }}
         </a>
       </div>
-    </div>
+    }
+  </div>
 
-    <div *ngIf="!isZvol" class="details">
+  @if (!isZvol) {
+    <div class="details">
       <div class="details-item">
         <div class="label">{{ 'User Quotas' | translate }}:</div>
-        <ng-container *ngIf="checkQuotas; else noneTemplate">
-          <div *ngIf="!isLoadingQuotas; else valuePlaceholder" class="value">
-            {{ 'Quotas set for {n, plural, one {# user} other {# users}}' |
-            translate: { n: userQuotas } }}
-          </div>
-        </ng-container>
-        <a
-          *ngIf="checkQuotas"
-          [ixTest]="[dataset.id, 'manage-user-quotas']"
-          [routerLink]="['/', 'datasets', dataset.id, 'user-quotas']"
-          [ixUiSearch]="searchableElements.elements.manageUserQuotas"
-        >
-          {{ 'Manage User Quotas' | translate }}
-        </a>
+          @if (checkQuotas) {
+            @if (!isLoadingQuotas) {
+              <div class="value">
+                {{ 'Quotas set for {n, plural, one {# user} other {# users}}' | translate: { n: userQuotas } }}
+              </div>
+            } @else {
+              <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
+            }
+          } @else {
+            {{ 'None' | translate }}
+          }
+          @if (checkQuotas) {
+            <a
+              [ixTest]="[dataset.id, 'manage-user-quotas']"
+              [routerLink]="['/', 'datasets', dataset.id, 'user-quotas']"
+              [ixUiSearch]="searchableElements.elements.manageUserQuotas"
+            >
+              {{ 'Manage User Quotas' | translate }}
+            </a>
+          }
       </div>
       <div class="details-item">
         <div class="label">{{ 'Group Quotas' | translate }}:</div>
-        <ng-container *ngIf="checkQuotas; else noneTemplate">
-          <div *ngIf="!isLoadingQuotas; else valuePlaceholder" class="value">
-            {{ 'Quotas set for {n, plural, one {# group} other {# groups}}' | translate: { n: groupQuotas } }}
-          </div>
-        </ng-container>
-        <a
-          *ngIf="checkQuotas"
-          [ixTest]="[dataset.id, 'manage-group-quotas']"
-          [routerLink]="['/', 'datasets', dataset.id, 'group-quotas']"
-          [ixUiSearch]="searchableElements.elements.manageGroupQuotas"
-        >
-          {{ 'Manage Group Quotas' | translate }}
-        </a>
+        @if (checkQuotas) {
+          @if (!isLoadingQuotas) {
+            <div class="value">
+              {{ 'Quotas set for {n, plural, one {# group} other {# groups}}' | translate: { n: groupQuotas } }}
+            </div>
+          } @else {
+            <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
+          }
+        } @else {
+          {{ 'None' | translate }}
+        }
+        @if (checkQuotas) {
+          <a
+            [ixTest]="[dataset.id, 'manage-group-quotas']"
+            [routerLink]="['/', 'datasets', dataset.id, 'group-quotas']"
+            [ixUiSearch]="searchableElements.elements.manageGroupQuotas"
+          >
+            {{ 'Manage Group Quotas' | translate }}
+          </a>
+        }
       </div>
     </div>
+  }
   </mat-card-content>
 </mat-card>
 
-<ng-template #valuePlaceholder>
-  <ngx-skeleton-loader class="value-placeholder"></ngx-skeleton-loader>
-</ng-template>
 
-<ng-template #noneTemplate>
-  {{ 'None' | translate }}
-</ng-template>

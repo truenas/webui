@@ -15,23 +15,27 @@
       (click)="toggleAll()"
     >
       <ix-icon [name]="!isAllSelected ? 'remove' : 'check_circle'"></ix-icon>
-      <span *ngIf="isAllSelected">{{ 'Unselect All' | translate }}</span>
-      <span *ngIf="!isAllSelected">{{ 'Select All' | translate }}</span>
+      @if (isAllSelected) {
+        <span>{{ 'Unselect All' | translate }}</span>
+      } @else {
+        <span>{{ 'Select All' | translate }}</span>
+      }
     </button>
   </div>
 
   <div (click)="$event.stopPropagation()">
-    <ng-container *ngFor="let column of columns">
-      <button
-        *ngIf="column.title"
-        mat-menu-item
-        [ixTest]="['toggle-column', column.title]"
-        (click)="toggle(column)"
-      >
-        <ix-icon [name]="isSelected(column) ? 'remove' : 'check_circle'"></ix-icon>
-        <span>{{ column.title | translate }}</span>
-      </button>
-    </ng-container>
+    @for (column of columns; track column) {
+      @if (column.title) {
+        <button
+          mat-menu-item
+          [ixTest]="['toggle-column', column.title]"
+          (click)="toggle(column)"
+        >
+          <ix-icon [name]="isSelected(column) ? 'remove' : 'check_circle'"></ix-icon>
+          <span>{{ column.title | translate }}</span>
+        </button>
+      }
+    }
   </div>
 
   <div (click)="$event.stopPropagation()">

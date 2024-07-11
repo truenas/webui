@@ -1,4 +1,4 @@
-<ng-container *ngIf="!requiredRoles?.length && !dynamicRequiredRoles">
+@if (!requiredRoles?.length && !dynamicRequiredRoles) {
   <mat-slide-toggle
     color="primary"
     [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row)"
@@ -7,8 +7,8 @@
     (change)="onSlideToggleChanged($event)"
     (click)="$event.stopPropagation()"
   ></mat-slide-toggle>
-</ng-container>
-<ng-container *ngIf="requiredRoles?.length || dynamicRequiredRoles">
+}
+@if (requiredRoles?.length || dynamicRequiredRoles) {
   <mat-slide-toggle
     *ixRequiresRoles="dynamicRequiredRoles ? (dynamicRequiredRoles(row) | async) : requiredRoles"
     color="primary"
@@ -18,4 +18,4 @@
     (change)="onSlideToggleChanged($event)"
     (click)="$event.stopPropagation()"
   ></mat-slide-toggle>
-</ng-container>
+}

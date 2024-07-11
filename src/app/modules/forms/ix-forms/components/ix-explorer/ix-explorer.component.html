@@ -1,10 +1,11 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-  [ixTestOverride]="controlDirective.name"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
 
 <div class="input-container" [class.disabled]="isDisabled">
   <input
@@ -21,20 +22,22 @@
     (blur)="onTouch()"
   />
 </div>
-<div *ngIf="canCreateDataset" class="create-dataset-container">
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    type="button"
-    class="create-dataset-btn"
-    ixTest="create-dataset"
-    [disabled]="createDatasetDisabled"
-    (click)="createDataset()"
-  >
-    <ix-icon name="create_new_folder"></ix-icon>
-    {{ 'Create Dataset' | translate }}
-  </button>
-</div>
+@if (canCreateDataset) {
+  <div class="create-dataset-container">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      type="button"
+      class="create-dataset-btn"
+      ixTest="create-dataset"
+      [disabled]="createDatasetDisabled"
+      (click)="createDataset()"
+    >
+      <ix-icon name="create_new_folder"></ix-icon>
+      {{ 'Create Dataset' | translate }}
+    </button>
+  </div>
+}
 <div class="tree-container" [class.disabled]="isDisabled" [attr.aria-label]="label">
   <tree-root
     #tree
@@ -45,40 +48,43 @@
   >
     <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
     <ng-template #treeNodeTemplate let-node>
-      <span
-        *ngIf="typeNode(node) as node"
-        tabindex="0"
-        class="node-container"
-        [attr.aria-label]="ariaLabel(node)"
-        [class.selected]="isPathSelected(node.data.path)"
-        (keyup.enter)="node?.toggleSelected()"
-        (keyup.space)="node?.toggleExpanded()"
-      >
-        <ng-container *ngIf="node.data.type === ExplorerNodeType.File; else folderIcon">
-          <ix-icon name="insert_drive_file"></ix-icon>
-        </ng-container>
-
-        <ng-template #folderIcon>
-          <ng-container *ngIf="!node.data.isLock; else lockIcon">
-            <ix-icon *ngIf="node.data.isMountpoint" name="ix:dataset"></ix-icon>
-            <ix-icon *ngIf="!node.data.isMountpoint" name="folder_open"></ix-icon>
-          </ng-container>
-        </ng-template>
-
-        <ng-template #lockIcon>
-          <ix-icon *ngIf="node.data.isLock" name="mdi-folder-lock"></ix-icon>
-        </ng-template>
-
-        <span class="node-name" [attr.aria-label]="node.data.name">{{ node.data.name }}</span>
-      </span>
+      @if (typeNode(node); as node) {
+        <span
+          tabindex="0"
+          class="node-container"
+          [attr.aria-label]="ariaLabel(node)"
+          [class.selected]="isPathSelected(node.data.path)"
+          (keyup.enter)="node?.toggleSelected()"
+          (keyup.space)="node?.toggleExpanded()"
+        >
+          @if (node.data.type === ExplorerNodeType.File) {
+            <ix-icon name="insert_drive_file"></ix-icon>
+          } @else {
+            @if (node.data.isLock) {
+              <ix-icon name="mdi-folder-lock"></ix-icon>
+            } @else {
+              @if (node.data.isMountpoint) {
+                <ix-icon name="ix:dataset"></ix-icon>
+              } @else {
+                <ix-icon name="folder_open"></ix-icon>
+              }
+            }
+          }
+          <span class="node-name" [attr.aria-label]="node.data.name">{{ node.data.name }}</span>
+        </span>
+      }
     </ng-template>
   </tree-root>
 </div>
 
-<mat-error *ngIf="loadingError" class="loading-error">
-  {{ loadingError }}
-</mat-error>
+@if (loadingError) {
+  <mat-error class="loading-error">
+    {{ loadingError }}
+  </mat-error>
+}
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-<mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+@if (hint) {
+  <mat-hint>{{ hint }}</mat-hint>
+}

@@ -1,11 +1,12 @@
 <div class="full-width container has-tooltip">
-  <ix-label
-    *ngIf="label || tooltip"
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
-    [ixTestOverride]="controlDirective.name"
-  ></ix-label>
+  @if (label || tooltip) {
+    <ix-label
+      [label]="label"
+      [tooltip]="tooltip"
+      [required]="required"
+      [ixTestOverride]="controlDirective.name"
+    ></ix-label>
+  }
 
   <div class="input-container" [class.disabled]="isDisabled">
     <input
@@ -22,26 +23,27 @@
       (blur)="onTouch()"
     />
     <span class="reset-input" [class.with-opacity]="shouldShowResetInput() && !isValueFromOptions(ixInput.value)">
-      <mat-progress-spinner
-        *ngIf="loading"
-        class="loader"
-        mode="indeterminate"
-        [diameter]="15"
-      ></mat-progress-spinner>
+      @if (loading) {
+        <mat-progress-spinner
+          class="loader"
+          mode="indeterminate"
+          [diameter]="15"
+        ></mat-progress-spinner>
+      }
 
-      <ix-icon
-        *ngIf="shouldShowResetInput() && !isValueFromOptions(ixInput.value); else arrowIcon"
-        name="mdi-close-circle"
-        (click)="resetInput()"
-      ></ix-icon>
-
-      <ng-template #arrowIcon>
+      @if (shouldShowResetInput() && !isValueFromOptions(ixInput.value)) {
+        <ix-icon
+          name="mdi-close-circle"
+          (click)="resetInput()"
+        ></ix-icon>
+      } @else {
         <span class="mat-mdc-select-arrow" (click)="ixInput.focus()">
           <svg viewBox="0 0 24 24" width="24px" height="24px" aria-hidden="true">
             <path d="M7 10l5 5 5-5z"></path>
           </svg>
         </span>
-      </ng-template>
+      }
+
     </span>
 
     <mat-autocomplete
@@ -50,9 +52,8 @@
       (optionSelected)="optionSelected($event.option.value)"
       (opened)="onOpenDropdown()"
     >
-      <ng-container *ngIf="options && options.length; else loadingOrError">
+      @for (option of options; track option.label) {
         <mat-option
-          *ngFor="let option of options"
           class="combobox-mat-options"
           [value]="option"
           [attr.aria-label]="option.label"
@@ -62,19 +63,20 @@
         >
           {{ option.label | translate }}
         </mat-option>
-      </ng-container>
-
-      <ng-template #loadingOrError>
-        <ng-container *ngIf="hasErrorInOptions">
+      } @empty {
+        @if (hasErrorInOptions) {
           <mat-option ixTest="options-cannot-be-loaded" [disabled]="true">
             {{ 'Options cannot be loaded' | translate }}
           </mat-option>
-        </ng-container>
-      </ng-template>
+        }
+      }
+
     </mat-autocomplete>
   </div>
 
   <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+  @if (hint) {
+    <mat-hint>{{ hint }}</mat-hint>
+  }
 </div>

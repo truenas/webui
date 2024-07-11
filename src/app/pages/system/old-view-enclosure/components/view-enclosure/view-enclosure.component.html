@@ -1,176 +1,199 @@
 <ix-page-header>
-  <a
-    *ngIf="hasJbofLicensed"
-    mat-button
-    ixTest="manage-expansion"
-    [routerLink]="['/', 'system', 'oldviewenclosure', 'jbof']"
-  >
-    {{ 'NVMe-oF Expansion Shelves' | translate }}
-  </a>
-  <button
-    *ngIf="views.length > 1 && isRackmount"
-    mat-button
-    ixTest="elements-menu"
-    [matMenuTriggerFor]="elementsMenu"
-  >
-    {{ 'Elements' | translate }}
-    <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
-  </button>
+  @if (hasJbofLicensed) {
+    <a
+      mat-button
+      ixTest="manage-expansion"
+      [routerLink]="['/', 'system', 'oldviewenclosure', 'jbof']"
+    >
+      {{ 'NVMe-oF Expansion Shelves' | translate }}
+    </a>
+  }
+  @if (views.length > 1 && isRackmount) {
+    <button
+      mat-button
+      ixTest="elements-menu"
+      [matMenuTriggerFor]="elementsMenu"
+    >
+      {{ 'Elements' | translate }}
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+    </button>
+  }
   <mat-menu #elementsMenu="matMenu">
-    <ng-container *ngIf="views.length">
-      <button *ngFor="let view of views"
-              mat-menu-item
-              [ixTest]="view.alias"
-              (click)="changeView(view)">
-        <span>{{ view.alias | translate }}</span>
-      </button>
-    </ng-container>
+    @if (views.length) {
+      @for (view of views; track view) {
+        <button
+          mat-menu-item
+          [ixTest]="view.alias"
+          (click)="changeView(view)">
+          <span>{{ view.alias | translate }}</span>
+        </button>
+      }
+    }
   </mat-menu>
 </ix-page-header>
 
-<ng-template #multispinner>
-  <div class="loader-dialog mat-mdc-card">
-    <div class="loader-dialog-inner">
-      <h3>Loading Data</h3>
-      <ul>
-        <li class="spinner-data-type">
-          <span class="td">enclosure data</span>
-          <span class="td">
-            <mat-spinner
-              *ngIf="!systemState || systemState.areEnclosuresLoading"
-              class="spinner indicator"
-              [diameter]="22"></mat-spinner>
-            <ix-icon
-              *ngIf="systemState && !systemState.areEnclosuresLoading"
-              name="mdi-check-circle"
-              class="icon indicator"></ix-icon>
-          </span>
-        </li>
-        <li class="spinner-data-type">
-          <span class="td">disk data</span>
-          <span class="td">
-            <mat-spinner
-              *ngIf="!systemState || systemState.areDisksLoading"
-              class="spinner indicator"
-              [diameter]="22"></mat-spinner>
-            <ix-icon
-              *ngIf="systemState && !systemState.areDisksLoading"
-              name="mdi-check-circle"
-              class="icon indicator"></ix-icon>
-          </span>
-        </li>
-        <li class="spinner-data-type">
-          <span class="td">pool data</span>
-          <span class="td">
-            <mat-spinner
-              *ngIf="!systemState || systemState.areEnclosuresLoading"
-              class="spinner indicator"
-              [diameter]="22"></mat-spinner>
-            <ix-icon
-              *ngIf="systemState && !systemState.areEnclosuresLoading"
-              name="mdi-check-circle"
-              class="icon indicator"></ix-icon>
-          </span>
-        </li>
-      </ul>
 
-    </div>
-  </div>
-</ng-template>
 
-<ng-template #simplespinner>
-  <div class="loader-dialog simple">
-    <div class="loader-dialog-inner">
-      <mat-spinner
-        class="spinner indicator"
-        [diameter]="48"></mat-spinner>
-    </div>
-  </div>
-</ng-template>
+@if (errors.length === 0) {
+  <ng-container [ixUiSearch]="searchableElements.elements.oldViewEnclosure">
+    <!-- Loading indicator -->
+    @if (spinner) {
+      <div class="loader-dialog mat-mdc-card">
+        <div class="loader-dialog-inner">
+          <h3>Loading Data</h3>
+          <ul>
+            <li class="spinner-data-type">
+              <span class="td">enclosure data</span>
+              <span class="td">
+                @if (!systemState || systemState.areEnclosuresLoading) {
+                  <mat-spinner
+                    class="spinner indicator"
+                  [diameter]="22"></mat-spinner>
+                }
+                @if (systemState && !systemState.areEnclosuresLoading) {
+                  <ix-icon
+                    name="mdi-check-circle"
+                  class="icon indicator"></ix-icon>
+                }
+              </span>
+            </li>
+            <li class="spinner-data-type">
+              <span class="td">disk data</span>
+              <span class="td">
+                @if (!systemState || systemState.areDisksLoading) {
+                  <mat-spinner
+                    class="spinner indicator"
+                  [diameter]="22"></mat-spinner>
+                }
+                @if (systemState && !systemState.areDisksLoading) {
+                  <ix-icon
+                    name="mdi-check-circle"
+                  class="icon indicator"></ix-icon>
+                }
+              </span>
+            </li>
+            <li class="spinner-data-type">
+              <span class="td">pool data</span>
+              <span class="td">
+                @if (!systemState || systemState.areEnclosuresLoading) {
+                  <mat-spinner
+                    class="spinner indicator"
+                  [diameter]="22"></mat-spinner>
+                }
+                @if (systemState && !systemState.areEnclosuresLoading) {
+                  <ix-icon
+                    name="mdi-check-circle"
+                  class="icon indicator"></ix-icon>
+                }
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    }
 
-<ng-container
-  *ngIf="errors.length === 0"
-  [ixUiSearch]="searchableElements.elements.oldViewEnclosure"
->
-  <!-- Loading indicator -->
-  <ng-container *ngIf="spinner; then multispinner;"></ng-container>
-
-  <!-- Main Content Wrapper -->
-  <div
-    *ngIf="showVisualizer && isIxHardware"
-    class="page-viewport"
-    fxLayout="row wrap"
-  >
-    <!-- Persistent Visualizer -->
-    <div
-      class="main-content"
-      [fxFlex]="'calc(100% - ' + minWidth + 'px )'"
-    >
-
-      <ng-container *ngIf="supportedHardware && controller && showVisualizer">
-        <!-- Rackmount -->
+    <!-- Main Content Wrapper -->
+    @if (showVisualizer && isIxHardware) {
+      <div
+        class="page-viewport"
+        fxLayout="row wrap"
+      >
+        <!-- Persistent Visualizer -->
         <div
-          *ngIf="controller?.rackmount; else mini"
-          class="enclosure-disks-wrapper"
+          class="main-content"
+          [fxFlex]="'calc(100% - ' + minWidth + 'px )'"
         >
-          <ix-enclosure-disks
-            *ngIf="events"
-            [controller-events]="events"
-            [current-tab]="currentView"
-            [profile]="systemProfile"
-          >
-          </ix-enclosure-disks>
+          @if (supportedHardware && controller && showVisualizer) {
+            <!-- Rackmount -->
+            @if (controller?.rackmount) {
+              <div class="enclosure-disks-wrapper">
+                @if (events) {
+                  <ix-enclosure-disks
+                    [controller-events]="events"
+                    [current-tab]="currentView"
+                    [profile]="systemProfile"
+                  ></ix-enclosure-disks>
+                }
+              </div>
+            } @else {
+              <div class="mini-container">
+                @if (events && systemState?.enclosures) {
+                  <ix-enclosure-disks-mini
+                    [controller-events]="events"
+                    [current-tab]="currentView"
+                    [profile]="systemProfile"
+                  ></ix-enclosure-disks-mini>
+                }
+              </div>
+            }
+
+            <!-- Mini -->
+            <ng-template #mini>
+              <div class="mini-container">
+                @if (events && systemState?.enclosures) {
+                  <ix-enclosure-disks-mini
+                    [controller-events]="events"
+                    [current-tab]="currentView"
+                    [profile]="systemProfile"
+                  ></ix-enclosure-disks-mini>
+                }
+              </div>
+            </ng-template>
+          }
         </div>
 
-        <!-- Mini -->
-        <ng-template #mini>
-          <div class="mini-container">
-            <ix-enclosure-disks-mini
-              *ngIf="events && systemState?.enclosures"
-              [controller-events]="events"
-              [current-tab]="currentView"
-              [profile]="systemProfile"
-            >
-            </ix-enclosure-disks-mini>
-          </div>
-        </ng-template>
-      </ng-container>
-    </div>
-
-    <!-- Enclosure Selector -->
-    <div
-      *ngIf="showVisualizer && showEnclosureSelector"
-      #navigation
-      fxFlex="240px"
-      fxFlex.lt-lg="180px"
-      class="enclosure-selector"
-    >
-      <!-- Loading indicator -->
-      <ng-container *ngIf="spinner; then simplespinner"></ng-container>
-
-      <ng-container *ngIf="systemState?.enclosures.length">
-        <ng-container *ngFor="let enclosure of systemState?.enclosures; let i = index">
+        <!-- Enclosure Selector -->
+        @if (showVisualizer && showEnclosureSelector) {
           <div
-            *ngIf="systemState.enclosures.length; else emptysquare"
-            [class]="['enclosure', 'enclosure-'+ enclosure.id]"
-            [class.active]="enclosure.id === systemState.selectedEnclosure"
-            (click)="selectEnclosure(enclosure.id)"
+            #navigation
+            fxFlex="240px"
+            fxFlex.lt-lg="180px"
+            class="enclosure-selector"
           >
-            <div *ngIf="systemState.enclosures[i]?.label === systemState.enclosures[i].name">
-              {{ enclosure.model }} ({{ i }})
-            </div>
-            <div *ngIf="systemState.enclosures[i]?.label !== systemState.enclosures[i].name">
-              {{ systemState.enclosures[enclosure.number].label }} ({{ i }})
-            </div>
-          </div>
-          <ng-template #emptysquare><div class="enclosure-selector-item empty"></div></ng-template>
-        </ng-container>
-      </ng-container>
-    </div>
-  </div>
-</ng-container>
+            <!-- Loading indicator -->
+            @if (spinner) {
+              <div class="loader-dialog simple">
+                <div class="loader-dialog-inner">
+                  <mat-spinner
+                    class="spinner indicator"
+                  [diameter]="48"></mat-spinner>
+                </div>
+              </div>
+            }
 
-<ng-container *ngIf="errors.length > 0">
+            @if (systemState?.enclosures.length) {
+              @for (enclosure of systemState?.enclosures; track enclosure; let i = $index) {
+                @if (systemState.enclosures.length) {
+                  <div
+                    [class]="['enclosure', 'enclosure-'+ enclosure.id]"
+                    [class.active]="enclosure.id === systemState.selectedEnclosure"
+                    (click)="selectEnclosure(enclosure.id)"
+                  >
+                    @if (systemState.enclosures[i]?.label === systemState.enclosures[i].name) {
+                      <div>
+                        {{ enclosure.model }} ({{ i }})
+                      </div>
+                    }
+
+                    @if (systemState.enclosures[i]?.label !== systemState.enclosures[i].name) {
+                      <div>
+                        {{ systemState.enclosures[enclosure.number].label }} ({{ i }})
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="enclosure-selector-item empty"></div>
+                }
+              }
+            }
+          </div>
+        }
+      </div>
+    }
+  </ng-container>
+}
+
+@if (errors.length > 0) {
   <div class="error mat-card">
     <h3 class="error-header">
       <ix-icon name="mdi-alert"></ix-icon>
@@ -194,4 +217,4 @@
       </button>
     </div>
   </div>
-</ng-container>
+}
