@@ -56,6 +56,10 @@ const eS60 = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/es60/es60-top.svg',
 };
 
+const r10 = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/r10/r10-front.svg',
+};
+
 const eS102 = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/es102/es102-top.svg',
 };
@@ -95,4 +99,5 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.Es24]: eS24,
   [EnclosureModel.Es60]: eS60,
   [EnclosureModel.Es102]: eS102,
+  [EnclosureModel.R10]: r10,
 };
