@@ -81,6 +81,10 @@ const r20 = {
   [EnclosureSide.Rear]: 'assets/images/new-hardware/r20/r20-rear.svg',
 };
 
+const r30 = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/r30/r30-front.svg',
+};
+
 export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.M30]: mSeries,
   [EnclosureModel.M40]: mSeries,
@@ -106,4 +110,5 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.Es102]: eS102,
   [EnclosureModel.R10]: r10,
   [EnclosureModel.R20]: r20,
+  [EnclosureModel.R30]: r30,
 };
