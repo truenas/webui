@@ -64,8 +64,12 @@ const eS102 = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/es102/es102-top.svg',
 };
 
-const mini3X = {
+const mini3x = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/mini3x/mini3x-front.svg',
+};
+
+const mini3xPlus = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3x-plus/mini3x-plus-front.svg',
 };
 
 export const supportedEnclosures: Record<string, EnclosureViews> = {
@@ -84,8 +88,8 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.H20]: hSeries,
   [EnclosureModel.Mini3E]: mini3E,
   [EnclosureModel.Mini3EPlus]: mini3E,
-  [EnclosureModel.Mini3X]: mini3X,
-  [EnclosureModel.Mini3XPlus]: mini3X,
+  [EnclosureModel.Mini3X]: mini3x,
+  [EnclosureModel.Mini3XPlus]: mini3xPlus,
   [EnclosureModel.Mini3XlPlus]: mini3Xl,
   [EnclosureModel.Es12]: eS12,
   [EnclosureModel.Es24]: eS24,
