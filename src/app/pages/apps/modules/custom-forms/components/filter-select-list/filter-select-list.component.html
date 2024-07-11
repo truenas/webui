@@ -1,12 +1,14 @@
 <div class="label">{{ label }}</div>
 
 <div class="options">
-  <div *ngFor="let option of options | async">
-    <div class="item" (click)="onItemChanged(option.value)">
-      {{ option.label | translate }}
-      <ix-icon [name]="isChecked(option.value) ? 'check_circle' : ''"></ix-icon>
+  @for (option of options | async; track option) {
+    <div>
+      <div class="item" (click)="onItemChanged(option.value)">
+        {{ option.label | translate }}
+        <ix-icon [name]="isChecked(option.value) ? 'check_circle' : ''"></ix-icon>
+      </div>
     </div>
-  </div>
+  }
 </div>
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

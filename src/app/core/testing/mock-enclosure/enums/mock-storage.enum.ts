@@ -24,11 +24,14 @@ export enum MockStorageScenario {
 
 export const mockStorageScenarioLabels = new Map<MockStorageScenario, string>([
   [MockStorageScenario.AllSlotsEmpty, 'All slots empty'],
-  [MockStorageScenario.FillSomeSlots, 'Add disks to some slots and add a pool to some disks.'],
-  [MockStorageScenario.FillAllSlots, 'Add disks to all slots and add a pool to all disks'],
+  [MockStorageScenario.FillSomeSlots, 'Add disks to some slots and add pools to some disks.'],
+  [MockStorageScenario.FillAllSlots, 'Add disks to all slots and add pools to all disks'],
   [MockStorageScenario.DiskStatuses, 'Fill some slots and use all disk statuses'],
 ]);
 
+/**
+ * @deprecated
+ */
 export enum MockDiskType {
   'Hdd' = 'Hdd',
   'Nvme' = 'Nvme',

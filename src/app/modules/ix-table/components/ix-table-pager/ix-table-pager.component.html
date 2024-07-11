@@ -9,19 +9,20 @@
         [aria-label]="'Items per page' | translate"
         (selectionChange)="onPageSizeChange($event)"
       >
-        <mat-option *ngFor="let option of pageSizeOptions" [value]="option" [ixTest]="['pageSizeOption', option]">
-          {{ option }}
-        </mat-option>
+        @for (option of pageSizeOptions; track option) {
+          <mat-option [value]="option" [ixTest]="['pageSizeOption', option]">
+            {{ option }}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
   </div>
   <span class="pages">
-    <ng-container *ngIf="lastPage > firstPage">
+    @if (lastPage > firstPage) {
       {{ firstPage }} – {{ lastPage }}
-    </ng-container>
-    <ng-container *ngIf="lastPage <= firstPage">
+    } @else {
       {{ lastPage }}
-    </ng-container>
+    }
     {{ 'of' | translate }} {{ totalItems }}
   </span>
   <div class="buttons">

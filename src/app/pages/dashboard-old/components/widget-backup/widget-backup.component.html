@@ -20,27 +20,32 @@
             <h3 class="mat-card-title-text">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
-                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  @if (showReorderHandle) {
+                    <span class="grip"></span>
+                  }
                   <span>{{ 'Backup Tasks' | translate }}</span>
                 </div>
               </ix-drag-handle>
             </h3>
 
-            <div *ngIf="!!allCount" class="status-container">
-              <ix-icon
-                *ngIf="!failedCount"
-                name="mdi-check-circle"
-                class="icon healthy"
-              ></ix-icon>
-              <ix-icon
-                *ngIf="!!failedCount"
-                name="mdi-alert"
-                class="icon warning"
-              ></ix-icon>
-              <span *ngIf="!!failedCount">
-                {{ '{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed' | translate : { failedCount, allCount } }}
-              </span>
-            </div>
+            @if (!!allCount) {
+              <div class="status-container">
+                @if (!failedCount) {
+                  <ix-icon
+                    name="mdi-check-circle"
+                    class="icon healthy"
+                  ></ix-icon>
+                } @else {
+                  <ix-icon
+                    name="mdi-alert"
+                    class="icon warning"
+                  ></ix-icon>
+                  <span>
+                    {{ '{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed' | translate : { failedCount, allCount } }}
+                  </span>
+                }
+              </div>
+            }
 
             <div class="controls">
               <a
@@ -57,130 +62,155 @@
           </mat-toolbar-row>
         </ix-drag-handle>
 
-        <div *ngIf="backupsTiles.length" class="card-content">
-          <mat-grid-list gutterSize="5px" [cols]="1" [rowHeight]="hasSendTasks ? 105 : 90">
-            <mat-grid-tile *ngFor="let tile of backupsTiles; trackBy: trackByTile">
-              <div class="tile">
-                <div class="tile-content">
-                  <ul class="caption" [style.max-width.%]="isMobile ? 50 : 25">
-                    <span class="title">{{ tile.title | translate }}</span>
-                    <div *ngIf="hasSendTasks && !tile.totalSend" class="backup-actions">
-                      <ng-template *ngTemplateOutlet="backupActions"></ng-template>
+        @if (backupsTiles.length) {
+          <div class="card-content">
+            <mat-grid-list gutterSize="5px" [cols]="1" [rowHeight]="hasSendTasks ? 105 : 90">
+              @for (tile of backupsTiles; track trackByTile($index, tile)) {
+                <mat-grid-tile>
+                  <div class="tile">
+                    <div class="tile-content">
+                      <ul class="caption" [style.max-width.%]="isMobile ? 50 : 25">
+                        <span class="title">{{ tile.title | translate }}</span>
+                        @if (hasSendTasks && !tile.totalSend) {
+                          <div class="backup-actions">
+                            <ng-template *ngTemplateOutlet="backupActions"></ng-template>
+                          </div>
+                        }
+                      </ul>
+                      <div class="divider"></div>
+                      <ul [style.max-width.%]="isMobile ? 50 : 25">
+                        <li>
+                          <span [class]="['icon', tile.failedSend ? 'warn' : 'safe']">
+                            <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+                          </span>
+                          <span class="label">
+                            {{ '{tasks, plural, =1 {# send task} other {# send tasks}}' | translate : { tasks: tile.totalSend } }}
+                          </span>
+                        </li>
+                        <li>
+                          <span [class]="['icon', tile.failedReceive ? 'warn' : 'safe']">
+                            <ix-icon [name]="tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+                          </span>
+                          <span class="label">
+                            {{ '{tasks, plural, =1 {# receive task} other {# receive tasks}}' | translate : { tasks: tile.totalReceive } }}
+                          </span>
+                        </li>
+                        <li>
+                          <span [class]="['icon', tile.failedSend + tile.failedReceive ? 'warn' : 'safe']">
+                            <ix-icon [name]="tile.failedSend + tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+                          </span>
+                          <span class="label">
+                            {{ 'Total failed' | translate }}: {{ tile.failedSend + tile.failedReceive }}
+                          </span>
+                        </li>
+                      </ul>
+                      @if (!isMobile) {
+                        <div class="divider"></div>
+
+                        <ul [style.max-width.%]="50">
+                          <li>
+                            @if (!tile.lastWeekSend) {
+                              <span class="label dash">—</span>
+                            }
+                            @if (tile.lastWeekSend) {
+                              <span class="label">
+                                {{ '{tasks, plural, =1 {# sent task} other {# sent tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
+                              </span>
+                            }
+                          </li>
+                          <li>
+                            @if (!tile.lastWeekReceive) {
+                              <span class="label dash">—</span>
+                            }
+                            @if (tile.lastWeekReceive) {
+                              <span class="label">
+                                {{ '{tasks, plural, =1 {# received task} other {# received tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
+                              </span>
+                            }
+                          </li>
+                          <li>
+                            <span class="label">
+                              {{ 'Last successful' | translate }}:
+                              {{ tile.lastSuccessfulTask ? (tile.lastSuccessfulTask.$date | formatDateTime) : ('Never' | translate) }}
+                            </span>
+                          </li>
+                        </ul>
+                      }
                     </div>
-                  </ul>
-                  <div class="divider"></div>
-                  <ul [style.max-width.%]="isMobile ? 50 : 25">
-                    <li>
-                      <span [class]="['icon', tile.failedSend ? 'warn' : 'safe']">
-                        <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
-                      </span>
-                      <span class="label">
-                        {{ '{tasks, plural, =1 {# send task} other {# send tasks}}' | translate : { tasks: tile.totalSend } }}
-                      </span>
-                    </li>
-                    <li>
-                      <span [class]="['icon', tile.failedReceive ? 'warn' : 'safe']">
-                        <ix-icon [name]="tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
-                      </span>
-                      <span class="label">
-                        {{ '{tasks, plural, =1 {# receive task} other {# receive tasks}}' | translate : { tasks: tile.totalReceive } }}
-                      </span>
-                    </li>
-                    <li>
-                      <span [class]="['icon', tile.failedSend + tile.failedReceive ? 'warn' : 'safe']">
-                        <ix-icon [name]="tile.failedSend + tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
-                      </span>
-                      <span class="label">
-                        {{ 'Total failed' | translate }}: {{ tile.failedSend + tile.failedReceive }}
-                      </span>
-                    </li>
-                  </ul>
-                  <div *ngIf="!isMobile" class="divider"></div>
-                  <ul *ngIf="!isMobile" [style.max-width.%]="50">
-                    <li>
-                      <span *ngIf="!tile.lastWeekSend" class="label dash">—</span>
-                      <span *ngIf="tile.lastWeekSend" class="label">
-                        {{ '{tasks, plural, =1 {# sent task} other {# sent tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
-                      </span>
-                    </li>
-                    <li>
-                      <span *ngIf="!tile.lastWeekReceive" class="label dash">—</span>
-                      <span *ngIf="tile.lastWeekReceive" class="label">
-                        {{ '{tasks, plural, =1 {# received task} other {# received tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
-                      </span>
-                    </li>
-                    <li>
-                      <span class="label">
-                        {{ 'Last successful' | translate }}:
-                        {{ tile.lastSuccessfulTask ? (tile.lastSuccessfulTask.$date | formatDateTime) : ('Never' | translate) }}
-                      </span>
-                    </li>
-                  </ul>
+                  </div>
+                </mat-grid-tile>
+              }
+            </mat-grid-list>
+            @if (!hasSendTasks) {
+              <div class="banner">
+                <ng-template *ngTemplateOutlet="backupActions"></ng-template>
+              </div>
+            }
+          </div>
+        }
+        @if (!backupsTiles.length) {
+          <div>
+            @if (!isLoading) {
+              <div class="empty-card-content">
+                <ix-icon name="mdi-format-list-text" class="empty-icon"></ix-icon>
+                <div class="backup-actions">
+                  <ng-template *ngTemplateOutlet="backupActions"></ng-template>
+                </div>
+                <div class="details-item">
+                  <div class="label">{{ 'Actions' | translate }}</div>
+                </div>
+                <div class="details-item">
+                  <a
+                    *ixRequiresRoles="[Role.CloudSyncWrite]"
+                    class="action"
+                    tabIndex="0"
+                    ixTest="cloud-sync"
+                    (click)="addCloudSyncTask()"
+                    (keydown.enter)="addCloudSyncTask()"
+                  >
+                    {{ 'Cloud Sync to Storj or similar provider' | translate }}
+                  </a>
+                </div>
+                <div class="details-item">
+                  <a
+                    *ixRequiresRoles="[Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]"
+                    class="action"
+                    tabIndex="0"
+                    ixTest="replication"
+                    (click)="addReplicationTask()"
+                    (keydown.enter)="addReplicationTask()"
+                  >
+                    {{ 'ZFS Replication to another TrueNAS' | translate }}
+                  </a>
+                </div>
+                <div class="details-item">
+                  <a
+                    *ixRequiresRoles="[Role.FullAdmin]"
+                    class="action"
+                    tabIndex="0"
+                    ixTest="rsync"
+                    (click)="addRsyncTask()"
+                    (keydown.enter)="addRsyncTask()"
+                  >
+                    {{ 'Rsync to another server' | translate }}
+                  </a>
                 </div>
               </div>
-            </mat-grid-tile>
-          </mat-grid-list>
-          <div *ngIf="!hasSendTasks" class="banner">
-            <ng-template *ngTemplateOutlet="backupActions"></ng-template>
+            }
+            @if (isLoading) {
+              <div class="loading-card-content">
+                <mat-spinner [diameter]="40"></mat-spinner>
+              </div>
+            }
           </div>
-        </div>
-        <div *ngIf="!backupsTiles.length">
-          <div *ngIf="!isLoading" class="empty-card-content">
-            <ix-icon name="mdi-format-list-text" class="empty-icon"></ix-icon>
-            <div class="backup-actions">
-              <ng-template *ngTemplateOutlet="backupActions"></ng-template>
-            </div>
-            <div class="details-item">
-              <div class="label">{{ 'Actions' | translate }}</div>
-            </div>
-            <div class="details-item">
-              <a
-                *ixRequiresRoles="[Role.CloudSyncWrite]"
-                class="action"
-                tabIndex="0"
-                ixTest="cloud-sync"
-                (click)="addCloudSyncTask()"
-                (keydown.enter)="addCloudSyncTask()"
-              >
-                {{ 'Cloud Sync to Storj or similar provider' | translate }}
-              </a>
-            </div>
-            <div class="details-item">
-              <a
-                *ixRequiresRoles="[Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]"
-                class="action"
-                tabIndex="0"
-                ixTest="replication"
-                (click)="addReplicationTask()"
-                (keydown.enter)="addReplicationTask()"
-              >
-                {{ 'ZFS Replication to another TrueNAS' | translate }}
-              </a>
-            </div>
-            <div class="details-item">
-              <a
-                *ixRequiresRoles="[Role.FullAdmin]"
-                class="action"
-                tabIndex="0"
-                ixTest="rsync"
-                (click)="addRsyncTask()"
-                (keydown.enter)="addRsyncTask()"
-              >
-                {{ 'Rsync to another server' | translate }}
-              </a>
-            </div>
-          </div>
-          <div *ngIf="isLoading" class="loading-card-content">
-            <mat-spinner [diameter]="40"></mat-spinner>
-          </div>
-        </div>
+        }
       </mat-card-content>
     </mat-card>
   </div>
 </div>
 
 <ng-template #backupActions>
-  <ng-container *ngIf="!!allCount">
+  @if (!!allCount) {
     {{ 'Backup' | translate }}
     <a *ixRequiresRoles="[Role.CloudSyncWrite]" class="backup-action" ixTest="cloud" (click)="addCloudSyncTask()">
       {{ 'to cloud' | translate }}
@@ -194,9 +224,9 @@
     >
       {{ 'to another TrueNAS' | translate }}
     </a>
-  </ng-container>
-  <ng-container *ngIf="!allCount">
+  }
+  @if (!allCount) {
     <ng-container *ixRequiresRoles="[Role.FullAdmin]"></ng-container>
     {{ 'Backup to Cloud or another TrueNAS via links below' | translate }}
-  </ng-container>
+  }
 </ng-template>

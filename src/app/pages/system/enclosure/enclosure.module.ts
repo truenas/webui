@@ -51,8 +51,11 @@ import {
 import {
   EnclosureViewComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/enclosure-view.component';
+import {
+  PoolsLegendComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/pools-legend/pools-legend.component';
+import { VdevDisksLegendComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/vdev-disks-legend/vdev-disks-legend.component';
 import { SasExpanderStatusViewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/sas-expander-status-view/sas-expander-status-view.component';
-import { VdevDisksListComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/vdev-disks-list/vdev-disks-list.component';
 import {
   MiniDisksOverviewComponent,
 } from 'app/pages/system/enclosure/components/pages/mini-page/mini-disks-overview/mini-disks-overview.component';
@@ -121,7 +124,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     JbofListComponent,
     SasExpanderStatusViewComponent,
     JbofFormComponent,
-    VdevDisksListComponent,
+    VdevDisksLegendComponent,
     SetEnclosureLabelDialogComponent,
     EnclosureDiskComponent,
     ElementsPageComponent,
@@ -139,6 +142,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MiniPoolsComponent,
     MiniEnclosureComponent,
     MiniSlotStatusComponent,
+    PoolsLegendComponent,
   ],
   providers: [
     EnclosureStore,

@@ -44,28 +44,29 @@
   <ix-app-update-cell [app]="app" [showIcon]="true"></ix-app-update-cell>
 </div>
 <div *ixRequiresRoles="requiredRoles" class="cell cell-action">
-  <button
-    *ngIf="isAppStopped"
-    mat-icon-button
-    matTooltipPosition="above"
-    [ixTest]="[app.name, 'start']"
-    [matTooltip]="'Start' | translate"
-    [disabled]="inProgress"
-    (click)="start(); $event.stopPropagation()"
-  >
-    <ix-icon name="mdi-play"></ix-icon>
-  </button>
-  <button
-    *ngIf="!isAppStopped"
-    mat-icon-button
-    matTooltipPosition="above"
-    [ixTest]="[app.name, 'stop']"
-    [matTooltip]="'Stop' | translate"
-    [disabled]="isStartingOrStopping"
-    (click)="stop(); $event.stopPropagation()"
-  >
-    <ix-icon name="mdi-stop"></ix-icon>
-  </button>
+  @if (isAppStopped) {
+    <button
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[app.name, 'start']"
+      [matTooltip]="'Start' | translate"
+      [disabled]="inProgress"
+      (click)="start(); $event.stopPropagation()"
+    >
+      <ix-icon name="mdi-play"></ix-icon>
+    </button>
+  } @else {
+    <button
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[app.name, 'stop']"
+      [matTooltip]="'Stop' | translate"
+      [disabled]="isStartingOrStopping"
+      (click)="stop(); $event.stopPropagation()"
+    >
+      <ix-icon name="mdi-stop"></ix-icon>
+    </button>
+  }
 </div>
 
 <ng-template #notAvailable>

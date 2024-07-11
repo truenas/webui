@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component, OnDestroy, ChangeDetectionStrategy,
   input,
@@ -20,7 +19,6 @@ import 'chartjs-adapter-date-fns';
   styleUrls: ['./view-chart-area.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule],
 })
 export class ViewChartAreaComponent implements OnDestroy {
   // TODO: Replace when ng-mocks get viewChild support

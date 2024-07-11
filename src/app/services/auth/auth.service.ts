@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
@@ -35,7 +34,6 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -48,7 +46,7 @@ export class AuthService {
    * time of a token generated with auth.generate_token. The 10 seconds
    * difference is to allow for delays in request send/receive
    */
-  readonly tokenRegenerationTimeMillis = 290 * 1000;
+  private readonly tokenRegenerationTimeMillis = 290 * 1000;
 
   private latestTokenGenerated$ = new ReplaySubject<string>(1);
   get authToken$(): Observable<string> {
@@ -78,7 +76,7 @@ export class AuthService {
     map((user) => user.account_attributes.includes(AccountAttribute.SysAdmin)),
   );
 
-  readonly userTwoFactorConfig$ = this.loggedInUser$.pipe(
+  readonly userTwoFactorConfig$ = this.user$.pipe(
     filter(Boolean),
     map((user) => user.two_factor_config),
   );
@@ -164,7 +162,7 @@ export class AuthService {
    * Use mockAuth if you need to set user role in tests.
    */
   hasRole(roles: Role[] | Role): Observable<boolean> {
-    return this.loggedInUser$.pipe(
+    return this.user$.pipe(
       filter(Boolean),
       map((user) => {
         const currentRoles = user?.privilege?.roles?.$set || [];
@@ -194,7 +192,6 @@ export class AuthService {
 
   refreshUser(): Observable<void> {
     this.loggedInUser$.next(null);
-
     return this.getLoggedInUserInformation().pipe(
       map(() => null),
     );
@@ -269,7 +266,6 @@ export class AuthService {
         filter((isAuthenticated) => isAuthenticated),
         switchMap(() => this.makeRequest('auth.generate_token')),
         tap((token) => this.latestTokenGenerated$.next(token)),
-        untilDestroyed(this),
       ).subscribe();
     }
   }
@@ -283,11 +279,10 @@ export class AuthService {
   }
 
   private setupAuthenticationUpdate(): void {
-    this.isAuthenticated$.pipe(untilDestroyed(this)).subscribe({
+    this.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.store$.dispatch(adminUiInitialized());
-          this.refreshUser().pipe(untilDestroyed(this)).subscribe();
           this.setupPeriodicTokenGeneration();
         } else if (this.generateTokenSubscription) {
           this.latestTokenGenerated$?.complete();
@@ -301,13 +296,13 @@ export class AuthService {
   }
 
   private setupWsConnectionUpdate(): void {
-    this.wsManager.isConnected$.pipe(filter((isConnected) => !isConnected), untilDestroyed(this)).subscribe(() => {
+    this.wsManager.isConnected$.pipe(filter((isConnected) => !isConnected)).subscribe(() => {
       this.isLoggedIn$.next(false);
     });
   }
 
   private setupTokenUpdate(): void {
-    this.latestTokenGenerated$.pipe(untilDestroyed(this)).subscribe((token) => {
+    this.latestTokenGenerated$.subscribe((token) => {
       this.token = token;
     });
   }

@@ -1,9 +1,9 @@
-<ngx-skeleton-loader
-  *ngIf="isLoading(); else gauge"
-  class="skeleton"
-  appearance="circle"
-  [theme]="{ width: '130px', height: '130px', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
-></ngx-skeleton-loader>
-<ng-template #gauge>
+@if (isLoading()) {
+  <ngx-skeleton-loader
+    class="skeleton"
+    appearance="circle"
+    [theme]="{ width: '130px', height: '130px', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
+  ></ngx-skeleton-loader>
+} @else {
   <ix-view-chart-gauge [config]="cpuAvg()"></ix-view-chart-gauge>
-</ng-template>
+}

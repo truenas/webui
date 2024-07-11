@@ -1,11 +1,12 @@
 <div class="full-width container has-tooltip">
-  <ix-label
-    *ngIf="label || tooltip"
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
-    [ixTestOverride]="controlDirective.name"
-  ></ix-label>
+  @if (label || tooltip) {
+    <ix-label
+      [label]="label"
+      [tooltip]="tooltip"
+      [required]="required"
+      [ixTestOverride]="controlDirective.name"
+    ></ix-label>
+  }
 
   <div class="input-container" [class.disabled]="disabledState">
     <mat-select
@@ -23,80 +24,85 @@
         {{ selectedLabel }}
       </mat-select-trigger>
 
-      <div
-        *ngIf="multiple && showSelectAll"
-        class="select-all-checkbox"
-        [ixTest]="[controlDirective.name, 'select-all']"
-        (click)="toggleSelectAll(!selectAllState.checked)"
-      >
-        <ix-icon
-          [name]="selectAllState.checked ? 'check_circle' : 'remove'"
-        ></ix-icon>
-
-        {{ 'Select All' | translate }}
-      </div>
-
-      <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
-        <mat-option
-          *ngIf="opts.length === 0"
-          [value]="null"
-          [disabled]="true"
-          [ixTest]="[controlDirective.name, 'no-options']"
-        >
-          {{ 'No options' | translate }}
-        </mat-option>
-
-        <mat-option
-          *ngIf="opts.length > 0 && !multiple && !required && !hideEmpty" [value]="emptyValue"
-          [ixTest]="[controlDirective.name, 'select']"
-        >
-          --
-        </mat-option>
-
-        <mat-option
-          *ngFor="let option of opts"
-          #ixOption
-          matTooltipPosition="right"
-          [value]="option.value"
-          [disabled]="option.disabled"
-          [ixTest]="[controlDirective.name, option.label]"
-          [matTooltip]="option.hoverTooltip"
-          [attr.aria-label]="option.label"
+      @if (multiple && showSelectAll) {
+        <div
+          class="select-all-checkbox"
+          [ixTest]="[controlDirective.name, 'select-all']"
+          (click)="toggleSelectAll(!selectAllState.checked)"
         >
           <ix-icon
-            *ngIf="multiple"
-            [name]="ixOption.selected ? 'check_circle' : 'remove'"
+            [name]="selectAllState.checked ? 'check_circle' : 'remove'"
           ></ix-icon>
+          {{ 'Select All' | translate }}
+        </div>
+      }
 
-          {{ option.label | translate }}
+      @if (opts$ | async; as opts) {
+        @if (opts.length === 0) {
+          <mat-option
+            [value]="null"
+            [disabled]="true"
+            [ixTest]="[controlDirective.name, 'no-options']"
+          >
+            {{ 'No options' | translate }}
+          </mat-option>
+        }
+        @if (opts.length > 0 && !multiple && !required && !hideEmpty) {
+          <mat-option
+            [value]="emptyValue"
+            [ixTest]="[controlDirective.name, 'select']"
+          >
+            --
+          </mat-option>
+        }
+        @for (option of opts; track option.label) {
+          <mat-option
+            #ixOption
+            matTooltipPosition="right"
+            [value]="option.value"
+            [disabled]="option.disabled"
+            [ixTest]="[controlDirective.name, option.label]"
+            [matTooltip]="option.hoverTooltip"
+            [attr.aria-label]="option.label"
+          >
+            @if (multiple) {
+              <ix-icon
+                [name]="ixOption.selected ? 'check_circle' : 'remove'"
+              ></ix-icon>
+            }
+            {{ option.label | translate }}
 
-          <ix-tooltip
-            *ngIf="option.tooltip"
-            class="option-tooltip"
-            [header]="option.label | translate"
-            [message]="option.tooltip | translate"
-            (click)="onOptionTooltipClicked($event)"
-          ></ix-tooltip>
-        </mat-option>
-      </ng-container>
-
-      <ng-template #loadingOrError>
-        <ng-container *ngIf="hasErrorInOptions">
+            @if (option.tooltip) {
+              <ix-tooltip
+                class="option-tooltip"
+                [header]="option.label | translate"
+                [message]="option.tooltip | translate"
+                (click)="onOptionTooltipClicked($event)"
+              ></ix-tooltip>
+            }
+          </mat-option>
+        }
+      } @else {
+        @if (hasErrorInOptions) {
           <mat-option [disabled]="true" [ixTest]="[controlDirective.name, 'options-not-loaded']">
             {{ 'Options cannot be loaded' | translate }}
           </mat-option>
-        </ng-container>
-      </ng-template>
+        }
+      }
     </mat-select>
-    <mat-progress-spinner
-      *ngIf="isLoadingState"
-      class="loader"
-      mode="indeterminate"
-      [diameter]="15"
-    ></mat-progress-spinner>
+
+    @if (isLoadingState) {
+      <mat-progress-spinner
+        class="loader"
+        mode="indeterminate"
+        [diameter]="15"
+      ></mat-progress-spinner>
+    }
   </div>
 
   <ix-errors [control]="controlDirective.control" [label]="label | translate"></ix-errors>
 
-  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+  @if (hint) {
+    <mat-hint>{{ hint }}</mat-hint>
+  }
 </div>

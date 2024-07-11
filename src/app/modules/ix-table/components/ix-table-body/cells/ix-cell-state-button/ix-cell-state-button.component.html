@@ -1,4 +1,4 @@
-<ng-container *ngIf="state; else empty">
+@if (state) {
   <button
     mat-stroked-button
     class="state-button"
@@ -10,12 +10,13 @@
     (click)="$event.stopPropagation(); onButtonClick()"
   >
     {{ state }}
-    <div *ngIf="warnings?.length > 0" class="label-warning-icon">
-      <ix-icon name="mdi-alert"></ix-icon>
-    </div>
+    @if (warnings?.length > 0) {
+      <div class="label-warning-icon">
+        <ix-icon name="mdi-alert"></ix-icon>
+      </div>
+    }
   </button>
-</ng-container>
-
-<ng-template #empty>
+} @else {
   {{ 'N/A' | translate }}
-</ng-template>
+}
+

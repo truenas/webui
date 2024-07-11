@@ -13,25 +13,27 @@
   (keydown.enter)="runSearch.emit()"
 />
 
-<a
-  *ngIf="allowAdvanced"
-  class="switch-link"
-  ixTest="switch-to-advanced"
-  tabindex="0"
-  (click)="switchToAdvanced.emit()"
-  (keydown.enter)="$event.preventDefault(); switchToAdvanced.emit()"
->
-  {{ 'Switch To Advanced' | translate }}
-</a>
-
-<span
-  *ngIf="searchControl.value"
-  class="reset-icon reset-input"
-  (click)="resetInput()"
->
-  <ix-icon
-    name="mdi-close-circle"
+@if (allowAdvanced) {
+  <a
+    class="switch-link"
+    ixTest="switch-to-advanced"
     tabindex="0"
-    (keydown.enter)="$event.preventDefault(); resetInput()"
-  ></ix-icon>
-</span>
+    (click)="switchToAdvanced.emit()"
+    (keydown.enter)="$event.preventDefault(); switchToAdvanced.emit()"
+  >
+    {{ 'Switch To Advanced' | translate }}
+  </a>
+}
+
+@if (searchControl.value) {
+  <span
+    class="reset-icon reset-input"
+    (click)="resetInput()"
+  >
+    <ix-icon
+      name="mdi-close-circle"
+      tabindex="0"
+      (keydown.enter)="$event.preventDefault(); resetInput()"
+    ></ix-icon>
+  </span>
+}
