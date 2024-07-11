@@ -1,11 +1,5 @@
-.container {
-  align-items: center;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: center;
-  min-width: 105px;
+:host {
+  text-align: center;
 }
 
 h1 {

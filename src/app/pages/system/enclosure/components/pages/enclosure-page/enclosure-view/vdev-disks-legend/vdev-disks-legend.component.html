@@ -1,0 +1,24 @@
+@if (!selectedSlot()?.dev) {
+  <div>{{ 'Empty drive cage' | translate }}</div>
+}
+
+@if (selectedSlot()?.dev && !selectedSlot()?.pool_info) {
+  <div>{{ 'No vdev info for this disk' | translate }}</div>
+}
+
+@if (selectedSlot()?.pool_info?.vdev_disks?.length) {
+    @for (disk of selectedSlot()?.pool_info.vdev_disks; track disk.dev) {
+      <a
+        class="disk-name"
+        [ixTest]="['select-disk', disk.dev]"
+        (click)="diskClick.emit(disk)"
+      >
+        <div
+          class="disk-circle"
+          [style.background]="isSelectedSlot(disk) ? undefined : poolColor()"
+          [class.selected]="isSelectedSlot(disk)"
+        ></div>
+        <span class="devname">{{ disk.dev }}</span>
+      </a>
+    }
+}
