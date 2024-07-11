@@ -60,6 +60,10 @@ const eS24 = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/es24/es24-front.svg',
 };
 
+const eS60 = {
+  [EnclosureSide.Top]: 'assets/images/new-hardware/es60/es60-top.svg',
+};
+
 export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.M30]: mSeries,
   [EnclosureModel.M40]: mSeries,
@@ -67,7 +71,6 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.M60]: mSeries,
   [EnclosureModel.Es24F]: eS24F,
   [EnclosureModel.Es24N]: eS24N,
-  [EnclosureModel.Es60]: eS60G2,
   [EnclosureModel.Es60G2]: eS60G2,
   [EnclosureModel.Es102]: eS102G2,
   [EnclosureModel.Es102G2]: eS102G2,
@@ -83,4 +86,5 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.Mini3XlPlus]: mini3Xl,
   [EnclosureModel.Es12]: eS12,
   [EnclosureModel.Es24]: eS24,
+  [EnclosureModel.Es60]: eS60,
 };
