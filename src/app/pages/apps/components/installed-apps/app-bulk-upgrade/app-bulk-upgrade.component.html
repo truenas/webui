@@ -7,85 +7,88 @@
   </p>
 
   <mat-accordion displayMode="flat" class="bulk-list">
-    <mat-expansion-panel
-      *ngFor="let bulkItem of bulkItems | keyvalue: originalOrder; trackBy: trackByKey"
-      (afterExpand)="onExpand(bulkItem)"
-    >
-      <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
-        <ix-fake-progress-bar [loading]="loadingMap.get(bulkItem.key)"></ix-fake-progress-bar>
-        <mat-panel-title>
-          <ix-bulk-list-item [item]="bulkItem.value">
-            {{ bulkItem.key }}
-            {{ bulkItem.value.item.human_version.split('_')[0] }}
+    @for (bulkItem of bulkItems | keyvalue: originalOrder; track trackByKey($index, bulkItem)) {
+      <mat-expansion-panel (afterExpand)="onExpand(bulkItem)">
+        <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+          <ix-fake-progress-bar [loading]="loadingMap.get(bulkItem.key)"></ix-fake-progress-bar>
+          <mat-panel-title>
+            <ix-bulk-list-item [item]="bulkItem.value">
+              {{ bulkItem.key }}
+              {{ bulkItem.value.item.human_version.split('_')[0] }}
 
-            <div class="version">
-              <span>{{ bulkItem.value.item.human_version.split('_')[1] }}</span>
-              <ix-icon name="mdi-arrow-right-thin"></ix-icon>
-              <span>{{ form.get(bulkItem.key)?.value }}</span>
-            </div>
-
-            <div class="logo">
-              <img
-                [src]="bulkItem.value.item.chart_metadata.icon"
-                [src-fallback]="imagePlaceholder"
-              />
-            </div>
-          </ix-bulk-list-item>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <div *appLet="upgradeSummaryMap.get(bulkItem.key) as summary" class="expansion-content">
-        <ix-select
-          [formControlName]="bulkItem.key"
-          [label]="'Version to be upgraded to' | translate"
-          [required]="true"
-          [options]="optionsMap.get(bulkItem.key)"
-        ></ix-select>
-
-        <ng-container *ngIf="hasErrors(bulkItem.key)">
-          <span>{{ bulkItem.value.message | translate }}</span>
-        </ng-container>
-
-        <mat-accordion class="details-list" displayMode="flat">
-          <mat-expansion-panel>
-            <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
-              <mat-panel-title>{{ 'Images ( to be updated )' | translate }}</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="details-expansion-content">
-              <ol *ngIf="hasUpdatesForImages(bulkItem.key); else noUpdatesForImages">
-                <li *ngFor="let containerImage of summary.container_images_to_update | keyvalue: originalOrder">
-                  {{ containerImage.key }}
-                </li>
-              </ol>
-            </div>
-          </mat-expansion-panel>
-
-          <mat-expansion-panel>
-            <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
-              <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="details-expansion-content">
-              <div
-                fxLayout="row"
-                fxLayoutAlign="start start"
-                class="detail-row row-dark"
-              >
-                <ng-container *ngIf="summary?.changelog; else noChangelog">
-                  <div [innerHTML]="summary.changelog"></div>
-                </ng-container>
+              <div class="version">
+                <span>{{ bulkItem.value.item.human_version.split('_')[1] }}</span>
+                <ix-icon name="mdi-arrow-right-thin"></ix-icon>
+                <span>{{ form.get(bulkItem.key)?.value }}</span>
               </div>
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </div>
-    </mat-expansion-panel>
+
+              <div class="logo">
+                <img
+                  [src]="bulkItem.value.item.chart_metadata.icon"
+                  [src-fallback]="imagePlaceholder"
+                  />
+              </div>
+            </ix-bulk-list-item>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div *appLet="upgradeSummaryMap.get(bulkItem.key) as summary" class="expansion-content">
+          <ix-select
+            [formControlName]="bulkItem.key"
+            [label]="'Version to be upgraded to' | translate"
+            [required]="true"
+            [options]="optionsMap.get(bulkItem.key)"
+          ></ix-select>
+
+          @if (hasErrors(bulkItem.key)) {
+            <span>{{ bulkItem.value.message | translate }}</span>
+          }
+
+          <mat-accordion class="details-list" displayMode="flat">
+            <mat-expansion-panel>
+              <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+                <mat-panel-title>{{ 'Images ( to be updated )' | translate }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="details-expansion-content">
+                @if (hasUpdatesForImages(bulkItem.key)) {
+                  <ol>
+                    @for (containerImage of summary.container_images_to_update | keyvalue: originalOrder; track containerImage) {
+                      <li>
+                        {{ containerImage.key }}
+                      </li>
+                    }
+                  </ol>
+                } @else {
+                  {{ 'There are no images requiring upgrade' | translate }}
+                }
+              </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+              <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+                <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="details-expansion-content">
+                <div
+                  fxLayout="row"
+                  fxLayoutAlign="start start"
+                  class="detail-row row-dark"
+                >
+                  @if (summary?.changelog) {
+                    <div [innerHTML]="summary.changelog"></div>
+                  } @else {
+                    {{ 'No Changelog' | translate }}
+                  }
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </mat-expansion-panel>
+    }
   </mat-accordion>
 
-  <ng-template #noUpdatesForImages>
-    {{ 'There are no images requiring upgrade' | translate }}
-  </ng-template>
 
-  <ng-template #noChangelog>{{ 'No Changelog' | translate }}</ng-template>
 
   <div class="form-actions">
     <button

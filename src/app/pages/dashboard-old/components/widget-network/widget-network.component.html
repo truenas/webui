@@ -20,7 +20,9 @@
             <h3 class="mat-card-title-text">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
-                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  @if (showReorderHandle) {
+                    <span class="grip"></span>
+                  }
                   <span>{{ 'Network' | translate }}</span>
                 </div>
               </ix-drag-handle>
@@ -41,129 +43,147 @@
           </mat-toolbar-row>
         </ix-drag-handle>
 
-        <ng-container *ngIf="!availableNics.length">
+        @if (!availableNics.length) {
           <div class="empty-state">
             <h3>{{ 'No active interfaces are found' | translate }}</h3>
             <a mat-button color="primary" routerLink="/network" ixTest="open-network">
               {{ 'Open Network' | translate }}
             </a>
           </div>
-        </ng-container>
-        <div *ngIf="availableNics.length">
-          <div
-            class="card-body"
-            [style.padding-top.px]="paddingTop"
-            [style.padding-bottom.px]="paddingBottom"
-            [style.padding-left.px]="paddingX"
-            [style.padding-right.px]="paddingX"
-          >
-            <mat-grid-list
-              cols="6"
-              [gutterSize]="gap + 'px'"
-              [rowHeight]="rowHeight + 'px'"
-              [ngClass]="'nics-' + availableNics.length"
+        }
+        @if (availableNics.length) {
+          <div>
+            <div
+              class="card-body"
+              [style.padding-top.px]="paddingTop"
+              [style.padding-bottom.px]="paddingBottom"
+              [style.padding-left.px]="paddingX"
+              [style.padding-right.px]="paddingX"
             >
-              <mat-grid-tile
-                *ngFor="let nic of availableNics; let i = index"
-                [class]="'tile-' + i"
-                [colspan]="getColspan(i)"
+              <mat-grid-list
+                cols="6"
+                [gutterSize]="gap + 'px'"
+                [rowHeight]="rowHeight + 'px'"
+                [ngClass]="'nics-' + availableNics.length"
               >
-                <div
-                  class="tile"
-                  [style.flex-direction]="availableNics.length === 1 ? 'column' : 'row'"
-                >
-                  <div class="nic-info">
-                    <div class="info-header">
-                      <h4 class="info-header-title">{{ nic.state.name }}</h4>
-                      <!-- TODO: NAS-117157 - Add pencil icon and open edit interface as slide-in form on click -->
-                    </div>
-                    <div class="info-body">
-                      <ul>
-                        <li class="info-list-item">
-                          <span *ngIf="getLinkState(nic) === LinkState.Up" class="icon up">
-                            <ix-icon name="check_circle" [matTooltip]="getLinkStateLabel(nic)"></ix-icon>
-                          </span>
-                          <span *ngIf="getLinkState(nic) !== LinkState.Up" class="icon down">
-                            <ix-icon name="cancel" [matTooltip]="getLinkStateLabel(nic)"></ix-icon>
-                          </span>
-                          <span>{{ getLinkStateLabel(nic) }}</span>
-                        </li>
-                        <li class="info-list-item line-state">
-                          <span class="icon state">
-                            <ix-interface-status-icon
-                              [update]="networkInterfaceUpdate.get(nic.state.name)"
-                            ></ix-interface-status-icon>
-                          </span>
-                          <ul *ngIf="getLinkState(nic) === LinkState.Up">
-                            <li>
-                              <span class="label">{{ 'In' | translate }}:</span>
-                              {{ nicInfoMap.get(nic.state.name)?.bitsIn | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                @for (nic of availableNics; track nic; let i = $index) {
+                  <mat-grid-tile
+                    [class]="'tile-' + i"
+                    [colspan]="getColspan(i)"
+                  >
+                    <div
+                      class="tile"
+                      [style.flex-direction]="availableNics.length === 1 ? 'column' : 'row'"
+                    >
+                      <div class="nic-info">
+                        <div class="info-header">
+                          <h4 class="info-header-title">{{ nic.state.name }}</h4>
+                          <!-- TODO: NAS-117157 - Add pencil icon and open edit interface as slide-in form on click -->
+                        </div>
+                        <div class="info-body">
+                          <ul>
+                            <li class="info-list-item">
+                              @if (getLinkState(nic) === LinkState.Up) {
+                                <span class="icon up">
+                                  <ix-icon name="check_circle" [matTooltip]="getLinkStateLabel(nic)"></ix-icon>
+                                </span>
+                              }
+                              @if (getLinkState(nic) !== LinkState.Up) {
+                                <span class="icon down">
+                                  <ix-icon name="cancel" [matTooltip]="getLinkStateLabel(nic)"></ix-icon>
+                                </span>
+                              }
+                              <span>{{ getLinkStateLabel(nic) }}</span>
                             </li>
-                            <li>
-                              <span class="label">{{ 'Out' | translate }}:</span
-                              >{{ nicInfoMap.get(nic.state.name)?.bitsOut | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
-                            </li>
-                          </ul>
-                          <span *ngIf="getLinkState(nic) !== LinkState.Up">
-                            {{ 'No Traffic' | translate }}
-                          </span>
-                        </li>
-                        <li *ngIf="availableNics.length > 1" class="info-list-item">
-                          <span class="icon address">
-                            <ix-icon name="settings_ethernet" [matTooltip]="getIpAddressTooltip(nic)"></ix-icon>
-                          </span>
-                          <span>{{ nicInfoMap.get(nic.state.name)?.ip }}</span>
-                        </li>
-                      </ul>
-                      <ul *ngIf="availableNics.length === 1" class="detail-info">
-                        <li>
-                          <span class="label">
-                            {{ 'Media Type' | translate }}:
-                          </span>
-                          <ng-container *ngIf="nic.state.active_media_type; else unknown">
-                            {{ nic.state.active_media_type }}
-                          </ng-container>
-                        </li>
-                        <li>
-                          <span class="label">
-                            {{ 'Media Subtype' | translate }}:
-                          </span>
-                          <ng-container *ngIf="nic.state.active_media_subtype; else unknown">
-                            {{ nic.state.active_media_subtype }}
-                          </ng-container>
-                        </li>
-                        <li>
-                          <span class="label">
-                            {{ 'IP Address' | translate }}:
-                          </span>
-                          {{ nicInfoMap.get(nic.state.name)?.ip }}
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div *ngIf="availableNics.length <= 3" class="nic-chart">
-                    <div class="chart-body" [ngClass]="getChartBodyClasses(nic)">
-                      <ix-view-chart-area
-                        *ngIf="nicInfoMap && nicInfoMap.get(nic.state.name).chartData; else emptychart"
-                        [data]="nicInfoMap.get(nic.state.name)?.chartData"
-                        [options]="chartOptions"
-                      >
-                      </ix-view-chart-area>
-                      <ng-template #emptychart>
-                        <ix-empty [conf]="nicInfoMap.get(nic.state.name)?.emptyConfig"></ix-empty>
-                      </ng-template>
-                    </div>
-                  </div>
-                </div>
-              </mat-grid-tile>
-            </mat-grid-list>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+                            <li class="info-list-item line-state">
+                              <span class="icon state">
+                                <ix-interface-status-icon
+                                  [update]="networkInterfaceUpdate.get(nic.state.name)"
+                                ></ix-interface-status-icon>
+                              </span>
+                              @if (getLinkState(nic) === LinkState.Up) {
+                                <ul>
+                                  <li>
+                                    <span class="label">{{ 'In' | translate }}:</span>
+                                    {{ nicInfoMap.get(nic.state.name)?.bitsIn | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                                  </li>
+                                  <li>
+                                    <span class="label">{{ 'Out' | translate }}:</span
+                                      >{{ nicInfoMap.get(nic.state.name)?.bitsOut | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                                    </li>
+                                  </ul>
+                                }
+                                @if (getLinkState(nic) !== LinkState.Up) {
+                                  <span>
+                                    {{ 'No Traffic' | translate }}
+                                  </span>
+                                }
+                              </li>
+                              @if (availableNics.length > 1) {
+                                <li class="info-list-item">
+                                  <span class="icon address">
+                                    <ix-icon name="settings_ethernet" [matTooltip]="getIpAddressTooltip(nic)"></ix-icon>
+                                  </span>
+                                  <span>{{ nicInfoMap.get(nic.state.name)?.ip }}</span>
+                                </li>
+                              }
+                            </ul>
+                            @if (availableNics.length === 1) {
+                              <ul class="detail-info">
+                                <li>
+                                  <span class="label">
+                                    {{ 'Media Type' | translate }}:
+                                  </span>
+                                  @if (nic.state.active_media_type) {
+                                    {{ nic.state.active_media_type }}
+                                  } @else {
+                                    {{ 'Unknown' | translate }}
+                                  }
+                                </li>
+                                <li>
+                                  <span class="label">
+                                    {{ 'Media Subtype' | translate }}:
+                                  </span>
+                                  @if (nic.state.active_media_subtype) {
+                                    {{ nic.state.active_media_subtype }}
+                                  } @else {
+                                    {{ 'Unknown' | translate }}
+                                  }
+                                </li>
+                                <li>
+                                  <span class="label">
+                                    {{ 'IP Address' | translate }}:
+                                  </span>
+                                  {{ nicInfoMap.get(nic.state.name)?.ip }}
+                                </li>
+                              </ul>
+                            }
+                          </div>
+                        </div>
+                        @if (availableNics.length <= 3) {
+                          <div class="nic-chart">
+                            <div class="chart-body" [ngClass]="getChartBodyClasses(nic)">
+                              @if (nicInfoMap && nicInfoMap.get(nic.state.name).chartData) {
+                                <ix-view-chart-area
+                                  [data]="nicInfoMap.get(nic.state.name)?.chartData"
+                                  [options]="chartOptions"
+                                >
+                                </ix-view-chart-area>
+                              } @else {
+                                <ix-empty [conf]="nicInfoMap.get(nic.state.name)?.emptyConfig"></ix-empty>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </mat-grid-tile>
+                  }
+                </mat-grid-list>
+              </div>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
-</div>
 
-<ng-template #unknown>
-  {{ 'Unknown' | translate }}
-</ng-template>

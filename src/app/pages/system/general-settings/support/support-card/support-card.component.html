@@ -8,129 +8,135 @@
   </mat-toolbar-row>
 
   <div class="mat-mdc-card-content">
+    <div
+      class="container"
+      fxLayoutGap="16px"
+      fxLayout.lt-lg="row wrap"
+      fxLayoutAlign="space-evenly center"
+      [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
+      [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
+    >
       <div
-        class="container"
-        fxLayoutGap="16px"
-        fxLayout.lt-lg="row wrap"
-        fxLayoutAlign="space-evenly center"
-        [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
-        [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
+        class="product-image"
+        [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+        [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
+        [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+        [style.background-image]="'url(' + productImageSrc + ')'"
       >
+        <img class="invisible" [src]="productImageSrc" />
+      </div>
+
+      @if (systemInfo) {
         <div
-          class="product-image"
-          [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
-          [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
-          [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
-          [style.background-image]="'url(' + productImageSrc + ')'"
+          fxLayout="column"
+          fxLayoutAlign="start stretch"
+          fxLayoutGap="16px"
+          fxFlex.gt-xs="calc(60% - 32px)"
+          [fxFlex.gt-md]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
+          [fxFlex.xs]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
+          [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
         >
-          <img class="invisible" [src]="productImageSrc" />
-        </div>
+          <ix-sys-info
+            [hasLicense]="hasLicense"
+            [systemInfo]="systemInfo"
+            [licenseInfo]="licenseInfo"
+          ></ix-sys-info>
 
-      <div
-        *ngIf="systemInfo"
-        fxLayout="column"
-        fxLayoutAlign="start stretch"
-        fxLayoutGap="16px"
-        fxFlex.gt-xs="calc(60% - 32px)"
-        [fxFlex.gt-md]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
-        [fxFlex.xs]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
-        [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
-      >
-        <ix-sys-info
-          [hasLicense]="hasLicense"
-          [systemInfo]="systemInfo"
-          [licenseInfo]="licenseInfo"
-        ></ix-sys-info>
-
-        <div class="links-wrapper">
-          <div *ngFor="let link of links" class="links">
-            <div [innerHTML]="link"></div>
+          <div class="links-wrapper">
+            @for (link of links; track link) {
+              <div class="links">
+                <div [innerHTML]="link"></div>
+              </div>
+            }
           </div>
-        </div>
-        <div *ngIf="hasLicense">
-          <mat-checkbox
-            *ixRequiresRoles="requiredRoles"
-            color="primary"
-            ixTest="production-system"
-            [(ngModel)]="isProduction"
-            (change)="updateProductionStatus($event)"
-          >
-            {{ 'This is a production system' | translate }}
-          </mat-checkbox>
-        </div>
-
-        <!-- ACTION BUTTONS -->
-        <div
-          fxLayout="row"
-          fxLayoutGap="8px"
-          class="actions button-group"
-          [class.btn-fixed]="!isProductImageRack"
-        >
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            color="default"
-            ixTest="set-license"
-            [ixUiSearch]="searchableElements.elements.updateLicense"
-            (click)="updateLicense()"
-          >
-            {{ licenseButtonText | translate }}
-          </button>
-          <ng-container *ngIf="hasLicense && !isProductImageRack; else elseBlock">
-            <button
-              mat-button
-              color="default"
-              class="menu-toggle"
-              ixTest="get-support"
-              [matMenuTriggerFor]="menu"
-            >
-              <span>{{ 'Get Support' | translate }}</span>
-              <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
-            </button>
-            <mat-menu #menu="matMenu" overlapTrigger="false">
-              <button
-                mat-menu-item
-                ixTest="file-ticket"
-                (click)="feedbackDialog()"
-              >
-                <span>{{ ticketText | translate }}</span>
-              </button>
-              <button
+          @if (hasLicense) {
+            <div>
+              <mat-checkbox
                 *ixRequiresRoles="requiredRoles"
-                id="proactiveSupport"
-                mat-menu-item
-                ixTest="proactive-support"
-                (click)="openProactive()"
+                color="primary"
+                ixTest="production-system"
+                [(ngModel)]="isProduction"
+                (change)="updateProductionStatus($event)"
               >
-                <span>{{ proactiveText | translate }}</span>
-              </button>
-            </mat-menu>
-          </ng-container>
-          <ng-template #elseBlock>
+                {{ 'This is a production system' | translate }}
+              </mat-checkbox>
+            </div>
+          }
+
+          <!-- ACTION BUTTONS -->
+          <div
+            fxLayout="row"
+            fxLayoutGap="8px"
+            class="actions button-group"
+            [class.btn-fixed]="!isProductImageRack"
+          >
             <button
+              *ixRequiresRoles="requiredRoles"
               mat-button
               color="default"
-              ixTest="file-ticket"
-              [ixUiSearch]="searchableElements.elements.fileTicket"
-              (click)="feedbackDialog()"
+              ixTest="set-license"
+              [ixUiSearch]="searchableElements.elements.updateLicense"
+              (click)="updateLicense()"
             >
-              {{ ticketText | translate }}
+              {{ licenseButtonText | translate }}
             </button>
-            <ng-container *ixRequiresRoles="requiredRoles">
+
+            @if (hasLicense && !isProductImageRack) {
               <button
-                *ngIf="hasLicense"
-                id="proactive-btn"
                 mat-button
                 color="default"
-                ixTest="proactive-support"
-                (click)="openProactive()"
+                class="menu-toggle"
+                ixTest="get-support"
+                [matMenuTriggerFor]="menu"
               >
-                {{ proactiveText | translate }}
+                <span>{{ 'Get Support' | translate }}</span>
+                <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
               </button>
-            </ng-container>
-          </ng-template>
+              <mat-menu #menu="matMenu" overlapTrigger="false">
+                <button
+                  mat-menu-item
+                  ixTest="file-ticket"
+                  (click)="feedbackDialog()"
+                >
+                  <span>{{ ticketText | translate }}</span>
+                </button>
+                <button
+                  *ixRequiresRoles="requiredRoles"
+                  id="proactiveSupport"
+                  mat-menu-item
+                  ixTest="proactive-support"
+                  (click)="openProactive()"
+                >
+                  <span>{{ proactiveText | translate }}</span>
+                </button>
+              </mat-menu>
+            } @else {
+              <button
+                mat-button
+                color="default"
+                ixTest="file-ticket"
+                [ixUiSearch]="searchableElements.elements.fileTicket"
+                (click)="feedbackDialog()"
+              >
+                {{ ticketText | translate }}
+              </button>
+              <ng-container *ixRequiresRoles="requiredRoles">
+                @if (hasLicense) {
+                  <button
+                    id="proactive-btn"
+                    mat-button
+                    color="default"
+                    ixTest="proactive-support"
+                    (click)="openProactive()"
+                  >
+                    {{ proactiveText | translate }}
+                  </button>
+                }
+              </ng-container>
+            }
+          </div>
         </div>
-      </div>
+      }
     </div>
   </div>
 </mat-card>

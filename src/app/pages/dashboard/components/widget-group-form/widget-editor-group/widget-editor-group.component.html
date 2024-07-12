@@ -1,28 +1,32 @@
-<button
-  *ngFor="let slotIndex of slotRange()"
-  tabindex="0"
-  [attr.aria-label]="'Slot {n}' | translate: { n: slotIndex + 1 }"
-  [ixTest]="['slot', slotIndex]"
-  [class]="['slot', 'slot' + slotIndex]"
-  [class.selected]="slotIndex === selectedSlot() && slotRange().length > 1"
-  [class.empty]="!slots()[slotIndex]"
-  (click)="onSlotSelected($event, slotIndex)"
-  (keydown.enter)="onSlotSelected($event, slotIndex)"
->
-  <div
-    *ngIf="slots()[slotIndex] as slot; else emptySlot"
-    class="inert-container"
-    inert
+@for (slotIndex of slotRange(); track slotIndex) {
+  <button
+    tabindex="0"
+    [attr.aria-label]="'Slot {n}' | translate: { n: slotIndex + 1 }"
+    [ixTest]="['slot', slotIndex]"
+    [class]="['slot', 'slot' + slotIndex]"
+    [class.selected]="slotIndex === selectedSlot() && slotRange().length > 1"
+    [class.empty]="!slots()[slotIndex]"
+    (click)="onSlotSelected($event, slotIndex)"
+    (keydown.enter)="onSlotSelected($event, slotIndex)"
   >
-    <div *ngIf="hasErrors(slotIndex); else component" class="error">
-      <ix-widget-error [message]="'Widget has errors' | translate"></ix-widget-error>
-    </div>
-    <ng-template #component>
-      <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
-    </ng-template>
-  </div>
-
-  <ng-template #emptySlot>
-    {{ 'Empty' | translate }}
-  </ng-template>
-</button>
+    @if (slots()[slotIndex]; as slot) {
+      <div
+        class="inert-container"
+        inert
+      >
+        @if (hasErrors(slotIndex)) {
+          <div class="error">
+            <ix-widget-error [message]="'Widget has errors' | translate"></ix-widget-error>
+          </div>
+        } @else {
+          <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
+        }
+        <ng-template #component>
+          <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
+        </ng-template>
+      </div>
+    } @else {
+      {{ 'Empty' | translate }}
+    }
+  </button>
+}
