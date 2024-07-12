@@ -8,6 +8,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -58,9 +59,8 @@ export class DatasetService {
     };
   }
 
-  rootLevelDatasetWarning(path: string): Observable<boolean> {
-    const isRootLevelDataset = !path.replace(`${mntPath}/`, '').includes('/');
-    return isRootLevelDataset ? this.dialog.confirm({
+  rootLevelDatasetWarning(path: string, skip = false): Observable<boolean> {
+    return isRootDataset({ name: path.replace(`${mntPath}/`, '') }) && !skip ? this.dialog.confirm({
       title: this.translate.instant('Warning'),
       message: this.translate.instant('You configure the root-level dataset. Are you sure you want to continue?'),
     }) : of(true);

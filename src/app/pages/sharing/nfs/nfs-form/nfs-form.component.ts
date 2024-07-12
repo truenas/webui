@@ -163,7 +163,7 @@ export class NfsFormComponent implements OnInit {
       request$ = this.ws.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare]);
     }
 
-    this.datasetService.rootLevelDatasetWarning(nfsShare.path)
+    this.datasetService.rootLevelDatasetWarning(nfsShare.path, !this.form.controls.path.dirty)
       .pipe(
         filter(Boolean),
         tap(() => {
