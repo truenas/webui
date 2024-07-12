@@ -1,0 +1,64 @@
+@import 'scss-imports/cssvars';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  @media (min-width: $breakpoint-md) {
+    height: 300px;
+  }
+}
+
+.disk-details-header {
+  align-items: center;
+  border-bottom: solid 1px var(--lines);
+  display: flex;
+  font-size: 1.15rem;
+  gap: 15px;
+  height: 50px;
+  padding: 12px 16px;
+}
+
+.disk-overview {
+  display: flex;
+  height: 100%;
+
+  @media (max-width: $breakpoint-xs) {
+    flex-wrap: wrap;
+  }
+
+  .tile {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+
+    &:not(:last-child) {
+      border-right: 1px solid var(--lines);
+    }
+
+    .primary-number {
+      font-size: 3.25rem;
+      font-weight: 100;
+    }
+
+    .title {
+      font-size: 1rem;
+    }
+
+    .subtitle {
+      font-size: 0.65rem;
+      opacity: 0.85;
+    }
+
+    button {
+      margin: 16px;
+    }
+  }
+
+  .tile.active {
+    background-color: var(--contrast-darker);
+  }
+}

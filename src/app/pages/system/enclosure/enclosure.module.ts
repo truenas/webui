@@ -38,24 +38,31 @@ import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-li
 import {
   ElementsPageComponent,
 } from 'app/pages/system/enclosure/components/pages/elements-page/elements-page.component';
+import {
+  DiskDetailsOverviewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/disk-details-overview/disk-details-overview.component';
+import { DiskDetailsComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/disk-details-overview/disks-overview-details/disk-details.component';
+import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/disks-overview/disks-overview.component';
 import { EnclosurePageComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-page.component';
 import { EnclosureSelectorComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
-import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disk-topology-description/disk-topology-description.component';
-import { DisksOverviewDetailsComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-details/disks-overview-details.component';
-import { DisksOverviewTilesComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-tiles/disks-overview-tiles.component';
-import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview.component';
-import { EnclosureDiskComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/enclosure-disk/enclosure-disk.component';
 import {
   EnclosureSideSwitchComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/enclosure-side-switch/enclosure-side-switch.component';
-import {
-  EnclosureViewComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/enclosure-view.component';
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side-switch/enclosure-side-switch.component';
+import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/disk-topology-description/disk-topology-description.component';
 import {
   PoolsLegendComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/pools-legend/pools-legend.component';
-import { VdevDisksLegendComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/vdev-disks-legend/vdev-disks-legend.component';
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-legend/pools-legend.component';
+import {
+  PoolsViewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-view.component';
+import { VdevDisksLegendComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/vdev-disks-legend/vdev-disks-legend.component';
 import { SasExpanderStatusViewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/sas-expander-status-view/sas-expander-status-view.component';
+import {
+  StatusViewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/status-view/status-view.component';
+import {
+  StatusesLegendComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/status-view/statuses-legend/statuses-legend.component';
 import {
   MiniDisksOverviewComponent,
 } from 'app/pages/system/enclosure/components/pages/mini-page/mini-disks-overview/mini-disks-overview.component';
@@ -116,8 +123,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
   declarations: [
     EnclosureDashboardComponent,
     DisksOverviewComponent,
-    DisksOverviewDetailsComponent,
-    DisksOverviewTilesComponent,
+    DiskDetailsComponent,
     DiskTopologyDescriptionComponent,
     EnclosureSelectorComponent,
     EnclosurePageComponent,
@@ -126,13 +132,12 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     JbofFormComponent,
     VdevDisksLegendComponent,
     SetEnclosureLabelDialogComponent,
-    EnclosureDiskComponent,
     ElementsPageComponent,
     EnclosureHeaderComponent,
     ViewElementsMenuComponent,
     EnclosureSvgComponent,
     EnclosureSideSwitchComponent,
-    EnclosureViewComponent,
+    PoolsViewComponent,
     EnclosureSideComponent,
     MiniPageComponent,
     MiniDisksOverviewComponent,
@@ -143,6 +148,9 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MiniEnclosureComponent,
     MiniSlotStatusComponent,
     PoolsLegendComponent,
+    StatusViewComponent,
+    StatusesLegendComponent,
+    DiskDetailsOverviewComponent,
   ],
   providers: [
     EnclosureStore,
