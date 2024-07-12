@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, EMPTY, forkJoin, Observable, of, Subscription, from,
@@ -21,6 +22,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 
 interface SigninState {
   isLoading: boolean;
@@ -76,6 +78,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
+    private actions$: Actions,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -85,9 +88,9 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => this.setLoadingState(true)),
-    switchMap(() => this.checkForLoginBanner()),
     switchMap(() => {
       return forkJoin([
+        this.checkForLoginBanner(),
         this.checkIfAdminPasswordSet(),
         this.checkIfManagedByTrueCommand(),
         this.loadFailoverStatus(),
@@ -182,9 +185,17 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private checkForLoginBanner(): Observable<string> {
+    this.subscribeToLoginBannerUpdates();
+
     return this.ws.call('system.advanced.login_banner').pipe(
       tap((loginBanner) => this.patchState({ loginBanner })),
     );
+  }
+
+  private subscribeToLoginBannerUpdates(): void {
+    this.actions$.pipe(ofType(loginBannerUpdated)).subscribe(({ loginBanner }) => {
+      this.patchState({ loginBanner });
+    });
   }
 
   private checkIfManagedByTrueCommand(): Observable<boolean> {

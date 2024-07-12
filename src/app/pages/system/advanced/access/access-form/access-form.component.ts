@@ -20,7 +20,7 @@ import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { advancedConfigUpdated, generalConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -89,12 +89,21 @@ export class AccessFormComponent implements OnInit {
       ).subscribe(() => {
         this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
 
-        if (this.form.controls.login_banner.dirty || this.isEnterprise) {
+        const bannerChanged = this.form.controls.login_banner.dirty;
+
+        if (bannerChanged || this.isEnterprise) {
+          const requests$ = [];
           this.isLoading = true;
-          forkJoin([
-            this.updateLoginBanner(),
-            this.updateEnterpriseDsAuth(),
-          ])
+
+          if (bannerChanged) {
+            requests$.push(this.updateLoginBanner());
+          }
+
+          if (this.isEnterprise) {
+            requests$.push(this.updateEnterpriseDsAuth());
+          }
+
+          forkJoin(requests$)
             .pipe(untilDestroyed(this))
             .subscribe({
               next: () => {
@@ -115,8 +124,12 @@ export class AccessFormComponent implements OnInit {
   }
 
   private updateLoginBanner(): Observable<unknown> {
-    return this.ws.call('system.advanced.update', [{ login_banner: this.form.value.login_banner }])
-      .pipe(finalize(() => this.store$.dispatch(advancedConfigUpdated())));
+    const loginBanner = this.form.value.login_banner;
+    return this.ws.call('system.advanced.update', [{ login_banner: loginBanner }])
+      .pipe(finalize(() => {
+        this.store$.dispatch(advancedConfigUpdated());
+        this.store$.dispatch(loginBannerUpdated({ loginBanner }));
+      }));
   }
 
   private updateEnterpriseDsAuth(): Observable<unknown> {

@@ -2,7 +2,6 @@ import {
   Component, OnInit, ChangeDetectionStrategy,
   Inject,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import {
@@ -30,7 +29,6 @@ export class SigninComponent implements OnInit {
   readonly hasLoadingIndicator$ = combineLatest([this.signinStore.isLoading$, this.isConnected$]).pipe(
     map(([isLoading, isConnected]) => isLoading || !isConnected),
   );
-  readonly loginBanner = toSignal(this.signinStore.loginBanner$);
 
   constructor(
     private wsManager: WebSocketConnectionService,
@@ -46,16 +44,14 @@ export class SigninComponent implements OnInit {
         this.signinStore.init();
       });
 
-    this.signinStore.loginBanner$
-      .pipe(
-        filter(Boolean),
-        filter(() => this.window.sessionStorage.getItem('loginBannerDismissed') !== 'true'),
-        switchMap((text) => this.dialog.fullScreenDialog(null, text, true, true)),
-        take(1),
-        filter(Boolean),
-        untilDestroyed(this),
-      ).subscribe(() => {
-        this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
-      });
+    this.signinStore.loginBanner$.pipe(
+      filter(Boolean),
+      filter(() => this.window.sessionStorage.getItem('loginBannerDismissed') !== 'true'),
+      switchMap((text) => this.dialog.fullScreenDialog(null, text, true, true).pipe(take(1))),
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
+    });
   }
 }
