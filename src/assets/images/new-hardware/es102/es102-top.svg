@@ -479,7 +479,7 @@
         </g>
       </g>
       <g id="ES102_Gen_1_Drives" data-name="ES102 Gen 1 Drives">
-        <g id="ES102_Gen_1_DRIVE_CAGE_0" data-name="ES102 Gen 1 DRIVE CAGE 0">
+        <g id="DRIVE_CAGE_0" data-name="ES102 Gen 1 DRIVE CAGE 0">
           <rect class="es102-cls-3" x="59.4" y="84.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -511,7 +511,7 @@
             <path class="es102-cls-1" d="M171.8,94.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_1" data-name="ES102 Gen 1 DRIVE CAGE 1">
+        <g id="DRIVE_CAGE_1" data-name="ES102 Gen 1 DRIVE CAGE 1">
           <rect class="es102-cls-3" x="59.4" y="167.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -543,7 +543,7 @@
             <path class="es102-cls-1" d="M171.8,177.4h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_2" data-name="ES102 Gen 1 DRIVE CAGE 2">
+        <g id="DRIVE_CAGE_2" data-name="ES102 Gen 1 DRIVE CAGE 2">
           <rect class="es102-cls-3" x="59.4" y="249.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -575,7 +575,7 @@
             <path class="es102-cls-1" d="M171.8,260h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_3" data-name="ES102 Gen 1 DRIVE CAGE 3">
+        <g id="DRIVE_CAGE_3" data-name="ES102 Gen 1 DRIVE CAGE 3">
           <rect class="es102-cls-3" x="59.4" y="332.4" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -607,7 +607,7 @@
             <path class="es102-cls-1" d="M171.8,342.6h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_4" data-name="ES102 Gen 1 DRIVE CAGE 4">
+        <g id="DRIVE_CAGE_4" data-name="ES102 Gen 1 DRIVE CAGE 4">
           <rect class="es102-cls-3" x="59.4" y="415" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -639,7 +639,7 @@
             <path class="es102-cls-1" d="M171.8,425.2h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_5" data-name="ES102 Gen 1 DRIVE CAGE 5">
+        <g id="DRIVE_CAGE_5" data-name="ES102 Gen 1 DRIVE CAGE 5">
           <rect class="es102-cls-3" x="59.4" y="497.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -671,7 +671,7 @@
             <path class="es102-cls-1" d="M171.8,507.7h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_6" data-name="ES102 Gen 1 DRIVE CAGE 6">
+        <g id="DRIVE_CAGE_6" data-name="ES102 Gen 1 DRIVE CAGE 6">
           <rect class="es102-cls-3" x="59.4" y="580.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -703,7 +703,7 @@
             <path class="es102-cls-1" d="M171.8,590.3h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_7" data-name="ES102 Gen 1 DRIVE CAGE 7">
+        <g id="DRIVE_CAGE_7" data-name="ES102 Gen 1 DRIVE CAGE 7">
           <rect class="es102-cls-3" x="59.4" y="735.4" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -735,7 +735,7 @@
             <path class="es102-cls-1" d="M171.8,745.5h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_8" data-name="ES102 Gen 1 DRIVE CAGE 8">
+        <g id="DRIVE_CAGE_8" data-name="ES102 Gen 1 DRIVE CAGE 8">
           <rect class="es102-cls-3" x="59.4" y="818" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -767,7 +767,7 @@
             <path class="es102-cls-1" d="M171.8,828.1h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_9" data-name="ES102 Gen 1 DRIVE CAGE 9">
+        <g id="DRIVE_CAGE_9" data-name="ES102 Gen 1 DRIVE CAGE 9">
           <rect class="es102-cls-3" x="59.4" y="900.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -799,7 +799,7 @@
             <path class="es102-cls-1" d="M171.8,910.7h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_10" data-name="ES102 Gen 1 DRIVE CAGE 10">
+        <g id="DRIVE_CAGE_10" data-name="ES102 Gen 1 DRIVE CAGE 10">
           <rect class="es102-cls-3" x="59.4" y="983.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -831,7 +831,7 @@
             <path class="es102-cls-1" d="M171.8,993.3h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_11" data-name="ES102 Gen 1 DRIVE CAGE 11">
+        <g id="DRIVE_CAGE_11" data-name="ES102 Gen 1 DRIVE CAGE 11">
           <rect class="es102-cls-3" x="59.4" y="1065.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -863,7 +863,7 @@
             <path class="es102-cls-1" d="M171.8,1075.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_12" data-name="ES102 Gen 1 DRIVE CAGE 12">
+        <g id="DRIVE_CAGE_12" data-name="ES102 Gen 1 DRIVE CAGE 12">
           <rect class="es102-cls-3" x="59.4" y="1148.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -895,7 +895,7 @@
             <path class="es102-cls-1" d="M171.8,1158.4h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_13" data-name="ES102 Gen 1 DRIVE CAGE 13">
+        <g id="DRIVE_CAGE_13" data-name="ES102 Gen 1 DRIVE CAGE 13">
           <rect class="es102-cls-3" x="59.4" y="1230.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -927,7 +927,7 @@
             <path class="es102-cls-1" d="M171.8,1241h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_14" data-name="ES102 Gen 1 DRIVE CAGE 14">
+        <g id="DRIVE_CAGE_14" data-name="ES102 Gen 1 DRIVE CAGE 14">
           <rect class="es102-cls-3" x="377.6" y="84.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -959,7 +959,7 @@
             <path class="es102-cls-1" d="M490,94.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_15" data-name="ES102 Gen 1 DRIVE CAGE 15">
+        <g id="DRIVE_CAGE_15" data-name="ES102 Gen 1 DRIVE CAGE 15">
           <rect class="es102-cls-3" x="377.6" y="167.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -991,7 +991,7 @@
             <path class="es102-cls-1" d="M490,177.4h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_16" data-name="ES102 Gen 1 DRIVE CAGE 16">
+        <g id="DRIVE_CAGE_16" data-name="ES102 Gen 1 DRIVE CAGE 16">
           <rect class="es102-cls-3" x="377.6" y="249.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1023,7 +1023,7 @@
             <path class="es102-cls-1" d="M490,260h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_17" data-name="ES102 Gen 1 DRIVE CAGE 17">
+        <g id="DRIVE_CAGE_17" data-name="ES102 Gen 1 DRIVE CAGE 17">
           <rect class="es102-cls-3" x="377.6" y="332.4" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1055,7 +1055,7 @@
             <path class="es102-cls-1" d="M490,342.6h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_18" data-name="ES102 Gen 1 DRIVE CAGE 18">
+        <g id="DRIVE_CAGE_18" data-name="ES102 Gen 1 DRIVE CAGE 18">
           <rect class="es102-cls-3" x="377.6" y="415" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1087,7 +1087,7 @@
             <path class="es102-cls-1" d="M490,425.2h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_19" data-name="ES102 Gen 1 DRIVE CAGE 19">
+        <g id="DRIVE_CAGE_19" data-name="ES102 Gen 1 DRIVE CAGE 19">
           <rect class="es102-cls-3" x="377.6" y="497.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1119,7 +1119,7 @@
             <path class="es102-cls-1" d="M490,507.7h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_20" data-name="ES102 Gen 1 DRIVE CAGE 20">
+        <g id="DRIVE_CAGE_20" data-name="ES102 Gen 1 DRIVE CAGE 20">
           <rect class="es102-cls-3" x="377.6" y="580.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1151,7 +1151,7 @@
             <path class="es102-cls-1" d="M490,590.3h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_21" data-name="ES102 Gen 1 DRIVE CAGE 21">
+        <g id="DRIVE_CAGE_21" data-name="ES102 Gen 1 DRIVE CAGE 21">
           <rect class="es102-cls-3" x="377.6" y="735.4" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1183,7 +1183,7 @@
             <path class="es102-cls-1" d="M490,745.5h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_22" data-name="ES102 Gen 1 DRIVE CAGE 22">
+        <g id="DRIVE_CAGE_22" data-name="ES102 Gen 1 DRIVE CAGE 22">
           <rect class="es102-cls-3" x="377.6" y="818" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1215,7 +1215,7 @@
             <path class="es102-cls-1" d="M490,828.1h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_23" data-name="ES102 Gen 1 DRIVE CAGE 23">
+        <g id="DRIVE_CAGE_23" data-name="ES102 Gen 1 DRIVE CAGE 23">
           <rect class="es102-cls-3" x="377.6" y="900.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1247,7 +1247,7 @@
             <path class="es102-cls-1" d="M490,910.7h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_24" data-name="ES102 Gen 1 DRIVE CAGE 24">
+        <g id="DRIVE_CAGE_24" data-name="ES102 Gen 1 DRIVE CAGE 24">
           <rect class="es102-cls-3" x="377.6" y="983.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1279,7 +1279,7 @@
             <path class="es102-cls-1" d="M490,993.3h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_25" data-name="ES102 Gen 1 DRIVE CAGE 25">
+        <g id="DRIVE_CAGE_25" data-name="ES102 Gen 1 DRIVE CAGE 25">
           <rect class="es102-cls-3" x="377.6" y="1065.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1311,7 +1311,7 @@
             <path class="es102-cls-1" d="M490,1075.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_26" data-name="ES102 Gen 1 DRIVE CAGE 26">
+        <g id="DRIVE_CAGE_26" data-name="ES102 Gen 1 DRIVE CAGE 26">
           <rect class="es102-cls-3" x="377.6" y="1148.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1343,7 +1343,7 @@
             <path class="es102-cls-1" d="M490,1158.4h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_27" data-name="ES102 Gen 1 DRIVE CAGE 27">
+        <g id="DRIVE_CAGE_27" data-name="ES102 Gen 1 DRIVE CAGE 27">
           <rect class="es102-cls-3" x="377.6" y="1230.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1375,7 +1375,7 @@
             <path class="es102-cls-1" d="M490,1241h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_28" data-name="ES102 Gen 1 DRIVE CAGE 28">
+        <g id="DRIVE_CAGE_28" data-name="ES102 Gen 1 DRIVE CAGE 28">
           <rect class="es102-cls-3" x="695.8" y="84.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1407,7 +1407,7 @@
             <path class="es102-cls-1" d="M808.2,94.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_29" data-name="ES102 Gen 1 DRIVE CAGE 29">
+        <g id="DRIVE_CAGE_29" data-name="ES102 Gen 1 DRIVE CAGE 29">
           <rect class="es102-cls-3" x="695.8" y="167.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1439,7 +1439,7 @@
             <path class="es102-cls-1" d="M808.2,177.4h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_30" data-name="ES102 Gen 1 DRIVE CAGE 30">
+        <g id="DRIVE_CAGE_30" data-name="ES102 Gen 1 DRIVE CAGE 30">
           <rect class="es102-cls-3" x="695.8" y="249.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1471,7 +1471,7 @@
             <path class="es102-cls-1" d="M808.2,260h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_31" data-name="ES102 Gen 1 DRIVE CAGE 31">
+        <g id="DRIVE_CAGE_31" data-name="ES102 Gen 1 DRIVE CAGE 31">
           <rect class="es102-cls-3" x="695.8" y="332.4" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1503,7 +1503,7 @@
             <path class="es102-cls-1" d="M808.2,342.6h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_32" data-name="ES102 Gen 1 DRIVE CAGE 32">
+        <g id="DRIVE_CAGE_32" data-name="ES102 Gen 1 DRIVE CAGE 32">
           <rect class="es102-cls-3" x="695.8" y="415" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1535,7 +1535,7 @@
             <path class="es102-cls-1" d="M808.2,425.2h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_33" data-name="ES102 Gen 1 DRIVE CAGE 33">
+        <g id="DRIVE_CAGE_33" data-name="ES102 Gen 1 DRIVE CAGE 33">
           <rect class="es102-cls-3" x="695.8" y="497.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1567,7 +1567,7 @@
             <path class="es102-cls-1" d="M808.2,507.7h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_34" data-name="ES102 Gen 1 DRIVE CAGE 34">
+        <g id="DRIVE_CAGE_34" data-name="ES102 Gen 1 DRIVE CAGE 34">
           <rect class="es102-cls-3" x="695.8" y="580.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1599,7 +1599,7 @@
             <path class="es102-cls-1" d="M808.2,590.3h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_35" data-name="ES102 Gen 1 DRIVE CAGE 35">
+        <g id="DRIVE_CAGE_35" data-name="ES102 Gen 1 DRIVE CAGE 35">
           <rect class="es102-cls-3" x="695.8" y="735.4" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1631,7 +1631,7 @@
             <path class="es102-cls-1" d="M808.2,745.5h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_36" data-name="ES102 Gen 1 DRIVE CAGE 36">
+        <g id="DRIVE_CAGE_36" data-name="ES102 Gen 1 DRIVE CAGE 36">
           <rect class="es102-cls-3" x="695.8" y="818" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1663,7 +1663,7 @@
             <path class="es102-cls-1" d="M808.2,828.1h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_37" data-name="ES102 Gen 1 DRIVE CAGE 37">
+        <g id="DRIVE_CAGE_37" data-name="ES102 Gen 1 DRIVE CAGE 37">
           <rect class="es102-cls-3" x="695.8" y="900.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1695,7 +1695,7 @@
             <path class="es102-cls-1" d="M808.2,910.7h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_38" data-name="ES102 Gen 1 DRIVE CAGE 38">
+        <g id="DRIVE_CAGE_38" data-name="ES102 Gen 1 DRIVE CAGE 38">
           <rect class="es102-cls-3" x="695.8" y="983.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1727,7 +1727,7 @@
             <path class="es102-cls-1" d="M808.2,993.3h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_39" data-name="ES102 Gen 1 DRIVE CAGE 39">
+        <g id="DRIVE_CAGE_39" data-name="ES102 Gen 1 DRIVE CAGE 39">
           <rect class="es102-cls-3" x="695.8" y="1065.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1759,7 +1759,7 @@
             <path class="es102-cls-1" d="M808.2,1075.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_40" data-name="ES102 Gen 1 DRIVE CAGE 40">
+        <g id="DRIVE_CAGE_40" data-name="ES102 Gen 1 DRIVE CAGE 40">
           <rect class="es102-cls-3" x="695.8" y="1148.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1791,7 +1791,7 @@
             <path class="es102-cls-1" d="M808.2,1158.4h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_41" data-name="ES102 Gen 1 DRIVE CAGE 41">
+        <g id="DRIVE_CAGE_41" data-name="ES102 Gen 1 DRIVE CAGE 41">
           <rect class="es102-cls-3" x="695.8" y="1230.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1823,7 +1823,7 @@
             <path class="es102-cls-1" d="M808.2,1241h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_42" data-name="ES102 Gen 1 DRIVE CAGE 42">
+        <g id="DRIVE_CAGE_42" data-name="ES102 Gen 1 DRIVE CAGE 42">
           <rect class="es102-cls-3" x="1014" y="84.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1855,7 +1855,7 @@
             <path class="es102-cls-1" d="M1126.4,94.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_43" data-name="ES102 Gen 1 DRIVE CAGE 43">
+        <g id="DRIVE_CAGE_43" data-name="ES102 Gen 1 DRIVE CAGE 43">
           <rect class="es102-cls-3" x="1014" y="167.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1887,7 +1887,7 @@
             <path class="es102-cls-1" d="M1126.4,177.4h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_44" data-name="ES102 Gen 1 DRIVE CAGE 44">
+        <g id="DRIVE_CAGE_44" data-name="ES102 Gen 1 DRIVE CAGE 44">
           <rect class="es102-cls-3" x="1014" y="249.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1919,7 +1919,7 @@
             <path class="es102-cls-1" d="M1126.4,260h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_45" data-name="ES102 Gen 1 DRIVE CAGE 45">
+        <g id="DRIVE_CAGE_45" data-name="ES102 Gen 1 DRIVE CAGE 45">
           <rect class="es102-cls-3" x="1014" y="332.4" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1951,7 +1951,7 @@
             <path class="es102-cls-1" d="M1126.4,342.6h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_46" data-name="ES102 Gen 1 DRIVE CAGE 46">
+        <g id="DRIVE_CAGE_46" data-name="ES102 Gen 1 DRIVE CAGE 46">
           <rect class="es102-cls-3" x="1014" y="415" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -1983,7 +1983,7 @@
             <path class="es102-cls-1" d="M1126.4,425.2h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_47" data-name="ES102 Gen 1 DRIVE CAGE 47">
+        <g id="DRIVE_CAGE_47" data-name="ES102 Gen 1 DRIVE CAGE 47">
           <rect class="es102-cls-3" x="1014" y="497.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2015,7 +2015,7 @@
             <path class="es102-cls-1" d="M1126.4,507.7h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_48" data-name="ES102 Gen 1 DRIVE CAGE 48">
+        <g id="DRIVE_CAGE_48" data-name="ES102 Gen 1 DRIVE CAGE 48">
           <rect class="es102-cls-3" x="1014" y="818" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2047,7 +2047,7 @@
             <path class="es102-cls-1" d="M1126.4,828.1h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_49" data-name="ES102 Gen 1 DRIVE CAGE 49">
+        <g id="DRIVE_CAGE_49" data-name="ES102 Gen 1 DRIVE CAGE 49">
           <rect class="es102-cls-3" x="1014" y="900.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2079,7 +2079,7 @@
             <path class="es102-cls-1" d="M1126.4,910.7h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_50" data-name="ES102 Gen 1 DRIVE CAGE 50">
+        <g id="DRIVE_CAGE_50" data-name="ES102 Gen 1 DRIVE CAGE 50">
           <rect class="es102-cls-3" x="1014" y="983.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2111,7 +2111,7 @@
             <path class="es102-cls-1" d="M1126.4,993.3h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_51" data-name="ES102 Gen 1 DRIVE CAGE 51">
+        <g id="DRIVE_CAGE_51" data-name="ES102 Gen 1 DRIVE CAGE 51">
           <rect class="es102-cls-3" x="1014" y="1065.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2143,7 +2143,7 @@
             <path class="es102-cls-1" d="M1126.4,1075.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_52" data-name="ES102 Gen 1 DRIVE CAGE 52">
+        <g id="DRIVE_CAGE_52" data-name="ES102 Gen 1 DRIVE CAGE 52">
           <rect class="es102-cls-3" x="1014" y="1148.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2175,7 +2175,7 @@
             <path class="es102-cls-1" d="M1126.4,1158.4h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_53" data-name="ES102 Gen 1 DRIVE CAGE 53">
+        <g id="DRIVE_CAGE_53" data-name="ES102 Gen 1 DRIVE CAGE 53">
           <rect class="es102-cls-3" x="1014" y="1230.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2207,7 +2207,7 @@
             <path class="es102-cls-1" d="M1126.4,1241h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_54" data-name="ES102 Gen 1 DRIVE CAGE 54">
+        <g id="DRIVE_CAGE_54" data-name="ES102 Gen 1 DRIVE CAGE 54">
           <rect class="es102-cls-3" x="1396.1" y="125.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2239,7 +2239,7 @@
             <path class="es102-cls-1" d="M1508.5,135.5h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_55" data-name="ES102 Gen 1 DRIVE CAGE 55">
+        <g id="DRIVE_CAGE_55" data-name="ES102 Gen 1 DRIVE CAGE 55">
           <rect class="es102-cls-3" x="1396.1" y="207.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2271,7 +2271,7 @@
             <path class="es102-cls-1" d="M1508.5,217.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_56" data-name="ES102 Gen 1 DRIVE CAGE 56">
+        <g id="DRIVE_CAGE_56" data-name="ES102 Gen 1 DRIVE CAGE 56">
           <rect class="es102-cls-3" x="1396.1" y="290.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2303,7 +2303,7 @@
             <path class="es102-cls-1" d="M1508.5,300.2h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_57" data-name="ES102 Gen 1 DRIVE CAGE 57">
+        <g id="DRIVE_CAGE_57" data-name="ES102 Gen 1 DRIVE CAGE 57">
           <rect class="es102-cls-3" x="1396.1" y="372.5" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2335,7 +2335,7 @@
             <path class="es102-cls-1" d="M1508.5,382.6h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_58" data-name="ES102 Gen 1 DRIVE CAGE 58">
+        <g id="DRIVE_CAGE_58" data-name="ES102 Gen 1 DRIVE CAGE 58">
           <rect class="es102-cls-3" x="1396.1" y="454.8" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2367,7 +2367,7 @@
             <path class="es102-cls-1" d="M1508.5,465h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_59" data-name="ES102 Gen 1 DRIVE CAGE 59">
+        <g id="DRIVE_CAGE_59" data-name="ES102 Gen 1 DRIVE CAGE 59">
           <rect class="es102-cls-3" x="1396.1" y="537.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2399,7 +2399,7 @@
             <path class="es102-cls-1" d="M1508.5,547.3h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_60" data-name="ES102 Gen 1 DRIVE CAGE 60">
+        <g id="DRIVE_CAGE_60" data-name="ES102 Gen 1 DRIVE CAGE 60">
           <rect class="es102-cls-3" x="1396.1" y="778.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2431,7 +2431,7 @@
             <path class="es102-cls-1" d="M1508.5,837.1h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_61" data-name="ES102 Gen 1 DRIVE CAGE 61">
+        <g id="DRIVE_CAGE_61" data-name="ES102 Gen 1 DRIVE CAGE 61">
           <rect class="es102-cls-3" x="1396.1" y="860.5" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2463,7 +2463,7 @@
             <path class="es102-cls-1" d="M1508.5,919.4h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_62" data-name="ES102 Gen 1 DRIVE CAGE 62">
+        <g id="DRIVE_CAGE_62" data-name="ES102 Gen 1 DRIVE CAGE 62">
           <rect class="es102-cls-3" x="1396.1" y="942.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2495,7 +2495,7 @@
             <path class="es102-cls-1" d="M1508.5,1001.8h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_63" data-name="ES102 Gen 1 DRIVE CAGE 63">
+        <g id="DRIVE_CAGE_63" data-name="ES102 Gen 1 DRIVE CAGE 63">
           <rect class="es102-cls-3" x="1396.1" y="1025.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2527,7 +2527,7 @@
             <path class="es102-cls-1" d="M1508.5,1084.2h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_64" data-name="ES102 Gen 1 DRIVE CAGE 64">
+        <g id="DRIVE_CAGE_64" data-name="ES102 Gen 1 DRIVE CAGE 64">
           <rect class="es102-cls-3" x="1396.1" y="1107.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2559,7 +2559,7 @@
             <path class="es102-cls-1" d="M1508.5,1166.6h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_65" data-name="ES102 Gen 1 DRIVE CAGE 65">
+        <g id="DRIVE_CAGE_65" data-name="ES102 Gen 1 DRIVE CAGE 65">
           <rect class="es102-cls-3" x="1396.1" y="1190" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2591,7 +2591,7 @@
             <path class="es102-cls-1" d="M1508.5,1248.9h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_66" data-name="ES102 Gen 1 DRIVE CAGE 66">
+        <g id="DRIVE_CAGE_66" data-name="ES102 Gen 1 DRIVE CAGE 66">
           <rect class="es102-cls-3" x="1714.2" y="125.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2623,7 +2623,7 @@
             <path class="es102-cls-1" d="M1826.6,135.5h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_67" data-name="ES102 Gen 1 DRIVE CAGE 67">
+        <g id="DRIVE_CAGE_67" data-name="ES102 Gen 1 DRIVE CAGE 67">
           <rect class="es102-cls-3" x="1714.2" y="207.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2655,7 +2655,7 @@
             <path class="es102-cls-1" d="M1826.6,217.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_68" data-name="ES102 Gen 1 DRIVE CAGE 68">
+        <g id="DRIVE_CAGE_68" data-name="ES102 Gen 1 DRIVE CAGE 68">
           <rect class="es102-cls-3" x="1714.2" y="290.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2687,7 +2687,7 @@
             <path class="es102-cls-1" d="M1826.6,300.2h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_69" data-name="ES102 Gen 1 DRIVE CAGE 69">
+        <g id="DRIVE_CAGE_69" data-name="ES102 Gen 1 DRIVE CAGE 69">
           <rect class="es102-cls-3" x="1714.2" y="372.5" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2719,7 +2719,7 @@
             <path class="es102-cls-1" d="M1826.6,382.6h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_70" data-name="ES102 Gen 1 DRIVE CAGE 70">
+        <g id="DRIVE_CAGE_70" data-name="ES102 Gen 1 DRIVE CAGE 70">
           <rect class="es102-cls-3" x="1714.2" y="454.8" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2751,7 +2751,7 @@
             <path class="es102-cls-1" d="M1826.6,465h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_71" data-name="ES102 Gen 1 DRIVE CAGE 71">
+        <g id="DRIVE_CAGE_71" data-name="ES102 Gen 1 DRIVE CAGE 71">
           <rect class="es102-cls-3" x="1714.2" y="537.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2783,7 +2783,7 @@
             <path class="es102-cls-1" d="M1826.6,547.3h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_72" data-name="ES102 Gen 1 DRIVE CAGE 72">
+        <g id="DRIVE_CAGE_72" data-name="ES102 Gen 1 DRIVE CAGE 72">
           <rect class="es102-cls-3" x="1714.2" y="778.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2815,7 +2815,7 @@
             <path class="es102-cls-1" d="M1826.6,837.1h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_73" data-name="ES102 Gen 1 DRIVE CAGE 73">
+        <g id="DRIVE_CAGE_73" data-name="ES102 Gen 1 DRIVE CAGE 73">
           <rect class="es102-cls-3" x="1714.2" y="860.5" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2847,7 +2847,7 @@
             <path class="es102-cls-1" d="M1826.6,919.4h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_74" data-name="ES102 Gen 1 DRIVE CAGE 74">
+        <g id="DRIVE_CAGE_74" data-name="ES102 Gen 1 DRIVE CAGE 74">
           <rect class="es102-cls-3" x="1714.2" y="942.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2879,7 +2879,7 @@
             <path class="es102-cls-1" d="M1826.6,1001.8h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_75" data-name="ES102 Gen 1 DRIVE CAGE 75">
+        <g id="DRIVE_CAGE_75" data-name="ES102 Gen 1 DRIVE CAGE 75">
           <rect class="es102-cls-3" x="1714.2" y="1025.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2911,7 +2911,7 @@
             <path class="es102-cls-1" d="M1826.6,1084.2h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_76" data-name="ES102 Gen 1 DRIVE CAGE 76">
+        <g id="DRIVE_CAGE_76" data-name="ES102 Gen 1 DRIVE CAGE 76">
           <rect class="es102-cls-3" x="1714.2" y="1107.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2943,7 +2943,7 @@
             <path class="es102-cls-1" d="M1826.6,1166.6h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_77" data-name="ES102 Gen 1 DRIVE CAGE 77">
+        <g id="DRIVE_CAGE_77" data-name="ES102 Gen 1 DRIVE CAGE 77">
           <rect class="es102-cls-3" x="1714.2" y="1190" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -2975,7 +2975,7 @@
             <path class="es102-cls-1" d="M1826.6,1248.9h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_78" data-name="ES102 Gen 1 DRIVE CAGE 78">
+        <g id="DRIVE_CAGE_78" data-name="ES102 Gen 1 DRIVE CAGE 78">
           <rect class="es102-cls-3" x="2032.4" y="125.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3007,7 +3007,7 @@
             <path class="es102-cls-1" d="M2144.8,135.5h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_79" data-name="ES102 Gen 1 DRIVE CAGE 79">
+        <g id="DRIVE_CAGE_79" data-name="ES102 Gen 1 DRIVE CAGE 79">
           <rect class="es102-cls-3" x="2032.4" y="207.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3039,7 +3039,7 @@
             <path class="es102-cls-1" d="M2144.8,217.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_80" data-name="ES102 Gen 1 DRIVE CAGE 80">
+        <g id="DRIVE_CAGE_80" data-name="ES102 Gen 1 DRIVE CAGE 80">
           <rect class="es102-cls-3" x="2032.4" y="290.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3071,7 +3071,7 @@
             <path class="es102-cls-1" d="M2144.8,300.2h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_81" data-name="ES102 Gen 1 DRIVE CAGE 81">
+        <g id="DRIVE_CAGE_81" data-name="ES102 Gen 1 DRIVE CAGE 81">
           <rect class="es102-cls-3" x="2032.4" y="372.5" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3103,7 +3103,7 @@
             <path class="es102-cls-1" d="M2144.8,382.6h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_82" data-name="ES102 Gen 1 DRIVE CAGE 82">
+        <g id="DRIVE_CAGE_82" data-name="ES102 Gen 1 DRIVE CAGE 82">
           <rect class="es102-cls-3" x="2032.4" y="454.8" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3135,7 +3135,7 @@
             <path class="es102-cls-1" d="M2144.8,465h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_83" data-name="ES102 Gen 1 DRIVE CAGE 83">
+        <g id="DRIVE_CAGE_83" data-name="ES102 Gen 1 DRIVE CAGE 83">
           <rect class="es102-cls-3" x="2032.4" y="537.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3167,7 +3167,7 @@
             <path class="es102-cls-1" d="M2144.8,547.3h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_84" data-name="ES102 Gen 1 DRIVE CAGE 84">
+        <g id="DRIVE_CAGE_84" data-name="ES102 Gen 1 DRIVE CAGE 84">
           <rect class="es102-cls-3" x="2032.4" y="778.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3199,7 +3199,7 @@
             <path class="es102-cls-1" d="M2144.8,837.1h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_85" data-name="ES102 Gen 1 DRIVE CAGE 85">
+        <g id="DRIVE_CAGE_85" data-name="ES102 Gen 1 DRIVE CAGE 85">
           <rect class="es102-cls-3" x="2032.4" y="860.5" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3231,7 +3231,7 @@
             <path class="es102-cls-1" d="M2144.8,919.4h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_86" data-name="ES102 Gen 1 DRIVE CAGE 86">
+        <g id="DRIVE_CAGE_86" data-name="ES102 Gen 1 DRIVE CAGE 86">
           <rect class="es102-cls-3" x="2032.4" y="942.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3263,7 +3263,7 @@
             <path class="es102-cls-1" d="M2144.8,1001.8h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_87" data-name="ES102 Gen 1 DRIVE CAGE 87">
+        <g id="DRIVE_CAGE_87" data-name="ES102 Gen 1 DRIVE CAGE 87">
           <rect class="es102-cls-3" x="2032.4" y="1025.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3295,7 +3295,7 @@
             <path class="es102-cls-1" d="M2144.8,1084.2h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_88" data-name="ES102 Gen 1 DRIVE CAGE 88">
+        <g id="DRIVE_CAGE_88" data-name="ES102 Gen 1 DRIVE CAGE 88">
           <rect class="es102-cls-3" x="2032.4" y="1107.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3327,7 +3327,7 @@
             <path class="es102-cls-1" d="M2144.8,1166.6h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_89" data-name="ES102 Gen 1 DRIVE CAGE 89">
+        <g id="DRIVE_CAGE_89" data-name="ES102 Gen 1 DRIVE CAGE 89">
           <rect class="es102-cls-3" x="2032.4" y="1190" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3359,7 +3359,7 @@
             <path class="es102-cls-1" d="M2144.8,1248.9h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_90" data-name="ES102 Gen 1 DRIVE CAGE 90">
+        <g id="DRIVE_CAGE_90" data-name="ES102 Gen 1 DRIVE CAGE 90">
           <rect class="es102-cls-3" x="2350.6" y="125.3" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3391,7 +3391,7 @@
             <path class="es102-cls-1" d="M2463,135.5h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_91" data-name="ES102 Gen 1 DRIVE CAGE 91">
+        <g id="DRIVE_CAGE_91" data-name="ES102 Gen 1 DRIVE CAGE 91">
           <rect class="es102-cls-3" x="2350.6" y="207.7" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3423,7 +3423,7 @@
             <path class="es102-cls-1" d="M2463,217.9h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_92" data-name="ES102 Gen 1 DRIVE CAGE 92">
+        <g id="DRIVE_CAGE_92" data-name="ES102 Gen 1 DRIVE CAGE 92">
           <rect class="es102-cls-3" x="2350.6" y="290.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3455,7 +3455,7 @@
             <path class="es102-cls-1" d="M2463,300.2h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_93" data-name="ES102 Gen 1 DRIVE CAGE 93">
+        <g id="DRIVE_CAGE_93" data-name="ES102 Gen 1 DRIVE CAGE 93">
           <rect class="es102-cls-3" x="2350.6" y="372.5" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3487,7 +3487,7 @@
             <path class="es102-cls-1" d="M2463,382.6h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_94" data-name="ES102 Gen 1 DRIVE CAGE 94">
+        <g id="DRIVE_CAGE_94" data-name="ES102 Gen 1 DRIVE CAGE 94">
           <rect class="es102-cls-3" x="2350.6" y="454.8" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3519,7 +3519,7 @@
             <path class="es102-cls-1" d="M2463,465h87.3c-8.7,16.2-8.7,32.4,0,48.5h-87.3c8.7-16.2,8.7-32.4,0-48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_95" data-name="ES102 Gen 1 DRIVE CAGE 95">
+        <g id="DRIVE_CAGE_95" data-name="ES102 Gen 1 DRIVE CAGE 95">
           <rect class="es102-cls-3" x="2350.6" y="537.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3551,7 +3551,7 @@
             <path class="es102-cls-1" d="M2463,547.3h87.3c-8.7,16.2-8.7,32.3,0,48.5h-87.3c8.7-16.2,8.7-32.3,0-48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_96" data-name="ES102 Gen 1 DRIVE CAGE 96">
+        <g id="DRIVE_CAGE_96" data-name="ES102 Gen 1 DRIVE CAGE 96">
           <rect class="es102-cls-3" x="2350.6" y="778.1" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3583,7 +3583,7 @@
             <path class="es102-cls-1" d="M2463,837.1h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_97" data-name="ES102 Gen 1 DRIVE CAGE 97">
+        <g id="DRIVE_CAGE_97" data-name="ES102 Gen 1 DRIVE CAGE 97">
           <rect class="es102-cls-3" x="2350.6" y="860.5" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3615,7 +3615,7 @@
             <path class="es102-cls-1" d="M2463,919.4h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_98" data-name="ES102 Gen 1 DRIVE CAGE 98">
+        <g id="DRIVE_CAGE_98" data-name="ES102 Gen 1 DRIVE CAGE 98">
           <rect class="es102-cls-3" x="2350.6" y="942.9" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3647,7 +3647,7 @@
             <path class="es102-cls-1" d="M2463,1001.8h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5h0Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_99" data-name="ES102 Gen 1 DRIVE CAGE 99">
+        <g id="DRIVE_CAGE_99" data-name="ES102 Gen 1 DRIVE CAGE 99">
           <rect class="es102-cls-3" x="2350.6" y="1025.2" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3679,7 +3679,7 @@
             <path class="es102-cls-1" d="M2463,1084.2h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_100" data-name="ES102 Gen 1 DRIVE CAGE 100">
+        <g id="DRIVE_CAGE_100" data-name="ES102 Gen 1 DRIVE CAGE 100">
           <rect class="es102-cls-3" x="2350.6" y="1107.6" width="282.3" height="69.1"/>
           <g>
             <g>
@@ -3711,7 +3711,7 @@
             <path class="es102-cls-1" d="M2463,1166.6h87.3c-8.7-16.2-8.7-32.3,0-48.5h-87.3c8.7,16.2,8.7,32.3,0,48.5Z"/>
           </g>
         </g>
-        <g id="ES102_Gen_1_DRIVE_CAGE_101" data-name="ES102 Gen 1 DRIVE CAGE 101">
+        <g id="DRIVE_CAGE_101" data-name="ES102 Gen 1 DRIVE CAGE 101">
           <rect class="es102-cls-3" x="2350.6" y="1190" width="282.3" height="69.1"/>
           <g>
             <g>
