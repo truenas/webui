@@ -55,7 +55,9 @@ import {
 import {
   PoolsViewComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-view.component';
-import { VdevDisksLegendComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/vdev-disks-legend/vdev-disks-legend.component';
+import {
+  VdevDisksLegendComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/vdev-disks-legend/vdev-disks-legend.component';
 import { SasExpanderStatusViewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/sas-expander-status-view/sas-expander-status-view.component';
 import {
   StatusViewComponent,

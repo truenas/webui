@@ -18,24 +18,27 @@
         </ix-product-image>
 
         <div class="card-action-container">
-          <button
-            *ngIf="isUpdateRunning()"
-            mat-button
-            color="primary"
-            [ixTest]="['widget-sysinfo', 'update-running']"
-            [disabled]="true"
-          >{{ 'Update in Progress' | translate }}</button>
-
-          <button
-            *ngIf="!isUpdateRunning()"
-            mat-button
-            color="primary"
-            [ixTest]="['widget-sysinfo', 'update']"
-            [routerLink]="['/system', 'update']"
-          >
-            <ng-container *ngIf="updateAvailable()">{{ 'Updates Available' | translate }}</ng-container>
-            <ng-container *ngIf="!updateAvailable()">{{ 'Check for Updates' | translate }}</ng-container>
-          </button>
+          @if (isUpdateRunning()) {
+            <button
+              mat-button
+              color="primary"
+              [ixTest]="['widget-sysinfo', 'update-running']"
+              [disabled]="true"
+            >{{ 'Update in Progress' | translate }}</button>
+          } @else {
+            <button
+              mat-button
+              color="primary"
+              [ixTest]="['widget-sysinfo', 'update']"
+              [routerLink]="['/system', 'update']"
+            >
+              @if (updateAvailable()) {
+                {{ 'Updates Available' | translate }}
+              } @else {
+                {{ 'Check for Updates' | translate }}
+              }
+            </button>
+          }
         </div>
       </div>
 
@@ -62,73 +65,136 @@
         <mat-list>
           <mat-list-item>
             <strong>{{ 'Platform' | translate }}:</strong>
-            <span *ngIf="isLoaded(); else inlineLoader">
-              <ng-container *ngIf="systemInfo()?.platform && isIxHardware(); else genericPlatform">
-                {{ systemInfo().platform }}
-              </ng-container>
-              <ng-template #genericPlatform>
-                {{ 'Generic' }}
-              </ng-template>
-            </span>
+            @if (isLoaded()) {
+              <span>
+                @if (systemInfo()?.platform && isIxHardware()) {
+                  {{ systemInfo().platform }}
+                } @else {
+                  {{ 'Generic' }}
+                }
+              </span>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
           </mat-list-item>
+
           <mat-list-item>
             <strong>{{ 'Version' | translate }}:</strong>
-            <div *ngIf="isLoaded(); else inlineLoader" class="copy-version">
-              <div class="copy-version-text" [matTooltip]="version()">
-                <span>
-                  {{ version() }}
-                </span>
+            @if (isLoaded()) {
+              <div class="copy-version">
+                <div class="copy-version-text" [matTooltip]="version()">
+                  <span>
+                    {{ version() }}
+                  </span>
+                </div>
+                <ix-copy-button [text]="version()"></ix-copy-button>
               </div>
-              <ix-copy-button [text]="version()"></ix-copy-button>
-            </div>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
           </mat-list-item>
 
           <mat-list-item>
             <strong>{{ 'License' | translate }}:</strong>
-            <ng-container *ngIf="isLoaded(); else inlineLoader">
-              <span *ngIf="systemInfo()?.license">
-                {{
-                  '{license} contract, expires {date}' | translate:
-                  {
-                    license: systemInfo().license.contract_type | titlecase,
-                    date: systemInfo().license.contract_end.$value,
-                  }
-                }}
-              </span>
-              <span *ngIf="!systemInfo()?.license">
-                {{ 'No License' | translate }}
-                <a
-                  ixTest="add-license"
-                  mat-icon-button
-                  matTooltipPosition="above"
-                  [matTooltip]="'Add License' | translate"
-                  [routerLink]="['/system', 'support']"
-                >
-                  <ix-icon name="add_circle"></ix-icon>
-                </a>
-              </span>
-            </ng-container>
+            @if (isLoaded()) {
+              @if (systemInfo()?.license) {
+                <span>
+                  {{
+                    '{license} contract, expires {date}' | translate:
+                    {
+                      license: systemInfo().license.contract_type | titlecase,
+                      date: systemInfo().license.contract_end.$value,
+                    }
+                  }}
+                </span>
+              } @else {
+                <span>
+                  {{ 'No License' | translate }}
+                  <a
+                    ixTest="add-license"
+                    mat-icon-button
+                    matTooltipPosition="above"
+                    [matTooltip]="'Add License' | translate"
+                    [routerLink]="['/system', 'support']"
+                  >
+                    <ix-icon name="add_circle"></ix-icon>
+                  </a>
+                </span>
+              }
+          } @else {
+            <ngx-skeleton-loader
+              class="inline-loader"
+              [theme]="{
+                height: '20px',
+                background: 'var(--alt-bg2)',
+                opacity: 0.25,
+                margin: 0,
+              }"
+            ></ngx-skeleton-loader>
+          }
           </mat-list-item>
 
-          <mat-list-item *ngIf="systemInfo()?.system_serial && isIxHardware()">
-            <strong>{{ 'System Serial' | translate }}:</strong>
-            <span>
-              {{ systemInfo().system_serial }}
-            </span>
-          </mat-list-item>
+          @if (systemInfo()?.system_serial && isIxHardware()) {
+            <mat-list-item>
+              <strong>{{ 'System Serial' | translate }}:</strong>
+              <span>
+                {{ systemInfo().system_serial }}
+              </span>
+            </mat-list-item>
+          }
 
           <mat-list-item>
             <strong>{{ 'Hostname' | translate }}:</strong>
-            <span *ngIf="isLoaded(); else inlineLoader">
-              {{ systemInfo().hostname }}
-            </span>
+            @if (isLoaded()) {
+              <span>
+                {{ systemInfo().hostname }}
+              </span>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
           </mat-list-item>
 
           <mat-list-item>
             <strong>{{ 'Uptime' | translate }}:</strong>
-            <span *ngIf="isLoaded(); else inlineLoader">
-              {{ uptime() | uptime: (datetime() | formatDateTime:' ':'HH:mm') }}
-            </span>
+            @if (isLoaded()) {
+              <span>
+                {{ uptime() | uptime: (datetime() | formatDateTime:' ':'HH:mm') }}
+              </span>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
           </mat-list-item>
         </mat-list>
       </div>
@@ -136,14 +202,3 @@
   </mat-card-content>
 </mat-card>
 
-<ng-template #inlineLoader>
-  <ngx-skeleton-loader
-    class="inline-loader"
-    [theme]="{
-      height: '20px',
-      background: 'var(--alt-bg2)',
-      opacity: 0.25,
-      margin: 0,
-    }"
-  ></ngx-skeleton-loader>
-</ng-template>

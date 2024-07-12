@@ -11,12 +11,16 @@
             <div class="preset-name">{{ preset.name }}</div>
             <div class="preset-type">{{ preset.acltype }}</div>
             @if (!preset.builtin) {
-              <span
+              <button
+                ixTest="remove-preset"
+                type="button"
+                mat-icon-button
                 class="preset-remove"
+                [attr.aria-label]="'Remove preset' | translate"
                 (click)="onRemovePreset(preset)"
               >
                 <ix-icon name="cancel"></ix-icon>
-              </span>
+              </button>
             }
           </div>
         }

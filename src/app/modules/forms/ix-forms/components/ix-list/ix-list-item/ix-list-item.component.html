@@ -1,14 +1,15 @@
 <div class="list-item">
-  <button
-    *ngIf="canDelete()"
-    mat-icon-button
-    type="button"
-    class="delete-btn"
-    ixTest="remove-from-list"
-    [attr.aria-label]="'Remove {label} item' | translate: { label }"
-    (click)="deleteItem()"
-  >
-    <ix-icon name="clear"></ix-icon>
-  </button>
+  @if (canDelete()) {
+    <button
+      mat-icon-button
+      type="button"
+      class="delete-btn"
+      ixTest="remove-from-list"
+      [attr.aria-label]="'Remove {label} item' | translate: { label }"
+      (click)="deleteItem()"
+    >
+      <ix-icon name="clear"></ix-icon>
+    </button>
+  }
   <ng-content></ng-content>
 </div>

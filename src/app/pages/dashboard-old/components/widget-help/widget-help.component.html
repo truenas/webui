@@ -20,7 +20,9 @@
             <h3 class="mat-card-title-text">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
-                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  @if (showReorderHandle) {
+                    <span class="grip"></span>
+                  }
                   <span>{{ 'TrueNAS Help' | translate }}</span>
                 </div>
               </ix-drag-handle>
@@ -47,9 +49,9 @@
             </div>
             <div class="helptext" [innerHtml]="helptext.newsletter | translate"></div>
           </div>
-          <ng-container *ngIf="productType$ | async as product">
+          @if (productType$ | async; as product) {
             <div class="open-source" [innerHtml]="helptext.opensource | translate: { product }"></div>
-          </ng-container>
+          }
         </div>
         <div id="footer">
           <div class="copyright-txt">

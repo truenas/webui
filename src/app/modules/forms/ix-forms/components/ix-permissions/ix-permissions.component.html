@@ -1,10 +1,11 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-  [ixTestOverride]="controlDirective.name"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
 
 <div class="permissions-container">
   <table ixTest="permissions-table" [class.disabled]="isDisabled">
@@ -90,41 +91,43 @@
         ></mat-checkbox>
       </td>
     </tr>
-    <tr *ngIf="!hideOthersPermissions" [ixTest]="[controlDirective.name, 'other-permissions']">
-      <td>
-        <span class="header-label">{{ 'Other' | translate }}</span>
-      </td>
-      <td>
-        <mat-checkbox
-          color="primary"
-          ixTest="other-read"
-          [disabled]="isDisabled"
-          [checked]="otherRead"
-          [attr.aria-label]="'Other Read' | translate"
-          (change)="toggleOtherRead()"
-        ></mat-checkbox>
-      </td>
-      <td>
-        <mat-checkbox
-          color="primary"
-          ixTest="other-write"
-          [disabled]="isDisabled"
-          [checked]="otherWrite"
-          [attr.aria-label]="'Other Write' | translate"
-          (change)="toggleOtherWrite()"
-        ></mat-checkbox>
-      </td>
-      <td>
-        <mat-checkbox
-          color="primary"
-          ixTest="other-execute"
-          [disabled]="isDisabled"
-          [checked]="otherExec"
-          [attr.aria-label]="'Other Execute' | translate"
-          (change)="toggleOtherExec()"
-        ></mat-checkbox>
-      </td>
-    </tr>
+    @if (!hideOthersPermissions) {
+      <tr [ixTest]="[controlDirective.name, 'other-permissions']">
+        <td>
+          <span class="header-label">{{ 'Other' | translate }}</span>
+        </td>
+        <td>
+          <mat-checkbox
+            color="primary"
+            ixTest="other-read"
+            [disabled]="isDisabled"
+            [checked]="otherRead"
+            [attr.aria-label]="'Other Read' | translate"
+            (change)="toggleOtherRead()"
+          ></mat-checkbox>
+        </td>
+        <td>
+          <mat-checkbox
+            color="primary"
+            ixTest="other-write"
+            [disabled]="isDisabled"
+            [checked]="otherWrite"
+            [attr.aria-label]="'Other Write' | translate"
+            (change)="toggleOtherWrite()"
+          ></mat-checkbox>
+        </td>
+        <td>
+          <mat-checkbox
+            color="primary"
+            ixTest="other-execute"
+            [disabled]="isDisabled"
+            [checked]="otherExec"
+            [attr.aria-label]="'Other Execute' | translate"
+            (change)="toggleOtherExec()"
+          ></mat-checkbox>
+        </td>
+      </tr>
+    }
   </table>
 </div>
 
