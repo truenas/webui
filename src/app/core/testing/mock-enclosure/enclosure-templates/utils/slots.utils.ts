@@ -1,3 +1,4 @@
+import { mapValues } from 'lodash';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
@@ -12,10 +13,11 @@ export function mapSlots(
   mappingFunction: ({ slot, index }: SlotMappingFunction) => DashboardEnclosureSlot,
 ): DashboardEnclosure[] {
   return enclosures.map((enclosure) => {
-    const slots = Object.values(enclosure.elements[EnclosureElementType.ArrayDeviceSlot])
-      .map((slot, i) => {
-        return mappingFunction({ slot, enclosure, index: i });
-      });
+    let i = -1;
+    const slots = mapValues(enclosure.elements[EnclosureElementType.ArrayDeviceSlot], (slot) => {
+      i = i + 1;
+      return mappingFunction({ slot, enclosure, index: i });
+    });
 
     return {
       ...enclosure,

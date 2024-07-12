@@ -66,6 +66,7 @@ describe('EnclosurePageComponent', () => {
   });
 
   beforeEach(() => {
+    selectedSlot.set({} as DashboardEnclosureSlot);
     spectator = createComponent();
   });
 
@@ -92,6 +93,9 @@ describe('EnclosurePageComponent', () => {
   });
 
   it('shows disks overview when no slot is selected', () => {
+    selectedSlot.set(null);
+    spectator.detectChanges();
+
     expect(spectator.query(DisksOverviewComponent)).toExist();
   });
 
