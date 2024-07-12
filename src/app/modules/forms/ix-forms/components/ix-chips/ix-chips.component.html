@@ -1,10 +1,11 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-  [ixTestOverride]="controlDirective.name"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
 
 <div class="input-container" [class.disabled]="isDisabled">
   <mat-chip-grid
@@ -54,4 +55,6 @@
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-<mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+@if (hint) {
+  <mat-hint>{{ hint }}</mat-hint>
+}

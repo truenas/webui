@@ -5,23 +5,28 @@
     @if (noPoolsDisks.length) {
       <h4>{{ 'Unused Disks' | translate }}</h4>
       <ul class="unused-disks">
-        <li *ngFor="let disk of noPoolsDisks">
-          {{ disk.formattedDisk }}
-        </li>
+        @for (disk of noPoolsDisks; track disk.formattedDisk) {
+          <li>
+            {{ disk.formattedDisk }}
+          </li>
+        }
       </ul>
     }
 
     @if (exportedPoolsDisks.length) {
       <h4>{{ 'Disks with exported pools' | translate }}</h4>
       <ul class="unused-disks">
-        <li *ngFor="let disk of exportedPoolsDisks">
-          {{ disk.formattedDisk }}
-          <ix-warning
-            *ngIf="disk.exportedPool"
-            class="inline-warning"
-            [message]="getWarningText(disk.exportedPool)"
-          ></ix-warning>
-        </li>
+        @for (disk of exportedPoolsDisks; track disk.formattedDisk) {
+          <li>
+            {{ disk.formattedDisk }}
+            @if (disk.exportedPool) {
+              <ix-warning
+                class="inline-warning"
+                [message]="getWarningText(disk.exportedPool)"
+              ></ix-warning>
+            }
+          </li>
+        }
       </ul>
     }
 

@@ -14,82 +14,92 @@
 
   <mat-card-content [ixUiSearch]="networkConfigurationCardElements.elements.configuration">
     <div class="columns">
-      <ng-container *ngIf="!isLoading">
+      @if (!isLoading) {
         <div class="first-column">
           <mat-list
             class="list"
           >
             <div class="section-title">{{ 'Nameservers' | translate }}</div>
-            <mat-list-item
-              *ngFor="let nameserver of nameservers"
-              [ixUiSearch]="networkConfigurationCardElements.elements.nameServers"
-            >
-              <span class="label">{{ nameserver.label | translate }}:</span>
-              <span class="value">
-                {{ nameserver.value | cast | translate }}
-              </span>
-            </mat-list-item>
+            @for (nameserver of nameservers; track nameserver.label) {
+              <mat-list-item
+                [ixUiSearch]="networkConfigurationCardElements.elements.nameServers"
+              >
+                <span class="label">{{ nameserver.label | translate }}:</span>
+                <span class="value">
+                  {{ nameserver.value | cast | translate }}
+                </span>
+              </mat-list-item>
+            }
           </mat-list>
 
-          <mat-list *ngIf="ipv4?.length > 0" class="list">
-            <div class="section-title">{{ 'Default Route' | translate }}</div>
-            <mat-list-item>
-              <ix-icon name="router" class="list-icon"></ix-icon>
-              <span class="label">{{ 'IPv4' | translate }}:</span>
-              <ul class="value">
-                <li *ngFor="let ip of ipv4">{{ ip }}</li>
-              </ul>
-            </mat-list-item>
-          </mat-list>
-
-          <mat-list *ngIf="ipv6?.length > 0" class="list">
-            <mat-list-item>
-              <ix-icon name="router" class="list-icon"></ix-icon>
-              <span class="label">{{ 'IPv6' | translate }}:</span>
-              <ul class="value">
-                <li *ngFor="let ip of ipv6">{{ ip }}</li>
-              </ul>
-            </mat-list-item>
-          </mat-list>
+          @if (ipv4?.length > 0) {
+            <mat-list class="list">
+              <div class="section-title">{{ 'Default Route' | translate }}</div>
+              <mat-list-item>
+                <ix-icon name="router" class="list-icon"></ix-icon>
+                <span class="label">{{ 'IPv4' | translate }}:</span>
+                <ul class="value">
+                  @for (ip of ipv4; track ip) {
+                    <li>{{ ip }}</li>
+                  }
+                </ul>
+              </mat-list-item>
+            </mat-list>
+          }
+          @if (ipv6?.length > 0) {
+            <mat-list class="list">
+              <mat-list-item>
+                <ix-icon name="router" class="list-icon"></ix-icon>
+                <span class="label">{{ 'IPv6' | translate }}:</span>
+                <ul class="value">
+                  @for (ip of ipv6; track ip) {
+                    <li>{{ ip }}</li>
+                  }
+                </ul>
+              </mat-list-item>
+            </mat-list>
+          }
         </div>
 
         <div>
-          <ul *ngIf="config.hostname" class="details-list">
-            <li>
-              <span class="label">{{ 'Hostname:' | translate }}</span>
-              <span class="value">{{ config.hostname_local }}</span>
-            </li>
-            <li>
-              <span class="label">{{ 'Domain:' | translate }}</span>
-              <span class="value">
-                {{ config.domain || ('Inherit from DHCP' | translate) }}
-              </span>
-            </li>
-            <li>
-              <span class="label">{{ 'HTTP Proxy:' | translate }}</span>
-              <span class="value">{{ config.httpproxy || '---' }}</span>
-            </li>
-            <li>
-              <span class="label">
-                {{ 'Service Announcement:' | translate }}
-              </span>
-              <span class="value">{{ serviceAnnouncement }}</span>
-            </li>
-            <li>
-              <span class="label">{{ 'Additional Domains:' | translate }}</span>
-              <span class="value">{{ additionalDomains }}</span>
-            </li>
-            <li>
-              <span class="label">{{ 'Hostname Database:' | translate }}</span>
-              <span class="value">{{ config.hosts.join(', ') || '---' }}</span>
-            </li>
-            <li>
-              <span class="label">{{ 'Outbound Network:' | translate }}</span>
-              <span class="value">{{ outboundNetwork }}</span>
-            </li>
-          </ul>
+          @if (config.hostname) {
+            <ul class="details-list">
+              <li>
+                <span class="label">{{ 'Hostname:' | translate }}</span>
+                <span class="value">{{ config.hostname_local }}</span>
+              </li>
+              <li>
+                <span class="label">{{ 'Domain:' | translate }}</span>
+                <span class="value">
+                  {{ config.domain || ('Inherit from DHCP' | translate) }}
+                </span>
+              </li>
+              <li>
+                <span class="label">{{ 'HTTP Proxy:' | translate }}</span>
+                <span class="value">{{ config.httpproxy || '---' }}</span>
+              </li>
+              <li>
+                <span class="label">
+                  {{ 'Service Announcement:' | translate }}
+                </span>
+                <span class="value">{{ serviceAnnouncement }}</span>
+              </li>
+              <li>
+                <span class="label">{{ 'Additional Domains:' | translate }}</span>
+                <span class="value">{{ additionalDomains }}</span>
+              </li>
+              <li>
+                <span class="label">{{ 'Hostname Database:' | translate }}</span>
+                <span class="value">{{ config.hosts.join(', ') || '---' }}</span>
+              </li>
+              <li>
+                <span class="label">{{ 'Outbound Network:' | translate }}</span>
+                <span class="value">{{ outboundNetwork }}</span>
+              </li>
+            </ul>
+          }
         </div>
-      </ng-container>
+      }
     </div>
   </mat-card-content>
 </mat-card>

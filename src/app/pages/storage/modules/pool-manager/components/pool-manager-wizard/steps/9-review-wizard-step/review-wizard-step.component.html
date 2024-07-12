@@ -19,21 +19,18 @@
   <div class="summary-group topology-summary">
     <h4>{{ 'Topology Summary' | translate }}</h4>
 
-    @if (nonEmptyTopologyCategories.length) {
-      @for (category of nonEmptyTopologyCategories; track category[0]) {
-        <div class="summary-item">
-          <div class="label">
-            {{ category[0] | mapValue: vdevTypeLabels | translate }}
-          </div>
-          <div class="value">
-            {{ category[1] | ixTopologyCategoryDescription: !isLimitedToOneLayout(category[0]) }}
-          </div>
+    @for (category of nonEmptyTopologyCategories; track category[0]) {
+      <div class="summary-item">
+        <div class="label">
+          {{ category[0] | mapValue: vdevTypeLabels | translate }}
         </div>
-      }
-    } @else {
+        <div class="value">
+          {{ category[1] | ixTopologyCategoryDescription: !isLimitedToOneLayout(category[0]) }}
+        </div>
+      </div>
+    } @empty {
       {{ 'No VDEVs added.' | translate }}
     }
-
   </div>
 
   <div class="summary-group">

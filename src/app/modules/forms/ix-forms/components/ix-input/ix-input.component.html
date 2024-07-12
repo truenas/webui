@@ -1,19 +1,22 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-  [ixTestOverride]="controlDirective.name"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
 
 <div
   class="input-container"
   [class.disabled]="isDisabled"
   [class.readonly]="readonly"
 >
-  <span *ngIf="prefixIcon" class="prefix-icon">
-    <ix-icon [name]="prefixIcon"></ix-icon>
-  </span>
+  @if (prefixIcon) {
+    <span class="prefix-icon">
+      <ix-icon [name]="prefixIcon"></ix-icon>
+    </span>
+  }
   <input
     #ixInput
     #trigger="matAutocompleteTrigger"
@@ -36,50 +39,61 @@
     (focus)="focus(ixInput)"
     (blur)="blurred()"
   />
-  <span *ngIf="shouldShowResetInput()" class="reset-input">
-    <ix-icon name="mdi-close-circle" (click)="resetInput(ixInput)"></ix-icon>
-  </span>
-  <button
-    *ngIf="type === 'password'"
-    mat-icon-button
-    type="button"
-    class="toggle_pw"
-    [ixTest]="['toggle-password', controlDirective.name]"
-    [attr.aria-label]="showPassword ? ('Hide Password' | translate) : ('Show Password' | translate)"
-    (click)="onPasswordToggled()"
-  >
-    <ix-icon
-      *ngIf="showPassword"
-      name="visibility"
-      [matTooltip]="'Hide' | translate"
-    ></ix-icon>
-    <ix-icon
-      *ngIf="!showPassword"
-      name="visibility_off"
-      [matTooltip]="'Show' | translate">
-    </ix-icon>
-  </button>
+
+  @if (shouldShowResetInput()) {
+    <span class="reset-input">
+      <ix-icon name="mdi-close-circle" (click)="resetInput(ixInput)"></ix-icon>
+    </span>
+  }
+
+  @if (type === 'password') {
+    <button
+      mat-icon-button
+      type="button"
+      class="toggle_pw"
+      [ixTest]="['toggle-password', controlDirective.name]"
+      [attr.aria-label]="showPassword ? ('Hide Password' | translate) : ('Show Password' | translate)"
+      (click)="onPasswordToggled()"
+    >
+      @if (showPassword) {
+        <ix-icon
+          name="visibility"
+          [matTooltip]="'Hide' | translate"
+        ></ix-icon>
+      } @else {
+        <ix-icon
+          name="visibility_off"
+          [matTooltip]="'Show' | translate">
+        </ix-icon>
+      }
+    </button>
+  }
 
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
-    <ng-container *ngIf="filteredOptions?.length">
-      <mat-option
-        *ngFor="let option of filteredOptions"
-        class="option"
-        [value]="option"
-        [ixTest]="[controlDirective.name, option.value]"
-      >
-        {{ option.label | translate }}
-      </mat-option>
-    </ng-container>
+    @if (filteredOptions?.length) {
+      @for (option of filteredOptions; track option) {
+        <mat-option
+          class="option"
+          [value]="option"
+          [ixTest]="[controlDirective.name, option.value]"
+        >
+          {{ option.label | translate }}
+        </mat-option>
+      }
+    }
   </mat-autocomplete>
 </div>
 
-<div *ngIf="invalid">
-  <mat-error>
-    <div [innerHTML]="invalidMessage()"></div>
-  </mat-error>
-</div>
+@if (invalid) {
+  <div>
+    <mat-error>
+      <div [innerHTML]="invalidMessage()"></div>
+    </mat-error>
+  </div>
+}
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-<mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+@if (hint) {
+  <mat-hint>{{ hint }}</mat-hint>
+}
