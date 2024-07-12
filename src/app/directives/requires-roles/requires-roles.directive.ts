@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { isEqual } from 'lodash';
 import { take } from 'rxjs';
-import { HasAccessDirective } from 'app/directives/common/has-access/has-access.directive';
+import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
 

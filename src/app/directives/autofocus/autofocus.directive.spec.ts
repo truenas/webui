@@ -1,5 +1,5 @@
 import { createDirectiveFactory } from '@ngneat/spectator/jest';
-import { AutofocusDirective } from 'app/directives/common/autofocus/autofocus.directive';
+import { AutofocusDirective } from 'app/directives/autofocus/autofocus.directive';
 
 describe('AutofocusDirective', () => {
   const createDirective = createDirectiveFactory({

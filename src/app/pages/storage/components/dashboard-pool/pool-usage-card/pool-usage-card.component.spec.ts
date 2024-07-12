@@ -8,7 +8,7 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/gauge-chart/gauge-chart.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
@@ -22,7 +22,7 @@ describe('PoolUsageCardComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      IxFileSizePipe,
+      FileSizePipe,
     ],
     declarations: [
       MockComponent(GaugeChartComponent),

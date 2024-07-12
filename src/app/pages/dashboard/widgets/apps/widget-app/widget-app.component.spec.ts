@@ -11,7 +11,7 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
@@ -49,7 +49,7 @@ describe('WidgetAppComponent', () => {
 
   const createComponent = createComponentFactory({
     component: WidgetAppComponent,
-    imports: [MapValuePipe, IxFileSizePipe, NgxSkeletonLoaderModule],
+    imports: [MapValuePipe, FileSizePipe, NgxSkeletonLoaderModule],
     declarations: [
       MockComponent(AppStatusCellComponent),
       MockComponent(AppUpdateCellComponent),

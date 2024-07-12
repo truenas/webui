@@ -2,7 +2,7 @@ import {
   createHostFactory, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
-import { HasRoleDirective } from 'app/directives/common/has-role/has-role.directive';
+import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
 
