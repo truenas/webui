@@ -13,6 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
@@ -35,7 +36,7 @@ describe('WidgetAppComponent', () => {
     name: 'TestApp',
     portals: {
       web_portal: ['http://test.com'],
-    },
+    } as Record<string, string[]>,
     status: ChartReleaseStatus.Active,
     update_available: true,
     container_images_update_available: false,
@@ -45,11 +46,16 @@ describe('WidgetAppComponent', () => {
     },
     catalog: 'truenas',
     catalog_train: 'charts',
-  } as unknown as ChartRelease;
+  } as ChartRelease;
 
   const createComponent = createComponentFactory({
     component: WidgetAppComponent,
-    imports: [MapValuePipe, FileSizePipe, NgxSkeletonLoaderModule],
+    imports: [
+      MapValuePipe,
+      NetworkSpeedPipe,
+      FileSizePipe,
+      NgxSkeletonLoaderModule,
+    ],
     declarations: [
       MockComponent(AppStatusCellComponent),
       MockComponent(AppUpdateCellComponent),

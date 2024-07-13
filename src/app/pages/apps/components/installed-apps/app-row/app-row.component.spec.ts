@@ -6,6 +6,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
@@ -36,6 +37,7 @@ describe('AppRowComponent', () => {
     imports: [
       ImgFallbackModule,
       FileSizePipe,
+      NetworkSpeedPipe,
     ],
     declarations: [
       MockComponents(AppStatusCellComponent, AppUpdateCellComponent),

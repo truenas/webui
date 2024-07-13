@@ -6,7 +6,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
-import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,6 +15,7 @@ import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
@@ -35,9 +35,7 @@ describe('SnapshotDetailsRowComponent', () => {
       ReactiveFormsModule,
       IxTableModule,
       FileSizePipe,
-    ],
-    declarations: [
-      FakeFormatDateTimePipe,
+      FormatDateTimePipe,
     ],
     providers: [
       mockAuth(),

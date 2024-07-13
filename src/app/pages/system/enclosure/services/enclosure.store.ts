@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
 import { chain } from 'lodash';
 import { switchMap, tap } from 'rxjs';
-import { delay, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
@@ -86,7 +86,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
             this.patchState({ enclosures });
           }),
           this.errorHandler.catchError(),
-          delay(100),
           finalize(() => {
             this.patchState({ isLoading: false });
           }),
@@ -135,7 +134,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     const enclosureToSelect = this.get().enclosures.find((enclosure) => enclosure.id === vdevDisk.enclosure_id);
     this.selectEnclosure(vdevDisk.enclosure_id);
 
-    const selectedSlot = enclosureToSelect?.elements[EnclosureElementType.ArrayDeviceSlot][vdevDisk.slot - 1];
+    const selectedSlot = enclosureToSelect?.elements[EnclosureElementType.ArrayDeviceSlot][vdevDisk.slot];
     this.selectSlot(selectedSlot);
   }
 

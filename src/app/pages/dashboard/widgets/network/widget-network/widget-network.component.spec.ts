@@ -5,7 +5,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { NetworkInterfaceType, NetworkInterfaceAliasType, LinkState } from 'app/enums/network-interface.enum';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
@@ -18,7 +18,7 @@ describe('WidgetNetworkComponent', () => {
     component: WidgetNetworkComponent,
     imports: [
       NgxSkeletonLoaderModule,
-      FileSizePipe,
+      NetworkSpeedPipe,
     ],
     declarations: [
       MockComponent(NetworkChartComponent),
