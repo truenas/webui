@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
@@ -22,9 +22,10 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
@@ -117,11 +118,12 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     AppStatusCellComponent,
     AppUpdateCellComponent,
     FormatDateTimePipe,
-    IxFileSizePipe,
+    FileSizePipe,
     CopyButtonComponent,
     MapValuePipe,
     ViewChartAreaComponent,
     ViewChartGaugeComponent,
+    NetworkSpeedPipe,
   ],
 })
 export class DashboardModule {

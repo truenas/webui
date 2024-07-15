@@ -12,7 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -20,7 +20,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { DiskComponent } from 'app/pages/system/old-view-enclosure/components/disk-component/disk.component';
@@ -60,7 +60,7 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     CommonDirectivesModule,
     IxTableModule,
     SearchInput1Component,
-    IxFileSizePipe,
+    FileSizePipe,
     TooltipComponent,
   ],
   declarations: [

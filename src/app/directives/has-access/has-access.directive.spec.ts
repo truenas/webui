@@ -1,5 +1,5 @@
 import { createHostFactory } from '@ngneat/spectator/jest';
-import { HasAccessDirective } from 'app/directives/common/has-access/has-access.directive';
+import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 
 describe('HasAccessDirective', () => {
   const createDirective = createHostFactory({

@@ -1,8 +1,8 @@
 import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { NewFeatureIndicatorDirective } from 'app/directives/common/new-feature-indicator/new-feature-indicator.directive';
-import { NewFeatureIndicator } from 'app/directives/common/new-feature-indicator/new-feature-indicator.interface';
-import { NewFeatureIndicatorService } from 'app/directives/common/new-feature-indicator/new-feature-indicator.service';
+import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
+import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
+import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
 
 describe('NewFeatureIndicatorDirective', () => {
   const createDirective = createHostFactory({
