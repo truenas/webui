@@ -1,7 +1,7 @@
 import { Renderer2, ElementRef } from '@angular/core';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { UiSearchDirectivesService } from './ui-search-directives.service';
 
 describe('UiSearchDirectivesService', () => {

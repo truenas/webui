@@ -2,9 +2,9 @@ import {
   ComponentRef, Directive, Input, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { NewFeatureIndicatorWrapperComponent } from 'app/directives/common/new-feature-indicator/new-feature-indicator-wrapper.component';
-import { NewFeatureIndicator } from 'app/directives/common/new-feature-indicator/new-feature-indicator.interface';
-import { NewFeatureIndicatorService } from 'app/directives/common/new-feature-indicator/new-feature-indicator.service';
+import { NewFeatureIndicatorWrapperComponent } from 'app/directives/new-feature-indicator/new-feature-indicator-wrapper.component';
+import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
+import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
 
 /**
  * Usage: adding an indicator with a hint about a new feature.

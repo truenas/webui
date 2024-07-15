@@ -2,7 +2,7 @@ import {
   ComponentRef, Directive, HostBinding, Input, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { MissingAccessWrapperComponent } from 'app/directives/common/has-access/missing-access-wrapper.component';
+import { MissingAccessWrapperComponent } from 'app/directives/has-access/missing-access-wrapper.component';
 
 @UntilDestroy()
 @Directive({

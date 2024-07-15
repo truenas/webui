@@ -5,7 +5,7 @@ import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   ConfigurationPreviewComponent,
@@ -24,7 +24,7 @@ describe('ConfigurationPreviewComponent', () => {
   const createComponent = createComponentFactory({
     component: ConfigurationPreviewComponent,
     imports: [
-      IxFileSizePipe,
+      FileSizePipe,
       MapValuePipe,
       CastPipe,
     ],

@@ -105,20 +105,20 @@
                                 <ul>
                                   <li>
                                     <span class="label">{{ 'In' | translate }}:</span>
-                                    {{ nicInfoMap.get(nic.state.name)?.bitsIn | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                                    {{ nicInfoMap.get(nic.state.name)?.bitsIn | ixNetworkSpeed }}
                                   </li>
                                   <li>
-                                    <span class="label">{{ 'Out' | translate }}:</span
-                                      >{{ nicInfoMap.get(nic.state.name)?.bitsOut | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
-                                    </li>
-                                  </ul>
-                                }
-                                @if (getLinkState(nic) !== LinkState.Up) {
-                                  <span>
-                                    {{ 'No Traffic' | translate }}
-                                  </span>
-                                }
-                              </li>
+                                    <span class="label">{{ 'Out' | translate }}:</span>
+                                    {{ nicInfoMap.get(nic.state.name)?.bitsOut | ixNetworkSpeed }}
+                                  </li>
+                                </ul>
+                              }
+                              @if (getLinkState(nic) !== LinkState.Up) {
+                                <span>
+                                  {{ 'No Traffic' | translate }}
+                                </span>
+                              }
+                            </li>
                               @if (availableNics.length > 1) {
                                 <li class="info-list-item">
                                   <span class="icon address">
