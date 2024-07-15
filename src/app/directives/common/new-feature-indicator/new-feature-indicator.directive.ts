@@ -50,7 +50,7 @@ export class NewFeatureIndicatorDirective {
     }
 
     this.wrapperContainer = this.viewContainerRef.createComponent(NewFeatureIndicatorWrapperComponent);
-    this.wrapperContainer.instance.template = this.templateRef;
-    this.wrapperContainer.instance.indicator = this.indicator;
+    this.wrapperContainer.setInput('template', this.templateRef);
+    this.wrapperContainer.setInput('indicator', this.indicator);
   }
 }
