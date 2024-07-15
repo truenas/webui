@@ -59,10 +59,10 @@ export class DatasetService {
     };
   }
 
-  rootLevelDatasetWarning(path: string, skip = false): Observable<boolean> {
+  rootLevelDatasetWarning(path: string, message: string, skip = false): Observable<boolean> {
     return isRootDataset({ name: path.replace(`${mntPath}/`, '') }) && !skip ? this.dialog.confirm({
       title: this.translate.instant('Warning'),
-      message: this.translate.instant('You configure the root-level dataset. Are you sure you want to continue?'),
+      message,
     }) : of(true);
   }
 }

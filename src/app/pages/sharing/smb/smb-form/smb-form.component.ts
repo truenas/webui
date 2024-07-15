@@ -441,7 +441,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       request$ = this.ws.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
     }
 
-    this.datasetService.rootLevelDatasetWarning(smbShare.path, !this.form.controls.path.dirty).pipe(
+    this.datasetService.rootLevelDatasetWarning(
+      smbShare.path,
+      this.translate.instant(helptextSharingSmb.root_level_warning),
+      !this.form.controls.path.dirty,
+    ).pipe(
       filter(Boolean),
       tap(() => {
         this.isLoading = true;
