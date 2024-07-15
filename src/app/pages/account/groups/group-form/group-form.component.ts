@@ -249,7 +249,7 @@ export class GroupFormComponent implements OnInit {
   private mapPrivilegeToPrivilegeUpdate(privilege: Privilege, localGroups: number[]): PrivilegeUpdate {
     return {
       local_groups: localGroups,
-      ds_groups: [...privilege.ds_groups.map((local) => local.id)],
+      ds_groups: [...privilege.ds_groups.map((group) => group.gid)],
       name: privilege.name,
       roles: privilege.roles,
       web_shell: privilege.web_shell,
