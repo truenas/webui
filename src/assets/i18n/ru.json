@@ -2935,7 +2935,6 @@
   "Unknown CPU": "",
   "Unknown Disk": "",
   "Unknown PID": "",
-  "Unknown error code": "",
   "Unlink": "",
   "Unlock Child Encrypted Roots": "",
   "Unlock Datasets": "",
@@ -3328,7 +3327,6 @@
   "{usage}% (All Threads)": "",
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Когда <b>Режим ИБП</b> установлен в <i>ведомый</i>. Введите номер открытого сетевого порта <i>ведущей</i> системы ИБП. Порт по умолчанию - <i>3493</i>.",
   " seconds.": " секунд.",
@@ -5138,5 +5136,6 @@
   "{service} Service is not currently running. Start the service now?": "{service} Служба в данный момент не запущена. Запустить службу прямо сейчас?",
   "{size} {type} at {location}": "{size} {type} в {location}",
   "{type} at {location}": "{type} в {location}",
-  "{used} of {total} ({used_pct})": "{used} из {total} ({used_cpt})"
+  "{used} of {total} ({used_pct})": "{used} из {total} ({used_cpt})",
+  "{version} is available!": "{version} доступна!"
 }

@@ -1183,7 +1183,6 @@
   "Unix Socket": "",
   "Unknown Disk": "",
   "Unknown PID": "",
-  "Unknown error code": "",
   "Unlink": "",
   "Unselect All": "",
   "Unshare {name}": "",
@@ -1372,7 +1371,6 @@
   "{usage}% (All Threads)": "",
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n Il semble que votre session soit inactive depuis plus de {lifetime} secondes.<br>\n Pour des raisons de sécurité, nous vous déconnecterons à {time}.\n",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Lorsque le <b>mode UPS</b> est réglé sur <i>Esclave</i>. Entrez le numéro de port réseau ouvert du système UPS <i>Maître</i> . Le port par défaut est <i>3493</i>.",
@@ -5138,5 +5136,6 @@
   "{service} Service is not currently running. Start the service now?": "Le service {service} n'est pas en cours d'exécution. Démarrer le service maintenant ?",
   "{size} {type} at {location}": "{size} {type} à {location}",
   "{type} at {location}": "{type} à {location}",
-  "{used} of {total} ({used_pct})": "{used} de {total} ({used_pct})"
+  "{used} of {total} ({used_pct})": "{used} de {total} ({used_pct})",
+  "{version} is available!": "{version} est disponible !"
 }

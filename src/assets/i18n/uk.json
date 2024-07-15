@@ -1646,7 +1646,6 @@
   "Unix Socket": "",
   "Unknown Disk": "",
   "Unknown PID": "",
-  "Unknown error code": "",
   "Unlink": "",
   "Unlock Pool": "",
   "Unselect All": "",
@@ -1859,7 +1858,6 @@
   "{usage}% (All Threads)": "",
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "Коли <b>Режим ДБЖ</b> встановлений у <i>відомий</i>. Введіть номер відкритого мережного порту <і>провідної</i> ДБЖ. Стандартний порт - <i>3493</i>.",
   " bytes.": "байт.",
@@ -5138,5 +5136,6 @@
   "{service} Service is not currently running. Start the service now?": "{service} Сервіс наразі не працює. Запустити послугу зараз?",
   "{size} {type} at {location}": "{size} {type} у {location}",
   "{type} at {location}": "{type} у {location}",
-  "{used} of {total} ({used_pct})": "{used} {total} ({user_pct})"
+  "{used} of {total} ({used_pct})": "{used} {total} ({user_pct})",
+  "{version} is available!": "{version} доступна!"
 }

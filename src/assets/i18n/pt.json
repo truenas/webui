@@ -2819,7 +2819,6 @@
   "Unkeep": "",
   "Unknown Disk": "",
   "Unknown PID": "",
-  "Unknown error code": "",
   "Unlink": "",
   "Unlock": "",
   "Unlock Child Encrypted Roots": "",
@@ -3155,7 +3154,6 @@
   "{usage}% (All Threads)": "",
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n Parece que a sua sessão está inativa há mais de {lifetime} segundos.<br>\n              Por motivos de segurança, vamos terminar a sessão em {time}.\n            ",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Quando o <b>Modo UPS</b> está definido como <i>escravo</i>. Enter the open network port number of the UPS <i>Sistema </i> mestre. A porta predefinida é 3493.",
@@ -5138,5 +5136,6 @@
   "{size} {type} at {location}": "{size} {type} no {location}",
   "{type} at {location}": "{type} no {location}",
   "{type} | {vdevWidth} wide | ": "{type} | {vdevWidth} largo | ",
-  "{used} of {total} ({used_pct})": "{used} de {total} ({used_pct})"
+  "{used} of {total} ({used_pct})": "{used} de {total} ({used_pct})",
+  "{version} is available!": "{version} está disponível!"
 }
