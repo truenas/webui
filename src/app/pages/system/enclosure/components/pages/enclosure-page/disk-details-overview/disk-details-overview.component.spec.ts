@@ -7,7 +7,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import {
   DiskDetailsOverviewComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/disk-details-overview/disk-details-overview.component';
@@ -30,7 +30,7 @@ describe('DiskDetailsOverviewComponent', () => {
   const createComponent = createComponentFactory({
     component: DiskDetailsOverviewComponent,
     imports: [
-      IxFileSizePipe,
+      FileSizePipe,
     ],
     declarations: [
       MockComponents(
