@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store, select } from '@ngrx/store';
-import { NewFeatureIndicator } from 'app/directives/common/new-feature-indicator/new-feature-indicator.interface';
+import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
 import { AppState } from 'app/store';
 import { shownNewIndicatorKeysUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';

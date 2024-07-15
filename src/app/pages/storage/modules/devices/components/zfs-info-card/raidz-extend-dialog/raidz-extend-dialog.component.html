@@ -4,7 +4,7 @@
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit($event)">
   <div>{{ 'Only disks that are at least {size} are shown.' | translate: { size: minimumSize() | ixFileSize } }}</div>
-  
+
   <ix-unused-disk-select
     formControlName="newDisk"
     [label]="'New Disk' | translate"

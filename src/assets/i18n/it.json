@@ -4832,6 +4832,7 @@
   "zstd-7 (very slow)": "",
   "zstd-fast (default level, 1)": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
+  "{bits}/s": "",
   "{checked} exporter: {name}": "",
   "{comparator} (Contains)": "",
   "{comparator} (Ends With)": "",

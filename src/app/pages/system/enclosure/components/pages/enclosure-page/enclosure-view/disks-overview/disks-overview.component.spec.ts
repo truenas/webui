@@ -8,7 +8,7 @@ import {
   DashboardEnclosureElements,
   DashboardEnclosureSlot,
 } from 'app/interfaces/enclosure.interface';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DisksOverviewDetailsComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-details/disks-overview-details.component';
 import { DisksOverviewTilesComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-tiles/disks-overview-tiles.component';
 import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview.component';
@@ -72,7 +72,7 @@ describe('DisksOverviewComponent', () => {
   const createComponent = createComponentFactory({
     component: DisksOverviewComponent,
     imports: [
-      IxFileSizePipe,
+      FileSizePipe,
     ],
     providers: [
       mockProvider(EnclosureStore, {

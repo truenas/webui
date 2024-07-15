@@ -4,8 +4,8 @@ import {
 import {
   ChangeDetectionStrategy, Component, input, TemplateRef,
 } from '@angular/core';
-import { NewFeatureIndicator } from 'app/directives/common/new-feature-indicator/new-feature-indicator.interface';
-import { NewFeatureIndicatorService } from 'app/directives/common/new-feature-indicator/new-feature-indicator.service';
+import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
+import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
 
 @Component({
   selector: 'ix-new-feature-indicator-wrapper',

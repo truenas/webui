@@ -2801,6 +2801,7 @@
   "to cloud": "",
   "vdev": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
+  "{bits}/s": "",
   "{checked} exporter: {name}": "",
   "{comparator} (Contains)": "",
   "{comparator} (Ends With)": "",
