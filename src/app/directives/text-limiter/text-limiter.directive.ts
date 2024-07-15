@@ -3,7 +3,9 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import {
   Directive, AfterViewInit, ElementRef, HostListener, ComponentRef, OnChanges, OnDestroy, input,
 } from '@angular/core';
-import { TextLimiterTooltipComponent } from 'app/directives/common/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
+import {
+  TextLimiterTooltipComponent,
+} from 'app/directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 
 @Directive({
   selector: '[textLimiter]',

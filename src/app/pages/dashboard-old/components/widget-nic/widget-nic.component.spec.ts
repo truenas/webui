@@ -12,7 +12,8 @@ import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { DragHandleComponent } from 'app/pages/dashboard-old/components/drag-handle/drag-handle.component';
 import { WidgetNicComponent } from 'app/pages/dashboard-old/components/widget-nic/widget-nic.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usage-store.service';
@@ -26,7 +27,8 @@ describe('WidgetNicComponent', () => {
     imports: [
       NgxSkeletonLoaderModule,
       MatGridListModule,
-      IxFileSizePipe,
+      FileSizePipe,
+      NetworkSpeedPipe,
     ],
     declarations: [
       MockComponent(DragHandleComponent),

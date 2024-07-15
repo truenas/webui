@@ -35,9 +35,9 @@
 </div>
 <div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
   <span *ngIf="stats && stats.network?.incoming !== undefined; else notAvailable">
-    {{ stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+    {{ stats.network.incoming | ixNetworkSpeed }}
     -
-    {{ stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+    {{ stats.network.outgoing | ixNetworkSpeed }}
   </span>
 </div>
 <div class="cell cell-update">

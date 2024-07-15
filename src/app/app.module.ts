@@ -27,7 +27,7 @@ import { NgxWebstorageModule } from 'ngx-webstorage';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { DialogModule } from 'app/modules/dialog/dialog.module';
 import { FeedbackModule } from 'app/modules/feedback/feedback.module';
