@@ -6,6 +6,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['isolated-gpus-devices', 'configure']"
+        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}
@@ -14,18 +15,19 @@
   </mat-toolbar-row>
 
   <mat-card-content>
-    <ix-empty
-      *ngIf="isolatedGpus.length === 0"
-      [conf]="emptyConfig"
-    ></ix-empty>
-
-    <mat-list *ngIf="isolatedGpus.length">
-      <mat-list-item [ixUiSearch]="searchableElements.elements.isolatedGpuPciIds">
-        <span class="label">{{ 'Isolated GPU Device(s)' | translate }}:</span>
-        <span class="value">
-          {{ isolatedGpuNames }}
-        </span>
-      </mat-list-item>
-    </mat-list>
+    @if (isolatedGpus.length === 0) {
+      <ix-empty
+        [conf]="emptyConfig"
+      ></ix-empty>
+    } @else {
+      <mat-list>
+        <mat-list-item [ixUiSearch]="searchableElements.elements.isolatedGpuPciIds">
+          <span class="label">{{ 'Isolated GPU Device(s)' | translate }}:</span>
+          <span class="value">
+            {{ isolatedGpuNames }}
+          </span>
+        </mat-list-item>
+      </mat-list>
+    }
   </mat-card-content>
 </mat-card>

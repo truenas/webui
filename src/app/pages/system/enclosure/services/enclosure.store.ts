@@ -1,13 +1,16 @@
 import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
+import { chain } from 'lodash';
 import { switchMap, tap } from 'rxjs';
-import { delay, finalize, map } from 'rxjs/operators';
-import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { finalize } from 'rxjs/operators';
+import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import { DashboardEnclosure, DashboardEnclosureSlot, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
@@ -30,39 +33,46 @@ const initialState: EnclosureState = {
 
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
-  readonly isLoading = toSignal(
-    this.state$.pipe(map((state) => state.isLoading)),
-    { initialValue: initialState.isLoading },
-  );
-  readonly selectedSlot = toSignal(
-    this.state$.pipe(map((state) => state.selectedSlot)),
-    { initialValue: initialState.selectedSlot },
-  );
-  readonly selectedEnclosure = toSignal(
-    this.state$.pipe(map((state) => {
-      return state.enclosures[state.selectedEnclosureIndex];
-    })),
-    { initialValue: undefined },
-  );
-  readonly selectedView = toSignal(
-    this.state$.pipe(map((state) => state.selectedView)),
-    { initialValue: initialState.selectedView },
-  );
-  readonly selectedSide = toSignal(
-    this.state$.pipe(map((state) => state.selectedSide)),
-    { initialValue: initialState.selectedSide },
+  readonly stateAsSignal = toSignal(
+    this.state$,
+    { initialValue: initialState },
   );
 
-  readonly enclosures = toSignal(
-    this.state$.pipe(map((state) => state.enclosures)),
-    { initialValue: [] },
-  );
+  readonly isLoading = computed(() => this.stateAsSignal().isLoading);
+  readonly selectedSlot = computed(() => this.stateAsSignal().selectedSlot);
+  readonly selectedEnclosure = computed(() => {
+    const state = this.stateAsSignal();
+    return state.enclosures[state.selectedEnclosureIndex];
+  });
+  readonly selectedEnclosureSlots = computed(() => {
+    const slots = this.selectedEnclosure()?.elements?.[EnclosureElementType.ArrayDeviceSlot] || {};
+    return Object.values(slots);
+  });
+  readonly selectedView = computed(() => this.stateAsSignal().selectedView);
+  readonly selectedSide = computed(() => this.stateAsSignal().selectedSide);
+  readonly enclosures = computed(() => this.stateAsSignal().enclosures);
+
+  readonly poolColors = computed<Record<string, string>>(() => {
+    const poolNames = chain(this.enclosures())
+      .flatMap((enclosure) => Object.values(enclosure.elements[EnclosureElementType.ArrayDeviceSlot]))
+      .filter((slot) => Boolean(slot.pool_info?.pool_name))
+      .map((slot) => slot.pool_info.pool_name)
+      .uniq();
+
+    return poolNames
+      .map((poolName, index) => {
+        return [poolName, this.theme.getRgbBackgroundColorByIndex(index)];
+      })
+      .fromPairs()
+      .value();
+  });
 
   readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));
 
   constructor(
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
+    private theme: ThemeService,
   ) {
     super(initialState);
   }
@@ -76,7 +86,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
             this.patchState({ enclosures });
           }),
           this.errorHandler.catchError(),
-          delay(100),
           finalize(() => {
             this.patchState({ isLoading: false });
           }),
@@ -120,6 +129,14 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       selectedSlot: slot,
     };
   });
+
+  selectSlotByVdevDisk(vdevDisk: EnclosureVdevDisk): void {
+    const enclosureToSelect = this.get().enclosures.find((enclosure) => enclosure.id === vdevDisk.enclosure_id);
+    this.selectEnclosure(vdevDisk.enclosure_id);
+
+    const selectedSlot = enclosureToSelect?.elements[EnclosureElementType.ArrayDeviceSlot][vdevDisk.slot];
+    this.selectSlot(selectedSlot);
+  }
 
   selectView = this.updater((state, view: EnclosureView) => {
     return {

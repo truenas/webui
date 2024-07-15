@@ -1,0 +1,224 @@
+@import 'scss-imports/cssvars';
+
+:host ::ng-deep ix-with-loading-state-error {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  font-size: 24px;
+  font-weight: bold;
+  height: 100%;
+  padding: 16px;
+  place-content: center center;
+  text-align: center;
+  width: 100%;
+}
+
+.card {
+  height: 100%;
+
+  ::ng-deep > ix-with-loading-state-loader {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    min-height: 54px;
+    padding: 16px 8px 8px 16px;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .controls {
+    align-items: center;
+    color: var(--fg2);
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+
+  &.full {
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+
+  &.empty {
+    align-items: center;
+    place-content: center center;
+    text-align: center;
+
+    ix-icon {
+      font-size: 48px;
+    }
+
+    &.full {
+      padding: 0 16px 48px;
+    }
+  }
+}
+
+ix-app-card-logo {
+  align-items: center;
+  aspect-ratio: 2;
+  background: var(--bg1);
+  display: inline-flex;
+  flex: 1 1 30%;
+  max-width: 30%;
+  padding: 0;
+  place-content: center center;
+}
+
+.app-info {
+  background: var(--bg1);
+  display: inline-flex;
+  flex: 1 1 70%;
+  flex-direction: column;
+  max-width: 70%;
+
+  .app-header {
+    align-items: baseline;
+    border-bottom: 1px solid var(--lines);
+    display: flex;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 8px;
+  }
+
+  .app-status {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 12px;
+
+    ix-app-update-cell {
+      gap: 8px;
+    }
+
+    ::ng-deep ix-with-loading-state-loader {
+      height: 24px;
+      margin-bottom: 4px;
+      margin-top: 4px;
+    }
+  }
+}
+
+.app-header-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+  min-height: 112px;
+}
+
+.app-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px 8px;
+}
+
+.app-stats-row {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+
+  h4 {
+    font-size: 16px;
+  }
+
+  strong {
+    font-size: 12px;
+  }
+}
+
+.slot {
+  background: var(--bg1);
+  display: inline-flex;
+
+  &.square {
+    align-items: center;
+    aspect-ratio: 1;
+    flex: 1 1 20%;
+    flex-direction: column;
+    justify-content: space-evenly;
+    max-width: 20%;
+    text-align: center;
+  }
+
+  &.rectangle {
+    align-items: center;
+    aspect-ratio: 4;
+    flex: 1 1 80%;
+    max-width: 80%;
+    place-content: center center;
+  }
+}
+
+.chart-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-around;
+  padding: 6px 0 6px 8px;
+  width: 100%;
+
+  h4,
+  small {
+    color: var(--fg2);
+  }
+
+  small {
+    font-weight: 500;
+    opacity: 0.75;
+  }
+
+  .in-out {
+    font-size: 12px;
+  }
+
+  .in-out-row {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+    white-space: nowrap;
+  }
+}
+
+.ix-icon {
+  &.mdi-check-circle {
+    color: var(--green);
+  }
+
+  &.mdi-progress-wrench,
+  &.mdi-alert-circle {
+    color: var(--yellow);
+  }
+
+  &.mdi-stop-circle {
+    color: var(--red);
+  }
+}
+
+.chart-graph {
+  .skeleton {
+    display: flex;
+    padding: 4px;
+  }
+}

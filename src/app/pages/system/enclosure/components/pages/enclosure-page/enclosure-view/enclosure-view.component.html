@@ -1,8 +1,11 @@
 <div class="left-column">
-  <ix-disk-topology-description
-    *ngIf="selectedSlot()"
-    [selectedSlot]="selectedSlot()"
-  ></ix-disk-topology-description>
+  @if (selectedSlot()) {
+    <ix-disk-topology-description
+      [selectedSlot]="selectedSlot()"
+    ></ix-disk-topology-description>
+  } @else {
+    <h2>{{ 'Pools' | translate }}</h2>
+  }
 </div>
 
 <div class="enclosure-container">
@@ -24,8 +27,16 @@
 </div>
 
 <div class="right-column">
-  <ix-vdev-disks-list
-    *ngIf="selectedSlot()"
-    [selectedSlot]="selectedSlot()"
-  ></ix-vdev-disks-list>
+  @if (selectedSlot()) {
+    <ix-vdev-disks-legend
+      [selectedSlot]="selectedSlot()"
+      [poolColor]="poolColor()"
+      (diskClick)="onVdevDiskClicked($event)"
+    ></ix-vdev-disks-legend>
+  } @else {
+    <ix-pools-legend
+      [slots]="selectedEnclosureSlots()"
+      [poolColors]="poolColors()"
+    ></ix-pools-legend>
+  }
 </div>

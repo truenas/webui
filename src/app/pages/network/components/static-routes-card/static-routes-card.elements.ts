@@ -10,8 +10,11 @@ export const staticRoutesCardElements = {
       synonyms: [T('Routing'), T('Static Routing')],
     },
     add: {
-      hierarchy: [T('Static Routes'), T('Add')],
-      synonyms: [T('Add Static Route'), T('Create Static Route'), T('New Static Route')],
+      hierarchy: [T('Static Routes'), T('Add Static Route')],
+      synonyms: [
+        T('Create Static Route'),
+        T('New Static Route'),
+      ],
       anchor: 'add-static-route',
     },
   },

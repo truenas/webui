@@ -55,6 +55,7 @@ export class VmwareSnapshotListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'vmware-snapshot-' + row.hostname,
+    ariaLabels: (row) => [row.hostname, this.translate.instant('VMware Snapshot')],
   });
 
   constructor(

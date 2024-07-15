@@ -99,6 +99,7 @@ export class CertificateListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'cert-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('Certificate')],
   });
 
   constructor(

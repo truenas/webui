@@ -132,6 +132,10 @@ export class VmEditFormComponent implements OnInit {
     };
     delete vmPayload.gpus;
 
+    if (this.form.controls.cpu_mode.value !== VmCpuMode.Custom) {
+      vmPayload.cpu_model = null;
+    }
+
     const gpusIds = this.form.value.gpus;
 
     const pciIdsRequests$ = gpusIds.map((gpu) => {

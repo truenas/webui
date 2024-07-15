@@ -3,15 +3,25 @@
 }
 
 .new-page-feedback {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
   margin-top: 3px;
+  place-content: center;
 
   span {
+    align-items: center;
     background: var(--red);
     border-radius: 2px;
+    box-sizing: border-box;
     color: var(--accent-txt);
+    display: flex;
+    flex-direction: row;
     line-height: initial;
-    margin: 0 15px;
+    margin: 0 8px 0 16px;
     padding: 1px 4px;
+    place-content: center;
   }
 
   button {
@@ -19,7 +29,6 @@
     border: none;
     color: var(--primary);
     cursor: pointer;
-    padding: 0;
     text-decoration: underline;
   }
 }

@@ -60,14 +60,15 @@
     ></tbody>
   </ix-table>
 
-  <a
-    *ngIf="iscsiShares.length > 4"
-    class="view-all"
-    [ixTest]="['iscsi-share', 'view-all']"
-    [routerLink]="['/sharing', 'iscsi', 'target']"
-  >
-    <span>
-      {{ 'View All' | translate }}
-    </span>
-  </a>
+  @if (iscsiShares.length > 4) {
+    <a
+      class="view-all"
+      [ixTest]="['iscsi-share', 'view-all']"
+      [routerLink]="['/sharing', 'iscsi', 'target']"
+    >
+      <span>
+        {{ 'View All' | translate }}
+      </span>
+    </a>
+  }
 </mat-card>

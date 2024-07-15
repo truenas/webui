@@ -1,4 +1,4 @@
-<ng-container *ngIf="!!allCount(); else noAllCount">
+@if (!!allCount()) {
   {{ 'Backup' | translate }}
   <a
     *ixRequiresRoles="[Role.CloudSyncWrite]"
@@ -17,9 +17,8 @@
   >
     {{ 'to another TrueNAS' | translate }}
   </a>
-</ng-container>
-
-<ng-template #noAllCount>
+} @else {
   <ng-container *ixRequiresRoles="[Role.FullAdmin]"></ng-container>
   {{ 'Backup to Cloud or another TrueNAS via links below' | translate }}
-</ng-template>
+}
+

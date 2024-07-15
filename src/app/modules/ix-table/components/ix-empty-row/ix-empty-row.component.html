@@ -8,40 +8,42 @@
     [class.large]="conf?.large"
     [class.compact]="conf?.compact"
   >
-    <div
-      *ngIf="!isLoading()"
-      fxLayout="column"
-      fxLayoutAlign="center center"
-      fxFlex
-      class="icon-div"
-    >
-      <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
-    </div>
-    <div
-      *ngIf="isLoading()"
-      fxLayout="column"
-      fxLayoutAlign="center center"
-      fxFlex
-    >
-      <mat-spinner [diameter]="40"></mat-spinner>
-    </div>
-    <div *ngIf="!isLoading()">
-      <h3 class="empty-title">{{ conf.title | translate }}</h3>
-
-      <!-- Messages -->
-      <p *ngIf="conf.message && !conf.compact" class="empty-message">
-        {{ conf.message | translate }}
-      </p>
-
-      <button
-        *ngIf="conf.button && !conf.compact"
-        class="empty-action"
-        mat-button
-        [ixTest]="[conf.button.label]"
-        (click)="doAction()"
+    @if (isLoading()) {
+      <div
+        fxLayout="column"
+        fxLayoutAlign="center center"
+        fxFlex
       >
-        {{ conf.button.label | translate }}
-      </button>
-    </div>
+        <mat-spinner [diameter]="40"></mat-spinner>
+      </div>
+    } @else {
+      <div
+        fxLayout="column"
+        fxLayoutAlign="center center"
+        fxFlex
+        class="icon-div"
+      >
+        <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
+      </div>
+      <div>
+        <h3 class="empty-title">{{ conf.title | translate }}</h3>
+        <!-- Messages -->
+        @if (conf.message && !conf.compact) {
+          <p class="empty-message">
+            {{ conf.message | translate }}
+          </p>
+        }
+        @if (conf.button && !conf.compact) {
+          <button
+            class="empty-action"
+            mat-button
+            [ixTest]="[conf.button.label]"
+            (click)="doAction()"
+          >
+            {{ conf.button.label | translate }}
+          </button>
+        }
+      </div>
+    }
   </div>
 </ng-template>

@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { IxDateModule } from 'app/modules/pipes/ix-date/ix-date.module';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import {
@@ -42,6 +43,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     MatCheckboxModule,
     TestIdModule,
     TooltipComponent,
+    CastPipe,
   ],
   exports: [
     SchedulerComponent,

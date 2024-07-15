@@ -1,20 +1,24 @@
 <ix-page-header [pageTitle]="'Installed' | translate">
   <ix-kubernetes-status></ix-kubernetes-status>
-  <div *ngIf="hasUpdates" class="global-update">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="update-all"
-      class="update-all-button"
-      (click)="onBulkUpgrade(true)"
-    >
-      <ix-icon name="mdi-alert-circle"></ix-icon>
-      <span>
-        {{ 'Update All' | translate }}
-        <ng-container *ngIf="appsUpdateAvailable">({{ appsUpdateAvailable }})</ng-container>
-      </span>
-    </button>
-  </div>
+  @if (hasUpdates) {
+    <div class="global-update">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="update-all"
+        class="update-all-button"
+        (click)="onBulkUpgrade(true)"
+      >
+        <ix-icon name="mdi-alert-circle"></ix-icon>
+        <span>
+          {{ 'Update All' | translate }}
+          @if (appsUpdateAvailable) {
+            ({{ appsUpdateAvailable }})
+          }
+        </span>
+      </button>
+    </div>
+  }
   <ix-app-settings-button></ix-app-settings-button>
   <a
     mat-button
@@ -30,72 +34,75 @@
     <div class="table-header">
       <h2>{{ 'Applications' | translate }}</h2>
 
-      <div *ngIf="hasCheckedApps" class="bulk-actions-container">
-        <div class="bulk-selected">
-          <span>{{ checkedAppsNames.length }}</span>
-          <span>{{ 'Selected' | translate }}</span>
-        </div>
+      @if (hasCheckedApps) {
+        <div class="bulk-actions-container">
+          <div class="bulk-selected">
+            <span>{{ checkedAppsNames.length }}</span>
+            <span>{{ 'Selected' | translate }}</span>
+          </div>
 
-        <div class="bulk-button-wrapper">
-          <label>{{ 'Bulk Actions' | translate }}</label>
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            ixTest="bulk-actions-menu"
-            [matMenuTriggerFor]="menu"
-            [disabled]="!hasCheckedApps"
-          >
-            {{ 'Select action' | translate }}
-            <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
-          </button>
-        </div>
+          <div class="bulk-button-wrapper">
+            <label>{{ 'Bulk Actions' | translate }}</label>
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              ixTest="bulk-actions-menu"
+              [matMenuTriggerFor]="menu"
+              [disabled]="!hasCheckedApps"
+            >
+              {{ 'Select action' | translate }}
+              <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+            </button>
+          </div>
 
-        <mat-menu #menu="matMenu">
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-menu-item
-            ixTest="start-selected"
-            [disabled]="isBulkStartDisabled"
-            (click)="onBulkStart()"
-          >
-            <span>{{ 'Start All Selected' | translate }}</span>
-          </button>
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-menu-item
-            ixTest="stop-selected"
-            [disabled]="isBulkStopDisabled"
-            (click)="onBulkStop()"
-          >
-            <span>{{ 'Stop All Selected' | translate }}</span>
-          </button>
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-menu-item
-            ixTest="upgrade-selected"
-            [disabled]="isBulkUpgradeDisabled"
-            (click)="onBulkUpgrade()"
-          >
-            <span>{{ 'Upgrade All Selected' | translate }}</span>
-          </button>
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-menu-item
-            ixTest="delete-selected"
-            (click)="onBulkDelete()"
-          >
-            <span>{{ 'Delete All Selected' | translate }}</span>
-          </button>
-        </mat-menu>
-      </div>
+          <mat-menu #menu="matMenu">
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-menu-item
+              ixTest="start-selected"
+              [disabled]="isBulkStartDisabled"
+              (click)="onBulkStart()"
+            >
+              <span>{{ 'Start All Selected' | translate }}</span>
+            </button>
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-menu-item
+              ixTest="stop-selected"
+              [disabled]="isBulkStopDisabled"
+              (click)="onBulkStop()"
+            >
+              <span>{{ 'Stop All Selected' | translate }}</span>
+            </button>
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-menu-item
+              ixTest="upgrade-selected"
+              [disabled]="isBulkUpgradeDisabled"
+              (click)="onBulkUpgrade()"
+            >
+              <span>{{ 'Upgrade All Selected' | translate }}</span>
+            </button>
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-menu-item
+              ixTest="delete-selected"
+              (click)="onBulkDelete()"
+            >
+              <span>{{ 'Delete All Selected' | translate }}</span>
+            </button>
+          </mat-menu>
+        </div>
+      }
     </div>
 
     <div class="item-search">
-      <ix-fake-progress-bar
-        *ngIf="!showMobileDetails"
-        class="loader-bar"
-        [loading]="isLoading"
-      ></ix-fake-progress-bar>
+      @if (!showMobileDetails) {
+        <ix-fake-progress-bar
+          class="loader-bar"
+          [loading]="isLoading"
+        ></ix-fake-progress-bar>
+      }
 
       <ix-search-input1
         [maxLength]="100"
@@ -116,14 +123,15 @@
       <div class="app-header-row">
         <div>
           <span class="name-header">
-            <mat-checkbox
-              *ngIf="dataSource.length"
-              color="primary"
-              ixTest="select-all-app"
-              [checked]="allAppsChecked"
-              [indeterminate]="!allAppsChecked && !!selection.selected.length"
-              (change)="toggleAppsChecked($event.checked)"
-            ></mat-checkbox>
+            @if (dataSource.length) {
+              <mat-checkbox
+                color="primary"
+                ixTest="select-all-app"
+                [checked]="allAppsChecked"
+                [indeterminate]="!allAppsChecked && !!selection.selected.length"
+                (change)="toggleAppsChecked($event.checked)"
+              ></mat-checkbox>
+            }
           </span>
         </div>
         <div
@@ -148,12 +156,13 @@
           [disabled]="!hasUpdates"
         >
           <span>{{ 'Updates' | translate }}</span>
-          <ix-icon
-            *ngIf="hasUpdates"
-            name="mdi-alert-circle"
-            matTooltipPosition="above"
-            [matTooltip]="'Updates available' | translate"
-          ></ix-icon>
+          @if (hasUpdates) {
+            <ix-icon
+              name="mdi-alert-circle"
+              matTooltipPosition="above"
+              [matTooltip]="'Updates available' | translate"
+            ></ix-icon>
+          }
         </div>
         <div></div>
       </div>
@@ -169,7 +178,7 @@
     >
       <div class="app-inner">
         <div class="apps-rows">
-          <ng-container *ngFor="let app of filteredApps; trackBy: trackAppBy">
+          @for (app of filteredApps; track trackAppBy($index, app)) {
             <ix-app-row
               tabindex="0"
               [app]="app"
@@ -185,28 +194,31 @@
               (click)="viewDetails(app)"
               (keydown.enter)="viewDetails(app)"
             ></ix-app-row>
-          </ng-container>
+          }
 
-          <div *ngIf="(dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading)" class="no-apps">
-            <ix-empty [conf]="entityEmptyConf"></ix-empty>
-          </div>
+          @if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading)) {
+            <div class="no-apps">
+              <ix-empty [conf]="entityEmptyConf"></ix-empty>
+            </div>
+          }
         </div>
       </div>
     </div>
   </div>
 
-  <div
-    *ngIf="selectedApp"
-    ixDetailsHeight="rightside-content-hold"
-    class="details-container"
-    [class.details-container-mobile]="showMobileDetails"
-  >
-    <ix-app-details-panel
-      [app]="selectedApp"
-      [status]="getAppStatus(selectedApp.name)"
-      (startApp)="start(selectedApp.name)"
-      (stopApp)="stop(selectedApp.name)"
-      (closeMobileDetails)="closeMobileDetails()"
-    ></ix-app-details-panel>
-  </div>
+  @if (selectedApp) {
+    <div
+      ixDetailsHeight="rightside-content-hold"
+      class="details-container"
+      [class.details-container-mobile]="showMobileDetails"
+    >
+      <ix-app-details-panel
+        [app]="selectedApp"
+        [status]="getAppStatus(selectedApp.name)"
+        (startApp)="start(selectedApp.name)"
+        (stopApp)="stop(selectedApp.name)"
+        (closeMobileDetails)="closeMobileDetails()"
+      ></ix-app-details-panel>
+    </div>
+  }
 </div>

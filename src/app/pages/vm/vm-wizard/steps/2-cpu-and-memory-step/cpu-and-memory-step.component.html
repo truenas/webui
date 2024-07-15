@@ -1,7 +1,9 @@
 <form [formGroup]="form">
-  <p *ngIf="maxVcpus" class="warning-text">
-    {{ helptext.vcpus_warning | translate: { maxVcpus } }}
-  </p>
+  @if (maxVcpus) {
+    <p class="warning-text">
+      {{ helptext.vcpus_warning | translate: { maxVcpus } }}
+    </p>
+  }
 
   <ix-input
     formControlName="vcpus"
@@ -46,12 +48,13 @@
     [required]="true"
   ></ix-select>
 
-  <ix-select
-    *ngIf="isCpuCustom"
-    formControlName="cpu_model"
-    [label]="'CPU Model' | translate"
-    [options]="cpuModels$"
-  ></ix-select>
+  @if (isCpuCustom) {
+    <ix-select
+      formControlName="cpu_model"
+      [label]="'CPU Model' | translate"
+      [options]="cpuModels$"
+    ></ix-select>
+  }
 
   <ix-input
     formControlName="memory"

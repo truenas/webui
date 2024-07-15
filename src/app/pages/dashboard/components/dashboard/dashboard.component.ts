@@ -42,6 +42,10 @@ export class DashboardComponent implements OnInit {
   readonly savedGroups = toSignal(this.dashboardStore.groups$);
   readonly isLoading = toSignal(this.dashboardStore.isLoading$);
   readonly isLoadingFirstTime = computed(() => this.isLoading() && this.savedGroups() === null);
+  readonly newFeatureConfig = {
+    key: 'dashboardConfigure',
+    message: this.translate.instant('Try out the new dashboard configuration feature'),
+  };
 
   emptyDashboardConf: EmptyConfig = {
     type: EmptyType.NoPageData,

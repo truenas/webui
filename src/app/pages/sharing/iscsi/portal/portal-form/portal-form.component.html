@@ -39,8 +39,8 @@
           [label]="'Add listen' | translate"
           (add)="onAdd()"
         >
-          <ng-container *ngFor="let item of listen; let i = index">
-            <ix-list-item (delete)="onDelete(i)">
+          @for (item of listen; track item; let i = $index) {
+            <ix-list-item [label]="'IP Address' | translate" (delete)="onDelete(i)">
               <ix-select
                 [formControlName]="i"
                 [label]="labels.ip | translate"
@@ -49,7 +49,7 @@
                 [required]="true"
               ></ix-select>
             </ix-list-item>
-          </ng-container>
+          }
         </ix-list>
       </ix-fieldset>
 

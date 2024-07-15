@@ -13,17 +13,21 @@
   </button>
 </ix-page-header>
 
-<div class="container" fxLayoutGap="16px">
+<div class="container">
   <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
-    <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="thead"></ng-container>
+    @if (!isMobileView) {
+      <ng-container [ngTemplateOutlet]="thead"></ng-container>
+    }
 
     <ix-table
       class="table"
       [ixUiSearch]="searchableElements.elements.tasks"
       [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-    >
-      <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="thead"></ng-container>
+      >
+      @if (isMobileView) {
+        <ng-container [ngTemplateOutlet]="thead"></ng-container>
+      }
       <tbody
         ix-table-body
         [columns]="columns"
@@ -35,17 +39,18 @@
     <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
   </div>
 
-  <div
-    *ngIf="dataProvider.expandedRow"
-    ixDetailsHeight="rightside-content-hold"
-    class="details-container"
-    [class.details-container-mobile]="showMobileDetails"
-  >
-    <ix-cloud-backup-details
-      [backup]="dataProvider.expandedRow"
-      (closeMobileDetails)="closeMobileDetails()"
-    ></ix-cloud-backup-details>
-  </div>
+  @if (dataProvider.expandedRow) {
+    <div
+      ixDetailsHeight="rightside-content-hold"
+      class="details-container"
+      [class.details-container-mobile]="showMobileDetails"
+    >
+      <ix-cloud-backup-details
+        [backup]="dataProvider.expandedRow"
+        (closeMobileDetails)="closeMobileDetails()"
+      ></ix-cloud-backup-details>
+    </div>
+  }
 </div>
 
 <ng-template #thead>

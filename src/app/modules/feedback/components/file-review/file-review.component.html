@@ -1,11 +1,12 @@
 <mat-dialog-content>
   <form [formGroup]="form">
-    <ix-star-rating
-      *ngIf="form.controls.rating.enabled"
-      formControlName="rating"
-      [label]="'Select Rating' | translate"
-      [required]="true"
-    ></ix-star-rating>
+    @if (form.controls.rating.enabled) {
+      <ix-star-rating
+        formControlName="rating"
+        [label]="'Select Rating' | translate"
+        [required]="true"
+      ></ix-star-rating>
+    }
 
     <ix-textarea
       formControlName="message"
@@ -20,21 +21,23 @@
       [tooltip]="'Capture and attach screenshot to the review' | translate"
     ></ix-checkbox>
 
-    <ix-checkbox
-      *ngIf="form.controls.attach_images.enabled"
-      formControlName="attach_images"
-      [label]="'Attach additional images' | translate"
-    ></ix-checkbox>
+    @if (form.controls.attach_images.enabled) {
+      <ix-checkbox
+        formControlName="attach_images"
+        [label]="'Attach additional images' | translate"
+      ></ix-checkbox>
+    }
 
-    <ix-file-input
-      *ngIf="form.controls.attach_images.value"
-      formControlName="images"
-      class="attach-images"
-      [label]="'Attach images (optional)' | translate"
-      [tooltip]="'Select images you want attach to review' | translate"
-      [multiple]="true"
-      [acceptedFiles]="acceptedFiles"
-    ></ix-file-input>
+    @if (form.controls.attach_images.value) {
+      <ix-file-input
+        formControlName="images"
+        class="attach-images"
+        [label]="'Attach images (optional)' | translate"
+        [tooltip]="'Select images you want attach to review' | translate"
+        [multiple]="true"
+        [acceptedFiles]="acceptedFiles"
+      ></ix-file-input>
+    }
   </form>
 </mat-dialog-content>
 

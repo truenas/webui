@@ -8,9 +8,10 @@ export const smbListElements = {
   elements: {
     smbList: {},
     createSmbShare: {
-      hierarchy: [T('Create SMB Share')],
+      hierarchy: [T('Add SMB Share')],
       synonyms:
-      [T('Add SMB Share'),
+      [
+        T('Create SMB Share'),
         T('New SMB Share'),
         T('Create Share'),
         T('Add Share'),

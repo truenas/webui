@@ -9,8 +9,8 @@ export const sshConnectionsCardElements = {
       anchor: 'ssh-connections',
     },
     add: {
-      hierarchy: [T('Add')],
-      synonyms: [T('Add SSH Connection'), T('New SSH Connection'), T('Create SSH Connection'), T('SSH Connection')],
+      hierarchy: [T('Add SSH Connection')],
+      synonyms: [T('New SSH Connection'), T('Create SSH Connection'), T('SSH Connection')],
       anchor: 'add-ssh-connection',
     },
   },

@@ -5,6 +5,8 @@
     </h3>
   </mat-card-header>
   <mat-card-content>
-    <p *ngFor="let item of backup().exclude">{{ item }}</p>
+    @for (item of backup().exclude; track item) {
+      <p>{{ item }}</p>
+    }
   </mat-card-content>
 </mat-card>

@@ -1,4 +1,10 @@
-<ix-date
-  [ixTest]="[title, rowTestId(row), 'row-date']"
-  [date]="date"
-></ix-date>
+@if (date) {
+  <ix-date
+    [ixTest]="[title, rowTestId(row), 'row-date']"
+    [date]="date"
+  ></ix-date>
+} @else {
+  <span [ixTest]="[title, rowTestId(row), 'row-date']">
+    {{ 'N/A' | translate }}
+  </span>
+}

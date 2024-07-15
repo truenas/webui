@@ -81,12 +81,13 @@
           [options]="cpuModeOptions$"
           [required]="true"
         ></ix-select>
-        <ix-select
-          *ngIf="showCpuModelField"
-          formControlName="cpu_model"
-          [label]="'CPU Model' | translate"
-          [options]="cpuModelOptions$"
-        ></ix-select>
+        @if (showCpuModelField) {
+          <ix-select
+            formControlName="cpu_model"
+            [label]="'CPU Model' | translate"
+            [options]="cpuModelOptions$"
+          ></ix-select>
+        }
         <ix-input
           formControlName="memory"
           [label]="'Memory Size' | translate"

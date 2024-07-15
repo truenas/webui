@@ -79,7 +79,6 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.componentInfo.close$.complete();
     this.chainedSlideInService.popComponent(this.componentInfo.id);
     this.element.remove();
   }
@@ -93,18 +92,19 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
   closeSlideIn(): void {
     this.isSlideInOpen = false;
-    // Delays are to give time for css transitions
-    timer(100).pipe(untilDestroyed(this)).subscribe(() => {
-      this.renderer.removeStyle(document.body, 'overflow');
-      this.wasBodyCleared = true;
-      this.timeOutOfClear = timer(100).pipe(untilDestroyed(this)).subscribe(() => {
-        // Destroying child component later improves performance a little bit.
-        // 200ms matches transition duration
-        this.slideInBody.clear();
-        this.wasBodyCleared = false;
-        this.cdr.markForCheck();
+    this.renderer.removeStyle(document.body, 'overflow');
+    this.wasBodyCleared = true;
+    this.timeOutOfClear = timer(255).pipe(untilDestroyed(this)).subscribe(() => {
+      // Destroying child component later improves performance a little bit.
+      // 255ms matches transition duration
+      this.slideInBody.clear();
+      this.wasBodyCleared = false;
+      this.cdr.markForCheck();
+      timer(50).pipe(
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => this.chainedSlideInService.popComponent(this.componentInfo.id),
       });
-      this.chainedSlideInService.popComponent(this.componentInfo.id);
     });
   }
 

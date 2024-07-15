@@ -64,6 +64,7 @@ export class UserListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'user-' + row.username,
+    ariaLabels: (row) => [row.username, this.translate.instant('User')],
   });
 
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));

@@ -12,7 +12,7 @@
 <div class="enclosure">
   <ix-enclosure-side
     [enclosure]="enclosure()"
-    [slotTintFn]="poolTint"
+    [slotTintFn]="poolTint()"
     [selectedSlot]="selectedSlot()"
     (selectedSlotChange)="onSlotSelected($event)"
   ></ix-enclosure-side>
@@ -22,20 +22,7 @@
   @for (slot of slots(); track slot.drive_bay_number; let index = $index) {
     <div class="slot">
       <div class="slot-status">
-        <!-- TODO: Incorrect check -->
-        @if (slot.status === 'OK' || !slot.dev) {
-          <ix-icon
-            name="check_circle"
-            class="status-icon status-ok"
-            [class.status-empty]="!slot.dev"
-          ></ix-icon>
-        } @else {
-          <ix-icon
-            name="error"
-            class="status-icon status-error"
-          ></ix-icon>
-        }
-        {{ slot.status }}
+        <ix-mini-slot-status [slot]="slot"></ix-mini-slot-status>
       </div>
     </div>
   }

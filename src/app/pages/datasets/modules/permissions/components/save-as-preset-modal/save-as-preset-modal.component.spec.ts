@@ -126,8 +126,10 @@ describe('SaveAsPresetModalComponent', () => {
 
   it('removes a non-builtin preset when Remove icon is pressed', () => {
     const preset = spectator.queryAll('.preset');
-    spectator.click(preset[2].querySelector('.preset-remove'));
+    const removeButton = preset[2].querySelector('.preset-remove');
+    spectator.click(removeButton);
 
+    expect(removeButton).toHaveAttribute('aria-label', 'Remove preset');
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acltemplate.delete', [4]);
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.by_path', expect.anything());
   });

@@ -7,28 +7,27 @@
     <h3>{{ 'Support' | translate }}</h3>
   </mat-toolbar-row>
 
-  <div fxLayout="column">
-    <div class="mat-mdc-card-content" fxLayout="column">
+  <div class="mat-mdc-card-content">
+    <div
+      class="container"
+      fxLayoutGap="16px"
+      fxLayout.lt-lg="row wrap"
+      fxLayoutAlign="space-evenly center"
+      [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
+      [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
+    >
       <div
-        class="container"
-        fxLayoutGap="16px"
-        fxLayout.lt-lg="row wrap"
-        fxLayoutAlign="space-evenly center"
-        [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
-        [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
+        class="product-image"
+        [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+        [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
+        [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+        [style.background-image]="'url(' + productImageSrc + ')'"
       >
-        <div
-          class="product-image"
-          [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
-          [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
-          [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
-          [style.background-image]="'url(' + productImageSrc + ')'"
-        >
-          <img class="invisible" [src]="productImageSrc" />
-        </div>
+        <img class="invisible" [src]="productImageSrc" />
+      </div>
 
+      @if (systemInfo) {
         <div
-          *ngIf="systemInfo"
           fxLayout="column"
           fxLayoutAlign="start stretch"
           fxLayoutGap="16px"
@@ -44,21 +43,25 @@
           ></ix-sys-info>
 
           <div class="links-wrapper">
-            <div *ngFor="let link of links" class="links">
-              <div [innerHTML]="link"></div>
+            @for (link of links; track link) {
+              <div class="links">
+                <div [innerHTML]="link"></div>
+              </div>
+            }
+          </div>
+          @if (hasLicense) {
+            <div>
+              <mat-checkbox
+                *ixRequiresRoles="requiredRoles"
+                color="primary"
+                ixTest="production-system"
+                [(ngModel)]="isProduction"
+                (change)="updateProductionStatus($event)"
+              >
+                {{ 'This is a production system' | translate }}
+              </mat-checkbox>
             </div>
-          </div>
-          <div *ngIf="hasLicense">
-            <mat-checkbox
-              *ixRequiresRoles="requiredRoles"
-              color="primary"
-              ixTest="production-system"
-              [(ngModel)]="isProduction"
-              (change)="updateProductionStatus($event)"
-            >
-              {{ 'This is a production system' | translate }}
-            </mat-checkbox>
-          </div>
+          }
 
           <!-- ACTION BUTTONS -->
           <div
@@ -77,7 +80,8 @@
             >
               {{ licenseButtonText | translate }}
             </button>
-            <ng-container *ngIf="hasLicense && !isProductImageRack; else elseBlock">
+
+            @if (hasLicense && !isProductImageRack) {
               <button
                 mat-button
                 color="default"
@@ -106,8 +110,7 @@
                   <span>{{ proactiveText | translate }}</span>
                 </button>
               </mat-menu>
-            </ng-container>
-            <ng-template #elseBlock>
+            } @else {
               <button
                 mat-button
                 color="default"
@@ -118,21 +121,22 @@
                 {{ ticketText | translate }}
               </button>
               <ng-container *ixRequiresRoles="requiredRoles">
-                <button
-                  *ngIf="hasLicense"
-                  id="proactive-btn"
-                  mat-button
-                  color="default"
-                  ixTest="proactive-support"
-                  (click)="openProactive()"
-                >
-                  {{ proactiveText | translate }}
-                </button>
+                @if (hasLicense) {
+                  <button
+                    id="proactive-btn"
+                    mat-button
+                    color="default"
+                    ixTest="proactive-support"
+                    (click)="openProactive()"
+                  >
+                    {{ proactiveText | translate }}
+                  </button>
+                }
               </ng-container>
-            </ng-template>
+            }
           </div>
         </div>
-      </div>
+      }
     </div>
   </div>
 </mat-card>

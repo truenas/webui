@@ -30,9 +30,10 @@
   }
 }
 
-ix-breadcrumb {
+.breadcrumbs {
   position: relative;
   top: 8px;
+  width: 100%;
 }
 
 ix-fake-progress-bar {
@@ -52,6 +53,14 @@ ix-fake-progress-bar {
 
   @media (max-width: $breakpoint-md) {
     flex-wrap: wrap;
+  }
+
+  .title-and-indicator {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    place-content: center;
   }
 }
 

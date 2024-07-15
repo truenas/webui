@@ -1,19 +1,11 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Store } from '@ngrx/store';
-import { filter, map } from 'rxjs';
-import { EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
-import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import {
-  TintingFunction,
-} from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
+import { DashboardEnclosure, DashboardEnclosureSlot, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
-import { ThemeService } from 'app/services/theme/theme.service';
-import { AppState } from 'app/store';
-import { selectTheme } from 'app/store/preferences/preferences.selectors';
+import { diskStatusTint } from 'app/pages/system/enclosure/utils/disk-status-tint.utils';
+import { makePoolTintFunction } from 'app/pages/system/enclosure/utils/make-pool-tint-function.utils';
 
 @Component({
   selector: 'ix-enclosure-view',
@@ -24,52 +16,39 @@ import { selectTheme } from 'app/store/preferences/preferences.selectors';
 export class EnclosureViewComponent {
   readonly enclosure = input.required<DashboardEnclosure>();
 
-  readonly selectedView = this.enclosureStore.selectedView;
-  readonly selectedSlot = this.enclosureStore.selectedSlot;
-  readonly selectedSide = this.enclosureStore.selectedSide;
-
-  // TODO: Simplify in ThemeService.
-  readonly theme = toSignal(this.store$.select(selectTheme).pipe(
-    filter(Boolean),
-    map(() => this.themeService.currentTheme()),
-  ));
+  readonly selectedView = this.store.selectedView;
+  readonly selectedSlot = this.store.selectedSlot;
+  readonly selectedEnclosureSlots = this.store.selectedEnclosureSlots;
+  readonly selectedSide = this.store.selectedSide;
+  readonly poolColors = this.store.poolColors;
 
   constructor(
-    private store$: Store<AppState>,
-    private enclosureStore: EnclosureStore,
-    private themeService: ThemeService,
+    private store: EnclosureStore,
   ) {}
 
   protected onSlotSelected(slot: DashboardEnclosureSlot): void {
-    this.enclosureStore.selectSlot(slot);
+    this.store.selectSlot(slot);
   }
 
   readonly slotTintFn = computed(() => {
     if (this.selectedView() === EnclosureView.DiskStatus) {
-      return this.diskStatusTint();
+      return diskStatusTint;
     }
 
-    return this.poolTint();
+    return makePoolTintFunction(this.poolColors());
   });
 
-  private diskStatusTint(): TintingFunction {
-    return (slot: DashboardEnclosureSlot) => {
-      return slot?.status === EnclosureStatus.Ok ? 'green' : 'red';
-    };
-  }
-
-  // TODO: Pool colors need to stay consistent across multiple enclosures, so this needs to be moved to store.
-  private poolTint(): TintingFunction {
-    const poolColors = new Map<string, string>();
-    return (slot: DashboardEnclosureSlot) => {
-      const poolName = slot.pool_info?.pool_name;
-      if (poolName) {
-        if (!poolColors.has(poolName)) {
-          poolColors.set(poolName, 'var(--primary)');
-        }
-        return poolColors.get(poolName);
-      }
+  readonly poolColor = computed(() => {
+    const poolName = this.selectedSlot()?.pool_info?.pool_name;
+    if (!poolName) {
       return null;
-    };
+    }
+
+    const poolColors = this.poolColors();
+    return poolColors[poolName];
+  });
+
+  protected onVdevDiskClicked(vdevDisk: EnclosureVdevDisk): void {
+    this.store.selectSlotByVdevDisk(vdevDisk);
   }
 }

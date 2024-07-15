@@ -5,14 +5,16 @@
   <mat-card-content>
     <div>
 
-      <div *ngFor="let category of topology$ | async | keyvalue" class="details-item">
-        <span class="label">
-          {{ category.key | mapValue: vdevTypeLabels | translate }}:
-        </span>
-        <span class="value">
-          {{ category.value | ixTopologyCategoryDescription: !isLimitedToOneLayout(category.key | cast) }}
-        </span>
-      </div>
+      @for (category of topology$ | async | keyvalue; track category.key) {
+        <div class="details-item">
+          <span class="label">
+            {{ category.key | mapValue: vdevTypeLabels | translate }}:
+          </span>
+          <span class="value">
+            {{ category.value | ixTopologyCategoryDescription: !isLimitedToOneLayout(category.key | cast) }}
+          </span>
+        </div>
+      }
 
     </div>
   </mat-card-content>

@@ -15,7 +15,7 @@
             [tooltip]="helptext.activedirectory_domainname_tooltip | translate"
           ></ix-input>
 
-          <ng-container *ngIf="!(hasKerberosPrincipal$ | async)">
+          @if (!(hasKerberosPrincipal$ | async)) {
             <ix-input
               formControlName="bindname"
               [label]="'Domain Account Name' | translate"
@@ -36,7 +36,7 @@
               [tooltip]="helptext.activedirectory_netbiosname_tooltip | translate"
               [required]="true"
             ></ix-input>
-          </ng-container>
+          }
 
           <ix-checkbox
             formControlName="enable"
@@ -44,7 +44,7 @@
             [tooltip]="helptext.activedirectory_enable_tooltip | translate"
           ></ix-checkbox>
 
-          <ng-container *ngIf="isAdvancedMode">
+          @if (isAdvancedMode) {
             <ix-checkbox
               formControlName="verbose_logging"
               [label]="'Verbose Logging' | translate"
@@ -80,61 +80,63 @@
               [label]="'Restrict PAM' | translate"
               [tooltip]="helptext.restrict_pam.tooltip | translate"
             ></ix-checkbox>
-          </ng-container>
+          }
         </ix-fieldset>
 
-        <ix-fieldset *ngIf="isAdvancedMode">
-          <ix-input
-            formControlName="site"
-            [label]="'Site Name' | translate"
-            [tooltip]="helptext.activedirectory_site_tooltip | translate"
-          ></ix-input>
+        @if (isAdvancedMode) {
+          <ix-fieldset>
+            <ix-input
+              formControlName="site"
+              [label]="'Site Name' | translate"
+              [tooltip]="helptext.activedirectory_site_tooltip | translate"
+            ></ix-input>
 
-          <ix-select
-            formControlName="kerberos_realm"
-            [label]="'Kerberos Realm' | translate"
-            [options]="kerberosRealms$"
-            [tooltip]="helptext.activedirectory_kerberos_realm_tooltip | translate"
-          ></ix-select>
+            <ix-select
+              formControlName="kerberos_realm"
+              [label]="'Kerberos Realm' | translate"
+              [options]="kerberosRealms$"
+              [tooltip]="helptext.activedirectory_kerberos_realm_tooltip | translate"
+            ></ix-select>
 
-          <ix-select
-            formControlName="kerberos_principal"
-            [label]="'Kerberos Principal' | translate"
-            [tooltip]="helptext.activedirectory_kerberos_principal_tooltip | translate"
-            [options]="kerberosPrincipals$"
-          ></ix-select>
+            <ix-select
+              formControlName="kerberos_principal"
+              [label]="'Kerberos Principal' | translate"
+              [tooltip]="helptext.activedirectory_kerberos_principal_tooltip | translate"
+              [options]="kerberosPrincipals$"
+            ></ix-select>
 
-          <ix-input
-            formControlName="createcomputer"
-            [label]="'Computer Account OU' | translate"
-            [tooltip]="helptext.computer_account_OU_tooltip | translate"
-          ></ix-input>
+            <ix-input
+              formControlName="createcomputer"
+              [label]="'Computer Account OU' | translate"
+              [tooltip]="helptext.computer_account_OU_tooltip | translate"
+            ></ix-input>
 
-          <ix-input
-            formControlName="timeout"
-            [label]="'AD Timeout' | translate"
-            [tooltip]="helptext.activedirectory_timeout_tooltip | translate"
-          ></ix-input>
+            <ix-input
+              formControlName="timeout"
+              [label]="'AD Timeout' | translate"
+              [tooltip]="helptext.activedirectory_timeout_tooltip | translate"
+            ></ix-input>
 
-          <ix-input
-            formControlName="dns_timeout"
-            [label]="'DNS Timeout' | translate"
-            [tooltip]="helptext.activedirectory_dns_timeout_tooltip | translate"
-          ></ix-input>
+            <ix-input
+              formControlName="dns_timeout"
+              [label]="'DNS Timeout' | translate"
+              [tooltip]="helptext.activedirectory_dns_timeout_tooltip | translate"
+            ></ix-input>
 
-          <ix-select
-            formControlName="nss_info"
-            [label]="'Winbind NSS Info' | translate"
-            [tooltip]="helptext.activedirectory_nss_info_tooltip | translate"
-            [options]="nssOptions$"
-          ></ix-select>
+            <ix-select
+              formControlName="nss_info"
+              [label]="'Winbind NSS Info' | translate"
+              [tooltip]="helptext.activedirectory_nss_info_tooltip | translate"
+              [options]="nssOptions$"
+            ></ix-select>
 
-          <ix-chips
-            formControlName="netbiosalias"
-            [label]="'NetBIOS Alias' | translate"
-            [tooltip]="helptext.activedirectory_netbiosalias_tooltip | translate"
-          ></ix-chips>
-        </ix-fieldset>
+            <ix-chips
+              formControlName="netbiosalias"
+              [label]="'NetBIOS Alias' | translate"
+              [tooltip]="helptext.activedirectory_netbiosalias_tooltip | translate"
+            ></ix-chips>
+          </ix-fieldset>
+        }
       </div>
 
       <ix-form-actions>
@@ -162,15 +164,16 @@
           {{ 'Rebuild Directory Service Cache' | translate }}
         </button>
         <ng-container *ixRequiresRoles="requiredRoles">
-          <button
-            *ngIf="canLeaveDomain"
-            mat-button
-            type="button"
-            ixTest="leave-domain"
-            (click)="onLeaveDomainPressed()"
-          >
-            {{ 'Leave Domain' | translate }}
-          </button>
+          @if (canLeaveDomain) {
+            <button
+              mat-button
+              type="button"
+              ixTest="leave-domain"
+              (click)="onLeaveDomainPressed()"
+            >
+              {{ 'Leave Domain' | translate }}
+            </button>
+          }
         </ng-container>
       </ix-form-actions>
     </form>

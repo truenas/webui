@@ -1,11 +1,12 @@
 <h1 mat-dialog-title>{{ 'Delete iSCSI extent {name}?' | translate: { name: extent.name } }}</h1>
 <div mat-dialog-content>
   <form [formGroup]="form">
-    <ix-checkbox
-      *ngIf="isFile"
-      formControlName="remove"
-      [label]="'Remove file?' | translate"
-    ></ix-checkbox>
+    @if (isFile) {
+      <ix-checkbox
+        formControlName="remove"
+        [label]="'Remove file?' | translate"
+      ></ix-checkbox>
+    }
     <ix-checkbox
       formControlName="force"
       [label]="'Force' | translate"

@@ -51,12 +51,14 @@
         </ng-container>
       </div>
     </div>
-    <div *ngIf="!isZvol" class="details-item">
-      <div class="label">{{ 'Enable Atime' | translate }}:</div>
-      <div class="value">
-        {{ (dataset.atime ? OnOff.On : OnOff.Off) | translate }}
+    @if (!isZvol) {
+      <div class="details-item">
+        <div class="label">{{ 'Enable Atime' | translate }}:</div>
+        <div class="value">
+          {{ (dataset.atime ? OnOff.On : OnOff.Off) | translate }}
+        </div>
       </div>
-    </div>
+    }
     <div class="details-item">
       <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
       <div class="value">
@@ -73,42 +75,47 @@
     </div>
     <div class="details-item">
       <div class="label">{{ 'Path' | translate }}:</div>
-      <div
-        *ngIf="!isLoading"
-        matTooltipPosition="above"
-        class="value dataset-path"
-        [matTooltip]="dataset.name"
-        [matTooltipClass]="['dataset-path-tooltip']"
-      >
-        {{ dataset.name }}
-      </div>
+      @if (!isLoading) {
+        <div
+          matTooltipPosition="above"
+          class="value dataset-path"
+          [matTooltip]="dataset.name"
+          [matTooltipClass]="['dataset-path-tooltip']"
+        >
+          {{ dataset.name }}
+        </div>
+      }
       <ix-copy-button [text]="dataset.name"></ix-copy-button>
     </div>
-    <div *ngIf="!isLoading && hasComments" class="details-item">
-      <div class="label">{{ 'Comments' | translate }}:</div>
-      <div class="value dataset-comments">{{ dataset.comments.value }}</div>
-    </div>
+    @if (!isLoading && hasComments) {
+      <div class="details-item">
+        <div class="label">{{ 'Comments' | translate }}:</div>
+        <div class="value dataset-comments">{{ dataset.comments.value }}</div>
+      </div>
+    }
   </mat-card-content>
-  <mat-card-actions *ngIf="dataset.id !== dataset.pool">
-    <ng-container *ngIf="canBePromoted">
+  @if (dataset.id !== dataset.pool) {
+    <mat-card-actions>
+      @if (canBePromoted) {
+        <button
+          *ixRequiresRoles="[Role.FullAdmin]"
+          mat-button
+          ixTest="promote-dataset"
+          (click)="promoteDataset()"
+        >
+          {{ 'Promote' | translate }}
+        </button>
+      }
       <button
-        *ixRequiresRoles="[Role.FullAdmin]"
+        *ixRequiresRoles="[Role.DatasetDelete]"
         mat-button
-        ixTest="promote-dataset"
-        (click)="promoteDataset()"
+        ixTest="delete-dataset"
+        (click)="deleteDataset()"
       >
-        {{ 'Promote' | translate }}
+        {{ 'Delete' | translate }}
       </button>
-    </ng-container>
-    <button
-      *ixRequiresRoles="[Role.DatasetDelete]"
-      mat-button
-      ixTest="delete-dataset"
-      (click)="deleteDataset()"
-    >
-      {{ 'Delete' | translate }}
-    </button>
-  </mat-card-actions>
+    </mat-card-actions>
+  }
 </mat-card>
 
 <ng-template #notAvailable>

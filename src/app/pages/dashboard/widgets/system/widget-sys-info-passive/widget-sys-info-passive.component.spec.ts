@@ -23,6 +23,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { WidgetSysInfoPassiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.component';
+import { LocaleService } from 'app/services/locale.service';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectIsIxHardware,
@@ -74,6 +75,9 @@ describe('WidgetSysInfoPassiveComponent', () => {
       mockAuth(),
       mockProvider(DialogService),
       mockProvider(Router),
+      mockProvider(LocaleService, {
+        getDateAndTime: () => ['2024-03-15', '10:34:11'],
+      }),
       mockProvider(WidgetResourcesService, {
         systemInfo$: of({
           isLoading: false,

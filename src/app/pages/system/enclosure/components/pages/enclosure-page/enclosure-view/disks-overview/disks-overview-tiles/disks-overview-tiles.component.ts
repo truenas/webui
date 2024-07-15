@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
-import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
+import { EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 
@@ -14,9 +14,10 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
 export class DisksOverviewTilesComponent {
   readonly selectedView = this.enclosureStore.selectedView;
   readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
+  readonly selectedEnclosureSlots = this.enclosureStore.selectedEnclosureSlots;
 
   readonly poolsInfo = computed(() => {
-    const slots = [...Object.values(this.selectedEnclosure().elements?.['Array Device Slot'] || {})];
+    const slots = this.selectedEnclosureSlots();
     return [
       ...new Map(
         slots.filter((slot) => slot.pool_info).map((slot) => [slot.pool_info.pool_name, slot.pool_info]),
@@ -25,23 +26,16 @@ export class DisksOverviewTilesComponent {
   });
 
   readonly expanders = computed(() => {
-    return [...Object.values(this.selectedEnclosure().elements?.['SAS Expander'] || {})];
+    return [...Object.values(this.selectedEnclosure().elements?.[EnclosureElementType.SasExpander] || {})];
   });
 
   readonly unhealthyPoolsInfo = computed(() => {
     return this.poolsInfo().filter((info) => info.disk_status !== EnclosureDiskStatus.Online);
   });
 
-  readonly failedPoolsInfo = computed(() => {
-    return this.poolsInfo().filter((info) => {
-      return info.disk_read_errors || info.disk_write_errors || info.disk_checksum_errors;
-    });
-  });
-
-  readonly failsCount = computed(() => {
-    return this.failedPoolsInfo().reduce((sum, info) => {
-      return sum + info.disk_read_errors || 0 + info.disk_write_errors || 0 + info.disk_checksum_errors || 0;
-    }, 0);
+  readonly failedDisks = computed(() => {
+    const slots = this.selectedEnclosureSlots();
+    return slots.filter((slot) => slot.pool_info?.disk_status === EnclosureDiskStatus.Faulted);
   });
 
   readonly EnclosureView = EnclosureView;

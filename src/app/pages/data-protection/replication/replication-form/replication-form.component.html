@@ -33,13 +33,14 @@
         ></ix-replication-schedule-section>
       </div>
 
-      <div
-        *ngIf="eligibleSnapshotsMessage"
-        class="eligible-snapshots"
-        [class.danger]="isEligibleSnapshotsMessageRed"
-      >
-        {{ eligibleSnapshotsMessage | translate }}
-      </div>
+      @if (eligibleSnapshotsMessage) {
+        <div
+          class="eligible-snapshots"
+          [class.danger]="isEligibleSnapshotsMessageRed"
+          >
+          {{ eligibleSnapshotsMessage | translate }}
+        </div>
+      }
 
       <div class="form-actions">
         <button
@@ -51,13 +52,14 @@
           [disabled]="!isFormValid"
           (click)="onSubmit(); $event.preventDefault();"
         >{{ 'Save' | translate }}</button>
-        <button
-          *ngIf="isNew"
-          mat-button
-          type="button"
-          ixTest="switch-to-wizard"
-          (click)="onSwitchToWizard()"
-        >{{ 'Switch To Wizard' | translate }}</button>
+        @if (isNew) {
+          <button
+            mat-button
+            type="button"
+            ixTest="switch-to-wizard"
+            (click)="onSwitchToWizard()"
+          >{{ 'Switch To Wizard' | translate }}</button>
+        }
       </div>
     </form>
   </mat-card-content>

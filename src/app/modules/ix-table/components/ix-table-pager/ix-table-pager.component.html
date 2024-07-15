@@ -2,20 +2,27 @@
   <div class="page-size">
     <span>{{ 'Items per page' | translate }}:</span>
     <mat-form-field>
-      <mat-select ixTest="pageSize" tabIndex="0" [value]="pageSize" (selectionChange)="onPageSizeChange($event)">
-        <mat-option *ngFor="let option of pageSizeOptions" [value]="option" [ixTest]="['pageSizeOption', option]">
-          {{ option }}
-        </mat-option>
+      <mat-select
+        ixTest="pageSize"
+        tabIndex="0"
+        [value]="pageSize"
+        [aria-label]="'Items per page' | translate"
+        (selectionChange)="onPageSizeChange($event)"
+      >
+        @for (option of pageSizeOptions; track option) {
+          <mat-option [value]="option" [ixTest]="['pageSizeOption', option]">
+            {{ option }}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
   </div>
   <span class="pages">
-    <ng-container *ngIf="lastPage > firstPage">
+    @if (lastPage > firstPage) {
       {{ firstPage }} – {{ lastPage }}
-    </ng-container>
-    <ng-container *ngIf="lastPage <= firstPage">
+    } @else {
       {{ lastPage }}
-    </ng-container>
+    }
     {{ 'of' | translate }} {{ totalItems }}
   </span>
   <div class="buttons">
@@ -23,6 +30,7 @@
       mat-icon-button
       ixTest="max-left"
       [disabled]="currentPage === 1"
+      [attr.aria-label]="'First Page' | translate"
       (click)="goToPage(1)"
     >
       <ix-icon name="first_page"></ix-icon>
@@ -31,6 +39,7 @@
       mat-icon-button
       ixTest="left"
       [disabled]="currentPage === 1"
+      [attr.aria-label]="'Previous Page' | translate"
       (click)="previousPage()"
     >
       <ix-icon name="mdi-chevron-left"></ix-icon>
@@ -38,6 +47,7 @@
     <button
       mat-icon-button
       ixTest="right"
+      [attr.aria-label]="'Next Page' | translate"
       [disabled]="currentPage === totalPages || !totalPages"
       (click)="nextPage()"
     >
@@ -46,6 +56,7 @@
     <button
       mat-icon-button
       ixTest="max-right"
+      [attr.aria-label]="'Last Page' | translate"
       [disabled]="currentPage === totalPages || !totalPages"
       (click)="goToPage(totalPages)"
     >

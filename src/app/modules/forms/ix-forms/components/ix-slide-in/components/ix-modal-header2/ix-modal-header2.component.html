@@ -1,34 +1,40 @@
 <div
   class="ix-slidein-title-bar"
   fxLayout="row"
-  [fxLayoutAlign]="componentsSize > 1 ? 'left center' : 'space-between center'"
+  [fxLayoutAlign]="componentsSize() > 1 ? 'left center' : 'space-between center'"
 >
-  <ng-container *ngIf="componentsSize > 1 && !disableClose">
+  @if (componentsSize() > 1 && !disableClose) {
     <button
       mat-icon-button
       id="ix-close-icon"
       [ixTest]="['close-slide-in']"
       [matTooltip]="tooltip"
+      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title }"
       (click)="close()"
     >
       <ix-icon name="mdi-chevron-left" ></ix-icon>
     </button>
-  </ng-container>
+  }
   <h3 class="ix-form-title">
     {{ title | translate }}
-    <ix-readonly-badge *ngIf="requiredRoles?.length && !(hasRequiredRoles | async)"></ix-readonly-badge>
+    @if (requiredRoles?.length && !(hasRequiredRoles | async)) {
+      <ix-readonly-badge></ix-readonly-badge>
+    }
   </h3>
-  <ng-container *ngIf="componentsSize <= 1 && !disableClose">
+  @if (componentsSize() <= 1 && !disableClose) {
     <button
       mat-icon-button
       id="ix-close-icon"
       [ixTest]="['close-slide-in']"
       [matTooltip]="tooltip"
+      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title }"
       (click)="close()"
     >
       <ix-icon name="cancel" (keydown.enter)="close()"></ix-icon>
     </button>
-  </ng-container>
+  }
 </div>
 
-<mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+@if (loading) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}

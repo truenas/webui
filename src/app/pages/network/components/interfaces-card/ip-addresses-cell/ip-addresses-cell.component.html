@@ -1,3 +1,5 @@
 <ul>
-  <li *ngFor="let address of addresses">{{ address }}</li>
+  @for (address of addresses; track address) {
+    <li>{{ address }}</li>
+  }
 </ul>
