@@ -67,13 +67,13 @@ describe('DatasetService', () => {
 
   describe('rootLevelDatasetWarning', () => {
     it('shows a dialog when the dataset is root-level', async () => {
-      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool'));
+      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool', 'msg'));
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(dialog).toBe(true);
     });
 
     it('returns True when the dataset is not root-level', async () => {
-      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool/dataset'));
+      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool/dataset', 'msg'));
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
       expect(dialog).toBe(true);
     });
