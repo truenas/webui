@@ -1,11 +1,11 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, throwError } from 'rxjs';
 import {
-  catchError, map, mergeMap, switchMap, withLatestFrom,
+  catchError, filter, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { WINDOW } from 'app/helpers/window.helper';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
@@ -29,7 +29,8 @@ export class PreferencesEffects {
   loadPreferences$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('auth.me').pipe(
+      return this.authService.user$.pipe(
+        filter(Boolean),
         map((user) => {
           const preferences = user.attributes?.preferences;
           const dashboardState = user.attributes?.dashState;
@@ -84,6 +85,6 @@ export class PreferencesEffects {
     private actions$: Actions,
     private ws: WebSocketService,
     private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
+    private authService: AuthService,
   ) {}
 }

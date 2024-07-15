@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -53,7 +52,6 @@ import { WebSocketService } from 'app/services/ws.service';
     IxFormsModule,
     ReactiveFormsModule,
     TranslateModule,
-    NgIf,
   ],
 })
 export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {

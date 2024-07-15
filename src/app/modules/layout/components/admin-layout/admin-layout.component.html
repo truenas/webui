@@ -38,22 +38,25 @@
         ></ix-secondary-menu>
       </div>
 
-      <div *ngIf="!isSidenavCollapsed" class="sidenav-copyright-txt">
+      @if (isSidenavCollapsed) {
         <div
-          *ngIf="hostname$ | async as hostname"
-          class="hostname-label"
-          [matTooltip]="'Hostname: {hostname}' | translate: { hostname }"
-        >{{ hostname }}</div>
-        <ix-copyright-line class="copyright-line"></ix-copyright-line>
-      </div>
-      <div
-        *ngIf="isSidenavCollapsed"
-        class="sidenav-copyright-icon"
-        matTooltipPosition="right"
-        [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + (copyrightYear$ | async) + ' by iXsystems Inc.'"
-      >
-        <ix-icon name="copyright"></ix-icon>
-      </div>
+          class="sidenav-copyright-icon"
+          matTooltipPosition="right"
+          [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + (copyrightYear$ | async) + ' by iXsystems Inc.'"
+        >
+          <ix-icon name="copyright"></ix-icon>
+        </div>
+      } @else {
+        <div class="sidenav-copyright-txt">
+          @if (hostname$ | async; as hostname) {
+            <div
+              class="hostname-label"
+              [matTooltip]="'Hostname: {hostname}' | translate: { hostname }"
+            >{{ hostname }}</div>
+          }
+          <ix-copyright-line class="copyright-line"></ix-copyright-line>
+        </div>
+      }
     </div>
   </mat-sidenav>
 
@@ -78,7 +81,9 @@
       <ix-default-page-header></ix-default-page-header>
       <router-outlet></router-outlet>
     </div>
-    <ix-console-footer *ngIf="hasConsoleFooter$ | async"></ix-console-footer>
+    @if (hasConsoleFooter$ | async) {
+      <ix-console-footer></ix-console-footer>
+    }
   </mat-sidenav-content>
 
   <!-- Alert bar -->

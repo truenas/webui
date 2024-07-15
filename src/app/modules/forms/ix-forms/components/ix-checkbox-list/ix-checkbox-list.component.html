@@ -1,26 +1,28 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+  ></ix-label>
+}
 
 <div class="checkbox-list" [fxLayout]="containerLayout" [attr.aria-label]="label">
-  <mat-checkbox
-    *ngFor="let option of options | async"
-    class="checkbox"
-    fxFlex="100%"
-    color="primary"
-    [checked]="isChecked(option.value)"
-    [fxFlex.gt-md]="fieldFlex"
-    [attr.aria-label]="option.label"
-    [disabled]="isDisabled"
-    [ixTest]="[controlDirective.name, option.label]"
-    (change)="onCheckboxChanged(option.value)"
-    (blur)="onTouch()"
-  >
-    {{ option.label | translate }}
-  </mat-checkbox>
+  @for (option of options | async; track option) {
+    <mat-checkbox
+      class="checkbox"
+      fxFlex="100%"
+      color="primary"
+      [checked]="isChecked(option.value)"
+      [fxFlex.gt-md]="fieldFlex"
+      [attr.aria-label]="option.label"
+      [disabled]="isDisabled"
+      [ixTest]="[controlDirective.name, option.label]"
+      (change)="onCheckboxChanged(option.value)"
+      (blur)="onTouch()"
+    >
+      {{ option.label | translate }}
+    </mat-checkbox>
+  }
 </div>
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

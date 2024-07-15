@@ -1,13 +1,19 @@
 <span class="prefix-icon" [matTooltip]="errorMessages?.[0]?.message">
-  <ix-icon *ngIf="!queryInputValue" name="mdi-text-search-variant"></ix-icon>
-  <ix-icon *ngIf="queryInputValue && hasQueryErrors" name="warning"></ix-icon>
-  <ix-icon *ngIf="queryInputValue && !hasQueryErrors" name="done"></ix-icon>
+  @if (!queryInputValue) {
+    <ix-icon name="mdi-text-search-variant"></ix-icon>
+  } @else if (hasQueryErrors) {
+    <ix-icon name="warning"></ix-icon>
+  } @else {
+    <ix-icon name="done"></ix-icon>
+  }
 </span>
 
 <div #inputArea class="input-area" (focusin)="startSuggestionsCompletion()" (click)="startSuggestionsCompletion()">
-  <mat-card *ngIf="showDatePicker$ | async" class="calendar">
-    <mat-calendar (selectedChange)="dateSelected($event)"></mat-calendar>
-  </mat-card>
+  @if (showDatePicker$ | async) {
+    <mat-card class="calendar">
+      <mat-calendar (selectedChange)="dateSelected($event)"></mat-calendar>
+    </mat-card>
+  }
 </div>
 
 <a

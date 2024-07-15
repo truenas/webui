@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { MockDirective } from 'ng-mocks';
 import { of, lastValueFrom } from 'rxjs';
-import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { AuthService } from 'app/services/auth/auth.service';

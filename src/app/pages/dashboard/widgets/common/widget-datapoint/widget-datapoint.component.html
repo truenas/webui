@@ -14,9 +14,11 @@
       >
         {{ text() | translate }}
 
-        <div *ngIf="subText" class="sub-text">
-          {{ subText() | translate }}
-        </div>
+        @if (subText) {
+          <div class="sub-text">
+            {{ subText() | translate }}
+          </div>
+        }
       </div>
     </div>
   </mat-card-content>
