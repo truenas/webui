@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.slots {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 20px 10px;
+
+  @container (min-width: 0) {
+    gap: 5px;
+  }
+}
+
+.slot {
+  align-items: center;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--lines);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  opacity: 0.8;
+  transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
+
+  &.static {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &:hover {
+    background-color: var(--primary) !important;
+    outline: solid 4px var(--primary);
+  }
+
+  &.selected {
+    filter: brightness(1.5);
+    outline: solid 4px var(--primary);
+  }
+}
