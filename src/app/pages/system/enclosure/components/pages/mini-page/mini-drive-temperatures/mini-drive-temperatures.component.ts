@@ -14,21 +14,23 @@ import { DiskTemperatureService } from 'app/services/disk-temperature.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MiniDriveTemperaturesComponent implements OnDestroy {
-  protected temperature = toSignal(this.diskTemperatureService.temperature$);
+  private temperature = toSignal(this.diskTemperatureService.temperature$);
 
-  readonly slots = computed(() => {
+  private readonly slots = computed(() => {
     return getSlotsOfSide(this.store.selectedEnclosure(), EnclosureSide.Front);
   });
 
-  readonly disks = computed(() => {
-    return this.slots().map((slot) => {
-      const value = this.temperature()?.values?.[slot.dev] || null;
-      const symbolText = `${this.temperature()?.symbolText}C`;
-      return {
-        dev: slot.dev,
-        temperature: value !== null ? `${value} ${symbolText}` : undefined,
-      };
-    });
+  protected readonly disks = computed(() => {
+    return this.slots()
+      .filter((slot) => slot.dev)
+      .map((slot) => {
+        const value = this.temperature()?.values?.[slot.dev] || null;
+        const symbolText = `${this.temperature()?.symbolText}C`;
+        return {
+          dev: slot.dev,
+          temperature: value !== null ? `${value} ${symbolText}` : undefined,
+        };
+      });
   });
 
   constructor(

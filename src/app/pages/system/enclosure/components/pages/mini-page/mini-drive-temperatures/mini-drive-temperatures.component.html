@@ -1,15 +1,19 @@
 <h3>{{ 'Drive Temperatures' | translate }}</h3>
 
-<ul *ngIf="disks()">
-  @for (disk of disks(); track disk) {
-    <li *ngIf="disk.dev" class="disk">
-      <strong class="dev">{{ disk.dev }}:</strong>
-      <span class="temperature">{{ disk.temperature || ('Temperature not available.' | translate) }}</span>
-      <ix-tooltip
-        *ngIf="!disk.temperature"
-        [header]="'Temperature data missing.' | translate"
-        [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here' | translate"
-      ></ix-tooltip>
-    </li>
-  }
-</ul>
+@if (disks()) {
+  <ul>
+    @for (disk of disks(); track disk) {
+      <li class="disk">
+        <strong class="dev">{{ disk.dev }}:</strong>
+        <span class="temperature">{{ disk.temperature || ('Temperature not available.' | translate) }}</span>
+
+        @if (!disk.temperature) {
+          <ix-tooltip
+            [header]="'Temperature data missing.' | translate"
+            [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur.' | translate"
+          ></ix-tooltip>
+        }
+      </li>
+    }
+  </ul>
+}

@@ -60,14 +60,6 @@ describe('MiniDriveTemperaturesComponent', () => {
     spectator = createComponent();
   });
 
-  it('generates a list of disks with temperature values', () => {
-    expect(spectator.component.disks()).toEqual([
-      { dev: 'ada1', temperature: '37 °C' },
-      { dev: 'ada2', temperature: undefined },
-      { dev: null, temperature: undefined },
-    ]);
-  });
-
   it('renders lines with temperature values', () => {
     const lines = spectator.queryAll('.disk');
     expect(lines).toHaveLength(2);
