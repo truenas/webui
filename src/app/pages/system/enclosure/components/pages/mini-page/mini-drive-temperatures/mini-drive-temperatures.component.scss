@@ -3,3 +3,11 @@
 h3 {
   @include section-title;
 }
+
+.disk {
+  margin: 8px 0 6px;
+
+  .dev {
+    margin-right: 6px;
+  }
+}

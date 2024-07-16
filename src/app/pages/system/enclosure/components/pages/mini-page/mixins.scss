@@ -14,13 +14,14 @@
     }
   }
 
-  .item-name {
+  .label {
     display: inline;
     font-weight: bold;
     margin-right: 5px;
   }
 
-  .item-value {
+  .value {
     display: inline;
+    font-weight: 400;
   }
 }

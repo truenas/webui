@@ -117,7 +117,7 @@ import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interfac
 import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
-import { DashboardEnclosure, Enclosure } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosure, Enclosure, SetDriveBayLightStatus } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
   FailoverUpdate,
@@ -456,7 +456,8 @@ export interface ApiCallDirectory {
   'enclosure2.query': { params: void; response: Enclosure[] };
   'webui.enclosure.dashboard': { params: void; response: DashboardEnclosure[] };
   'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
-  'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: void };
+  'enclosure.set_slot_status': { params: [enclosureId: string, slot: number, status: EnclosureSlotStatus ]; response: void };
+  'enclosure2.set_slot_status': { params: SetDriveBayLightStatus; response: void };
 
   // Failover
   'failover.become_passive': { params: void; response: void };

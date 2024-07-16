@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="R40" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1366.9 250.4">
+  <defs>
+    <style>
+      .r40-cls-1 {
+        fill-rule: evenodd;
+      }
+
+      .r40-cls-1, .r40-cls-2, .r40-cls-3 {
+        fill: #fff;
+      }
+
+      .r40-cls-1, .r40-cls-4, .r40-cls-5, .r40-cls-3 {
+        stroke-width: 0px;
+      }
+
+      .r40-cls-6 {
+        fill: #262626;
+      }
+
+      .r40-cls-6, .r40-cls-7, .r40-cls-8, .r40-cls-9, .r40-cls-10, .r40-cls-11, .r40-cls-2, .r40-cls-12, .r40-cls-13, .r40-cls-14, .r40-cls-15, .r40-cls-16, .r40-cls-17, .r40-cls-18, .r40-cls-19 {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .r40-cls-6, .r40-cls-8, .r40-cls-10, .r40-cls-11, .r40-cls-2, .r40-cls-12, .r40-cls-13, .r40-cls-14, .r40-cls-20, .r40-cls-15, .r40-cls-16, .r40-cls-17, .r40-cls-18, .r40-cls-19 {
+        stroke-width: .2px;
+      }
+
+      .r40-cls-6, .r40-cls-8, .r40-cls-10, .r40-cls-2, .r40-cls-12, .r40-cls-13, .r40-cls-20, .r40-cls-15, .r40-cls-16, .r40-cls-17, .r40-cls-18, .r40-cls-19 {
+        stroke: #000;
+      }
+
+      .r40-cls-7 {
+        fill: #811517;
+        fill-opacity: .9;
+        stroke: #272626;
+      }
+
+      .r40-cls-7, .r40-cls-9, .r40-cls-21 {
+        stroke-width: .5px;
+      }
+
+      .r40-cls-8, .r40-cls-11 {
+        fill: #000;
+      }
+
+      .r40-cls-9, .r40-cls-22, .r40-cls-23, .r40-cls-24, .r40-cls-21 {
+        fill: none;
+      }
+
+      .r40-cls-9, .r40-cls-22, .r40-cls-23, .r40-cls-21 {
+        stroke: #e5e5e5;
+      }
+
+      .r40-cls-10 {
+        fill: #c6c6c5;
+      }
+
+      .r40-cls-25 {
+        fill: #e4e4e4;
+        stroke-linecap: square;
+      }
+
+      .r40-cls-25, .r40-cls-23, .r40-cls-24 {
+        stroke-width: .2px;
+      }
+
+      .r40-cls-25, .r40-cls-23, .r40-cls-24, .r40-cls-21, .r40-cls-26 {
+        stroke-miterlimit: 11.3;
+      }
+
+      .r40-cls-25, .r40-cls-24, .r40-cls-26 {
+        stroke: #e6e6e5;
+      }
+
+      .r40-cls-22 {
+        stroke-miterlimit: 11.3;
+        stroke-width: .1px;
+      }
+
+      .r40-cls-22, .r40-cls-27, .r40-cls-28 {
+        isolation: isolate;
+      }
+
+      .r40-cls-22, .r40-cls-28 {
+        font-family: OpenSans-Light, 'Open Sans';
+        font-size: 10.1px;
+        font-weight: 300;
+      }
+
+      .r40-cls-11 {
+        stroke: #231f20;
+      }
+
+      .r40-cls-12 {
+        fill: #2d2d2d;
+      }
+
+      .r40-cls-4, .r40-cls-26 {
+        fill: #e6e6e5;
+      }
+
+      .r40-cls-13 {
+        fill: #eaeaea;
+      }
+
+      .r40-cls-14 {
+        fill: #3954a5;
+        stroke: #010101;
+      }
+
+      .r40-cls-20 {
+        stroke-miterlimit: 10;
+      }
+
+      .r40-cls-20, .r40-cls-5 {
+        fill: #e6e7e8;
+      }
+
+      .r40-cls-15 {
+        fill: #d8d8d8;
+      }
+
+      .r40-cls-16 {
+        fill: #333;
+      }
+
+      .r40-cls-26 {
+        stroke-width: .2px;
+      }
+
+      .r40-cls-28 {
+        fill: #e5e5e5;
+      }
+
+      .r40-cls-17 {
+        fill: #383838;
+      }
+
+      .r40-cls-18 {
+        fill: #bcbcbc;
+      }
+
+      .r40-cls-19 {
+        fill: #0d0d0d;
+      }
+    </style>
+  </defs>
+  <g id="R40_Chassis" data-name="R40 Chassis">
+    <rect class="r40-cls-8" x="69.9" y="3" width="1227.2" height="241.5"/>
+    <polygon class="r40-cls-13" points="1315.8 3 1315.8 22.8 1312.9 22.8 1312.9 5.9 1300 5.9 1300 247.4 67 247.4 67 5.9 54 5.9 54 22.8 51.1 22.8 51.1 3 69.9 3 69.9 244.5 1297.1 244.5 1297.1 3 1315.8 3"/>
+    <polygon class="r40-cls-13" points="1318.7 .1 1318.7 22.8 1315.8 22.8 1315.8 3 51.1 3 51.1 22.8 48.3 22.8 48.3 .1 1318.7 .1"/>
+    <rect class="r40-cls-13" x="69.9" y=".1" width="1227.2" height="2.9"/>
+    <g>
+      <g>
+        <rect class="r40-cls-16" x="1308.1" y="3" width="58.8" height="247.2"/>
+        <rect class="r40-cls-6" x="1300" y="3" width="8.1" height="51.7"/>
+        <rect class="r40-cls-6" x="1300" y="113.2" width="8.1" height="137.1"/>
+        <rect class="r40-cls-12" x="1302.8" y="44.8" width="5.3" height="39.6"/>
+        <rect class="r40-cls-12" x="1302.8" y="197.3" width="5.3" height="39.6"/>
+        <g>
+          <rect class="r40-cls-17" x="1312.4" y="25.2" width="54.4" height="119.5"/>
+          <g id="g2043-8">
+            <path id="path2037-8" class="r40-cls-9" d="M1346.4,43.1v5.5h2.5l2.1,2v-9.1l-2,1.6h-2.6Z"/>
+            <path id="path2039-6" class="r40-cls-21" d="M1348.9,43.1v5.5"/>
+            <g id="text2058-2">
+              <g id="g2063-8">
+                <path id="path2065-2" class="r40-cls-3" d="M1354.8,45.9l-1.9-2.6h.6l1.6,2.3,1.6-2.3h.5l-1.9,2.6,2,2.8h-.6l-1.7-2.4-1.7,2.4h-.5l2-2.8Z"/>
+                <path id="path2067-9" class="r40-cls-3" d="M1352.7,43.1l2,2.8-2.1,2.9h.9l1.6-2.3,1.6,2.3h.9l-2.1-2.9,2-2.8h-.9l-1.5,2.2-1.5-2.2h-.9ZM1353.2,43.4h.3l1.7,2.4,1.7-2.4h.2l-1.8,2.5,1.9,2.7h-.3l-1.8-2.5-1.8,2.5h-.2l1.9-2.7h0c0,0-1.8-2.5-1.8-2.5Z"/>
+              </g>
+            </g>
+          </g>
+          <ellipse id="path3626-8-3" class="r40-cls-7" cx="1326.7" cy="46.1" rx="4.1" ry="3.9"/>
+          <path id="path2891" class="r40-cls-23" d="M1353.7,103.4v12.3"/>
+          <path id="path2893" class="r40-cls-23" d="M1353.7,104.6c1.3,2.6,3.1,2,2.6,4.9"/>
+          <ellipse id="ellipse2895" class="r40-cls-4" cx="1356.4" cy="110.3" rx="1" ry="1"/>
+          <path id="path2897" class="r40-cls-24" d="M1353.7,107.1c-1.3,2.2-3.1,1.8-2.7,4.7"/>
+          <rect id="rect2899" class="r40-cls-25" x="1350.2" y="111.8" width="1.7" height="1.6"/>
+          <path id="path2901" class="r40-cls-26" d="M1354.6,115h-1.8l.9,1.9.9-1.9Z"/>
+          <g id="text2124" class="r40-cls-27">
+            <text class="r40-cls-28" transform="translate(1350.1 94.8) rotate(90)"><tspan x="0" y="0">SS</tspan></text>
+            <text class="r40-cls-22" transform="translate(1350.1 94.8) rotate(90)"><tspan x="0" y="0">SS</tspan></text>
+          </g>
+          <rect class="r40-cls-11" x="1312.3" y="96.5" width="34.7" height="15.1" transform="translate(1433.7 -1225.6) rotate(90)"/>
+          <rect class="r40-cls-14" x="1317.3" y="101.4" width="31.4" height="5.4" transform="translate(1437 -1228.9) rotate(90)"/>
+        </g>
+      </g>
+      <g>
+        <rect class="r40-cls-19" x="1312.4" y="162" width="50.1" height="74.9"/>
+        <rect class="r40-cls-2" x="1327.6" y="175.1" width="19.7" height="29.7" rx="9.8" ry="9.8" transform="translate(1147.4 1527.4) rotate(-90)"/>
+      </g>
+      <g>
+        <rect class="r40-cls-16" x="1312.4" y="162" width="50.1" height="74.9"/>
+        <circle class="r40-cls-16" cx="1337.4" cy="173.3" r="1.8"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <rect class="r40-cls-16" x=".1" y="3" width="58.8" height="247.3"/>
+        <rect class="r40-cls-6" x="58.9" y="3" width="8.1" height="51.7" transform="translate(125.9 57.7) rotate(180)"/>
+        <rect class="r40-cls-6" x="58.9" y="113.2" width="8.1" height="137.1"/>
+        <rect class="r40-cls-12" x="58.9" y="197.3" width="5.3" height="39.6" transform="translate(123 434.2) rotate(180)"/>
+        <g>
+          <rect class="r40-cls-17" x=".1" y="25.2" width="54.4" height="119.5"/>
+          <circle class="r40-cls-20" cx="15.7" cy="40.9" r="9.8"/>
+          <circle class="r40-cls-20" cx="15.7" cy="129.1" r="9.8"/>
+          <g>
+            <path class="r40-cls-3" d="M16.1,54.9v3c0,.2-.2.4-.4.4s-.4-.2-.4-.4v-3c0-.2.2-.4.4-.4s.4.2.4.4Z"/>
+            <g>
+              <path class="r40-cls-3" d="M15.7,53.2c-3,0-5.4,2.4-5.4,5.4s2.4,5.4,5.4,5.4,5.4-2.4,5.4-5.4-2.4-5.4-5.4-5.4ZM15.7,63.4c-2.6,0-4.7-2.1-4.7-4.7s2.1-4.7,4.7-4.7,4.7,2.1,4.7,4.7-2.1,4.7-4.7,4.7Z"/>
+              <path class="r40-cls-3" d="M18.8,58.9c0,1.7-1.4,3.2-3.1,3.2s-3.1-1.4-3.1-3.2.3-1.6.9-2.2c.1-.1.4-.2.5,0,0,0,.1.2.1.3,0,0,0,.2,0,.3-.5.5-.7,1.1-.7,1.7,0,1.3,1.1,2.4,2.4,2.4s2.4-1.1,2.4-2.4-.2-1.2-.7-1.7c0,0-.1-.2-.1-.3s0-.2.1-.3c0,0,.2-.1.3-.1,0,0,.2,0,.3,0,.6.6.9,1.4.9,2.2Z"/>
+            </g>
+          </g>
+          <g>
+            <path class="r40-cls-1" d="M15.7,81.7c-3.1,0-5.5,2.5-5.5,5.5s2.5,5.5,5.5,5.5,5.5-2.5,5.5-5.5-2.5-5.5-5.5-5.5ZM15.7,92.1c-2.7,0-4.9-2.2-4.9-4.8s2.2-4.8,4.9-4.8,4.8,2.2,4.8,4.8-2.2,4.8-4.8,4.8Z"/>
+            <polygon class="r40-cls-3" points="19.7 86.8 19.7 87.6 18.5 87.6 15.7 90.5 15.1 89.9 12.8 87.6 11.7 87.6 11.7 86.8 13.1 86.8 13.9 87.6 15.7 89.4 18.2 86.8 19.7 86.8"/>
+          </g>
+          <g>
+            <path class="r40-cls-3" d="M10.2,105.5v10h1.2v-10h-1.2Z"/>
+            <path class="r40-cls-3" d="M19.8,106.8c-.9-.9-2.1-1.3-3.6-1.3h-3.1v10h2.8c1.7,0,3-.4,3.9-1.3.9-.9,1.3-2.1,1.3-3.8s-.4-2.8-1.3-3.6ZM18.8,113.5c-.7.7-1.7,1-3.1,1h-1.4v-8h1.7c1.3,0,2.3.3,2.9,1,.7.7,1,1.6,1,2.9s-.3,2.3-1,3Z"/>
+          </g>
+          <circle class="r40-cls-19" cx="15.7" cy="98.9" r="3.6"/>
+          <path class="r40-cls-3" d="M50.9,95.3h-1.4v-1.3h1.4c0,0,.1,0,.1-.2s0-.2-.1-.2h-4.4v-1.3h1.4c0,0,.1,0,.1-.2v-3.2c0,0,0-.2-.1-.2h-3c0,0-.1,0-.1.2v3.2c0,.1,0,.2.1.2h1.4v1.3h-4.4c0,0-.1,0-.1.2s0,.2.1.2h1.4v1.3h-1.4c0,0-.1,0-.1.2v3.2c0,0,0,.2.1.2h3c0,0,.1,0,.1-.2v-3.2c0-.1,0-.2-.1-.2h-1.4v-1.3h5.8v1.3h-1.4c0,0-.1,0-.1.2v3.2c0,0,0,.2.1.2h3c0,0,.1,0,.1-.2v-3.2c0-.1,0-.2-.1-.2ZM44.7,95.6v2.9h-2.8v-2.9h2.8ZM45,92v-2.9h2.8v2.9h-2.8ZM50.8,98.5h-2.8v-2.9h2.8v2.9Z"/>
+          <circle class="r40-cls-20" cx="46.4" cy="40.9" r="3.6"/>
+          <circle class="r40-cls-20" cx="46.4" cy="84.1" r="3.6"/>
+          <path class="r40-cls-3" d="M50.9,73.7h-1.4v-1.3h1.4c0,0,.1,0,.1-.2s0-.2-.1-.2h-4.4v-1.3h1.4c0,0,.1,0,.1-.2v-3.2c0-.1,0-.2-.1-.2h-3c0,0-.1,0-.1.2v3.2c0,0,0,.2.1.2h1.4v1.3h-4.4c0,0-.1,0-.1.2s0,.2.1.2h1.4v1.3h-1.4c0,0-.1,0-.1.2v3.2c0,0,0,.2.1.2h3c0,0,.1,0,.1-.2v-3.2c0-.1,0-.2-.1-.2h-1.4v-1.3h5.8v1.3h-1.4c0,0-.1,0-.1.2v3.2c0,0,0,.2.1.2h3c0,0,.1,0,.1-.2v-3.2c0-.1,0-.2-.1-.2ZM44.7,74v2.9h-2.8v-2.9h2.8ZM45,70.4v-2.9h2.8v2.9h-2.8ZM50.8,76.9h-2.8v-2.9h2.8v2.9Z"/>
+          <circle class="r40-cls-20" cx="46.4" cy="62.5" r="3.6"/>
+          <g>
+            <path class="r40-cls-5" d="M46.4,45.6l-4.7,10.1h9.4l-4.7-10.1ZM46.4,46.7l3.9,8.4h-7.8l3.9-8.4Z"/>
+            <rect class="r40-cls-5" x="46.1" y="48.5" width=".4" height="4.6" rx=".2" ry=".2"/>
+            <rect class="r40-cls-5" x="46" y="53.8" width=".7" height=".7" rx=".4" ry=".4" transform="translate(100.6 7.8) rotate(90)"/>
+          </g>
+        </g>
+      </g>
+      <g>
+        <rect class="r40-cls-19" x="4.4" y="162" width="50.1" height="74.9" transform="translate(59 398.9) rotate(180)"/>
+        <rect class="r40-cls-2" x="19.7" y="175.1" width="19.7" height="29.7" rx="9.8" ry="9.8" transform="translate(-160.5 219.5) rotate(-90)"/>
+      </g>
+      <g>
+        <rect class="r40-cls-16" x="4.4" y="162" width="50.1" height="74.9" transform="translate(59 398.9) rotate(180)"/>
+        <circle class="r40-cls-16" cx="29.5" cy="173.3" r="1.8"/>
+      </g>
+    </g>
+    <rect class="r40-cls-15" x="78.1" y="3" width="1210.8" height="15.9" transform="translate(1366.9 22) rotate(180)"/>
+    <path class="r40-cls-15" d="M69.9,3h3c2,0,3.6,1.6,3.6,3.6v234.3c0,2-1.6,3.6-3.6,3.6h-3V3h0Z"/>
+    <path class="r40-cls-15" d="M1294.1,3h3v241.5h-3c-2,0-3.6-1.6-3.6-3.6V6.6c0-2,1.6-3.6,3.6-3.6Z"/>
+    <rect class="r40-cls-15" x="78.1" y="228.5" width="1210.8" height="15.9" transform="translate(1366.9 473) rotate(180)"/>
+  </g>
+  <g id="R40_DRIVES" data-name="R40 DRIVES">
+    <g id="DRIVE_CAGE_0" data-name="R40 DRIVE CAGE 0">
+      <rect class="r40-cls-15" x="76.4" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="79.7" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="79.7" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="79.7" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="76.4" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="76.4" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_1" data-name="R40 DRIVE CAGE 1">
+      <rect class="r40-cls-15" x="101.8" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="105" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="105" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="105" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="101.8" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="101.8" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_2" data-name="R40 DRIVE CAGE 2">
+      <rect class="r40-cls-15" x="127.2" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="130.4" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="130.4" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="130.4" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="127.2" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="127.2" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_3" data-name="R40 DRIVE CAGE 3">
+      <rect class="r40-cls-15" x="152.5" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="155.8" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="155.8" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="155.8" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="152.5" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="152.5" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_4" data-name="R40 DRIVE CAGE 4">
+      <rect class="r40-cls-15" x="177.9" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="181.1" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="181.1" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="181.1" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="177.9" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="177.9" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_5" data-name="R40 DRIVE CAGE 5">
+      <rect class="r40-cls-15" x="203.3" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="206.5" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="206.5" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="206.5" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="203.3" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="203.3" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_6" data-name="R40 DRIVE CAGE 6">
+      <rect class="r40-cls-15" x="228.6" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="231.9" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="231.9" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="231.9" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="228.6" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="228.6" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_7" data-name="R40 DRIVE CAGE 7">
+      <rect class="r40-cls-15" x="254" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="257.2" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="257.2" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="257.2" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="254" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="254" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_8" data-name="R40 DRIVE CAGE 8">
+      <rect class="r40-cls-15" x="279.3" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="282.6" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="282.6" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="282.6" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="279.3" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="279.3" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_9" data-name="R40 DRIVE CAGE 9">
+      <rect class="r40-cls-15" x="304.7" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="307.9" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="307.9" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="307.9" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="304.7" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="304.7" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_10" data-name="R40 DRIVE CAGE 10">
+      <rect class="r40-cls-15" x="330.1" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="333.3" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="333.3" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="333.3" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="330.1" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="330.1" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_11" data-name="R40 DRIVE CAGE 11">
+      <rect class="r40-cls-15" x="355.4" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="358.7" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="358.7" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="358.7" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="355.4" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="355.4" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_12" data-name="R40 DRIVE CAGE 12">
+      <rect class="r40-cls-15" x="380.8" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="384" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="384" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="384" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="380.8" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="380.8" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_13" data-name="R40 DRIVE CAGE 13">
+      <rect class="r40-cls-15" x="406.2" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="409.4" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="409.4" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="409.4" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="406.2" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="406.2" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_14" data-name="R40 DRIVE CAGE 14">
+      <rect class="r40-cls-15" x="431.5" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="434.8" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="434.8" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="434.8" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="431.5" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="431.5" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_15" data-name="R40 DRIVE CAGE 15">
+      <rect class="r40-cls-15" x="456.9" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="460.1" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="460.1" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="460.1" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="456.9" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="456.9" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_16" data-name="R40 DRIVE CAGE 16">
+      <rect class="r40-cls-15" x="482.3" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="485.5" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="485.5" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="485.5" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="482.3" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="482.3" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_17" data-name="R40 DRIVE CAGE 17">
+      <rect class="r40-cls-15" x="507.6" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="510.9" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="510.9" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="510.9" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="507.6" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="507.6" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_18" data-name="R40 DRIVE CAGE 18">
+      <rect class="r40-cls-15" x="533" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="536.2" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="536.2" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="536.2" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="533" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="533" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_19" data-name="R40 DRIVE CAGE 19">
+      <rect class="r40-cls-15" x="558.3" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="561.6" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="561.6" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="561.6" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="558.3" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="558.3" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_20" data-name="R40 DRIVE CAGE 20">
+      <rect class="r40-cls-15" x="583.7" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="587" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="587" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="587" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="583.7" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="583.7" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_21" data-name="R40 DRIVE CAGE 21">
+      <rect class="r40-cls-15" x="609.1" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="612.3" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="612.3" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="612.3" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="609.1" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="609.1" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_22" data-name="R40 DRIVE CAGE 22">
+      <rect class="r40-cls-15" x="634.4" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="637.7" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="637.7" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="637.7" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="634.4" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="634.4" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_23" data-name="R40 DRIVE CAGE 23">
+      <rect class="r40-cls-15" x="659.8" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="663" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="663" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="663" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="659.8" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="659.8" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_24" data-name="R40 DRIVE CAGE 24">
+      <rect class="r40-cls-15" x="685.2" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="688.4" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="688.4" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="688.4" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="685.2" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="685.2" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_25" data-name="R40 DRIVE CAGE 25">
+      <rect class="r40-cls-15" x="710.5" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="713.8" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="713.8" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="713.8" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="710.5" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="710.5" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_26" data-name="R40 DRIVE CAGE 26">
+      <rect class="r40-cls-15" x="735.9" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="739.1" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="739.1" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="739.1" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="735.9" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="735.9" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_27" data-name="R40 DRIVE CAGE 27">
+      <rect class="r40-cls-15" x="761.3" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="764.5" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="764.5" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="764.5" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="761.3" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="761.3" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_28" data-name="R40 DRIVE CAGE 28">
+      <rect class="r40-cls-15" x="786.6" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="789.9" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="789.9" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="789.9" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="786.6" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="786.6" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_29" data-name="R40 DRIVE CAGE 29">
+      <rect class="r40-cls-15" x="812" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="815.2" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="815.2" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="815.2" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="812" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="812" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_30" data-name="R40 DRIVE CAGE 30">
+      <rect class="r40-cls-15" x="837.4" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="840.6" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="840.6" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="840.6" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="837.4" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="837.4" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_31" data-name="R40 DRIVE CAGE 31">
+      <rect class="r40-cls-15" x="862.7" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="866" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="866" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="866" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="862.7" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="862.7" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_32" data-name="R40 DRIVE CAGE 32">
+      <rect class="r40-cls-15" x="888.1" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="891.3" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="891.3" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="891.3" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="888.1" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="888.1" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_33" data-name="R40 DRIVE CAGE 33">
+      <rect class="r40-cls-15" x="913.4" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="916.7" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="916.7" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="916.7" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="913.4" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="913.4" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_34" data-name="R40 DRIVE CAGE 34">
+      <rect class="r40-cls-15" x="938.8" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="942.1" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="942.1" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="942.1" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="938.8" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="938.8" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_35" data-name="R40 DRIVE CAGE 35">
+      <rect class="r40-cls-15" x="964.2" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="967.4" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="967.4" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="967.4" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="964.2" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="964.2" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_36" data-name="R40 DRIVE CAGE 36">
+      <rect class="r40-cls-15" x="989.5" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="992.8" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="992.8" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="992.8" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="989.5" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="989.5" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_37" data-name="R40 DRIVE CAGE 37">
+      <rect class="r40-cls-15" x="1014.9" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1018.1" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1018.1" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1018.1" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1014.9" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1014.9" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_38" data-name="R40 DRIVE CAGE 38">
+      <rect class="r40-cls-15" x="1040.3" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1043.5" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1043.5" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1043.5" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1040.3" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1040.3" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_39" data-name="R40 DRIVE CAGE 39">
+      <rect class="r40-cls-15" x="1065.6" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1068.9" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1068.9" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1068.9" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1065.6" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1065.6" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_40" data-name="R40 DRIVE CAGE 40">
+      <rect class="r40-cls-15" x="1091" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1094.2" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1094.2" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1094.2" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1091" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1091" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_41" data-name="R40 DRIVE CAGE 41">
+      <rect class="r40-cls-15" x="1116.4" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1119.6" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1119.6" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1119.6" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1116.4" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1116.4" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_42" data-name="R40 DRIVE CAGE 42">
+      <rect class="r40-cls-15" x="1141.7" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1145" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1145" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1145" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1141.7" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1141.7" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_43" data-name="R40 DRIVE CAGE 43">
+      <rect class="r40-cls-15" x="1167.1" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1170.3" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1170.3" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1170.3" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1167.1" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1167.1" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_44" data-name="R40 DRIVE CAGE 44">
+      <rect class="r40-cls-15" x="1192.5" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1195.7" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1195.7" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1195.7" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1192.5" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1192.5" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_45" data-name="R40 DRIVE CAGE 45">
+      <rect class="r40-cls-15" x="1217.8" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1221.1" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1221.1" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1221.1" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1217.8" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1217.8" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_46" data-name="R40 DRIVE CAGE 46">
+      <rect class="r40-cls-15" x="1243.2" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1246.4" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1246.4" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1246.4" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1243.2" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1243.2" y="19" width="22" height="7.9"/>
+    </g>
+    <g id="DRIVE_CAGE_47" data-name="R40 DRIVE CAGE 47">
+      <rect class="r40-cls-15" x="1268.5" y="31.2" width="3.2" height="190.8"/>
+      <rect class="r40-cls-15" x="1271.8" y="31.2" width="18.7" height="28.8"/>
+      <rect class="r40-cls-18" x="1271.8" y="60" width="18.7" height="1.9"/>
+      <rect class="r40-cls-15" x="1271.8" y="61.9" width="18.7" height="166.7"/>
+      <rect class="r40-cls-18" x="1268.5" y="19" width="22" height="12.2"/>
+      <rect class="r40-cls-10" x="1268.5" y="19" width="22" height="7.9"/>
+    </g>
+  </g>
+</svg>
