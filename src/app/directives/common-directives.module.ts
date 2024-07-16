@@ -25,6 +25,7 @@ import { TextLimiterDirective } from 'app/directives/text-limiter/text-limiter.d
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { LetDirective } from './app-let.directive';
 
 @NgModule({
@@ -37,6 +38,7 @@ import { LetDirective } from './app-let.directive';
     NgxPopperjsModule,
     Ng2FittextModule,
     CastPipe,
+    TestIdModule,
   ],
   declarations: [
     LetDirective,

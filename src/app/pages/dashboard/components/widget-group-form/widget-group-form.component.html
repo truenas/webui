@@ -1,21 +1,14 @@
 <ix-modal-header2
   [title]="'Widget Editor' | translate"
 ></ix-modal-header2>
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<form class="ix-form-container" (submit)="$event.preventDefault(); onSubmit()">
   <ix-fieldset>
     <div class="form-row">
-      <ix-select
-        formControlName="template"
-        [options]="templateOptions$"
-        [label]="'Template' | translate"
-        [tooltip]="'Select a template' | translate"
-      ></ix-select>
-
       <ix-icon-group
-        formControlName="layout"
+        class="layout-control"
+        [formControl]="layoutControl"
         [options]="layoutsMap"
-        [label]="'Layouts' | translate"
-        [tooltip]="'Select a layout' | translate"
+        [label]="'Layout' | translate"
       ></ix-icon-group>
     </div>
   </ix-fieldset>
@@ -43,7 +36,7 @@
       type="submit"
       color="primary"
       [ixTest]="['add-widget-group-btn']"
-      [disabled]="settingsHasErrors() || form.invalid"
+      [disabled]="settingsHasErrors() || layoutControl.invalid"
     >{{ 'Save' | translate }}</button>
     <button
       mat-button
