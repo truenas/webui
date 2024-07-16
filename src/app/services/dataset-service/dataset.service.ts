@@ -1,15 +1,22 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class DatasetService {
   constructor(
     private ws: WebSocketService,
+    private dialog: DialogService,
+    private translate: TranslateService,
   ) {}
 
   getDatasetNodeProvider(): TreeNodeProvider {
@@ -50,5 +57,12 @@ export class DatasetService {
         }),
       );
     };
+  }
+
+  rootLevelDatasetWarning(path: string, message: string, skip = false): Observable<boolean> {
+    return isRootDataset({ name: path.replace(`${mntPath}/`, '') }) && !skip ? this.dialog.confirm({
+      title: this.translate.instant('Warning'),
+      message,
+    }) : of(true);
   }
 }

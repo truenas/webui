@@ -1,36 +1,41 @@
 <div class="product-image-placeholder" [ngClass]="productEnclosure()">
-  <ng-container *ngIf="systemProduct(); else imageLoader">
-    <img
-      *ngIf="isIxHardware(); else generic"
-      matTooltipPosition="above"
-      [matTooltip]="'View Enclosure' | translate"
-      [id]="product()"
-      [class.clickable]="hasEnclosureSupport()"
-      [matTooltipDisabled]="!hasEnclosureSupport()"
-      [src]="productImage()"
-      (click)="goToEnclosure()"
-    />
-  </ng-container>
+  @if (systemProduct()) {
+    @if (isIxHardware()) {
+      <img
+        matTooltipPosition="above"
+        [matTooltip]="'View Enclosure' | translate"
+        [id]="product()"
+        [class.clickable]="hasEnclosureSupport()"
+        [matTooltipDisabled]="!hasEnclosureSupport()"
+        [src]="productImage()"
+        (click)="goToEnclosure()"
+      />
+    } @else {
+      <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
+    }
+  } @else {
+    <ngx-skeleton-loader
+      class="image-loader"
+      [theme]="{
+        width: '100%',
+        height: 'auto',
+        'aspect-ratio': '1',
+        background: 'var(--alt-bg2)',
+        opacity: 0.25
+      }"
+    ></ngx-skeleton-loader>
+  }
 </div>
 
-<div *ngIf="showProductImageText()" class="product-image-text">
-  <strong *ngIf="productImage() && isHaLicensed()">(<ng-content></ng-content>)</strong>
-  <strong *ngIf="isUnsupportedHardware()">({{ 'Unsupported Hardware' | translate }})</strong>
-</div>
+@if (showProductImageText()) {
+  <div class="product-image-text">
+    @if (productImage() && isHaLicensed()) {
+      <strong>(<ng-content></ng-content>)</strong>
+    }
+    @if (isUnsupportedHardware()) {
+      <strong>({{ 'Unsupported Hardware' | translate }})</strong>
+    }
+  </div>
+}
 
-<ng-template #generic>
-  <ix-icon name="ix:logo_truenas_scale_mark"></ix-icon>
-</ng-template>
 
-<ng-template #imageLoader>
-  <ngx-skeleton-loader
-    class="image-loader"
-    [theme]="{
-      width: '100%',
-      height: 'auto',
-      'aspect-ratio': '1',
-      background: 'var(--alt-bg2)',
-      opacity: 0.25
-    }"
-  ></ngx-skeleton-loader>
-</ng-template>

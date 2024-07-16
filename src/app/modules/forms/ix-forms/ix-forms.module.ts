@@ -22,7 +22,7 @@ import { RouterLink } from '@angular/router';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';

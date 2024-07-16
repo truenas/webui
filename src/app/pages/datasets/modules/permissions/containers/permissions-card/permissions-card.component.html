@@ -3,14 +3,15 @@
     <h3 mat-card-title>{{ 'Permissions' | translate }}</h3>
 
     <ng-container *ixRequiresRoles="requiredRoles">
-      <button
-        *ngIf="canEditPermissions"
-        mat-button
-        ixTest="edit-permissions"
-        (click)="redirectToEditPermissions()"
-      >
-        {{ 'Edit' | translate }}
-      </button>
+      @if (canEditPermissions) {
+        <button
+          mat-button
+          ixTest="edit-permissions"
+          (click)="redirectToEditPermissions()"
+        >
+          {{ 'Edit' | translate }}
+        </button>
+      }
     </ng-container>
   </mat-card-header>
 
@@ -30,31 +31,34 @@
       </div>
     </div>
 
-    <div *ngIf="acl" class="permissions">
-      <ix-view-trivial-permissions
-        *ngIf="acl.trivial; else nonTrivial"
-        [stat]="stat"
-      ></ix-view-trivial-permissions>
+    @if (acl) {
+      <div class="permissions">
+        @if (acl.trivial) {
+          <ix-view-trivial-permissions
+            [stat]="stat"
+          ></ix-view-trivial-permissions>
+        } @else {
+          @switch (acl.acltype) {
+            @case (AclType.Posix1e) {
+              <ix-view-posix-permissions
+                [acl]="acl | cast"
+              ></ix-view-posix-permissions>
+            }
+            @case (AclType.Nfs4) {
+              <ix-view-nfs-permissions
+                [acl]="acl | cast"
+              ></ix-view-nfs-permissions>
+            }
+          }
+        }
+      </div>
+    }
 
-      <ng-template #nonTrivial>
-        <ng-container [ngSwitch]="acl.acltype">
-          <ix-view-posix-permissions
-            *ngSwitchCase="AclType.Posix1e"
-            [acl]="acl | cast"
-          ></ix-view-posix-permissions>
-
-          <ix-view-nfs-permissions
-            *ngSwitchCase="AclType.Nfs4"
-            [acl]="acl | cast"
-          ></ix-view-nfs-permissions>
-        </ng-container>
-      </ng-template>
-    </div>
-
-    <ix-empty
-      *ngIf="!isLoading && !acl"
-      [conf]="isMissingMountpoint ? missionMountpointEmptyConfig : emptyConfig"
-    ></ix-empty>
+    @if (!isLoading && !acl) {
+      <ix-empty
+        [conf]="isMissingMountpoint ? missionMountpointEmptyConfig : emptyConfig"
+      ></ix-empty>
+    }
   </mat-card-content>
 </mat-card>
 
@@ -62,9 +66,11 @@
   <ngx-skeleton-loader></ngx-skeleton-loader>
 </ng-template>
 
-<div *ngIf="isLoading" class="permissions loader-permissions">
-  <ngx-skeleton-loader
-    [count]="4"
-  ></ngx-skeleton-loader>
-</div>
+@if (isLoading) {
+  <div class="permissions loader-permissions">
+    <ngx-skeleton-loader
+      [count]="4"
+    ></ngx-skeleton-loader>
+  </div>
+}
 

@@ -11,7 +11,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
-import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -37,13 +36,6 @@ describe('ManualUpdateFormComponent', () => {
     ],
     providers: [
       mockWebSocket([
-        mockCall('auth.me', {
-          attributes: {
-            preferences: {
-              rebootAfterManualUpdate: false,
-            } as Preferences,
-          },
-        } as LoggedInUser),
         mockCall('pool.query', [
           {
             name: 'pool2',

@@ -5,7 +5,10 @@ TrueNAS {{ productType$ | async | mapValue: productTypeLabels }} ® © {{ copyri
   title="iXsystems, Inc."
   ixTest="copyright"
 >
-  <img *ngIf="withIxLogo()" class="ix-logo" src="assets/images/ix_logo_full.png" alt="iX Systems">
-  <ng-container *ngIf="!withIxLogo()"> - iXsystems, Inc</ng-container>
+  @if (withIxLogo()) {
+    <img class="ix-logo" src="assets/images/ix_logo_full.png" alt="iX Systems">
+  } @else {
+    - iXsystems, Inc
+  }
 </a>
 

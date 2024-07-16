@@ -30,9 +30,13 @@ import {
 import failOnConsole from 'jest-fail-on-console';
 import { MockProvider } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
-import { Observable } from 'rxjs';
+import {
+  Observable,
+} from 'rxjs';
+import { EmptyAuthService } from 'test-utils/empty-auth.service';
+import { EmptyWebsocketService } from 'test-utils/empty-ws.service';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxIconTestingModule } from 'app/modules/ix-icon/ix-icon-testing.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -40,7 +44,9 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 failOnConsole();
 
@@ -113,6 +119,14 @@ defineGlobalsInjections({
     mockProvider(ErrorHandlerService, {
       catchError: () => (source$: Observable<unknown>) => source$,
     }),
+    {
+      provide: AuthService,
+      useClass: EmptyAuthService,
+    },
+    {
+      provide: WebSocketService,
+      useClass: EmptyWebsocketService,
+    },
   ],
 });
 

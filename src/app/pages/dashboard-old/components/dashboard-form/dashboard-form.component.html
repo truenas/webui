@@ -6,27 +6,30 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'System Widgets' | translate">
-        <ix-slide-toggle
-          *ngFor="let widget of systemWidgets"
-          [formControlName]="extractName(widget)"
-          [label]="extractName(widget) | translate"
-        ></ix-slide-toggle>
+        @for (widget of systemWidgets; track widget) {
+          <ix-slide-toggle
+            [formControlName]="extractName(widget)"
+            [label]="extractName(widget) | translate"
+          ></ix-slide-toggle>
+        }
       </ix-fieldset>
 
       <ix-fieldset [title]="'Storage Widgets' | translate">
-        <ix-slide-toggle
-          *ngFor="let widget of storageWidgets"
-          [formControlName]="extractName(widget)"
-          [label]="extractName(widget) | translate"
-        ></ix-slide-toggle>
+        @for (widget of storageWidgets; track widget) {
+          <ix-slide-toggle
+            [formControlName]="extractName(widget)"
+            [label]="extractName(widget) | translate"
+          ></ix-slide-toggle>
+        }
       </ix-fieldset>
 
       <ix-fieldset [title]="'Network Widgets' | translate">
-        <ix-slide-toggle
-          *ngFor="let widget of networkWidgets"
-          [formControlName]="extractName(widget)"
-          [label]="extractName(widget) | translate"
-        ></ix-slide-toggle>
+        @for (widget of networkWidgets; track widget) {
+          <ix-slide-toggle
+            [formControlName]="extractName(widget)"
+            [label]="extractName(widget) | translate"
+          ></ix-slide-toggle>
+        }
       </ix-fieldset>
 
       <ix-form-actions>

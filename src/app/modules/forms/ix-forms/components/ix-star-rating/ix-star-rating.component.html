@@ -1,9 +1,10 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+  ></ix-label>
+}
 
 <div class="star-rating" [attr.aria-label]="label">
   <div *ngFor="let rating of ratings; index as index">

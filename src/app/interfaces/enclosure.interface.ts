@@ -88,7 +88,7 @@ export interface DashboardEnclosureSlot {
   pool_info: EnclosureSlotPoolInfo | null;
 }
 
-export interface EnclosureVdev {
+export interface EnclosureVdevDisk {
   enclosure_id: string;
   slot: number;
   dev: string;
@@ -102,7 +102,7 @@ export interface EnclosureSlotPoolInfo {
   disk_checksum_errors?: number;
   vdev_name: string;
   vdev_type: VdevType;
-  vdev_disks: EnclosureVdev[];
+  vdev_disks: EnclosureVdevDisk[];
 }
 
 export type DashboardEnclosureElements = Overwrite<EnclosureElements, {

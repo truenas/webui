@@ -1,0 +1,29 @@
+.disk-name {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  margin-bottom: 5px;
+  min-width: 55px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .disk-circle {
+    border-radius: 50%;
+    display: inline-block;
+    height: 10px;
+    margin-right: 5px;
+    width: 10px;
+
+    &.selected {
+      background: var(--fg2);
+    }
+  }
+
+  .devname {
+    border-bottom: 1px solid var(--alt-fg1);
+    display: inline-block;
+    line-height: 18px;
+  }
+}

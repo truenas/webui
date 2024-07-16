@@ -20,21 +20,22 @@
       <div class="vdev-line">
         <b>{{ 'Data VDEVs' | translate }}</b>
         <div class="vdev-stats">
-          <span
-            *ngIf="!!topologyWarningsState.data && !isPoolOffline"
-            class="warning"
-            [matTooltip]="topologyWarningsState.data"
-          >
-            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-          </span>
-          <span *ngIf="!isPoolOffline" class="vdev-value">{{ topologyState.data }}</span>
-          <span
-            *ngIf="isPoolOffline"
-            class="warning"
-          >
-            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-          </span>
-          <span *ngIf="isPoolOffline" class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
+          @if (!!topologyWarningsState.data && !isPoolOffline) {
+            <span
+              class="warning"
+              [matTooltip]="topologyWarningsState.data"
+            >
+              <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+            </span>
+          }
+          @if (isPoolOffline) {
+            <span class="warning">
+              <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+            </span>
+            <span class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
+          } @else {
+            <span class="vdev-value">{{ topologyState.data }}</span>
+          }
         </div>
       </div>
       <div class="vdev-line">

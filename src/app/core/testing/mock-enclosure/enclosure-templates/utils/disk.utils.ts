@@ -5,14 +5,17 @@ import { EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
 export function addDisksToSlots(enclosures: DashboardEnclosure[], percentageToAdd: number): DashboardEnclosure[] {
-  const totalSlots = countSlots(enclosures);
+  let totalAddedDisks = -1;
 
-  return mapSlots(enclosures, ({ slot, index }) => {
-    if (index > totalSlots * percentageToAdd) {
+  return mapSlots(enclosures, ({ slot, enclosure, index }) => {
+    const slotsInEnclosure = countSlots(enclosure);
+    if (index > slotsInEnclosure * percentageToAdd) {
       return slot;
     }
 
-    return addDisk(slot, index);
+    totalAddedDisks = totalAddedDisks + 1;
+
+    return addDisk(slot, totalAddedDisks);
   });
 }
 
@@ -43,6 +46,5 @@ function generateDiskName(index: number): string {
     index = Math.floor(index / base) - 1;
   }
 
-  result = 'sd' + String.fromCharCode(offset + index) + result;
-  return result;
+  return 'sd' + String.fromCharCode(offset + index) + result;
 }

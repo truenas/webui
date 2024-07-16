@@ -1,9 +1,11 @@
 @import 'scss-imports/cssvars';
 
 :host {
+  box-sizing: border-box;
   column-gap: 5px;
   display: flex;
   height: 100%;
+  padding: 0 5px;
   width: 100%;
 
   @media (max-width: $breakpoint-md) {
@@ -15,8 +17,14 @@
 
 .left-column,
 .right-column {
+  align-items: center;
+  display: flex;
   flex: 1 1 25%;
+  flex-direction: column;
+  justify-content: center;
   max-width: 200px;
+  min-height: 100%;
+  min-width: 105px;
 
   @media (max-width: $breakpoint-md) {
     max-width: 100%;

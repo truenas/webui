@@ -18,15 +18,16 @@
         </ix-product-image>
 
         <div class="card-action-container">
-          <button
-            *ngIf="isUpdateRunning()"
-            mat-button
-            color="primary"
-            [ixTest]="['widget-sysinfo', 'update-running']"
-            [disabled]="true"
-          >{{ 'Update in Progress' | translate }}</button>
+          @if (isUpdateRunning()) {
+            <button
+              mat-button
+              color="primary"
+              [ixTest]="['widget-sysinfo', 'update-running']"
+              [disabled]="true"
+            >{{ 'Update in Progress' | translate }}</button>
+          }
 
-          <ng-container *ngIf="isHaLicensed() && !isUpdateRunning()">
+          @if (isHaLicensed() && !isUpdateRunning()) {
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button
@@ -39,10 +40,12 @@
               [disabled]="isDisabled$ | async"
               (click)="openDialog()"
             >
-              <ix-icon *ngIf="!isHaEnabled()" name="mdi-alert"></ix-icon>
+              @if (!isHaEnabled()) {
+                <ix-icon name="mdi-alert"></ix-icon>
+              }
               {{ 'Initiate Failover' | translate }}
             </button>
-          </ng-container>
+          }
         </div>
       </div>
 
@@ -58,86 +61,140 @@
         <mat-list>
           <mat-list-item>
             <strong>{{ 'Platform' | translate }}:</strong>
-            <span *ngIf="isLoaded(); else inlineLoader">
-              <ng-container *ngIf="systemInfo()?.platform && isIxHardware(); else genericPlatform">
-                {{ systemInfo().platform }}
-              </ng-container>
-              <ng-template #genericPlatform>
-                {{ 'Generic' }}
-              </ng-template>
-            </span>
+            @if (isLoaded()) {
+              <span>
+                @if (systemInfo()?.platform && isIxHardware()) {
+                  {{ systemInfo().platform }}
+                } @else {
+                  {{ 'Generic' }}
+                }
+              </span>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
           </mat-list-item>
           <mat-list-item>
             <strong>{{ 'Version' | translate }}:</strong>
-            <div *ngIf="isLoaded(); else inlineLoader" class="copy-version">
-              <div class="copy-version-text" [matTooltip]="version()">
-                <span>
-                  {{ version() }}
-                </span>
+            @if (isLoaded()) {
+              <div class="copy-version">
+                <div class="copy-version-text" [matTooltip]="version()">
+                  <span>
+                    {{ version() }}
+                  </span>
+                </div>
+                <ix-copy-button [text]="version()"></ix-copy-button>
               </div>
-              <ix-copy-button [text]="version()"></ix-copy-button>
-            </div>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
           </mat-list-item>
 
           <mat-list-item>
             <strong>{{ 'License' | translate }}:</strong>
-            <ng-container *ngIf="isLoaded(); else inlineLoader">
-              <span *ngIf="systemInfo()?.license">
-                {{
-                  '{license} contract, expires {date}' | translate:
-                  {
-                    license: systemInfo().license.contract_type | titlecase,
-                    date: systemInfo().license.contract_end.$value,
-                  }
-                }}
-              </span>
-              <span *ngIf="!systemInfo()?.license">
-                {{ 'No License' | translate }}
-              </span>
-            </ng-container>
+            @if (isLoaded()) {
+              @if (systemInfo()?.license) {
+                <span>
+                  {{
+                    '{license} contract, expires {date}' | translate:
+                    {
+                      license: systemInfo().license.contract_type | titlecase,
+                      date: systemInfo().license.contract_end.$value,
+                    }
+                  }}
+                </span>
+              } @else {
+                <span>
+                  {{ 'No License' | translate }}
+                </span>
+              }
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
           </mat-list-item>
 
-          <mat-list-item *ngIf="systemInfo()?.system_serial && isIxHardware()">
-            <strong>{{ 'System Serial' | translate }}:</strong>
-            <span>
-              {{ systemInfo().system_serial }}
-            </span>
-          </mat-list-item>
+          @if (systemInfo()?.system_serial && isIxHardware()) {
+            <mat-list-item>
+              <strong>{{ 'System Serial' | translate }}:</strong>
+              <span>
+                {{ systemInfo().system_serial }}
+              </span>
+            </mat-list-item>
+          }
 
           <mat-list-item>
             <strong>{{ 'Hostname' | translate }}:</strong>
-            <span *ngIf="isLoaded(); else inlineLoader">
-              {{ systemInfo().hostname }}
-            </span>
+            @if (isLoaded()) {
+              <span>
+                {{ systemInfo().hostname }}
+              </span>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
           </mat-list-item>
 
           <mat-list-item>
             <strong>{{ 'Uptime' | translate }}:</strong>
-            <span *ngIf="isLoaded(); else inlineLoader">
-              {{ uptime() | uptime: (datetime() | formatDateTime:' ':'HH:mm') }}
-            </span>
+            @if (isLoaded()) {
+              <span>
+                {{ uptime() | uptime: (datetime() | formatDateTime:' ':'HH:mm') }}
+              </span>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
           </mat-list-item>
         </mat-list>
+     </div>
+    </div>
+
+    @if (!isHaLicensed()) {
+      <div [class]="['empty', 'container', size()]">
+        <ix-icon class="icon" name="mdi-widgets"></ix-icon>
+        <h3>
+          <div>{{ 'The system is not licensed for HA.' | translate }}</div>
+          <small>{{ 'Configure dashboard to edit the widget.' | translate }}</small>
+        </h3>
       </div>
-    </div>
-    <div *ngIf="!isHaLicensed()" [class]="['empty', 'container', size()]">
-      <ix-icon class="icon" name="mdi-widgets"></ix-icon>
-      <h3>
-        <div>{{ 'The system is not licensed for HA.' | translate }}</div>
-        <small>{{ 'Configure dashboard to edit the widget.' | translate }}</small>
-      </h3>
-    </div>
+    }
   </mat-card-content>
 </mat-card>
 
-<ng-template #inlineLoader>
-  <ngx-skeleton-loader
-    class="inline-loader"
-    [theme]="{
-      height: '20px',
-      background: 'var(--alt-bg2)',
-      opacity: 0.25,
-      margin: 0,
-    }"
-  ></ngx-skeleton-loader>
-</ng-template>

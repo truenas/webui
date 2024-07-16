@@ -1,8 +1,9 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { lastValueFrom } from 'rxjs';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { lastValueFrom, of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 
 describe('DatasetService', () => {
@@ -18,6 +19,9 @@ describe('DatasetService', () => {
           'pool/subpool/subsub',
         ]),
       ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
     ],
   });
 
@@ -59,5 +63,19 @@ describe('DatasetService', () => {
         ],
       },
     ]);
+  });
+
+  describe('rootLevelDatasetWarning', () => {
+    it('shows a dialog when the dataset is root-level', async () => {
+      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool', 'msg'));
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(dialog).toBe(true);
+    });
+
+    it('returns True when the dataset is not root-level', async () => {
+      const dialog = await lastValueFrom(spectator.service.rootLevelDatasetWarning('/mnt/root_pool/dataset', 'msg'));
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(dialog).toBe(true);
+    });
   });
 });

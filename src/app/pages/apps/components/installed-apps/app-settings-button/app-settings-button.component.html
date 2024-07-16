@@ -27,7 +27,7 @@
   >
     {{ 'Advanced Settings' | translate }}
   </button>
-  <ng-container *ngIf="!!(kubernetesStore.selectedPool$ | async)">
+  @if (!!(kubernetesStore.selectedPool$ | async)) {
     <button
       *ixRequiresRoles="requiredRoles"
       mat-menu-item
@@ -36,7 +36,7 @@
     >
       {{ 'Unset Pool' | translate }}
     </button>
-  </ng-container>
+  }
   <button mat-menu-item ixTest="container-images" [routerLink]="['/apps', 'manage-container-images']">
     {{ 'Manage Container Images' | translate }}
   </button>

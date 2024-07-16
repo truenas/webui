@@ -1,271 +1,304 @@
 <div class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container">
     <mat-card class="front overflow-hidden">
-      <mat-card-content *ngIf="nicState; else notAvailable" #carouselparent>
-        <ix-drag-handle [showReorderHandle]="showReorderHandle">
-          <ng-content [select]="[cdkDragHandle]"></ng-content>
+      @if (nicState) {
+        <mat-card-content #carouselparent>
+          <ix-drag-handle [showReorderHandle]="showReorderHandle">
+            <ng-content [select]="[cdkDragHandle]"></ng-content>
+            <mat-toolbar-row [class]="'view-' + currentSlideName">
+              @if (currentSlide === '0') {
+                <button
+                  mat-icon-button
+                  color="default"
+                  class="mat-card-title-text primary-nav"
+                  ixTest="nic-back"
+                  [attr.aria-label]="'Go back' | translate"
+                  (click)="goBack(); updateSlide(path[previousSlide].name, true, previousSlide)"
+                >
+                  <ix-icon name="chevron_left"></ix-icon>
+                </button>
+              }
 
-          <mat-toolbar-row [class]="'view-' + currentSlideName">
-            <button
-              *ngIf="currentSlide === '0'"
-              mat-icon-button
-              color="default"
-              class="mat-card-title-text primary-nav"
-              ixTest="nic-back"
-              [attr.aria-label]="'Go back' | translate"
-              (click)="goBack(); updateSlide(path[previousSlide].name, true, previousSlide)"
-            >
-              <ix-icon name="chevron_left"></ix-icon>
-            </button>
+              @if (currentSlide !== '0') {
+                <button
+                  mat-icon-button
+                  color="default"
+                  class="mat-card-title-text primary-nav slide-back"
+                  [ixTest]="['nic-widget', 'back']"
+                  (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
+                >
+                  <ix-icon name="chevron_left"></ix-icon>
+                </button>
+              }
 
-            <button
-              *ngIf="currentSlide !== '0'"
-              mat-icon-button
-              color="default"
-              class="mat-card-title-text primary-nav slide-back"
-              [ixTest]="['nic-widget', 'back']"
-              (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
-            >
-              <ix-icon name="chevron_left"></ix-icon>
-            </button>
-
-            <h3 class="mat-card-title-text" [class.button-offset]="currentSlide !== '0'">
-              <ix-drag-handle [showReorderHandle]="showReorderHandle">
-                <div class="card-title-text">
-                  <span *ngIf="showReorderHandle" class="grip"></span>
-                  <span>{{ title | translate }} </span>
-                </div>
-              </ix-drag-handle>
-            </h3>
-
-            <div class="controls">
-              <button
-                mat-icon-button
-                matTooltipPosition="above"
-                [ixTest]="['nic-widget', 'configure-interface', nicState.name]"
-                [attr.aria-label]="'Configure {name}' | translate: { name: nicState.name }"
-                [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
-                (click)="manageInterface(nicState)"
-              >
-                <ix-icon name="edit"></ix-icon>
-              </button>
-
-              <button
-                mat-icon-button
-                matTooltipPosition="above"
-                [attr.aria-label]="'Network Reports' | translate"
-                [matTooltip]="'Network Reports' | translate"
-                [ixTest]="['nic-widget', 'network-reports', nicState.name]"
-                [routerLink]="['/reportsdashboard', 'network']"
-              >
-                <ix-icon name="insert_chart"></ix-icon>
-              </button>
-            </div>
-          </mat-toolbar-row>
-        </ix-drag-handle>
-
-        <!-- Carousel -->
-        <div #carousel class="carousel" [class.lagg]="nicState.lagg_ports">
-          <div class="slide overview">
-            <div class="left">
-              <div class="overlay">
-                <div class="left-content">
-                  <div
-                    class="nic-name"
-                    [class.up]="linkState === LinkState.Up"
-                    [class.down]="linkState !== LinkState.Up"
-                  >
-                    <span
-                      textLimiter
-                      [threshold]="12"
-                      [content]="nicState.name | translate"
-                    ></span>
+              <h3 class="mat-card-title-text" [class.button-offset]="currentSlide !== '0'">
+                <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                  <div class="card-title-text">
+                    @if (showReorderHandle) {
+                      <span class="grip"></span>
+                    }
+                    <span>{{ title | translate }} </span>
                   </div>
+                </ix-drag-handle>
+              </h3>
 
-                  <div
-                    class="link-state"
-                    [class.up]="linkState === LinkState.Up"
-                    [class.down]="linkState !== LinkState.Up"
-                  >
-                    <div class="link-state-label">
-                      <span>{{ linkStateLabel | translate }}</span>
-                      <ix-icon *ngIf="linkState === LinkState.Up" name="check_circle"></ix-icon>
-                      <ix-icon *ngIf="linkState !== LinkState.Up" name="cancel"></ix-icon>
+              <div class="controls">
+                <button
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [ixTest]="['nic-widget', 'configure-interface', nicState.name]"
+                  [attr.aria-label]="'Configure {name}' | translate: { name: nicState.name }"
+                  [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
+                  (click)="manageInterface(nicState)"
+                >
+                  <ix-icon name="edit"></ix-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'Network Reports' | translate"
+                  [matTooltip]="'Network Reports' | translate"
+                  [ixTest]="['nic-widget', 'network-reports', nicState.name]"
+                  [routerLink]="['/reportsdashboard', 'network']"
+                >
+                  <ix-icon name="insert_chart"></ix-icon>
+                </button>
+              </div>
+            </mat-toolbar-row>
+          </ix-drag-handle>
+
+          <!-- Carousel -->
+          <div #carousel class="carousel" [class.lagg]="nicState.lagg_ports">
+            <div class="slide overview">
+              <div class="left">
+                <div class="overlay">
+                  <div class="left-content">
+                    <div
+                      class="nic-name"
+                      [class.up]="linkState === LinkState.Up"
+                      [class.down]="linkState !== LinkState.Up"
+                    >
+                      <span
+                        textLimiter
+                        [threshold]="12"
+                        [content]="nicState.name | translate"
+                      ></span>
                     </div>
-
-                    <div *ngIf="traffic && linkState === LinkState.Up" class="nic-traffic">
-                      <div class="tr">
-                        <div class="td label">
-                          <strong>{{ 'In' | translate }}: &nbsp;</strong>
-                        </div>
-                        <div class="td value">
-                          <span class="stat">{{ traffic.bitsReceived | ixFileSize: { baseUnit: 'b', base: 10 } }}</span>/s
-                        </div>
+                    <div
+                      class="link-state"
+                      [class.up]="linkState === LinkState.Up"
+                      [class.down]="linkState !== LinkState.Up"
+                    >
+                      <div class="link-state-label">
+                        <span>{{ linkStateLabel | translate }}</span>
+                        @if (linkState === LinkState.Up) {
+                          <ix-icon name="check_circle"></ix-icon>
+                        }
+                        @if (linkState !== LinkState.Up) {
+                          <ix-icon name="cancel"></ix-icon>
+                        }
                       </div>
-                      <div class="tr">
-                        <div class="td label">
-                          <strong>{{ 'Out' | translate }}: </strong>&nbsp;
+                      @if (traffic && linkState === LinkState.Up) {
+                        <div class="nic-traffic">
+                          <div class="tr">
+                            <div class="td label">
+                              <strong>{{ 'In' | translate }}: &nbsp;</strong>
+                            </div>
+                            <div class="td value">
+                              <span class="stat">{{ traffic.bitsReceived | ixNetworkSpeed }}</span>
+                            </div>
+                          </div>
+                          <div class="tr">
+                            <div class="td label">
+                              <strong>{{ 'Out' | translate }}: </strong>&nbsp;
+                            </div>
+                            <div class="td value">
+                              <span class="stat">{{ traffic.bitsSent | ixFileSize }}</span>/s
+                            </div>
+                          </div>
                         </div>
-                        <div class="td value">
-                          <span class="stat">{{ traffic.bitsSent | ixFileSize: { baseUnit: 'b', base: 10 } }}</span>/s
+                      }
+                      @if (!traffic && linkState === LinkState.Up) {
+                        <div class="nic-traffic-gathering">
+                          {{ 'Gathering data...' | translate }}
                         </div>
-                      </div>
-                    </div>
-
-                    <div *ngIf="!traffic && linkState === LinkState.Up" class="nic-traffic-gathering">
-                      {{ 'Gathering data...' | translate }}
-                    </div>
-
-                    <div *ngIf="linkState !== LinkState.Up" class="no-nic-traffic">
-                      {{ 'No Traffic' | translate }}
+                      }
+                      @if (linkState !== LinkState.Up) {
+                        <div class="no-nic-traffic">
+                          {{ 'No Traffic' | translate }}
+                        </div>
+                      }
                     </div>
                   </div>
                 </div>
               </div>
+              <div class="right">
+                <div class="right-content">
+                  <div class="list-subheader">{{ 'Overview' | translate }}</div>
+                  <mat-list>
+                    <mat-list-item>
+                      <strong>{{ 'Media Type' | translate }}:</strong>
+                      @if (nicState.active_media_type) {
+                        {{ nicState.active_media_type }}
+                      } @else {
+                        {{ 'Unknown' | translate }}
+                      }
+                    </mat-list-item>
+                    <mat-list-item>
+                      <strong>{{ 'Media Subtype' | translate }}:</strong>
+                      @if (nicState.active_media_subtype) {
+                        {{ nicState.active_media_subtype }}
+                      } @else {
+                        {{ 'Unknown' | translate }}
+                      }
+                    </mat-list-item>
+                    <mat-list-item
+                      [class.clickable]="ipAddresses.length > 1"
+                      (click)="updateSlide(Path.Addresses, ipAddresses.length > 1, 1)"
+                    >
+                      <strong>{{ 'IP Addresses' | translate }}:</strong>
+                      {{ ipAddresses.length > 0 ? ipAddresses[0].address : ipAddresses.length }}
+                      @if (ipAddresses.length > 0) {
+                        <span>
+                          /{{ ipAddresses[0].netmask }}
+                        </span>
+                      }
+                      @if (ipAddresses.length > 1) {
+                        <span class="more-addresses">
+                          ({{ '{n} more' | translate: { n: ipAddresses.length - 1 } }})
+                        </span>
+                      }
+                      @if (ipAddresses.length) {
+                        <ix-icon
+                          name="chevron_right"
+                          class="next-slide"
+                        ></ix-icon>
+                      }
+                    </mat-list-item>
+                    @if (nicState.vlans) {
+                      <mat-list-item
+                        [class.clickable]="nicState.vlans.length"
+                        (click)="updateSlide(Path.Vlans, nicState.vlans.length > 0, 1)"
+                      >
+                        <strong>{{ 'VLANs' | translate }}:</strong>
+                        {{ nicState.vlans.length }}
+                        @if (nicState.vlans.length > 0) {
+                          <ix-icon
+                            name="chevron_right"
+                            class="next-slide"
+                          ></ix-icon>
+                        }
+                      </mat-list-item>
+                    }
+                    @if (nicState.lagg_ports) {
+                      <mat-list-item
+                        [class.clickable]="nicState.lagg_ports.length"
+                        (click)="updateSlide(Path.Interfaces, nicState.lagg_ports.length > 0, 1)"
+                      >
+                        <strong>{{ 'Interfaces' | translate }}:</strong>
+                        {{ nicState.lagg_ports.length }}
+                        @if (nicState.lagg_ports.length > 0) {
+                          <ix-icon
+                            name="chevron_right"
+                            class="next-slide"
+                          ></ix-icon>
+                        }
+                      </mat-list-item>
+                    }
+                  </mat-list>
+                </div>
+              </div>
             </div>
-
-            <div class="right">
-              <div class="right-content">
-                <div class="list-subheader">{{ 'Overview' | translate }}</div>
+            @if (path[1].name === Path.Addresses) {
+              <div class="slide addresses">
+                <div class="list-subheader">{{ 'Addresses' | translate }}</div>
+                @if (nicState && nicState.aliases?.length > 0) {
+                  <mat-list>
+                    @for (ip of nicState.aliases; track ip) {
+                      <mat-list-item
+                        role="listitem"
+                        [class.hidden]="ip.type !== NetworkInterfaceAliasType.Inet && ip.type !== NetworkInterfaceAliasType.Inet6"
+                      >
+                        <strong>{{ ip.type }}:</strong>
+                        {{ ip.address }}/{{ ip.netmask }}
+                      </mat-list-item>
+                    }
+                  </mat-list>
+                }
+              </div>
+            }
+            @if (path[1].name === Path.Vlans) {
+              <div class="slide vlans">
+                <div class="list-subheader">{{ currentSlideName }}</div>
+                @if (nicState.vlans?.length > 0) {
+                  <mat-list>
+                    @for (vlan of nicState.vlans; track vlan; let i = $index) {
+                      <mat-list-item
+                        role="listitem"
+                        [class.clickable]="vlan.aliases.length"
+                        (click)="updateSlide(Path.VlanAddresses, vlanAliases(i).length > 0, 2, i)"
+                      >
+                        <strong>{{ vlan.name }}:</strong>&nbsp;&nbsp;
+                        {{ vlanAliases(i).length }} addresses
+                        @if (vlan.aliases.length) {
+                          <ix-icon
+                            name="chevron_right"
+                            class="next-slide"
+                          ></ix-icon>
+                        }
+                      </mat-list-item>
+                    }
+                  </mat-list>
+                }
+              </div>
+            }
+            @if (nicState.lagg_ports && path[1].name === Path.Interfaces) {
+              <div class="slide lagg-ports">
+                <div class="list-subheader">{{ 'Interfaces' | translate }}</div>
                 <mat-list>
-                  <mat-list-item>
-                    <strong>{{ 'Media Type' | translate }}:</strong>
-                    <ng-container *ngIf="nicState.active_media_type; else unknown">
-                      {{ nicState.active_media_type }}
-                    </ng-container>
-                  </mat-list-item>
-                  <mat-list-item>
-                    <strong>{{ 'Media Subtype' | translate }}:</strong>
-                    <ng-container *ngIf="nicState.active_media_subtype; else unknown">
-                      {{ nicState.active_media_subtype }}
-                    </ng-container>
-                  </mat-list-item>
-                  <mat-list-item
-                    [class.clickable]="ipAddresses.length > 1"
-                    (click)="updateSlide(Path.Addresses, ipAddresses.length > 1, 1)"
-                  >
-                    <strong>{{ 'IP Addresses' | translate }}:</strong>
-                    {{ ipAddresses.length > 0 ? ipAddresses[0].address : ipAddresses.length }}
-                    <span *ngIf="ipAddresses.length > 0">
-                      /{{ ipAddresses[0].netmask }}
-                    </span>
-                    <span *ngIf="ipAddresses.length > 1" class="more-addresses">
-                      ({{ '{n} more' | translate: { n: ipAddresses.length - 1 } }})
-                    </span>
-                    <ix-icon
-                      *ngIf="ipAddresses.length"
-                      name="chevron_right"
-                      class="next-slide"
-                    ></ix-icon>
-                  </mat-list-item>
-                  <mat-list-item
-                    *ngIf="nicState.vlans"
-                    [class.clickable]="nicState.vlans.length"
-                    (click)="updateSlide(Path.Vlans, nicState.vlans.length > 0, 1)"
-                  >
-                    <strong>{{ 'VLANs' | translate }}:</strong>
-                    {{ nicState.vlans.length }}
-                    <ix-icon
-                      *ngIf="nicState.vlans.length > 0"
-                      name="chevron_right"
-                      class="next-slide"
-                    ></ix-icon>
-                  </mat-list-item>
-                  <mat-list-item
-                    *ngIf="nicState.lagg_ports"
-                    [class.clickable]="nicState.lagg_ports.length"
-                    (click)="updateSlide(Path.Interfaces, nicState.lagg_ports.length > 0, 1)"
-                  >
-                    <strong>{{ 'Interfaces' | translate }}:</strong>
-                    {{ nicState.lagg_ports.length }}
-                    <ix-icon
-                      *ngIf="nicState.lagg_ports.length > 0"
-                      name="chevron_right"
-                      class="next-slide"
-                    ></ix-icon>
-                  </mat-list-item>
+                  @for (port of nicState.lagg_ports; track port) {
+                    <mat-list-item role="listitem">
+                      <strong>{{ 'Interface' | translate }}:</strong>&nbsp;&nbsp;
+                      {{ port }}
+                    </mat-list-item>
+                  }
                 </mat-list>
               </div>
-            </div>
+            }
+            @if (path[1].name === Path.Empty) {
+              <div class="slide empty"></div>
+            }
+            @if (path[2].name === Path.VlanAddresses) {
+              <div class="slide vlan-addresses">
+                <div class="list-subheader">{{ 'VLAN Addresses' | translate }}</div>
+                @if (nicState && vlanAliases(path[2].index).length > 0) {
+                  <mat-list>
+                    @for (ip of vlanAliases(path[2].index); track ip) {
+                      <mat-list-item
+                        role="listitem"
+                        [class.hidden]="ip.type !== NetworkInterfaceAliasType.Inet && ip.type !== NetworkInterfaceAliasType.Inet6"
+                      >
+                        <strong>{{ ip.type | translate }}:</strong>&nbsp;&nbsp;
+                        {{ ip.address }}/{{ ip.netmask }}
+                      </mat-list-item>
+                    }
+                  </mat-list>
+                }
+              </div>
+            }
+            @if (path[2].name === Path.Empty) {
+              <div class="slide empty"></div>
+            }
           </div>
-
-          <div *ngIf="path[1].name === Path.Addresses" class="slide addresses">
-            <div class="list-subheader">{{ 'Addresses' | translate }}</div>
-            <mat-list *ngIf="nicState && nicState.aliases?.length > 0">
-              <mat-list-item
-                *ngFor="let ip of nicState.aliases"
-                role="listitem"
-                [class.hidden]="ip.type !== NetworkInterfaceAliasType.Inet && ip.type !== NetworkInterfaceAliasType.Inet6"
-              >
-                <strong>{{ ip.type }}:</strong>
-                {{ ip.address }}/{{ ip.netmask }}
-              </mat-list-item>
-            </mat-list>
-          </div>
-
-          <div *ngIf="path[1].name === Path.Vlans" class="slide vlans">
-            <div class="list-subheader">{{ currentSlideName }}</div>
-            <mat-list *ngIf="nicState.vlans?.length > 0">
-              <mat-list-item
-                *ngFor="let vlan of nicState.vlans; let i = index"
-                role="listitem"
-                [class.clickable]="vlan.aliases.length"
-                (click)="updateSlide(Path.VlanAddresses, vlanAliases(i).length > 0, 2, i)"
-              >
-                <strong>{{ vlan.name }}:</strong>&nbsp;&nbsp;
-                {{ vlanAliases(i).length }} addresses
-                <ix-icon
-                  *ngIf="vlan.aliases.length"
-                  name="chevron_right"
-                  class="next-slide"
-                ></ix-icon>
-              </mat-list-item>
-            </mat-list>
-          </div>
-
-          <div
-            *ngIf="nicState.lagg_ports && path[1].name === Path.Interfaces"
-            class="slide lagg-ports"
-          >
-            <div class="list-subheader">{{ 'Interfaces' | translate }}</div>
-            <mat-list>
-              <mat-list-item
-                *ngFor="let port of nicState.lagg_ports"
-                role="listitem"
-              >
-                <strong>{{ 'Interface' | translate }}:</strong>&nbsp;&nbsp;
-                {{ port }}
-              </mat-list-item>
-            </mat-list>
-          </div>
-
-          <div *ngIf="path[1].name === Path.Empty" class="slide empty"></div>
-
-          <div *ngIf="path[2].name === Path.VlanAddresses" class="slide vlan-addresses">
-            <div class="list-subheader">{{ 'VLAN Addresses' | translate }}</div>
-            <mat-list *ngIf="nicState && vlanAliases(path[2].index).length > 0">
-              <mat-list-item
-                *ngFor="let ip of vlanAliases(path[2].index)"
-                role="listitem"
-                [class.hidden]="ip.type !== NetworkInterfaceAliasType.Inet && ip.type !== NetworkInterfaceAliasType.Inet6"
-              >
-                <strong>{{ ip.type | translate }}:</strong>&nbsp;&nbsp;
-                {{ ip.address }}/{{ ip.netmask }}
-              </mat-list-item>
-            </mat-list>
-          </div>
-
-          <div *ngIf="path[2].name === Path.Empty" class="slide empty"></div>
-        </div>
-      </mat-card-content>
-
-      <ng-template #notAvailable>
+        </mat-card-content>
+      } @else {
         <mat-card-content>
           <h2>{{ 'Widget data is not available' | translate }}</h2>
         </mat-card-content>
-      </ng-template>
+      }
+
     </mat-card>
   </div>
 </div>
 
-<ng-template #unknown>{{ 'Unknown' | translate }}</ng-template>

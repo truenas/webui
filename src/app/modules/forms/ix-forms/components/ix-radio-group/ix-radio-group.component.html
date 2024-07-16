@@ -1,10 +1,11 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-  [ixTestOverride]="controlDirective.name"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
 
 <mat-radio-group
   color="primary"
@@ -16,26 +17,27 @@
   [attr.aria-label]="label"
   (change)="onRadiosChanged($event)"
 >
-  <div
-    *ngFor="let option of options | async"
-    fxFlex="100%"
-    [fxFlex.gt-md]="fieldFlex"
-  >
-    <mat-radio-button
-      [value]="option.value"
-      [ixTest]="[controlDirective.name, option.label]"
-      [attr.aria-label]="option.label"
+  @for (option of options | async; track option) {
+    <div
+      fxFlex="100%"
+      [fxFlex.gt-md]="fieldFlex"
     >
-      {{ option.label | translate }}
-    </mat-radio-button>
-
-    <ix-tooltip
-      *ngIf="option.tooltip"
-      class="tooltip"
-      [header]="option.label | translate"
-      [message]="option.tooltip | translate"
-    ></ix-tooltip>
-  </div>
+      <mat-radio-button
+        [value]="option.value"
+        [ixTest]="[controlDirective.name, option.label]"
+        [attr.aria-label]="option.label"
+      >
+        {{ option.label | translate }}
+      </mat-radio-button>
+      @if (option.tooltip) {
+        <ix-tooltip
+          class="tooltip"
+          [header]="option.label | translate"
+          [message]="option.tooltip | translate"
+        ></ix-tooltip>
+      }
+    </div>
+  }
 </mat-radio-group>
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

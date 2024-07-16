@@ -5,7 +5,8 @@ import { officialCatalog } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
@@ -35,7 +36,8 @@ describe('AppRowComponent', () => {
     component: AppRowComponent,
     imports: [
       ImgFallbackModule,
-      IxFileSizePipe,
+      FileSizePipe,
+      NetworkSpeedPipe,
     ],
     declarations: [
       MockComponents(AppStatusCellComponent, AppUpdateCellComponent),
