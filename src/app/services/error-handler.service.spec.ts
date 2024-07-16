@@ -181,6 +181,15 @@ describe('ErrorHandlerService', () => {
       expect(errorReport).toEqual({ message: 'That error', title: 'Error (400)' });
     });
 
+    it('returns correct object with 404 error', () => {
+      const errorReport = spectator.service.parseHttpError({
+        ...httpError,
+        status: 404,
+        statusText: 'Not Found',
+      });
+      expect(errorReport).toEqual({ message: 'This error occurred', title: 'Not Found' });
+    });
+
     it('returns correct object with 500 error', () => {
       const errorReport = spectator.service.parseHttpError({
         ...httpError,
@@ -209,9 +218,14 @@ describe('ErrorHandlerService', () => {
         error: 'Odd error',
       });
 
-      expect(console.error).toHaveBeenCalledWith('Unknown error code', 510);
+      expect(console.error).toHaveBeenCalledWith({
+        ...httpError,
+        status: 510,
+        statusText: 'Bad Request',
+        error: 'Odd error',
+      });
 
-      expect(errorReport).toEqual({ message: 'Fatal error! Check logs.', title: 'Error (510)' });
+      expect(errorReport).toEqual({ message: 'This error occurred', title: 'Error (510)' });
     });
   });
 

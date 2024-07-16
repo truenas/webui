@@ -4,14 +4,14 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import {
   DiskIconComponent,
 } from 'app/modules/disk-icon/disk-icon.component';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 
 describe('DiskIconComponent', () => {
   let spectator: Spectator<DiskIconComponent>;
   const createComponent = createComponentFactory({
     component: DiskIconComponent,
     imports: [
-      IxFileSizePipe,
+      FileSizePipe,
     ],
   });
 

@@ -19,12 +19,11 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
 export class EnclosurePageComponent {
   readonly enclosure = this.store.selectedEnclosure;
   readonly selectedView = this.store.selectedView;
+  readonly selectedSlot = this.store.selectedSlot;
   readonly isLoading = this.store.isLoading;
   readonly isSupportedEnclosure = computed(() => this.enclosure().model !== unsupportedEnclosureMockModel);
 
-  protected readonly isExpandersView = computed(() => {
-    return this.selectedView() === EnclosureView.Expanders;
-  });
+  protected readonly EnclosureView = EnclosureView;
 
   protected readonly title = computed(() => {
     return this.translate.instant('Disks on {enclosure}', {
@@ -33,7 +32,8 @@ export class EnclosurePageComponent {
   });
 
   protected readonly redirectOnMinis = effect(() => {
-    if (!this.enclosure()) {
+    const enclosure = this.store.selectedEnclosure();
+    if (!enclosure) {
       return;
     }
 
@@ -45,11 +45,11 @@ export class EnclosurePageComponent {
       EnclosureModel.Mini3XlPlus,
     ];
 
-    if (!minisWithOwnPage.includes(this.enclosure().model)) {
+    if (!minisWithOwnPage.includes(enclosure.model)) {
       return;
     }
 
-    this.router.navigate(['/system', 'viewenclosure', this.enclosure().id, 'mini']);
+    this.router.navigate(['/system', 'viewenclosure', enclosure.id, 'mini']);
   }, { allowSignalWrites: true });
 
   constructor(

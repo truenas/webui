@@ -1,0 +1,48 @@
+<div class="details">
+  <div class="details-grid">
+    <div class="item">
+      <div class="label">{{ 'Pool' | translate }}</div>
+      <div class="value">
+        {{ selectedSlot().pool_info?.pool_name || ('Disk not attached to any pools.' | translate) }}
+      </div>
+    </div>
+    <div class="item">
+      <div class="label">{{ 'Model' | translate }}</div>
+      <div class="value">{{ selectedSlot().model || ('N/A' | translate) }}</div>
+    </div>
+    <div class="item">
+      <div class="label">{{ 'Serial' | translate }}</div>
+      <div class="value">{{ selectedSlot().serial || ('N/A' | translate) }}</div>
+    </div>
+
+    @if (selectedSlot().rotationrate) {
+      <div class="item">
+        <div class="label">{{ 'Rotation Rate' | translate }}</div>
+        <div class="value">
+          {{ '{n} RPM' | translate: { n: selectedSlot().rotationrate } }}
+        </div>
+      </div>
+    }
+
+    @if (selectedSlot().pool_info) {
+      <div class="item">
+        <div class="label">{{ 'Status' | translate }}</div>
+        <div class="value">
+          {{ selectedSlot().pool_info?.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
+        </div>
+      </div>
+      <div class="item">
+        <div class="label">{{ 'Read Errors' | translate }}</div>
+        <div class="value">{{ selectedSlot().pool_info.disk_read_errors | number }}</div>
+      </div>
+      <div class="item">
+        <div class="label">{{ 'Write Errors' | translate }}</div>
+        <div class="value">{{ selectedSlot().pool_info.disk_write_errors | number }}</div>
+      </div>
+      <div class="item">
+        <div class="label">{{ 'Checksum Errors' | translate }}</div>
+        <div class="value">{{ selectedSlot().pool_info.disk_checksum_errors | number }}</div>
+      </div>
+    }
+  </div>
+</div>

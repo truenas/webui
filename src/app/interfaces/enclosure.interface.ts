@@ -1,7 +1,12 @@
 import { Overwrite } from 'utility-types';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
-import { EnclosureStatus, EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import {
+  EnclosureStatus,
+  EnclosureDiskStatus,
+  EnclosureElementType,
+  DriveBayLightStatus,
+} from 'app/enums/enclosure-slot-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 
 export interface Enclosure {
@@ -108,3 +113,9 @@ export interface EnclosureSlotPoolInfo {
 export type DashboardEnclosureElements = Overwrite<EnclosureElements, {
   [EnclosureElementType.ArrayDeviceSlot]: Record<number, DashboardEnclosureSlot>;
 }>;
+
+export interface SetDriveBayLightStatus {
+  enclosure_id: string;
+  slot: number;
+  status: DriveBayLightStatus;
+}

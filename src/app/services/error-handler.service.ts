@@ -198,7 +198,16 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseHttpError(error: HttpErrorResponse): ErrorReport | ErrorReport[] {
+    console.error(error);
     switch (error.status) {
+      case 401:
+      case 403:
+      case 404: {
+        return {
+          title: error.statusText,
+          message: error.message,
+        };
+      }
       case 409: {
         return this.parseHttpErrorObject(error);
       }
@@ -229,11 +238,10 @@ export class ErrorHandlerService implements ErrorHandler {
         };
       }
       default: {
-        console.error(this.translate?.instant('Unknown error code') || 'Unknown error code', error.status);
         return {
           title: this.translate?.instant('Error ({code})', { code: error.status })
             || `Error (${error.status})`,
-          message: this.translate?.instant('Fatal error! Check logs.') || 'Fatal error! Check logs.',
+          message: error.message || this.translate?.instant('Fatal error! Check logs.') || 'Fatal error! Check logs.',
         };
       }
     }
