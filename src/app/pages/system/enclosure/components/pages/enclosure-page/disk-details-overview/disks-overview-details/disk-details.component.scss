@@ -1,0 +1,23 @@
+.details-grid {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+
+  .item {
+    margin: 8px 0;
+    text-align: left;
+
+    .label {
+      font-size: 100%;
+      font-weight: 500;
+    }
+
+    .value {
+      font-size: 120%;
+      font-weight: 300;
+      line-height: 85%;
+      text-align: left;
+      word-break: break-word;
+    }
+  }
+}
