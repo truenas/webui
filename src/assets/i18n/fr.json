@@ -198,6 +198,8 @@
   "Configure Syslog": "",
   "Configure dashboard to edit the widget.": "",
   "Configure {name}": "",
+  "Configuring NFS exports of root-level datasets may lead to storage reconfiguration issues. Consider creating a dataset instead.": "",
+  "Configuring SMB exports of root-level datasets may lead to storage reconfiguration issues. Consider creating a dataset instead.": "",
   "Confirmation": "",
   "Connect using:": "",
   "Connecting to TrueNAS": "",
