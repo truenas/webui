@@ -18,21 +18,21 @@
     </div>
     <div class="details-item">
       <div class="label">{{ 'Transfer Mode' | translate }}:</div>
-      <div *ngIf="disk?.transfermode; else notAvailable" class="value">
-        {{ disk.transfermode }}
+      <div class="value">
+        {{ disk?.transfermode | orNotAvailable }}
       </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Serial' | translate }}:</div>
-      <div *ngIf="disk?.serial; else notAvailable" class="value">
+      <div class="value">
         {{ disk.serial }}
         <ix-copy-button [text]="disk.serial"></ix-copy-button>
       </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Model' | translate }}:</div>
-      <div *ngIf="disk?.model; else notAvailable" class="value">
-        {{ disk.model }}
+      <div class="value">
+        {{ disk?.model | orNotAvailable }}
       </div>
     </div>
     <div *ngIf="isHdd" class="details-item">
@@ -43,21 +43,15 @@
     </div>
     <div class="details-item">
       <div class="label">{{ 'Type' | translate }}:</div>
-      <div *ngIf="disk?.type; else notAvailable" class="value">
-        {{ disk.type }}
-      </div>
+      <div class="value">{{ disk?.type | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'HDD Standby' | translate }}:</div>
-      <div *ngIf="disk?.hddstandby; else notAvailable" class="value">
-        {{ disk.hddstandby }}
-      </div>
+      <div class="value">{{ disk?.hddstandby | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Description' | translate }}:</div>
-      <div *ngIf="disk?.description; else notAvailable" class="value">
-        {{ disk.description }}
-      </div>
+      <div class="value">{{ disk?.description | orNotAvailable }}</div>
     </div>
   </mat-card-content>
   <mat-card-content *ngIf="!isAvailable">

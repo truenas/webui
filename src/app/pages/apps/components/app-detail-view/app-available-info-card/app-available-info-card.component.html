@@ -4,9 +4,7 @@
   <span class="label">{{ 'Version' | translate }}:</span>
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else version"></ngx-skeleton-loader>
   <ng-template #version>
-    <ng-container *ngIf="app?.latest_app_version; else notAvailable">
-      {{ app?.latest_app_version }}
-    </ng-container>
+    {{ app?.latest_app_version | orNotAvailable }}
   </ng-template>
 </div>
 <div class="app-list-item sources">

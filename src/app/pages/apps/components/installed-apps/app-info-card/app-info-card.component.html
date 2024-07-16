@@ -35,18 +35,14 @@
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
           <div class="value">
-            <ng-container *ngIf="app?.name; else notAvailable">
-              {{ app.name }}
-            </ng-container>
+            {{ app?.name | orNotAvailable }}
           </div>
         </div>
         <div class="details-item">
           <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
             <ng-container *ngIf="!ixChartApp">
-              <ng-container *ngIf="app?.chart_metadata?.appVersion; else notAvailable">
-                {{ app.chart_metadata.appVersion }}
-              </ng-container>
+              {{ app?.chart_metadata?.appVersion | orNotAvailable }}
             </ng-container>
             <ng-container *ngIf="ixChartApp && app.human_version">
               <!-- Show docker image tag as version for custom apps -->
@@ -93,9 +89,7 @@
         <div class="details-item">
           <div class="label">{{ 'Train' | translate }}:</div>
           <div class="value">
-            <ng-container *ngIf="app?.catalog_train; else notAvailable">
-              {{ app.catalog_train }}
-            </ng-container>
+            {{ app?.catalog_train | orNotAvailable }}
           </div>
         </div>
         @if (app?.portals) {

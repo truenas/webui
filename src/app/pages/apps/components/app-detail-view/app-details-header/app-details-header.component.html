@@ -45,9 +45,7 @@
     <span class="label">{{ 'App Version' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>
     <ng-template #latestAppVersion>
-      <ng-container *ngIf="app?.latest_app_version; else notAvailable">
-        {{ app?.latest_app_version }}
-      </ng-container>
+      {{ app?.latest_app_version | orNotAvailable }}
     </ng-template>
   </div>
   <div class="app-list-item">
@@ -63,9 +61,7 @@
     <span class="label">{{ 'Train' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else train"></ngx-skeleton-loader>
     <ng-template #train>
-      <ng-container *ngIf="app?.train; else notAvailable">
-        {{ app?.train }}
-      </ng-container>
+      {{ app?.train | orNotAvailable }}
     </ng-template>
   </div>
   <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
