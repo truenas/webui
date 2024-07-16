@@ -41,13 +41,12 @@
         <div class="details-item">
           <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
-            <ng-container *ngIf="!ixChartApp">
+            @if (!ixChartApp) {
               {{ app?.chart_metadata?.appVersion | orNotAvailable }}
-            </ng-container>
-            <ng-container *ngIf="ixChartApp && app.human_version">
+            } @else if (app.human_version) {
               <!-- Show docker image tag as version for custom apps -->
               {{ app.human_version?.split(':')?.[1]?.split('_')?.[0] }}
-            </ng-container>
+            }
           </div>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
@@ -60,17 +59,20 @@
         <div class="details-item sources">
           <div class="label">{{ 'Source' | translate }}:</div>
           <div class="value">
-            <div *ngIf="app?.chart_metadata?.sources?.length; else notAvailable">
-              <a
-                *ngFor="let source of app?.chart_metadata?.sources;"
-                class="source-link"
-                target="_blank"
-                [href]="source"
-                [title]="source"
-                [ixTest]="[app.name, 'source']"
-              >{{ source | cleanLink }}</a>
+            <div>
+              @for (source of app?.chart_metadata?.sources; track source) {
+                <a
+                  class="source-link"
+                  target="_blank"
+                  [href]="source"
+                  [title]="source"
+                  [ixTest]="[app.name, 'source']"
+                >{{ source | cleanLink }}</a>
+              } @empty {
+                {{ 'N/A' | translate }}
+              }
             </div>
-          </div>
+        </div>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
         <div class="details-item">
@@ -80,12 +82,14 @@
           </div>
         </div>
         <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        <div *ngIf="false" class="details-item">
-          <div class="label">{{ 'Commits in the last 60 days' | translate }}:</div>
-          <div class="value">
-            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
+        @if (false) {
+          <div class="details-item">
+            <div class="label">{{ 'Commits in the last 60 days' | translate }}:</div>
+            <div class="value">
+              <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
+            </div>
           </div>
-        </div>
+        }
         <div class="details-item">
           <div class="label">{{ 'Train' | translate }}:</div>
           <div class="value">

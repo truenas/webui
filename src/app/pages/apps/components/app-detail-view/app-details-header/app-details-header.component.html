@@ -43,40 +43,60 @@
 <div class="app-info" fxFlex="240px">
   <div class="app-list-item">
     <span class="label">{{ 'App Version' | translate }}:</span>
-    <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>
-    <ng-template #latestAppVersion>
+    @if (isLoading$ | async) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
       {{ app?.latest_app_version | orNotAvailable }}
-    </ng-template>
+    }
   </div>
   <div class="app-list-item">
     <span class="label">{{ 'Keywords' | translate }}:</span>
-    <ngx-skeleton-loader *ngIf="isLoading$ | async; else appCategories"></ngx-skeleton-loader>
-    <ng-template #appCategories>
-      <ng-container *ngIf="app?.tags; else notAvailable">
+    @if (isLoading$ | async) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @if (app?.tags) {
         {{ app?.tags.join(', ') }}
-      </ng-container>
-    </ng-template>
+      } @else {
+        {{ 'N/A' | translate }}
+      }
+    }
   </div>
   <div class="app-list-item">
     <span class="label">{{ 'Train' | translate }}:</span>
-    <ngx-skeleton-loader *ngIf="isLoading$ | async; else train"></ngx-skeleton-loader>
-    <ng-template #train>
+    @if (isLoading$ | async) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
       {{ app?.train | orNotAvailable }}
-    </ng-template>
+    }
   </div>
   <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
   <div class="app-list-item">
     <span class="label">{{ 'Homepage' | translate }}:</span>
-    <ngx-skeleton-loader *ngIf="isLoading$ | async; else homepage"></ngx-skeleton-loader>
-    <ng-template #homepage>
-      <ng-container *ngIf="app?.home; else notAvailable">
+    @if (isLoading$ | async) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @if (app?.home) {
         <a
           ixTest="homepage"
           target="_blank"
           [href]="app.home"
           [title]="app.home"
         >{{ app.home | cleanLink }}</a>
-      </ng-container>
+      } @else {
+        {{ 'N/A' | translate }}
+      }
+    }
+    <ng-template #homepage>
+      @if (app?.home) {
+        <a
+          ixTest="homepage"
+          target="_blank"
+          [href]="app.home"
+          [title]="app.home"
+        >{{ app.home | cleanLink }}</a>
+      } @else {
+        {{ 'N/A' | translate }}
+      }
     </ng-template>
   </div>
 </div>
@@ -89,6 +109,3 @@
   }
 </div>
 
-<ng-template #notAvailable>
-  {{ 'N/A' | translate }}
-</ng-template>

@@ -27,32 +27,36 @@
     <div class="details-item">
       <div class="label">{{ 'Highest Temperature' | translate }}:</div>
       <div class="value">
-        <ng-container *ngIf="isHighestTempReady; else noData">
+        @if (isHighestTempReady) {
           {{ diskState.highestTemperature | number }}
           {{ diskState.symbolText }}{{ diskState.unit }}
-        </ng-container>
+        } @else {
+          {{ 'No Data' | translate }}
+        }
       </div>
     </div>
 
     <div class="details-item">
       <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
       <div class="value">
-        <ng-container *ngIf="isLowestTempReady; else noData">
+        @if (isLowestTempReady) {
           {{ diskState.lowestTemperature | number }}
           {{ diskState.symbolText }}{{ diskState.unit }}
-        </ng-container>
+        } @else {
+          {{ 'No Data' | translate }}
+        }
       </div>
     </div>
 
     <div class="details-item">
       <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
       <div class="value">
-        <ng-container
-          *ngIf="isAverageTempReady; else noData"
-        >
+        @if (isAverageTempReady) {
           {{ diskState.averageTemperature | number }}
           {{ diskState.symbolText }}{{ diskState.unit }}
-        </ng-container>
+        } @else {
+          {{ 'No Data' | translate }}
+        }
       </div>
       <a
         ixTest="view-reports"
@@ -76,8 +80,5 @@
       </a>
     </div>
 
-    <ng-template #noData>
-      {{ 'No Data' | translate }}
-    </ng-template>
   </mat-card-content>
 </mat-card>

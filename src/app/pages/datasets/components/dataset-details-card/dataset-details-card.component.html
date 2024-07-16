@@ -38,9 +38,11 @@
     <div class="details-item">
       <div class="label">{{ 'Compression Level' | translate }}:</div>
       <div class="value">
-        <ng-container *ngIf="datasetCompression; else notAvailable">
+        @if (datasetCompression) {
           {{ datasetCompression }}
-        </ng-container>
+        } @else {
+          {{ 'N/A' | translate }}
+        }
       </div>
     </div>
     @if (!isZvol) {
@@ -106,6 +108,3 @@
   }
 </mat-card>
 
-<ng-template #notAvailable>
-  {{ 'N/A' | translate }}
-</ng-template>
