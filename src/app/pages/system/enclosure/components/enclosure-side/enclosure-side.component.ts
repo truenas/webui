@@ -1,11 +1,11 @@
 import {
   ChangeDetectionStrategy, Component, computed, input, model,
 } from '@angular/core';
-import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import {
   TintingFunction,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
+import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
 import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/utils/supported-enclosures';
 
 // TODO: It may be a good idea to make this into a separate module.
@@ -27,7 +27,7 @@ export class EnclosureSideComponent {
   readonly side = input<EnclosureSide>(undefined);
 
   readonly sideSlots = computed(() => {
-    return Object.values(this.enclosure().elements[EnclosureElementType.ArrayDeviceSlot]);
+    return getSlotsOfSide(this.enclosure(), this.shownSide());
   });
 
   readonly shownSide = computed(() => {

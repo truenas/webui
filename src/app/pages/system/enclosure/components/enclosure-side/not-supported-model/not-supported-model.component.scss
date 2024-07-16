@@ -1,27 +1,28 @@
 :host {
-  display: block;
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 
 .slots {
   display: grid;
-  gap: 1px;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 100px));
   padding: 20px 10px;
 
-  @container (min-width: 0) {
-    gap: 5px;
+  &.high-count {
+    grid-template-columns: repeat(6, minmax(0, 60px));
   }
 }
 
 .slot {
-  align-items: center;
-  aspect-ratio: 16 / 10;
-  border: 1px solid var(--lines);
+  aspect-ratio: 16/9;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  box-sizing: border-box;
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  opacity: 0.8;
-  transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
+  overflow: hidden;
+  position: relative;
+  transition: border 0.2s ease-in-out;
 
   &.static {
     cursor: default;
@@ -29,12 +30,40 @@
   }
 
   &:hover {
-    background-color: var(--primary) !important;
-    outline: solid 4px var(--primary);
+    border: solid 2px var(--primary);
+
+    .background,
+    .number {
+      filter: brightness(1);
+    }
   }
 
   &.selected {
-    filter: brightness(1.5);
-    outline: solid 4px var(--primary);
+    border: solid 2px var(--primary);
+    outline: 1px solid var(--fg1);
+
+    .background,
+    .number {
+      filter: brightness(1.1);
+    }
+  }
+
+  .background,
+  .number {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    font-weight: 500;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: filter 0.2s ease-in-out;
+  }
+
+  .background {
+    background-color: var(--bg2);
+    filter: brightness(0.8);
   }
 }

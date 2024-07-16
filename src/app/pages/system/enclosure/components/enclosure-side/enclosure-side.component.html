@@ -8,6 +8,7 @@
   ></ix-enclosure-svg>
 } @else {
   <ix-not-supported-model
+    [model]="enclosure().model"
     [slots]="sideSlots()"
     [slotTintFn]="slotTintFn()"
     [enableMouseEvents]="enableMouseEvents()"

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, model,
+  ChangeDetectionStrategy, Component, input, model, OnInit,
 } from '@angular/core';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import {
@@ -12,9 +12,16 @@ import {
   styleUrls: ['./not-supported-model.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotSupportedModelComponent {
-  readonly slots = input<DashboardEnclosureSlot[]>();
+export class NotSupportedModelComponent implements OnInit {
+  readonly model = input.required<string>();
+  readonly slots = input.required<DashboardEnclosureSlot[]>();
   readonly enableMouseEvents = input(true);
-  readonly slotTintFn = input<TintingFunction>();
+  readonly slotTintFn = input.required<TintingFunction>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
+
+  protected readonly highCountThreshold = 60;
+
+  ngOnInit(): void {
+    console.error(`Unsupported enclosure model: ${this.model()}`);
+  }
 }
