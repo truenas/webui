@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';

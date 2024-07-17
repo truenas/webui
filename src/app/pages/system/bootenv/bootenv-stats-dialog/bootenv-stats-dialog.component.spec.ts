@@ -16,7 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -45,7 +45,7 @@ describe('BootenvStatsDialogComponent', () => {
       IxFormsModule,
       ReactiveFormsModule,
       MapValuePipe,
-      IxFileSizePipe,
+      FileSizePipe,
     ],
     providers: [
       mockProvider(DialogService),

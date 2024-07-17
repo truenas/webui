@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { EntityModule } from 'app/modules/entity/entity.module';

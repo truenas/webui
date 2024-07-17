@@ -1,7 +1,17 @@
-<ix-enclosure-svg
-  [svgUrl]="svgUrl()"
-  [slotTintFn]="slotTintFn()"
-  [enableMouseEvents]="enableMouseEvents()"
-  [slots]="sideSlots()"
-  [(selectedSlot)]="selectedSlot"
-></ix-enclosure-svg>
+@if (svgUrl()) {
+  <ix-enclosure-svg
+    [svgUrl]="svgUrl()"
+    [slotTintFn]="slotTintFn()"
+    [enableMouseEvents]="enableMouseEvents()"
+    [slots]="sideSlots()"
+    [(selectedSlot)]="selectedSlot"
+  ></ix-enclosure-svg>
+} @else {
+  <ix-not-supported-model
+    [model]="enclosure().model"
+    [slots]="sideSlots()"
+    [slotTintFn]="slotTintFn()"
+    [enableMouseEvents]="enableMouseEvents()"
+    [(selectedSlot)]="selectedSlot"
+  ></ix-not-supported-model>
+}

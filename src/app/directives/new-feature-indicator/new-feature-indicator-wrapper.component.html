@@ -1,0 +1,25 @@
+<popper-content #popperTooltip class="fn-theme-tooltip">
+  <div
+    class="tooltip-message"
+    ixTest="tooltip-message"
+    [innerHTML]="indicator().message"
+  ></div>
+</popper-content>
+
+<div
+  popperAppendTo="body"
+  [popperTrigger]="'hover' | cast"
+  [popper]="popperTooltip"
+  [popperShowOnStart]="false"
+  (popperOnHidden)="onHidden()"
+>
+  <ng-container *ngTemplateOutlet="template()"></ng-container>
+</div>
+
+<div class="tooltip">
+  <ix-icon
+    class="tooltip-icon"
+    name="circle"
+    @fadeIn
+  ></ix-icon>
+</div>

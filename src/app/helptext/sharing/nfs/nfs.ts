@@ -1,6 +1,12 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingNfs = {
+  root_level_warning: T(
+    'Configuring NFS exports of root-level datasets\
+ may lead to storage reconfiguration issues.\
+ Consider creating a dataset instead.',
+  ),
+
   // NFSListComponent
   column_path: T('Path'),
   column_comment: T('Description'),

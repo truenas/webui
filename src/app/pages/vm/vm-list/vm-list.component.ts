@@ -21,7 +21,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table/utils';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { vmListElements } from 'app/pages/vm/vm-list/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -35,7 +35,7 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [IxFileSizePipe],
+  providers: [FileSizePipe],
 })
 export class VmListComponent implements OnInit {
   protected readonly requiredRoles = [Role.VmWrite];
@@ -136,7 +136,7 @@ export class VmListComponent implements OnInit {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private vmService: VmService,
-    private fileSizePipe: IxFileSizePipe,
+    private fileSizePipe: FileSizePipe,
     protected emptyService: EmptyService,
   ) {}
 

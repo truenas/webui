@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
@@ -14,6 +13,7 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { CertificateAuthorityAddComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
 import { CertificateAuthorityEditComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { CertificateAuthorityListComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-list/certificate-authority-list.component';
@@ -41,8 +41,8 @@ describe('CertificateAuthorityListComponent', () => {
     component: CertificateAuthorityListComponent,
     imports: [
       IxTableModule,
+      FormatDateTimePipe,
     ],
-    declarations: [FakeFormatDateTimePipe],
     providers: [
       mockWebSocket([
         mockCall('certificateauthority.query', certificates),

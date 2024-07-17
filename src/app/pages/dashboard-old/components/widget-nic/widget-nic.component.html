@@ -106,7 +106,7 @@
                               <strong>{{ 'In' | translate }}: &nbsp;</strong>
                             </div>
                             <div class="td value">
-                              <span class="stat">{{ traffic.bitsReceived | ixFileSize: { baseUnit: 'b', base: 10 } }}</span>/s
+                              <span class="stat">{{ traffic.bitsReceived | ixNetworkSpeed }}</span>
                             </div>
                           </div>
                           <div class="tr">
@@ -114,7 +114,7 @@
                               <strong>{{ 'Out' | translate }}: </strong>&nbsp;
                             </div>
                             <div class="td value">
-                              <span class="stat">{{ traffic.bitsSent | ixFileSize: { baseUnit: 'b', base: 10 } }}</span>/s
+                              <span class="stat">{{ traffic.bitsSent | ixFileSize }}</span>/s
                             </div>
                           </div>
                         </div>

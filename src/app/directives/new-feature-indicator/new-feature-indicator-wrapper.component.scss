@@ -1,0 +1,28 @@
+:host {
+  position: relative;
+}
+
+.tooltip {
+  display: inline-flex;
+  margin: 0;
+
+  position: absolute;
+  right: -6px;
+  top: -5px;
+}
+
+.tooltip-icon {
+  background: var(--fg2);
+  border-radius: 50%;
+  color: var(--primary-lighter);
+  cursor: pointer;
+  font-size: 14px !important;
+  height: 14px;
+  width: 14px;
+}
+
+.tooltip-message {
+  font-family: var(--font-family-body2);
+  font-size: 12px;
+  line-height: 1.3;
+}
