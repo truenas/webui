@@ -113,7 +113,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     let leftPosition = `${this.window.scrollX + rect.right - 15}px`;
 
     if (rect.right + 140 > viewportWidth) {
-      leftPosition = `${this.window.scrollX + rect.left - 115}px`;
+      leftPosition = `${this.window.scrollX + rect.left - 120}px`;
       this.renderer.addClass(arrowElement, 'arrow-left');
     } else {
       this.renderer.addClass(arrowElement, 'arrow-right');
