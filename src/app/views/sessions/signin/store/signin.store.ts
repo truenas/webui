@@ -88,9 +88,9 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => this.setLoadingState(true)),
+    switchMap(() => this.checkForLoginBanner()),
     switchMap(() => {
       return forkJoin([
-        this.checkForLoginBanner(),
         this.checkIfAdminPasswordSet(),
         this.checkIfManagedByTrueCommand(),
         this.loadFailoverStatus(),
@@ -194,6 +194,7 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private subscribeToLoginBannerUpdates(): void {
     this.actions$.pipe(ofType(loginBannerUpdated)).subscribe(({ loginBanner }) => {
+      this.window.sessionStorage.removeItem('loginBannerDismissed');
       this.patchState({ loginBanner });
     });
   }
