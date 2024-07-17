@@ -1,4 +1,7 @@
-TrueNAS {{ productType$ | async | mapValue: productTypeLabels }} ® © {{ copyrightYear$ | async }}
+TrueNAS {{ product() }} ® © {{ copyrightYear() }}
+@if (!withIxLogo()) {
+  -
+}
 <a
   href="https://www.ixsystems.com/"
   target="_blank"
@@ -6,9 +9,9 @@ TrueNAS {{ productType$ | async | mapValue: productTypeLabels }} ® © {{ copyri
   ixTest="copyright"
 >
   @if (withIxLogo()) {
-    <img class="ix-logo" src="assets/images/ix_logo_full.png" alt="iX Systems">
+    <img class="ix-logo" src="assets/images/ix_logo_full.png" alt="iXsystems, Inc.">
   } @else {
-    - iXsystems, Inc
+    iXsystems, Inc.
   }
 </a>
 
