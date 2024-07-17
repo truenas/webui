@@ -6,7 +6,9 @@
 
 <!-- If necessary provide testing instructions or refer reviewer to ticket. -->
 
-**Are docs changes needed?**
+### Downstream
+<!--- Note downstream areas that can be affected with a brief reasoning after "|" of each -->
 
-* [ ] No, there are no user-facing changes.
-* [ ] Yes and I will `doc_impact` label to Jira ticket.
+|Affects         |Reasoning
+|----------------|-------------------------------
+|Documentation   |
