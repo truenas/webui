@@ -65,7 +65,7 @@
       </div>
       <div class="details-item">
         <div class="label">{{ 'Description' | translate }}:</div>
-        <div class="value">{{ disk?.description | orNotAvailable }}</div>
+        <div class="value">{{ disk.description || ('N/A' | translate) }}</div>
       </div>
     </mat-card-content>
   }
