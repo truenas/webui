@@ -1,0 +1,99 @@
+.arrow-element {
+  align-items: center;
+  animation: float 1.5s infinite ease-in-out;
+  background: var(--primary);
+  border: 3px solid var(--fg1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  opacity: 0;
+  padding: 15px;
+  position: absolute;
+  transition: opacity 0.3s;
+  width: 130px;
+  z-index: 1000;
+}
+
+.arrow-tip {
+  height: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+
+  &::after {
+    border-left: 3px solid var(--fg1);
+    border-top: 0;
+    bottom: 5.6px;
+    content: '';
+    height: 23.4px;
+    left: -12.1px;
+    position: absolute;
+    transform: rotate(-44deg);
+    width: 25px;
+  }
+
+  &::before {
+    border-left: 3px solid var(--fg1);
+    border-top: 0;
+    content: '';
+    height: 24.4px;
+    left: -11.9px;
+    position: absolute;
+    top: 4.5px;
+    transform: rotate(41deg);
+    width: 28px;
+  }
+}
+
+.arrow-right {
+  .arrow-tip {
+    border-bottom: 15px solid transparent;
+    border-right: 15px solid var(--primary);
+    border-top: 15px solid transparent;
+    left: -14px;
+
+    &::after {
+      bottom: -11.4px;
+      content: '';
+      left: 1.9px;
+    }
+
+    &::before {
+      content: '';
+      left: 2.2px;
+      top: -10.5px;
+    }
+  }
+
+  &.arrow-element {
+    border-bottom-right-radius: 8px;
+    border-left: 0;
+    border-top-right-radius: 8px;
+  }
+}
+
+.arrow-left {
+  .arrow-tip {
+    border-bottom: 15px solid transparent;
+    border-left: 15px solid var(--primary);
+    border-top: 15px solid transparent;
+    right: -14px;
+  }
+
+  &.arrow-element {
+    border-bottom-left-radius: 8px;
+    border-right: 0;
+    border-top-left-radius: 8px;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}

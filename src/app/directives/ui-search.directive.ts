@@ -1,7 +1,9 @@
 import {
   Directive, Input, ElementRef, Renderer2, OnInit,
   OnDestroy,
+  Inject,
 } from '@angular/core';
+import { WINDOW } from 'app/helpers/window.helper';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -35,6 +37,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private elementRef: ElementRef<HTMLElement>,
     private searchDirectives: UiSearchDirectivesService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -75,21 +78,71 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     }, searchDelayConst * 1.5);
   }
 
-  private highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
+  highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
     if (!anchorRef) return;
 
-    this.renderer.addClass(anchorRef, 'search-element-highlighted');
+    const arrowPointer = this.createArrowPointer();
 
     if (shouldClick) setTimeout(() => anchorRef.click(), searchDelayConst);
 
     setTimeout(() => {
       anchorRef.focus();
       anchorRef.scrollIntoView();
-      document.querySelector<HTMLElement>('.rightside-content-hold').scrollBy(0, -20);
+      document.querySelector<HTMLElement>('.rightside-content-hold')?.scrollBy(0, -20);
+
+      if (!shouldClick) this.positionArrowPointer(anchorRef, arrowPointer);
     }, searchDelayConst);
 
+    setTimeout(() => this.removeArrowPointer(arrowPointer), searchDelayConst * 15);
+
     setTimeout(() => {
-      this.renderer.removeClass(anchorRef, 'search-element-highlighted');
-    }, searchDelayConst * 15);
+      document.addEventListener('click', () => this.removeArrowPointer(arrowPointer), { once: true });
+      document.addEventListener('keydown', () => this.removeArrowPointer(arrowPointer), { once: true });
+    });
+  }
+
+  private positionArrowPointer(anchorRef: HTMLElement, arrowElement: HTMLElement): void {
+    const rect = anchorRef.getBoundingClientRect();
+    const viewportWidth = this.window.innerWidth;
+
+    if (rect.top === 0) {
+      return;
+    }
+
+    const topPosition = `${this.window.scrollY + rect.top + rect.height / 2 - 15}px`;
+    let leftPosition = `${this.window.scrollX + rect.right + 20}px`;
+
+    if (rect.right + 140 > viewportWidth) {
+      leftPosition = `${this.window.scrollX + rect.left - 150}px`;
+      this.renderer.addClass(arrowElement, 'arrow-left');
+    } else {
+      this.renderer.addClass(arrowElement, 'arrow-right');
+    }
+
+    this.renderer.setStyle(arrowElement, 'top', topPosition);
+    this.renderer.setStyle(arrowElement, 'left', leftPosition);
+    this.renderer.setStyle(arrowElement, 'opacity', '1');
+
+    this.renderer.appendChild(this.window.document.body, arrowElement);
+  }
+
+  private removeArrowPointer(arrowElement: HTMLElement): void {
+    this.renderer.setStyle(arrowElement, 'opacity', '0');
+    setTimeout(() => {
+      if (arrowElement.parentNode) {
+        arrowElement.parentNode.removeChild(arrowElement);
+      }
+    }, 300);
+  }
+
+  private createArrowPointer(): HTMLElement {
+    const arrowElement = this.renderer.createElement('div') as HTMLElement;
+    this.renderer.addClass(arrowElement, 'arrow-element');
+
+    const arrowTip = this.renderer.createElement('div') as HTMLElement;
+    this.renderer.addClass(arrowTip, 'arrow-tip');
+    this.renderer.appendChild(arrowElement, arrowTip);
+
+    return arrowElement;
   }
 }
