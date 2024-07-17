@@ -167,14 +167,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   }
 
   ngOnInit(): void {
-    runInInjectionContext(this.environmentInjector, () => {
-      this.getLayoutSupportedWidgets = toSignal(of(this.widgetRegistryEntries).pipe(
-        switchMap((widgets) => combineLatest(this.getVisibilityList(widgets))),
-        map(([widgets, visibilityList]) => this.filterHiddenWidgets(widgets, visibilityList)),
-        map((widgets) => this.filterUnsupportedWidgets(widgets)),
-        map((widgets) => widgets.map(([type, widget]) => ({ ...widget, type: type as WidgetType }))),
-      ));
-    });
+    this.setLayoutSupportedWidgets();
   }
 
   ngAfterViewInit(): void {
@@ -205,6 +198,17 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
     this.categorySubscription?.unsubscribe();
     this.typeSubscription?.unsubscribe();
     this.settingsContainer?.clear();
+  }
+
+  private setLayoutSupportedWidgets(): void {
+    runInInjectionContext(this.environmentInjector, () => {
+      this.getLayoutSupportedWidgets = toSignal(of(this.widgetRegistryEntries).pipe(
+        switchMap((widgets) => combineLatest(this.getVisibilityList(widgets))),
+        map(([widgets, visibilityList]) => this.filterHiddenWidgets(widgets, visibilityList)),
+        map((widgets) => this.filterUnsupportedWidgets(widgets)),
+        map((widgets) => widgets.map(([type, widget]) => ({ ...widget, type: type as WidgetType }))),
+      ));
+    });
   }
 
   private getVisibilityList(
