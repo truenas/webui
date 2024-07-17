@@ -104,16 +104,20 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   private positionArrowPointer(anchorRef: HTMLElement, arrowElement: HTMLElement): void {
     const rect = anchorRef.getBoundingClientRect();
     const viewportWidth = this.window.innerWidth;
+    const arrowMaxWidth = 130;
+    const arrowRightOffset = 60;
+    const arrowLeftOffset = 70;
+    const arrowTopOffset = 22;
 
     if (rect.top === 0) {
       return;
     }
 
-    const topPosition = `${this.window.scrollY + rect.top + rect.height / 2 - 55}px`;
-    let leftPosition = `${this.window.scrollX + rect.right - 15}px`;
+    const topPosition = `${this.window.scrollY + rect.top + rect.height / 2 - arrowTopOffset}px`;
+    let leftPosition = `${this.window.scrollX + rect.right - arrowLeftOffset}px`;
 
-    if (rect.right + 140 > viewportWidth) {
-      leftPosition = `${this.window.scrollX + rect.left - 120}px`;
+    if (rect.right + arrowMaxWidth > viewportWidth) {
+      leftPosition = `${this.window.scrollX + rect.left - arrowRightOffset}px`;
       this.renderer.addClass(arrowElement, 'arrow-left');
     } else {
       this.renderer.addClass(arrowElement, 'arrow-right');
