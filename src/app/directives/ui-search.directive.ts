@@ -109,11 +109,11 @@ export class UiSearchDirective implements OnInit, OnDestroy {
       return;
     }
 
-    const topPosition = `${this.window.scrollY + rect.top + rect.height / 2 - 15}px`;
-    let leftPosition = `${this.window.scrollX + rect.right + 20}px`;
+    const topPosition = `${this.window.scrollY + rect.top + rect.height / 2 - 55}px`;
+    let leftPosition = `${this.window.scrollX + rect.right - 15}px`;
 
     if (rect.right + 140 > viewportWidth) {
-      leftPosition = `${this.window.scrollX + rect.left - 150}px`;
+      leftPosition = `${this.window.scrollX + rect.left - 115}px`;
       this.renderer.addClass(arrowElement, 'arrow-left');
     } else {
       this.renderer.addClass(arrowElement, 'arrow-right');
@@ -138,10 +138,6 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   private createArrowPointer(): HTMLElement {
     const arrowElement = this.renderer.createElement('div') as HTMLElement;
     this.renderer.addClass(arrowElement, 'arrow-element');
-
-    const arrowTip = this.renderer.createElement('div') as HTMLElement;
-    this.renderer.addClass(arrowTip, 'arrow-tip');
-    this.renderer.appendChild(arrowElement, arrowTip);
 
     return arrowElement;
   }
