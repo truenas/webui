@@ -78,7 +78,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     }, searchDelayConst * 1.5);
   }
 
-  highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
+  private highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
     if (!anchorRef) return;
 
     const arrowPointer = this.createArrowPointer();
