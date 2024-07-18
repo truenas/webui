@@ -37,6 +37,17 @@
           fill: var(--primary) !important;
         }
       }
+
+      &.selected-vdev-disk {
+        filter: brightness(1.5);
+        stroke: white;
+        stroke-dasharray: none;
+        stroke-width: 4px;
+
+        &.tinted {
+          fill: var(--primary) !important;
+        }
+      }
     }
   }
 }

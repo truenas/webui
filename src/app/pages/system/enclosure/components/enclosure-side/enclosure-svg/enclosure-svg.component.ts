@@ -113,15 +113,56 @@ export class EnclosureSvgComponent implements OnDestroy {
   });
 
   private highlightSelectedSlot = effect(() => {
-    Object.values(this.overlayRects).forEach((overlay) => overlay.classList.remove('selected'));
+    const selectedSlot = this.selectedSlot();
+    const slots = this.slots();
 
-    if (!this.selectedSlot()) {
+    this.clearSelectionStylesFromAllSlots();
+
+    if (!selectedSlot) {
       return;
     }
 
-    const slotOverlay = this.overlayRects[this.selectedSlot().drive_bay_number];
-    this.renderer.addClass(slotOverlay, 'selected');
+    this.addSelectedStyles(selectedSlot);
+    this.addSelectedVdevDisksStyles(selectedSlot, slots);
   });
+
+  private clearSelectionStylesFromAllSlots(): void {
+    Object.values(this.overlayRects).forEach((overlay) => {
+      overlay.classList.remove('selected');
+      overlay.classList.remove('selected-vdev-disk');
+    });
+  }
+
+  private addSelectedStyles(selectedSlot: DashboardEnclosureSlot): void {
+    const slotOverlay = this.overlayRects[selectedSlot.drive_bay_number];
+    this.renderer.addClass(slotOverlay, 'selected');
+  }
+
+  private addSelectedVdevDisksStyles(
+    selectedSlot: DashboardEnclosureSlot,
+    allSlots: DashboardEnclosureSlot[],
+  ): void {
+    const selectedVdevDisks = selectedSlot.pool_info?.vdev_disks.map(
+      (diskInfo) => diskInfo.dev,
+    ).filter(
+      (disk) => disk !== selectedSlot.dev,
+    );
+
+    if (!selectedVdevDisks?.length) {
+      return;
+    }
+    const selectedVdevDisksDriveBayNumbers = [];
+    for (const slot of allSlots) {
+      if (selectedVdevDisks.includes(slot.dev)) {
+        selectedVdevDisksDriveBayNumbers.push(slot.drive_bay_number);
+      }
+    }
+
+    for (const vdevDiskDriveBayNumber of selectedVdevDisksDriveBayNumbers) {
+      const vdevDiskSlotOverlay = this.overlayRects[vdevDiskDriveBayNumber];
+      this.renderer.addClass(vdevDiskSlotOverlay, 'selected-vdev-disk');
+    }
+  }
 
   private clearOverlays(): void {
     Object.values(this.overlayRects).forEach((overlay) => overlay.remove());
