@@ -10,8 +10,6 @@
 }
 
 .svg-container {
-  fill-opacity: 0.3;
-
   &.static {
     pointer-events: none;
   }
@@ -20,6 +18,7 @@
     .overlay-rect {
       cursor: pointer;
       fill: var(--black);
+      fill-opacity: 0.3;
       transition: fill-opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
 
       &:hover {
