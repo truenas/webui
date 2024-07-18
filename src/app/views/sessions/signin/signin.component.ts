@@ -50,8 +50,6 @@ export class SigninComponent implements OnInit {
       switchMap((text) => this.dialog.fullScreenDialog(null, text, true, true).pipe(take(1))),
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
-    });
+    ).subscribe();
   }
 }

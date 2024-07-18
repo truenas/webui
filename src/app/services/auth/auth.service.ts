@@ -214,6 +214,7 @@ export class AuthService {
             }
 
             this.isLoggedIn$.next(true);
+            this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
             return this.authToken$.pipe(
               take(1),
               map(() => LoginResult.Success),
