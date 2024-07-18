@@ -144,7 +144,6 @@ export class AuthService {
 
   loginWithToken(): Observable<LoginResult> {
     if (!this.token) {
-      this.window.sessionStorage.removeItem('loginBannerDismissed');
       return of(LoginResult.NoToken);
     }
 
