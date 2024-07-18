@@ -19,7 +19,7 @@
   }
 
   .error {
-    font-family: monospace;
+    font-family: var(--font-family-monospace);
     white-space: pre-line;
   }
 }

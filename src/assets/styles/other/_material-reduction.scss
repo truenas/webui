@@ -45,7 +45,7 @@ small {font-size: 0.833em;}
 
 span.code {
   background: rgba(255, 255, 255, 0.1);
-  font-family: 'Inconsolata', monospace;
+  font-family: var(--font-family-monospace);
   opacity: 0.75;
 }
 
