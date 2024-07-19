@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { sub } from 'date-fns';
+import { subHours, subMinutes } from 'date-fns';
 import {
   Observable, Subject, combineLatestWith, debounceTime, filter,
-  forkJoin, map, repeat, shareReplay, switchMap, timer,
+  forkJoin, map, repeat, shareReplay, switchMap, take, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -92,30 +92,29 @@ export class WidgetResourcesService {
     }),
   );
 
-  cpuUpdate(minutes = 1): Observable<ReportingData[]> {
+  cpuLastMinuteStats(minutes = 1): Observable<ReportingData[]> {
     return this.serverTime$.pipe(
+      take(1),
       switchMap((serverTime) => {
-        return this.ws.call('reporting.netdata_get_data', [[{
-          name: 'cpu',
-        }], {
-          end: Math.floor(serverTime.getTime() / 1000),
-          start: Math.floor(sub(serverTime, { minutes }).getTime() / 1000),
-        }]);
+        const end = Math.floor(serverTime.getTime() / 1000);
+        const start = Math.floor(subMinutes(serverTime, minutes).getTime() / 1000);
+
+        return this.ws.call('reporting.netdata_get_data', [[{ name: 'cpu' }], { end, start }]);
       }),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
 
-  networkInterfaceUpdate(interfaceName: string): Observable<ReportingData[]> {
+  networkInterfaceLastHourStats(interfaceName: string): Observable<ReportingData[]> {
     return this.serverTime$.pipe(
+      take(1),
       switchMap((serverTime) => {
+        const end = Math.floor(serverTime.getTime() / 1000);
+        const start = Math.floor(subHours(serverTime, 1).getTime() / 1000);
         return this.ws.call('reporting.netdata_get_data', [[{
           identifier: interfaceName,
           name: 'interface',
-        }], {
-          end: Math.floor(serverTime.getTime() / 1000),
-          start: Math.floor(sub(serverTime, { hours: 1 }).getTime() / 1000),
-        }]);
+        }], { end, start }]);
       }),
       shareReplay({ bufferSize: 1, refCount: true }),
     );

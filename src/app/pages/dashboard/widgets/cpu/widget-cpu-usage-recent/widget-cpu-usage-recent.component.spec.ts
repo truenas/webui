@@ -5,6 +5,7 @@ import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { oneMinuteMillis } from 'app/constants/time.constant';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetCpuUsageRecentComponent } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-recent/widget-cpu-usage-recent.component';
@@ -14,11 +15,11 @@ import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetCpuUsageRecentComponent', () => {
   let spectator: Spectator<WidgetCpuUsageRecentComponent>;
+  let startDate: number;
+
   const createComponent = createComponentFactory({
     component: WidgetCpuUsageRecentComponent,
-    imports: [
-      NgxSkeletonLoaderModule,
-    ],
+    imports: [NgxSkeletonLoaderModule],
     declarations: [
       MockDirective(BaseChartDirective),
     ],
@@ -26,19 +27,29 @@ describe('WidgetCpuUsageRecentComponent', () => {
       mockProvider(
         WidgetResourcesService,
         {
-          cpuUpdate: jest.fn(() => of([
+          cpuLastMinuteStats: jest.fn(() => of([
             {
               name: 'cpu',
               data: [
-                [1714583020, 80.1, 12.2],
-                [1714586020, 50.3, 15.9],
-                [1714589020, 55.2, 16.8],
+                [0, 80.1, 12.2],
+                [0, 50.3, 15.9],
+                [0, 55.2, 16.8],
               ],
               legend: ['time', 'user', 'system'],
-              start: 1714583020,
-              end: 1714589020,
+              start: 0,
+              end: 0,
             },
           ])),
+          realtimeUpdates$: of({
+            fields: {
+              cpu: {
+                average: {
+                  user: 10,
+                  system: 20,
+                },
+              },
+            },
+          }),
         },
       ),
       provideMockStore({
@@ -69,6 +80,7 @@ describe('WidgetCpuUsageRecentComponent', () => {
         size: SlotSize.Half,
       },
     });
+    startDate = Date.now() - oneMinuteMillis;
   });
 
   it('shows title', () => {
@@ -86,18 +98,18 @@ describe('WidgetCpuUsageRecentComponent', () => {
         {
           label: 'User',
           data: [
-            { x: 1714583020000, y: 80.1 },
-            { x: 1714586020000, y: 50.3 },
-            { x: 1714589020000, y: 55.2 },
+            { x: startDate, y: 80.1 },
+            { x: startDate + 1000, y: 50.3 },
+            { x: startDate + 2000, y: 55.2 },
           ],
           pointBackgroundColor: 'blue',
         },
         {
           label: 'System',
           data: [
-            { x: 1714583020000, y: 12.2 },
-            { x: 1714586020000, y: 15.9 },
-            { x: 1714589020000, y: 16.8 },
+            { x: startDate, y: 12.2 },
+            { x: startDate + 1000, y: 15.9 },
+            { x: startDate + 2000, y: 16.8 },
           ],
           pointBackgroundColor: 'orange',
         },

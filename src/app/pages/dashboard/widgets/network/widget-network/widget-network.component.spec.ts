@@ -62,7 +62,7 @@ describe('WidgetNetworkComponent', () => {
             },
           },
         }),
-        networkInterfaceUpdate: jest.fn(() => of([
+        networkInterfaceLastHourStats: jest.fn(() => of([
           {
             name: 'interface',
             identifier: 'ens1',
