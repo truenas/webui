@@ -10,6 +10,7 @@ import { environmentTemplate, environmentTs } from './variables';
 
 interface ConfigVariables {
   remote: string;
+  buildYear: number;
   mockConfig: {
     enabled: boolean;
     controllerModel: string;
@@ -20,6 +21,7 @@ interface ConfigVariables {
 
 const defaults: ConfigVariables = {
   remote: '_REMOTE_',
+  buildYear: new Date().getFullYear(),
   mockConfig: {
     enabled: false,
     controllerModel: EnclosureModel.M40,
@@ -37,6 +39,7 @@ export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void
   const configTemplate = getConfigTemplate();
   const configToWrite = configTemplate
     .replace('_REMOTE_', stringify(valuesToWrite.remote))
+    .replace('_BUILD_YEAR_', stringify(valuesToWrite.buildYear))
     .replace('_MOCK_ENABLED_', stringify(Boolean(valuesToWrite.mockConfig.enabled)))
     .replace('_MOCK_CONTROLLER_', printModel(valuesToWrite.mockConfig.controllerModel))
     .replace('_MOCK_EXPANSIONS_', printEnumArray({
