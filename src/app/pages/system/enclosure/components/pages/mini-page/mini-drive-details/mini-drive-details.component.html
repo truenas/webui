@@ -61,3 +61,9 @@
     </li>
   }
 </ul>
+
+@if (selectedSlot().supports_identify_light) {
+  <h3>{{ 'Identify Light' | translate }}</h3>
+
+  <ix-identify-light></ix-identify-light>
+}

@@ -30,7 +30,7 @@
   height: 100%;
   overflow: auto;
 
-  @media (max-width: $breakpoint-md) {
+  @media (max-width: $breakpoint-sm) {
     flex-wrap: wrap;
   }
 
@@ -38,7 +38,7 @@
     align-items: center;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 2px;
     justify-content: center;
     width: 25%;
 
@@ -56,7 +56,7 @@
   .details {
     border-left: solid 1px var(--lines);
     overflow: auto;
-    padding: 0 8px;
+    padding: 0 12px;
     width: 75%;
 
     @media (max-width: $breakpoint-md) {
