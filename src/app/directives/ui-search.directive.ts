@@ -96,7 +96,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     setTimeout(() => this.removeArrowPointer(arrowPointer), searchDelayConst * 15);
 
     setTimeout(() => {
-      ['click', 'keydown', 'scroll'].forEach((event) => {
+      ['click', 'keydown'].forEach((event) => {
         this.window.addEventListener(event, () => this.removeArrowPointer(arrowPointer), { once: true });
       });
     });
