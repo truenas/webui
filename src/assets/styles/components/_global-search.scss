@@ -5,27 +5,18 @@
   opacity: 0;
   position: absolute;
   transition: opacity 0.3s;
-  width: 130px;
   z-index: 1000;
 
-  &::after {
-    background-image: url('assets/images/right-arrow.svg');
-    background-repeat: no-repeat;
-    background-size: contain;
-    content: '';
-    display: block;
-    height: 50px;
-    position: relative;
-    transform: rotate(180deg);
-    width: 100%;
+  &.arrow-left {
+    rotate: 0deg;
+  }
+
+  &.arrow-right {
+    margin-top: -3px;
+    rotate: 180deg;
   }
 }
 
-.arrow-left {
-  &.arrow-element::after {
-    transform: rotate(0);
-  }
-}
 
 @keyframes float {
   0%,

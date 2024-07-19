@@ -96,18 +96,19 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     setTimeout(() => this.removeArrowPointer(arrowPointer), searchDelayConst * 15);
 
     setTimeout(() => {
-      document.addEventListener('click', () => this.removeArrowPointer(arrowPointer), { once: true });
-      document.addEventListener('keydown', () => this.removeArrowPointer(arrowPointer), { once: true });
+      ['click', 'keydown', 'scroll'].forEach((event) => {
+        this.window.addEventListener(event, () => this.removeArrowPointer(arrowPointer), { once: true });
+      });
     });
   }
 
   private positionArrowPointer(anchorRef: HTMLElement, arrowElement: HTMLElement): void {
     const rect = anchorRef.getBoundingClientRect();
     const viewportWidth = this.window.innerWidth;
-    const arrowMaxWidth = 130;
-    const arrowRightOffset = 60;
-    const arrowLeftOffset = 70;
-    const arrowTopOffset = 22;
+    const arrowMaxWidth = 90;
+    const arrowRightOffset = 80;
+    const arrowLeftOffset = 10;
+    const arrowTopOffset = 25;
 
     if (rect.top === 0) {
       return;
@@ -140,9 +141,25 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   }
 
   private createArrowPointer(): HTMLElement {
-    const arrowElement = this.renderer.createElement('div') as HTMLElement;
-    this.renderer.addClass(arrowElement, 'arrow-element');
+    const svgElement = this.renderer.createElement('svg', 'http://www.w3.org/2000/svg') as HTMLElement;
+    this.renderer.setAttribute(svgElement, 'width', '90');
+    this.renderer.setAttribute(svgElement, 'height', '50');
+    this.renderer.setAttribute(svgElement, 'viewBox', '0 0 700 700');
 
-    return arrowElement;
+    const gElement = this.renderer.createElement('g', 'http://www.w3.org/2000/svg') as HTMLElement;
+    this.renderer.setAttribute(gElement, 'transform', 'matrix(0,-1,1,0,28.57143,680.00001)');
+
+    const pathElement = this.renderer.createElement('path', 'http://www.w3.org/2000/svg') as HTMLElement;
+    this.renderer.setAttribute(pathElement, 'd', 'M 680.00001,-27.858649 C 680.00001,-26.000219 330.00773,672.12987 329.42789,671.42805 C 327.4824,669.07328 -20.639627,-28.032809 -19.999107,-28.291219 C -19.580737,-28.459999 59.298143,5.3997002 155.28729,46.952552 L 329.81303,122.50321 L 504.05513,46.965887 C 599.8883,5.4203742 678.68037,-28.571419 679.14863,-28.571419 C 679.61689,-28.571419 680.00001,-28.250669 680.00001,-27.858649 z');
+    this.renderer.setAttribute(pathElement, 'fill', 'var(--primary)');
+    this.renderer.setAttribute(pathElement, 'stroke', 'var(--fg1)');
+    this.renderer.setAttribute(pathElement, 'stroke-width', '40');
+
+    this.renderer.appendChild(gElement, pathElement);
+    this.renderer.appendChild(svgElement, gElement);
+
+    this.renderer.addClass(svgElement, 'arrow-element');
+
+    return svgElement;
   }
 }
