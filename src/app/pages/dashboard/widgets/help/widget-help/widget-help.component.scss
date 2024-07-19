@@ -1,4 +1,4 @@
-@import 'scss-imports/cssvars';
+@import 'scss-imports/variables';
 
 .card {
   height: 100%;
@@ -25,6 +25,10 @@
       .lines {
         padding: 16px 0;
         row-gap: 24px;
+
+        @media (max-width: $breakpoint-tablet) {
+          row-gap: 12px;
+        }
       }
 
       .open-source {
@@ -43,6 +47,10 @@
 
     &.quarter {
       padding: 8px;
+
+      @media (max-width: $breakpoint-tablet) {
+        padding-bottom: 0;
+      }
 
       &.enterprise {
         padding: 16px 16px 0;
