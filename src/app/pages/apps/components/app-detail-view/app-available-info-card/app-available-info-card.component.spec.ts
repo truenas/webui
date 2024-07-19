@@ -3,6 +3,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
@@ -30,6 +31,7 @@ describe('AppAvailableInfoCardComponent', () => {
     component: AppAvailableInfoCardComponent,
     imports: [
       CleanLinkPipe,
+      OrNotAvailablePipe,
     ],
     providers: [
       mockProvider(ApplicationsService, {

@@ -21,6 +21,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DevicesComponent } from 'app/pages/storage/modules/devices/components/devices/devices.component';
 import {
@@ -78,6 +79,7 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     CastPipe,
     FileSizePipe,
     CopyButtonComponent,
+    OrNotAvailablePipe,
   ],
   declarations: [
     DevicesComponent,
