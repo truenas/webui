@@ -19,6 +19,9 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import {
+  yesNoColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -62,6 +65,10 @@ export class SmbCardComponent implements OnInit {
       propertyName: 'enabled',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Audit Logging'),
+      propertyName: 'audit',
     }),
     actionsColumn({
       cssClass: 'wide-actions',

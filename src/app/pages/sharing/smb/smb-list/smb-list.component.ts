@@ -18,6 +18,9 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import {
+  yesNoColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -77,6 +80,10 @@ export class SmbListComponent implements OnInit {
           },
         });
       },
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Audit Logging'),
+      propertyName: 'audit',
     }),
     actionsColumn({
       actions: [
