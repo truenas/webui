@@ -44,8 +44,8 @@ describe('MiniDriveDetailsComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
     selectedSlotSignal.set(slot);
+    spectator = createComponent();
     getItemValue = getItemValueFactory(spectator);
   });
 
