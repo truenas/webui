@@ -80,7 +80,6 @@ describe('WidgetCpuUsageRecentComponent', () => {
         size: SlotSize.Half,
       },
     });
-    startDate = Date.now() - oneMinuteMillis;
   });
 
   it('shows title', () => {
@@ -89,6 +88,7 @@ describe('WidgetCpuUsageRecentComponent', () => {
 
   it('shows a chart with cpu usage', () => {
     const chart = spectator.query(BaseChartDirective);
+    startDate = Date.now() - oneMinuteMillis;
     expect(chart).not.toBeNull();
     expect(chart.type).toBe('line');
 
