@@ -4,6 +4,7 @@ import {
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   ElementRef,
   input,
@@ -13,10 +14,11 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { delay } from 'rxjs';
+import { delay, pairwise } from 'rxjs';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -44,6 +46,13 @@ export class EnclosureSvgComponent implements OnDestroy {
   readonly enableMouseEvents = input(true);
   readonly slotTintFn = input<TintingFunction>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
+  readonly selectedOldNewValuePair = toSignal(toObservable(this.selectedSlot).pipe(pairwise()));
+  readonly previousSelectedVdevDisks = computed(() => {
+    const [prevSelectedSlot] = this.selectedOldNewValuePair();
+    return prevSelectedSlot?.pool_info?.vdev_disks?.length
+      ? [...prevSelectedSlot.pool_info.vdev_disks.map((disk) => disk.dev)]
+      : [];
+  });
 
   private keyDownListener: () => void;
   private clickListener: () => void;
@@ -130,6 +139,7 @@ export class EnclosureSvgComponent implements OnDestroy {
     Object.values(this.overlayRects).forEach((overlay) => {
       overlay.classList.remove('selected');
       overlay.classList.remove('selected-vdev-disk');
+      overlay.classList.remove('not-selected-vdev-disk');
     });
   }
 
@@ -152,15 +162,22 @@ export class EnclosureSvgComponent implements OnDestroy {
       return;
     }
     const selectedVdevDisksDriveBayNumbers = [];
+    const notSelectedVdevDisksDriveBayNumbers = [];
     for (const slot of allSlots) {
       if (selectedVdevDisks.includes(slot.dev)) {
         selectedVdevDisksDriveBayNumbers.push(slot.drive_bay_number);
+      } else if (slot.drive_bay_number !== selectedSlot.drive_bay_number) {
+        notSelectedVdevDisksDriveBayNumbers.push(slot.drive_bay_number);
       }
     }
 
     for (const vdevDiskDriveBayNumber of selectedVdevDisksDriveBayNumbers) {
       const vdevDiskSlotOverlay = this.overlayRects[vdevDiskDriveBayNumber];
       this.renderer.addClass(vdevDiskSlotOverlay, 'selected-vdev-disk');
+    }
+    for (const notVdevDiskDriveBayNumber of notSelectedVdevDisksDriveBayNumbers) {
+      const vdevDiskSlotOverlay = this.overlayRects[notVdevDiskDriveBayNumber];
+      this.renderer.addClass(vdevDiskSlotOverlay, 'not-selected-vdev-disk');
     }
   }
 
@@ -216,7 +233,28 @@ export class EnclosureSvgComponent implements OnDestroy {
   private addInteractionListeners(slot: DashboardEnclosureSlot): void {
     const overlay = this.overlayRects[slot.drive_bay_number];
 
-    this.clickListener = this.renderer.listen(overlay, 'click', () => this.selectedSlot.set(slot));
+    this.clickListener = this.renderer.listen(overlay, 'click', () => {
+      const selectedSlot = this.selectedSlot();
+      const newSlotExists = !!slot;
+      const prevSlotExists = !!selectedSlot;
+      const prevSlotVdevDisks = prevSlotExists ? selectedSlot.pool_info?.vdev_disks.map((disk) => disk.dev) : [];
+
+      if (!newSlotExists) {
+        this.selectedSlot.set(undefined);
+        return;
+      }
+
+      if (!prevSlotExists) {
+        this.selectedSlot.set(slot);
+        return;
+      }
+
+      if (prevSlotVdevDisks.includes(slot.dev)) {
+        this.selectedSlot.set(slot);
+      } else {
+        this.selectedSlot.set(undefined);
+      }
+    });
 
     this.keyDownListener = this.renderer.listen(
       overlay,

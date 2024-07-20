@@ -48,6 +48,11 @@
           fill: var(--primary) !important;
         }
       }
+
+      &.not-selected-vdev-disk {
+        fill: black;
+        opacity: 0.2;
+      }
     }
   }
 }
