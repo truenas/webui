@@ -35,6 +35,10 @@ export class DisksOverviewComponent {
     return [...Object.values(this.selectedEnclosure().elements?.[EnclosureElementType.SasExpander] || {})];
   });
 
+  readonly unhealthyPoolsInfo = computed(() => {
+    return this.poolsInfo().filter((info) => info.disk_status !== EnclosureDiskStatus.Online);
+  });
+
   readonly failedDisks = computed(() => {
     const slots = this.selectedEnclosureSlots();
     return slots.filter((slot) => slot.pool_info?.disk_status === EnclosureDiskStatus.Faulted);
