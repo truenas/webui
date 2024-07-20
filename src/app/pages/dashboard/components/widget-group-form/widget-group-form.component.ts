@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, signal,
 } from '@angular/core';
-import {
-  FormBuilder, FormControl, ValidationErrors, Validators,
-} from '@angular/forms';
+import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { tap } from 'rxjs';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
@@ -44,18 +42,16 @@ export class WidgetGroupFormComponent {
   ]);
 
   protected layoutControl = new FormControl(WidgetGroupLayout.Full, [Validators.required]);
+  protected readonly layoutsMap = widgetGroupIcons;
 
   protected settingsHasErrors = computed<boolean>(() => {
     const validationErrors = this.validationErrors().slice(0, layoutToSlotSizes[this.group().layout].length);
     return validationErrors.some((errors) => !!Object.keys(errors).length);
   });
 
-  protected readonly layoutsMap = widgetGroupIcons;
-
   constructor(
     protected chainedRef: ChainedRef<WidgetGroup>,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
   ) {
     this.setupLayoutUpdates();
     this.setInitialFormValues();
@@ -160,7 +156,8 @@ export class WidgetGroupFormComponent {
       const newGroup: WidgetGroup = { layout: group.layout, slots: [] };
       const slotsCount = Math.max(layoutToSlotSizes[newGroup.layout].length, group.slots.length);
       for (let i = 0; i < slotsCount; i++) {
-        if (i as SlotPosition === slot.slotPosition) {
+        const slotPosition = i as SlotPosition;
+        if (slotPosition === slot.slotPosition) {
           newGroup.slots.push({
             type: slot.type,
             settings: slot.settings || undefined,

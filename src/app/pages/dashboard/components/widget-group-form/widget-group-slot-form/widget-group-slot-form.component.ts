@@ -176,9 +176,11 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
 
   setValuesFromInput(): void {
     this.clearUpdates();
-    const slotConfig = this.slotConfig();
+    this.setLayoutSupportedWidgets();
 
+    const slotConfig = this.slotConfig();
     this.slot.set(slotConfig);
+
     if (!slotConfig.type) {
       this.form.controls.category.setValue(null);
       this.updateSelectedCategory(null);
