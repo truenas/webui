@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { parse } from 'date-fns';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { trackById } from 'app/helpers/track-by.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -28,8 +27,6 @@ export class IpmiEventsDialogComponent implements OnInit {
     title: this.translate.instant('No events to display.'),
     type: EmptyType.NoPageData,
   };
-
-  protected readonly trackById = trackById;
 
   constructor(
     private ws: WebSocketService,
