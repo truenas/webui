@@ -69,7 +69,7 @@ describe('EnclosureStore', () => {
         enclosures,
         isLoading: false,
         selectedEnclosureIndex: 0,
-        selectedSlot: undefined,
+        selectedSlotNumber: null,
         selectedView: EnclosureView.Pools,
         selectedSide: undefined,
       });
@@ -84,7 +84,7 @@ describe('EnclosureStore', () => {
         enclosures,
         isLoading: false,
         selectedEnclosureIndex: 1,
-        selectedSlot: undefined,
+        selectedSlotNumber: null,
         selectedView: EnclosureView.Pools,
         selectedSide: undefined,
       });
@@ -103,9 +103,9 @@ describe('EnclosureStore', () => {
     it('updates selected slot', () => {
       const slot = enclosures[0].elements[EnclosureElementType.ArrayDeviceSlot][1];
 
-      spectator.service.selectSlot(slot);
+      spectator.service.selectSlot(slot.drive_bay_number);
 
-      expect(spectator.service.state().selectedSlot).toBe(slot);
+      expect(spectator.service.state().selectedSlotNumber).toBe(slot.drive_bay_number);
     });
   });
 
@@ -120,7 +120,7 @@ describe('EnclosureStore', () => {
         enclosures,
         isLoading: false,
         selectedEnclosureIndex: 1,
-        selectedSlot: enclosures[1].elements[EnclosureElementType.ArrayDeviceSlot][4],
+        selectedSlotNumber: enclosures[1].elements[EnclosureElementType.ArrayDeviceSlot][4].drive_bay_number,
         selectedView: EnclosureView.Pools,
         selectedSide: undefined,
       });
