@@ -66,7 +66,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   theme: Theme;
   timeFormat = '%H:%M';
-  culling = 6;
   controlUid = `chart_${UUID.UUID()}`;
 
   @Output() zoomChange = new EventEmitter<number[]>();
