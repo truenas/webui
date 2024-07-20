@@ -95,17 +95,12 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
     return [...initialStats, ...cachedStats].slice(-3600);
   });
 
-  protected chartLabels = computed(() => {
-    const data = this.networkStats();
-    const startDate = Date.now() - oneHourMillis - oneMinuteMillis;
-    return data.map((_, index) => (startDate + index * 1000));
-  });
-
   protected chartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
     const response = this.networkStats();
     const networkInterfaceName = this.interfaceId();
-    const labels = this.chartLabels();
+    const startDate = Date.now() - oneHourMillis - oneMinuteMillis;
+    const labels = response.map((_, index) => (startDate + index * 1000));
 
     return {
       datasets: [

@@ -3,6 +3,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { oneHourMillis, oneMinuteMillis } from 'app/constants/time.constant';
 import { NetworkInterfaceType, NetworkInterfaceAliasType, LinkState } from 'app/enums/network-interface.enum';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
@@ -14,6 +15,8 @@ import { ThemeService } from 'app/services/theme/theme.service';
 
 describe('WidgetNetworkComponent', () => {
   let spectator: Spectator<WidgetNetworkComponent>;
+  let startDate: number;
+
   const createComponent = createComponentFactory({
     component: WidgetNetworkComponent,
     imports: [
@@ -71,22 +74,8 @@ describe('WidgetNetworkComponent', () => {
               [0, 8728.161792, 1992.3273728],
             ],
             legend: ['time', 'received', 'sent'],
-            start: 1714583020,
-            end: 1714586620,
-            aggregations: {
-              min: {
-                received: 0,
-                sent: 0.3679756,
-              },
-              mean: {
-                received: 2.9719816804221155,
-                sent: 29.53915262221609,
-              },
-              max: {
-                received: 68.91254,
-                sent: 258.6983,
-              },
-            },
+            start: 0,
+            end: 0,
           },
         ])),
       }),
@@ -132,6 +121,7 @@ describe('WidgetNetworkComponent', () => {
 
     it('shows a chart with network traffic', fakeAsync(() => {
       spectator.tick(1);
+      startDate = Date.now() - oneHourMillis - oneMinuteMillis;
       const chart = spectator.query(NetworkChartComponent);
       expect(chart).not.toBeNull();
 
@@ -147,8 +137,9 @@ describe('WidgetNetworkComponent', () => {
             pointRadius: 0,
             tension: 0.2,
             data: [
-              { x: 1714583020000, y: 7728161.791999999 },
-              { x: 1714583021000, y: 8728161.792000001 },
+              { x: startDate, y: 7728161.791999999 },
+              { x: startDate + 1000, y: 8728161.792000001 },
+              { x: startDate + 2000, y: 16384 },
             ],
           },
           {
@@ -160,8 +151,9 @@ describe('WidgetNetworkComponent', () => {
             pointRadius: 0,
             tension: 0.2,
             data: [
-              { x: 1714583020000, y: -992327.3728 },
-              { x: 1714583021000, y: -1992327.3728 },
+              { x: startDate, y: -992327.3728 },
+              { x: startDate + 1000, y: -1992327.3728 },
+              { x: startDate + 2000, y: -32768 },
             ],
           },
         ],
@@ -209,6 +201,7 @@ describe('WidgetNetworkComponent', () => {
 
     it('shows a chart with network traffic', fakeAsync(() => {
       spectator.tick(1);
+      startDate = Date.now() - oneHourMillis - oneMinuteMillis;
       const chart = spectator.query(NetworkChartComponent);
       expect(chart).not.toBeNull();
 
@@ -224,8 +217,9 @@ describe('WidgetNetworkComponent', () => {
             pointRadius: 0,
             tension: 0.2,
             data: [
-              { x: 1714583020000, y: 7728161.791999999 },
-              { x: 1714583021000, y: 8728161.792000001 },
+              { x: startDate, y: 7728161.791999999 },
+              { x: startDate + 1000, y: 8728161.792000001 },
+              { x: startDate + 2000, y: 16384 },
             ],
           },
           {
@@ -237,8 +231,9 @@ describe('WidgetNetworkComponent', () => {
             pointRadius: 0,
             tension: 0.2,
             data: [
-              { x: 1714583020000, y: -992327.3728 },
-              { x: 1714583021000, y: -1992327.3728 },
+              { x: startDate, y: -992327.3728 },
+              { x: startDate + 1000, y: -1992327.3728 },
+              { x: startDate + 2000, y: -32768 },
             ],
           },
         ],
