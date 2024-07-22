@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -144,5 +145,15 @@ describe('CloudBackupCardComponent', () => {
       'cloud_backup.update',
       [1, { enabled: true }],
     );
+  });
+
+  it('navigates to the details page when View Details button is pressed', async () => {
+    const router = spectator.inject(Router);
+    const navigateSpy = jest.spyOn(router, 'navigate').mockImplementation();
+
+    const viewDetailsIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'visibility' }), 1, 5);
+    await viewDetailsIcon.click();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/data-protection', 'cloud-backup'], { fragment: '1' });
   });
 });
