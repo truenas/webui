@@ -123,8 +123,8 @@ describe('SmbCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Path', 'Description', 'Enabled', ''],
-      ['smb123', '/mnt/APPS/smb1', 'pool', '', ''],
+      ['Name', 'Path', 'Description', 'Enabled', 'Audit Logging', ''],
+      ['smb123', '/mnt/APPS/smb1', 'pool', '', 'No', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -132,7 +132,7 @@ describe('SmbCardComponent', () => {
   });
 
   it('shows form to edit an existing SMB Share when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 4);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
@@ -141,7 +141,7 @@ describe('SmbCardComponent', () => {
   });
 
   it('shows confirmation to delete SMB Share when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 4);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -161,7 +161,7 @@ describe('SmbCardComponent', () => {
   });
 
   it('handles edit Share ACL', async () => {
-    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 4);
+    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 5);
     await editIcon.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
@@ -176,7 +176,7 @@ describe('SmbCardComponent', () => {
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation();
 
-    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 4);
+    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 5);
     await editIcon.click();
 
     expect(router.navigate).toHaveBeenCalledWith(
