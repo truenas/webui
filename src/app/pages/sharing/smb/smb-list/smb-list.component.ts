@@ -27,6 +27,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
+import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -124,7 +125,7 @@ export class SmbListComponent implements OnInit {
           iconName: 'security',
           tooltip: helptextSharingSmb.action_edit_acl,
           requiredRoles: this.requiredRoles,
-          disabled: (row) => of(!row.path.replace('/mnt/', '').includes('/')),
+          disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => {
             if (row.locked) {
               this.lockedPathDialog(row.path);
