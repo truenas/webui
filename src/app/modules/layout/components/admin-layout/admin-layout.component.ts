@@ -9,6 +9,7 @@ import {
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { environment } from 'environments/environment';
 import { map } from 'rxjs';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -38,7 +39,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly productType$ = this.sysGeneralService.getProductType$;
-  readonly copyrightYear$ = this.sysGeneralService.getCopyrightYear$;
+  readonly copyrightYear = environment.buildYear;
   readonly productTypeLabels = productTypeLabels;
 
   get sidenavWidth(): string {
