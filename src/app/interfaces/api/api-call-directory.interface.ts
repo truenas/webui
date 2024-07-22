@@ -457,7 +457,7 @@ export interface ApiCallDirectory {
   'webui.enclosure.dashboard': { params: void; response: DashboardEnclosure[] };
   'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
   'enclosure.set_slot_status': { params: [enclosureId: string, slot: number, status: EnclosureSlotStatus ]; response: void };
-  'enclosure2.set_slot_status': { params: SetDriveBayLightStatus; response: void };
+  'enclosure2.set_slot_status': { params: [SetDriveBayLightStatus]; response: void };
 
   // Failover
   'failover.become_passive': { params: void; response: void };

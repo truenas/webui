@@ -30,7 +30,7 @@ describe('CopyrightLineComponent', () => {
   });
 
   it('shows copyright line with product type and year of build', () => {
-    expect(spectator.fixture.nativeElement).toHaveText('TrueNAS SCALE ® © 2022');
+    expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS SCALE ® © ${new Date().getFullYear()}`);
     expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
   });
 });

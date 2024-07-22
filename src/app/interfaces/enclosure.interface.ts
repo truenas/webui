@@ -81,6 +81,7 @@ export interface DashboardEnclosureSlot {
   status: EnclosureStatus;
   dev: string;
   supports_identify_light?: boolean;
+  drive_bay_light_status: DriveBayLightStatus | null;
   size?: number;
   model?: string;
   is_top: boolean;

@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  tap, map, filter, switchMap, BehaviorSubject,
+  tap, map, filter, switchMap, BehaviorSubject, of,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -19,9 +19,13 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import {
+  yesNoColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -63,6 +67,10 @@ export class SmbCardComponent implements OnInit {
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),
+    yesNoColumn({
+      title: this.translate.instant('Audit Logging'),
+      propertyName: 'audit',
+    }),
     actionsColumn({
       cssClass: 'wide-actions',
       actions: [
@@ -75,6 +83,7 @@ export class SmbCardComponent implements OnInit {
         {
           iconName: 'security',
           tooltip: this.translate.instant('Edit Filesystem ACL'),
+          disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => this.doFilesystemAclEdit(row),
           requiredRoles: this.requiredRoles,
         },

@@ -32,7 +32,7 @@ export class MiniEnclosureComponent {
       return;
     }
 
-    this.store.selectSlot(slot);
+    this.store.selectSlot(slot.drive_bay_number);
   }
 
   readonly slots = computed(() => {
