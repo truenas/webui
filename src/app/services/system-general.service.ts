@@ -5,12 +5,14 @@ import {
   Subject, Observable,
 } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { miniSeries, serverSeries } from 'app/constants/server-series.constant';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -162,5 +164,25 @@ export class SystemGeneralService {
 
   updateDone(): void {
     this.updateIsDone$.next();
+  }
+
+  getProductImageSrc(systemInfo: SystemInfo): string | null {
+    const systemProduct = systemInfo.system_product;
+    const getProductImageName = (productName: string): string | null => {
+      if (productName?.includes('MINI')) {
+        const getImage = Object.values(miniSeries).find(
+          (series) => series.images.includes(productName),
+        )?.pathImg;
+        return getImage || null;
+      }
+      const product = serverSeries.find((series) => productName?.includes(series));
+      if (product) {
+        return `/servers/${product}.png`;
+      }
+      return null;
+    };
+
+    const imgName = getProductImageName(systemProduct);
+    return imgName != null ? 'assets/images' + (imgName.startsWith('/') ? imgName : ('/' + imgName)) : null;
   }
 }

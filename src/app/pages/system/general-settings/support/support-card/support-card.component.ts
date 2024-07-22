@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,12 +14,13 @@ import { GiB } from 'app/constants/bytes.constant';
 import { oneDayMillis } from 'app/constants/time.constant';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { getMiniImagePath, getServerProduct, isRackmount } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -30,6 +32,7 @@ import { supportCardElements } from 'app/pages/system/general-settings/support/s
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -46,11 +49,11 @@ export class SupportCardComponent implements OnInit {
   protected readonly searchableElements = supportCardElements;
 
   isProduction: boolean;
-  productImage = 'ix-original-cropped.png';
-  isProductImageRack = false;
+  isWiderImage = false;
   extraMargin = true;
   systemInfo: SystemInfoInSupport;
   hasLicense = false;
+  productImageSrc = signal<string>(null);
   licenseInfo: LicenseInfoInSupport = null;
   links = [helptext.docHub, helptext.forums, helptext.licensing];
   ticketText = helptext.ticket;
@@ -71,25 +74,16 @@ export class SupportCardComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
+    private sysService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
       this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
-      if (systemInfo.system_product?.includes('MINI')) {
-        const getImage = getMiniImagePath(systemInfo.system_product);
-        if (isRackmount(systemInfo.system_product)) {
-          this.isProductImageRack = true;
-          this.extraMargin = true;
-        } else {
-          this.isProductImageRack = false;
-          this.extraMargin = false;
-        }
-        this.productImage = getImage || 'ix-original-cropped.png';
-      } else {
-        this.getServerImage(systemInfo.system_product);
-      }
+
+      this.setupProductImage(systemInfo);
+
       if (systemInfo.license) {
         this.hasLicense = true;
         this.licenseInfo = { ...systemInfo.license };
@@ -105,9 +99,11 @@ export class SupportCardComponent implements OnInit {
       });
   }
 
-  get productImageSrc(): string {
-    // TODO: Duplicating code in widget-sys-info. Figure out some universal way of doing this.
-    return 'assets/images' + (this.productImage.startsWith('/') ? this.productImage : ('/' + this.productImage));
+  private setupProductImage(systemInfo: SystemInfo): void {
+    const productImageUrl = this.sysService.getProductImageSrc(systemInfo) || 'assets/images/ix-original-cropped.png';
+    this.productImageSrc.set(productImageUrl);
+    this.isWiderImage = !productImageUrl.includes('ix-original');
+    this.extraMargin = !productImageUrl.includes('ix-original');
   }
 
   parseLicenseInfo(): void {
@@ -137,11 +133,9 @@ export class SupportCardComponent implements OnInit {
     const product = getServerProduct(sysProduct);
 
     if (product) {
-      this.isProductImageRack = true;
-      this.productImage = `/servers/${product}.png`;
+      this.isWiderImage = true;
     } else {
-      this.productImage = 'ix-original-cropped.png';
-      this.isProductImageRack = false;
+      this.isWiderImage = false;
       this.extraMargin = false;
     }
   }
