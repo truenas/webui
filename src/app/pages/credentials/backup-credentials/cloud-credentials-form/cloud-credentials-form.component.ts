@@ -9,7 +9,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, of, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
@@ -267,5 +267,11 @@ export class CloudCredentialsFormComponent implements OnInit {
     const formRef = this.providerFormContainer.createComponent(formClass);
     formRef.instance.provider = this.selectedProvider;
     this.providerForm = formRef.instance;
+
+    if (this.providerForm?.form) {
+      timer(0).pipe(untilDestroyed(this)).subscribe(() => {
+        this.providerForm.form.updateValueAndValidity();
+      });
+    }
   }
 }

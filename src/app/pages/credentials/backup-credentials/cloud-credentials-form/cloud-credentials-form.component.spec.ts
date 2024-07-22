@@ -51,10 +51,11 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
       })) as BaseProviderFormComponent['getSubmitAttributes'];
       beforeSubmit = jest.fn(() => of(true)) as BaseProviderFormComponent['beforeSubmit'];
       form = {
+        patchValue: jest.fn(),
         get invalid(): boolean {
           return false;
         },
-      } as FormGroup;
+      } as unknown as FormGroup;
     }),
   };
 });
