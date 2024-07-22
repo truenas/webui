@@ -236,7 +236,7 @@ describe('CloudBackupFormComponent', () => {
         Password: '1234',
         'Post-script': '',
         'Pre-script': '',
-        Schedule: 'Weekly (0 0 * * 0)  On Sundays at 00:00 (12:00 AM)',
+        Schedule: 'Weekly (0 0 * * sun)  On Sundays at 00:00 (12:00 AM)',
         'Source Path': '/mnt/my pool',
         'Take Snapshot': false,
         Transfers: '5',
