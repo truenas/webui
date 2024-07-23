@@ -16,20 +16,30 @@
   </mat-card-header>
 
   <mat-card-content>
-    <div *ngIf="stat?.user || isLoading" class="file-information">
-      <div class="details-item">
-        <div class="label">{{ 'Owner:' | translate }}</div>
-        <div *ngIf="!isLoading; else loaderDetailsItem" class="value">
-          {{ stat.user }}
+    @if (stat?.user || isLoading) {
+      <div class="file-information">
+        <div class="details-item">
+          <div class="label">{{ 'Owner:' | translate }}</div>
+          @if (!isLoading) {
+            <div class="value">
+              {{ stat.user }}
+            </div>
+          } @else {
+            <ngx-skeleton-loader></ngx-skeleton-loader>
+          }
+        </div>
+        <div class="details-item">
+          <div class="label">{{ 'Group:' | translate }}</div>
+          @if (!isLoading) {
+            <div class="value">
+              {{ stat.group }}
+            </div>
+          } @else {
+            <ngx-skeleton-loader></ngx-skeleton-loader>
+          }
         </div>
       </div>
-      <div class="details-item">
-        <div class="label">{{ 'Group:' | translate }}</div>
-        <div *ngIf="!isLoading; else loaderDetailsItem" class="value">
-          {{ stat.group }}
-        </div>
-      </div>
-    </div>
+    }
 
     @if (acl) {
       <div class="permissions">
@@ -62,9 +72,6 @@
   </mat-card-content>
 </mat-card>
 
-<ng-template #loaderDetailsItem>
-  <ngx-skeleton-loader></ngx-skeleton-loader>
-</ng-template>
 
 @if (isLoading) {
   <div class="permissions loader-permissions">

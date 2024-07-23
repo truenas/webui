@@ -24,14 +24,7 @@
         <div class="capacity">{{ selectedSlot().size | ixFileSize }}</div>
         <div class="disk-actions">
           @if (selectedSlot().supports_identify_light) {
-            <button
-              mat-button
-              color="primary"
-              ixTest="identify-drive"
-              (click)="identifyDrive()"
-            >
-              {{ 'Identify Drive' | translate }}
-            </button>
+            <ix-identify-light></ix-identify-light>
           }
         </div>
       </div>

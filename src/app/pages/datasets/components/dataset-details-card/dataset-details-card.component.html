@@ -29,26 +29,20 @@
   <mat-card-content>
     <div class="details-item">
       <div class="label">{{ 'Type' | translate }}:</div>
-      <div class="value">
-        <ng-container *ngIf="dataset.type; else notAvailable">
-          {{ dataset.type }}
-        </ng-container>
-      </div>
+      <div class="value">{{ dataset.type | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Sync' | translate }}:</div>
-      <div class="value">
-        <ng-container *ngIf="dataset?.sync?.value; else notAvailable">
-          {{ dataset.sync.value }}
-        </ng-container>
-      </div>
+      <div class="value">{{ dataset?.sync?.value | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Compression Level' | translate }}:</div>
       <div class="value">
-        <ng-container *ngIf="datasetCompression; else notAvailable">
+        @if (datasetCompression) {
           {{ datasetCompression }}
-        </ng-container>
+        } @else {
+          {{ 'N/A' | translate }}
+        }
       </div>
     </div>
     @if (!isZvol) {
@@ -61,11 +55,7 @@
     }
     <div class="details-item">
       <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
-      <div class="value">
-        <ng-container *ngIf="dataset?.deduplication?.value; else notAvailable">
-          {{ dataset.deduplication.value }}
-        </ng-container>
-      </div>
+      <div class="value">{{ dataset?.deduplication?.value | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
@@ -118,6 +108,3 @@
   }
 </mat-card>
 
-<ng-template #notAvailable>
-  {{ 'N/A' | translate }}
-</ng-template>

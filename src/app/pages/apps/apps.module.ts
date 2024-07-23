@@ -37,6 +37,7 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
@@ -175,6 +176,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     BulkListItemComponent,
     FileSizePipe,
     NetworkSpeedPipe,
+    OrNotAvailablePipe,
   ],
 })
 export class AppsModule { }

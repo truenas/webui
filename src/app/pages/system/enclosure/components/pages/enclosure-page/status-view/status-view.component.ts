@@ -22,7 +22,7 @@ export class StatusViewComponent {
   ) {}
 
   protected onSlotSelected(slot: DashboardEnclosureSlot): void {
-    this.store.selectSlot(slot);
+    this.store.selectSlot(slot.drive_bay_number);
   }
 
   readonly diskStatusTint = diskStatusTint;

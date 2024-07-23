@@ -1,13 +1,12 @@
 import { signal } from '@angular/core';
-import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import {
   DiskDetailsOverviewComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/disk-details-overview/disk-details-overview.component';
@@ -36,6 +35,7 @@ describe('DiskDetailsOverviewComponent', () => {
       MockComponents(
         DiskDetailsComponent,
         DiskIconComponent,
+        IdentifyLightComponent,
       ),
     ],
     providers: [
@@ -44,9 +44,6 @@ describe('DiskDetailsOverviewComponent', () => {
         selectedEnclosure: () => ({ id: 1 }),
         selectSlot: jest.fn(),
       }),
-      mockWebSocket([
-        mockCall('enclosure2.set_slot_status'),
-      ]),
     ],
   });
 
@@ -76,15 +73,7 @@ describe('DiskDetailsOverviewComponent', () => {
     expect(component.selectedSlot).toBe(initialSelectedSlot);
   });
 
-  describe('identify drive button', () => {
-    it('does not show Identify Drive button when slot does not support identification', () => {
-      selectedSlot.set({
-        ...initialSelectedSlot,
-        supports_identify_light: false,
-      });
-      spectator.detectChanges();
-
-      expect(spectator.query(byText('Identify Drive'))).not.toExist();
-    });
+  it('shows identify light when enclosure slot has support for it', () => {
+    expect(spectator.query(IdentifyLightComponent)).toExist();
   });
 });

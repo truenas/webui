@@ -79,6 +79,9 @@ describe('ProactiveComponent', () => {
       'Secondary Phone Number': '+999999999',
       'Secondary Title': 'Cannot connect',
     });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    expect(await saveButton.isDisabled()).toBeFalsy();
   });
 
   it('saves support config when form is submitted', async () => {
