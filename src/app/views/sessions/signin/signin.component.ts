@@ -50,6 +50,9 @@ export class SigninComponent implements OnInit {
       switchMap((text) => this.dialog.fullScreenDialog(null, text, true, true).pipe(take(1))),
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe();
+    ).subscribe(() => {
+      // Restore focus on username input
+      this.window.document?.querySelector<HTMLElement>('[ixAutofocus] input')?.focus();
+    });
   }
 }

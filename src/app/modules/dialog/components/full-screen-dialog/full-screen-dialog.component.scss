@@ -1,4 +1,6 @@
 ::ng-deep {
+  z-index: 99999;
+
   .cdk-overlay-container {
     z-index: 99999;
   }
