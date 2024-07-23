@@ -268,9 +268,11 @@ export class CloudCredentialsFormComponent implements OnInit {
     formRef.instance.provider = this.selectedProvider;
     this.providerForm = formRef.instance;
 
-    if (this.providerForm?.form) {
+    if (this.existingCredential && this.providerForm?.form) {
       timer(0).pipe(untilDestroyed(this)).subscribe(() => {
-        this.providerForm.form.updateValueAndValidity();
+        this.providerForm.form.patchValue({
+          ...this.providerForm.form.value as Record<string, string>,
+        });
       });
     }
   }

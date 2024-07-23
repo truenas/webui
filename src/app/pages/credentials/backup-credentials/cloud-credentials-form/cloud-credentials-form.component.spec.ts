@@ -55,7 +55,7 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
         get invalid(): boolean {
           return false;
         },
-      } as unknown as FormGroup;
+      } as Partial<FormGroup>;
     }),
   };
 });
