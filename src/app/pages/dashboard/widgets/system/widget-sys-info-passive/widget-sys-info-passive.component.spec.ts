@@ -178,7 +178,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
     store$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.query('.container.empty div')).toHaveText('The system is not licensed for HA.');
-    expect(spectator.query('.container.empty small')).toHaveText('Configure dashboard to edit the widget.');
+    expect(spectator.query('.container.empty div')).toHaveText('This system is not licensed for HA.');
+    expect(spectator.query('.container.empty small')).toHaveText('Configure dashboard to edit this widget.');
   });
 });
