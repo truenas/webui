@@ -2,7 +2,7 @@
 <h1 mat-dialog-title>{{ 'IPMI Events' | translate }}</h1>
 <div mat-dialog-content class="events-container">
   @if ((events.length || isLoading)) {
-    @for (event of events; track trackById($index, event)) {
+    @for (event of events; track event.id) {
       <div class="event">
         <div class="event-header">
           <div>{{ getEventDate(event) | formatDateTime }}</div>
