@@ -25,7 +25,7 @@
           (onSelectionChange)="onOptionSelectionChange($event)"
         >
           {{ preset.label | translate }}
-          <span class="crontab">({{ preset.value }})</span>
+          <span class="crontab">({{ preset.value }})</span>&nbsp;
           <span class="preset-description">{{ preset.description }}</span>
         </mat-option>
       }
@@ -49,7 +49,7 @@
         [ixTest]="[controlDirective.name, 'create-custom']"
         (onSelectionChange)="onOptionSelectionChange($event)"
       >
-        {{ 'Create' | translate }}
+        {{ 'Create' | translate }}&nbsp;
         <span class="preset-description">
           {{ 'Custom schedule' | translate }}
         </span>
