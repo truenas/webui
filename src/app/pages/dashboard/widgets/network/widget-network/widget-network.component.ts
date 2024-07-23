@@ -10,6 +10,7 @@ import { ChartData } from 'chart.js';
 import {
   filter, switchMap, map,
   tap,
+  throttleTime,
 } from 'rxjs';
 import { kb } from 'app/constants/bits.constant';
 import { oneHourMillis, oneMinuteMillis } from 'app/constants/time.constant';
@@ -43,6 +44,7 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
   protected interfaceUsage = toSignal(toObservable(this.interfaceId).pipe(
     filter(Boolean),
     switchMap((interfaceId) => this.resources.realtimeUpdates$.pipe(
+      throttleTime(1000),
       map((update) => update.fields.interfaces[interfaceId]),
     )),
     tap((realtimeUpdate) => {
@@ -75,8 +77,7 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
   protected isLoading = computed(() => {
     return this.interface().isLoading
       || !this.interfaceUsage()
-      || !this.networkStats()
-      || !this.chartData();
+      || !this.networkStats();
   });
 
   protected initialNetworkStats = toSignal(toObservable(this.interfaceId).pipe(
