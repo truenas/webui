@@ -112,7 +112,8 @@ export class NetworkComponent implements OnInit {
     }
 
     this.hasPendingChanges = await this.getPendingChanges();
-    this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
+    this.handleWaitingCheckIn(await this.getCheckInWaitingSeconds());
+    this.cdr.markForCheck();
   }
 
   async loadCheckinStatusAfterChange(): Promise<void> {
@@ -121,18 +122,19 @@ export class NetworkComponent implements OnInit {
     }
 
     let hasPendingChanges = await this.getPendingChanges();
-    let checkinWaitingSeconds = await this.getCheckinWaitingSeconds();
+    let checkinWaitingSeconds = await this.getCheckInWaitingSeconds();
 
     // This handles scenario where user made one change, clicked Test and then made another change.
     // TODO: Backend should be deciding to reset timer.
     if (hasPendingChanges && checkinWaitingSeconds > 0) {
       await this.cancelCommit();
       hasPendingChanges = await this.getPendingChanges();
-      checkinWaitingSeconds = await this.getCheckinWaitingSeconds();
+      checkinWaitingSeconds = await this.getCheckInWaitingSeconds();
     }
 
     this.hasPendingChanges = hasPendingChanges;
-    this.handleWaitingCheckin(checkinWaitingSeconds);
+    this.handleWaitingCheckIn(checkinWaitingSeconds);
+    this.cdr.markForCheck();
   }
 
   private listenForHaStatus(): void {
@@ -141,10 +143,11 @@ export class NetworkComponent implements OnInit {
       this.store$.select(selectHaStatus).pipe(filter(Boolean)),
     ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
       this.isHaEnabled = isHa && hasHa;
+      this.cdr.markForCheck();
     });
   }
 
-  private getCheckinWaitingSeconds(): Promise<number> {
+  private getCheckInWaitingSeconds(): Promise<number> {
     return lastValueFrom(
       this.ws.call('interface.checkin_waiting'),
     );
@@ -162,7 +165,7 @@ export class NetworkComponent implements OnInit {
     );
   }
 
-  private handleWaitingCheckin(seconds: number): void {
+  private handleWaitingCheckIn(seconds: number): void {
     if (seconds !== null) {
       if (seconds > 0 && this.checkinRemaining === null) {
         this.checkinRemaining = Math.round(seconds);
@@ -234,13 +237,13 @@ export class NetworkComponent implements OnInit {
               .pipe(
                 this.loader.withLoader(),
                 this.errorHandler.catchError(),
-                switchMap(() => this.getCheckinWaitingSeconds()),
+                switchMap(() => this.getCheckInWaitingSeconds()),
                 untilDestroyed(this),
               )
               .subscribe((checkInSeconds) => {
                 this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: false }));
                 this.interfacesStore.loadInterfaces();
-                this.handleWaitingCheckin(checkInSeconds);
+                this.handleWaitingCheckIn(checkInSeconds);
                 this.cdr.markForCheck();
               });
           });
