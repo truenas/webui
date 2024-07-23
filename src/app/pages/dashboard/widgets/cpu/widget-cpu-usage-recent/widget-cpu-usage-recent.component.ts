@@ -6,7 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import {
-  filter, map, tap,
+  filter, map, startWith, tap,
 } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -30,7 +30,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
   readonly name = cpuUsageRecentWidget.name;
 
   protected isLoading = computed(() => {
-    return !this.initialCpuStats();
+    return !this.chartData();
   });
 
   protected cpuUsage = toSignal(this.resources.realtimeUpdates$.pipe(
@@ -52,20 +52,14 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
 
       return (update.data as number[][]).slice(-60).map((item) => ([item[userIndex], item[systemIndex]]));
     }),
+    startWith(Array.from({ length: 60 }, () => ([0, 0]))),
   ));
 
   protected cachedCpuStats = signal<number[][]>([]);
-
   protected cpuStats = computed(() => {
     const initialStats = this.initialCpuStats();
     const cachedStats = this.cachedCpuStats();
     return [...initialStats, ...cachedStats].slice(-60);
-  });
-
-  protected chartLabels = computed(() => {
-    const data = this.cpuStats();
-    const startDate = Date.now() - oneMinuteMillis;
-    return data.map((_, index) => (startDate + index * 1000));
   });
 
   constructor(
@@ -77,8 +71,9 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
 
   chartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
-    const labels = this.chartLabels();
+    const startDate = Date.now() - oneMinuteMillis;
     const values = this.cpuStats();
+    const labels = values.map((_, index) => (startDate + (index * 1000)));
 
     return {
       datasets: [

@@ -1,21 +1,18 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
 import { ChartData } from 'chart.js';
 import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { oneMinuteMillis } from 'app/constants/time.constant';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetCpuUsageRecentComponent } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-recent/widget-cpu-usage-recent.component';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetCpuUsageRecentComponent', () => {
   let spectator: Spectator<WidgetCpuUsageRecentComponent>;
-  let startDate: number;
+  const startDate = new Date('2024-07-23'); // 1721692740000
 
   const createComponent = createComponentFactory({
     component: WidgetCpuUsageRecentComponent,
@@ -52,18 +49,6 @@ describe('WidgetCpuUsageRecentComponent', () => {
           }),
         },
       ),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectSystemInfo,
-            value: {
-              model: 'Intel(R) Xeon(R) Silver 4210R CPU',
-              cores: 4,
-              physical_cores: 2,
-            },
-          },
-        ],
-      }),
       mockProvider(ThemeService, {
         currentTheme: jest.fn(() => ({
           blue: 'blue',
@@ -80,6 +65,8 @@ describe('WidgetCpuUsageRecentComponent', () => {
         size: SlotSize.Half,
       },
     });
+    const dateNowStub = jest.fn(() => startDate.getTime());
+    global.Date.now = dateNowStub;
   });
 
   it('shows title', () => {
@@ -88,7 +75,6 @@ describe('WidgetCpuUsageRecentComponent', () => {
 
   it('shows a chart with cpu usage', () => {
     const chart = spectator.query(BaseChartDirective);
-    startDate = Date.now() - oneMinuteMillis;
     expect(chart).not.toBeNull();
     expect(chart.type).toBe('line');
 
@@ -98,18 +84,18 @@ describe('WidgetCpuUsageRecentComponent', () => {
         {
           label: 'User',
           data: [
-            { x: startDate, y: 80.1 },
-            { x: startDate + 1000, y: 50.3 },
-            { x: startDate + 2000, y: 55.2 },
+            { x: 1721692740000, y: 80.1 },
+            { x: 1721692741000, y: 50.3 },
+            { x: 1721692742000, y: 55.2 },
           ],
           pointBackgroundColor: 'blue',
         },
         {
           label: 'System',
           data: [
-            { x: startDate, y: 12.2 },
-            { x: startDate + 1000, y: 15.9 },
-            { x: startDate + 2000, y: 16.8 },
+            { x: 1721692740000, y: 12.2 },
+            { x: 1721692741000, y: 15.9 },
+            { x: 1721692742000, y: 16.8 },
           ],
           pointBackgroundColor: 'orange',
         },
