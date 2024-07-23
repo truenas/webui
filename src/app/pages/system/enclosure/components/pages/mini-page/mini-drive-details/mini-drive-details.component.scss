@@ -13,4 +13,5 @@ h3 {
 
 .overview {
   @include item-list;
+  margin-bottom: 26px;
 }

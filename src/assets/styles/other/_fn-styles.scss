@@ -130,13 +130,13 @@ h6 {
 
 code {
   background: rgba(0, 0, 0, 0.08);
-  font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace !important;
+  font-family: var(--font-family-monospace) !important;
   padding: 8px;
 }
 
 samp {
   background: rgba(180, 180, 180, 0.5);
-  font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace !important;
+  font-family: var(--font-family-monospace) !important;
   padding: 2px;
 }
 

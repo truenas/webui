@@ -41,16 +41,19 @@ describe('MiniEnclosureComponent', () => {
           dev: 'ada1',
           status: EnclosureStatus.Ok,
           is_front: true,
+          drive_bay_number: 1,
         } as DashboardEnclosureSlot,
         2: {
           dev: 'ada2',
           status: EnclosureStatus.Crit,
           is_front: true,
+          drive_bay_number: 2,
         } as DashboardEnclosureSlot,
         3: {
           dev: null,
           status: EnclosureStatus.Ok,
           is_front: true,
+          drive_bay_number: 3,
         } as DashboardEnclosureSlot,
       },
     } as DashboardEnclosureElements,
@@ -100,8 +103,7 @@ describe('MiniEnclosureComponent', () => {
     const enclosureComponent = spectator.query(EnclosureSideStubComponent);
     enclosureComponent.selectedSlot.set(enclosure.elements[EnclosureElementType.ArrayDeviceSlot][1]);
 
-    expect(spectator.inject(EnclosureStore).selectSlot)
-      .toHaveBeenCalledWith(enclosure.elements[EnclosureElementType.ArrayDeviceSlot][1]);
+    expect(spectator.inject(EnclosureStore).selectSlot).toHaveBeenCalledWith(1);
   });
 
   it('unselects slots when an empty slot is clicked on in enclosure svg', () => {

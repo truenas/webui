@@ -23,10 +23,18 @@ export class SystemGeneralService {
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject<void>();
 
+  /**
+   * @deprecated
+   * Use selectIsEnterprise selector instead
+   */
   get isEnterprise(): boolean {
     return this.getProductType() === ProductType.ScaleEnterprise;
   }
 
+  /**
+   * @deprecated
+   * Use selectProductType selector instead
+   */
   getProductType(): ProductType {
     return this.productType;
   }
@@ -40,13 +48,25 @@ export class SystemGeneralService {
     );
   }
 
+  /**
+   * @deprecated
+   * Use selectProductType selector instead
+   */
   getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: false, bufferSize: 1 }));
 
+  /**
+   * @deprecated
+   * Use selectIsEnterprise selector instead
+   */
   readonly isEnterprise$ = this.getProductType$.pipe(
     map((productType) => productType === ProductType.ScaleEnterprise),
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
 
+  /**
+   * @deprecated
+   * Use selectBuildTime selector instead
+   */
   getCopyrightYear$ = this.ws.call('system.build_time').pipe(
     map((buildTime) => {
       return fromUnixTime(buildTime.$date / 1000).getFullYear();

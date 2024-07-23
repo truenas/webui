@@ -34,6 +34,10 @@ import {
 import {
   EnclosureSvgComponent,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
+import {
+  NotSupportedModelComponent,
+} from 'app/pages/system/enclosure/components/enclosure-side/not-supported-model/not-supported-model.component';
+import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
 import {
@@ -155,6 +159,8 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     StatusViewComponent,
     StatusesLegendComponent,
     DiskDetailsOverviewComponent,
+    NotSupportedModelComponent,
+    IdentifyLightComponent,
   ],
   providers: [
     EnclosureStore,

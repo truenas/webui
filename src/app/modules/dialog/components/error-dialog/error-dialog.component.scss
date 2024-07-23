@@ -29,7 +29,7 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
     background: var(--contrast-darker);
     border: 1px solid var(--lines);
     color: var(--fg2);
-    font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
+    font-family: var(--font-family-monospace);
     max-height: $opened-scroll-container-height;
     min-height: 100px;
     overflow: auto;

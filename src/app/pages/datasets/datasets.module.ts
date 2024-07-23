@@ -26,6 +26,7 @@ import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
@@ -90,6 +91,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatIconButton,
     FileSizePipe,
     CopyButtonComponent,
+    OrNotAvailablePipe,
   ],
   declarations: [
     DatasetsManagementComponent,

@@ -1,4 +1,4 @@
-@for (enclosure of enclosures(); track enclosure; let i = $index) {
+@for (enclosure of enclosures(); track enclosure.id; let i = $index) {
   <a
     class="enclosure"
     [class.active]="enclosure.id === selectedEnclosure()"

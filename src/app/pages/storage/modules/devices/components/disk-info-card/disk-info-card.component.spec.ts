@@ -15,6 +15,7 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -28,6 +29,7 @@ describe('DiskInfoCardComponent', () => {
     component: DiskInfoCardComponent,
     imports: [
       FileSizePipe,
+      OrNotAvailablePipe,
     ],
     declarations: [
       MockComponents(CopyButtonComponent),

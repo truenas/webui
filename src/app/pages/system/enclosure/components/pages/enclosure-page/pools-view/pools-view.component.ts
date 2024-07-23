@@ -23,7 +23,7 @@ export class PoolsViewComponent {
   ) {}
 
   protected onSlotSelected(slot: DashboardEnclosureSlot): void {
-    this.store.selectSlot(slot);
+    this.store.selectSlot(slot.drive_bay_number);
   }
 
   readonly slotTintFn = computed(() => {
