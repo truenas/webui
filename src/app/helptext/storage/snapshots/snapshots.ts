@@ -14,7 +14,7 @@ export const helptextSnapshots = {
  This allows the snapshot to be replicated. Cannot be used with a <i>Name</i>.'),
 
   snapshot_add_recursive_placeholder: T('Recursive'),
-  snapshot_add_recursive_tooltip: T('Set to include child datasets of the \
+  snapshot_add_recursive_tooltip: T('Set to include child datasets and zvols of the \
  chosen dataset.'),
 
   snapshot_clone_name_tooltip: T('Name of the new dataset created from the \
