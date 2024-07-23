@@ -21,7 +21,7 @@ import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -210,7 +210,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   setProductImage(): void {
     if (!this.isIxHardware() || !this.systemInfo) return;
     this.productImageSrc.set(
-      this.sysGenService.getProductImageSrc(this.systemInfo)
+      getProductImageSrc(this.systemInfo)
       || 'assets/images/ix-original.svg',
     );
 

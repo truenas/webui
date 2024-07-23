@@ -1,29 +1,30 @@
 import { miniSeries, serverSeries } from 'app/constants/server-series.constant';
 import { Codename } from 'app/enums/codename.enum';
 import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 
 export function getServerProduct(systemProduct: string): string {
   return serverSeries.find((series) => systemProduct?.includes(series));
 }
 
-export function getMiniImagePath(systemProduct: string): string {
-  return Object.values(miniSeries).find((series) => series.images.includes(systemProduct))?.pathImg;
-}
+export function getProductImageSrc(systemInfo: SystemInfo): string | null {
+  const systemProduct = systemInfo.system_product;
+  const getProductImageName = (productName: string): string | null => {
+    if (productName?.includes('MINI')) {
+      const getImage = Object.values(miniSeries).find(
+        (series) => series.images.includes(productName),
+      )?.pathImg;
+      return getImage || null;
+    }
+    const product = serverSeries.find((series) => productName?.includes(series));
+    if (product) {
+      return `/servers/${product}.png`;
+    }
+    return null;
+  };
 
-export function getProductImage(systemProduct: string): string {
-  if (!systemProduct) {
-    return '';
-  }
-
-  let product: string;
-
-  if (systemProduct.includes('MINI')) {
-    product = getMiniImagePath(systemProduct);
-  } else {
-    product = getServerProduct(systemProduct) ? `servers/${getServerProduct(systemProduct)}.png` : 'ix-original.svg';
-  }
-
-  return product ? `assets/images/${product}` : '';
+  const imgName = getProductImageName(systemProduct);
+  return imgName != null ? 'assets/images' + (imgName.startsWith('/') ? imgName : ('/' + imgName)) : null;
 }
 
 /**

@@ -20,7 +20,7 @@ import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedbac
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -32,7 +32,6 @@ import { supportCardElements } from 'app/pages/system/general-settings/support/s
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -74,7 +73,6 @@ export class SupportCardComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private sysService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {
@@ -100,7 +98,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   private setupProductImage(systemInfo: SystemInfo): void {
-    const productImageUrl = this.sysService.getProductImageSrc(systemInfo) || 'assets/images/ix-original-cropped.png';
+    const productImageUrl = getProductImageSrc(systemInfo) || 'assets/images/ix-original-cropped.png';
     this.productImageSrc.set(productImageUrl);
     this.isWiderImage = !productImageUrl.includes('ix-original');
     this.extraMargin = !productImageUrl.includes('ix-original');
