@@ -83,7 +83,7 @@ describe('WidgetGroupSlotComponent', () => {
       slotPosition: SlotPosition.First,
       slotSize: SlotSize.Half,
       settings: undefined,
-      type: WidgetType.CpuUsageRecentWidget,
+      type: WidgetType.CpuUsageRecent,
     });
   });
 });
