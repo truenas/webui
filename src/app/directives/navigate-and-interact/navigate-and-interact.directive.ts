@@ -17,13 +17,10 @@ export class NavigateAndInteractDirective {
   @HostListener('click')
   onClick(): void {
     this.router.navigate(this.navigateRoute(), { fragment: this.navigateHash() }).then(() => {
-      setTimeout(() => {
-        const htmlElement = document.getElementById(this.navigateHash());
-
-        if (htmlElement) {
-          this.handleHashScrollIntoView(htmlElement);
-        }
-      }, 150);
+      const htmlElement = document.getElementById(this.navigateHash());
+      if (htmlElement) {
+        this.handleHashScrollIntoView(htmlElement);
+      }
     });
   }
 
