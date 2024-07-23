@@ -107,10 +107,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  setDescription(desc: string): void {
-    this.description = desc;
-  }
-
   setTitle(title: string): void {
     this.title = title;
   }
@@ -189,21 +185,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
           this.prefailure.emit(err);
         },
       });
-  }
-
-  wspost(path: string, options: unknown): void {
-    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe({
-      next: (response: Job | { job_id: number }) => {
-        this.job = response as Job; // Type is actually not a Job, but a { job_id: number }
-        if (response && 'job_id' in response) {
-          this.jobId = response.job_id;
-        }
-        this.wsshow();
-      },
-      error: (err: HttpErrorResponse) => {
-        this.prefailure.emit(err);
-      },
-    });
   }
 
   wsshow(): void {

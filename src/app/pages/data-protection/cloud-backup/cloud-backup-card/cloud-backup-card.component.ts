@@ -43,7 +43,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CloudBackupCardComponent implements OnInit {
   cloudBackups: CloudBackup[] = [];
   dataProvider: AsyncDataProvider<CloudBackup>;
-  readonly jobState = JobState;
   readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
 
