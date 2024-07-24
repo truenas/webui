@@ -15,6 +15,7 @@ export interface AdvancedConfig {
   isolated_gpu_pci_ids: string[];
   kdump_enabled: boolean;
   motd: string;
+  login_banner: string;
   overprovision: number;
   powerdaemon: boolean;
   sed_user: SedUser;

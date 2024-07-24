@@ -9,3 +9,4 @@ export const systemConfigLoaded = createAction(
 
 export const generalConfigUpdated = createAction('[System Config] General Config Updated');
 export const advancedConfigUpdated = createAction('[System Config] Advanced Config Updated');
+export const loginBannerUpdated = createAction('[System Config] Login Banner Updated', props<{ loginBanner: string }>());

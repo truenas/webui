@@ -108,7 +108,7 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  fullScreenDialog(title: string, message: string, showClose = false): Observable<boolean> {
+  fullScreenDialog(title: string, message: string, showClose = false, pre = false): Observable<boolean> {
     const dialogRef = this.matDialog.open(FullScreenDialogComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
@@ -116,7 +116,7 @@ export class DialogService {
       width: '100%',
       panelClass: 'full-screen-modal',
       disableClose: true,
-      data: { showClose },
+      data: { showClose, pre },
     });
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;

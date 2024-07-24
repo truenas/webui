@@ -24,7 +24,7 @@ import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AccessCardComponent', () => {
   let spectator: Spectator<AccessCardComponent>;
@@ -79,6 +79,12 @@ describe('AccessCardComponent', () => {
               ds_auth: true,
             },
           },
+          {
+            selector: selectAdvancedConfig,
+            value: {
+              login_banner: 'Hello World!',
+            },
+          },
         ],
       }),
       mockProvider(DialogService, {
@@ -111,6 +117,11 @@ describe('AccessCardComponent', () => {
   it('shows whether DS users are allowed access to WebUI', async () => {
     const allowed = (await loader.getAllHarnesses(MatListItemHarness))[1];
     expect(await allowed.getFullText()).toBe('Allow Directory Service users to access WebUI: Yes');
+  });
+
+  it('shows current login banner', async () => {
+    const loginBanner = (await loader.getAllHarnesses(MatListItemHarness))[2];
+    expect(await loginBanner.getFullText()).toBe('Login Banner: Hello World!');
   });
 
   it('opens Token settings form when Configure is pressed', async () => {
