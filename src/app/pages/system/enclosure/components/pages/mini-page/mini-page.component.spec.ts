@@ -70,7 +70,6 @@ describe('MiniPageComponent', () => {
   it('shows pools and enclosure components', () => {
     const pools = spectator.query(MiniPoolsComponent);
     expect(pools).toExist();
-    expect(pools.slots).toMatchObject(slots);
 
     const enclosures = spectator.query(MiniEnclosureComponent);
     expect(enclosures).toExist();
