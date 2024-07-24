@@ -66,7 +66,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   uptimeInterval: Interval;
 
   isMobile$ = this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(map((state) => state.matches));
-  isHaEnabled$ = this.store$.select(selectHaStatus).pipe(filter(Boolean), map(({ hasHa }) => hasHa));
   isUnsupportedHardware$ = this.sysGenService.isEnterprise$.pipe(
     map((isEnterprise) => isEnterprise && !this.isIxHardware()),
   );

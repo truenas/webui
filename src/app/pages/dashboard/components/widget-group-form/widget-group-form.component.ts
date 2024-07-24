@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, signal,
 } from '@angular/core';
-import {
-  FormBuilder, FormControl, ValidationErrors, Validators,
-} from '@angular/forms';
+import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { tap } from 'rxjs';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
@@ -55,7 +53,6 @@ export class WidgetGroupFormComponent {
   constructor(
     protected chainedRef: ChainedRef<WidgetGroup>,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
   ) {
     this.setupLayoutUpdates();
     this.setInitialFormValues();

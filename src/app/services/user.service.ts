@@ -14,7 +14,7 @@ export class UserService {
   protected uncachedGroupQuery = 'group.get_group_obj' as const;
   protected userQuery = 'user.query' as const;
   protected groupQuery = 'group.query' as const;
-  protected queryOptions = { extra: { search_dscache: true }, limit: 50 };
+  protected queryOptions = { limit: 50 };
 
   constructor(protected ws: WebSocketService) {}
 

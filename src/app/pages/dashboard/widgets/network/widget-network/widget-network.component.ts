@@ -1,15 +1,19 @@
 import {
   Component, ChangeDetectionStrategy, input,
   computed,
+  signal,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import {
-  filter, switchMap, throttleTime, map,
+  filter, switchMap, map,
+  tap,
+  throttleTime,
 } from 'rxjs';
 import { kb } from 'app/constants/bits.constant';
+import { oneHourMillis, oneMinuteMillis } from 'app/constants/time.constant';
 import { LinkState, NetworkInterfaceAliasType, linkStateLabelMap } from 'app/enums/network-interface.enum';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
@@ -43,6 +47,17 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
       throttleTime(1000),
       map((update) => update.fields.interfaces[interfaceId]),
     )),
+    tap((realtimeUpdate) => {
+      this.cachedNetworkStats.update((cachedStats) => {
+        return [
+          ...cachedStats,
+          [
+            realtimeUpdate.received_bytes_rate * 8,
+            realtimeUpdate.sent_bytes_rate * 8,
+          ],
+        ].slice(-3600);
+      });
+    }),
   ));
 
   protected linkState = computed(() => {
@@ -62,38 +77,37 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
   protected isLoading = computed(() => {
     return this.interface().isLoading
       || !this.interfaceUsage()
-      || !this.reportingData()
-      || !this.chartData();
+      || !this.networkStats();
   });
 
-  protected reportingData = toSignal(toObservable(this.interfaceId).pipe(
+  protected initialNetworkStats = toSignal(toObservable(this.interfaceId).pipe(
     filter(Boolean),
-    switchMap((interfaceId) => this.resources.networkInterfaceUpdate(interfaceId)),
+    switchMap((interfaceId) => this.resources.networkInterfaceLastHourStats(interfaceId)),
     filter((response) => !!response.length),
     map((response) => {
-      const updatedResponse = response[0];
-      (updatedResponse.data as number[][]).forEach((row, index) => {
-        // remove first column and convert kilobits/s to bits/s
-        (updatedResponse.data as number[][])[index] = row.slice(1).map((value) => value * kb);
-      });
-      return updatedResponse;
+      const [update] = response;
+      return (update.data as number[][]).map((row) => (row = row.slice(1).map((value) => value * kb)));
     }),
   ));
+  protected cachedNetworkStats = signal<number[][]>([]);
+  protected networkStats = computed(() => {
+    const cachedStats = this.cachedNetworkStats();
+    const initialStats = this.initialNetworkStats();
+    return [...initialStats, ...cachedStats].slice(-3600);
+  });
 
   protected chartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
-    const response = this.reportingData();
+    const response = this.networkStats();
     const networkInterfaceName = this.interfaceId();
-
-    const labels: number[] = (response.data as number[][]).map((_, index) => {
-      return (response.start + index) * 1000;
-    });
+    const startDate = Date.now() - oneHourMillis - oneMinuteMillis;
+    const labels = response.map((_, index) => (startDate + index * 1000));
 
     return {
       datasets: [
         {
           label: this.translate.instant('Incoming [{networkInterfaceName}]', { networkInterfaceName }),
-          data: (response.data as number[][]).map((item, index) => ({ x: labels[index], y: item[0] })),
+          data: response.map((item, index) => ({ x: labels[index], y: item[0] })),
           borderColor: currentTheme.blue,
           backgroundColor: currentTheme.blue,
           pointBackgroundColor: currentTheme.blue,
@@ -103,7 +117,7 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
         },
         {
           label: this.translate.instant('Outgoing [{networkInterfaceName}]', { networkInterfaceName }),
-          data: (response.data as number[][]).map((item, index) => ({ x: labels[index], y: -item[1] })),
+          data: response.map((item, index) => ({ x: labels[index], y: -item[1] })),
           borderColor: currentTheme.orange,
           backgroundColor: currentTheme.orange,
           pointBackgroundColor: currentTheme.orange,

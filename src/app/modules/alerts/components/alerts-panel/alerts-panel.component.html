@@ -63,7 +63,7 @@
       </div>
     } @else {
       <div class="alert-list unread-alerts">
-        @for (alert of unreadAlerts; track trackByAlertId($index, alert); let last = $last) {
+        @for (alert of unreadAlerts; track alert.id; let last = $last) {
           <div
             class="alert"
             role="listitem"
@@ -86,7 +86,7 @@
   <div *appLet="dismissedAlerts$ | async as dismissedAlerts">
     @if (dismissedAlerts.length) {
       <div class="alert-list dismissed-alerts">
-        @for (alert of dismissedAlerts; track trackByAlertId($index, alert); let last = $last) {
+        @for (alert of dismissedAlerts; track alert.id; let last = $last) {
           <div
             class="alert"
             role="listitem"

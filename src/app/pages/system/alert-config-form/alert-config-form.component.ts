@@ -10,7 +10,6 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { trackById } from 'app/helpers/track-by.utils';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -39,8 +38,6 @@ export class AlertConfigFormComponent implements OnInit {
   form = this.formBuilder.group({});
   isFormLoading = false;
   readonly helptext = helptextAlertSettings;
-
-  readonly trackById = trackById;
 
   readonly levelOptions$ = of([
     { label: this.translate.instant('INFO'), value: AlertLevel.Info },

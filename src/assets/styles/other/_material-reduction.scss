@@ -846,8 +846,8 @@ body .mat-calendar-next-button::after {
   }
 }
 
-.cdk-overlay-pane {
-  @media(max-width: $breakpoint-sm) {
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+  @media(max-width: $breakpoint-xs) {
     max-width: 95% !important;
     width: inherit;
   }
