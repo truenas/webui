@@ -97,6 +97,14 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
         value: type,
         disabled: !widgetRegistry[type].supportedSizes.includes(this.slotConfig().slotSize),
       };
+    }).sort((a, b) => {
+      // Prioritize enabled items over disabled
+      if (a.disabled !== b.disabled) {
+        return a.disabled ? 1 : -1;
+      }
+
+      // If both items have the same enabled status, sort by name in ascending order
+      return a.label.localeCompare(b.label);
     });
     if (!this.form.controls.type.value || !Array.from(uniqTypes).includes(this.form.controls.type.value)) {
       const firstSupported = typeOptions.find((option) => !option.disabled).value;
