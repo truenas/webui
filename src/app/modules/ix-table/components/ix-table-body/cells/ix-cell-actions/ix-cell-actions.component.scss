@@ -2,7 +2,7 @@
 
 .actions {
   display: flex;
-  gap: 1;
+  gap: 0;
   justify-content: flex-end;
 
   @media(max-width: $breakpoint-sm) {

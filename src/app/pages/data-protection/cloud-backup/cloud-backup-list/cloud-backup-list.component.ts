@@ -2,6 +2,7 @@ import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/l
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -117,23 +118,17 @@ export class CloudBackupListComponent implements OnInit {
     private snackbar: SnackbarService,
     private appLoader: AppLoaderService,
     private breakpointObserver: BreakpointObserver,
+    private route: ActivatedRoute,
     protected emptyService: EmptyService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
-    const cloudBackups$ = this.ws.call('cloud_backup.query').pipe(
-      tap((cloudBackups) => {
-        this.cloudBackups = cloudBackups;
-        const selectedBackup = cloudBackups.find(
-          (cloudBackup) => cloudBackup.id === this.dataProvider?.expandedRow?.id,
-        );
-        this.dataProvider.expandedRow = this.isMobileView ? null : (selectedBackup || cloudBackups[0]);
-        this.expanded(this.dataProvider.expandedRow);
-      }),
-    );
-    this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
-    this.getCloudBackups();
+    this.route.fragment.pipe(
+      tap((id) => this.loadCloudBackups(id)),
+      untilDestroyed(this),
+    ).subscribe();
+
     this.initMobileView();
   }
 
@@ -232,6 +227,24 @@ export class CloudBackupListComponent implements OnInit {
       // focus on details container
       setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
+  }
+
+  private loadCloudBackups(id?: string): void {
+    const cloudBackups$ = this.ws.call('cloud_backup.query').pipe(
+      tap((cloudBackups) => {
+        this.cloudBackups = cloudBackups;
+
+        const selectedBackup = id
+          ? cloudBackups.find((cloudBackup) => cloudBackup.id.toString() === id)
+          : cloudBackups.find((cloudBackup) => cloudBackup.id === this.dataProvider?.expandedRow?.id);
+
+        this.dataProvider.expandedRow = this.isMobileView ? null : (selectedBackup || cloudBackups[0]);
+        this.expanded(this.dataProvider.expandedRow);
+      }),
+    );
+
+    this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
+    this.getCloudBackups();
   }
 
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
