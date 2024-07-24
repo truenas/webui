@@ -31,7 +31,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SchedulerModalComponent implements OnInit {
-  form = this.formBuilder.group({
+  protected form = this.formBuilder.group({
     preset: [''],
     minutes: ['', [Validators.required, this.validators.crontabPartValidator(CrontabPart.Minutes)]],
     hours: ['', [Validators.required, this.validators.crontabPartValidator(CrontabPart.Hours)]],
@@ -134,6 +134,10 @@ export class SchedulerModalComponent implements OnInit {
 
   private setupFormSubscriptions(): void {
     this.form.controls.preset.valueChanges.pipe(untilDestroyed(this)).subscribe((preset) => {
+      if (!preset) {
+        return;
+      }
+
       this.setValuesFromCrontab(preset);
     });
 
@@ -143,6 +147,7 @@ export class SchedulerModalComponent implements OnInit {
       }
 
       this.crontab = this.getCrontabFromForm();
+      this.updatePresetToMatchCrontab();
     });
   }
 
@@ -214,5 +219,13 @@ export class SchedulerModalComponent implements OnInit {
 
   private get areAllWeekdaysSelected(): boolean {
     return this.selectedWeekdays.length === 0 || this.selectedWeekdays.length === 7;
+  }
+
+  private updatePresetToMatchCrontab(): void {
+    const matchingPreset = this.presets.some((preset) => {
+      return preset.value === this.crontab;
+    });
+
+    this.form.patchValue({ preset: matchingPreset ? this.crontab : '' }, { emitEvent: false });
   }
 }

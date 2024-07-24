@@ -78,7 +78,7 @@ describe('SchedulerComponent', () => {
     expect(optionLabels).toEqual([
       'Hourly (0 * * * *)  At the start of each hour',
       'Daily (0 0 * * *)  At 00:00 (12:00 AM)',
-      'Weekly (0 0 * * 0)  On Sundays at 00:00 (12:00 AM)',
+      'Weekly (0 0 * * sun)  On Sundays at 00:00 (12:00 AM)',
       'Monthly (0 0 1 * *)  On the first day of the month at 00:00 (12:00 AM)',
       'Create   Custom schedule',
     ]);
