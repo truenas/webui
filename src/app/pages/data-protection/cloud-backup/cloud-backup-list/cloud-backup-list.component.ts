@@ -125,7 +125,7 @@ export class CloudBackupListComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.fragment.pipe(
-      tap((fragment: string | null) => this.loadCloudBackups(fragment)),
+      tap((id) => this.loadCloudBackups(id)),
       untilDestroyed(this),
     ).subscribe();
 
@@ -229,13 +229,13 @@ export class CloudBackupListComponent implements OnInit {
     }
   }
 
-  private loadCloudBackups(fragment?: string): void {
+  private loadCloudBackups(id?: string): void {
     const cloudBackups$ = this.ws.call('cloud_backup.query').pipe(
       tap((cloudBackups) => {
         this.cloudBackups = cloudBackups;
 
-        const selectedBackup = fragment
-          ? cloudBackups.find((cloudBackup) => cloudBackup.id.toString() === fragment)
+        const selectedBackup = id
+          ? cloudBackups.find((cloudBackup) => cloudBackup.id.toString() === id)
           : cloudBackups.find((cloudBackup) => cloudBackup.id === this.dataProvider?.expandedRow?.id);
 
         this.dataProvider.expandedRow = this.isMobileView ? null : (selectedBackup || cloudBackups[0]);
