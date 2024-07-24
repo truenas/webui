@@ -9,7 +9,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, of, timer } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
@@ -107,15 +107,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     this.loadProviders();
 
     if (this.existingCredential) {
-      this.setCredentialsForEdit();
-    }
-  }
-
-  setCredentialsForEdit(): void {
-    this.commonForm.patchValue(this.existingCredential);
-
-    if (this.providerForm) {
-      this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
+      this.commonForm.patchValue(this.existingCredential);
     }
   }
 
@@ -221,7 +213,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.setNamesInUseValidator(credentials);
           this.renderProviderForm();
           if (this.existingCredential) {
-            this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
+            setTimeout(() => this.providerForm.getFormSetter$().next(this.existingCredential.attributes));
           }
           this.isLoading = false;
           this.cdr.markForCheck();
@@ -267,13 +259,5 @@ export class CloudCredentialsFormComponent implements OnInit {
     const formRef = this.providerFormContainer.createComponent(formClass);
     formRef.instance.provider = this.selectedProvider;
     this.providerForm = formRef.instance;
-
-    if (this.existingCredential && this.providerForm?.form) {
-      timer(0).pipe(untilDestroyed(this)).subscribe(() => {
-        this.providerForm.form.patchValue({
-          ...this.providerForm.form.value as Record<string, string>,
-        });
-      });
-    }
   }
 }
