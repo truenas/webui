@@ -21,7 +21,7 @@ export class WidgetArbitraryTextSettingsComponent implements
   form = this.fb.group({
     widgetTitle: [null as string, [Validators.required, Validators.maxLength(20)]],
     widgetText: [null as string, [Validators.required, Validators.maxLength(130)]],
-    widgetSubText: [null as string, [Validators.maxLength(10)]],
+    widgetSubText: [null as string, [Validators.maxLength(64)]],
   });
 
   private readonly formFieldNames = ['widgetTitle', 'widgetText', 'widgetSubText'];

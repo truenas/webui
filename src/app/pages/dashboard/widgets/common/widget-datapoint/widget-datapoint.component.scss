@@ -22,6 +22,8 @@ mat-card {
     .container {
       align-items: center;
       display: flex;
+      flex-direction: column;
+      gap: 8px;
       height: calc($widget-group-height * 0.3125);
       justify-content: center;
       line-height: normal;
@@ -41,11 +43,10 @@ mat-card {
       }
 
       .sub-text {
-        display: inline-block;
+        display: block;
         font-size: smaller;
+        opacity: 0.5;
         transform: scale(0.75);
-        transform-origin: -15px 15px;
-        vertical-align: sub;
       }
     }
   }

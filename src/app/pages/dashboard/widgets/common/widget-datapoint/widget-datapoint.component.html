@@ -7,19 +7,22 @@
     <div [class]="['container', size()]">
       <div
         fittext
-        [modelToWatch]="text"
+        [modelToWatch]="text()"
         [activateOnResize]="true"
-        [maxFontSize]="maxFontSize"
+        [maxFontSize]="getMaxFontSize(text())"
         [minFontSize]="12"
-      >
-        {{ text() | translate }}
+      >{{ text() | translate }}</div>
 
-        @if (subText) {
-          <div class="sub-text">
-            {{ subText() | translate }}
-          </div>
-        }
-      </div>
+      @if (subText()) {
+        <div
+          fittext
+          class="sub-text"
+          [modelToWatch]="subText()"
+          [activateOnResize]="true"
+          [maxFontSize]="getMaxFontSize(subText())"
+          [minFontSize]="12"
+        >{{ subText() | translate }}</div>
+      }
     </div>
   </mat-card-content>
 </mat-card>
