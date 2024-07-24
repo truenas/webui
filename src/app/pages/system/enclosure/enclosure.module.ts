@@ -55,9 +55,6 @@ import {
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side-switch/enclosure-side-switch.component';
 import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/disk-topology-description/disk-topology-description.component';
 import {
-  PoolsLegendComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-legend/pools-legend.component';
-import {
   PoolsViewComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-view.component';
 import {
@@ -92,6 +89,9 @@ import { MiniPageComponent } from 'app/pages/system/enclosure/components/pages/m
 import {
   MiniPoolsComponent,
 } from 'app/pages/system/enclosure/components/pages/mini-page/mini-pools/mini-pools.component';
+import {
+  PoolsLegendComponent,
+} from 'app/pages/system/enclosure/components/pools-legend/pools-legend.component';
 import {
   SetEnclosureLabelDialogComponent,
 } from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
