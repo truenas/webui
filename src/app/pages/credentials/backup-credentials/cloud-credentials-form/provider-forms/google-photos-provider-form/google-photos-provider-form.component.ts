@@ -4,9 +4,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -18,8 +16,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GooglePhotosProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
-  private formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
-
   form = this.formBuilder.group({
     token: ['', Validators.required],
     client_id: ['', Validators.required],
@@ -40,10 +36,6 @@ export class GooglePhotosProviderFormComponent extends BaseProviderFormComponent
       this.form.patchValue(values);
     });
   }
-
-  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
-    return this.formPatcher$;
-  };
 
   override getSubmitAttributes(): this['form']['value'] {
     return {

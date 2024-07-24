@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject, from, of } from 'rxjs';
+import { from, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import {
@@ -21,12 +21,6 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
     service_account_credentials: ['', Validators.required],
     upload_credentials: [[] as File[]],
   });
-
-  private formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
-
-  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
-    return this.formPatcher$;
-  };
 
   constructor(
     private formBuilder: FormBuilder,

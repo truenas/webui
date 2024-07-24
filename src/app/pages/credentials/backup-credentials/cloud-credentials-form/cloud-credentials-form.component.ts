@@ -213,7 +213,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.setNamesInUseValidator(credentials);
           this.renderProviderForm();
           if (this.existingCredential) {
-            setTimeout(() => this.providerForm.getFormSetter$().next(this.existingCredential.attributes));
+            this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
           }
           this.isLoading = false;
           this.cdr.markForCheck();
