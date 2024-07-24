@@ -37,4 +37,9 @@ export const selectIsEnterprise = createSelector(
   (productType) => productType === ProductType.ScaleEnterprise,
 );
 
+export const selectBuildYear = createSelector(
+  selectSystemInfoState,
+  (state) => state.buildYear,
+);
+
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);

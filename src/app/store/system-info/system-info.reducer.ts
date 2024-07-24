@@ -1,4 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
+import { environment } from 'environments/environment';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import {
@@ -12,6 +13,7 @@ export interface SystemInfoState {
   systemIsStable: boolean;
   productType: ProductType;
   isIxHardware: boolean;
+  buildYear: number;
 }
 
 const initialState: SystemInfoState = {
@@ -20,6 +22,7 @@ const initialState: SystemInfoState = {
   productType: null,
   systemIsStable: false,
   isIxHardware: false,
+  buildYear: environment.buildYear,
 };
 
 export const systemInfoReducer = createReducer(
