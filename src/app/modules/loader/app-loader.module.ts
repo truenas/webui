@@ -13,6 +13,14 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { WithLoadingStateErrorComponent } from './directives/with-loading-state/with-loading-state-error/with-loading-state-error.component';
 import { WithLoadingStateLoaderComponent } from './directives/with-loading-state/with-loading-state-loader/with-loading-state-loader.component';
 
+const components = [
+  AppLoaderComponent,
+  FakeProgressBarComponent,
+  WithLoadingStateDirective,
+  WithLoadingStateErrorComponent,
+  WithLoadingStateLoaderComponent,
+];
+
 @NgModule({
   imports: [
     CommonModule,
@@ -25,11 +33,7 @@ import { WithLoadingStateLoaderComponent } from './directives/with-loading-state
   ],
   providers: [AppLoaderService],
   declarations: [
-    AppLoaderComponent,
-    FakeProgressBarComponent,
-    WithLoadingStateDirective,
-    WithLoadingStateErrorComponent,
-    WithLoadingStateLoaderComponent,
+    ...components,
   ],
   exports: [
     AppLoaderComponent,

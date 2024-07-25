@@ -28,6 +28,25 @@ import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { LetDirective } from './app-let.directive';
 
+const components = [
+  LetDirective,
+  IfNightlyDirective,
+  HasRoleDirective,
+  HasAccessDirective,
+  DisableFocusableElementsDirective,
+  MissingAccessWrapperComponent,
+  RequiresRolesDirective,
+  AutofocusDirective,
+  NavigateAndInteractDirective,
+  StepActivationDirective,
+  NewFeatureIndicatorWrapperComponent,
+  NewFeatureIndicatorDirective,
+  UiSearchDirective,
+  IxDetailsHeightDirective,
+  TextLimiterDirective,
+  TextLimiterTooltipComponent,
+];
+
 @NgModule({
   imports: [
     CommonModule,
@@ -41,40 +60,11 @@ import { LetDirective } from './app-let.directive';
     TestIdModule,
   ],
   declarations: [
-    LetDirective,
-    IfNightlyDirective,
-    HasRoleDirective,
-    HasAccessDirective,
-    DisableFocusableElementsDirective,
-    MissingAccessWrapperComponent,
-    RequiresRolesDirective,
-    AutofocusDirective,
-    NavigateAndInteractDirective,
-    StepActivationDirective,
-    NewFeatureIndicatorWrapperComponent,
-    NewFeatureIndicatorDirective,
-    UiSearchDirective,
-    IxDetailsHeightDirective,
-    TextLimiterDirective,
-    TextLimiterTooltipComponent,
+    ...components,
   ],
   exports: [
-    LetDirective,
-    IfNightlyDirective,
-    HasRoleDirective,
-    HasAccessDirective,
-    DisableFocusableElementsDirective,
-    MissingAccessWrapperComponent,
-    RequiresRolesDirective,
-    AutofocusDirective,
-    NavigateAndInteractDirective,
-    StepActivationDirective,
-    NewFeatureIndicatorWrapperComponent,
-    NewFeatureIndicatorDirective,
-    UiSearchDirective,
+    ...components,
     Ng2FittextModule,
-    IxDetailsHeightDirective,
-    TextLimiterDirective,
   ],
   providers: [
     NewFeatureIndicatorService,
