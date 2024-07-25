@@ -60,13 +60,14 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
-import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
+import { ContainerSettingsComponent } from 'app/pages/apps/components/installed-apps/container-settings/container-settings.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { DockerService } from 'app/pages/apps/store/docker.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -101,7 +102,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppDetailsPanelComponent,
     AppContainersCardComponent,
     AppHistoryCardComponent,
-    KubernetesSettingsComponent,
+    ContainerSettingsComponent,
     AppResourcesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
@@ -177,6 +178,9 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     FileSizePipe,
     NetworkSpeedPipe,
     OrNotAvailablePipe,
+  ],
+  providers: [
+    DockerService,
   ],
 })
 export class AppsModule { }

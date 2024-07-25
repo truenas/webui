@@ -1,3 +1,4 @@
+import { DockerStatusResponse } from 'app/enums/docker-config.interface';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ChartRelease, ChartStatisticsUpdate } from 'app/interfaces/chart-release.interface';
@@ -40,4 +41,5 @@ export interface ApiEventDirectory {
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'smart.test.progress': { response: SmartTestProgressUpdate };
   'kubernetes.state': { response: KubernetesStatusData };
+  'docker.state': { response: DockerStatusResponse };
 }

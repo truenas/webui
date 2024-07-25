@@ -1,3 +1,4 @@
+import { DockerConfig, DockerConfigUpdate } from 'app/enums/docker-config.interface';
 import { SetAcl } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
@@ -132,6 +133,9 @@ export interface ApiJobDirectory {
 
   // KMIP
   'kmip.update': { params: [KmipConfigUpdate]; response: KmipConfig };
+
+  // Docker
+  'docker.update': { params: DockerConfigUpdate; response: DockerConfig };
 
   // Kubernetes
   'kubernetes.update': { params: [Partial<KubernetesConfigUpdate>]; response: KubernetesConfig };
