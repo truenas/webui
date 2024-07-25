@@ -6,17 +6,19 @@ import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.inte
 import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
-import { hostnameWidget } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.definition';
+import {
+  hostnamePassiveWidget,
+} from 'app/pages/dashboard/widgets/system/widget-hostname-passive/widget-hostname-passive.definition';
 
 @Component({
-  selector: 'ix-widget-hostname',
-  templateUrl: './widget-hostname.component.html',
-  styleUrls: ['./widget-hostname.component.scss'],
+  selector: 'ix-widget-hostname-passive',
+  templateUrl: './widget-hostname-passive.component.html',
+  styleUrls: ['./widget-hostname-passive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetHostnameComponent implements WidgetComponent {
+export class WidgetHostnamePassiveComponent implements WidgetComponent {
   size = input.required<SlotSize>();
-  readonly name = hostnameWidget.name;
+  readonly name = hostnamePassiveWidget.name;
 
   systemInfo$ = this.resources.systemInfo$;
 

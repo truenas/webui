@@ -6,18 +6,18 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
-import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.component';
+import { WidgetHostnameActiveComponent } from 'app/pages/dashboard/widgets/system/widget-hostname-active/widget-hostname-active.component';
 
-describe('WidgetHostnameComponent', () => {
-  let spectator: Spectator<WidgetHostnameComponent>;
+describe('WidgetHostnameActiveComponent', () => {
+  let spectator: Spectator<WidgetHostnameActiveComponent>;
   const createComponent = createComponentFactory({
-    component: WidgetHostnameComponent,
+    component: WidgetHostnameActiveComponent,
     declarations: [
       MockComponent(WidgetDatapointComponent),
     ],
   });
 
-  it('renders hostname for the current system', () => {
+  it('renders hostname for the active system', () => {
     spectator = createComponent({
       props: {
         size: SlotSize.Full,

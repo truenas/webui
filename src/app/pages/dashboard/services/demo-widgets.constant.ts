@@ -62,7 +62,7 @@ export const demoWidgets: WidgetGroup[] = [
   {
     layout: WidgetGroupLayout.Halves,
     slots: [
-      { type: WidgetType.Hostname },
+      { type: WidgetType.HostnameActive },
       {
         type: WidgetType.Ipv4Address,
         settings: {

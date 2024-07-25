@@ -7,10 +7,10 @@ import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-grou
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SlotSize, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetHelpComponent } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.component';
-import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.component';
 import {
   WidgetInterfaceIpComponent,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.component';
+import { WidgetHostnameActiveComponent } from 'app/pages/dashboard/widgets/system/widget-hostname-active/widget-hostname-active.component';
 import { WidgetSysInfoPassiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.component';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -21,7 +21,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
       component: WidgetGroupComponent,
       declarations: [
         MockComponents(
-          WidgetHostnameComponent,
+          WidgetHostnameActiveComponent,
           WidgetInterfaceIpComponent,
           WidgetHelpComponent,
           WidgetErrorComponent,
@@ -63,7 +63,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
             layout: WidgetGroupLayout.HalfAndQuarters,
             slots: [
               { type: WidgetType.Ipv4Address, settings: { interface: 'eno1' } },
-              { type: WidgetType.Hostname },
+              { type: WidgetType.HostnameActive },
               { type: WidgetType.Ipv4Address, settings: { interface: 'eno2' } },
               null,
             ],
@@ -76,7 +76,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
       expect(widget1.size).toBe(SlotSize.Half);
       expect(widget1.settings).toMatchObject({ interface: 'eno1' });
 
-      const widget2 = spectator.query(WidgetHostnameComponent, { parentSelector: '.slot:nth-child(2)' });
+      const widget2 = spectator.query(WidgetHostnameActiveComponent, { parentSelector: '.slot:nth-child(2)' });
       expect(widget2).toExist();
       expect(widget2.size).toBe(SlotSize.Quarter);
 
@@ -93,7 +93,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
             layout: WidgetGroupLayout.Halves,
             slots: [
               null,
-              { type: WidgetType.Hostname },
+              { type: WidgetType.HostnameActive },
             ],
           },
         },

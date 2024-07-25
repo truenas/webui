@@ -78,7 +78,7 @@ describe('DashboardStore', () => {
     spectator.service.save([{
       layout: WidgetGroupLayout.Full,
       slots: [
-        { type: WidgetType.Hostname },
+        { type: WidgetType.HostnameActive },
       ],
     },
     ]).subscribe();
@@ -89,7 +89,7 @@ describe('DashboardStore', () => {
       [{
         layout: WidgetGroupLayout.Full,
         slots: [
-          { type: WidgetType.Hostname },
+          { type: WidgetType.HostnameActive },
         ],
       }],
     ]);

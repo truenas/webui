@@ -7,10 +7,10 @@ import {
 import { WidgetEditorGroupComponent } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
-import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.component';
 import {
   WidgetInterfaceIpComponent,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.component';
+import { WidgetHostnameActiveComponent } from 'app/pages/dashboard/widgets/system/widget-hostname-active/widget-hostname-active.component';
 
 runWidgetGroupTestSuite(WidgetEditorGroupComponent);
 
@@ -20,7 +20,7 @@ describe('WidgetEditorGroupComponent - additions', () => {
     component: WidgetEditorGroupComponent,
     declarations: [
       MockComponents(
-        WidgetHostnameComponent,
+        WidgetHostnameActiveComponent,
         WidgetInterfaceIpComponent,
         WidgetErrorComponent,
       ),
@@ -33,10 +33,10 @@ describe('WidgetEditorGroupComponent - additions', () => {
         group: {
           layout: WidgetGroupLayout.Quarters,
           slots: [
-            { type: WidgetType.Hostname },
+            { type: WidgetType.HostnameActive },
             { type: WidgetType.Ipv4Address },
-            { type: WidgetType.Hostname },
-            { type: WidgetType.Hostname },
+            { type: WidgetType.HostnameActive },
+            { type: WidgetType.HostnameActive },
           ],
         },
         validationErrors: [{}, {}, {}, {}],
@@ -64,10 +64,10 @@ describe('WidgetEditorGroupComponent - additions', () => {
     spectator.setInput('group', {
       layout: WidgetGroupLayout.Quarters,
       slots: [
-        { type: WidgetType.Hostname },
+        { type: WidgetType.HostnameActive },
         null,
-        { type: WidgetType.Hostname },
-        { type: WidgetType.Hostname },
+        { type: WidgetType.HostnameActive },
+        { type: WidgetType.HostnameActive },
       ],
     });
 

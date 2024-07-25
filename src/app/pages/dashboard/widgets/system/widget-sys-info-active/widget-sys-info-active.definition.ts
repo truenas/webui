@@ -5,7 +5,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetSysInfoActiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.component';
 
 export const systemInfoActiveWidget = dashboardWidget({
-  name: T('System Information Active Node'),
+  name: T('System Information – Active'),
   supportedSizes: [SlotSize.Full, SlotSize.Half],
   category: WidgetCategory.SystemInfo,
   component: WidgetSysInfoActiveComponent,

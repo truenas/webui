@@ -7,7 +7,7 @@ import { WidgetSysInfoPassiveComponent } from 'app/pages/dashboard/widgets/syste
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 export const systemInfoPassiveWidget = dashboardWidget({
-  name: T('System Information Standby Node'),
+  name: T('System Information – Standby'),
   supportedSizes: [SlotSize.Full, SlotSize.Half],
   category: WidgetCategory.SystemInfo,
   component: WidgetSysInfoPassiveComponent,
