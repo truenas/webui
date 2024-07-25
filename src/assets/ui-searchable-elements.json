@@ -466,9 +466,7 @@
       "Choose Pool"
     ],
     "synonyms": [],
-    "requiredRoles": [
-      "KUBERNETES_WRITE"
-    ],
+    "requiredRoles": [],
     "anchorRouterLink": [
       "/apps",
       "installed",
@@ -489,9 +487,7 @@
     "synonyms": [
       "Kubernetes Settings"
     ],
-    "requiredRoles": [
-      "KUBERNETES_WRITE"
-    ],
+    "requiredRoles": [],
     "anchorRouterLink": [
       "/apps",
       "installed",
