@@ -43,18 +43,9 @@
       [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template let-vm ix-table-details-row [dataProvider]="dataProvider">
-        @if (hiddenColumns.length) {
-          <dl class="table-hidden-columns">
-            @for (column of hiddenColumns; track column) {
-              <div>
-                <b>{{ column.title | translate }}:</b>
-                <span>{{ column?.getValue?.(vm) || vm[column.propertyName] }}</span>
-              </div>
-            }
-            <mat-divider></mat-divider>
-          </dl>
-        }
-        <ix-vm-details-row [vm]="vm"></ix-vm-details-row>
+        <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="vm">
+          <ix-vm-details-row [vm]="vm"></ix-vm-details-row>
+        </ix-table-details-row>
       </ng-template>
     </tbody>
   </ix-table>

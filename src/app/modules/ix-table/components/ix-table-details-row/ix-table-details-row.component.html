@@ -1,0 +1,17 @@
+@if (hiddenColumns().length) {
+  <dl class="table-hidden-columns">
+    @for (column of hiddenColumns(); track column) {
+      <div>
+        <b>{{ column.title | translate }}:</b>
+        <ng-template
+          ix-body-cell
+          [row]="row()"
+          [column]="column"
+        ></ng-template>
+      </div>
+    }
+    <mat-divider></mat-divider>
+  </dl>
+}
+
+<ng-content></ng-content>

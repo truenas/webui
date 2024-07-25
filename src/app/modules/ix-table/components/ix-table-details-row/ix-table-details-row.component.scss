@@ -1,0 +1,26 @@
+:host ::ng-deep .table-details-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+
+  button {
+    span {
+      margin-left: 5px;
+    }
+  }
+}
+
+.table-hidden-columns {
+  margin: 12px 0;
+
+  div {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+  }
+
+  .mat-divider {
+    margin-top: 6px;
+  }
+}

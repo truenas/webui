@@ -38,37 +38,27 @@
       [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
-        @if (hiddenColumns.length) {
-          <dl class="table-hidden-columns">
-            @for (column of hiddenColumns; track column) {
-              <div>
-                <b>{{ column.title | translate }}:</b>
-                <span>{{ column?.getValue?.(task) || task[column.propertyName] }}</span>
-              </div>
-            }
-            <mat-divider></mat-divider>
-          </dl>
-        }
-
-        <div class="table-details-row-actions">
-          <button
-            mat-button
-            [ixTest]="[task.dataset, task.naming_schema, 'edit']"
-            (click)="doEdit(task)"
-          >
-            <ix-icon name="edit"></ix-icon>
-            <span>{{ 'Edit' | translate }}</span>
-          </button>
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            [ixTest]="[task.dataset, task.naming_schema, 'delete']"
-            (click)="doDelete(task)"
-          >
-            <ix-icon name="delete"></ix-icon>
-            <span>{{ 'Delete' | translate }}</span>
-          </button>
-        </div>
+        <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="task">
+          <div class="table-details-row-actions">
+            <button
+              mat-button
+              [ixTest]="[task.dataset, task.naming_schema, 'edit']"
+              (click)="doEdit(task)"
+            >
+              <ix-icon name="edit"></ix-icon>
+              <span>{{ 'Edit' | translate }}</span>
+            </button>
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              [ixTest]="[task.dataset, task.naming_schema, 'delete']"
+              (click)="doDelete(task)"
+            >
+              <ix-icon name="delete"></ix-icon>
+              <span>{{ 'Delete' | translate }}</span>
+            </button>
+          </div>
+        </ix-table-details-row>
       </ng-template>
     </tbody>
   </ix-table>
