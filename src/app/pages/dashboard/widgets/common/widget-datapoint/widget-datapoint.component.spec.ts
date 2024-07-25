@@ -13,26 +13,75 @@ describe('WidgetDatapointComponent', () => {
     component: WidgetDatapointComponent,
   });
 
-  beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        size: SlotSize.Half,
-        label,
-        text,
-        subText,
-      },
+  function setupTest(props: {
+    size: SlotSize;
+    label: string;
+    text: string;
+    subText: string;
+  }): void {
+    spectator = createComponent({ props });
+  }
+
+  describe('when size is full', () => {
+    beforeEach(() => {
+      setupTest({
+        size: SlotSize.Full, label, text, subText,
+      });
+    });
+
+    it(`it has label '${label}'`, () => {
+      expect(spectator.query('.header')).toContainText(label);
+    });
+
+    it(`it has text '${text}'`, () => {
+      expect(spectator.component.maxFontSize).toBe(49);
+      expect(spectator.query('.container')).toContainText(text);
+    });
+
+    it(`it has sub text '${subText}'`, () => {
+      expect(spectator.query('.container .sub-text')).toHaveText(subText);
     });
   });
 
-  it(`it has label '${label}'`, () => {
-    expect(spectator.query('.header')).toContainText(label);
+  describe('when size is half', () => {
+    beforeEach(() => {
+      setupTest({
+        size: SlotSize.Half, label, text, subText,
+      });
+    });
+
+    it(`it has label '${label}'`, () => {
+      expect(spectator.query('.header')).toContainText(label);
+    });
+
+    it(`it has text '${text}'`, () => {
+      expect(spectator.component.maxFontSize).toBe(49);
+      expect(spectator.query('.container')).toContainText(text);
+    });
+
+    it(`it has sub text '${subText}'`, () => {
+      expect(spectator.query('.container .sub-text')).toHaveText(subText);
+    });
   });
 
-  it(`it has text '${text}'`, () => {
-    expect(spectator.query('.container')).toContainText(text);
-  });
+  describe('when size is quarter', () => {
+    beforeEach(() => {
+      setupTest({
+        size: SlotSize.Quarter, label, text, subText,
+      });
+    });
 
-  it(`it has sub text '${subText}'`, () => {
-    expect(spectator.query('.container')).toContainText(subText);
+    it(`it has label '${label}'`, () => {
+      expect(spectator.query('.header')).toContainText(label);
+    });
+
+    it(`it has text '${text}'`, () => {
+      expect(spectator.component.maxFontSize).toBe(30);
+      expect(spectator.query('.container')).toContainText(text);
+    });
+
+    it(`it has sub text '${subText}'`, () => {
+      expect(spectator.query('.container .sub-text')).toHaveText(subText);
+    });
   });
 });
