@@ -6,7 +6,6 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -46,7 +45,6 @@ export class ServiceFtpComponent implements OnInit {
     timeout: [null as number, [rangeValidator(0, 10000), Validators.required]],
     ssltls_certificate: [null as number],
     defaultroot: [false],
-    rootlogin: [false],
     onlyanonymous: [false],
     anonpath: [''],
     onlylocal: [false],
@@ -162,7 +160,6 @@ export class ServiceFtpComponent implements OnInit {
             anonuserdlbw: this.convertKbyteToByte(config.anonuserdlbw),
           });
           this.isFormLoading = false;
-          this.setRootLoginWarning();
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
@@ -171,29 +168,6 @@ export class ServiceFtpComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
-  }
-
-  private setRootLoginWarning(): void {
-    this.form.controls.rootlogin.valueChanges.pipe(
-      filter(Boolean),
-      switchMap(() => {
-        return this.dialogService.confirm({
-          title: helptextServiceFtp.rootlogin_dialog_title,
-          message: helptextServiceFtp.rootlogin_dialog_message,
-          buttonText: this.translate.instant('Continue'),
-          cancelText: this.translate.instant('Cancel'),
-        });
-      }),
-      untilDestroyed(this),
-    ).subscribe((confirmed) => {
-      if (confirmed) {
-        return;
-      }
-
-      this.form.patchValue({
-        rootlogin: false,
-      });
-    });
   }
 
   private convertByteToKbyte(bytes: number): number {
