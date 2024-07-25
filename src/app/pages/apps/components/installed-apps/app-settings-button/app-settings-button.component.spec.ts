@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
-import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
+import { ContainerSettingsComponent } from 'app/pages/apps/components/installed-apps/container-settings/container-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -67,7 +67,7 @@ describe('AppSettingsButtonComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Advanced Settings' });
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(KubernetesSettingsComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ContainerSettingsComponent);
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {

@@ -10,7 +10,7 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
-import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
+import { ContainerSettingsComponent } from 'app/pages/apps/components/installed-apps/container-settings/container-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -45,7 +45,7 @@ export class AppSettingsButtonComponent {
   }
 
   onAdvancedSettings(): void {
-    this.slideInService.open(KubernetesSettingsComponent);
+    this.slideInService.open(ContainerSettingsComponent);
   }
 
   onUnsetPool(): void {
