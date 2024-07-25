@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, Observable, of, switchMap, take,
 } from 'rxjs';
-import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
@@ -27,8 +26,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class AppDetailsHeaderComponent {
   @Input() app: AvailableApp;
   @Input() isLoading$: Observable<boolean>;
-
-  protected readonly requiredRoles = [Role.KubernetesWrite];
 
   constructor(
     public kubernetesStore: KubernetesStore,
