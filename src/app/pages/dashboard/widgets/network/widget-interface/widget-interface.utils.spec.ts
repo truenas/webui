@@ -1,6 +1,6 @@
 import { LinkState, NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { processNetworkInterfaces } from './widget-network.utils';
+import { processNetworkInterfaces } from './widget-interface.utils';
 
 describe('processNetworkInterfaces', () => {
   it('should process network interfaces correctly', () => {
