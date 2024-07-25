@@ -9,6 +9,7 @@ import {
   AfterViewInit,
   Inject,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import {
@@ -35,13 +36,13 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
+import { DockerSettingsComponent } from 'app/pages/apps/components/installed-apps/docker-settings/docker-settings.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
-import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -156,7 +157,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private installedAppsStore: InstalledAppsStore,
-    private kubernetesStore: KubernetesStore,
+    private dockerStore: DockerStore,
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
@@ -282,8 +283,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.cdr.markForCheck();
 
     combineLatest([
-      this.kubernetesStore.selectedPool$,
-      this.kubernetesStore.isKubernetesStarted$,
+      toObservable(this.dockerStore.selectedPool),
+      toObservable(this.dockerStore.dockerStarted),
       this.installedAppsStore.installedApps$,
     ]).pipe(
       filter(([pool]) => {
@@ -294,13 +295,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         }
         return !!pool;
       }),
-      filter(([,kubernetesStarted]) => {
-        if (!kubernetesStarted) {
+      filter(([,dockerStarted]) => {
+        if (!dockerStarted) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.Errors);
           this.cdr.markForCheck();
         }
-        return !!kubernetesStarted;
+        return !!dockerStarted;
       }),
       filter(([,,charts]) => {
         if (!charts.length) {
@@ -475,7 +476,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   private openAdvancedSettings(): void {
-    this.slideInService.open(KubernetesSettingsComponent);
+    this.slideInService.open(DockerSettingsComponent);
   }
 
   private resetSearch(): void {
@@ -496,5 +497,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
+    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 }

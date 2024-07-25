@@ -10,14 +10,14 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ContainerSettingsComponent } from 'app/pages/apps/components/installed-apps/container-settings/container-settings.component';
+import { DockerSettingsComponent } from 'app/pages/apps/components/installed-apps/docker-settings/docker-settings.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 describe('KubernetesSettingsComponent', () => {
-  let spectator: Spectator<ContainerSettingsComponent>;
+  let spectator: Spectator<DockerSettingsComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: ContainerSettingsComponent,
+    component: DockerSettingsComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,

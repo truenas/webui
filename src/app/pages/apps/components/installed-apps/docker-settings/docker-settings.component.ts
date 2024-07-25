@@ -11,20 +11,20 @@ import {
 } from 'rxjs/operators';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { containerSettingsElements } from 'app/pages/apps/components/installed-apps/container-settings/container-settings.elements';
+import { dockerSettingsElements } from 'app/pages/apps/components/installed-apps/docker-settings/docker-settings.elements';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-kubernetes-settings',
+  selector: 'ix-docker-settings',
   templateUrl: './kubernetes-settings.component.html',
   styleUrls: ['./kubernetes-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContainerSettingsComponent implements OnInit {
-  readonly searchableElements = containerSettingsElements;
+export class DockerSettingsComponent implements OnInit {
+  readonly searchableElements = dockerSettingsElements;
 
   isFormLoading = false;
 
@@ -34,7 +34,7 @@ export class ContainerSettingsComponent implements OnInit {
 
   constructor(
     protected ws: WebSocketService,
-    private slideInRef: IxSlideInRef<ContainerSettingsComponent>,
+    private slideInRef: IxSlideInRef<DockerSettingsComponent>,
     private appService: ApplicationsService,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,

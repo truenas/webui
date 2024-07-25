@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,12 +21,12 @@ import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-ap
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
-import { KubernetesStatusComponent } from 'app/pages/apps/components/installed-apps/kubernetes-status/kubernetes-status.component';
+import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/kubernetes-status/docker-status.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('InstalledAppsComponent', () => {
@@ -53,16 +54,15 @@ describe('InstalledAppsComponent', () => {
     declarations: [
       EmptyComponent,
       SearchInput1Component,
-      KubernetesStatusComponent,
+      DockerStatusComponent,
       AppSettingsButtonComponent,
       MockDeclaration(AppDetailsPanelComponent),
       MockDeclaration(AppRowComponent),
     ],
     providers: [
-      mockProvider(KubernetesStore, {
-        isLoading$: of(false),
-        isKubernetesStarted$: of(true),
-        selectedPool$: of('pool'),
+      mockProvider(DockerStore, {
+        dockerStarted: signal(true),
+        selectedPool: signal('pool'),
       }),
       mockProvider(InstalledAppsStore, {
         isLoading$: of(false),
