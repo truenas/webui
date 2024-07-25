@@ -3,7 +3,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/kubernetes-status/docker-status.component';
+import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 
 describe('DockerStatusComponent', () => {

@@ -85,8 +85,8 @@ import { AppHistoryCardComponent } from './components/installed-apps/app-history
 import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { DockerStatusComponent } from './components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
-import { DockerStatusComponent } from './components/installed-apps/kubernetes-status/docker-status.component';
 
 @NgModule({
   declarations: [
