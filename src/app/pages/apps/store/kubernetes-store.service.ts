@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, ObservableInput, Subscription, catchError, combineLatest, map, of, switchMap, tap,
+  Observable, ObservableInput, Subscription, catchError, combineLatest, map, switchMap, tap,
 } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
@@ -13,7 +13,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface KubernetesState {
   kubernetesConfig: KubernetesConfig;
-  isKubernetesStarted: boolean;
   kubernetesStatus: KubernetesStatus | null;
   kubernetesStatusDescription: string | null;
   isLoading: boolean;
@@ -22,7 +21,6 @@ export interface KubernetesState {
 
 const initialState: KubernetesState = {
   kubernetesConfig: null,
-  isKubernetesStarted: null,
   isLoading: false,
   selectedPool: null,
   kubernetesStatus: null,
@@ -33,7 +31,6 @@ const initialState: KubernetesState = {
 export class KubernetesStore extends ComponentStore<KubernetesState> {
   private kubernetesStatusSubscription: Subscription;
 
-  readonly isKubernetesStarted$ = this.select((state) => state.isKubernetesStarted);
   readonly selectedPool$ = this.select((state) => state.selectedPool);
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly kubernetesStatus$ = this.select((state) => state.kubernetesStatus);
@@ -58,17 +55,10 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
         });
       }),
       switchMap(() => this.updatePoolAndKubernetesConfig()),
-      switchMap((config) => {
-        if (config.pool) {
-          return this.appsService.getKubernetesServiceStarted();
-        }
-        return of(false);
-      }),
-      tap((isKubernetesStarted) => {
+      tap(() => {
         this.patchState((state: KubernetesState): KubernetesState => {
           return {
             ...state,
-            isKubernetesStarted,
             isLoading: false,
           };
         });
@@ -87,7 +77,6 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
       return {
         ...state,
         isLoading: false,
-        isKubernetesStarted: false,
       };
     });
   }
@@ -102,15 +91,13 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
   updatePoolAndKubernetesConfig(): Observable<KubernetesConfig> {
     return combineLatest([
       this.appsService.getKubernetesConfig(),
-      this.appsService.getKubernetesServiceStarted(),
     ]).pipe(
-      map(([config, isKubernetesStarted]) => {
+      map(([config]) => {
         this.patchState((state: KubernetesState): KubernetesState => {
           return {
             ...state,
             kubernetesConfig: { ...config },
             selectedPool: config.pool,
-            isKubernetesStarted: config.pool ? isKubernetesStarted : false,
           };
         });
         return config;

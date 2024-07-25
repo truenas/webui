@@ -9,7 +9,6 @@ import { ixChartApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -73,10 +72,6 @@ export class ApplicationsService {
 
   getInterfaces(): Observable<NetworkInterface[]> {
     return this.ws.call('interface.query');
-  }
-
-  getKubernetesServiceStarted(): Observable<boolean> {
-    return this.ws.call('service.started', [ServiceName.Kubernetes]);
   }
 
   getCatalogItem(name: string, catalog: string, train: string): Observable<CatalogApp> {
