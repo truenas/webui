@@ -45,7 +45,6 @@ describe('ServiceFtpComponent', () => {
     port: 21,
     resume: true,
     reversedns: true,
-    rootlogin: true,
     ssltls_certificate: 1,
     timeout: 600,
     timeout_notransfer: 300,
@@ -133,7 +132,6 @@ describe('ServiceFtpComponent', () => {
       Certificate: 'Secure certificate',
 
       'Always Chroot': true,
-      'Allow Root Login': true,
       'Allow Anonymous Login': true,
       Path: '/mnt/x',
       'Allow Local User Login': true,
@@ -212,19 +210,5 @@ describe('ServiceFtpComponent', () => {
       'TLS DNS Name Required',
       'TLS IP Address Required',
     ]);
-  });
-
-  it('shows confirmation when Allow Root Login is enabled', async () => {
-    const advancedOptionsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-    await advancedOptionsButton.click();
-
-    await form.fillForm({
-      'Allow Root Login': false,
-    });
-    await form.fillForm({
-      'Allow Root Login': true,
-    });
-
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
   });
 });
