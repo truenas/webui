@@ -13,10 +13,13 @@ export class FullScreenDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<FullScreenDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) protected data: { showClose: boolean },
+    @Inject(MAT_DIALOG_DATA) protected data: {
+      showClose: boolean;
+      pre: boolean;
+    },
   ) {}
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(true);
   }
 }

@@ -1,8 +1,11 @@
 ::ng-deep {
+  z-index: 99999;
+
   .cdk-overlay-container {
     z-index: 99999;
   }
 
+  .cdk-overlay-pane.full-screen-modal,
   .mat-mdc-dialog-container {
     max-width: none !important;
   }
@@ -13,10 +16,20 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-bottom: 16px;
   width: 50%;
 
   .title {
     font-size: xx-large;
+  }
+
+  .message {
+    &.pre {
+      display: block;
+      font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
+      unicode-bidi: isolate;
+      white-space: pre;
+    }
   }
 }
 
