@@ -1,11 +1,9 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, Component, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject } from 'rxjs';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -21,7 +19,6 @@ import {
 })
 export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   @ViewChild(OauthProviderComponent, { static: true }) oauthComponent: OauthProviderComponent;
-  private formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
 
   form = this.formBuilder.group({
     token: ['', Validators.required],
@@ -30,6 +27,7 @@ export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent 
 
   constructor(
     private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }
@@ -38,12 +36,9 @@ export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent 
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
       this.oauthComponent.form.patchValue(values);
+      this.cdr.detectChanges();
     });
   }
-
-  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
-    return this.formPatcher$;
-  };
 
   override getSubmitAttributes(): OauthProviderComponent['form']['value'] & this['form']['value'] {
     return {

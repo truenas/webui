@@ -1,9 +1,10 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, of } from 'rxjs';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import { of } from 'rxjs';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   BaseProviderFormComponent,
@@ -41,22 +42,19 @@ export class WebdavProviderFormComponent extends BaseProviderFormComponent imple
       value: 'OTHER',
     },
   ]);
-  private formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
-
-  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
-    return this.formPatcher$;
-  };
 
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
+      this.cdr.detectChanges();
     });
   }
 
   constructor(
+    public formatter: IxFormatterService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    public formatter: IxFormatterService,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }
