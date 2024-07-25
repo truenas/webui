@@ -1,5 +1,4 @@
 <ix-modal-header
-  [requiredRoles]="requiredRoles"
   [title]="'Kubernetes Settings' | translate"
   [loading]="isFormLoading"
 ></ix-modal-header>
@@ -79,7 +78,6 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

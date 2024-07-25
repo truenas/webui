@@ -10,7 +10,6 @@ import {
   catchError, filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
@@ -33,7 +32,6 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KubernetesSettingsComponent implements OnInit {
-  protected readonly requiredRoles = [Role.KubernetesWrite];
   readonly searchableElements = kubernetesSettingsElements;
 
   isFormLoading = false;

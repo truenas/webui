@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
@@ -39,7 +38,6 @@ describe('AppSettingsButtonComponent', () => {
       mockProvider(KubernetesStore, {
         selectedPool$: of('pool'),
       }),
-      mockAuth(),
       mockWebSocket([
         mockJob('kubernetes.update'),
       ]),
