@@ -93,6 +93,9 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
   protected networkStats = computed(() => {
     const cachedStats = this.cachedNetworkStats();
     const initialStats = this.initialNetworkStats();
+
+    if (!initialStats?.length || !cachedStats?.length) return [];
+
     return [...initialStats, ...cachedStats].slice(-3600);
   });
 

@@ -59,6 +59,9 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
   protected cpuStats = computed(() => {
     const initialStats = this.initialCpuStats();
     const cachedStats = this.cachedCpuStats();
+
+    if (!initialStats?.length || !cachedStats?.length) return [];
+
     return [...initialStats, ...cachedStats].slice(-60);
   });
 
