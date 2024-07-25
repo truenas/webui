@@ -21,6 +21,7 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import {
   toggleColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table/utils';
@@ -90,12 +91,12 @@ export class ReplicationListComponent implements OnInit {
       propertyName: 'target_dataset',
       hidden: true,
     }),
-    textColumn({
+    yesNoColumn({
       title: this.translate.instant('Recursive'),
       propertyName: 'recursive',
       hidden: true,
     }),
-    textColumn({
+    yesNoColumn({
       title: this.translate.instant('Auto'),
       propertyName: 'auto',
       hidden: true,

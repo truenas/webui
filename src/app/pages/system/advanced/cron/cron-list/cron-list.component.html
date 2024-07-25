@@ -26,37 +26,27 @@
     [isLoading]="dataProvider.isLoading$ | async"
   >
     <ng-template let-cronjob ix-table-details-row [dataProvider]="dataProvider">
-      @if (hiddenColumns.length) {
-        <dl class="table-hidden-columns">
-          @for (column of hiddenColumns; track column) {
-            <div>
-              <b>{{ column.title | translate }}:</b>
-              <span>{{ column?.getValue?.(cronjob) || cronjob[column.propertyName] }}</span>
-            </div>
-          }
-          <mat-divider></mat-divider>
-        </dl>
-      }
-
-      <div class="table-details-row-actions">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          [ixTest]="[cronjob.id, 'run_now']"
-          (click)="runNow(cronjob)"
-        >{{ 'Run Now' | translate }}</button>
-        <button
-          mat-button
-          [ixTest]="[cronjob.id, 'edit']"
-          (click)="doEdit(cronjob)"
-        >{{ 'Edit' | translate }}</button>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          [ixTest]="[cronjob.id, 'delete']"
-          (click)="doDelete(cronjob)"
-        >{{ 'Delete' | translate }}</button>
-      </div>
+      <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="cronjob">
+        <div class="table-details-row-actions">
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-button
+            [ixTest]="[cronjob.id, 'run_now']"
+            (click)="runNow(cronjob)"
+          >{{ 'Run Now' | translate }}</button>
+          <button
+            mat-button
+            [ixTest]="[cronjob.id, 'edit']"
+            (click)="doEdit(cronjob)"
+          >{{ 'Edit' | translate }}</button>
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-button
+            [ixTest]="[cronjob.id, 'delete']"
+            (click)="doDelete(cronjob)"
+          >{{ 'Delete' | translate }}</button>
+        </div>
+      </ix-table-details-row>
     </ng-template>
   </tbody>
 </ix-table>
