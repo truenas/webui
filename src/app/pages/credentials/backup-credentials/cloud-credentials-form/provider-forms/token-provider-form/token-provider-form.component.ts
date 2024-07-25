@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,6 +27,7 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
 
   constructor(
     private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }
@@ -56,6 +57,7 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
       if (this.hasOAuth) {
         this.oauthComponent.form.patchValue(values);
       }
+      this.cdr.detectChanges();
     });
   }
 

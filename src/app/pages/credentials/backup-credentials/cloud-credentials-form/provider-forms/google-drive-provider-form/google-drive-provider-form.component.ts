@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, Component, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,6 +27,7 @@ export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent 
 
   constructor(
     private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }
@@ -35,6 +36,7 @@ export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent 
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
       this.oauthComponent.form.patchValue(values);
+      this.cdr.detectChanges();
     });
   }
 

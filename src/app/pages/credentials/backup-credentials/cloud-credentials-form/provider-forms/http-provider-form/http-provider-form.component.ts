@@ -1,4 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -20,11 +22,13 @@ export class HttpProviderFormComponent extends BaseProviderFormComponent impleme
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
+      this.cdr.detectChanges();
     });
   }
   constructor(
-    private formBuilder: FormBuilder,
     public formatter: IxFormatterService,
+    private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }

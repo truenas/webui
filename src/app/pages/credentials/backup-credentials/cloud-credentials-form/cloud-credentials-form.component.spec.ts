@@ -302,6 +302,8 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('shows existing values when form is opened for edit', async () => {
+      spectator.component.setCredentialsForEdit();
+
       const commonFormValues = await form.getValues();
       expect(commonFormValues).toEqual({
         Name: 'My backup server',
@@ -316,6 +318,8 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('updates existing credentials when edit form is saved', async () => {
+      spectator.component.setCredentialsForEdit();
+
       await form.fillForm({
         Name: 'My updated server',
       });

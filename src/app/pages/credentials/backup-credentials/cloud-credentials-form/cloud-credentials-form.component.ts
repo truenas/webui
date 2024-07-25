@@ -107,7 +107,15 @@ export class CloudCredentialsFormComponent implements OnInit {
     this.loadProviders();
 
     if (this.existingCredential) {
-      this.commonForm.patchValue(this.existingCredential);
+      this.setCredentialsForEdit();
+    }
+  }
+
+  setCredentialsForEdit(): void {
+    this.commonForm.patchValue(this.existingCredential);
+
+    if (this.providerForm) {
+      this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
     }
   }
 

@@ -1,4 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -44,13 +46,15 @@ export class WebdavProviderFormComponent extends BaseProviderFormComponent imple
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
+      this.cdr.detectChanges();
     });
   }
 
   constructor(
+    public formatter: IxFormatterService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    public formatter: IxFormatterService,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }

@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,6 +27,7 @@ export class GooglePhotosProviderFormComponent extends BaseProviderFormComponent
 
   constructor(
     private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }
@@ -34,6 +35,7 @@ export class GooglePhotosProviderFormComponent extends BaseProviderFormComponent
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
+      this.cdr.detectChanges();
     });
   }
 

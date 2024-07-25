@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, OnInit,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -48,6 +48,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }
@@ -59,6 +60,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
+      this.cdr.detectChanges();
     });
   }
 

@@ -1,4 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
@@ -22,10 +24,12 @@ export class FtpProviderFormComponent extends BaseProviderFormComponent implemen
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
+      this.cdr.detectChanges();
     });
   }
   constructor(
     private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }
