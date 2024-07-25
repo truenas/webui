@@ -69,7 +69,7 @@ const mini3x = {
 };
 
 const mini3xPlus = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3x-plus/mini3x-plus-front.svg',
+  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3x/mini3x-front.svg',
 };
 
 const mini3xlPlus = {
