@@ -8,7 +8,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 export const systemInfoPassiveWidget = dashboardWidget({
   name: T('System Information Standby Node'),
-  supportedSizes: [SlotSize.Full],
+  supportedSizes: [SlotSize.Full, SlotSize.Half],
   category: WidgetCategory.SystemInfo,
   component: WidgetSysInfoPassiveComponent,
   settingsComponent: null,
