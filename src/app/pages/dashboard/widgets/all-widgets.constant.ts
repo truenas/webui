@@ -55,7 +55,7 @@ export const widgetRegistry = {
   [WidgetType.Ipv6Address]: ipv6AddressWidget,
   [WidgetType.Help]: helpWidget,
   [WidgetType.Memory]: memoryWidget,
-  [WidgetType.Network]: interfaceWidget,
+  [WidgetType.Interface]: interfaceWidget,
   [WidgetType.BackupTasks]: backupTasksWidget,
   [WidgetType.Cpu]: cpuWidget,
   [WidgetType.CpuUsageGauge]: cpuUsageGaugeWidget,

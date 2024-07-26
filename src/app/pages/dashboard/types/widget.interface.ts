@@ -12,7 +12,7 @@ export enum WidgetType {
   Ipv6Address = 'ipv6-address',
   Help = 'help',
   Memory = 'memory',
-  Network = 'network',
+  Interface = 'interface',
   BackupTasks = 'backup-tasks',
   Cpu = 'cpu',
   CpuUsageGauge = 'cpu-usage-gauge',
