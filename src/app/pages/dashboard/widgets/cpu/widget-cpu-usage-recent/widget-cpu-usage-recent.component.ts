@@ -30,7 +30,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
   readonly name = cpuUsageRecentWidget.name;
 
   protected isLoading = computed(() => {
-    return !this.chartData();
+    return !this.chartData() || !this.cpuStats() || !this.cpuUsage();
   });
 
   protected cpuUsage = toSignal(this.resources.realtimeUpdates$.pipe(
@@ -60,7 +60,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     const initialStats = this.initialCpuStats();
     const cachedStats = this.cachedCpuStats();
 
-    if (!initialStats?.length || !cachedStats?.length) return [];
+    if (!initialStats?.length || !cachedStats?.length) return null;
 
     return [...initialStats, ...cachedStats].slice(-60);
   });
