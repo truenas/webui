@@ -75,7 +75,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
   });
 
   protected isLoading = computed(() => {
-    return this.interface().isLoading || !this.interfaceUsage() || !this.networkStats() || !this.initialNetworkStats();
+    return this.interface().isLoading || !this.initialNetworkStats() || !this.interfaceUsage() || !this.networkStats();
   });
 
   protected initialNetworkStats = toSignal(toObservable(this.interfaceId).pipe(
