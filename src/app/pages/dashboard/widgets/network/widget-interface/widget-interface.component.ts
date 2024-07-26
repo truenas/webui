@@ -75,7 +75,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
   });
 
   protected isLoading = computed(() => {
-    return this.interface().isLoading || !this.interfaceUsage() || !this.networkStats();
+    return this.interface().isLoading || !this.interfaceUsage() || !this.networkStats() || !this.initialNetworkStats();
   });
 
   protected initialNetworkStats = toSignal(toObservable(this.interfaceId).pipe(
@@ -91,9 +91,6 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
   protected networkStats = computed(() => {
     const cachedStats = this.cachedNetworkStats();
     const initialStats = this.initialNetworkStats();
-
-    if (!initialStats?.length || !cachedStats?.length) return null;
-
     return [...initialStats, ...cachedStats].slice(-3600);
   });
 
