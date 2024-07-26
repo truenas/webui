@@ -19,6 +19,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
@@ -127,6 +128,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     AppLoaderModule,
     DiskIconComponent,
     TooltipComponent,
+    OrNotAvailablePipe,
   ],
   declarations: [
     EnclosureDashboardComponent,

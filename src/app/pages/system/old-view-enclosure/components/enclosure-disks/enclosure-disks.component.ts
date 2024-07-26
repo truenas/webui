@@ -252,39 +252,39 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     protected matDialog: MatDialog,
     protected enclosureStore: EnclosureStore,
   ) {
-    this.diskTemperatureService.listenForTemperatureUpdates();
+    // this.diskTemperatureService.listenForTemperatureUpdates();
 
-    this.diskTemperatureService.temperature$.pipe(untilDestroyed(this)).subscribe((data) => {
-      const chassisView: ChassisView = this.chassisView && this.view === EnclosureLocation.Rear
-        ? this.chassis?.rear
-        : this.chassis?.front;
-      if (!this.chassis || !chassisView?.driveTrayObjects) { return; }
+    // this.diskTemperatureService.temperature$.pipe(untilDestroyed(this)).subscribe((data) => {
+    //   const chassisView: ChassisView = this.chassisView && this.view === EnclosureLocation.Rear
+    //     ? this.chassis?.rear
+    //     : this.chassis?.front;
+    //   if (!this.chassis || !chassisView?.driveTrayObjects) { return; }
 
-      const clone: Temperature = { ...data };
-      clone.values = {};
-      clone.keys = [];
+    //   const clone: Temperature = { ...data };
+    //   clone.values = {};
+    //   clone.keys = [];
 
-      if (chassisView?.driveTrayObjects) {
-        const enclosureView = this.selectedEnclosure;
-        chassisView.driveTrayObjects.forEach((dt: DriveTray) => {
-          const enclosureSlot = enclosureView.elements['Array Device Slot'][parseInt(dt.id)];
-          if (enclosureSlot.dev) {
-            clone.keys.push(enclosureSlot.dev);
-            clone.values[enclosureSlot.dev] = data.values[enclosureSlot.dev];
-          }
-        });
-      } else {
-        console.warn({
-          message: 'No Chassis View Available',
-          chassisView,
-          thisChassisView: this.chassisView,
-        });
-      }
+    //   if (chassisView?.driveTrayObjects) {
+    //     const enclosureView = this.selectedEnclosure;
+    //     chassisView.driveTrayObjects.forEach((dt: DriveTray) => {
+    //       const enclosureSlot = enclosureView.elements['Array Device Slot'][parseInt(dt.id)];
+    //       if (enclosureSlot.dev) {
+    //         clone.keys.push(enclosureSlot.dev);
+    //         clone.values[enclosureSlot.dev] = data.values[enclosureSlot.dev];
+    //       }
+    //     });
+    //   } else {
+    //     console.warn({
+    //       message: 'No Chassis View Available',
+    //       chassisView,
+    //       thisChassisView: this.chassisView,
+    //     });
+    //   }
 
-      this.temperatures = clone;
-      this.cdr.markForCheck();
-    });
-    this.diskTemperatureService.diskTemperaturesSubscribe();
+    //   this.temperatures = clone;
+    //   this.cdr.markForCheck();
+    // });
+    // this.diskTemperatureService.diskTemperaturesSubscribe();
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
@@ -402,7 +402,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Component Cleanup
   ngOnDestroy(): void {
-    this.diskTemperatureService.diskTemperaturesUnsubscribe();
+    // this.diskTemperatureService.diskTemperaturesUnsubscribe();
     this.destroyAllEnclosures();
     if (this.app) {
       this.app.stage.destroy(true);

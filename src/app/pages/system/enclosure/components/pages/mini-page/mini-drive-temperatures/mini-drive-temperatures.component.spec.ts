@@ -6,10 +6,11 @@ import {
   DashboardEnclosureElements,
   DashboardEnclosureSlot,
 } from 'app/interfaces/enclosure.interface';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { MiniDriveTemperaturesComponent } from 'app/pages/system/enclosure/components/pages/mini-page/mini-drive-temperatures/mini-drive-temperatures.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { DiskTemperatureService, Temperature } from 'app/services/disk-temperature.service';
+import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 
 describe('MiniDriveTemperaturesComponent', () => {
   let spectator: Spectator<MiniDriveTemperaturesComponent>;
@@ -38,6 +39,7 @@ describe('MiniDriveTemperaturesComponent', () => {
     component: MiniDriveTemperaturesComponent,
     imports: [
       TooltipComponent,
+      OrNotAvailablePipe,
     ],
     providers: [
       mockProvider(EnclosureStore, {
@@ -46,12 +48,7 @@ describe('MiniDriveTemperaturesComponent', () => {
         selectSlot: jest.fn(),
       }),
       mockProvider(DiskTemperatureService, {
-        temperature$: of({
-          values: { ada1: 37 },
-          keys: ['ada1'],
-          unit: 'Celsius',
-          symbolText: '°',
-        } as Temperature),
+        getTemperature: () => of({ ada1: 37 }),
       }),
     ],
   });
@@ -73,7 +70,7 @@ describe('MiniDriveTemperaturesComponent', () => {
     });
     expect(contents).toEqual([
       { label: 'ada1:', temperature: '37 °C', hideTooltip: true },
-      { label: 'ada2:', temperature: 'Temperature not available.', hideTooltip: false },
+      { label: 'ada2:', temperature: 'N/A', hideTooltip: false },
     ]);
   });
 });

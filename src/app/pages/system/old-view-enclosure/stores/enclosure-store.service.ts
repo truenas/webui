@@ -9,7 +9,6 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { OldEnclosure } from 'app/pages/system/old-view-enclosure/interfaces/old-enclosure.interface';
-import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -39,7 +38,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   constructor(
     private ws: WebSocketService,
-    private disksUpdateService: DisksUpdateService,
+    // private disksUpdateService: DisksUpdateService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -134,7 +133,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   listenForDiskUpdates(): void {
     if (!this.disksUpdateSubscriptionId) {
       const diskUpdatesTrigger$ = new Subject<Disk[]>();
-      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$, true);
+      // this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$, true);
       diskUpdatesTrigger$.pipe(untilDestroyed(this)).subscribe(() => {
         this.loadData();
       });

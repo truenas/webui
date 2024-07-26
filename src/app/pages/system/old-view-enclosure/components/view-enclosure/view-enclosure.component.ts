@@ -20,7 +20,6 @@ import { ErrorMessage } from 'app/pages/system/old-view-enclosure/interfaces/err
 import { OldEnclosure } from 'app/pages/system/old-view-enclosure/interfaces/old-enclosure.interface';
 import { ViewConfig } from 'app/pages/system/old-view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/old-view-enclosure/stores/enclosure-store.service';
-import { DisksUpdateService } from 'app/services/disks-update.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -157,7 +156,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     public router: Router,
     private ws: WebSocketService,
     private store$: Store<AppState>,
-    private disksUpdateService: DisksUpdateService,
+    // private disksUpdateService: DisksUpdateService,
     private enclosureStore: EnclosureStore,
     private changeDetectorRef: ChangeDetectorRef,
   ) {
@@ -261,7 +260,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
+    // this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, OnDestroy, computed,
+  ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
@@ -14,22 +14,24 @@ import { DiskTemperatureService } from 'app/services/disk-temperature.service';
   styleUrl: './mini-drive-temperatures.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MiniDriveTemperaturesComponent implements OnDestroy {
-  private temperature = toSignal(this.diskTemperatureService.temperature$);
-
+export class MiniDriveTemperaturesComponent {
+  private temperature = toSignal(this.diskTemperatureService.getTemperature());
+  private symbolText = TemperatureUnit.Celsius;
   private readonly slots = computed(() => {
     return getSlotsOfSide(this.store.selectedEnclosure(), EnclosureSide.Front);
   });
+
+  isLoading = computed(() => !this.temperature());
 
   protected readonly disks = computed(() => {
     return this.slots()
       .filter((slot) => slot.dev)
       .map((slot) => {
-        const value = this.temperature()?.values?.[slot.dev] || null;
-        const symbolText = TemperatureUnit.Celsius;
+        const temperature = this.temperature();
+        const value = temperature ? `${temperature[slot.dev]} ${this.symbolText}` : null;
         return {
           dev: slot.dev,
-          temperature: value !== null ? `${value} ${symbolText}` : undefined,
+          temperature: value !== null ? value : undefined,
         };
       });
   });
@@ -37,12 +39,5 @@ export class MiniDriveTemperaturesComponent implements OnDestroy {
   constructor(
     private store: EnclosureStore,
     private diskTemperatureService: DiskTemperatureService,
-  ) {
-    this.diskTemperatureService.listenForTemperatureUpdates();
-    this.diskTemperatureService.diskTemperaturesSubscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.diskTemperatureService.diskTemperaturesUnsubscribe();
-  }
+  ) { }
 }

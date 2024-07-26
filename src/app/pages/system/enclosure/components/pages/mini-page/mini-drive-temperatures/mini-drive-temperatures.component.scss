@@ -9,4 +9,13 @@ h3 {
   display: flex;
   gap: 6px;
   margin: 8px 0 6px;
+
+  .dev {
+    min-width: 32px;
+  }
+
+  ngx-skeleton-loader {
+    display: inline-flex;
+    width: 32px;
+  }
 }
