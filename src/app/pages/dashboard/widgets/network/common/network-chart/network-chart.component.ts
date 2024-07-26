@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { fullSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.const';
+import { fullSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.const';
 import { LocaleService } from 'app/services/locale.service';
 
 @Component({
