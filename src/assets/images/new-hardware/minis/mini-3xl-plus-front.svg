@@ -586,7 +586,7 @@
     <path class="cls-mini3xl-plus-12" d="M605.3,11.6v820.5h-14v-356.7h-14.3c-2.3,0-4.4,1.1-5.8,2.9-5.6,7.6-14.7,12.6-24.9,12.6s-15.8-3.2-21.3-8.5v-45.1c5.5-5.2,13.1-8.5,21.3-8.5s19.3,4.9,24.9,12.6c1.4,1.8,3.5,2.9,5.8,2.9h14.3V11.6h14Z"/>
   </g>
   <g id="MINI_XL_DRIVES" data-name="MINI XL+ DRIVES">
-    <g id="DRIVE_CAGE_0" data-name="MINI XL+ DRIVE CAGE 0">
+    <g id="DRIVE_CAGE_7" data-name="MINI XL+ DRIVE CAGE 7">
       <rect class="cls-mini3xl-plus-19" x="158.3" y="700.2" width="286.1" height="72.7"/>
       <rect class="cls-mini3xl-plus-12" x="444.3" y="700.2" width="5.5" height="72.7" transform="translate(894.1 1473.1) rotate(180)"/>
       <rect class="cls-mini3xl-plus-12" x="146.7" y="700.2" width="11.5" height="8.4" transform="translate(305 1408.7) rotate(180)"/>
@@ -656,7 +656,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_1" data-name="MINI XL+ DRIVE CAGE 1">
+    <g id="DRIVE_CAGE_6" data-name="MINI XL+ DRIVE CAGE 6">
       <rect class="cls-mini3xl-plus-19" x="158.3" y="621.5" width="286.1" height="72.7"/>
       <rect class="cls-mini3xl-plus-12" x="444.3" y="621.5" width="5.5" height="72.7" transform="translate(894.1 1315.7) rotate(180)"/>
       <rect class="cls-mini3xl-plus-12" x="146.7" y="621.5" width="11.5" height="8.4" transform="translate(305 1251.3) rotate(180)"/>
@@ -726,7 +726,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_2" data-name="MINI XL+ DRIVE CAGE 2">
+    <g id="DRIVE_CAGE_5" data-name="MINI XL+ DRIVE CAGE 5">
       <rect class="cls-mini3xl-plus-19" x="158.3" y="542.8" width="286.1" height="72.7"/>
       <rect class="cls-mini3xl-plus-12" x="444.3" y="542.8" width="5.5" height="72.7" transform="translate(894.1 1158.3) rotate(180)"/>
       <rect class="cls-mini3xl-plus-12" x="146.7" y="542.8" width="11.5" height="8.4" transform="translate(305 1093.9) rotate(180)"/>
@@ -796,7 +796,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_3" data-name="MINI XL+ DRIVE CAGE 3">
+    <g id="DRIVE_CAGE_4" data-name="MINI XL+ DRIVE CAGE 4">
       <rect class="cls-mini3xl-plus-19" x="158.3" y="464.1" width="286.1" height="72.7"/>
       <rect class="cls-mini3xl-plus-12" x="444.3" y="464.1" width="5.5" height="72.7" transform="translate(894.1 1000.9) rotate(180)"/>
       <rect class="cls-mini3xl-plus-12" x="146.7" y="464.1" width="11.5" height="8.4" transform="translate(305 936.6) rotate(180)"/>
@@ -866,7 +866,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_4" data-name="MINI XL+ DRIVE CAGE 4">
+    <g id="DRIVE_CAGE_3" data-name="MINI XL+ DRIVE CAGE 3">
       <rect class="cls-mini3xl-plus-19" x="158.3" y="326.9" width="286.1" height="72.7"/>
       <rect class="cls-mini3xl-plus-12" x="444.3" y="326.9" width="5.5" height="72.7" transform="translate(894.1 726.5) rotate(180)"/>
       <rect class="cls-mini3xl-plus-12" x="146.7" y="326.9" width="11.5" height="8.4" transform="translate(305 662.1) rotate(180)"/>
@@ -936,7 +936,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_5" data-name="MINI XL+ DRIVE CAGE 5">
+    <g id="DRIVE_CAGE_2" data-name="MINI XL+ DRIVE CAGE 2">
       <rect class="cls-mini3xl-plus-19" x="158.3" y="248.2" width="286.1" height="72.7"/>
       <rect class="cls-mini3xl-plus-12" x="444.3" y="248.2" width="5.5" height="72.7" transform="translate(894.1 569.1) rotate(180)"/>
       <rect class="cls-mini3xl-plus-12" x="146.7" y="248.2" width="11.5" height="8.4" transform="translate(305 504.7) rotate(180)"/>
@@ -1006,7 +1006,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_6" data-name="MINI XL+ DRIVE CAGE 6">
+    <g id="DRIVE_CAGE_1" data-name="MINI XL+ DRIVE CAGE 1">
       <rect class="cls-mini3xl-plus-19" x="158.3" y="169.5" width="286.1" height="72.7"/>
       <rect class="cls-mini3xl-plus-12" x="444.3" y="169.5" width="5.5" height="72.7" transform="translate(894.1 411.7) rotate(180)"/>
       <rect class="cls-mini3xl-plus-12" x="146.7" y="169.5" width="11.5" height="8.4" transform="translate(305 347.3) rotate(180)"/>
@@ -1076,7 +1076,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_7" data-name="MINI XL+ DRIVE CAGE 7">
+    <g id="DRIVE_CAGE_0" data-name="MINI XL+ DRIVE CAGE 0">
       <rect class="cls-mini3xl-plus-19" x="158.3" y="90.8" width="286.1" height="72.7"/>
       <rect class="cls-mini3xl-plus-12" x="444.3" y="90.8" width="5.5" height="72.7" transform="translate(894.1 254.3) rotate(180)"/>
       <rect class="cls-mini3xl-plus-12" x="146.7" y="90.8" width="11.5" height="8.4" transform="translate(305 189.9) rotate(180)"/>

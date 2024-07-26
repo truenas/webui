@@ -40,10 +40,6 @@ const hSeries = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/h-series/h-series-front.svg',
 };
 
-const mini3E = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3-e-front.svg',
-};
-
 const eS12 = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/es12/es12-front.svg',
 };
@@ -64,16 +60,20 @@ const eS102 = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/es102/es102-top.svg',
 };
 
-const mini3x = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3x/mini3x-front.svg',
+const mini3e = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3e-front.svg',
 };
 
-const mini3xPlus = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3x-plus/mini3x-plus-front.svg',
+const mini3x = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3x-front.svg',
 };
 
 const mini3xlPlus = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3xl-plus/mini3xl-plus-front.svg',
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3xl-plus-front.svg',
+};
+
+const miniR = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-r-front.svg',
 };
 
 const r20 = {
@@ -112,11 +112,12 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.F130]: fSeries,
   [EnclosureModel.H10]: hSeries,
   [EnclosureModel.H20]: hSeries,
-  [EnclosureModel.Mini3E]: mini3E,
-  [EnclosureModel.Mini3EPlus]: mini3E,
+  [EnclosureModel.Mini3E]: mini3e,
+  [EnclosureModel.Mini3EPlus]: mini3e,
   [EnclosureModel.Mini3X]: mini3x,
-  [EnclosureModel.Mini3XPlus]: mini3xPlus,
+  [EnclosureModel.Mini3XPlus]: mini3x,
   [EnclosureModel.Mini3XlPlus]: mini3xlPlus,
+  [EnclosureModel.MiniR]: miniR,
   [EnclosureModel.Es12]: eS12,
   [EnclosureModel.Es24]: eS24,
   [EnclosureModel.Es60]: eS60,
