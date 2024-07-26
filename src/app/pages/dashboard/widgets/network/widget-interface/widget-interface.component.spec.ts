@@ -10,15 +10,15 @@ import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
-import { WidgetNetworkComponent } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.component';
+import { WidgetInterfaceComponent } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.component';
 import { ThemeService } from 'app/services/theme/theme.service';
 
-describe('WidgetNetworkComponent', () => {
-  let spectator: Spectator<WidgetNetworkComponent>;
+describe('WidgetInterfaceComponent', () => {
+  let spectator: Spectator<WidgetInterfaceComponent>;
   let startDate: number;
 
   const createComponent = createComponentFactory({
-    component: WidgetNetworkComponent,
+    component: WidgetInterfaceComponent,
     imports: [
       NgxSkeletonLoaderModule,
       NetworkSpeedPipe,
@@ -101,7 +101,7 @@ describe('WidgetNetworkComponent', () => {
     });
 
     it('shows widget header', () => {
-      expect(spectator.query('.header')).toHaveText('Network');
+      expect(spectator.query('.header')).toHaveText('Interface');
     });
 
     it('shows interface name', () => {

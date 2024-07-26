@@ -23,7 +23,6 @@ export interface FtpConfig {
   port: number;
   resume: boolean;
   reversedns: boolean;
-  rootlogin: boolean;
   ssltls_certificate: number;
   timeout: number;
   timeout_notransfer: number;

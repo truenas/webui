@@ -20,19 +20,19 @@ import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
+import { fullSizeNetworkWidgetAspectRatio, halfSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.const';
+import { getNetworkInterface } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
-import { fullSizeNetworkWidgetAspectRatio, halfSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.const';
-import { getNetworkInterface } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.utils';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-widget-network',
-  templateUrl: './widget-network.component.html',
-  styleUrls: ['./widget-network.component.scss'],
+  selector: 'ix-widget-interface',
+  templateUrl: './widget-interface.component.html',
+  styleUrls: ['./widget-interface.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
+export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
   size = input.required<SlotSize>();
   settings = input.required<WidgetInterfaceIpSettings>();
   private interfaces = toSignal(this.resources.networkInterfaces$, { initialValue: { isLoading: true } });

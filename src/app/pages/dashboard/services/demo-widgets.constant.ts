@@ -29,7 +29,7 @@ export const demoWidgets: WidgetGroup[] = [
   {
     layout: WidgetGroupLayout.Full,
     slots: [
-      { type: WidgetType.Network },
+      { type: WidgetType.Interface },
     ],
   },
   {

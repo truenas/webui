@@ -6,7 +6,7 @@ import { WidgetSysInfoActiveComponent } from 'app/pages/dashboard/widgets/system
 
 export const systemInfoActiveWidget = dashboardWidget({
   name: T('System Information Active Node'),
-  supportedSizes: [SlotSize.Full],
+  supportedSizes: [SlotSize.Full, SlotSize.Half],
   category: WidgetCategory.SystemInfo,
   component: WidgetSysInfoActiveComponent,
   settingsComponent: null,

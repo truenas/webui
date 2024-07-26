@@ -10,8 +10,8 @@ import { arbitraryTextWidget } from 'app/pages/dashboard/widgets/custom/arbitrar
 import { helpWidget } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.definition';
 import { memoryWidget } from 'app/pages/dashboard/widgets/memory/widget-memory/widget-memory.definition';
 import { hostnameWidget } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.definition';
+import { interfaceWidget } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.definition';
 import { ipv4AddressWidget, ipv6AddressWidget } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
-import { networkWidget } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.definition';
 import { poolWidget } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
 import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.definition';
 import { osVersionWidget } from 'app/pages/dashboard/widgets/system/widget-os-version/widget-os-version.definition';
@@ -28,7 +28,7 @@ export const widgetComponents = [
   ipv4AddressWidget.settingsComponent,
   helpWidget.component,
   memoryWidget.component,
-  networkWidget.component,
+  interfaceWidget.component,
   backupTasksWidget.component,
   cpuWidget.component,
   cpuUsageGaugeWidget.component,
@@ -55,7 +55,7 @@ export const widgetRegistry = {
   [WidgetType.Ipv6Address]: ipv6AddressWidget,
   [WidgetType.Help]: helpWidget,
   [WidgetType.Memory]: memoryWidget,
-  [WidgetType.Network]: networkWidget,
+  [WidgetType.Interface]: interfaceWidget,
   [WidgetType.BackupTasks]: backupTasksWidget,
   [WidgetType.Cpu]: cpuWidget,
   [WidgetType.CpuUsageGauge]: cpuUsageGaugeWidget,
