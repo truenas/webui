@@ -25,7 +25,7 @@
   >
     {{ 'Advanced Settings' | translate }}
   </button>
-  @if (!!(kubernetesStore.selectedPool$ | async)) {
+  @if (!!dockerStore.selectedPool()) {
     <button
       mat-menu-item
       ixTest="unset-pool"

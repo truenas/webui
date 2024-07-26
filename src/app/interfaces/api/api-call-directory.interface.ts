@@ -166,8 +166,6 @@ import {
   SshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig } from 'app/interfaces/kmip-config.interface';
-import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
-import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import {
@@ -614,11 +612,6 @@ export interface ApiCallDirectory {
   // Docker
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusResponse };
-
-  // Kubernetes
-  'kubernetes.bindip_choices': { params: void; response: Choices };
-  'kubernetes.config': { params: void; response: KubernetesConfig };
-  'kubernetes.status': { params: void; response: KubernetesStatusData };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };

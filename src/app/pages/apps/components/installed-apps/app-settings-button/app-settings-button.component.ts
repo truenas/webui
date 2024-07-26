@@ -12,7 +12,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { DockerSettingsComponent } from 'app/pages/apps/components/installed-apps/docker-settings/docker-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -36,9 +36,11 @@ export class AppSettingsButtonComponent {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
-    protected kubernetesStore: KubernetesStore,
+    protected dockerStore: DockerStore,
     private viewContainerRef: ViewContainerRef,
-  ) { }
+  ) {
+    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
+  }
 
   onChoosePool(): void {
     this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
@@ -56,13 +58,13 @@ export class AppSettingsButtonComponent {
       buttonText: helptextApps.choosePool.unsetPool.confirm.button,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.dialogService.jobDialog(
-        this.ws.job('kubernetes.update', [{ pool: null }]),
+        this.ws.job('docker.update', { pool: null }),
         { title: helptextApps.choosePool.jobTitle },
       )
         .afterClosed()
         .pipe(this.errorHandler.catchError(), untilDestroyed(this))
         .subscribe(() => {
-          this.kubernetesStore.updateSelectedPool(null);
+          this.dockerStore.setDockerPool(null);
           this.snackbar.success(this.translate.instant('Pool has been unset.'));
         });
     });

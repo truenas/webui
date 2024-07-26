@@ -67,7 +67,6 @@ import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-d
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -178,9 +177,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     FileSizePipe,
     NetworkSpeedPipe,
     OrNotAvailablePipe,
-  ],
-  providers: [
-    DockerStore,
   ],
 })
 export class AppsModule { }

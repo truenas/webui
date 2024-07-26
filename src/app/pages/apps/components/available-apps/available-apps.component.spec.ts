@@ -15,7 +15,6 @@ import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-we
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
-import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -34,8 +33,8 @@ import {
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 const existingCatalogApp = {
@@ -243,7 +242,7 @@ describe('Finding app', () => {
       MockDeclaration(CustomAppButtonComponent),
     ],
     providers: [
-      KubernetesStore,
+      DockerStore,
       InstalledAppsStore,
       mockProvider(AppsStatisticsService),
       mockWebSocket([]),
@@ -304,7 +303,7 @@ describe('Redirect to install app', () => {
       ),
     ],
     providers: [
-      KubernetesStore,
+      DockerStore,
       InstalledAppsStore,
       mockProvider(AppsStatisticsService),
       mockWebSocket([
@@ -313,17 +312,6 @@ describe('Redirect to install app', () => {
         mockCall('catalog.get_item_details', existingCatalogApp),
         mockCall('chart.release.query', [{} as ChartRelease]),
         mockCall('service.started', true),
-        mockCall('kubernetes.config', {
-          pool: 'my pool',
-          node_ip: '10.123.45.67',
-          route_v4_interface: 'enp0s7',
-          route_v4_gateway: '10.123.45.1',
-          configure_gpus: true,
-          servicelb: true,
-          cluster_cidr: '172.16.0.0/16',
-          service_cidr: '172.17.0.0/16',
-          cluster_dns_ip: '172.17.0.1',
-        } as KubernetesConfig),
       ]),
       mockProvider(AuthService, {
         user$: of({ attributes: { appsAgreement: true } }),

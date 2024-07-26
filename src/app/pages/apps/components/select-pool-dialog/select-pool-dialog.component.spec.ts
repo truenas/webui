@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -9,7 +10,6 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -17,7 +17,7 @@ import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SelectPoolDialogComponent', () => {
@@ -32,12 +32,10 @@ describe('SelectPoolDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(KubernetesStore, {
-        updatePoolAndKubernetesConfig: jest.fn(() => of()),
-        updateSelectedPool: jest.fn(() => of()),
+      mockProvider(DockerStore, {
+        setDockerPool: jest.fn(() => of()),
       }),
       mockProvider(ApplicationsService, {
-        getKubernetesConfig: jest.fn(() => of({})),
         getPoolList: jest.fn(() => of([
           { name: 'pool1' },
           { name: 'pool2' },
@@ -52,7 +50,7 @@ describe('SelectPoolDialogComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(Router),
       mockWebSocket([
-        mockJob('kubernetes.update'),
+        mockJob('docker.update'),
       ]),
     ],
   });
@@ -61,9 +59,6 @@ describe('SelectPoolDialogComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-
-    const kubernetesStore = spectator.inject(KubernetesStore);
-    jest.spyOn(kubernetesStore, 'updatePoolAndKubernetesConfig').mockReturnValue(of({} as KubernetesConfig));
   });
 
   it('loads pools available in system and shows them in the dropdown', async () => {
@@ -83,17 +78,17 @@ describe('SelectPoolDialogComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'kubernetes.update',
+      'docker.update',
       [{ pool: 'pool2' }],
     );
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('shows migrate checkbox when existing pool is changed to a new one', async () => {
-    const appService = spectator.inject(ApplicationsService);
-    jest.spyOn(appService, 'getKubernetesConfig').mockReturnValue(of({
-      pool: 'pool1',
-    } as KubernetesConfig));
+    const dockerStore = spectator.inject(DockerStore);
+    Object.defineProperty(dockerStore, 'selectedPool', {
+      value: signal('pool1'),
+    });
     spectator.component.ngOnInit();
 
     await form.fillForm({
@@ -116,8 +111,8 @@ describe('SelectPoolDialogComponent', () => {
     await chooseButton.click();
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'kubernetes.update',
-      [{ migrate_applications: true, pool: 'pool2' }],
+      'docker.update',
+      [{ pool: 'pool2' }],
     );
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });

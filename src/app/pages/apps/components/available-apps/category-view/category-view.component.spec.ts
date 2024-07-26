@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
@@ -14,7 +15,7 @@ import {
 } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { CategoryViewComponent } from './category-view.component';
 
 describe('CategoryViewComponent', () => {
@@ -46,8 +47,8 @@ describe('CategoryViewComponent', () => {
         applyFilters: jest.fn(),
         resetFilters: jest.fn(),
       }),
-      mockProvider(KubernetesStore, {
-        selectedPool$: of('pool'),
+      mockProvider(DockerStore, {
+        selectedPool: signal('pool'),
       }),
       mockProvider(AppsStore, {
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent', 'new-and-updated']),

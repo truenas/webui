@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -48,7 +49,7 @@ import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -79,6 +80,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
   });
+
+  selectedPool$ = toObservable(this.dockerStore.selectedPool);
 
   searchControl = this.formBuilder.control('');
   searchOptions: Option[] = [];
@@ -119,7 +122,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     private loader: AppLoaderService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
-    private kubernetesStore: KubernetesStore,
+    private dockerStore: DockerStore,
     private ws: WebSocketService,
   ) {}
 
@@ -127,6 +130,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.getDockerHubRateLimitInfo();
     this.listenForRouteChanges();
     this.handleSearchControl();
+    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 
   ngOnDestroy(): void {
@@ -486,11 +490,10 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   private checkIfPoolIsSet(): void {
-    this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
-      if (!pool) {
-        this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
-      }
-    });
+    const pool = this.dockerStore.selectedPool();
+    if (!pool) {
+      this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+    }
   }
 
   private handleSearchControl(): void {

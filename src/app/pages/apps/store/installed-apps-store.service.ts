@@ -1,4 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
@@ -12,7 +13,7 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface InstalledAppsState {
@@ -35,7 +36,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   constructor(
     private appsService: ApplicationsService,
     private appsStore: AppsStore,
-    private kubernetesStore: KubernetesStore,
+    private dockerStore: DockerStore,
     private errorHandler: ErrorHandlerService,
     private appsStats: AppsStatisticsService,
   ) {
@@ -162,12 +163,12 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   }
 
   private loadInstalledApps(): Observable<unknown> {
-    return this.kubernetesStore.isLoading$.pipe(
+    return toObservable(this.dockerStore.isLoading).pipe(
       filter((loading) => !loading),
-      switchMap(() => this.kubernetesStore.isKubernetesStarted$),
-      filter((isKubernetesStarted) => isKubernetesStarted !== null),
-      switchMap((isKubernetesStarted) => {
-        return isKubernetesStarted ? this.appsService.getAllChartReleases().pipe(
+      switchMap(() => toObservable(this.dockerStore.dockerStarted)),
+      filter((isDockerStarted) => isDockerStarted !== null),
+      switchMap((isDockerStarted) => {
+        return isDockerStarted ? this.appsService.getAllChartReleases().pipe(
           tap((installedApps: ChartRelease[]) => {
             this.patchState((state: InstalledAppsState): InstalledAppsState => {
               return {
@@ -175,7 +176,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
                 installedApps: [...installedApps],
               };
             });
-            if (isKubernetesStarted) {
+            if (isDockerStarted) {
               this.subscribeToInstalledAppsUpdates();
               this.appsStats.subscribeToUpdates();
             }

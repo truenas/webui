@@ -12,7 +12,7 @@
   <div class="app-image-holder">
     <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
   </div>
-  @if (!!(kubernetesStore.selectedPool$ | async)) {
+  @if (!!dockerStore.selectedPool()) {
     <button
       mat-button
       color="primary"

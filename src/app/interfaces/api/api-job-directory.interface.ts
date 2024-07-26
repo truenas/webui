@@ -34,7 +34,6 @@ import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/fil
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
-import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
@@ -136,9 +135,6 @@ export interface ApiJobDirectory {
 
   // Docker
   'docker.update': { params: DockerConfigUpdate; response: DockerConfig };
-
-  // Kubernetes
-  'kubernetes.update': { params: [Partial<KubernetesConfigUpdate>]; response: KubernetesConfig };
 
   // LDAP
   'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };

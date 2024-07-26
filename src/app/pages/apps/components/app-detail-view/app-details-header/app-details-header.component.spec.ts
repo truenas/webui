@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ViewContainerRef } from '@angular/core';
+import { signal, ViewContainerRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,8 +20,8 @@ import {
   AppDetailsHeaderComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 describe('AppDetailsHeaderComponent', () => {
@@ -77,8 +77,8 @@ describe('AppDetailsHeaderComponent', () => {
           app: application,
         },
         providers: [
-          mockProvider(KubernetesStore, {
-            selectedPool$: of(null),
+          mockProvider(DockerStore, {
+            selectedPool: signal(null),
           }),
         ],
       });
@@ -105,8 +105,8 @@ describe('AppDetailsHeaderComponent', () => {
           app: application,
         },
         providers: [
-          mockProvider(KubernetesStore, {
-            selectedPool$: of('has-pool'),
+          mockProvider(DockerStore, {
+            selectedPool: signal('has-pool'),
           }),
         ],
       });

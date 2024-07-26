@@ -5,9 +5,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { Observable, switchMap, tap } from 'rxjs';
 import { DockerConfig, DockerStatusResponse } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface DockerConfigState {
@@ -111,20 +109,12 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
     return this.ws.call('docker.status');
   }
 
-  setupDockerUpdateJob(pool: string): Observable<Job<DockerConfig>> {
-    return this.ws.job('docker.update', { pool }).pipe(
-      tap((job) => {
-        if (job.state === JobState.Success) {
-          this.patchState((state) => {
-            return {
-              ...state,
-              pool: job.result.pool,
-            };
-          });
-        }
-      }),
-    );
-  }
+  setDockerPool = this.updater((state: DockerConfigState, pool: string) => {
+    return {
+      ...state,
+      pool,
+    };
+  });
 
   /**
    * Updates docker status in `DockerStore` service

@@ -11,8 +11,8 @@ import {
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -28,7 +28,7 @@ export class AppDetailsHeaderComponent {
   @Input() isLoading$: Observable<boolean>;
 
   constructor(
-    public kubernetesStore: KubernetesStore,
+    protected dockerStore: DockerStore,
     private router: Router,
     private matDialog: MatDialog,
     private installedAppsStore: InstalledAppsStore,
@@ -37,7 +37,9 @@ export class AppDetailsHeaderComponent {
     private translate: TranslateService,
     private ws: WebSocketService,
     private viewContainerRef: ViewContainerRef,
-  ) {}
+  ) {
+    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
+  }
 
   get description(): string {
     const splitText = this.app?.app_readme?.split('</h1>');

@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,7 +24,7 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -296,8 +297,8 @@ describe('ChartWizardComponent', () => {
           error: null,
         }),
       ]),
-      mockProvider(KubernetesStore, {
-        selectedPool$: of('pool set'),
+      mockProvider(DockerStore, {
+        selectedPool: signal('pool set'),
       }),
       mockProvider(MatDialog),
       mockProvider(IxSlideInRef),
@@ -330,8 +331,8 @@ describe('ChartWizardComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const store = spectator.inject(KubernetesStore);
-      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      const store = spectator.inject(DockerStore);
+      Object.defineProperty(store, 'selectedPool', { value: signal(undefined) });
       spectator.component.ngOnInit();
 
       expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'app_name']);
@@ -387,8 +388,8 @@ describe('ChartWizardComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const store = spectator.inject(KubernetesStore);
-      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      const store = spectator.inject(DockerStore);
+      Object.defineProperty(store, 'selectedPool', { value: signal(undefined) });
       spectator.component.ngOnInit();
 
       expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'ipfs']);

@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DockerStatus, dockerStatusLabels } from 'app/enums/docker-status.enum';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 
+@UntilDestroy(this)
 @Component({
   selector: 'ix-docker-status',
   templateUrl: './docker-status.component.html',
@@ -15,5 +17,7 @@ export class DockerStatusComponent {
   status = this.store.status;
   statusDescription = this.store.statusDescription;
 
-  constructor(private store: DockerStore) {}
+  constructor(private store: DockerStore) {
+    this.store.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
+  }
 }
