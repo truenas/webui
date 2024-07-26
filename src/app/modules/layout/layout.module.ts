@@ -57,31 +57,6 @@ import { PowerMenuComponent } from './components/topbar/power-menu/power-menu.co
 import { ResilveringIndicatorComponent } from './components/topbar/resilvering-indicator/resilvering-indicator.component';
 import { UserMenuComponent } from './components/topbar/user-menu/user-menu.component';
 
-const components = [
-  ChangePasswordDialogComponent,
-  NavigationComponent,
-  SecondaryMenuComponent,
-  PowerMenuComponent,
-  TopbarComponent,
-  UserMenuComponent,
-  AuthLayoutComponent,
-  AdminLayoutComponent,
-  CopyrightLineComponent,
-  ConsoleFooterComponent,
-  DirectoryServicesIndicatorComponent,
-  JobsIndicatorComponent,
-  IxLogoComponent,
-  HaStatusIconComponent,
-  HaStatusPopoverComponent,
-  ResilveringIndicatorComponent,
-  FailoverUpgradeIndicatorComponent,
-  CheckinIndicatorComponent,
-  AboutDialogComponent,
-  ConsolePanelDialogComponent,
-  ResilverProgressDialogComponent,
-  DirectoryServicesMonitorComponent,
-];
-
 @NgModule({
   imports: [
     CommonModule,
@@ -112,7 +87,28 @@ const components = [
     MapValuePipe,
   ],
   declarations: [
-    ...components,
+    ChangePasswordDialogComponent,
+    NavigationComponent,
+    SecondaryMenuComponent,
+    PowerMenuComponent,
+    TopbarComponent,
+    UserMenuComponent,
+    AuthLayoutComponent,
+    AdminLayoutComponent,
+    CopyrightLineComponent,
+    ConsoleFooterComponent,
+    DirectoryServicesIndicatorComponent,
+    JobsIndicatorComponent,
+    IxLogoComponent,
+    HaStatusIconComponent,
+    HaStatusPopoverComponent,
+    ResilveringIndicatorComponent,
+    FailoverUpgradeIndicatorComponent,
+    CheckinIndicatorComponent,
+    AboutDialogComponent,
+    ConsolePanelDialogComponent,
+    ResilverProgressDialogComponent,
+    DirectoryServicesMonitorComponent,
   ],
   exports: [
     ChangePasswordDialogComponent,
