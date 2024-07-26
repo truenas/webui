@@ -8,6 +8,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
+import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { SystemState } from 'app/enums/system-state.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
@@ -797,6 +798,7 @@ export interface ApiCallDirectory {
   'system.advanced.login_banner': { params: void; response: string };
   'system.build_time': { params: void; response: ApiTimestamp };
   'system.boot_id': { params: void; response: string };
+  'system.environment': { params: void; response: SystemEnvironment };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: void; response: Choices };
   'system.general.language_choices': { params: void; response: Choices };

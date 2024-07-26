@@ -120,7 +120,7 @@ export class DashboardPoolComponent implements OnChanges {
   }
 
   counter(i: number): number[] {
-    return new Array<number>(i).fill(0).map((_, index) => index);
+    return new Array<number>(i);
   }
 
   private handlePendingGlobalSearchElement(): void {
