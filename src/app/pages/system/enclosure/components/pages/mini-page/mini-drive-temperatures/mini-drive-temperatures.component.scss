@@ -5,9 +5,8 @@ h3 {
 }
 
 .disk {
+  align-items: center;
+  display: flex;
+  gap: 6px;
   margin: 8px 0 6px;
-
-  .dev {
-    margin-right: 6px;
-  }
 }

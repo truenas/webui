@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, OnDestroy, computed,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
@@ -25,7 +26,7 @@ export class MiniDriveTemperaturesComponent implements OnDestroy {
       .filter((slot) => slot.dev)
       .map((slot) => {
         const value = this.temperature()?.values?.[slot.dev] || null;
-        const symbolText = `${this.temperature()?.symbolText}C`;
+        const symbolText = TemperatureUnit.Celsius;
         return {
           dev: slot.dev,
           temperature: value !== null ? `${value} ${symbolText}` : undefined,
