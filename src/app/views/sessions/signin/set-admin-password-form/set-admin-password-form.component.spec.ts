@@ -4,10 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
-import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -32,7 +30,6 @@ describe('SetAdminPasswordFormComponent', () => {
     providers: [
       mockWebSocket([
         mockCall('user.setup_local_administrator'),
-        mockCall('system.environment', SystemEnvironment.Default),
       ]),
       mockProvider(SigninStore, {
         setLoadingState: jest.fn(),
@@ -82,31 +79,12 @@ describe('SetAdminPasswordFormComponent', () => {
     await submitButton.click();
 
     const websocket = spectator.inject(WebSocketService);
-    expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['admin', '12345678']);
+    expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['truenas_admin', '12345678']);
     const authService = spectator.inject(AuthService);
-    expect(authService.login).toHaveBeenCalledWith('admin', '12345678');
+    expect(authService.login).toHaveBeenCalledWith('truenas_admin', '12345678');
 
     const signinStore = spectator.inject(SigninStore);
     expect(signinStore.setLoadingState).toHaveBeenCalledWith(true);
     expect(signinStore.handleSuccessfulLogin).toHaveBeenCalled();
-  });
-
-  it('checks environment status and shows EC2 Instance ID when environment is EC2', async () => {
-    const websocket = spectator.inject(MockWebSocketService);
-    websocket.mockCall('system.environment', SystemEnvironment.Ec2);
-
-    spectator.component.ngOnInit();
-
-    await form.fillForm({
-      Password: '12345678',
-      'Reenter Password': '12345678',
-      'EC2 Instance ID': 'i-12345678',
-    });
-
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
-    await submitButton.click();
-
-    expect(spectator.inject(WebSocketService).call)
-      .toHaveBeenCalledWith('user.setup_local_administrator', ['admin', '12345678', { instance_id: 'i-12345678' }]);
   });
 });
