@@ -25,7 +25,7 @@ export class ProductImageComponent {
   showProductImageText = input<boolean>(true);
 
   product = computed(() => getServerProduct(this.systemProduct()));
-  productImage = computed(() => getProductImageSrc(this.systemProduct(), 'ix-original.svg'));
+  productImage = computed(() => getProductImageSrc(this.systemProduct()));
   productEnclosure = computed(() => {
     if (!this.hasEnclosureSupport() || !this.systemProduct()) {
       return null;

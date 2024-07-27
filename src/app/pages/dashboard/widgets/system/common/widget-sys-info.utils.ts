@@ -8,8 +8,9 @@ export function getServerProduct(systemProduct: string): string {
 
 export function getProductImageSrc(
   systemProduct: string,
-  defaultImg: 'ix-original.svg' | 'ix-original-cropped.png',
+  cropDefaultImg = false,
 ): string | null {
+  const defaultImg = cropDefaultImg ? 'ix-original-cropped.png' : 'ix-original.svg';
   const getProductImageName = (productName: string): string | null => {
     if (productName?.includes('MINI')) {
       const getImage = Object.values(miniSeries).find(

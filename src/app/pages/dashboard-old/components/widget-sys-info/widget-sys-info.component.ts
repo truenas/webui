@@ -209,7 +209,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   setProductImage(): void {
     if (!this.isIxHardware() || !this.systemInfo) return;
     this.productImageSrc.set(
-      getProductImageSrc(this.systemInfo.system_product, 'ix-original.svg'),
+      getProductImageSrc(this.systemInfo.system_product),
     );
 
     if (this.systemInfo.platform.includes('MINI')) {

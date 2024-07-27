@@ -98,7 +98,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   private setupProductImage(systemInfo: SystemInfo): void {
-    const productImageUrl = getProductImageSrc(systemInfo.system_product, 'ix-original-cropped.png');
+    const productImageUrl = getProductImageSrc(systemInfo.system_product, true);
     this.productImageSrc.set(productImageUrl);
     this.isWiderImage = !productImageUrl.includes('ix-original');
     this.extraMargin = !productImageUrl.includes('ix-original');
