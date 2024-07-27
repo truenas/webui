@@ -203,7 +203,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   private handleOverlayKeyNavigation(event: KeyboardEvent, slot: DashboardEnclosureSlot): void {
     switch (event.key) {
       case 'Enter':
-        this.selectedSlot.set(slot);
+        this.slotSelected(slot);
         break;
       case 'ArrowUp':
       case 'ArrowLeft':
@@ -233,18 +233,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   private addInteractionListeners(slot: DashboardEnclosureSlot): void {
     const overlay = this.overlayRects[slot.drive_bay_number];
 
-    this.clickListener = this.renderer.listen(overlay, 'click', () => {
-      const selectedSlot = this.selectedSlot();
-      const newSlotExists = !!slot;
-      const prevSlotExists = !!selectedSlot;
-
-      if (newSlotExists && prevSlotExists && slot.dev === selectedSlot.dev) {
-        this.selectedSlot.set(undefined);
-        return;
-      }
-
-      this.selectedSlot.set(slot);
-    });
+    this.clickListener = this.renderer.listen(overlay, 'click', this.slotSelected.bind(this, slot));
 
     this.keyDownListener = this.renderer.listen(
       overlay,
@@ -263,6 +252,19 @@ export class EnclosureSvgComponent implements OnDestroy {
       }),
     );
   }
+
+  slotSelected = (slot: DashboardEnclosureSlot): void => {
+    const selectedSlot = this.selectedSlot();
+    const newSlotExists = !!slot;
+    const prevSlotExists = !!selectedSlot;
+
+    if (newSlotExists && prevSlotExists && slot.dev === selectedSlot.dev) {
+      this.selectedSlot.set(undefined);
+      return;
+    }
+
+    this.selectedSlot.set(slot);
+  };
 
   private addTint(slot: DashboardEnclosureSlot): void {
     const overlay = this.overlayRects[slot.drive_bay_number];
