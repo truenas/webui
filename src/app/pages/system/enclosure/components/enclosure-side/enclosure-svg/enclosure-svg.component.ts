@@ -237,23 +237,13 @@ export class EnclosureSvgComponent implements OnDestroy {
       const selectedSlot = this.selectedSlot();
       const newSlotExists = !!slot;
       const prevSlotExists = !!selectedSlot;
-      const prevSlotVdevDisks = prevSlotExists ? selectedSlot.pool_info?.vdev_disks.map((disk) => disk.dev) : [];
 
-      if (!newSlotExists) {
+      if (newSlotExists && prevSlotExists && slot.dev === selectedSlot.dev) {
         this.selectedSlot.set(undefined);
         return;
       }
 
-      if (!prevSlotExists) {
-        this.selectedSlot.set(slot);
-        return;
-      }
-
-      if (prevSlotVdevDisks.includes(slot.dev)) {
-        this.selectedSlot.set(slot);
-      } else {
-        this.selectedSlot.set(undefined);
-      }
+      this.selectedSlot.set(slot);
     });
 
     this.keyDownListener = this.renderer.listen(
