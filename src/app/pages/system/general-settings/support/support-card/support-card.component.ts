@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
   signal,
+  WritableSignal,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -48,7 +49,7 @@ export class SupportCardComponent implements OnInit {
   protected readonly searchableElements = supportCardElements;
 
   isProduction: boolean;
-  isWiderImage = false;
+  isWiderImage: WritableSignal<boolean> = signal(false);
   extraMargin = true;
   systemInfo: SystemInfoInSupport;
   hasLicense = false;
@@ -100,7 +101,7 @@ export class SupportCardComponent implements OnInit {
   private setupProductImage(systemInfo: SystemInfo): void {
     const productImageUrl = getProductImageSrc(systemInfo.system_product, true);
     this.productImageSrc.set(productImageUrl);
-    this.isWiderImage = !productImageUrl.includes('ix-original');
+    this.isWiderImage.set(!productImageUrl.includes('ix-original'));
     this.extraMargin = !productImageUrl.includes('ix-original');
   }
 
