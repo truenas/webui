@@ -161,23 +161,13 @@ export class EnclosureSvgComponent implements OnDestroy {
     if (!selectedVdevDisks?.length) {
       return;
     }
-    const selectedVdevDisksDriveBayNumbers = [];
-    const notSelectedVdevDisksDriveBayNumbers = [];
+
     for (const slot of allSlots) {
       if (selectedVdevDisks.includes(slot.dev)) {
-        selectedVdevDisksDriveBayNumbers.push(slot.drive_bay_number);
+        this.renderer.addClass(this.overlayRects[slot.drive_bay_number], 'selected-vdev-disk');
       } else if (slot.drive_bay_number !== selectedSlot.drive_bay_number) {
-        notSelectedVdevDisksDriveBayNumbers.push(slot.drive_bay_number);
+        this.renderer.addClass(this.overlayRects[slot.drive_bay_number], 'not-selected-vdev-disk');
       }
-    }
-
-    for (const vdevDiskDriveBayNumber of selectedVdevDisksDriveBayNumbers) {
-      const vdevDiskSlotOverlay = this.overlayRects[vdevDiskDriveBayNumber];
-      this.renderer.addClass(vdevDiskSlotOverlay, 'selected-vdev-disk');
-    }
-    for (const notVdevDiskDriveBayNumber of notSelectedVdevDisksDriveBayNumbers) {
-      const vdevDiskSlotOverlay = this.overlayRects[notVdevDiskDriveBayNumber];
-      this.renderer.addClass(vdevDiskSlotOverlay, 'not-selected-vdev-disk');
     }
   }
 
