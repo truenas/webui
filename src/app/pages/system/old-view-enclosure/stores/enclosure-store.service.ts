@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import {
-  forkJoin, Observable, Subject, tap,
+  forkJoin, Observable, tap,
 } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { Disk } from 'app/interfaces/disk.interface';
+import { filter, map, switchMap } from 'rxjs/operators';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { OldEnclosure } from 'app/pages/system/old-view-enclosure/interfaces/old-enclosure.interface';
@@ -38,7 +38,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   constructor(
     private ws: WebSocketService,
-    // private disksUpdateService: DisksUpdateService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -132,11 +131,16 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   listenForDiskUpdates(): void {
     if (!this.disksUpdateSubscriptionId) {
-      const diskUpdatesTrigger$ = new Subject<Disk[]>();
-      // this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$, true);
-      diskUpdatesTrigger$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.loadData();
-      });
+      this.ws.subscribe('disk.query')
+        .pipe(
+          filter((event) => [
+            IncomingApiMessageType.Added,
+            IncomingApiMessageType.Changed,
+            IncomingApiMessageType.Removed,
+          ].includes(event.msg)),
+          untilDestroyed(this),
+        )
+        .subscribe(() => this.loadData());
     }
   }
 

@@ -50,7 +50,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<EnclosureEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef<HTMLElement>;
-  private disksUpdateSubscriptionId: string;
   private destroyed$ = new ReplaySubject<boolean>(1);
   protected readonly searchableElements = viewEnclosureElements;
 
@@ -156,7 +155,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     public router: Router,
     private ws: WebSocketService,
     private store$: Store<AppState>,
-    // private disksUpdateService: DisksUpdateService,
     private enclosureStore: EnclosureStore,
     private changeDetectorRef: ChangeDetectorRef,
   ) {
@@ -260,7 +258,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

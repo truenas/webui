@@ -22,6 +22,7 @@ import { filter, map } from 'rxjs/operators';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { EnclosureDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { Role } from 'app/enums/role.enum';
+import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { DashboardEnclosureSlot, EnclosureElement } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -252,39 +253,44 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     protected matDialog: MatDialog,
     protected enclosureStore: EnclosureStore,
   ) {
-    // this.diskTemperatureService.listenForTemperatureUpdates();
+    this.diskTemperatureService.getTemperature()
+      .pipe(untilDestroyed(this))
+      .subscribe((diskTemperature) => {
+        const chassisView: ChassisView = this.chassisView && this.view === EnclosureLocation.Rear
+          ? this.chassis?.rear
+          : this.chassis?.front;
+        if (!this.chassis || !chassisView?.driveTrayObjects) { return; }
 
-    // this.diskTemperatureService.temperature$.pipe(untilDestroyed(this)).subscribe((data) => {
-    //   const chassisView: ChassisView = this.chassisView && this.view === EnclosureLocation.Rear
-    //     ? this.chassis?.rear
-    //     : this.chassis?.front;
-    //   if (!this.chassis || !chassisView?.driveTrayObjects) { return; }
+        const data = {
+          keys: Object.keys(diskTemperature),
+          values: { ...diskTemperature },
+          unit: TemperatureUnit.Celsius,
+          symbolText: '',
+        };
+        const clone: Temperature = { ...data };
+        clone.values = {};
+        clone.keys = [];
 
-    //   const clone: Temperature = { ...data };
-    //   clone.values = {};
-    //   clone.keys = [];
+        if (chassisView?.driveTrayObjects) {
+          const enclosureView = this.selectedEnclosure;
+          chassisView.driveTrayObjects.forEach((dt: DriveTray) => {
+            const enclosureSlot = enclosureView.elements['Array Device Slot'][parseInt(dt.id)];
+            if (enclosureSlot.dev) {
+              clone.keys.push(enclosureSlot.dev);
+              clone.values[enclosureSlot.dev] = data.values[enclosureSlot.dev];
+            }
+          });
+        } else {
+          console.warn({
+            message: 'No Chassis View Available',
+            chassisView,
+            thisChassisView: this.chassisView,
+          });
+        }
 
-    //   if (chassisView?.driveTrayObjects) {
-    //     const enclosureView = this.selectedEnclosure;
-    //     chassisView.driveTrayObjects.forEach((dt: DriveTray) => {
-    //       const enclosureSlot = enclosureView.elements['Array Device Slot'][parseInt(dt.id)];
-    //       if (enclosureSlot.dev) {
-    //         clone.keys.push(enclosureSlot.dev);
-    //         clone.values[enclosureSlot.dev] = data.values[enclosureSlot.dev];
-    //       }
-    //     });
-    //   } else {
-    //     console.warn({
-    //       message: 'No Chassis View Available',
-    //       chassisView,
-    //       thisChassisView: this.chassisView,
-    //     });
-    //   }
-
-    //   this.temperatures = clone;
-    //   this.cdr.markForCheck();
-    // });
-    // this.diskTemperatureService.diskTemperaturesSubscribe();
+        this.temperatures = clone;
+        this.cdr.markForCheck();
+      });
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
@@ -402,7 +408,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Component Cleanup
   ngOnDestroy(): void {
-    // this.diskTemperatureService.diskTemperaturesUnsubscribe();
     this.destroyAllEnclosures();
     if (this.app) {
       this.app.stage.destroy(true);
