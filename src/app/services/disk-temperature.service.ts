@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-  delay,
   filter,
   map, Observable, repeat,
   switchMap,
@@ -38,7 +37,6 @@ export class DiskTemperatureService {
     return this.websocket
       .call('webui.enclosure.dashboard')
       .pipe(
-        delay(5000),
         repeat(({ delay: () => this.disksChanged$ })),
         map((enclosures) => {
           return enclosures.map((enclosure) => {
