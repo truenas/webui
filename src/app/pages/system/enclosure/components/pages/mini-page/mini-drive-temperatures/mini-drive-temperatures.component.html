@@ -10,13 +10,12 @@
           <ngx-skeleton-loader [theme]="{ margin: 0, background: 'var(--alt-bg2)' }"></ngx-skeleton-loader>
         } @else {
           <span class="temperature">{{ disk.temperature | orNotAvailable }}</span>
-        }
-
-        @if (disk.temperature === undefined) {
-          <ix-tooltip
-            [header]="'Temperature data missing.' | translate"
-            [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur.' | translate"
-          ></ix-tooltip>
+          @if (!disk.temperature) {
+            <ix-tooltip
+              [header]="'Temperature data missing.' | translate"
+              [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur.' | translate"
+            ></ix-tooltip>
+          }
         }
       </li>
     }

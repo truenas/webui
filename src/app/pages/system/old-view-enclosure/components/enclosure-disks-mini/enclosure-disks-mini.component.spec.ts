@@ -76,7 +76,7 @@ describe('EnclosureDisksMiniComponent', () => {
         getPools: jest.fn(() => ['test_pool']),
       }),
       mockProvider(DiskTemperatureService, {
-        getTemperature: of({}),
+        getTemperature: () => of({}),
       }),
       mockProvider(ThemeService, {
         currentTheme: jest.fn(() => ({

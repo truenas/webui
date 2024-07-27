@@ -16,7 +16,7 @@ import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 })
 export class MiniDriveTemperaturesComponent {
   private temperature = toSignal(this.diskTemperatureService.getTemperature());
-  private symbolText = TemperatureUnit.Celsius;
+  private celsius = TemperatureUnit.Celsius;
   private readonly slots = computed(() => {
     return getSlotsOfSide(this.store.selectedEnclosure(), EnclosureSide.Front);
   });
@@ -26,12 +26,11 @@ export class MiniDriveTemperaturesComponent {
   protected readonly disks = computed(() => {
     return this.slots()
       .filter((slot) => slot.dev)
-      .map((slot) => {
-        const temperature = this.temperature();
-        const value = temperature ? `${temperature[slot.dev]} ${this.symbolText}` : null;
+      .map(({ dev }) => {
+        const data = this.temperature();
         return {
-          dev: slot.dev,
-          temperature: value !== null ? value : undefined,
+          dev,
+          temperature: data?.[dev] ? `${data[dev]} ${this.celsius}` : null,
         };
       });
   });
