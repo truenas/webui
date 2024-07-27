@@ -20,7 +20,7 @@ import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedbac
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getProductImageSrc } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -125,17 +125,6 @@ export class SupportCardComponent implements OnInit {
 
   daysTillExpiration(now: Date, then: Date): number {
     return Math.round((then.getTime() - now.getTime()) / (oneDayMillis));
-  }
-
-  getServerImage(sysProduct: string): void {
-    const product = getServerProduct(sysProduct);
-
-    if (product) {
-      this.isWiderImage = true;
-    } else {
-      this.isWiderImage = false;
-      this.extraMargin = false;
-    }
   }
 
   updateLicense(): void {
