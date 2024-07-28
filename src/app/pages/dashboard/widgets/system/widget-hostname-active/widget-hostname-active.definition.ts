@@ -4,12 +4,12 @@ import {
   dashboardWidget,
 } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.component';
+import { WidgetHostnameActiveComponent } from 'app/pages/dashboard/widgets/system/widget-hostname-active/widget-hostname-active.component';
 
-export const hostnameWidget = dashboardWidget({
-  name: T('Hostname'),
+export const hostnameActiveWidget = dashboardWidget({
+  name: T('Hostname – Active'),
   supportedSizes: [SlotSize.Quarter, SlotSize.Half, SlotSize.Full],
-  category: WidgetCategory.Network,
-  component: WidgetHostnameComponent,
+  category: WidgetCategory.SystemInfo,
+  component: WidgetHostnameActiveComponent,
   settingsComponent: null,
 });

@@ -9,12 +9,21 @@ import { cpuUsageBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-us
 import { arbitraryTextWidget } from 'app/pages/dashboard/widgets/custom/arbitrary-text/widget-arbitrary-text.definition';
 import { helpWidget } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.definition';
 import { memoryWidget } from 'app/pages/dashboard/widgets/memory/widget-memory/widget-memory.definition';
-import { hostnameWidget } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.definition';
 import { interfaceWidget } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.definition';
 import { ipv4AddressWidget, ipv6AddressWidget } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { poolWidget } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
 import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.definition';
+import { hostnameActiveWidget } from 'app/pages/dashboard/widgets/system/widget-hostname-active/widget-hostname-active.definition';
+import {
+  hostnamePassiveWidget,
+} from 'app/pages/dashboard/widgets/system/widget-hostname-passive/widget-hostname-passive.definition';
 import { osVersionWidget } from 'app/pages/dashboard/widgets/system/widget-os-version/widget-os-version.definition';
+import {
+  serialActiveWidget,
+} from 'app/pages/dashboard/widgets/system/widget-serial-active/widget-serial-active.definition';
+import {
+  serialPassiveWidget,
+} from 'app/pages/dashboard/widgets/system/widget-serial-passive/widget-serial-passive.definition';
 import { systemInfoActiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.definition';
 import { systemInfoPassiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.definition';
 import { systemImageWidget } from 'app/pages/dashboard/widgets/system/widget-system-image/widget-system-image.definition';
@@ -23,7 +32,6 @@ import { systemUptimeWidget } from 'app/pages/dashboard/widgets/system/widget-sy
 export const widgetComponents = [
   appWidget.component,
   appWidget.settingsComponent,
-  hostnameWidget.component,
   ipv4AddressWidget.component,
   ipv4AddressWidget.settingsComponent,
   helpWidget.component,
@@ -45,11 +53,14 @@ export const widgetComponents = [
   poolWidget.settingsComponent,
   arbitraryTextWidget.component,
   arbitraryTextWidget.settingsComponent,
+  hostnameActiveWidget.component,
+  hostnamePassiveWidget.component,
+  serialActiveWidget.component,
+  serialPassiveWidget.component,
 ];
 
 export const widgetRegistry = {
   [WidgetType.App]: appWidget,
-  [WidgetType.Hostname]: hostnameWidget,
   [WidgetType.Pool]: poolWidget,
   [WidgetType.Ipv4Address]: ipv4AddressWidget,
   [WidgetType.Ipv6Address]: ipv6AddressWidget,
@@ -69,4 +80,8 @@ export const widgetRegistry = {
   [WidgetType.SystemUptime]: systemUptimeWidget,
   [WidgetType.SystemImage]: systemImageWidget,
   [WidgetType.ArbitraryText]: arbitraryTextWidget,
+  [WidgetType.HostnameActive]: hostnameActiveWidget,
+  [WidgetType.HostnamePassive]: hostnamePassiveWidget,
+  [WidgetType.SerialActive]: serialActiveWidget,
+  [WidgetType.SerialPassive]: serialPassiveWidget,
 };
