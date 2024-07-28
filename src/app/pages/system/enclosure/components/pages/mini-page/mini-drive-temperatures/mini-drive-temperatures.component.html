@@ -2,7 +2,7 @@
 
 @if (disks()) {
   <ul>
-    @for (disk of disks(); track disk) {
+    @for (disk of disks(); track disk.dev) {
       <li class="disk">
         <strong class="dev">{{ disk.dev }}:</strong>
         <span class="temperature">{{ disk.temperature || ('Temperature not available.' | translate) }}</span>
