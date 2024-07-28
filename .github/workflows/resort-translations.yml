@@ -10,6 +10,10 @@ jobs:
   resort-strings:
     name: Resort strings and commit if translations were changed
     runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,15 +23,8 @@ jobs:
         run: yarn run extract
       - name: Validate Translations
         run: yarn run validate-translations
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name 'bugclerk'
-          git config --global user.email 'bugclerk@ixsystems.com'
-          git pull origin master --no-edit
-          git add src/assets/i18n
-          if ! git diff --quiet --cached; then
-            git commit -m "NAS-XXXXXX: Auto resort translation strings" --no-verify
-            git push origin master
-          else
-            echo "No changes to commit."
-          fi
+      # Commit all changed files back to the repository
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Resorting translations.
+          commit_options: '--no-verify --signoff'
