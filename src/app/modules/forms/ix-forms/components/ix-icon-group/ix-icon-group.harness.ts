@@ -37,7 +37,7 @@ export class IxIconGroupHarness extends ComponentHarness implements IxFormContro
       return '';
     }
 
-    return (await selectedButton.host()).getAttribute('aria-label');
+    return (await selectedButton.host()).getAttribute('data-value');
   }
 
   async setValue(value: string): Promise<void> {

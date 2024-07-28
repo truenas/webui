@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SlotSize, Widget } from 'app/pages/dashboard/types/widget.interface';
 
 export enum WidgetGroupLayout {
@@ -46,10 +47,30 @@ export const layoutToSlotSizes = {
   [WidgetGroupLayout.Quarters]: [SlotSize.Quarter, SlotSize.Quarter, SlotSize.Quarter, SlotSize.Quarter],
 };
 
-export const widgetGroupIcons = new Map<WidgetGroupLayout, string>([
-  [WidgetGroupLayout.Full, 'ix:layout_full'],
-  [WidgetGroupLayout.HalfAndQuarters, 'ix:layout_half_and_quarters'],
-  [WidgetGroupLayout.Halves, 'ix:layout_halves'],
-  [WidgetGroupLayout.QuartersAndHalf, 'ix:layout_quarters_and_half'],
-  [WidgetGroupLayout.Quarters, 'ix:layout_quarters'],
-]);
+export const widgetGroupIcons = [
+  {
+    value: WidgetGroupLayout.Full,
+    icon: 'ix:layout_full',
+    label: T('Full'),
+  },
+  {
+    value: WidgetGroupLayout.Halves,
+    icon: 'ix:layout_halves',
+    label: T('Halves'),
+  },
+  {
+    value: WidgetGroupLayout.QuartersAndHalf,
+    icon: 'ix:layout_quarters_and_half',
+    label: T('Quarters and Half'),
+  },
+  {
+    value: WidgetGroupLayout.HalfAndQuarters,
+    icon: 'ix:layout_half_and_quarters',
+    label: T('Half and Quarters'),
+  },
+  {
+    value: WidgetGroupLayout.Quarters,
+    icon: 'ix:layout_quarters',
+    label: T('Quarters'),
+  },
+];

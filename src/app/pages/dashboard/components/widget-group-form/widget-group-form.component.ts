@@ -48,7 +48,7 @@ export class WidgetGroupFormComponent {
     return validationErrors.some((errors) => !!Object.keys(errors).length);
   });
 
-  protected readonly layoutsMap = widgetGroupIcons;
+  protected readonly layoutOptions = widgetGroupIcons;
 
   constructor(
     protected chainedRef: ChainedRef<WidgetGroup>,
