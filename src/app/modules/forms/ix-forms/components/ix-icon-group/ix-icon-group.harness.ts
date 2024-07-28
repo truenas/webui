@@ -41,7 +41,7 @@ export class IxIconGroupHarness extends ComponentHarness implements IxFormContro
   }
 
   async setValue(value: string): Promise<void> {
-    const button = this.locatorFor(MatButtonHarness.with({ selector: `[aria-label="${value}"]` }))();
+    const button = this.locatorFor(MatButtonHarness.with({ selector: `[data-value="${value}"]` }))();
     (await button)?.click();
   }
 
