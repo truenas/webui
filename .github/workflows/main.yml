@@ -21,38 +21,10 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
 
-  check-files:
-    name: Check if translations only were changed
-    runs-on: ubuntu-latest
-    outputs:
-      translations-only: ${{ steps.determine-changes.outputs.translations-only }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Determine if only translations were changed
-        id: determine-changes
-        run: |
-          CHANGED_FILES=$(git diff --name-only HEAD~1 ${{ github.sha }})
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-
-          TRANSLATIONS_ONLY="true"
-          for file in $CHANGED_FILES; do
-            if [[ "$file" != "src/assets/i18n/"* ]]; then
-              TRANSLATIONS_ONLY="false"
-              break
-            fi
-          done
-
-          echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
-
   build:
     name: Build
-    needs: [check-files, install]
+    needs: [install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -65,9 +37,8 @@ jobs:
 
   lint:
     name: Validate code style
-    needs: [check-files, install]
+    needs: [install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -92,9 +63,8 @@ jobs:
 
   test:
     name: Run tests
-    needs: [check-files, install]
+    needs: [install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
@@ -111,33 +81,3 @@ jobs:
           name: webui
           token: ${{ env.CODECOV_TOKEN }}
           fail_ci_if_error: true
-
-  resort-strings:
-    name: Resort Strings and Commit if only translations were added
-    needs: [check-files, install]
-    runs-on: ubuntu-latest
-    if: ${{ needs.check-files.outputs.translations-only == 'true' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 1
-      - name: Install
-        uses: ./.github/actions/prepare
-      - name: Extract Messages
-        run: yarn run extract
-      - name: Validate Translations
-        run: yarn run validate-translations
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name 'BugClerk'
-          git config --global user.email 'bugclerk@ixsystems.com'
-          git pull origin ${{ github.head_ref }} --no-edit
-          git add src/assets/i18n
-          if ! git diff --quiet --cached; then
-            git commit -m "NAS-XXXXXX: Auto resort translation strings"
-            git push origin ${{ github.head_ref }}
-          else
-            echo "No changes to commit."
-          fi

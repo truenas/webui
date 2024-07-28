@@ -1,0 +1,33 @@
+name: Resort translations
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/assets/i18n/**'
+
+jobs:
+  resort-strings:
+    name: Resort strings and commit if translations were changed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Extract Messages
+        run: yarn run extract
+      - name: Validate Translations
+        run: yarn run validate-translations
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name 'bugclerk'
+          git config --global user.email 'bugclerk@ixsystems.com'
+          git pull origin ${{ github.head_ref }} --no-edit
+          git add src/assets/i18n
+          if ! git diff --quiet --cached; then
+            git commit -m "NAS-XXXXXX: Auto resort translation strings"
+            git push origin ${{ github.head_ref }}
+          else
+            echo "No changes to commit."
+          fi
