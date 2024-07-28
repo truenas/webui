@@ -1,5 +1,6 @@
 {
   "": "",
+  "PULL": "ТЯГНУТИ",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   " Est. Usable Raw Capacity": "",
   " as of {dateTime}": "",
@@ -3803,7 +3804,6 @@
   "PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.": "Для пристрою PCI не визначено механізм скидання, і під час запуску/зупинення віртуальної машини ви можете зіткнутися з непослідовною/погіршеною поведінкою.",
   "POSIX": "POSIX",
   "POSIX Permissions": "POSIX дозволи",
-  "PULL": "ТЯГНУТИ",
   "PUSH": "НАТИСНУТИ",
   "PagerDuty client name.": "Ім'я клієнта PagerDuty.",
   "Pair this certificate's public key with the Certificate Authority private key used to sign this certificate.": "Поєднайте відкритий ключ цього сертифіката з закритим ключем центру сертифікації, який використовується для підпису цього сертифіката.",
