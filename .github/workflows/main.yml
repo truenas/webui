@@ -23,7 +23,7 @@ jobs:
 
   build:
     name: Build
-    needs: [check-files, install]
+    needs: [install]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,7 +37,7 @@ jobs:
 
   lint:
     name: Validate code style
-    needs: [check-files, install]
+    needs: [install]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -63,7 +63,7 @@ jobs:
 
   test:
     name: Run tests
-    needs: [check-files, install]
+    needs: [install]
     runs-on: ubuntu-latest
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
