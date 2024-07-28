@@ -54,6 +54,7 @@
       [ixTest]="['toggle-password', controlDirective.name]"
       [attr.aria-label]="showPassword ? ('Hide Password' | translate) : ('Show Password' | translate)"
       (click)="onPasswordToggled()"
+      (keydown.enter)="$event.stopPropagation()"
     >
       @if (showPassword) {
         <ix-icon

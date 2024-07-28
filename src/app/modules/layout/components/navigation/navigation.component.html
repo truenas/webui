@@ -1,4 +1,7 @@
-<mat-nav-list role="list">
+<mat-nav-list
+  role="navigation"
+  [attr.aria-label]="'Main menu' | translate"
+>
   @for (item of menuItems; track item; let i = $index) {
     <div>
       @if (!item.isVisible$ || (item.isVisible$ | async)) {
@@ -66,9 +69,6 @@
             }
           </div>
         }
-        <a mat-button class="absorbs-focus" ixTest="focus-trap" [tabIndex]="-1">
-          <!-- 'absorbs' the focus behavior -->
-        </a>
       }
     </div>
   }
