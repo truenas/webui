@@ -125,7 +125,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
       case WidgetName.Interface: return WidgetType.Ipv4Address;
       case WidgetName.SystemInformation: return WidgetType.SystemInfoActive;
       case WidgetName.SystemInformationStandby: return WidgetType.SystemInfoPassive;
-      case WidgetName.Network: return WidgetType.Network;
+      case WidgetName.Network: return WidgetType.Interface;
       case WidgetName.Backup: return WidgetType.BackupTasks;
       case WidgetName.Cpu: return WidgetType.Cpu;
       case WidgetName.Pool: return WidgetType.Pool;
