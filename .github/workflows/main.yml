@@ -4,11 +4,13 @@ on:
     branches:
       - master
     paths-ignore:
+      - 'src/assets/i18n/**'
       - 'tests/**'
   pull_request:
     branches:
       - '**'
     paths-ignore:
+      - 'src/assets/i18n/**'
       - 'tests/**'
 
 jobs:
