@@ -23,11 +23,11 @@ jobs:
         run: |
           git config --global user.name 'bugclerk'
           git config --global user.email 'bugclerk@ixsystems.com'
-          git pull origin ${{ github.head_ref }} --no-edit
+          git pull origin master --no-edit
           git add src/assets/i18n
           if ! git diff --quiet --cached; then
             git commit -m "NAS-XXXXXX: Auto resort translation strings" --no-verify
-            git push origin ${{ github.head_ref }}
+            git push origin master
           else
             echo "No changes to commit."
           fi
