@@ -21,6 +21,8 @@ describe('SnackbarService', () => {
       spectator.service.success('All good');
 
       expect(spectator.inject(MatSnackBar).openFromComponent).toHaveBeenCalledWith(SnackbarComponent, {
+        announcementMessage: 'All good',
+        politeness: 'assertive',
         data: {
           message: 'All good',
           icon: 'check',
