@@ -51,26 +51,26 @@ export const widgetGroupIcons = [
   {
     value: WidgetGroupLayout.Full,
     icon: 'ix:layout_full',
-    label: T('Full'),
+    label: T('One large widget'),
   },
   {
     value: WidgetGroupLayout.Halves,
     icon: 'ix:layout_halves',
-    label: T('Halves'),
+    label: T('Two half widgets, one below another'),
   },
   {
     value: WidgetGroupLayout.QuartersAndHalf,
     icon: 'ix:layout_quarters_and_half',
-    label: T('Quarters and Half'),
+    label: T('Two quarter widgets and one half widget below'),
   },
   {
     value: WidgetGroupLayout.HalfAndQuarters,
     icon: 'ix:layout_half_and_quarters',
-    label: T('Half and Quarters'),
+    label: T('One half widget and two quarter widgets below'),
   },
   {
     value: WidgetGroupLayout.Quarters,
     icon: 'ix:layout_quarters',
-    label: T('Quarters'),
+    label: T('Four quarter widgets in two by two grid'),
   },
 ];
