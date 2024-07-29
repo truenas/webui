@@ -6,6 +6,7 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -22,7 +23,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { TokenLifetimeService } from 'app/services/token-lifetime.service';
 import { AppState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +39,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly productType$ = this.sysGeneralService.getProductType$;
-  readonly copyrightYear$ = this.sysGeneralService.getCopyrightYear$;
+  readonly copyrightYear = toSignal(this.store$.select(selectBuildYear));
   readonly productTypeLabels = productTypeLabels;
 
   get sidenavWidth(): string {

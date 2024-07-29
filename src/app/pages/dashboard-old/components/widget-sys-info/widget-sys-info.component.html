@@ -2,8 +2,8 @@
   *appLet="isMobile$ | async as isMobile"
   class="widget double-height"
   [class.xs]="isMobile"
-  [class.generic-hardware]="!productImage"
-  [class.ix-hardware]="productImage"
+  [class.generic-hardware]="!isIxHardware()"
+  [class.ix-hardware]="isIxHardware()"
   >
   <div class="card-container">
     <mat-card class="front">
@@ -51,7 +51,7 @@
               </button>
 
               <div class="platform-logo-wrapper">
-                @if (productImage || isPassive) {
+                @if (isIxHardware() || isPassive) {
                   <ix-icon name="ix:logo_truenas_scale_full" [id]="productModel"></ix-icon>
                 } @else {
                   <ix-icon name="ix:logo_truenas_scale_type" [id]="productModel"></ix-icon>
@@ -69,16 +69,16 @@
                   [ngClass]="productEnclosure"
                   [class.truenas]="sysGenService.isEnterprise"
                   [class.freenas]="!sysGenService.isEnterprise"
-                  [class.ix-logo]="productImage === 'ix-original.svg'"
+                  [class.ix-logo]="productImageSrc() === 'ix-original.svg'"
                 >
-                  @if (productImage) {
+                  @if (isIxHardware()) {
                     <img
                       matTooltipPosition="above"
                       [matTooltip]="'View Enclosure' | translate"
                       [id]="productModel"
                       [class.clickable]="enclosureSupport$ | async"
                       [matTooltipDisabled]="!(enclosureSupport$ | async)"
-                      [src]="productImageSrc"
+                      [src]="productImageSrc()"
                       [src-fallback]="'assets/images/truenas_scale_ondark_favicon.png'"
                       (click)="goToEnclosure()"
                     />
@@ -99,12 +99,12 @@
                       ></ix-icon>
                     }
                   </ng-template>
-                  @if (productImage && isHaLicensed && !isPassive) {
+                  @if (isIxHardware() && isHaLicensed && !isPassive) {
                     <div class="ha-node-status">
                       ({{ 'Active' | translate }})
                     </div>
                   }
-                  @if (productImage && isHaLicensed && isPassive) {
+                  @if (isIxHardware() && isHaLicensed && isPassive) {
                     <div class="ha-node-status">
                       ({{ 'Standby' | translate }})
                     </div>
@@ -174,7 +174,7 @@
                     <mat-list-item>
                       <strong>{{ 'Platform' | translate }}:</strong>
                       <span>
-                        {{ systemInfo.platform && isIxHardware ? systemInfo.platform : 'Generic' }}
+                        {{ systemInfo.platform && isIxHardware() ? systemInfo.platform : 'Generic' }}
                       </span>
                     </mat-list-item>
                     <mat-list-item>
@@ -200,7 +200,7 @@
                       }}</span>
                     </mat-list-item>
                   }
-                  @if (systemInfo.system_serial && isIxHardware) {
+                  @if (systemInfo.system_serial && isIxHardware()) {
                     <mat-list-item>
                       <strong>{{ 'System Serial' | translate }}:</strong>
                       <span>{{ systemInfo.system_serial }}</span>

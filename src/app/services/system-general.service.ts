@@ -1,5 +1,4 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { fromUnixTime } from 'date-fns';
 import * as _ from 'lodash';
 import {
   Subject, Observable,
@@ -61,17 +60,6 @@ export class SystemGeneralService {
   readonly isEnterprise$ = this.getProductType$.pipe(
     map((productType) => productType === ProductType.ScaleEnterprise),
     shareReplay({ refCount: true, bufferSize: 1 }),
-  );
-
-  /**
-   * @deprecated
-   * Use selectBuildTime selector instead
-   */
-  getCopyrightYear$ = this.ws.call('system.build_time').pipe(
-    map((buildTime) => {
-      return fromUnixTime(buildTime.$date / 1000).getFullYear();
-    }),
-    shareReplay({ refCount: false, bufferSize: 1 }),
   );
 
   constructor(

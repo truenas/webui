@@ -42,7 +42,7 @@
         <div
           class="sidenav-copyright-icon"
           matTooltipPosition="right"
-          [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + (copyrightYear$ | async) + ' by iXsystems, Inc.'"
+          [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + copyrightYear() + ' by iXsystems, Inc.'"
         >
           <ix-icon name="copyright"></ix-icon>
         </div>
