@@ -2,7 +2,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import {
   PoolsLegendComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-legend/pools-legend.component';
+} from 'app/pages/system/enclosure/components/pools-legend/pools-legend.component';
 
 describe('PoolsLegendComponent', () => {
   let spectator: Spectator<PoolsLegendComponent>;
