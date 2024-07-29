@@ -15,7 +15,7 @@ export interface WidgetPoolSettings {
 
 export const poolDisksWithZfsErrorsWidget = dashboardWidget({
   name: T('Disks w/ZFS Errors'),
-  supportedSizes: [SlotSize.Quarter, SlotSize.Full],
+  supportedSizes: [SlotSize.Quarter],
   category: WidgetCategory.Storage,
   component: WidgetDisksWithZfsErrorsComponent,
   settingsComponent: WidgetPoolSettingsComponent as Type<WidgetSettingsComponent>,

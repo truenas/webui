@@ -15,7 +15,7 @@ export interface WidgetPoolSettings {
 
 export const poolLastScanErrorsWidget = dashboardWidget({
   name: T('Last Scan Errors'),
-  supportedSizes: [SlotSize.Quarter, SlotSize.Full],
+  supportedSizes: [SlotSize.Quarter],
   category: WidgetCategory.Storage,
   component: WidgetPoolLastScanErrorsComponent,
   settingsComponent: WidgetPoolSettingsComponent as Type<WidgetSettingsComponent>,

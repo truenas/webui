@@ -15,7 +15,7 @@ export interface WidgetPoolSettings {
 
 export const poolStatusWidget = dashboardWidget({
   name: T('Pool Status'),
-  supportedSizes: [SlotSize.Quarter, SlotSize.Full],
+  supportedSizes: [SlotSize.Quarter],
   category: WidgetCategory.Storage,
   component: WidgetPoolStatusComponent,
   settingsComponent: WidgetPoolSettingsComponent as Type<WidgetSettingsComponent>,

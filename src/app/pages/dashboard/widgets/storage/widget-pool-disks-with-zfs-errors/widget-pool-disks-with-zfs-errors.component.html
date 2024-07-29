@@ -6,7 +6,7 @@
           @if (!pool()?.name) {
             <ngx-skeleton-loader></ngx-skeleton-loader>
           } @else {
-            {{ pool().name || ' - ' }}
+            {{ pool().name }}
           }
         </h3>
       </div>
