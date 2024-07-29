@@ -1,18 +1,16 @@
 import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { produce } from 'immer';
 import { chain } from 'lodash';
-import { Subject, switchMap, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
-import { Disk } from 'app/interfaces/disk.interface';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
-import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -81,11 +79,8 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));
 
-  private disksUpdateSubscriptionId: string;
-
   constructor(
     private ws: WebSocketService,
-    private disksUpdateService: DisksUpdateService,
     private errorHandler: ErrorHandlerService,
     private theme: ThemeService,
   ) {
@@ -122,16 +117,10 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     );
   });
 
-  addListenerForDiskUpdates(): void {
-    if (!this.disksUpdateSubscriptionId) {
-      const diskUpdatesTrigger$ = new Subject<Disk[]>();
-      this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(diskUpdatesTrigger$, true);
-      diskUpdatesTrigger$.pipe(untilDestroyed(this)).subscribe(() => this.update());
-    }
-  }
-
-  removeListenerForDiskUpdates(): void {
-    this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
+  listenForDiskUpdates(): Observable<unknown> {
+    return this.ws.subscribe('disk.query').pipe(
+      tap(() => this.update()),
+    );
   }
 
   selectEnclosure = this.updater((state, id: string) => {
