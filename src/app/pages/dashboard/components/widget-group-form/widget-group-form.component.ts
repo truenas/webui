@@ -25,7 +25,7 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
 })
 export class WidgetGroupFormComponent {
   protected group = signal<WidgetGroup>(
-    { layout: WidgetGroupLayout.Full, slots: [{ type: null }] } as WidgetGroup,
+    { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
   );
   selectedSlot = signal<WidgetGroupSlot<object>>({
     slotPosition: 0,

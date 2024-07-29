@@ -1,10 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  ChangeDetectionStrategy, Component, effect, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
+import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -20,22 +22,25 @@ import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-p
 })
 export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<WidgetPoolSettings>, OnInit {
   form = this.fb.group({
-    pool: [null as string, [Validators.required]],
+    poolId: [null as number, [Validators.required]],
   });
 
-  protected poolOptions$ = this.resources.pools$.pipe(
-    map((pools) => pools.map((result) => ({
-      label: result.name,
-      value: result.id,
-    }))),
-  );
+  protected poolOptions$ = this.resources.pools$.pipe(idNameArrayToOptions());
+  private firstOption = toSignal(this.poolOptions$.pipe(map((opts) => opts[0]?.value)));
 
-  private readonly formFieldNames = ['pool'];
+  private readonly formFieldNames = ['poolId'];
   constructor(
     public widgetSettingsRef: WidgetSettingsRef<WidgetPoolSettings>,
     private fb: FormBuilder,
     private resources: WidgetResourcesService,
-  ) { }
+  ) {
+    effect(() => {
+      const firstOption = this.firstOption();
+      if (!this.widgetSettingsRef.getSettings()?.poolId && firstOption) {
+        this.form.controls.poolId.setValue(firstOption);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.setCurrentSettings();
@@ -44,10 +49,8 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
 
   private setCurrentSettings(): void {
     const settings = this.widgetSettingsRef.getSettings();
-    if (!settings) {
-      return;
-    }
-    this.form.controls.pool.setValue(settings.poolId);
+    if (!settings) return;
+    this.form.controls.poolId.setValue(settings.poolId);
   }
 
   private setupSettingsUpdate(): void {
@@ -56,7 +59,7 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
     );
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (settings) => {
-        this.widgetSettingsRef.updateSettings({ poolId: settings.pool });
+        this.widgetSettingsRef.updateSettings({ poolId: settings.poolId });
         this.widgetSettingsRef.updateValidity(
           getAllFormErrors(this.form, this.formFieldNames),
         );

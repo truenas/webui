@@ -8,6 +8,7 @@ import {
   OnChanges,
   OnInit,
   Signal,
+  Type,
   ViewChild,
   ViewContainerRef,
   WritableSignal,
@@ -30,7 +31,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
-import { WidgetVisibilityDepsType } from 'app/pages/dashboard/types/widget-component.interface';
+import { WidgetSettingsComponent, WidgetVisibilityDepsType } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -51,8 +52,6 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
 
   private categorySubscription: Subscription;
   private typeSubscription: Subscription;
-
-  protected readonly WidgetCategory = WidgetCategory;
 
   protected get shouldShowType(): boolean {
     return this.selectedCategory != null
@@ -246,17 +245,13 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
       this.settingsChange.emit({ ...slotConfig, settings: undefined });
     }
 
-    if (
-      !slotConfig?.type
-      || !widgetRegistry[slotConfig.type]?.settingsComponent
-    ) {
+    const settingsComponent: Type<WidgetSettingsComponent<object>> = widgetRegistry[slotConfig.type]?.settingsComponent;
+
+    if (!slotConfig?.type || !settingsComponent) {
       return;
     }
 
-    this.settingsContainer.createComponent(
-      widgetRegistry[slotConfig.type]?.settingsComponent,
-      { injector: this.getInjector() },
-    );
+    this.settingsContainer.createComponent(settingsComponent, { injector: this.getInjector() });
   }
 
   getInjector(): Injector {
