@@ -3631,7 +3631,7 @@
   "Select a schedule preset or choose <i>Custom</i>  to open the advanced scheduler. Note that an in-progress cron task postpones  any later scheduled instance of the same task until the running task is  complete.": "",
   "Select a schedule preset or choose <i>Custom</i> to open the advanced scheduler.": "",
   "Select a schedule preset or choose <i>Custom</i> to setup custom schedule.": "",
-  "Select a schema when Samba Schema is set.": "",
+  "Select a schema when LDAP NSS schema is set.": "",
   "Select a screen resolution to use for SPICE sessions.": "",
   "Select a sector size in bytes. <i>Default</i> leaves the sector size unset and uses the ZFS volume values. Setting a sector size changes both the logical and physical sector size.": "",
   "Select a subfolder from which to restore content.": "",
