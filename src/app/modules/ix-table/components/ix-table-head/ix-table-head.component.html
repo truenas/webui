@@ -1,28 +1,29 @@
 <tr ixTest="header">
-  <th
-    *ngFor="let column of displayedColumns; index as idx"
-    [ngClass]="column.cssClass || ''"
-    [matTooltip]="column.title"
-    (click)="onSort(idx)"
-  >
-    <div class="title-container" [ngStyle]="{ cursor: !column.disableSorting ? 'pointer' : 'auto' }">
-      <div class="title">
-        <ng-template
-          ix-header-cell
-          [dataProvider]="dataProvider"
-          [column]="column"
-        ></ng-template>
+  @for (column of displayedColumns; track column; let idx = $index) {
+    <th
+      [ngClass]="column.cssClass || ''"
+      [matTooltip]="column.title"
+      (click)="onSort(idx)"
+    >
+      <div class="title-container" [ngStyle]="{ cursor: !column.disableSorting ? 'pointer' : 'auto' }">
+        <div class="title">
+          <ng-template
+            ix-header-cell
+            [dataProvider]="dataProvider"
+            [column]="column"
+          ></ng-template>
+        </div>
+        @if (!column.disableSorting) {
+          <div>
+            @if (dataProvider.sorting.direction === SortDirection.Asc && dataProvider.sorting.active === idx) {
+              <ix-icon name="mdi-arrow-down"></ix-icon>
+            }
+            @if (dataProvider.sorting.direction === SortDirection.Desc && dataProvider.sorting.active === idx) {
+              <ix-icon name="mdi-arrow-up"></ix-icon>
+            }
+          </div>
+        }
       </div>
-      <div *ngIf="!column.disableSorting">
-        <ix-icon
-          *ngIf="dataProvider.sorting.direction === SortDirection.Asc && dataProvider.sorting.active === idx"
-          name="mdi-arrow-down">
-        </ix-icon>
-        <ix-icon
-          *ngIf="dataProvider.sorting.direction === SortDirection.Desc && dataProvider.sorting.active === idx"
-          name="mdi-arrow-up">
-        </ix-icon>
-      </div>
-    </div>
-  </th>
+    </th>
+  }
 </tr>

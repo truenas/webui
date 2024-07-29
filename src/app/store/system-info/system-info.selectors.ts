@@ -32,6 +32,11 @@ export const selectProductType = createSelector(
   (state) => state.productType,
 );
 
+export const selectBuildTime = createSelector(
+  selectSystemInfoState,
+  (state) => state.buildTime,
+);
+
 export const selectIsEnterprise = createSelector(
   selectProductType,
   (productType) => productType === ProductType.ScaleEnterprise,

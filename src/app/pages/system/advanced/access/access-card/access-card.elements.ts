@@ -22,5 +22,9 @@ export const accessCardElements = {
       hierarchy: [T('Token Lifetime')],
       synonyms: [T('Session Token Lifetime')],
     },
+    loginBanner: {
+      hierarchy: [T('Login Banner')],
+      synonyms: [T('MOTD')],
+    },
   },
 } satisfies UiSearchableElement;

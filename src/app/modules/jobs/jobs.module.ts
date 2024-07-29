@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';

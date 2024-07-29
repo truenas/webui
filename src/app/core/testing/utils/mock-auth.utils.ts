@@ -44,6 +44,7 @@ export function mockAuth(
           }),
           createSpyObject(Store),
           createSpyObject(WebSocketService),
+          createSpyObject(Window),
         );
 
         mockService.setUser(user as LoggedInUser);

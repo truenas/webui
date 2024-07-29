@@ -52,60 +52,51 @@
     [isLoading]="dataProvider.isLoading$ | async"
   >
     <ng-template let-disk ix-table-details-row [dataProvider]="dataProvider">
-      @if (hiddenColumns.length) {
-        <dl class="table-hidden-columns">
-          @for (column of hiddenColumns; track column) {
-            <div>
-              <b>{{ column.title | translate }}:</b>
-              <span>{{ column?.getValue?.(disk) || disk[column.propertyName] || ('N/A' | translate) }}</span>
-            </div>
+      <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="disk">
+        <div class="table-details-row-actions">
+          <button
+            mat-button
+            [ixTest]="[disk.name, 'edit']"
+            (click)="edit([disk])"
+          >
+            <ix-icon name="edit"></ix-icon>
+            <span>{{ 'Edit' | translate }}</span>
+          </button>
+
+          @if (isSmartSupported(disk)) {
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              [ixTest]="[disk.name, 'manual_test']"
+              (click)="manualTest([disk])"
+            >
+              <ix-icon name="play_arrow"></ix-icon>
+              <span>{{ 'Manual Test' | translate }}</span>
+            </button>
+            <button
+              mat-button
+              [ixTest]="[disk.name, 'test_results']"
+              (click)="goToTestResults(disk)"
+            >
+              <ix-icon name="format_list_bulleted"></ix-icon>
+              <span>{{ 'S.M.A.R.T. Test Results' | translate }}</span>
+            </button>
           }
-          <mat-divider></mat-divider>
-        </dl>
-      }
 
-      <div class="table-details-row-actions">
-        <button
-          mat-button
-          [ixTest]="[disk.name, 'edit']"
-          (click)="edit([disk])"
-        >
-          <ix-icon name="edit"></ix-icon>
-          <span>{{ 'Edit' | translate }}</span>
-        </button>
+          @if (isUnusedDisk(disk)) {
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              [ixTest]="[disk.name, 'wipe']"
+              (click)="wipe(disk)"
+            >
+              <ix-icon name="delete_sweep"></ix-icon>
+              <span>{{ 'Wipe' | translate }}</span>
+            </button>
+          }
+        </div>
+      </ix-table-details-row>
 
-        @if (isSmartSupported(disk)) {
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            [ixTest]="[disk.name, 'manual_test']"
-            (click)="manualTest([disk])"
-          >
-            <ix-icon name="play_arrow"></ix-icon>
-            <span>{{ 'Manual Test' | translate }}</span>
-          </button>
-          <button
-            mat-button
-            [ixTest]="[disk.name, 'test_results']"
-            (click)="goToTestResults(disk)"
-          >
-            <ix-icon name="format_list_bulleted"></ix-icon>
-            <span>{{ 'S.M.A.R.T. Test Results' | translate }}</span>
-          </button>
-        }
-
-        @if (isUnusedDisk(disk)) {
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            [ixTest]="[disk.name, 'wipe']"
-            (click)="wipe(disk)"
-          >
-            <ix-icon name="delete_sweep"></ix-icon>
-            <span>{{ 'Wipe' | translate }}</span>
-          </button>
-        }
-      </div>
     </ng-template>
   </tbody>
 </ix-table>

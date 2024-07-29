@@ -36,6 +36,7 @@ describe('SigninStore', () => {
         mockCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
         mockCall('truenas.managed_by_truecommand', false),
+        mockCall('system.advanced.login_banner', ''),
       ]),
       mockProvider(WebSocketConnectionService, {
         isConnected$: of(true),
@@ -88,9 +89,14 @@ describe('SigninStore', () => {
       wasAdminSet: true,
       managedByTrueCommand: false,
       isLoading: false,
+      loginBanner: '',
     };
     beforeEach(() => {
       spectator.service.setState(initialState);
+    });
+
+    it('loginBanner$', async () => {
+      expect(await firstValueFrom(spectator.service.loginBanner$)).toBe('');
     });
 
     it('hasRootPassword$', async () => {
@@ -120,6 +126,21 @@ describe('SigninStore', () => {
   });
 
   describe('init', () => {
+    it('checks login banner and show if set', async () => {
+      websocket.mockCall('system.advanced.login_banner', 'HELLO USER');
+      spectator.service.init();
+
+      expect(await firstValueFrom(spectator.service.state$)).toEqual({
+        wasAdminSet: true,
+        managedByTrueCommand: false,
+        loginBanner: 'HELLO USER',
+        isLoading: false,
+        failover: {
+          status: FailoverStatus.Single,
+        },
+      });
+    });
+
     it('checks if root password is set and loads failover status', async () => {
       spectator.service.init();
 
@@ -129,6 +150,7 @@ describe('SigninStore', () => {
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
         managedByTrueCommand: false,
+        loginBanner: '',
         isLoading: false,
         failover: {
           status: FailoverStatus.Single,
@@ -147,6 +169,7 @@ describe('SigninStore', () => {
         wasAdminSet: true,
         isLoading: false,
         managedByTrueCommand: false,
+        loginBanner: '',
         failover: {
           disabledReasons: [FailoverDisabledReason.NoLicense],
           ips: ['123.23.44.54'],
@@ -190,6 +213,7 @@ describe('SigninStore', () => {
         wasAdminSet: true,
         isLoading: false,
         managedByTrueCommand: false,
+        loginBanner: '',
         failover: {
           disabledReasons: [FailoverDisabledReason.NoLicense],
           ips: ['123.23.44.54'],
@@ -221,6 +245,7 @@ describe('SigninStore', () => {
             wasAdminSet: true,
             managedByTrueCommand: false,
             isLoading: false,
+            loginBanner: '',
             failover: {
               disabledReasons: [FailoverDisabledReason.DisagreeVip],
               ips: ['123.23.44.54'],

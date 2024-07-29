@@ -1,67 +1,79 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Disk Info' | translate }}</h3>
-    <button
-      *ngIf="isAvailable"
-      mat-button
-      ixTest="edit-disk"
-      (click)="onEdit()"
-    >{{ 'Edit' | translate }}</button>
+    @if (isAvailable) {
+      <button
+        mat-button
+        ixTest="edit-disk"
+        (click)="onEdit()"
+      >{{ 'Edit' | translate }}</button>
+    }
   </mat-card-header>
-  <mat-card-content *ngIf="isAvailable">
-    <div class="details-item">
-      <div class="label">{{ 'Disk Size' | translate }}:</div>
-      <div *ngIf="disk?.size; else notAvailable" class="value">
-        {{ disk.size | ixFileSize }}
+
+  @if (isAvailable) {
+    <mat-card-content>
+      <div class="details-item">
+        <div class="label">{{ 'Disk Size' | translate }}:</div>
+        @if (disk?.size) {
+          <div class="value">
+            {{ disk.size | ixFileSize }}
+          </div>
+        } @else {
+          <div class="value">{{ 'N/A' | translate }}</div>
+        }
       </div>
-    </div>
-    <div class="details-item">
-      <div class="label">{{ 'Transfer Mode' | translate }}:</div>
-      <div *ngIf="disk?.transfermode; else notAvailable" class="value">
-        {{ disk.transfermode }}
+      <div class="details-item">
+        <div class="label">{{ 'Transfer Mode' | translate }}:</div>
+        <div class="value">
+          {{ disk?.transfermode | orNotAvailable }}
+        </div>
       </div>
-    </div>
-    <div class="details-item">
-      <div class="label">{{ 'Serial' | translate }}:</div>
-      <div *ngIf="disk?.serial; else notAvailable" class="value">
-        {{ disk.serial }}
-        <ix-copy-button [text]="disk.serial"></ix-copy-button>
+      <div class="details-item">
+        <div class="label">{{ 'Serial' | translate }}:</div>
+        <div class="value">
+          {{ disk.serial }}
+          <ix-copy-button [text]="disk.serial"></ix-copy-button>
+        </div>
       </div>
-    </div>
-    <div class="details-item">
-      <div class="label">{{ 'Model' | translate }}:</div>
-      <div *ngIf="disk?.model; else notAvailable" class="value">
-        {{ disk.model }}
+      <div class="details-item">
+        <div class="label">{{ 'Model' | translate }}:</div>
+        <div class="value">
+          {{ disk?.model | orNotAvailable }}
+        </div>
       </div>
-    </div>
-    <div *ngIf="isHdd" class="details-item">
-      <div class="label">{{ 'Rotation Rate' | translate }}:</div>
-      <div *ngIf="disk?.rotationrate; else notAvailable" class="value">
-        {{ '{n} RPM' | translate: { n: disk.rotationrate } }}
+
+      @if (isHdd) {
+        <div class="details-item">
+          <div class="label">{{ 'Rotation Rate' | translate }}:</div>
+          @if (disk?.rotationrate) {
+            <div class="value">
+              {{ '{n} RPM' | translate: { n: disk.rotationrate } }}
+            </div>
+          } @else {
+            <div class="value">{{ 'N/A' | translate }}</div>
+          }
+        </div>
+      }
+
+      <div class="details-item">
+        <div class="label">{{ 'Type' | translate }}:</div>
+        <div class="value">{{ disk?.type | orNotAvailable }}</div>
       </div>
-    </div>
-    <div class="details-item">
-      <div class="label">{{ 'Type' | translate }}:</div>
-      <div *ngIf="disk?.type; else notAvailable" class="value">
-        {{ disk.type }}
+      <div class="details-item">
+        <div class="label">{{ 'HDD Standby' | translate }}:</div>
+        <div class="value">{{ disk?.hddstandby | orNotAvailable }}</div>
       </div>
-    </div>
-    <div class="details-item">
-      <div class="label">{{ 'HDD Standby' | translate }}:</div>
-      <div *ngIf="disk?.hddstandby; else notAvailable" class="value">
-        {{ disk.hddstandby }}
+      <div class="details-item">
+        <div class="label">{{ 'Description' | translate }}:</div>
+        <div class="value">{{ disk.description || ('N/A' | translate) }}</div>
       </div>
-    </div>
-    <div class="details-item">
-      <div class="label">{{ 'Description' | translate }}:</div>
-      <div *ngIf="disk?.description; else notAvailable" class="value">
-        {{ disk.description }}
-      </div>
-    </div>
-  </mat-card-content>
-  <mat-card-content *ngIf="!isAvailable">
-    <div>{{ 'Disk is unavailable' | translate }}</div>
-  </mat-card-content>
+    </mat-card-content>
+  }
+  @if (!isAvailable) {
+    <mat-card-content>
+      <div>{{ 'Disk is unavailable' | translate }}</div>
+    </mat-card-content>
+  }
   <mat-card-actions>
     <button *ixRequiresRoles="requiredRoles" mat-button ixTest="replace" (click)="onReplace()">
       {{ 'Replace' | translate }}
@@ -69,6 +81,3 @@
   </mat-card-actions>
 </mat-card>
 
-<ng-template #notAvailable>
-  <div class="value">{{ 'N/A' | translate }}</div>
-</ng-template>

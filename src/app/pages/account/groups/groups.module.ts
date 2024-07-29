@@ -19,7 +19,7 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';

@@ -8,7 +8,7 @@
 
   span {
     display: block;
-    font-family: monospace;
+    font-family: var(--font-family-monospace);
     unicode-bidi: embed;
     white-space: pre-line;
   }

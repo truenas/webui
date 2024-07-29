@@ -11,7 +11,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableEmptyRowComponent } from 'app/modules/ix-table/components/ix-empty-row/ix-empty-row.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -27,6 +27,7 @@ import { IxCellTextComponent } from 'app/modules/ix-table/components/ix-table-bo
 import { IxCellToggleComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { IxCellYesNoComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
 import { IxHeaderCellTextComponent } from 'app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component';
@@ -38,13 +39,43 @@ import { IxTableHeaderCellDirective } from 'app/modules/ix-table/directives/ix-h
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { IxDateModule } from 'app/modules/pipes/ix-date/ix-date.module';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
 import { ScheduleToCrontabPipe } from 'app/modules/pipes/schedule-to-crontab/schedule-to-crontab.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-selector/ix-table-columns-selector.component';
+
+const components = [
+  IxTableComponent,
+  IxTableHeadComponent,
+  IxTableBodyComponent,
+  IxTablePagerComponent,
+  IxCellTemplateComponent,
+  IxTableCellDirective,
+  IxTableDetailsRowDirective,
+  IxTableBodyCellDirective,
+  IxTableHeaderCellDirective,
+  IxCellTextComponent,
+  IxCellDateComponent,
+  IxCellRelativeDateComponent,
+  IxCellSizeComponent,
+  IxCellCheckboxComponent,
+  IxCellYesNoComponent,
+  IxCellActionsComponent,
+  IxCellToggleComponent,
+  IxCellScheduleComponent,
+  IxCellStateButtonComponent,
+  IxHeaderCellTextComponent,
+  IxHeaderCellCheckboxComponent,
+  IxTableEmptyDirective,
+  IxTableEmptyRowComponent,
+  IxTableColumnsSelectorComponent,
+  IxTablePagerShowMoreComponent,
+  IxTableExpandableRowComponent,
+  IxTableDetailsRowComponent,
+];
 
 @NgModule({
   imports: [
@@ -59,70 +90,21 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     TranslateModule,
     CommonDirectivesModule,
     TestIdModule,
-    IxDateModule,
+    IxDateComponent,
     MatMenuModule,
     MatDividerModule,
     MatTooltipModule,
-    IxFileSizePipe,
+    FileSizePipe,
     YesNoPipe,
     ScheduleToCrontabPipe,
     CdkPortalOutlet,
     FlexModule,
   ],
   declarations: [
-    IxTableComponent,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTablePagerComponent,
-    IxCellTemplateComponent,
-    IxTableCellDirective,
-    IxTableDetailsRowDirective,
-    IxTableBodyCellDirective,
-    IxTableHeaderCellDirective,
-    IxCellTextComponent,
-    IxCellDateComponent,
-    IxCellRelativeDateComponent,
-    IxCellSizeComponent,
-    IxCellCheckboxComponent,
-    IxCellYesNoComponent,
-    IxCellActionsComponent,
-    IxCellToggleComponent,
-    IxCellScheduleComponent,
-    IxCellStateButtonComponent,
-    IxHeaderCellTextComponent,
-    IxHeaderCellCheckboxComponent,
-    IxTableEmptyDirective,
-    IxTableEmptyRowComponent,
-    IxTableColumnsSelectorComponent,
-    IxTablePagerShowMoreComponent,
-    IxTableExpandableRowComponent,
+    ...components,
   ],
   exports: [
-    IxTableComponent,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTablePagerComponent,
-    IxTableCellDirective,
-    IxTableDetailsRowDirective,
-    IxTableBodyCellDirective,
-    IxTableHeaderCellDirective,
-    IxCellTextComponent,
-    IxCellDateComponent,
-    IxCellRelativeDateComponent,
-    IxCellSizeComponent,
-    IxCellCheckboxComponent,
-    IxCellYesNoComponent,
-    IxCellActionsComponent,
-    IxCellToggleComponent,
-    IxCellScheduleComponent,
-    IxCellStateButtonComponent,
-    IxHeaderCellTextComponent,
-    IxHeaderCellCheckboxComponent,
-    IxTableEmptyDirective,
-    IxTableEmptyRowComponent,
-    IxTableColumnsSelectorComponent,
-    IxTablePagerShowMoreComponent,
-    IxTableExpandableRowComponent,
+    ...components,
   ],
   providers: [
     FormatDateTimePipe,

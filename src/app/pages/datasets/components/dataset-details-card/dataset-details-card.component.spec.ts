@@ -15,6 +15,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
@@ -47,6 +48,9 @@ describe('DatasetDetailsCardComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DatasetDetailsCardComponent,
+    imports: [
+      OrNotAvailablePipe,
+    ],
     declarations: [
       MockComponents(
         DatasetFormComponent,
@@ -86,7 +90,7 @@ describe('DatasetDetailsCardComponent', () => {
   function getDetails(): Record<string, string> {
     return spectator.queryAll('.details-item').reduce((acc, item: HTMLElement) => {
       const key = item.querySelector('.label').textContent;
-      const value = item.querySelector('.value').textContent;
+      const value = item.querySelector('.value').textContent.trim();
       acc[key] = value;
       return acc;
     }, {} as Record<string, string>);
@@ -105,13 +109,13 @@ describe('DatasetDetailsCardComponent', () => {
 
       const details = getDetails();
       expect(details).toEqual({
-        'Type:': ' FILESYSTEM ',
-        'Sync:': ' STANDARD ',
-        'Compression Level:': ' Inherit (LZ4) ',
-        'Enable Atime:': ' ON ',
-        'ZFS Deduplication:': ' OFF ',
-        'Case Sensitivity:': ' OFF ',
-        'Path:': ' pool/child ',
+        'Type:': 'FILESYSTEM',
+        'Sync:': 'STANDARD',
+        'Compression Level:': 'Inherit (LZ4)',
+        'Enable Atime:': 'ON',
+        'ZFS Deduplication:': 'OFF',
+        'Case Sensitivity:': 'OFF',
+        'Path:': 'pool/child',
         'Comments:': 'Test comment',
       });
     });
@@ -144,12 +148,12 @@ describe('DatasetDetailsCardComponent', () => {
 
       const details = getDetails();
       expect(details).toEqual({
-        'Type:': ' VOLUME ',
-        'Sync:': ' STANDARD ',
-        'Compression Level:': ' Inherit (LZ4) ',
-        'ZFS Deduplication:': ' OFF ',
-        'Case Sensitivity:': ' OFF ',
-        'Path:': ' pool/child ',
+        'Type:': 'VOLUME',
+        'Sync:': 'STANDARD',
+        'Compression Level:': 'Inherit (LZ4)',
+        'ZFS Deduplication:': 'OFF',
+        'Case Sensitivity:': 'OFF',
+        'Path:': 'pool/child',
         'Comments:': 'Test comment',
       });
     });

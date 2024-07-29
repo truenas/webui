@@ -9,7 +9,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';

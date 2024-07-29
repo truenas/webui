@@ -17,75 +17,82 @@
           [label]="'Add entry' | translate"
           (add)="addAce()"
         >
-          <ix-list-item
-            *ngFor="let entry of form.controls.entries.controls; let i = index"
-            [formGroupName]="i"
-            [label]="'ACL Entries' | translate"
-            (delete)="removeAce(i)"
-          >
-            <div *ngIf="entry.controls.ae_who_sid.value" class="entry-row">
-              {{ 'SID' | translate }}:
-              {{ entry.controls.ae_who_sid.value }}
-            </div>
-            <div class="entry-row">
-              <ix-select
-                formControlName="ae_who"
-                [label]="'Who' | translate"
-                [options]="tags$"
-                [required]="true"
-              ></ix-select>
+          @for (entry of form.controls.entries.controls; track entry; let i = $index) {
+            <ix-list-item
+              [formGroupName]="i"
+              [label]="'ACL Entries' | translate"
+              (delete)="removeAce(i)"
+            >
+              @if (entry.controls.ae_who_sid.value) {
+                <div class="entry-row">
+                  {{ 'SID' | translate }}:
+                  {{ entry.controls.ae_who_sid.value }}
+                </div>
+              }
 
-              <ix-combobox
-                *ngIf="entry.controls.ae_who.value === nfsAclTag.User"
-                formControlName="user"
-                [label]="'User' | translate"
-                [provider]="userProvider"
-                [allowCustomValue]="true"
-                [required]="true"
-              ></ix-combobox>
+              <div class="entry-row">
+                <ix-select
+                  formControlName="ae_who"
+                  [label]="'Who' | translate"
+                  [options]="tags$"
+                  [required]="true"
+                ></ix-select>
 
-              <ix-combobox
-                *ngIf="groupProvider && entry.controls.ae_who.value === nfsAclTag.UserGroup"
-                formControlName="group"
-                [label]="'Group' | translate"
-                [provider]="groupProvider"
-                [allowCustomValue]="true"
-                [required]="true"
-              ></ix-combobox>
+                @if (entry.controls.ae_who.value === nfsAclTag.User) {
+                  <ix-combobox
+                    formControlName="user"
+                    [label]="'User' | translate"
+                    [provider]="userProvider"
+                    [allowCustomValue]="true"
+                    [required]="true"
+                  ></ix-combobox>
+                }
 
-              <!-- TODO: Delete after the backend has support for distinguishing user from group -->
-              <ix-combobox
-                *ngIf="bothProvider && entry.controls.ae_who.value === nfsAclTag.Both"
-                formControlName="both"
-                [label]="'Unknown' | translate"
-                [provider]="bothProvider"
-                [allowCustomValue]="true"
-                [required]="true"
-              ></ix-combobox>
-            </div>
+                @if (groupProvider && entry.controls.ae_who.value === nfsAclTag.UserGroup) {
+                  <ix-combobox
+                    formControlName="group"
+                    [label]="'Group' | translate"
+                    [provider]="groupProvider"
+                    [allowCustomValue]="true"
+                    [required]="true"
+                  ></ix-combobox>
+                }
 
-            <div class="entry-row">
-              <ix-errors [control]="entry"></ix-errors>
-            </div>
+                <!-- TODO: Delete after the backend has support for distinguishing user from group -->
+                @if (bothProvider && entry.controls.ae_who.value === nfsAclTag.Both) {
+                  <ix-combobox
+                    formControlName="both"
+                    [label]="'Unknown' | translate"
+                    [provider]="bothProvider"
+                    [allowCustomValue]="true"
+                    [required]="true"
+                  ></ix-combobox>
+                }
+              </div>
 
-            <div class="entry-row">
-              <ix-select
-                formControlName="ae_perm"
-                [label]="'Permission' | translate"
-                [options]="permissions$"
-                [required]="true"
-                [tooltip]="helptext.ae_perm_tooltip | translate"
-              ></ix-select>
+              <div class="entry-row">
+                <ix-errors [control]="entry"></ix-errors>
+              </div>
 
-              <ix-select
-                formControlName="ae_type"
-                [label]="'Type' | translate"
-                [options]="types$"
-                [required]="true"
-                [tooltip]="helptext.ae_type_tooltip | translate"
-              ></ix-select>
-            </div>
-          </ix-list-item>
+              <div class="entry-row">
+                <ix-select
+                  formControlName="ae_perm"
+                  [label]="'Permission' | translate"
+                  [options]="permissions$"
+                  [required]="true"
+                  [tooltip]="helptext.ae_perm_tooltip | translate"
+                ></ix-select>
+
+                <ix-select
+                  formControlName="ae_type"
+                  [label]="'Type' | translate"
+                  [options]="types$"
+                  [required]="true"
+                  [tooltip]="helptext.ae_type_tooltip | translate"
+                ></ix-select>
+              </div>
+            </ix-list-item>
+          }
         </ix-list>
       </ix-fieldset>
 

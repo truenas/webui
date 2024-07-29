@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -30,7 +29,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    NgIf,
     IxIconModule,
     TranslateModule,
     MatInputModule,

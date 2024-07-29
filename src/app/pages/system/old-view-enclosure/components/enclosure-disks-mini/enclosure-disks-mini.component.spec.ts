@@ -8,7 +8,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DriveTray } from 'app/pages/system/old-view-enclosure/classes/drivetray';
 import { DiskComponent } from 'app/pages/system/old-view-enclosure/components/disk-component/disk.component';
 import { EnclosureDisksMiniComponent } from 'app/pages/system/old-view-enclosure/components/enclosure-disks-mini/enclosure-disks-mini.component';
@@ -62,7 +62,7 @@ describe('EnclosureDisksMiniComponent', () => {
   const createComponent = createComponentFactory({
     component: EnclosureDisksMiniComponent,
     imports: [
-      IxFileSizePipe,
+      FileSizePipe,
     ],
     declarations: [
       DiskComponent,

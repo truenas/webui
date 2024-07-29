@@ -21,10 +21,6 @@ export class NewDevicesPreviewComponent {
   protected topology$ = this.store.topology$;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
-  get unknownProp(): string {
-    return this.translate.instant('None');
-  }
-
   constructor(
     private store: PoolManagerStore,
     private translate: TranslateService,

@@ -1,49 +1,67 @@
 <dl class="details">
   <div class="details-row">
     <dt>{{ 'Used' | translate }}:</dt>
-    <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
-    <dd *ngIf="!isLoading">
-      <ng-container *ngIf="snapshotInfo?.properties?.used?.parsed; else notAvailable">
-        {{ +snapshotInfo.properties.used.parsed | ixFileSize }}
-      </ng-container>
-    </dd>
+    @if (isLoading) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      <dd>
+        @if (snapshotInfo?.properties?.used?.parsed) {
+          {{ +snapshotInfo.properties.used.parsed | ixFileSize }}
+        } @else {
+          {{ 'N/A' | translate }}
+        }
+      </dd>
+    }
   </div>
   <div class="details-row">
     <dt>{{ 'Date created' | translate }}:</dt>
-    <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
-    <dd *ngIf="!isLoading">
-      <ng-container *ngIf="snapshotInfo?.properties?.creation?.parsed?.$date; else notAvailable">
-        {{ snapshotInfo.properties.creation.parsed.$date | formatDateTime }}
-      </ng-container>
-    </dd>
+    @if (isLoading) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      <dd>
+        @if (snapshotInfo?.properties?.creation?.parsed?.$date) {
+          {{ snapshotInfo.properties.creation.parsed.$date | formatDateTime }}
+        } @else {
+          {{ 'N/A' | translate }}
+        }
+      </dd>
+    }
   </div>
   <div class="details-row">
     <dt>{{ 'Referenced' | translate }}:</dt>
-    <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
-    <dd *ngIf="!isLoading">
-      <ng-container *ngIf="snapshotInfo?.properties?.referenced?.parsed; else notAvailable">
-        {{ +snapshotInfo.properties.referenced.parsed | ixFileSize }}
-      </ng-container>
-    </dd>
+    @if (isLoading) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      <dd>
+        @if (snapshotInfo?.properties?.referenced?.parsed) {
+          {{ +snapshotInfo.properties.referenced.parsed | ixFileSize }}
+        } @else {
+          {{ 'N/A' | translate }}
+        }
+      </dd>
+    }
   </div>
   <div class="details-row">
     <dt>{{ 'Retention' | translate }}:</dt>
-    <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
-    <dd *ngIf="!isLoading">
-      <ng-container *ngIf="snapshotInfo?.retention?.datetime?.$date">
-        <ng-container *ngIf="snapshotInfo?.retention?.periodic_snapshot_task_id">
-          {{ 'Will be automatically destroyed at {datetime} by periodic snapshot task' | translate:
+    @if (isLoading) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      <dd>
+        @if (snapshotInfo?.retention?.datetime?.$date) {
+          @if (snapshotInfo?.retention?.periodic_snapshot_task_id) {
+            {{ 'Will be automatically destroyed at {datetime} by periodic snapshot task' | translate:
             { datetime: snapshotInfo.retention.datetime.$date | formatDateTime } }}
-        </ng-container>
-        <ng-container *ngIf="!snapshotInfo?.retention?.periodic_snapshot_task_id">
-          {{ 'Is planned to be automatically destroyed at {datetime}' | translate:
+          }
+          @if (!snapshotInfo?.retention?.periodic_snapshot_task_id) {
+            {{ 'Is planned to be automatically destroyed at {datetime}' | translate:
             { datetime: snapshotInfo.retention.datetime.$date | formatDateTime } }}
-        </ng-container>
-      </ng-container>
-      <ng-container *ngIf="!snapshotInfo?.retention?.datetime?.$date">
-        {{ 'Will not be destroyed automatically' | translate }}
-      </ng-container>
-    </dd>
+          }
+        }
+        @if (!snapshotInfo?.retention?.datetime?.$date) {
+          {{ 'Will not be destroyed automatically' | translate }}
+        }
+      </dd>
+    }
   </div>
   <ng-container *ixRequiresRoles="requiredRoles">
     <ix-checkbox
@@ -90,6 +108,3 @@
   </span>
 </div>
 
-<ng-template #notAvailable>
-  {{ 'N/A' | translate }}
-</ng-template>

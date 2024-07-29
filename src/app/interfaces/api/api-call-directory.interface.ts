@@ -8,7 +8,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
-import { SystemEnvironment } from 'app/enums/system-environment.enum';
+import { SystemState } from 'app/enums/system-state.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
   Acl,
@@ -117,7 +117,7 @@ import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interfac
 import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
-import { DashboardEnclosure, Enclosure } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosure, Enclosure, SetDriveBayLightStatus } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
   FailoverUpdate,
@@ -456,7 +456,8 @@ export interface ApiCallDirectory {
   'enclosure2.query': { params: void; response: Enclosure[] };
   'webui.enclosure.dashboard': { params: void; response: DashboardEnclosure[] };
   'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
-  'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: void };
+  'enclosure.set_slot_status': { params: [enclosureId: string, slot: number, status: EnclosureSlotStatus ]; response: void };
+  'enclosure2.set_slot_status': { params: [SetDriveBayLightStatus]; response: void };
 
   // Failover
   'failover.become_passive': { params: void; response: void };
@@ -793,9 +794,9 @@ export interface ApiCallDirectory {
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
   'system.advanced.update': { params: [Partial<AdvancedConfigUpdate>]; response: AdvancedConfig };
   'system.advanced.update_gpu_pci_ids': { params: [isolated_gpu_pci_ids: string[]]; response: void };
+  'system.advanced.login_banner': { params: void; response: string };
   'system.build_time': { params: void; response: ApiTimestamp };
   'system.boot_id': { params: void; response: string };
-  'system.environment': { params: void; response: SystemEnvironment };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: void; response: Choices };
   'system.general.language_choices': { params: void; response: Choices };
@@ -819,6 +820,10 @@ export interface ApiCallDirectory {
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.info.fips_available': { params: void; response: boolean };
   'system.set_time': { params: [number]; response: void };
+  'system.ready': { params: void; response: boolean };
+  'system.state': { params: void; response: SystemState };
+  'system.version': { params: void; response: string };
+  'system.version_short': { params: void; response: string };
 
   // Systemdataset
   'systemdataset.config': { params: void; response: SystemDatasetConfig };

@@ -1,7 +1,7 @@
 import { Renderer2, ElementRef } from '@angular/core';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { UiSearchDirectivesService } from './ui-search-directives.service';
 
 describe('UiSearchDirectivesService', () => {
@@ -25,7 +25,7 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check register and unregister', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
+      const directive = new UiSearchDirective(renderer, elementRef, spectator.service, {} as Window);
       directive.config = { anchor: 'anchor' };
 
       spectator.service.register(directive);
@@ -36,7 +36,7 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check get method', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
+      const directive = new UiSearchDirective(renderer, elementRef, spectator.service, {} as Window);
       directive.config = { anchor: 'anchor' };
 
       spectator.service.register(directive);
@@ -50,7 +50,7 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check directiveAdded$ BehaviorSubject', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
+      const directive = new UiSearchDirective(renderer, elementRef, spectator.service, {} as Window);
       directive.config = { anchor: 'anchor' };
 
       spectator.service.register(directive);
@@ -66,7 +66,7 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check size method', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
+      const directive = new UiSearchDirective(renderer, elementRef, spectator.service, {} as Window);
       directive.config = { anchor: 'anchor' };
 
       spectator.service.register(directive);

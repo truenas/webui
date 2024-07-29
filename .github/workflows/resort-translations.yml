@@ -1,0 +1,30 @@
+name: Resort translations
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/assets/i18n/**'
+
+jobs:
+  resort-strings:
+    name: Resort strings and commit if translations were changed
+    runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Extract Messages
+        run: yarn run extract
+      - name: Validate Translations
+        run: yarn run validate-translations
+      # Commit all changed files back to the repository
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Resorting translations.
+          commit_options: '--no-verify --signoff'

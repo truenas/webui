@@ -11,6 +11,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 @Injectable({ providedIn: 'root' })
 export class FormErrorHandlerService {
   private isOnErrorFocused = false;
+  private needToShowError = false;
 
   constructor(
     private dialog: DialogService,
@@ -61,6 +62,7 @@ export class FormErrorHandlerService {
     triggerAnchor: string,
   ): void {
     this.isOnErrorFocused = false;
+    this.needToShowError = false;
     const extra = (error as WebSocketError).extra as string[][];
     for (const extraItem of extra) {
       const field = extraItem[0].split('.').pop();
@@ -89,6 +91,11 @@ export class FormErrorHandlerService {
         control, field, errorMessage, error,
       });
     }
+
+    if (this.needToShowError) {
+      // Fallback to default modal error message.
+      this.dialog.error(this.errorHandler.parseError(error));
+    }
   }
 
   private showValidationError({
@@ -103,8 +110,7 @@ export class FormErrorHandlerService {
 
     if (!control || !controlsNames.includes(field)) {
       console.error(`Could not find control ${field}.`);
-      // Fallback to default modal error message.
-      this.dialog.error(this.errorHandler.parseError(error));
+      this.needToShowError = true;
       return;
     }
 

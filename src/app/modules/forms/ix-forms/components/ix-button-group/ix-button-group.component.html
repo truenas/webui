@@ -1,10 +1,11 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-  [ixTestOverride]="controlDirective.name"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
 
 <mat-button-toggle-group
   [value]="value"
@@ -14,15 +15,18 @@
   [attr.aria-label]="label"
   (change)="onValueChanged($event)"
 >
-  <mat-button-toggle
-    *ngFor="let option of options | async"
-    [name]="option.value.toString()"
-    [disabled]="isDisabled"
-    [value]="option.value"
-    [ixTest]="[controlDirective.name, option.label]"
-    [attr.aria-label]="option.label"
-  >{{ option.label | translate }}</mat-button-toggle>
+  @for (option of options | async; track option.label) {
+    <mat-button-toggle
+      [name]="option.value.toString()"
+      [disabled]="isDisabled"
+      [value]="option.value"
+      [ixTest]="[controlDirective.name, option.label]"
+      [attr.aria-label]="option.label"
+    >{{ option.label | translate }}</mat-button-toggle>
+  }
 </mat-button-toggle-group>
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
-<mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+@if (hint) {
+  <mat-hint>{{ hint }}</mat-hint>
+}

@@ -1,11 +1,10 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
-import { Alert } from 'app/interfaces/alert.interface';
 import {
   alertPanelClosed,
   dismissAllAlertsPressed,
@@ -34,8 +33,6 @@ export class AlertsPanelComponent implements OnInit {
   dismissedAlerts$ = this.store$.select(selectDismissedAlerts);
 
   isHaLicensed = false;
-
-  readonly trackByAlertId: TrackByFunction<Alert> = (_, alert) => alert.id;
 
   constructor(
     private store$: Store<AlertSlice>,

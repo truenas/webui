@@ -45,16 +45,12 @@ ix-fake-progress-bar {
     margin: 0;
   }
 
-  ::ng-deep .view-container .container {
-    ix-sas-expander-status-view,
-    ix-enclosure-view,
-    ix-disks-overview {
-      min-height: 55vh;
-    }
-  }
-
   .container {
+    align-items: stretch;
     background-color: var(--contrast-darkest);
+    display: flex;
+    justify-content: center;
+    min-height: 50vh;
     padding: 0;
   }
 }

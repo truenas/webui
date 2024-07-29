@@ -1,6 +1,12 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingSmb = {
+  root_level_warning: T(
+    'Configuring SMB exports of root-level datasets\
+ may lead to storage reconfiguration issues.\
+ Consider creating a dataset instead.',
+  ),
+
   shareAclDescription: T('The SMB share ACL defines access rights for users of this SMB share up to, but not beyond, the access granted by filesystem ACLs.'),
   column_name: T('Name'),
   column_path: T('Path'),

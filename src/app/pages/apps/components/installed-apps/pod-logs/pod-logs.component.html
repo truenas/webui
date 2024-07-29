@@ -30,15 +30,19 @@
     class="pod-logs"
     [ngStyle]="{ 'font-size': fontSize + 'px' }"
   >
-    <mat-spinner *ngIf="isLoadingPodLogs" class="spinner" [diameter]="40"></mat-spinner>
-    <div *ngIf="!isLoadingPodLogs && !podLogs.length" class="log-row">
-      <span  class="no-logs">{{ 'No logs yet' | translate }}</span>
-    </div>
-    <ng-container *ngIf="!isLoadingPodLogs">
-      <div *ngFor="let podLog of podLogs" class="log-row">
-        <span class="timestamp">{{ podLog.timestamp }}</span>
-        <span class="log-data">{{ podLog.data }}</span>
+    @if (isLoadingPodLogs) {
+      <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
+    } @else if (!podLogs.length) {
+      <div class="log-row">
+        <span  class="no-logs">{{ 'No logs yet' | translate }}</span>
       </div>
-    </ng-container>
+    } @else {
+      @for (podLog of podLogs; track podLog) {
+        <div class="log-row">
+          <span class="timestamp">{{ podLog.timestamp }}</span>
+          <span class="log-data">{{ podLog.data }}</span>
+        </div>
+      }
+    }
   </div>
 </div>

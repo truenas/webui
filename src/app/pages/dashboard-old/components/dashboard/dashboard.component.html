@@ -1,50 +1,52 @@
-<ix-page-header *ngIf="screenType === ScreenType.Desktop">
-  <ng-container *ngIf="isLoaded">
-    <button
-      mat-button
-      ixTest="configure-dashboard"
-      color="primary"
-      (click)="showConfigForm()"
-    >
-      {{ 'Configure' | translate }}
-    </button>
-    <button
-      *ngIf="reorderMode"
-      mat-button
-      ixTest="cancel-reorder"
-      (click)="onCancel()"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ngIf="reorderMode"
-      mat-button
-      color="primary"
-      ixTest="save-new-order"
-      [disabled]="isSavingState"
-      (click)="onConfirm()"
-    >
-      {{ 'Save' | translate }}
-    </button>
-    <button
-      *ngIf="!reorderMode && !isEmpty"
-      mat-button
-      color="primary"
-      ixTest="start-reorder"
-      (click)="onEnter()"
-    >
-      {{ 'Reorder' | translate }}
-    </button>
-  </ng-container>
-</ix-page-header>
+@if (screenType === ScreenType.Desktop) {
+  <ix-page-header>
+    @if (isLoaded) {
+      <button
+        mat-button
+        ixTest="configure-dashboard"
+        color="primary"
+        (click)="showConfigForm()"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+      @if (reorderMode) {
+        <button
+          mat-button
+          ixTest="cancel-reorder"
+          (click)="onCancel()"
+        >
+          {{ 'Cancel' | translate }}
+        </button>
+        <button
+          mat-button
+          color="primary"
+          ixTest="save-new-order"
+          [disabled]="isSavingState"
+          (click)="onConfirm()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      }
+      @if (!reorderMode && !isEmpty) {
+        <button
+          mat-button
+          color="primary"
+          ixTest="start-reorder"
+          (click)="onEnter()"
+        >
+          {{ 'Reorder' | translate }}
+        </button>
+      }
+    }
+  </ix-page-header>
+}
 
 <div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
-  <div
-    *ngIf="screenType === ScreenType.Desktop && isLoaded && isEmpty"
-    class="widgets-wrapper empty"
-  >
-    <ix-empty [conf]="emptyDashConf"></ix-empty>
-  </div>
+  @if (screenType === ScreenType.Desktop && isLoaded && isEmpty) {
+    <div class="widgets-wrapper empty">
+      <ix-empty [conf]="emptyDashConf"></ix-empty>
+    </div>
+  }
 
   <div
     class="widgets-wrapper"
@@ -55,192 +57,194 @@
     (ixDropGridModelChange)="onWidgetReorder($event)"
   >
     <!-- LOADING WIDGETS -->
-    <ng-container *ngIf="!isLoaded && screenType === ScreenType.Desktop">
-      <div *ngFor="let _ of [1,2,3,4,5,6]">
-        <div class="widget placeholder">
-          <div class="card-container">
-            <mat-card [class.loading]="true"></mat-card>
+    @if (!isLoaded && screenType === ScreenType.Desktop) {
+      @for (_ of [1,2,3,4,5,6]; track _) {
+        <div>
+          <div class="widget placeholder">
+            <div class="card-container">
+              <mat-card [class.loading]="true"></mat-card>
+            </div>
           </div>
         </div>
-      </div>
-    </ng-container>
+      }
+    }
 
     <!-- SORTABLE WIDGETS -->
-    <ng-container *ngIf="isLoaded && screenType === ScreenType.Desktop">
-      <ng-container *ngIf="renderedWidgets">
-        <div
-          *ngFor="let widget of renderedWidgets; let index = index; trackBy: getWidgetId"
-          ixDropGridItem
-        >
-          <ng-container [ngSwitch]="widget.name">
-            <ix-widget-sysinfo
-              *ngSwitchCase="WidgetType.SystemInformation"
-              id="active"
-              ixDrag
-              [isPassive]="false"
-              [showReorderHandle]="reorderMode"
-            >
-              <span ixDragHandle></span>
-            </ix-widget-sysinfo>
-
-            <ix-widget-sysinfo
-              *ngSwitchCase="WidgetType.SystemInformationStandby"
-              id="passive"
-              ixDrag
-              [isPassive]="true"
-              [showReorderHandle]="reorderMode"
-            >
-              <span ixDragHandle></span>
-            </ix-widget-sysinfo>
-
-            <ix-widget-help
-              *ngSwitchCase="WidgetType.Help"
-              ixDrag
-              [showReorderHandle]="reorderMode"
-            >
-              <span ixDragHandle></span>
-            </ix-widget-help>
-
-            <ix-widget-cpu
-              *ngSwitchCase="WidgetType.Cpu"
-              ixDrag
-              [showReorderHandle]="reorderMode"
-              ><span ixDragHandle></span
-            ></ix-widget-cpu>
-
-            <ix-widget-memory
-              *ngSwitchCase="WidgetType.Memory"
-              ixDrag
-              [showReorderHandle]="reorderMode"
-            >
-              <span ixDragHandle></span>
-            </ix-widget-memory>
-
-            <ix-widget-pool-wrapper
-              *ngSwitchCase="WidgetType.Pool"
-              [pool]="(widget.identifier.split(',')[1]).split(':')[1]"
-              [showReorderHandle]="reorderMode"
-            >
-            </ix-widget-pool-wrapper>
-
-            <ix-widget-storage
-              *ngSwitchCase="WidgetType.Storage"
-              ixDrag
-              [showReorderHandle]="reorderMode"
-            >
-              <span ixDragHandle></span>
-            </ix-widget-storage>
-
-            <ix-widget-nic
-              *ngSwitchCase="WidgetType.Interface"
-              ixDrag
-              [nic]="widget.identifier.split(',')[1]"
-              [showReorderHandle]="reorderMode"
-            >
-              <span ixDragHandle></span>
-            </ix-widget-nic>
-
-            <ix-widget-network
-              *ngSwitchCase="WidgetType.Network"
-              ixDrag
-              [showReorderHandle]="reorderMode"
-            >
-              <span ixDragHandle></span>
-            </ix-widget-network>
-
-            <ix-widget-backup
-              *ngSwitchCase="WidgetType.Backup"
-              ixDrag
-              [showReorderHandle]="reorderMode"
-            >
-              <span ixDragHandle></span>
-            </ix-widget-backup>
-          </ng-container>
-        </div>
-      </ng-container>
-    </ng-container>
+    @if (isLoaded && screenType === ScreenType.Desktop) {
+      @if (renderedWidgets) {
+        @for (widget of renderedWidgets; track getWidgetId(index, widget); let index = $index) {
+          <div ixDropGridItem>
+            @switch (widget.name) {
+              @case (WidgetType.SystemInformation) {
+                <ix-widget-sysinfo
+                  id="active"
+                  ixDrag
+                  [isPassive]="false"
+                  [showReorderHandle]="reorderMode"
+                >
+                  <span ixDragHandle></span>
+                </ix-widget-sysinfo>
+              }
+              @case (WidgetType.SystemInformationStandby) {
+                <ix-widget-sysinfo
+                  id="passive"
+                  ixDrag
+                  [isPassive]="true"
+                  [showReorderHandle]="reorderMode"
+                >
+                  <span ixDragHandle></span>
+                </ix-widget-sysinfo>
+              }
+              @case (WidgetType.Help) {
+                <ix-widget-help
+                  ixDrag
+                  [showReorderHandle]="reorderMode"
+                >
+                  <span ixDragHandle></span>
+                </ix-widget-help>
+              }
+              @case (WidgetType.Cpu) {
+                <ix-widget-cpu
+                  ixDrag
+                  [showReorderHandle]="reorderMode"
+                >
+                  <span ixDragHandle></span>
+                </ix-widget-cpu>
+              }
+              @case (WidgetType.Memory) {
+                <ix-widget-memory
+                  ixDrag
+                  [showReorderHandle]="reorderMode"
+                >
+                  <span ixDragHandle></span>
+                </ix-widget-memory>
+              }
+              @case (WidgetType.Pool) {
+                <ix-widget-pool-wrapper
+                  [pool]="(widget.identifier.split(',')[1]).split(':')[1]"
+                  [showReorderHandle]="reorderMode"
+                ></ix-widget-pool-wrapper>
+              }
+              @case (WidgetType.Storage) {
+                <ix-widget-storage
+                  ixDrag
+                  [showReorderHandle]="reorderMode"
+                >
+                  <span ixDragHandle></span>
+                </ix-widget-storage>
+              }
+              @case (WidgetType.Interface) {
+                <ix-widget-nic
+                  ixDrag
+                  [nic]="widget.identifier.split(',')[1]"
+                  [showReorderHandle]="reorderMode"
+                >
+                  <span ixDragHandle></span>
+                </ix-widget-nic>
+              }
+              @case (WidgetType.Network) {
+                <ix-widget-network
+                  ixDrag
+                  [showReorderHandle]="reorderMode"
+                >
+                  <span ixDragHandle></span>
+                </ix-widget-network>
+              }
+              @case (WidgetType.Backup) {
+                <ix-widget-backup
+                  ixDrag
+                  [showReorderHandle]="reorderMode"
+                >
+                  <span ixDragHandle></span>
+                </ix-widget-backup>
+              }
+            }
+          </div>
+        }
+      }
+    }
   </div>
 </div>
 
-<ng-container *ngIf="!isLoaded && screenType === ScreenType.Mobile">
+@if (!isLoaded && screenType === ScreenType.Mobile) {
   <mat-spinner class="spinner xs" [diameter]="40"></mat-spinner>
-</ng-container>
+}
 
 <!-- MOBILE WIDGETS -->
 <div class="mobile-viewport" [class.hidden]="screenType === ScreenType.Desktop">
   <div class="carousel">
-    <ix-widget-controller
-      *ngIf="screenType === ScreenType.Mobile && dashState && dashState.length > 0"
-      [renderedWidgets]="renderedWidgets"
-      [dashState]="dashState"
-      [emptyConfig]="emptyDashConf"
-      (launcher)="onMobileLaunch($event)"
-    ></ix-widget-controller>
+    @if (screenType === ScreenType.Mobile && dashState && dashState.length > 0) {
+      <ix-widget-controller
+        [renderedWidgets]="renderedWidgets"
+        [dashState]="dashState"
+        [emptyConfig]="emptyDashConf"
+        (launcher)="onMobileLaunch($event)"
+      ></ix-widget-controller>
+    }
 
     <div class="mobile-widget-container">
-      <ng-container *ngIf="isLoaded && screenType === ScreenType.Mobile">
-        <ng-container *ngFor="let widget of activeMobileWidget">
-          <ng-container [ngSwitch]="widget.name">
-            <ix-widget-sysinfo
-              *ngSwitchCase="WidgetType.SystemInformation"
-              id="active"
-              [isPassive]="false"
-              (back)="onMobileBack()"
-            >
-            </ix-widget-sysinfo>
-
-            <ix-widget-sysinfo
-              *ngSwitchCase="WidgetType.SystemInformationStandby"
-              id="passive"
-              [isPassive]="true"
-              (back)="onMobileBack()"
-            >
-            </ix-widget-sysinfo>
-
-            <ix-widget-help
-              *ngSwitchCase="WidgetType.Help"
-              (back)="onMobileBack()"
-            ></ix-widget-help>
-
-            <ix-widget-cpu
-              *ngSwitchCase="WidgetType.Cpu"
-              (back)="onMobileBack()"
-            ></ix-widget-cpu>
-
-            <ix-widget-memory
-              *ngSwitchCase="WidgetType.Memory"
-              (back)="onMobileBack()"
-            ></ix-widget-memory>
-
-            <ix-widget-pool-wrapper
-              *ngSwitchCase="WidgetType.Pool"
-              [pool]="(widget.identifier.split(',')[1]).split(':')[1]"
-              (back)="onMobileBack()"
-            ></ix-widget-pool-wrapper>
-
-            <ix-widget-storage
-              *ngSwitchCase="WidgetType.Storage"
-              (back)="onMobileBack()"
-            ></ix-widget-storage>
-
-            <ix-widget-nic
-              *ngSwitchCase="WidgetType.Interface"
-              [nic]="widget.identifier.split(',')[1]"
-              (back)="onMobileBack()"
-            ></ix-widget-nic>
-
-            <ix-widget-network
-              *ngSwitchCase="WidgetType.Network"
-              (back)="onMobileBack()"
-            ></ix-widget-network>
-
-            <ix-widget-backup
-              *ngSwitchCase="WidgetType.Backup"
-              (back)="onMobileBack()"
-            ></ix-widget-backup>
-          </ng-container>
-        </ng-container>
-      </ng-container>
+      @if (isLoaded && screenType === ScreenType.Mobile) {
+        @for (widget of activeMobileWidget; track widget) {
+          @switch (widget.name) {
+            @case (WidgetType.SystemInformation) {
+              <ix-widget-sysinfo
+                id="active"
+                [isPassive]="false"
+                (back)="onMobileBack()"
+              ></ix-widget-sysinfo>
+            }
+            @case (WidgetType.SystemInformationStandby) {
+              <ix-widget-sysinfo
+                id="passive"
+                [isPassive]="true"
+                (back)="onMobileBack()"
+              ></ix-widget-sysinfo>
+            }
+            @case (WidgetType.Help) {
+              <ix-widget-help
+                (back)="onMobileBack()"
+              ></ix-widget-help>
+            }
+            @case (WidgetType.Cpu) {
+              <ix-widget-cpu
+                (back)="onMobileBack()"
+              ></ix-widget-cpu>
+            }
+            @case (WidgetType.Memory) {
+              <ix-widget-memory
+                (back)="onMobileBack()"
+              ></ix-widget-memory>
+            }
+            @case (WidgetType.Pool) {
+              <ix-widget-pool-wrapper
+                [pool]="(widget.identifier.split(',')[1]).split(':')[1]"
+                (back)="onMobileBack()"
+              ></ix-widget-pool-wrapper>
+            }
+            @case (WidgetType.Storage) {
+              <ix-widget-storage
+                (back)="onMobileBack()"
+              ></ix-widget-storage>
+            }
+            @case (WidgetType.Interface) {
+              <ix-widget-nic
+                [nic]="widget.identifier.split(',')[1]"
+                (back)="onMobileBack()"
+              ></ix-widget-nic>
+            }
+            @case (WidgetType.Network) {
+              <ix-widget-network
+                (back)="onMobileBack()"
+              ></ix-widget-network>
+            }
+            @case (WidgetType.Backup) {
+              <ix-widget-backup
+                (back)="onMobileBack()"
+              ></ix-widget-backup>
+            }
+          }
+        }
+      }
     </div>
   </div>
 </div>

@@ -109,6 +109,12 @@ This should bring the yarn environment back to a usable state.
 All JSON files for translating TrueNAS's web interface are included in this repository under [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n). \
 These can be edited using your editor of choice or directly via the GitHub Web based code editing system.
 
+Translation needs to be added to the right part of the string. For example:
+
+```
+"1 day": "1 jour",
+```
+
 Some strings may use [ICU Message Format](https://formatjs.io/docs/core-concepts/icu-syntax/#plural-format) for pluralization.\
 You can move tokens around and adjust them for your language.
 
@@ -126,9 +132,13 @@ can be translated in Russian as:
 
 You can test your strings in an [online editor](http://format-message.github.io/icu-message-format-for-translators/editor.html).
 
-Stock images used on the dashboard UI are courtesy of Pixabay.com and are subject to the Simplified Pixabay License.
-Full license details can be found at https://pixabay.com/service/license/.
+String files are often changed by developers and other contributors, so it's better to make multiple smaller PRs instead of trying to translate everything at once.
 
 # Contributing
 
 Learn how you can contribute to our project and help us maintain it [on our Contribution guide](https://github.com/truenas/webui/blob/master/CONTRIBUTING.md).
+
+# Stock Images
+
+Stock images used on the dashboard UI are courtesy of Pixabay.com and are subject to the Simplified Pixabay License.
+Full license details can be found at https://pixabay.com/service/license/.

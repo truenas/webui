@@ -29,6 +29,17 @@ describe('WidgetInterfaceIpComponent', () => {
                 { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
               ],
             },
+            {
+              name: 'eth2',
+              aliases: [],
+              state: {
+                aliases: [
+                  { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.10' },
+                  { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.11' },
+                  { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
+                ],
+              },
+            },
           ],
         }),
       }),
@@ -53,6 +64,25 @@ describe('WidgetInterfaceIpComponent', () => {
     const widget = spectator.query(MockComponent(WidgetDatapointComponent));
     expect(widget).toBeTruthy();
     expect(widget.text).toBe('192.168.1.1\n192.168.1.2');
+  });
+
+  it('renders IPv4 addresses for the selected network interface from state', () => {
+    spectator.setInput('settings', { interface: 'eth2' });
+
+    const widget = spectator.query(MockComponent(WidgetDatapointComponent));
+    expect(widget).toBeTruthy();
+    expect(widget.text).toBe('192.168.1.10\n192.168.1.11');
+  });
+
+  it('renders IPv6 addresses for the selected network interface', () => {
+    spectator.setInput('settings', {
+      interface: 'eth1',
+      widgetName: 'IPv6 Address',
+    });
+
+    const widget = spectator.query(MockComponent(WidgetDatapointComponent));
+    expect(widget).toBeTruthy();
+    expect(widget.text).toBe('fe80::1');
   });
 
   it('renders "interface not found" when selected interface is not available in interface data', () => {

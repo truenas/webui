@@ -1,4 +1,4 @@
-@import 'scss-imports/splitview';
+@import 'scss-imports/variables';
 
 :host {
   border-bottom: solid 1px var(--lines);
@@ -53,6 +53,14 @@ ix-fake-progress-bar {
 
   @media (max-width: $breakpoint-md) {
     flex-wrap: wrap;
+  }
+
+  .title-and-indicator {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    place-content: center;
   }
 }
 

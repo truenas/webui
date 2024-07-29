@@ -45,7 +45,7 @@ small {font-size: 0.833em;}
 
 span.code {
   background: rgba(255, 255, 255, 0.1);
-  font-family: 'Inconsolata', monospace;
+  font-family: var(--font-family-monospace);
   opacity: 0.75;
 }
 
@@ -831,22 +831,6 @@ body {
   ix-fieldset.highlighted fieldset {
     outline: 1.5px solid var(--primary);
   }
-
-  .search-element-highlighted {
-    background-color: var(--contrast-darkest) !important;
-    box-shadow: 0 0 5px 5px var(--primary-lighter) !important;
-    outline: 4px solid var(--primary) !important;
-    overflow: visible;
-
-    &:focus-visible {
-      box-shadow: 0 0 5px 5px var(--primary-lighter) !important;
-      outline: 4px solid var(--primary) !important;
-    }
-
-    &.mat-primary {
-      outline: 4px solid var(--primary-txt) !important;
-    }
-  }
 }
 
 body .mat-calendar-previous-button::after,
@@ -862,8 +846,8 @@ body .mat-calendar-next-button::after {
   }
 }
 
-.cdk-overlay-pane {
-  @media(max-width: $breakpoint-sm) {
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+  @media(max-width: $breakpoint-xs) {
     max-width: 95% !important;
     width: inherit;
   }
@@ -924,10 +908,4 @@ mat-list-item {
 
 div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
   margin: 5px 0;
-}
-
-mat-tab-nav-panel {
-  .search-element-highlighted {
-    display: block;
-  }
 }

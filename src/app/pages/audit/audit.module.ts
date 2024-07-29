@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';

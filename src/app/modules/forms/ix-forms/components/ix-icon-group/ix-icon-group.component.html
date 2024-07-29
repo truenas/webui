@@ -1,27 +1,27 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+  ></ix-label>
+}
 
 <div class="icon-group" [attr.aria-label]="label">
   @for (option of options | keyvalue: keepOrder; track option) {
-  <button
-    mat-icon-button
-    type="button"
-    [disabled]="isDisabled"
-    [ixTest]="[controlDirective.name, option.key]"
-    [attr.aria-label]="option.key"
-    [class.selected]="value === option.key"
-    (click)="onValueChanged(option.key)"
-    (blur)="onTouch()"
-  >
-    <ix-icon [name]="option.value"></ix-icon>
-  </button>
-  }
-  @empty {
-  <span>{{ 'No options are passed' | translate }}</span>
+    <button
+      mat-icon-button
+      type="button"
+      [disabled]="isDisabled"
+      [ixTest]="[controlDirective.name, option.key]"
+      [attr.aria-label]="option.key"
+      [class.selected]="value === option.key"
+      (click)="onValueChanged(option.key)"
+      (blur)="onTouch()"
+    >
+      <ix-icon [name]="option.value"></ix-icon>
+    </button>
+  } @empty {
+    <span>{{ 'No options are passed' | translate }}</span>
   }
 </div>
 

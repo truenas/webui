@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { GlobalSearchModule } from 'app/modules/global-search/global-search.module';

@@ -5,22 +5,21 @@
   <ix-custom-app-button></ix-custom-app-button>
 </ix-page-header>
 
-<ng-container *ngIf="isLoading$ | async; else categoryLoaded">
+@if (isLoading$ | async) {
   <ngx-skeleton-loader
     class="fake-apps"
     [count]="9"
     [animation]="false"
   ></ngx-skeleton-loader>
-</ng-container>
-
-<ng-template #categoryLoaded>
+} @else {
   <div class="apps">
-    <ix-app-card
-      *ngFor="let app of apps$ | async; trackBy: trackByAppId"
-      [app]="app"
-      [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
-      (keyup.enter)="router.navigate(['/apps', 'available', app.catalog, app.train, app.name])"
-    ></ix-app-card>
+    @for (app of apps$ | async; track trackByAppId($index, app)) {
+      <ix-app-card
+        [app]="app"
+        [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+        (keyup.enter)="router.navigate(['/apps', 'available', app.catalog, app.train, app.name])"
+      ></ix-app-card>
+    }
   </div>
 
   <div class="view-all">
@@ -30,4 +29,5 @@
       [routerLink]="['/apps', 'available']"
     >{{ 'Back to Discover Page' | translate }}</button>
   </div>
-</ng-template>
+}
+

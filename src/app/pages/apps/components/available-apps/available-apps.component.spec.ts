@@ -18,6 +18,7 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from 'app/pages/apps/components/app-detail-view/app-detail-view.component';
@@ -233,6 +234,7 @@ describe('Finding app', () => {
       IxFormsModule,
       ReactiveFormsModule,
       MockModule(PageHeaderModule),
+      OrNotAvailablePipe,
     ],
     declarations: [
       AvailableAppsHeaderComponent,
@@ -290,6 +292,7 @@ describe('Redirect to install app', () => {
     imports: [
       NgxSkeletonLoaderModule,
       MockModule(PageHeaderModule),
+      OrNotAvailablePipe,
     ],
     declarations: [
       AppDetailsHeaderComponent,

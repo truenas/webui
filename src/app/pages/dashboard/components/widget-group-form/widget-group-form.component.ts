@@ -1,11 +1,9 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, signal,
 } from '@angular/core';
-import {
-  FormBuilder, ValidationErrors, Validators,
-} from '@angular/forms';
+import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { of, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
@@ -43,10 +41,7 @@ export class WidgetGroupFormComponent {
     {} as ValidationErrors,
   ]);
 
-  protected form = this.fb.group({
-    template: [''],
-    layout: [WidgetGroupLayout.Full as WidgetGroupLayout, [Validators.required]],
-  });
+  protected layoutControl = new FormControl(WidgetGroupLayout.Full, [Validators.required]);
 
   protected settingsHasErrors = computed<boolean>(() => {
     const validationErrors = this.validationErrors().slice(0, layoutToSlotSizes[this.group().layout].length);
@@ -55,13 +50,9 @@ export class WidgetGroupFormComponent {
 
   protected readonly layoutsMap = widgetGroupIcons;
 
-  // TODO: Implement template options
-  protected templateOptions$ = of([]);
-
   constructor(
     protected chainedRef: ChainedRef<WidgetGroup>,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
   ) {
     this.setupLayoutUpdates();
     this.setInitialFormValues();
@@ -74,7 +65,7 @@ export class WidgetGroupFormComponent {
       return;
     }
     this.group.set(widgetGroup);
-    this.form.controls.layout.setValue(this.group().layout);
+    this.layoutControl.setValue(this.group().layout);
     for (let slotPosition = 0; slotPosition < this.group().slots.length; slotPosition++) {
       this.updateSelectedSlot(slotPosition);
     }
@@ -82,7 +73,7 @@ export class WidgetGroupFormComponent {
   }
 
   private setupLayoutUpdates(): void {
-    this.form.controls.layout.valueChanges.pipe(
+    this.layoutControl.valueChanges.pipe(
       tap((layout) => {
         this.group.update((group) => {
           const newGroup: WidgetGroup = { layout, slots: [] };

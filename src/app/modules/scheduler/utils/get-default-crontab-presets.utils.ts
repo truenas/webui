@@ -4,7 +4,7 @@ import { CronPreset } from 'app/modules/scheduler/interfaces/cron-preset.interfa
 export enum CronPresetValue {
   Hourly = '0 * * * *',
   Daily = '0 0 * * *',
-  Weekly = '0 0 * * 0',
+  Weekly = '0 0 * * sun',
   Monthly = '0 0 1 * *',
 }
 

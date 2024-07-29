@@ -20,7 +20,9 @@
             <h3 class="mat-card-title-text">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
-                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  @if (showReorderHandle) {
+                    <span class="grip"></span>
+                  }
                   <span>{{ 'Storage' | translate }}</span>
                 </div>
               </ix-drag-handle>
@@ -52,158 +54,187 @@
               [gutterSize]="gap + 'px'"
               [rowHeight]="rowHeight + 'px'"
             >
-              <mat-grid-tile *ngFor="let pool of pools">
-                <div
-                  class="tile"
-                  [class.rows-2]="rows === 2"
-                  [class.rows-3]="rows === 3"
-                  [class.rows-2-2]="rows === 2 && cols === 2"
-                >
-                  <div class="tile-header">
-                    <h4 class="tile-header-title">{{ pool.name }}</h4>
-                    <div class="tile-header-button">
-                      <a
-                        mat-icon-button
-                        ixTest="pool-status"
-                        matTooltipPosition="above"
-                        [routerLink]="['/storage']"
-                        [attr.aria-label]="'Pool Status' | translate"
-                        [matTooltip]="'Pool Status' | translate"
-                      >
-                        <ix-icon name="mdi-database"></ix-icon>
-                      </a>
+              @for (pool of pools; track pool) {
+                <mat-grid-tile>
+                  <div
+                    class="tile"
+                    [class.rows-2]="rows === 2"
+                    [class.rows-3]="rows === 3"
+                    [class.rows-2-2]="rows === 2 && cols === 2"
+                  >
+                    <div class="tile-header">
+                      <h4 class="tile-header-title">{{ pool.name }}</h4>
+                      <div class="tile-header-button">
+                        <a
+                          mat-icon-button
+                          ixTest="pool-status"
+                          matTooltipPosition="above"
+                          [routerLink]="['/storage']"
+                          [attr.aria-label]="'Pool Status' | translate"
+                          [matTooltip]="'Pool Status' | translate"
+                        >
+                          <ix-icon name="mdi-database"></ix-icon>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                  <div class="tile-content">
-                    <ul [style.max-width.%]="getSubwidgetColumnWidth(pool)">
-                      <li>
-                        <span [class]="['icon', poolInfoMap.get(pool.name)?.status?.level]">
-                          <ix-icon [name]="poolInfoMap.get(pool.name)?.status?.icon"></ix-icon>
-                        </span>
-                        <span class="label">
-                          {{ 'Pool Status' | translate }}:
-                        </span>
-                        <span class="storage-value">
-                          {{ poolInfoMap.get(pool.name)?.status?.value | titlecase | translate | uppercase }}
-                        </span>
-                      </li>
-                      <li>
-                        <span [class]="['icon', poolInfoMap.get(pool.name)?.usedSpace?.level]">
-                          <ix-icon [name]="poolInfoMap.get(pool.name)?.usedSpace?.icon"></ix-icon
-                        ></span>
-                        <span class="label">{{ 'Used Space' | translate }}:</span>
-                        <span
-                          class="storage-value"
-                          textLimiter
-                          [threshold]="25"
-                          [content]="poolInfoMap.get(pool.name)?.usedSpace?.value"
-                        ></span>
-                      </li>
-                      <li>
-                        <span [class]="['icon', poolInfoMap.get(pool.name)?.disksWithError?.level]">
-                          <ix-icon [name]="poolInfoMap.get(pool.name)?.disksWithError?.icon"></ix-icon>
-                        </span>
-                        <span class="label">{{ 'Disks with Errors' | translate }}:</span>
-                        <span class="storage-value">
-                          {{ poolInfoMap.get(pool.name)?.disksWithError?.value }}
-                        </span>
-                      </li>
-                      <li *ngIf="cols === 2 && rows === 2">
-                        <ng-container *ngIf="!pool?.scan?.end_time?.$date && !isScanInProgress(pool); else lastScrub">
-                          <span class="icon warn">
-                            <ix-icon name="error" [matTooltip]="'Never' | translate"></ix-icon>
-                          </span>
-                        </ng-container>
-                        <span class="label">
-                          {{ isScanResilver(pool) ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}
-                        </span>
-                      </li>
-                    </ul>
-                    <ng-container *ngIf="cols === 1">
-                      <div class="divider"></div>
+                    <div class="tile-content">
                       <ul [style.max-width.%]="getSubwidgetColumnWidth(pool)">
                         <li>
+                          <span [class]="['icon', poolInfoMap.get(pool.name)?.status?.level]">
+                            <ix-icon [name]="poolInfoMap.get(pool.name)?.status?.icon"></ix-icon>
+                          </span>
                           <span class="label">
-                            {{ isScanResilver(pool) ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}:
+                            {{ 'Pool Status' | translate }}:
                           </span>
                           <span class="storage-value">
-                            <ng-container *ngIf="!pool?.scan?.end_time?.$date && !isScanInProgress(pool); else lastScrub">
-                              {{ 'Never' | translate }}
-                            </ng-container>
+                            {{ poolInfoMap.get(pool.name)?.status?.value | titlecase | translate | uppercase }}
                           </span>
                         </li>
                         <li>
-                          <span class="label">{{ 'Free Space' | translate }}:</span>
-                          <span class="storage-value">
-                            {{ poolInfoMap.get(pool.name)?.freeSpace }}
-                          </span>
-                        </li>
-                        <li>
-                          <span class="label">{{ 'Total Disks' | translate }}:</span>
-                          <span class="storage-value">
-                            {{ poolInfoMap.get(pool.name)?.totalDisks }}
-                          </span>
-                        </li>
-                      </ul>
-                      <div *ngIf="pool.topology" class="divider"></div>
-                      <ul *ngIf="pool.topology" [style.max-width.%]="getSubwidgetColumnWidth(pool)">
-                        <li>
-                          <span class="label">{{ 'Data' | translate }}:</span>
-                          <span class="storage-value">
-                            {{ pool.topology.data.length }} vdev
-                          </span>
-                        </li>
-                        <li>
-                          <span class="label">
-                            {{ 'Caches' | translate }}:
-                          </span>
-                          <span class="storage-value">
-                            {{ pool.topology.cache.length }}
-                          </span>
-                        </li>
-                        <li>
-                          <span class="label">
-                            {{ 'Spares' | translate }}:
-                          </span>
-                          <span class="storage-value">
-                            {{ pool.topology.spare.length }}
-                          </span>
-                        </li>
-                      </ul>
-                    </ng-container>
-                  </div>
-                </div>
-
-                <ng-template #lastScrub>
-                  <span *ngIf="!isScanInProgress(pool)" [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
-                    <ix-icon
-                      [matTooltip]="pool.scan.end_time.$date | formatDateTime"
-                      [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
-                    ></ix-icon>
-                  </span>
-                  <span *ngIf="isScanInProgress(pool)" class="icon safe">
-                    <ix-icon
-                      name="arrow_circle_right"
-                      [matTooltip]="pool.scan.percentage / 100 | percent: '1.2-2'"
-                    ></ix-icon>
-                  </span>
-                </ng-template>
-              </mat-grid-tile>
-              <mat-grid-tile *ngIf="pools?.length % 2 === 1 || pools?.length === 0">
-                <a
-                  *ixRequiresRoles="requiredRoles"
-                  class="create-new"
-                  ixTest="create-pool"
-                  [routerLink]="['/storage', 'create']"
-                >
-                  <ix-icon name="mdi-database"></ix-icon>
-                  <span>{{ 'Create Pool' | translate }}</span>
-                </a>
-              </mat-grid-tile>
-            </mat-grid-list>
+                          <span [class]="['icon', poolInfoMap.get(pool.name)?.usedSpace?.level]">
+                            <ix-icon [name]="poolInfoMap.get(pool.name)?.usedSpace?.icon"></ix-icon
+                            ></span>
+                            <span class="label">{{ 'Used Space' | translate }}:</span>
+                            <span
+                              class="storage-value"
+                              textLimiter
+                              [threshold]="25"
+                              [content]="poolInfoMap.get(pool.name)?.usedSpace?.value"
+                            ></span>
+                          </li>
+                          <li>
+                            <span [class]="['icon', poolInfoMap.get(pool.name)?.disksWithError?.level]">
+                              <ix-icon [name]="poolInfoMap.get(pool.name)?.disksWithError?.icon"></ix-icon>
+                            </span>
+                            <span class="label">{{ 'Disks with Errors' | translate }}:</span>
+                            <span class="storage-value">
+                              {{ poolInfoMap.get(pool.name)?.disksWithError?.value }}
+                            </span>
+                          </li>
+                          @if (cols === 2 && rows === 2) {
+                            <li>
+                              @if (!pool?.scan?.end_time?.$date && !isScanInProgress(pool)) {
+                                <span class="icon warn">
+                                  <ix-icon name="error" [matTooltip]="'Never' | translate"></ix-icon>
+                                </span>
+                              } @else {
+                                @if (!isScanInProgress(pool)) {
+                                  <span [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
+                                    <ix-icon
+                                      [matTooltip]="pool.scan.end_time.$date | formatDateTime"
+                                      [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
+                                    ></ix-icon>
+                                  </span>
+                                }
+                                @if (isScanInProgress(pool)) {
+                                  <span class="icon safe">
+                                    <ix-icon
+                                      name="arrow_circle_right"
+                                      [matTooltip]="pool.scan.percentage / 100 | percent: '1.2-2'"
+                                    ></ix-icon>
+                                  </span>
+                                }
+                              }
+                              <span class="label">
+                                {{ isScanResilver(pool) ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}
+                              </span>
+                            </li>
+                          }
+                        </ul>
+                        @if (cols === 1) {
+                          <div class="divider"></div>
+                          <ul [style.max-width.%]="getSubwidgetColumnWidth(pool)">
+                            <li>
+                              <span class="label">
+                                {{ isScanResilver(pool) ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}:
+                              </span>
+                              <span class="storage-value">
+                                @if (!pool?.scan?.end_time?.$date && !isScanInProgress(pool)) {
+                                  {{ 'Never' | translate }}
+                                } @else {
+                                  @if (!isScanInProgress(pool)) {
+                                    <span [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
+                                      <ix-icon
+                                        [matTooltip]="pool.scan.end_time.$date | formatDateTime"
+                                        [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
+                                      ></ix-icon>
+                                    </span>
+                                  }
+                                  @if (isScanInProgress(pool)) {
+                                    <span class="icon safe">
+                                      <ix-icon
+                                        name="arrow_circle_right"
+                                        [matTooltip]="pool.scan.percentage / 100 | percent: '1.2-2'"
+                                      ></ix-icon>
+                                    </span>
+                                  }
+                                }
+                              </span>
+                            </li>
+                            <li>
+                              <span class="label">{{ 'Free Space' | translate }}:</span>
+                              <span class="storage-value">
+                                {{ poolInfoMap.get(pool.name)?.freeSpace }}
+                              </span>
+                            </li>
+                            <li>
+                              <span class="label">{{ 'Total Disks' | translate }}:</span>
+                              <span class="storage-value">
+                                {{ poolInfoMap.get(pool.name)?.totalDisks }}
+                              </span>
+                            </li>
+                          </ul>
+                          @if (pool.topology) {
+                            <div class="divider"></div>
+                          }
+                          @if (pool.topology) {
+                            <ul [style.max-width.%]="getSubwidgetColumnWidth(pool)">
+                              <li>
+                                <span class="label">{{ 'Data' | translate }}:</span>
+                                <span class="storage-value">
+                                  {{ pool.topology.data.length }} vdev
+                                </span>
+                              </li>
+                              <li>
+                                <span class="label">
+                                  {{ 'Caches' | translate }}:
+                                </span>
+                                <span class="storage-value">
+                                  {{ pool.topology.cache.length }}
+                                </span>
+                              </li>
+                              <li>
+                                <span class="label">
+                                  {{ 'Spares' | translate }}:
+                                </span>
+                                <span class="storage-value">
+                                  {{ pool.topology.spare.length }}
+                                </span>
+                              </li>
+                            </ul>
+                          }
+                        }
+                      </div>
+                    </div>
+                  </mat-grid-tile>
+                }
+                @if (pools?.length % 2 === 1 || pools?.length === 0) {
+                  <mat-grid-tile>
+                    <a
+                      *ixRequiresRoles="requiredRoles"
+                      class="create-new"
+                      ixTest="create-pool"
+                      [routerLink]="['/storage', 'create']"
+                    >
+                      <ix-icon name="mdi-database"></ix-icon>
+                      <span>{{ 'Create Pool' | translate }}</span>
+                    </a>
+                  </mat-grid-tile>
+                }
+              </mat-grid-list>
+            </div>
           </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
-</div>

@@ -1,4 +1,4 @@
-@import 'scss-imports/splitview';
+@import 'scss-imports/variables';
 
 /* Universal Overrides for Egret */
 
@@ -18,14 +18,6 @@ div.mat-toolbar {
   min-height: 64px;
   padding: 0 16px;
   width: 100%;
-}
-
-.xs .rightside-content-hold {
-  padding: 0 !important;
-
-  @media (max-width: $breakpoint-tablet) {
-    padding-bottom: 96px !important;
-  }
 }
 
 /* Tabbed navigation is fixed too */

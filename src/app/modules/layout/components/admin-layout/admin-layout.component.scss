@@ -1,5 +1,5 @@
 @import 'scss-imports/cssvars';
-@import 'scss-imports/splitview';
+@import 'scss-imports/variables';
 
 .mat-sidenav-container {
   height: 100vh;
@@ -88,11 +88,6 @@
   width: 108px !important;
 }
 
-/* To get rid of VScroll on entity tables */
-.rightside-content-hold {
-  padding-bottom: 5px;
-}
-
 .hostname-label {
   font-size: 12px;
   margin: auto;
@@ -154,18 +149,18 @@ ix-jw-modal {
   display: block;
   height: calc(100% - 48px);
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: auto !important;
   padding: 16px;
   position: absolute;
   top: 48px;
   width: 100%;
 
-  &.has-console-footer {
-    height: calc(100% - 95px);
+  @media (max-width: $breakpoint-tablet) {
+    padding-bottom: 96px !important;
+  }
 
-    @media (max-width: $breakpoint-tablet) {
-      height: calc(100% - 144px);
-    }
+  &.has-console-footer {
+    height: calc(100% - #{$console-footer-height + $topbar-mobile-height});
   }
 }
 

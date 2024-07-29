@@ -106,7 +106,7 @@ describe('SmbListComponent', () => {
   });
 
   it('opens smb edit form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 4);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
@@ -115,7 +115,7 @@ describe('SmbListComponent', () => {
   });
 
   it('opens smb edit share ACL form when "Edit Share ACL" button is pressed', async () => {
-    const editShareAclButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 4);
+    const editShareAclButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 5);
     await editShareAclButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbAclComponent, {
@@ -124,7 +124,7 @@ describe('SmbListComponent', () => {
   });
 
   it('redirects to edit ACL page when "Edit Filesystem ACL" button is pressed', async () => {
-    const editFilesystemAclButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 4);
+    const editFilesystemAclButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 5);
     await editFilesystemAclButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
@@ -134,7 +134,7 @@ describe('SmbListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 4);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
@@ -142,8 +142,8 @@ describe('SmbListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Path', 'Description', 'Enabled', ''],
-      ['some-name', 'some-local-path', 'comment', '', ''],
+      ['Name', 'Path', 'Description', 'Enabled', 'Audit Logging', ''],
+      ['some-name', 'some-local-path', 'comment', '', 'No', ''],
     ];
 
     const cells = await table.getCellTexts();

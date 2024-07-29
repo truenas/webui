@@ -20,7 +20,7 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
@@ -33,9 +33,11 @@ import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-lis
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
@@ -172,7 +174,9 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     MapValuePipe,
     CleanLinkPipe,
     BulkListItemComponent,
-    IxFileSizePipe,
+    FileSizePipe,
+    NetworkSpeedPipe,
+    OrNotAvailablePipe,
   ],
 })
 export class AppsModule { }

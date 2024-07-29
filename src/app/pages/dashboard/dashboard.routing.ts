@@ -10,6 +10,7 @@ export const routes: Routes = [{
   data: {
     title: T('Dashboard'),
     breadcrumb: T('Dashboard'),
+    isNew: true,
   },
 }];
 

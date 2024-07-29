@@ -1,10 +1,11 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-  [ixTestOverride]="controlDirective.name"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
 
 <div class="input-container" [class.disabled]="isDisabled">
   <input
@@ -26,9 +27,11 @@
     [value]="netmask"
     (selectionChange)="onNetmaskChange($event)"
   >
-    <mat-option *ngFor="let option of netmaskOptions" [value]="option.value" [ixTest]="['netmask', option.label]">
-      {{ option.label | translate }}
-    </mat-option>
+    @for (option of netmaskOptions; track option.label) {
+      <mat-option [value]="option.value" [ixTest]="['netmask', option.label]">
+        {{ option.label | translate }}
+      </mat-option>
+    }
   </mat-select>
 </div>
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

@@ -4,23 +4,24 @@
       <div class="title">
         <h3>{{ name | translate }}</h3>
 
-        <div *ngIf="!!allCount" class="status-container">
-          <ix-icon
-            *ngIf="!failedCount"
-            name="mdi-check-circle"
-            class="icon healthy"
-          ></ix-icon>
-
-          <ix-icon
-            *ngIf="!!failedCount"
-            name="mdi-alert"
-            class="icon warning"
-          ></ix-icon>
-
-          <span *ngIf="!!failedCount">
-            {{ '{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed' | translate : { failedCount, allCount } }}
-          </span>
-        </div>
+        @if (!!allCount) {
+          <div class="status-container">
+            @if (!!failedCount) {
+              <ix-icon
+                name="mdi-alert"
+                class="icon warning"
+              ></ix-icon>
+              <span>
+                {{ '{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed' | translate : { failedCount, allCount } }}
+              </span>
+            } @else {
+              <ix-icon
+                name="mdi-check-circle"
+                class="icon healthy"
+              ></ix-icon>
+            }
+          </div>
+        }
       </div>
 
       <div class="controls">
@@ -38,30 +39,36 @@
     </div>
 
     <div [class]="['container', size()]">
-      <div *ngIf="backupsTiles.length" class="container-content">
-        <mat-grid-list gutterSize="5px" [cols]="1" [rowHeight]="hasSendTasks ? 105 : 90">
-          <mat-grid-tile *ngFor="let tile of backupsTiles; trackBy: trackByTile">
-            <ix-backup-task-tile
-              [tile]="tile"
-              [hasSendTasks]="hasSendTasks"
-              [backupActions]="backupActions"
-            ></ix-backup-task-tile>
-          </mat-grid-tile>
-        </mat-grid-list>
-
-        <div *ngIf="!hasSendTasks" class="banner">
-          <ng-template *ngTemplateOutlet="backupActions"></ng-template>
+      @if (backupsTiles.length) {
+        <div class="container-content">
+          <mat-grid-list gutterSize="5px" [cols]="1" [rowHeight]="hasSendTasks ? 105 : 90">
+            @for (tile of backupsTiles; track trackByTile($index, tile)) {
+              <mat-grid-tile>
+                <ix-backup-task-tile
+                  [tile]="tile"
+                  [hasSendTasks]="hasSendTasks"
+                  [backupActions]="backupActions"
+                ></ix-backup-task-tile>
+              </mat-grid-tile>
+            }
+          </mat-grid-list>
+          @if (!hasSendTasks) {
+            <div class="banner">
+              <ng-template *ngTemplateOutlet="backupActions"></ng-template>
+            </div>
+          }
         </div>
-      </div>
+      }
 
-      <ix-backup-task-empty
-        *ngIf="!backupsTiles.length || isLoading"
-        [isLoading]="isLoading"
-        [backupActions]="backupActions"
-        (addReplicationTask)="addReplicationTask()"
-        (addCloudSyncTask)="addCloudSyncTask()"
-        (addRsyncTask)="addRsyncTask()"
-      ></ix-backup-task-empty>
+      @if (!backupsTiles.length || isLoading) {
+        <ix-backup-task-empty
+          [isLoading]="isLoading"
+          [backupActions]="backupActions"
+          (addReplicationTask)="addReplicationTask()"
+          (addCloudSyncTask)="addCloudSyncTask()"
+          (addRsyncTask)="addRsyncTask()"
+        ></ix-backup-task-empty>
+      }
     </div>
   </mat-card-content>
 </mat-card>

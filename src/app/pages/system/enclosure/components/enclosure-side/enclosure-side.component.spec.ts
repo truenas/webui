@@ -45,8 +45,9 @@ describe('EnclosureSideComponent', () => {
       id: 'enclosure-id',
       elements: {
         [EnclosureElementType.ArrayDeviceSlot]: {
-          1: { drive_bay_number: 1 } as DashboardEnclosureSlot,
-          2: { drive_bay_number: 2 } as DashboardEnclosureSlot,
+          1: { drive_bay_number: 1, is_rear: true } as DashboardEnclosureSlot,
+          2: { drive_bay_number: 2, is_rear: true } as DashboardEnclosureSlot,
+          3: { drive_bay_number: 3, is_front: true } as DashboardEnclosureSlot,
         },
       } as DashboardEnclosureElements,
       model: EnclosureModel.M40,
@@ -65,7 +66,8 @@ describe('EnclosureSideComponent', () => {
     expect(svg.selectedSlot).toBe(props.selectedSlot);
     expect(svg.slotTintFn).toBe(props.slotTintFn);
     expect(svg.enableMouseEvents).toBe(props.enableMouseEvents);
-    expect(svg.slots).toEqual(Object.values(props.enclosure.elements[EnclosureElementType.ArrayDeviceSlot]));
+    expect(svg.slots)
+      .toEqual(Object.values(props.enclosure.elements[EnclosureElementType.ArrayDeviceSlot]).slice(0, 2));
     expect(svg.svgUrl).toBe(supportedEnclosures[props.enclosure.model][props.side]);
   });
 

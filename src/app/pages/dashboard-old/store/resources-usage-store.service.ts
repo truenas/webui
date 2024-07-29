@@ -6,7 +6,7 @@ import {
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllCpusUpdate, AllNetworkInterfacesUpdate, ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
-import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.utils';
+import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { DashboardNetworkInterface } from 'app/pages/dashboard-old/components/dashboard/dashboard.component';
 import { WebSocketService } from 'app/services/ws.service';
 

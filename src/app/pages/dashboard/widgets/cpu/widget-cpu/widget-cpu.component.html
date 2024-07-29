@@ -27,25 +27,31 @@
               <span class="label">
                 <strong>{{ 'Cores' | translate }}:</strong>
               </span>
-              <ng-container *ngIf="!isLoading(); else skeleton">
+              @if (!isLoading()) {
                 {{ '{coreCount, plural, one {# core} other {# cores} }' | translate: { coreCount: coreCount() } }}
-              </ng-container>
+              } @else {
+                <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+              }
             </mat-list-item>
             <mat-list-item>
               <span class="label">
                 <strong>{{ 'Highest Usage' | translate }}:</strong>
               </span>
-              <ng-container *ngIf="!isLoading(); else skeleton">
+              @if (!isLoading()) {
                 {{ highest() }}
-              </ng-container>
+              } @else {
+                <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+              }
             </mat-list-item>
             <mat-list-item>
               <span class="label">
                 <strong>{{ 'Hottest' | translate }}:</strong>
               </span>
-              <ng-container *ngIf="!isLoading(); else skeleton">
+              @if (!isLoading()) {
                 {{ hottest() }}
-              </ng-container>
+              } @else {
+                <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+              }
             </mat-list-item>
             <ng-template #skeleton>
               <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>

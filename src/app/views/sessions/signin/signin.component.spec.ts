@@ -4,6 +4,7 @@ import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import {
@@ -33,6 +34,7 @@ describe('SigninComponent', () => {
   const canLogin$ = new BehaviorSubject<boolean>(undefined);
   const isConnected$ = new BehaviorSubject<boolean>(undefined);
   const managedByTrueCommand$ = new BehaviorSubject<boolean>(undefined);
+  const loginBanner$ = new BehaviorSubject<string>(undefined);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -50,6 +52,9 @@ describe('SigninComponent', () => {
       ),
     ],
     providers: [
+      mockProvider(DialogService, {
+        fullScreenDialog: jest.fn(),
+      }),
       mockProvider(WebSocketConnectionService, {
         isConnected$,
       }),
@@ -59,6 +64,7 @@ describe('SigninComponent', () => {
         failover$,
         hasFailover$,
         canLogin$,
+        loginBanner$,
         isLoading$: of(false),
         init: jest.fn(),
       }),
@@ -73,6 +79,7 @@ describe('SigninComponent', () => {
     canLogin$.next(true);
     isConnected$.next(true);
     managedByTrueCommand$.next(false);
+    loginBanner$.next('');
   });
 
   it('initializes SigninStore on component init', () => {
@@ -127,6 +134,13 @@ describe('SigninComponent', () => {
       expect(failoverStatus.disabledReasons).toEqual([FailoverDisabledReason.NoPong]);
       expect(failoverStatus.status).toEqual(FailoverStatus.Error);
       expect(failoverStatus.failoverIps).toEqual(['123.44.1.22', '123.44.1.34']);
+    });
+
+    it('checks login banner and shows full dialog if set', () => {
+      loginBanner$.next('HELLO USER');
+      spectator.detectChanges();
+
+      expect(spectator.inject(DialogService).fullScreenDialog).toHaveBeenCalled();
     });
   });
 });

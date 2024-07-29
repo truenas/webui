@@ -7,34 +7,38 @@
 
           <mat-toolbar-row [class]="'view-' + (path.length > 0 ? currentSlideName : 'Pool')">
             <!-- Mobile Only: Exit widget -->
-            <button
-              *ngIf="currentSlide === '0'"
-              class="mat-card-title-text primary-nav"
-              mat-icon-button
-              color="default"
-              [ixTest]="[poolState.name, 'widget', 'back']"
-              [attr.aria-label]="'Go back' | translate"
-              (click)="goBack()"
-            >
-              <ix-icon name="chevron_left"></ix-icon>
-            </button>
+            @if (currentSlide === '0') {
+              <button
+                class="mat-card-title-text primary-nav"
+                mat-icon-button
+                color="default"
+                [ixTest]="[poolState.name, 'widget', 'back']"
+                [attr.aria-label]="'Go back' | translate"
+                (click)="goBack()"
+              >
+                <ix-icon name="chevron_left"></ix-icon>
+              </button>
+            }
 
             <!-- Back to previous slide -->
-            <button
-              *ngIf="currentSlide !== '0'"
-              class="mat-card-title-text primary-nav slide-back"
-              mat-icon-button
-              color="default"
-              [ixTest]="[poolState.name, 'widget', 'back']"
-              (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
-            >
-              <ix-icon name="chevron_left"></ix-icon>
-            </button>
+            @if (currentSlide !== '0') {
+              <button
+                class="mat-card-title-text primary-nav slide-back"
+                mat-icon-button
+                color="default"
+                [ixTest]="[poolState.name, 'widget', 'back']"
+                (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
+              >
+                <ix-icon name="chevron_left"></ix-icon>
+              </button>
+            }
 
             <h3 class="mat-card-title-text" [class.button-offset]="currentSlide !== '0'">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
-                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  @if (showReorderHandle) {
+                    <span class="grip"></span>
+                  }
                   <span>{{ title | translate }}</span>
                 </div>
               </ix-drag-handle>
@@ -68,425 +72,475 @@
         </ix-drag-handle>
 
         <!-- Carousel -->
-        <div *ngIf="poolState && path" #carousel class="carousel">
-          <ng-template #locked>
-            <div class="locked offline">
-              <ix-icon name="error"></ix-icon>
-              <h4>{{ 'Data not available' | translate }}.</h4>
-            </div>
-          </ng-template>
-
-          <div *ngFor="let slide of path" [class]="['slide', 'overview', slide.name.replace(' ', '_')]">
-            <ng-container *ngTemplateOutlet="slide.template"></ng-container>
-          </div>
-
-          <!-- FRONT -->
-          <ng-template #overview>
-            <div class="overview-inner">
-              <!-- FRONT LEFT -->
-              <div class="left">
-                <div class="left-content">
-                  <div class="pool-name">
-                    <span
-                      textLimiter
-                      [threshold]="9"
-                      [content]="poolState.name | translate"
-                    ></span>
-                  </div>
-
-                  <div class="table">
-                    <div class="tr">
-                      <div class="td label">
-                        <strong> {{ 'Total Disks' | translate }}: </strong>
-                      </div>
-                      <div class="td">{{ totalDisks }}</div>
+        @if (poolState && path) {
+          <div #carousel class="carousel">
+            <ng-template #locked>
+              <div class="locked offline">
+                <ix-icon name="error"></ix-icon>
+                <h4>{{ 'Data not available' | translate }}.</h4>
+              </div>
+            </ng-template>
+            @for (slide of path; track slide) {
+              <div [class]="['slide', 'overview', slide.name.replace(' ', '_')]">
+                <ng-container *ngTemplateOutlet="slide.template"></ng-container>
+              </div>
+            }
+            <!-- FRONT -->
+            <ng-template #overview>
+              <div class="overview-inner">
+                <!-- FRONT LEFT -->
+                <div class="left">
+                  <div class="left-content">
+                    <div class="pool-name">
+                      <span
+                        textLimiter
+                        [threshold]="9"
+                        [content]="poolState.name | translate"
+                      ></span>
                     </div>
 
-                    <div class="pool-status tr">
-                      <div class="td label">
-                        <strong> {{ 'Pool Status' | translate }}: </strong>
-                      </div>
-                      <div class="td status-cell">
-                        <span class="capitalize">
-                          {{ poolState.status | titlecase | translate | uppercase }}
-                        </span>
-                        <ng-container [ngSwitch]="poolState.status">
-                          <span *ngSwitchCase="PoolStatus.Locked" class="lock-icon-wrapper icon">
-                            <ix-icon name="lock"></ix-icon>
-                          </span>
-                          <span *ngSwitchCase="PoolStatus.Online" [class]="[poolHealth.level, 'icon']">
-                            <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
-                          </span>
-                          <span *ngSwitchCase="PoolStatus.Healthy" [class]="[poolHealth.level, 'icon']">
-                            <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
-                          </span>
-                          <span *ngSwitchDefault class="error icon">
-                            <ix-icon name="cancel"></ix-icon>
-                          </span>
-                        </ng-container>
-                      </div>
-                    </div>
-
-                    <div class="used-space tr">
-                      <ng-container *ngIf="!volumeData || !volumeData.used_pct">
+                    <div class="table">
+                      <div class="tr">
                         <div class="td label">
-                          <strong>{{ 'Used Space' | translate }}:</strong>&nbsp;
+                          <strong> {{ 'Total Disks' | translate }}: </strong>
+                        </div>
+                        <div class="td">{{ totalDisks }}</div>
+                      </div>
+
+                      <div class="pool-status tr">
+                        <div class="td label">
+                          <strong> {{ 'Pool Status' | translate }}: </strong>
+                        </div>
+                        <div class="td status-cell">
+                          <span class="capitalize">
+                            {{ poolState.status | titlecase | translate | uppercase }}
+                          </span>
+                          @switch (poolState.status) {
+                            @case (PoolStatus.Locked) {
+                              <span class="lock-icon-wrapper icon">
+                                <ix-icon name="lock"></ix-icon>
+                              </span>
+                            }
+                            @case (PoolStatus.Online) {
+                              <span [class]="[poolHealth.level, 'icon']">
+                                <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
+                              </span>
+                            }
+                            @case (PoolStatus.Healthy) {
+                              <span [class]="[poolHealth.level, 'icon']">
+                                <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
+                              </span>
+                            }
+                            @default {
+                              <span class="error icon">
+                                <ix-icon name="cancel"></ix-icon>
+                              </span>
+                            }
+                          }
+                        </div>
+                      </div>
+                      <div class="used-space tr">
+                        @if (!volumeData || !volumeData.used_pct) {
+                          <div class="td label">
+                            <strong>{{ 'Used Space' | translate }}:</strong>&nbsp;
+                          </div>
+                          <div class="td">
+                            <span class="value-used">{{ 'Unknown' | translate }}</span>
+                          </div>
+                        }
+
+                        @if (volumeData && volumeData.used_pct) {
+                          <div class="td label">
+                            <strong>{{ 'Used Space' | translate }}:</strong>
+                          </div>
+                          @if (convertPercentToNumber(volumeData.used_pct) >= 80) {
+                            <div class="td">
+                              <span class="value-used">
+                                {{ volumeData.used_pct }}
+                              </span>
+                              <span [class]="['icon', convertPercentToNumber(volumeData.used_pct) >= 90 ? 'error' : 'warning']">
+                                <ix-icon name="error"></ix-icon>
+                              </span>
+                            </div>
+                          } @else {
+                            <div class="td">
+                              <span class="value-used">
+                                {{ volumeData.used_pct }}
+                              </span>
+                              <span class="safe icon">
+                                <ix-icon name="check_circle"></ix-icon>
+                              </span>
+                            </div>
+                          }
+                        }
+                      </div>
+                      <!-- END ROW -->
+
+                      @if (poolState.status === PoolStatus.Online) {
+                        <div class="disk-errors tr">
+                          <div class="td label">
+                            <strong>{{ 'Disks with Errors' | translate }}:</strong>
+                          </div>
+                          <div class="td">
+                            {{ unhealthyDisks.totalErrors }}
+                            @if (unhealthyDisks.totalErrors !== 0 && unhealthyDisks.totalErrors !== 'Unknown') {
+                              <span>
+                                {{ 'Disks' | translate }}
+                              </span>
+                            }
+                            @if (unhealthyDisks.totalErrors !== 0 && unhealthyDisks.totalErrors !== 'Unknown') {
+                              <span class="error icon">
+                                <ix-icon class="disk-errors" name="error"></ix-icon>
+                              </span>
+                            }
+                            @if (unhealthyDisks.totalErrors === 0) {
+                              <span class="safe icon">
+                                <ix-icon class="healthy" name="check_circle"></ix-icon>
+                              </span>
+                            }
+                          </div>
+                        </div>
+                      }
+                      <div class="tr last-scan">
+                        <div class="td label">
+                          <strong>{{ isScanResilver ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}:</strong>
                         </div>
                         <div class="td">
-                          <span class="value-used">{{ 'Unknown' | translate }}</span>
+                          @if (!poolState.scan?.end_time?.$date && !isScanInProgress) {
+                            {{ 'Never' | translate }}
+                          } @else {
+                            @if (!isScanInProgress) {
+                              {{ poolState.scan.end_time.$date | formatDateTime }}
+                              <span>
+                                @if (isScanFinished) {
+                                  <ix-icon class="healthy" name="check_circle"></ix-icon>
+                                }
+                                @if (!isScanFinished) {
+                                  <ix-icon class="warning" name="error"></ix-icon>
+                                }
+                              </span>
+                            }
+                            @if (isScanInProgress) {
+                              {{ 'In Progress' | translate }}
+                              {{ poolState.scan.percentage / 100 | percent: '1.2-2' }}
+                            }
+                          }
                         </div>
-                      </ng-container>
-
-                      <ng-container *ngIf="volumeData && volumeData.used_pct">
-                        <div class="td label">
-                          <strong>{{ 'Used Space' | translate }}:</strong>
-                        </div>
-
-                        <div *ngIf="convertPercentToNumber(volumeData.used_pct) >= 80; else safeSpace" class="td">
-                          <span class="value-used">
-                            {{ volumeData.used_pct }}
-                          </span>
-                          <span [class]="['icon', convertPercentToNumber(volumeData.used_pct) >= 90 ? 'error' : 'warning']">
-                            <ix-icon name="error"></ix-icon>
-                          </span>
-                        </div>
-
-                        <ng-template #safeSpace>
-                          <div class="td">
-                            <span class="value-used">
-                              {{ volumeData.used_pct }}
-                            </span>
-                            <span class="safe icon">
-                              <ix-icon name="check_circle"></ix-icon>
-                            </span>
-                          </div>
-                        </ng-template>
-                      </ng-container>
-                    </div>
-                    <!-- END ROW -->
-
-                    <div *ngIf="poolState.status === PoolStatus.Online" class="disk-errors tr">
-                      <div class="td label">
-                        <strong>{{ 'Disks with Errors' | translate }}:</strong>
-                      </div>
-                      <div class="td">
-                        {{ unhealthyDisks.totalErrors }}
-                        <span *ngIf="unhealthyDisks.totalErrors !== 0 && unhealthyDisks.totalErrors !== 'Unknown'">
-                          {{ 'Disks' | translate }}
-                        </span>
-                        <span
-                          *ngIf="unhealthyDisks.totalErrors !== 0 && unhealthyDisks.totalErrors !== 'Unknown'"
-                          class="error icon"
-                        >
-                          <ix-icon class="disk-errors" name="error"></ix-icon>
-                        </span>
-                        <span *ngIf="unhealthyDisks.totalErrors === 0" class="safe icon">
-                          <ix-icon class="healthy" name="check_circle"></ix-icon>
-                        </span>
                       </div>
                     </div>
-
-                    <div class="tr last-scan">
-                      <div class="td label">
-                        <strong>{{ isScanResilver ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}:</strong>
+                  </div>
+                </div>
+                <!-- FRONT RIGHT -->
+                <div class="right">
+                  @if (poolState?.topology?.data) {
+                    <div class="right-content">
+                      <div class="list-subheader">
+                        <span class="capitalize">{{ 'Overview' | translate }}</span>
                       </div>
-                      <div class="td">
-                        <ng-container *ngIf="!poolState.scan?.end_time?.$date && !isScanInProgress; else lastScrub">
-                          {{ 'Never' | translate }}
-                        </ng-container>
-                        <ng-template #lastScrub>
-                          <ng-container *ngIf="!isScanInProgress">
-                            {{ poolState.scan.end_time.$date | formatDateTime }}
+                      <mat-list>
+                        <mat-list-item>
+                          <strong>{{ 'Path' | translate }}:</strong>
+                          {{ poolState.path }}
+                        </mat-list-item>
+                        <mat-list-item>
+                          <strong>{{ 'Available Space' | translate }}:</strong>
+                          @if (volumeData && volumeData.used_pct) {
                             <span>
-                              <ix-icon *ngIf="isScanFinished" class="healthy" name="check_circle"></ix-icon>
-                              <ix-icon *ngIf="!isScanFinished" class="warning" name="error"></ix-icon>
+                              <span class="value">{{ diskSize }}</span>
+                              <span class="value-units">{{ diskSizeLabel }}</span>
                             </span>
-                          </ng-container>
-                          <ng-container *ngIf="isScanInProgress">
-                            {{ 'In Progress' | translate }}
-                            {{ poolState.scan.percentage / 100 | percent: '1.2-2' }}
-                          </ng-container>
-                        </ng-template>
-                      </div>
+                          } @else {
+                            @if (displayValue !== 'Unknown') {
+                              <span class="value">
+                                {{ 'Gathering data...' | translate }}
+                              </span>
+                            }
+                            @if (displayValue === 'Unknown') {
+                              <span class="value">
+                                {{ 'Unknown' | translate }}
+                              </span>
+                            }
+                          }
+                        </mat-list-item>
+                        <mat-list-item
+                          [class.clickable]="poolState.topology.data.length"
+                          (click)="updateSlide('data', poolState.topology.data.length > 0, 1, undefined, PoolTopologyCategory.Data)"
+                        >
+                          <strong>{{ 'Data' | translate }}:</strong>
+                          {{ poolState.topology.data.length }}
+                          vdev
+                          @if (poolState.topology.data.length > 1) {
+                            <span>s</span>
+                          }
+                          @if (poolState.topology.data.length > 0) {
+                            <ix-icon
+                              name="chevron_right"
+                              class="next-slide"
+                            ></ix-icon>
+                          }
+                        </mat-list-item>
+                        <mat-list-item
+                          [class.clickable]="poolState.topology.cache.length"
+                          (click)="updateSlide('data', poolState.topology.cache.length > 0, 1, 0, PoolTopologyCategory.Cache)"
+                        >
+                          <strong>{{ 'Caches' | translate }}:</strong>
+                          {{ poolState.topology.cache.length }}
+                          @if (poolState.topology.cache.length > 0) {
+                            <ix-icon
+                              name="chevron_right"
+                              class="next-slide"
+                            ></ix-icon>
+                          }
+                        </mat-list-item>
+                        <mat-list-item
+                          [class.clickable]="poolState.topology.spare.length"
+                          (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, PoolTopologyCategory.Spare)"
+                        >
+                          <strong>{{ 'Spares' | translate }}:</strong>
+                          {{ poolState.topology.spare.length }}
+                          @if (poolState.topology.spare.length > 0) {
+                            <ix-icon
+                              name="chevron_right"
+                              class="next-slide"
+                            ></ix-icon>
+                          }
+                        </mat-list-item>
+                        <mat-list-item
+                          [class.clickable]="poolState.topology.log.length"
+                          (click)="updateSlide('data', poolState.topology.log.length > 0, 1, 0, PoolTopologyCategory.Log)"
+                          >
+                          <strong>{{ 'Logs' | translate }}:</strong>
+                          {{ poolState.topology.log.length }}
+                          @if (poolState.topology.log.length > 0) {
+                            <ix-icon
+                              name="chevron_right"
+                              class="next-slide"
+                            ></ix-icon>
+                          }
+                        </mat-list-item>
+                      </mat-list>
                     </div>
-                  </div>
+                  } @else {
+                    <div class="locked offline">
+                      <ix-icon name="error"></ix-icon>
+                      <h4>{{ 'Data not available' | translate }}.</h4>
+                    </div>
+                  }
                 </div>
               </div>
-
-              <!-- FRONT RIGHT -->
-              <div class="right">
-                <div *ngIf="poolState?.topology?.data; else locked" class="right-content">
-                  <div class="list-subheader">
-                    <span class="capitalize">{{ 'Overview' | translate }}</span>
-                  </div>
-                  <mat-list>
-                    <mat-list-item>
-                      <strong>{{ 'Path' | translate }}:</strong>
-                      {{ poolState.path }}
-                    </mat-list-item>
-
-                    <mat-list-item>
-                      <strong>{{ 'Available Space' | translate }}:</strong>
-                      <span *ngIf="volumeData && volumeData.used_pct; else unavail">
-                        <span class="value">{{ diskSize }}</span>
-                        <span class="value-units">{{ diskSizeLabel }}</span>
-                      </span>
-                      <ng-template #unavail>
-                        <span *ngIf="displayValue !== 'Unknown'" class="value">
-                          {{ 'Gathering data...' | translate }}
-                        </span>
-                        <span *ngIf="displayValue === 'Unknown'" class="value">
-                          {{ 'Unknown' | translate }}
-                        </span>
-                      </ng-template>
-                    </mat-list-item>
-
-                    <mat-list-item
-                      [class.clickable]="poolState.topology.data.length"
-                      (click)="updateSlide('data', poolState.topology.data.length > 0, 1, undefined, PoolTopologyCategory.Data)"
-                    >
-                      <strong>{{ 'Data' | translate }}:</strong>
-                      {{ poolState.topology.data.length }}
-                      vdev
-                      <span *ngIf="poolState.topology.data.length > 1">
-                        s
-                      </span>
-                      <ix-icon
-                        *ngIf="poolState.topology.data.length > 0"
-                        name="chevron_right"
-                        class="next-slide"
-                      ></ix-icon>
-                    </mat-list-item>
-
-                    <mat-list-item
-                      [class.clickable]="poolState.topology.cache.length"
-                      (click)="updateSlide('data', poolState.topology.cache.length > 0, 1, 0, PoolTopologyCategory.Cache)"
-                    >
-                      <strong>{{ 'Caches' | translate }}:</strong>
-                      {{ poolState.topology.cache.length }}
-                      <ix-icon
-                        *ngIf="poolState.topology.cache.length > 0"
-                        name="chevron_right"
-                        class="next-slide"
-                      ></ix-icon>
-                    </mat-list-item>
-
-                    <mat-list-item
-                      [class.clickable]="poolState.topology.spare.length"
-                      (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, PoolTopologyCategory.Spare)"
-                    >
-                      <strong>{{ 'Spares' | translate }}:</strong>
-                      {{ poolState.topology.spare.length }}
-                      <ix-icon
-                        *ngIf="poolState.topology.spare.length > 0"
-                        name="chevron_right"
-                        class="next-slide"
-                      ></ix-icon>
-                    </mat-list-item>
-
-                    <mat-list-item
-                      [class.clickable]="poolState.topology.log.length"
-                      (click)="updateSlide('data', poolState.topology.log.length > 0, 1, 0, PoolTopologyCategory.Log)"
-                    >
-                      <strong>{{ 'Logs' | translate }}:</strong>
-                      {{ poolState.topology.log.length }}
-                      <ix-icon
-                        *ngIf="poolState.topology.log.length > 0"
-                        name="chevron_right"
-                        class="next-slide"
-                      ></ix-icon>
-                    </mat-list-item>
-                  </mat-list>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-
-          <!-- DATA -->
-          <ng-template #data>
-            <div class="list-subheader">
-              <span class="capitalize">{{ currentSlideName | translate }}</span>
-            </div>
-            <mat-list *ngIf="poolState?.topology[currentSlideTopology]">
-              <mat-list-item
-                *ngFor="let vdev of poolState.topology[currentSlideTopology]; let i = index"
-                role="listitem"
-                class="clickable"
-                (click)="updateSlide('disks', true, currentSlideIndex + 1, i, currentSlideTopology, vdev)"
-              >
-                <strong>{{ vdev.type | translate }}:</strong>
-                {{ vdev.status }}
-                <!-- STATUS ICONS -->
-                <span
-                  *ngIf="vdev.status === TopologyItemStatus.Online"
-                  [class]="[poolHealth.level, 'healthy']"
-                >
-                  <ix-icon name="check_circle"></ix-icon>
-                </span>
-                <span
-                  *ngIf="vdev.status !== TopologyItemStatus.Online"
-                  [class]="[poolHealth.level, 'healthy']"
-                >
-                  <ix-icon name="error"></ix-icon>
-                </span>
-
-                <span *ngIf="vdev.type === 'DISK'" class="vdev">
-                  <span>
-                    {{ trimMultipath(vdev.disk).name }}
-                  </span>
-                </span>
-
-                <span
-                  *ngIf="vdev.type !== 'DISK' && vdev.children.length <= 3"
-                  class="vdev"
-                >
-                  <span *ngFor="let device of vdev.children; let child = index">
-                    <div *ngIf="device.disk">
-                      <span>{{ device.disk }}</span>
-                      {{ trimMultipath(device.disk).name }}
-                      <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">
-                        ,
-                      </span>
-                    </div>
-                  </span>
-                </span>
-
-                <span *ngIf="vdev.children.length > 3" class="vdev">
-                  <span
-                    *ngFor="let device of vdev.children; let child = index"
-                    [ngClass]="{ hidden: child >= 3 }"
-                  >
-                    <div *ngIf="device.disk">
-                      <span>{{ device.disk }}</span>
-                      <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">
-                        ,
-                      </span>
-                    </div>
-                  </span>
-                  <span>
-                    ({{ vdev.children.length - 3 }} more)
-                  </span>
-                </span>
-
-                <ix-icon class="next-slide" name="chevron_right"></ix-icon>
-              </mat-list-item>
-            </mat-list>
-          </ng-template>
-
-          <!-- DISKS -->
-          <ng-template #disks>
-            <div class="list-subheader">
-              <span class="capitalize">{{ 'Disks' | translate }}</span>
-            </div>
-
-            <mat-list *ngIf="!path[currentSlideIndex].dataSource.type || path[currentSlideIndex].dataSource.type !== 'DISK'">
-              <mat-list-item
-                *ngFor="let disk of path[currentSlideIndex].dataSource.children; let i = index"
-                role="listitem"
-                [ngClass]="{ clickable: true }"
-                (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, disk); getDiskDetails('name', disk.disk)"
-              >
-                <strong>
-                  <span *ngIf="disk.status !== 'UNAVAIL'">
-                    {{ trimMultipath(disk.disk).fullName }}
-                  </span>
-                  <span *ngIf="disk.status === 'UNAVAIL'">
-                    {{ 'Unknown Disk' | translate }}
-                  </span>
-                  :
-                </strong>
-                {{ disk.status | translate }}
-
-                <!-- STATUS ICONS -->
-                <span *ngIf="disk.status === TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
-                  <ix-icon name="check_circle"></ix-icon>
-                </span>
-                <span *ngIf="disk.status !== TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
-                  <ix-icon name="error"></ix-icon>
-                </span>
-
-                <!-- CHEVRON -->
-                <ix-icon class="next-slide" name="chevron_right"></ix-icon>
-              </mat-list-item>
-            </mat-list>
-
-            <mat-list *ngIf="path[currentSlideIndex].dataSource.type === 'DISK'">
-              <mat-list-item
-                role="listitem"
-                [ngClass]="{ clickable: true }"
-                (click)="updateSlide('disk details', true, currentSlideIndex + 1, undefined, currentSlideTopology, path[currentSlideIndex].dataSource); getDiskDetails('name', asDisk(path[currentSlideIndex].dataSource).disk)"
-              >
-                <strong>
-                  {{ trimMultipath(asDisk(path[2].dataSource).disk).fullName }}
-                  :
-                </strong>
-                {{ path[2].dataSource.status | translate }}
-                <span *ngIf="path[2].dataSource.status === TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
-                  <ix-icon name="check_circle"></ix-icon>
-                </span>
-                <ix-icon class="next-slide" name="chevron_right"></ix-icon>
-              </mat-list-item>
-            </mat-list>
-          </ng-template>
-
-          <!-- DISK DETAILS -->
-          <ng-template #diskDetails>
-            <div class="list-subheader">
-              <span class="capitalize">{{ 'Disk Details' | translate }}</span>
-            </div>
-            <mat-list>
-              <mat-list-item role="listitem">
-                <strong> {{ 'Name' | translate }}:</strong>
-                {{ asDisk(path[currentSlideIndex].dataSource).disk }}
-              </mat-list-item>
-
-              <mat-list-item role="listitem">
-                <strong> GUID:</strong>
-                {{ path[currentSlideIndex].dataSource.guid }}
-              </mat-list-item>
-              <mat-list-item
-                *ngIf="path[currentSlideIndex].dataSource.stats.read_errors"
-                role="listitem"
-              >
-                <strong> {{ 'Read Errors' | translate }}:</strong>
-                {{ path[currentSlideIndex].dataSource.stats.read_errors }}
-              </mat-list-item>
-              <mat-list-item
-                *ngIf="path[currentSlideIndex].dataSource.stats.write_errors"
-                role="listitem"
-              >
-                <strong> {{ 'Write Errors' | translate }}:</strong>
-                {{ path[currentSlideIndex].dataSource.stats.write_errors }}
-              </mat-list-item>
-              <mat-list-item
-                *ngIf="path[currentSlideIndex].dataSource.stats.self_healed"
-                role="listitem"
-              >
-                <strong> {{ 'Self Healed' | translate }}:</strong>
-                {{ path[currentSlideIndex].dataSource.stats.self_healed }}
-              </mat-list-item>
-            </mat-list>
-
-            <!-- Dynamic disk details-->
-            <ng-container *ngIf="currentDiskDetailsKeys.length > 0">
+            </ng-template>
+            <!-- DATA -->
+            <ng-template #data>
               <div class="list-subheader">
-                {{ 'Advanced Details' | translate }}
+                <span class="capitalize">{{ currentSlideName | translate }}</span>
+              </div>
+              @if (poolState?.topology[currentSlideTopology]) {
+                <mat-list>
+                  @for (vdev of poolState.topology[currentSlideTopology]; track vdev; let i = $index) {
+                    <mat-list-item
+                      role="listitem"
+                      class="clickable"
+                      (click)="updateSlide('disks', true, currentSlideIndex + 1, i, currentSlideTopology, vdev)"
+                    >
+                      <strong>{{ vdev.type | translate }}:</strong>
+                      {{ vdev.status }}
+                      <!-- STATUS ICONS -->
+                      @if (vdev.status === TopologyItemStatus.Online) {
+                        <span
+                          [class]="[poolHealth.level, 'healthy']"
+                        >
+                          <ix-icon name="check_circle"></ix-icon>
+                        </span>
+                      }
+                      @if (vdev.status !== TopologyItemStatus.Online) {
+                        <span
+                          [class]="[poolHealth.level, 'healthy']"
+                        >
+                          <ix-icon name="error"></ix-icon>
+                        </span>
+                      }
+                      @if (vdev.type === 'DISK') {
+                        <span class="vdev">
+                          <span>
+                            {{ trimMultipath(vdev.disk).name }}
+                          </span>
+                        </span>
+                      }
+                      @if (vdev.type !== 'DISK' && vdev.children.length <= 3) {
+                        <span class="vdev">
+                          @for (device of vdev.children; track device; let child = $index) {
+                            <span>
+                              @if (device.disk) {
+                                <div>
+                                  <span>{{ device.disk }}</span>
+                                  {{ trimMultipath(device.disk).name }}
+                                  @if (child < 3 - 1 && child !== vdev.children.length - 1) {
+                                    <span>
+                                      ,
+                                    </span>
+                                  }
+                                </div>
+                              }
+                            </span>
+                          }
+                        </span>
+                      }
+                      @if (vdev.children.length > 3) {
+                        <span class="vdev">
+                          @for (device of vdev.children; track device; let child = $index) {
+                            <span
+                              [ngClass]="{ hidden: child >= 3 }"
+                            >
+                              @if (device.disk) {
+                                <div>
+                                  <span>{{ device.disk }}</span>
+                                  @if (child < 3 - 1 && child !== vdev.children.length - 1) {
+                                    <span>
+                                      ,
+                                    </span>
+                                  }
+                                </div>
+                              }
+                            </span>
+                          }
+                          <span>
+                            ({{ vdev.children.length - 3 }} more)
+                          </span>
+                        </span>
+                      }
+                      <ix-icon class="next-slide" name="chevron_right"></ix-icon>
+                    </mat-list-item>
+                  }
+                </mat-list>
+              }
+            </ng-template>
+            <!-- DISKS -->
+            <ng-template #disks>
+              <div class="list-subheader">
+                <span class="capitalize">{{ 'Disks' | translate }}</span>
+              </div>
+              @if (!path[currentSlideIndex].dataSource.type || path[currentSlideIndex].dataSource.type !== 'DISK') {
+                <mat-list>
+                  @for (disk of path[currentSlideIndex].dataSource.children; track disk; let i = $index) {
+                    <mat-list-item
+                      role="listitem"
+                      [ngClass]="{ clickable: true }"
+                      (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, disk); getDiskDetails('name', disk.disk)"
+                    >
+                      <strong>
+                        @if (disk.status !== 'UNAVAIL') {
+                          <span>
+                            {{ trimMultipath(disk.disk).fullName }}
+                          </span>
+                        }
+                        @if (disk.status === 'UNAVAIL') {
+                          <span>
+                            {{ 'Unknown Disk' | translate }}
+                          </span>
+                        }
+                        :
+                      </strong>
+                      {{ disk.status | translate }}
+                      <!-- STATUS ICONS -->
+                      @if (disk.status === TopologyItemStatus.Online) {
+                        <span [class]="[poolHealth.level, 'healthy']">
+                          <ix-icon name="check_circle"></ix-icon>
+                        </span>
+                      }
+                      @if (disk.status !== TopologyItemStatus.Online) {
+                        <span [class]="[poolHealth.level, 'healthy']">
+                          <ix-icon name="error"></ix-icon>
+                        </span>
+                      }
+                      <!-- CHEVRON -->
+                      <ix-icon class="next-slide" name="chevron_right"></ix-icon>
+                    </mat-list-item>
+                  }
+                </mat-list>
+              }
+              @if (path[currentSlideIndex].dataSource.type === 'DISK') {
+                <mat-list>
+                  <mat-list-item
+                    role="listitem"
+                    [ngClass]="{ clickable: true }"
+                    (click)="updateSlide('disk details', true, currentSlideIndex + 1, undefined, currentSlideTopology, path[currentSlideIndex].dataSource); getDiskDetails('name', asDisk(path[currentSlideIndex].dataSource).disk)"
+                  >
+                    <strong>
+                      {{ trimMultipath(asDisk(path[2].dataSource).disk).fullName }}
+                      :
+                    </strong>
+                    {{ path[2].dataSource.status | translate }}
+                    @if (path[2].dataSource.status === TopologyItemStatus.Online) {
+                      <span [class]="[poolHealth.level, 'healthy']">
+                        <ix-icon name="check_circle"></ix-icon>
+                      </span>
+                    }
+                    <ix-icon class="next-slide" name="chevron_right"></ix-icon>
+                  </mat-list-item>
+                </mat-list>
+              }
+            </ng-template>
+            <!-- DISK DETAILS -->
+            <ng-template #diskDetails>
+              <div class="list-subheader">
+                <span class="capitalize">{{ 'Disk Details' | translate }}</span>
               </div>
               <mat-list>
-                <ng-container *ngFor="let key of currentDiskDetailsKeys">
-                  <mat-list-item *ngIf="key !== 'identifier' && currentDiskDetails[key]" role="listitem">
-                    <strong class="detail-key"> {{ key }}:</strong>
-                    {{ currentDiskDetails[key] }}
+                <mat-list-item role="listitem">
+                  <strong> {{ 'Name' | translate }}:</strong>
+                  {{ asDisk(path[currentSlideIndex].dataSource).disk }}
+                </mat-list-item>
+                <mat-list-item role="listitem">
+                  <strong> GUID:</strong>
+                  {{ path[currentSlideIndex].dataSource.guid }}
+                </mat-list-item>
+                @if (path[currentSlideIndex].dataSource.stats.read_errors) {
+                  <mat-list-item
+                    role="listitem"
+                    >
+                    <strong> {{ 'Read Errors' | translate }}:</strong>
+                    {{ path[currentSlideIndex].dataSource.stats.read_errors }}
                   </mat-list-item>
-                </ng-container>
+                }
+                @if (path[currentSlideIndex].dataSource.stats.write_errors) {
+                  <mat-list-item
+                    role="listitem"
+                    >
+                    <strong> {{ 'Write Errors' | translate }}:</strong>
+                    {{ path[currentSlideIndex].dataSource.stats.write_errors }}
+                  </mat-list-item>
+                }
+                @if (path[currentSlideIndex].dataSource.stats.self_healed) {
+                  <mat-list-item
+                    role="listitem"
+                    >
+                    <strong> {{ 'Self Healed' | translate }}:</strong>
+                    {{ path[currentSlideIndex].dataSource.stats.self_healed }}
+                  </mat-list-item>
+                }
               </mat-list>
-            </ng-container>
-          </ng-template>
-
-          <ng-template #empty>
-            <div class="empty"></div>
-          </ng-template>
-        </div>
+              <!-- Dynamic disk details-->
+              @if (currentDiskDetailsKeys.length > 0) {
+                <div class="list-subheader">
+                  {{ 'Advanced Details' | translate }}
+                </div>
+                <mat-list>
+                  @for (key of currentDiskDetailsKeys; track key) {
+                    @if (key !== 'identifier' && currentDiskDetails[key]) {
+                      <mat-list-item role="listitem">
+                        <strong class="detail-key"> {{ key }}:</strong>
+                        {{ currentDiskDetails[key] }}
+                      </mat-list-item>
+                    }
+                  }
+                </mat-list>
+              }
+            </ng-template>
+            <ng-template #empty>
+              <div class="empty"></div>
+            </ng-template>
+          </div>
+        }
       </mat-card-content>
     </mat-card>
   </div>

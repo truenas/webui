@@ -41,17 +41,18 @@
 
       <!-- finish update -->
       <ix-failover-upgrade-indicator></ix-failover-upgrade-indicator>
-      <button
-        *ngIf="updateIsRunning"
-        mat-icon-button
-        id="update-running"
-        class="topbar-button-right"
-        ixTest="update-is-running"
-        [matTooltip]="tooltips.update | translate"
-        (click)="showUpdateDialog()"
-      >
-        <ix-icon class="movement" name="system_update_alt"></ix-icon>
-      </button>
+      @if (updateIsRunning) {
+        <button
+          mat-icon-button
+          id="update-running"
+          class="topbar-button-right"
+          ixTest="update-is-running"
+          [matTooltip]="tooltips.update | translate"
+          (click)="showUpdateDialog()"
+        >
+          <ix-icon class="movement" name="system_update_alt"></ix-icon>
+        </button>
+      }
       <ix-checkin-indicator></ix-checkin-indicator>
       <ix-resilvering-indicator></ix-resilvering-indicator>
       <ix-ha-status-icon></ix-ha-status-icon>

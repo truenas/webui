@@ -16,25 +16,25 @@
     <div class="events">
       <h4>{{ 'Related Kubernetes Events' | translate }}</h4>
       <div class="event-list">
-        <ng-container *ngIf="isLoading; else loaded">
+        @if (isLoading) {
           <ngx-skeleton-loader [count]="5"></ngx-skeleton-loader>
-        </ng-container>
+        } @else {
+          @for (event of events; track event) {
+            <div class="event-item">
+              @if (event?.metadata?.creation_timestamp?.$date) {
+                <strong class="event-timestamp">
+                  {{ event.metadata.creation_timestamp.$date | formatDateTime }}
+                </strong>
+              }
+              <span>{{ event.message | translate }}</span>
+            </div>
+          } @empty {
+            <div class="no-events">{{ 'No events are available.' | translate }}</div>
+          }
+        }
       </div>
     </div>
   </mat-card-content>
 </mat-card>
 
-<ng-template #loaded>
-  <ng-container *ngIf="events.length; else noEvents">
-    <div *ngFor="let event of events" class="event-item">
-      <strong *ngIf="event?.metadata?.creation_timestamp?.$date" class="event-timestamp">
-        {{ event.metadata.creation_timestamp.$date | formatDateTime }}
-      </strong>
-      <span>{{ event.message | translate }}</span>
-    </div>
-  </ng-container>
-</ng-template>
 
-<ng-template #noEvents>
-  <div class="no-events">{{ 'No events are available.' | translate }}</div>
-</ng-template>

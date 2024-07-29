@@ -37,7 +37,6 @@ export class ApiKeyListComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = apiKeysElements;
 
-  smartTasks: ApiKey[] = [];
   dataProvider = new ArrayDataProvider<ApiKey>();
   apiKeys: ApiKey[] = [];
   filterString = '';

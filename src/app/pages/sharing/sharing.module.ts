@@ -17,7 +17,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';

@@ -14,6 +14,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
   AppDetailsHeaderComponent,
@@ -44,6 +45,7 @@ describe('AppDetailsHeaderComponent', () => {
     imports: [
       ViewContainerRef,
       CleanLinkPipe,
+      OrNotAvailablePipe,
     ],
     declarations: [
       MockComponent(AppCardLogoComponent),

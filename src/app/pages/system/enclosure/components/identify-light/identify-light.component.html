@@ -1,0 +1,38 @@
+<div class="status-line">
+  @if (isStatusKnown()) {
+    @switch (status()) {
+      @case (DriveBayLightStatus.Identify) {
+        <ix-icon name="mdi-lightbulb-on"></ix-icon>
+        {{ 'Identify light is on.' | translate }}
+      }
+      @case (DriveBayLightStatus.Fault) {
+        <ix-icon name="mdi-lightbulb-on"></ix-icon>
+        {{ 'Fault light is on.' | translate }}
+      }
+      @case (DriveBayLightStatus.Off) {
+        <ix-icon name="mdi-lightbulb-off-outline"></ix-icon>
+        {{ 'Identify light is off.' | translate }}
+      }
+    }
+  } @else {
+    <ix-icon name="mdi-lightbulb-question-outline"></ix-icon>
+    {{ 'Light status is unknown.' | translate }}
+  }
+</div>
+
+<div class="controls">
+  @if (status() === DriveBayLightStatus.Off || !isStatusKnown()) {
+    <button
+      mat-button
+      ixTest="identify"
+      (click)="changeLightStatus(DriveBayLightStatus.Identify)"
+    >{{ 'Identify' | translate }}</button>
+  }
+  @if (status() !== DriveBayLightStatus.Off || !isStatusKnown()) {
+    <button
+      mat-button
+      ixTest="turn-off"
+      (click)="changeLightStatus(DriveBayLightStatus.Off)"
+    >{{ 'Turn Off' | translate }}</button>
+  }
+</div>

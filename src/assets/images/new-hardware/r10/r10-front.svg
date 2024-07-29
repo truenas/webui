@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="R10" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg" viewBox="0 0 1367 126.2">
+  <defs>
+    <style>
+      .r10-cls-1 {
+        fill-rule: evenodd;
+      }
+
+      .r10-cls-1, .r10-cls-2, .r10-cls-3, .r10-cls-4, .r10-cls-5 {
+        stroke-width: 0px;
+      }
+
+      .r10-cls-1, .r10-cls-4, .r10-cls-6 {
+        fill: #fff;
+      }
+
+      .r10-cls-7 {
+        fill: #294228;
+      }
+
+      .r10-cls-7, .r10-cls-8, .r10-cls-9, .r10-cls-10, .r10-cls-11, .r10-cls-12, .r10-cls-13, .r10-cls-14, .r10-cls-15, .r10-cls-16, .r10-cls-17, .r10-cls-18, .r10-cls-19, .r10-cls-20, .r10-cls-21, .r10-cls-6, .r10-cls-22, .r10-cls-23 {
+        stroke: #000;
+        stroke-width: .2px;
+      }
+
+      .r10-cls-7, .r10-cls-19 {
+        stroke-miterlimit: 10;
+      }
+
+      .r10-cls-2, .r10-cls-13 {
+        fill: #000;
+      }
+
+      .r10-cls-8 {
+        fill: #7e807f;
+      }
+
+      .r10-cls-8, .r10-cls-9, .r10-cls-10, .r10-cls-11, .r10-cls-12, .r10-cls-13, .r10-cls-14, .r10-cls-15, .r10-cls-16, .r10-cls-17, .r10-cls-18, .r10-cls-20, .r10-cls-21, .r10-cls-6, .r10-cls-22, .r10-cls-23 {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .r10-cls-9 {
+        fill: #3f3f3f;
+      }
+
+      .r10-cls-10 {
+        fill: #b2b2b2;
+      }
+
+      .r10-cls-11 {
+        fill: none;
+      }
+
+      .r10-cls-12 {
+        fill: #262626;
+      }
+
+      .r10-cls-14 {
+        fill: #d8d8d8;
+      }
+
+      .r10-cls-15 {
+        fill: #c6c6c5;
+      }
+
+      .r10-cls-3 {
+        fill: #0096d6;
+      }
+
+      .r10-cls-16 {
+        fill: #9a6226;
+      }
+
+      .r10-cls-17 {
+        fill: #2b2b2b;
+      }
+
+      .r10-cls-18 {
+        fill: #a1a4a2;
+      }
+
+      .r10-cls-19 {
+        fill: #49492d;
+      }
+
+      .r10-cls-20 {
+        fill: #a5a5a5;
+      }
+
+      .r10-cls-21 {
+        fill: #bcbcbc;
+      }
+
+      .r10-cls-22 {
+        fill: #cccccb;
+      }
+
+      .r10-cls-5 {
+        fill: #721e1e;
+      }
+
+      .r10-cls-23 {
+        fill: #eaeaea;
+      }
+    </style>
+  </defs>
+  <g id="R10_CHASSIS" data-name="R10 CHASSIS">
+    <g>
+      <rect class="r10-cls-13" x="69.8" y="3" width="1227.2" height="120.2"/>
+      <polygon class="r10-cls-23" points="69.8 3 69.8 123.2 1297.1 123.2 1297.1 3 1300 3 1300 126.1 66.9 126.1 66.9 3 69.8 3"/>
+      <polygon class="r10-cls-23" points="1302.9 .1 1302.9 22.8 1300 22.8 1300 3 66.9 3 66.9 22.8 64.1 22.8 64.1 .1 1302.9 .1"/>
+    </g>
+    <g>
+      <g>
+        <path class="r10-cls-12" d="M67,126.1H7.3c-4,0-7.2-3.2-7.2-7.2V7.3C0,3.3,3.3.1,7.3.1h59.7v126h0Z"/>
+        <g>
+          <rect class="r10-cls-14" x="37.5" y="9.1" width="21.4" height="108"/>
+          <g>
+            <path class="r10-cls-10" d="M39,69.6h18.4c.6.8.9,1.3,1.5,2.2h0c-.6.8-.9,1.3-1.5,2.2h-18.4c-.6-.8-.9-1.3-1.5-2.2h0c.6-.8.9-1.3,1.5-2.2Z"/>
+            <path class="r10-cls-10" d="M39,64.4h18.4c.6.8.9,1.3,1.5,2.1h0c-.6.8-.9,1.3-1.5,2.1h-18.4c-.6-.8-.9-1.3-1.5-2.1h0c.6-.8.9-1.3,1.5-2.1Z"/>
+            <path class="r10-cls-10" d="M39,59.5h18.4c.6.8.9,1.2,1.5,2h0c-.6.8-.9,1.2-1.5,2h-18.4c-.6-.8-.9-1.2-1.5-2h0c.6-.8.9-1.2,1.5-2Z"/>
+            <path class="r10-cls-10" d="M39,54.7h18.4c.6.7.9,1.2,1.5,1.9h0c-.6.7-.9,1.2-1.5,1.9h-18.4c-.6-.7-.9-1.2-1.5-1.9h0c.6-.7.9-1.2,1.5-1.9Z"/>
+            <path class="r10-cls-10" d="M39,50.1h18.4c.6.7.9,1.1,1.5,1.8h0c-.6.7-.9,1.1-1.5,1.8h-18.4c-.6-.7-.9-1.1-1.5-1.8h0c.6-.7.9-1.1,1.5-1.8Z"/>
+            <path class="r10-cls-10" d="M39,45.7h18.4c.6.7.9,1,1.5,1.7h0c-.6.7-.9,1-1.5,1.7h-18.4c-.6-.7-.9-1-1.5-1.7h0c.6-.7.9-1,1.5-1.7Z"/>
+            <path class="r10-cls-10" d="M39,41.4h18.4c.6.6.9,1,1.5,1.6h0c-.6.6-.9,1-1.5,1.6h-18.4c-.6-.6-.9-1-1.5-1.6h0c.6-.6.9-1,1.5-1.6Z"/>
+            <path class="r10-cls-10" d="M39,37.4h18.4l1.5,1.5h0l-1.5,1.5h-18.4l-1.5-1.5h0l1.5-1.5Z"/>
+            <path class="r10-cls-10" d="M39,33.5h18.4c.6.6.9.9,1.5,1.4h0c-.6.6-.9.9-1.5,1.4h-18.4c-.6-.6-.9-.9-1.5-1.4h0c.6-.6.9-.9,1.5-1.4Z"/>
+            <path class="r10-cls-10" d="M39,29.8h18.4c.6.5.9.8,1.5,1.4h0c-.6.5-.9.8-1.5,1.3h-18.4c-.6-.5-.9-.8-1.5-1.3h0c.6-.5.9-.8,1.5-1.4Z"/>
+            <path class="r10-cls-10" d="M39,26.3h18.4c.6.5.9.8,1.5,1.3h0c-.6.5-.9.8-1.5,1.3h-18.4c-.6-.5-.9-.8-1.5-1.3h0c.6-.5.9-.8,1.5-1.3Z"/>
+            <path class="r10-cls-10" d="M39,23.1h18.4c.6.4.9.7,1.5,1.1h0c-.6.4-.9.7-1.5,1.1h-18.4c-.6-.4-.9-.7-1.5-1.1h0c.6-.4.9-.7,1.5-1.1Z"/>
+            <path class="r10-cls-10" d="M39,20.1h18.4c.6.4.9.6,1.5,1h0c-.6.4-.9.6-1.5,1h-18.4c-.6-.4-.9-.6-1.5-1h0c.6-.4.9-.6,1.5-1Z"/>
+            <path class="r10-cls-10" d="M39,17.3h18.4c.6.4.9.5,1.5.9h0c-.6.4-.9.5-1.5.9h-18.4c-.6-.4-.9-.5-1.5-.9h0c.6-.4.9-.6,1.5-.9Z"/>
+            <path class="r10-cls-10" d="M39,14.9h18.4c.6.3.9.4,1.5.7h0c-.6.3-.9.4-1.5.7h-18.4c-.6-.3-.9-.4-1.5-.7h0c.6-.3.9-.4,1.5-.7Z"/>
+          </g>
+          <line class="r10-cls-11" x1="37.5" y1="71.7" x2="58.9" y2="71.7"/>
+          <line class="r10-cls-11" x1="37.5" y1="66.5" x2="58.9" y2="66.5"/>
+          <line class="r10-cls-11" x1="58.9" y1="61.5" x2="37.5" y2="61.5"/>
+          <line class="r10-cls-11" x1="37.5" y1="56.6" x2="58.9" y2="56.6"/>
+          <line class="r10-cls-11" x1="58.9" y1="51.9" x2="37.5" y2="51.9"/>
+          <line class="r10-cls-11" x1="37.5" y1="47.4" x2="58.9" y2="47.4"/>
+          <path class="r10-cls-10" d="M58.9,43.1"/>
+          <line class="r10-cls-11" x1="37.5" y1="43.1" x2="58.9" y2="43.1"/>
+          <line class="r10-cls-11" x1="58.9" y1="38.9" x2="37.5" y2="38.9"/>
+          <line class="r10-cls-11" x1="37.5" y1="34.9" x2="58.9" y2="34.9"/>
+          <line class="r10-cls-11" x1="58.9" y1="31.1" x2="37.5" y2="31.1"/>
+          <line class="r10-cls-11" x1="37.5" y1="27.5" x2="58.9" y2="27.5"/>
+          <line class="r10-cls-11" x1="58.9" y1="24.2" x2="37.5" y2="24.2"/>
+          <line class="r10-cls-11" x1="37.5" y1="21.1" x2="58.9" y2="21.1"/>
+          <line class="r10-cls-11" x1="58.9" y1="18.2" x2="37.5" y2="18.2"/>
+          <line class="r10-cls-11" x1="37.5" y1="15.6" x2="58.9" y2="15.6"/>
+        </g>
+      </g>
+      <g>
+        <path class="r10-cls-12" d="M1300,.1h59.7c4,0,7.2,3.2,7.2,7.2v111.6c0,4-3.2,7.2-7.2,7.2h-59.7V.1h0Z"/>
+        <g>
+          <rect class="r10-cls-14" x="1308.1" y="9.1" width="21.4" height="108"/>
+          <g>
+            <path class="r10-cls-10" d="M1309.6,69.6h18.4c.6.8.9,1.3,1.5,2.2h0c-.6.8-.9,1.3-1.5,2.2h-18.4c-.6-.8-.9-1.3-1.5-2.2h0c.6-.8.9-1.3,1.5-2.2Z"/>
+            <path class="r10-cls-10" d="M1309.6,64.4h18.4c.6.8.9,1.3,1.5,2.1h0c-.6.8-.9,1.3-1.5,2.1h-18.4c-.6-.8-.9-1.3-1.5-2.1h0c.6-.8.9-1.3,1.5-2.1Z"/>
+            <path class="r10-cls-10" d="M1309.6,59.5h18.4c.6.8.9,1.2,1.5,2h0c-.6.8-.9,1.2-1.5,2h-18.4c-.6-.8-.9-1.2-1.5-2h0c.6-.8.9-1.2,1.5-2Z"/>
+            <path class="r10-cls-10" d="M1309.6,54.7h18.4c.6.7.9,1.2,1.5,1.9h0c-.6.7-.9,1.2-1.5,1.9h-18.4c-.6-.7-.9-1.2-1.5-1.9h0c.6-.7.9-1.2,1.5-1.9Z"/>
+            <path class="r10-cls-10" d="M1309.6,50.1h18.4c.6.7.9,1.1,1.5,1.8h0c-.6.7-.9,1.1-1.5,1.8h-18.4c-.6-.7-.9-1.1-1.5-1.8h0c.6-.7.9-1.1,1.5-1.8Z"/>
+            <path class="r10-cls-10" d="M1309.6,45.7h18.4c.6.7.9,1,1.5,1.7h0c-.6.7-.9,1-1.5,1.7h-18.4c-.6-.7-.9-1-1.5-1.7h0c.6-.7.9-1,1.5-1.7Z"/>
+            <path class="r10-cls-10" d="M1309.6,41.4h18.4c.6.6.9,1,1.5,1.6h0c-.6.6-.9,1-1.5,1.6h-18.4c-.6-.6-.9-1-1.5-1.6h0c.6-.6.9-1,1.5-1.6Z"/>
+            <path class="r10-cls-10" d="M1309.6,37.4h18.4c.6.6.9.9,1.5,1.5h0c-.6.6-.9.9-1.5,1.5h-18.4c-.6-.6-.9-.9-1.5-1.5h0c.6-.6.9-.9,1.5-1.5Z"/>
+            <path class="r10-cls-10" d="M1309.6,33.5h18.4c.6.6.9.9,1.5,1.4h0c-.6.6-.9.9-1.5,1.4h-18.4c-.6-.6-.9-.9-1.5-1.4h0c.6-.6.9-.9,1.5-1.4Z"/>
+            <path class="r10-cls-10" d="M1309.6,29.8h18.4c.6.5.9.8,1.5,1.4h0c-.6.5-.9.8-1.5,1.3h-18.4c-.6-.5-.9-.8-1.5-1.3h0c.6-.5.9-.8,1.5-1.4Z"/>
+            <path class="r10-cls-10" d="M1309.6,26.3h18.4c.6.5.9.8,1.5,1.3h0c-.6.5-.9.8-1.5,1.3h-18.4c-.6-.5-.9-.8-1.5-1.3h0c.6-.5.9-.8,1.5-1.3Z"/>
+            <path class="r10-cls-10" d="M1309.6,23.1h18.4c.6.4.9.7,1.5,1.1h0c-.6.4-.9.7-1.5,1.1h-18.4c-.6-.4-.9-.7-1.5-1.1h0c.6-.4.9-.7,1.5-1.1Z"/>
+            <path class="r10-cls-10" d="M1309.6,20.1h18.4c.6.4.9.6,1.5,1h0c-.6.4-.9.6-1.5,1h-18.4c-.6-.4-.9-.6-1.5-1h0c.6-.4.9-.6,1.5-1Z"/>
+            <path class="r10-cls-10" d="M1309.6,17.3h18.4c.6.4.9.5,1.5.9h0c-.6.4-.9.5-1.5.9h-18.4c-.6-.4-.9-.5-1.5-.9h0c.6-.4.9-.6,1.5-.9Z"/>
+            <path class="r10-cls-10" d="M1309.6,14.9h18.4c.6.3.9.4,1.5.7h0c-.6.3-.9.4-1.5.7h-18.4c-.6-.3-.9-.4-1.5-.7h0c.6-.3.9-.4,1.5-.7Z"/>
+          </g>
+          <line class="r10-cls-11" x1="1308.1" y1="71.7" x2="1329.5" y2="71.7"/>
+          <line class="r10-cls-11" x1="1308.1" y1="66.5" x2="1329.5" y2="66.5"/>
+          <line class="r10-cls-11" x1="1329.5" y1="61.5" x2="1308.1" y2="61.5"/>
+          <line class="r10-cls-11" x1="1308.1" y1="56.6" x2="1329.5" y2="56.6"/>
+          <line class="r10-cls-11" x1="1329.5" y1="51.9" x2="1308.1" y2="51.9"/>
+          <line class="r10-cls-11" x1="1308.1" y1="47.4" x2="1329.5" y2="47.4"/>
+          <path class="r10-cls-10" d="M1329.5,43.1"/>
+          <line class="r10-cls-11" x1="1308.1" y1="43.1" x2="1329.5" y2="43.1"/>
+          <line class="r10-cls-11" x1="1329.5" y1="38.9" x2="1308.1" y2="38.9"/>
+          <line class="r10-cls-11" x1="1308.1" y1="34.9" x2="1329.5" y2="34.9"/>
+          <line class="r10-cls-11" x1="1329.5" y1="31.1" x2="1308.1" y2="31.1"/>
+          <line class="r10-cls-11" x1="1308.1" y1="27.5" x2="1329.5" y2="27.5"/>
+          <line class="r10-cls-11" x1="1329.5" y1="24.2" x2="1308.1" y2="24.2"/>
+          <line class="r10-cls-11" x1="1308.1" y1="21.1" x2="1329.5" y2="21.1"/>
+          <line class="r10-cls-11" x1="1329.5" y1="18.2" x2="1308.1" y2="18.2"/>
+          <line class="r10-cls-11" x1="1308.1" y1="15.6" x2="1329.5" y2="15.6"/>
+        </g>
+      </g>
+    </g>
+    <rect class="r10-cls-23" x="80.5" y="117.1" width="872.6" height="9"/>
+    <g>
+      <path class="r10-cls-14" d="M74.9,8.8v108.7c0,3.2-2.6,5.8-5.8,5.8h-2.2V3h2.2c3.2,0,5.8,2.6,5.8,5.8Z"/>
+      <path class="r10-cls-14" d="M294.5,8.5v103.2c0,3-2.6,5.5-5.8,5.5h-2.2V3h2.2c3.2,0,5.8,2.4,5.8,5.5Z"/>
+      <g>
+        <path class="r10-cls-14" d="M280.7,10.9H80.7c-3.2,0-5.8-2.6-5.8-5.8v-2.2h211.6v2.2c0,3.2-2.6,5.8-5.8,5.8Z"/>
+        <g>
+          <g>
+            <rect class="r10-cls-13" x="83.3" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="83.3" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="96.6" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="96.6" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="109.8" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="109.8" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="123.1" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="123.1" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="136.3" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="136.3" y="3" width="11.6" height="1.4"/>
+          </g>
+        </g>
+        <g>
+          <g>
+            <rect class="r10-cls-13" x="266.5" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="266.5" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="253.2" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="253.2" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="240" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="240" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="226.8" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="226.8" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="213.5" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="213.5" y="3" width="11.6" height="1.4"/>
+          </g>
+        </g>
+        <g>
+          <rect class="r10-cls-13" x="163.7" y="3" width="34.1" height="4"/>
+          <rect class="r10-cls-20" x="163.7" y="3" width="34.1" height="1.4"/>
+        </g>
+      </g>
+    </g>
+    <g>
+      <path class="r10-cls-14" d="M514,8.5v103.2c0,3-2.6,5.5-5.8,5.5h-2.2V3h2.2c3.2,0,5.8,2.4,5.8,5.5Z"/>
+      <g>
+        <path class="r10-cls-14" d="M500.3,10.9h-200.1c-3.2,0-5.8-2.6-5.8-5.8v-2.2h211.6v2.2c0,3.2-2.6,5.8-5.8,5.8h0Z"/>
+        <g>
+          <g>
+            <rect class="r10-cls-13" x="302.9" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="302.9" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="316.1" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="316.1" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="329.4" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="329.4" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="342.6" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="342.6" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="355.9" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="355.9" y="3" width="11.6" height="1.4"/>
+          </g>
+        </g>
+        <g>
+          <g>
+            <rect class="r10-cls-13" x="486" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="486" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="472.8" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="472.8" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="459.5" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="459.5" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="446.3" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="446.3" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="433.1" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="433.1" y="3" width="11.6" height="1.4"/>
+          </g>
+        </g>
+        <g>
+          <rect class="r10-cls-13" x="383.2" y="3" width="34.1" height="4"/>
+          <rect class="r10-cls-20" x="383.2" y="3" width="34.1" height="1.4"/>
+        </g>
+      </g>
+    </g>
+    <g>
+      <path class="r10-cls-14" d="M733.6,8.5v103.2c0,3-2.6,5.5-5.8,5.5h-2.2V3h2.2c3.2,0,5.8,2.4,5.8,5.5Z"/>
+      <g>
+        <path class="r10-cls-14" d="M719.8,10.9h-200.1c-3.2,0-5.8-2.6-5.8-5.8v-2.2h211.6v2.2c0,3.2-2.6,5.8-5.8,5.8h0Z"/>
+        <g>
+          <g>
+            <rect class="r10-cls-13" x="522.4" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="522.4" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="535.7" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="535.7" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="548.9" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="548.9" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="562.2" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="562.2" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="575.4" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="575.4" y="3" width="11.6" height="1.4"/>
+          </g>
+        </g>
+        <g>
+          <g>
+            <rect class="r10-cls-13" x="705.6" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="705.6" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="692.3" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="692.3" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="679.1" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="679.1" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="665.9" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="665.9" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="652.6" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="652.6" y="3" width="11.6" height="1.4"/>
+          </g>
+        </g>
+        <g>
+          <rect class="r10-cls-13" x="602.8" y="3" width="34.1" height="4"/>
+          <rect class="r10-cls-20" x="602.8" y="3" width="34.1" height="1.4"/>
+        </g>
+      </g>
+    </g>
+    <rect class="r10-cls-12" x="945.2" y="3" width="7.9" height="114.1"/>
+    <g>
+      <path class="r10-cls-14" d="M953.1,8.5v103.2c0,3-2.6,5.5-5.8,5.5h-2.2V3h2.2c3.2,0,5.8,2.4,5.8,5.5Z"/>
+      <g>
+        <path class="r10-cls-14" d="M939.4,10.9h-200.1c-3.2,0-5.8-2.6-5.8-5.8v-2.2h211.6v2.2c0,3.2-2.6,5.8-5.8,5.8h0Z"/>
+        <g>
+          <g>
+            <rect class="r10-cls-13" x="742" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="742" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="755.2" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="755.2" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="768.5" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="768.5" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="781.7" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="781.7" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="795" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="795" y="3" width="11.6" height="1.4"/>
+          </g>
+        </g>
+        <g>
+          <g>
+            <rect class="r10-cls-13" x="925.1" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="925.1" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="911.9" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="911.9" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="898.6" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="898.6" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="885.4" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="885.4" y="3" width="11.6" height="1.4"/>
+          </g>
+          <g>
+            <rect class="r10-cls-13" x="872.2" y="3" width="11.6" height="4"/>
+            <rect class="r10-cls-20" x="872.2" y="3" width="11.6" height="1.4"/>
+          </g>
+        </g>
+        <g>
+          <rect class="r10-cls-13" x="822.3" y="3" width="34.1" height="4"/>
+          <rect class="r10-cls-20" x="822.3" y="3" width="34.1" height="1.4"/>
+        </g>
+      </g>
+    </g>
+    <rect class="r10-cls-12" x="953.1" y="3" width="343.9" height="120.2"/>
+    <g>
+      <g>
+        <circle class="r10-cls-2" cx="1239.9" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1239.9" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1239.9" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1257.3" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1257.3" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1257.3" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1222.5" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1222.5" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1222.5" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1205.1" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1205.1" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1205.1" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1187.8" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1187.8" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1187.8" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1170.4" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1170.4" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1170.4" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1153" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1153" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1153" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1135.6" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1135.6" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1135.6" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1118.2" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1118.2" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1118.2" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1100.9" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1100.9" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1100.9" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1083.5" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1083.5" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1083.5" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1066.1" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1066.1" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1066.1" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1048.7" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1048.7" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1048.7" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1031.3" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1031.3" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1031.3" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1014" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1014" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="1014" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="996.6" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="996.6" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="996.6" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="979.2" cy="16.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="979.2" cy="49.9" r="4.2"/>
+        <circle class="r10-cls-2" cx="979.2" cy="33.4" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1231.2" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1231.2" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1248.6" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1248.6" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1213.8" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1213.8" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1196.4" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1196.4" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1179.1" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1179.1" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1161.7" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1161.7" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1144.3" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1144.3" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1126.9" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1126.9" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1109.5" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1109.5" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1092.2" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1092.2" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1074.8" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1074.8" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1057.4" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1057.4" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1040" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1040" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <path class="r10-cls-2" d="M1022.6,21c2.3,0,4.2,1.9,4.2,4.2s-1.9,4.2-4.2,4.2-4.2-1.9-4.2-4.2,1.9-4.2,4.2-4.2Z"/>
+        <path class="r10-cls-2" d="M1022.6,37.4c2.3,0,4.2,1.9,4.2,4.2s-1.9,4.2-4.2,4.2-4.2-1.9-4.2-4.2,1.9-4.2,4.2-4.2Z"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="1005.3" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="1005.3" cy="41.6" r="4.2"/>
+      </g>
+      <g>
+        <circle class="r10-cls-2" cx="987.9" cy="25.2" r="4.2"/>
+        <circle class="r10-cls-2" cx="987.9" cy="41.6" r="4.2"/>
+      </g>
+    </g>
+    <g>
+      <rect class="r10-cls-9" x="953.1" y="59.2" width="338" height="25"/>
+      <g>
+        <g>
+          <path class="r10-cls-4" d="M1097.8,70.1v4.4c-3.1,1.8-6.2,3.6-9.3,5.4v-4.4c3.1-1.8,6.2-3.6,9.3-5.4Z"/>
+          <path class="r10-cls-4" d="M1077.3,74.5v-4.4c3.1,1.8,6.2,3.6,9.3,5.4v4.4c-3.1-1.8-6.2-3.6-9.3-5.4Z"/>
+          <path class="r10-cls-4" d="M1093.1,70.7c-1.6-.9-3.1-1.8-4.7-2.7v-4.4c2.9,1.7,5.7,3.3,8.5,4.9-1.3.8-2.6,1.5-3.8,2.2Z"/>
+          <path class="r10-cls-4" d="M1078.1,68.5c2.9-1.7,5.6-3.3,8.5-4.9v4.4c-1.5.9-3.1,1.8-4.7,2.7-1.3-.7-2.5-1.4-3.8-2.2Z"/>
+          <path class="r10-cls-4" d="M1091.3,71.7c-1.3.8-2.5,1.5-3.8,2.2-1.3-.7-2.5-1.5-3.8-2.2,1.3-.7,2.5-1.5,3.8-2.2,1.3.7,2.5,1.4,3.8,2.2Z"/>
+        </g>
+        <g>
+          <path class="r10-cls-4" d="M1111.5,64.8v2h-4v11.8h-2.3v-11.8h-4v-2h10.3Z"/>
+          <path class="r10-cls-4" d="M1117,71.1c-.3-.5-.8-.8-1.4-.8-1.1,0-1.8.8-1.8,2.3v6.1h-2.2v-10.1h2.1v.9c.4-.6,1.1-1.1,2.3-1.1s2.2.5,2.8,1.5l-1.7,1.2h-.1Z"/>
+          <path class="r10-cls-4" d="M1127.4,78.7h-2.1v-.9c-.5.7-1.1,1.1-2.5,1.1-2.1,0-3.7-1.1-3.7-4v-6.3h2.2v6.1c0,1.8.8,2.3,1.9,2.3s2.1-.9,2.1-2.3v-6.1h2.1v10.1Z"/>
+          <path class="r10-cls-4" d="M1137,77.2c-.7,1.2-1.8,1.7-3.6,1.7-2.9,0-4.4-1.9-4.4-4.5v-1.4c0-3,1.4-4.5,4.1-4.5s4.1,1.6,4.1,4.6v1.1h-6c0,1.6.6,2.8,2.2,2.8s1.7-.4,2.1-1l1.6,1.1h0ZM1131.2,72.5h3.8c0-1.5-.7-2.2-1.9-2.2s-1.8.8-1.9,2.2Z"/>
+          <path class="r10-cls-4" d="M1149.3,64.8v13.9h-2.1l-5.6-9.4v9.4h-2.3v-13.9h2l5.7,9.6v-9.6h2.3Z"/>
+          <path class="r10-cls-4" d="M1150.6,78.7l4.8-13.9h2.2l4.8,13.9h-2.5l-.9-2.9h-5l-.9,2.9h-2.5ZM1154.6,73.8h3.7l-1.8-5.6-1.8,5.6h0Z"/>
+          <path class="r10-cls-4" d="M1170.9,68.2c-.7-.9-1.4-1.5-3-1.5s-2.3.6-2.3,1.8,1,1.8,3,2.3c2.8.6,4.2,1.6,4.2,4.1s-1.4,4-4.7,4-4-.7-5.2-2.3l1.8-1.3c.8,1,1.6,1.5,3.2,1.5s2.5-.8,2.5-1.8-.6-1.8-3-2.3c-2.7-.6-4.2-1.8-4.2-4.2s1.4-3.8,4.6-3.8,3.8.7,4.7,2.3l-1.8,1.3h.2Z"/>
+        </g>
+      </g>
+      <g>
+        <path class="r10-cls-3" d="M979.9,71.4l-4.4,8.5c-3.3,0-5.9-1-6.9-3.2-1.7-3.6,1.7-8.7,7.6-11.4.2,0,.3-.2.5-.2l3.3,6.3h0Z"/>
+        <path class="r10-cls-3" d="M984.8,76.7l-2.7-5.3h0l3.8-7.5c1.8.5,3.2,1.4,3.9,2.9,1.4,3-.8,7.1-5,9.9Z"/>
+        <path class="r10-cls-3" d="M983.2,77.7c-.3.2-.6.3-1,.5-1.5.7-3,1.2-4.4,1.4l3.2-6.1,2.2,4.2Z"/>
+        <path class="r10-cls-4" d="M982.1,71.4l2.7,5.3c-.5.4-1.1.7-1.6,1l-2.2-4.2-3.2,6.1c-.8,0-1.6.2-2.3.3l4.4-8.5-3.3-6.3c.6-.3,1.2-.5,1.8-.7l2.5,4.9,2.9-5.7c.7,0,1.4,0,2,.3l-3.8,7.5h0Z"/>
+        <path class="r10-cls-3" d="M983.9,63.6l-2.9,5.7-2.5-4.9c1.9-.6,3.8-.9,5.4-.8Z"/>
+        <rect class="r10-cls-4" x="973.6" y="70" width="1.6" height="7.5"/>
+        <path class="r10-cls-4" d="M974.4,67.3h0c.4,0,.8.4.8.8h0c0,.4-.4.8-.8.8h0c-.4,0-.8-.4-.8-.8h0c0-.4.4-.8.8-.8Z"/>
+      </g>
+      <g>
+        <path class="r10-cls-4" d="M1253.8,72.9v3.8h-2.1v-9.9h2.9c1.4,0,2.4.2,3,.7s1,1.2,1,2.2-.2,1.1-.5,1.6-.8.8-1.4,1.1c1.5,2.2,2.5,3.7,2.9,4.3h-2.3l-2.4-3.8s-1.1,0-1.1,0ZM1253.8,71.2h.7c.7,0,1.2,0,1.5-.3s.5-.6.5-1-.2-.8-.5-1-.8-.3-1.5-.3h-.6v2.7h0Z"/>
+        <path class="r10-cls-4" d="M1265.4,76.7h-2.1v-7.7c-.3.3-.6.6-.7.7l-1.1.9-1-1.3,3.2-2.6h1.7v9.9h0Z"/>
+        <path class="r10-cls-4" d="M1275.1,71.8c0,1.7-.3,3-.9,3.9s-1.4,1.3-2.6,1.3-2-.4-2.6-1.3-.9-2.1-.9-3.8.3-3,.9-3.9,1.4-1.2,2.6-1.2,2,.4,2.6,1.3.9,2.1.9,3.8h0ZM1270.2,71.8c0,1.2,0,2.1.3,2.6s.6.8,1.1.8.8-.3,1.1-.8.3-1.4.3-2.6,0-2.1-.3-2.6-.6-.8-1.1-.8-.8.3-1.1.8-.3,1.4-.3,2.6Z"/>
+      </g>
+    </g>
+    <rect class="r10-cls-13" x="1172.5" y="122.1" width="65.2" height="1.1"/>
+    <circle class="r10-cls-2" cx="1072.2" cy="100.1" r="4.3"/>
+    <circle class="r10-cls-5" cx="1072.2" cy="100.1" r="3.7"/>
+    <path class="r10-cls-1" d="M1072.2,107.9c-2.3,0-4.1,1.9-4.1,4.1s1.9,4.1,4.1,4.1,4.1-1.9,4.1-4.1-1.9-4.1-4.1-4.1ZM1072.2,115.7c-2,0-3.6-1.6-3.6-3.6s1.6-3.6,3.6-3.6,3.6,1.6,3.6,3.6-1.6,3.6-3.6,3.6Z"/>
+    <polygon class="r10-cls-4" points="1075.2 111.8 1075.2 112.3 1074.3 112.3 1072.2 114.5 1071.8 114 1070.1 112.3 1069.2 112.3 1069.2 111.8 1070.3 111.8 1070.9 112.3 1072.2 113.7 1074.1 111.8 1075.2 111.8"/>
+    <circle class="r10-cls-2" cx="1225.4" cy="100.1" r="4.3"/>
+    <circle class="r10-cls-5" cx="1225.4" cy="100.1" r="3.7"/>
+    <g>
+      <g>
+        <circle class="r10-cls-22" cx="1040" cy="98.9" r="6.7"/>
+        <circle class="r10-cls-22" cx="1040" cy="98.9" r="5.9"/>
+        <circle class="r10-cls-17" cx="1040" cy="98.9" r="5.9"/>
+        <circle class="r10-cls-22" cx="1040" cy="98.9" r="5"/>
+      </g>
+      <g>
+        <path class="r10-cls-4" d="M1017.7,93.9v10h1.2v-10h-1.2Z"/>
+        <path class="r10-cls-4" d="M1027.3,95.2c-.9-.9-2.1-1.3-3.6-1.3h-3.1v10h2.8c1.7,0,3-.4,3.9-1.3s1.3-2.1,1.3-3.8-.4-2.8-1.3-3.6h0ZM1026.3,101.9c-.7.7-1.7,1-3.1,1h-1.4v-8h1.7c1.3,0,2.3.3,2.9,1,.7.7,1,1.6,1,2.9s-.3,2.4-1,3h0Z"/>
+      </g>
+    </g>
+    <g>
+      <circle class="r10-cls-22" cx="1248.6" cy="98.9" r="6.7"/>
+      <circle class="r10-cls-22" cx="1248.6" cy="98.9" r="5.9"/>
+      <circle class="r10-cls-17" cx="1248.6" cy="98.9" r="5.9"/>
+      <circle class="r10-cls-22" cx="1248.6" cy="98.9" r="5"/>
+    </g>
+    <g>
+      <path class="r10-cls-4" d="M1267.6,91.6v5.3c0,.4-.4.7-.8.7s-.8-.3-.8-.7v-5.3c0-.4.4-.7.8-.7s.8.3.8.7Z"/>
+      <path class="r10-cls-4" d="M1273.6,98.7c0,3.8-3,6.9-6.8,6.9s-6.8-3.1-6.8-6.9.7-3.5,2-4.8c.3-.3.8-.3,1.1,0,0,0,.3.3.3.6s0,.4-.2.6c-1,1-1.5,2.4-1.5,3.7,0,2.9,2.3,5.2,5.2,5.2s5.1-2.4,5.1-5.2-.5-2.7-1.5-3.7c0,0-.3-.3-.3-.6s0-.4.2-.6c0-.2.3-.3.6-.3s.4,0,.6.2c1.3,1.3,2,3.1,2,4.9h0Z"/>
+    </g>
+    <path class="r10-cls-4" d="M1139.8,94.8h1.4v-1.3h-1.4s0,0,0-.2,0-.2,0-.2h4.4v-1.3h-1.4s0,0,0-.2v-3.2c0,0,0-.2,0-.2h3s0,0,0,.2v3.2s0,.2,0,.2h-1.4v1.3h4.4s0,0,0,.2,0,.2,0,.2h-1.4v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2h1.4v-1.3h-5.8v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2ZM1145.7,91.6v-2.9h-2.8v2.9h2.8ZM1146,95.2v2.9h2.8v-2.9h-2.8ZM1139.9,98h2.8v-2.9h-2.8v2.9Z"/>
+    <circle class="r10-cls-19" cx="1144.3" cy="103.1" r="3.6"/>
+    <path class="r10-cls-4" d="M1182,94.8h1.4v-1.3h-1.4s0,0,0-.2,0-.2,0-.2h4.4v-1.3h-1.4s0,0,0-.2v-3.2c0,0,0-.2,0-.2h3s0,0,0,.2v3.2s0,.2,0,.2h-1.4v1.3h4.4s0,0,0,.2,0,.2,0,.2h-1.4v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2h1.4v-1.3h-5.8v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2ZM1187.9,91.6v-2.9h-2.8v2.9h2.8ZM1188.2,95.2v2.9h2.8v-2.9h-2.8ZM1182.2,98h2.8v-2.9h-2.8v2.9Z"/>
+    <circle class="r10-cls-19" cx="1186.6" cy="103.1" r="3.6"/>
+    <path class="r10-cls-4" d="M1167.9,94.8h1.4v-1.3h-1.4s0,0,0-.2,0-.2,0-.2h4.4v-1.3h-1.4s0,0,0-.2v-3.2c0,0,0-.2,0-.2h3s0,0,0,.2v3.2s0,.2,0,.2h-1.4v1.3h4.4s0,0,0,.2,0,.2,0,.2h-1.4v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2h1.4v-1.3h-5.8v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2ZM1173.9,91.6v-2.9h-2.8v2.9h2.8ZM1174.1,95.2v2.9h2.8v-2.9h-2.8ZM1168.1,98h2.8v-2.9h-2.8v2.9Z"/>
+    <circle class="r10-cls-19" cx="1172.5" cy="103.1" r="3.6"/>
+    <path class="r10-cls-4" d="M1153.8,94.8h1.4v-1.3h-1.4s0,0,0-.2,0-.2,0-.2h4.4v-1.3h-1.4s0,0,0-.2v-3.2c0,0,0-.2,0-.2h3s0,0,0,.2v3.2s0,.2,0,.2h-1.4v1.3h4.4s0,0,0,.2,0,.2,0,.2h-1.4v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2h1.4v-1.3h-5.8v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2ZM1159.8,91.6v-2.9h-2.8v2.9h2.8ZM1160,95.2v2.9h2.8v-2.9h-2.8ZM1154,98h2.8v-2.9h-2.8v2.9Z"/>
+    <circle class="r10-cls-19" cx="1158.4" cy="103.1" r="3.6"/>
+    <path class="r10-cls-4" d="M1196.1,94.8h1.4v-1.3h-1.4s0,0,0-.2,0-.2,0-.2h4.4v-1.3h-1.4s0,0,0-.2v-3.2c0,0,0-.2,0-.2h3s0,0,0,.2v3.2s0,.2,0,.2h-1.4v1.3h4.4s0,0,0,.2,0,.2,0,.2h-1.4v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2h1.4v-1.3h-5.8v1.3h1.4s0,0,0,.2v3.2s0,.2,0,.2h-3s0,0,0-.2v-3.2c0,0,0-.2,0-.2ZM1202,91.6v-2.9h-2.8v2.9h2.8ZM1202.3,95.2v2.9h2.8v-2.9h-2.8ZM1196.2,98h2.8v-2.9h-2.8v2.9Z"/>
+    <circle class="r10-cls-7" cx="1200.7" cy="103.1" r="3.6"/>
+    <path class="r10-cls-4" d="M1222.9,114.8h-.7l-3.1-4.7h0v4.7h-.6v-5.6h.7l3.1,4.7h0v-4.7h.6v5.6Z"/>
+    <path class="r10-cls-4" d="M1227,114.8l-1.9-5h0v5h-.6v-5.6h1l1.8,4.6h0l1.8-4.6h1v5.6h-.7v-4.9h0l-1.9,5h-.5Z"/>
+    <path class="r10-cls-4" d="M1231.6,114.8v-5.6h.7v5.6h-.7Z"/>
+    <rect class="r10-cls-13" x="1089.9" y="89.4" width="36.3" height="16.7"/>
+    <g>
+      <rect class="r10-cls-13" x="1090.8" y="90.2" width="34.7" height="14.9"/>
+      <path class="r10-cls-18" d="M1125.9,105.7v-15.9h-35.7v15.9h35.7ZM1090.7,90.3h34.7v14.9h-34.7v-14.9Z"/>
+      <rect class="r10-cls-18" x="1090" y="92.4" width=".8" height="10.5"/>
+      <rect class="r10-cls-18" x="1092.6" y="105.1" width="31" height=".9"/>
+      <rect class="r10-cls-18" x="1125.4" y="92.4" width=".8" height="10.5"/>
+      <rect class="r10-cls-18" x="1092.6" y="89.5" width="31" height=".8"/>
+      <g>
+        <rect class="r10-cls-6" x="1092.4" y="98.4" width="31.4" height="5.4"/>
+        <g>
+          <rect class="r10-cls-8" x="1113.4" y="90.3" width="5.6" height="2"/>
+          <rect class="r10-cls-8" x="1097.2" y="90.3" width="5.6" height="2"/>
+          <rect class="r10-cls-16" x="1116.2" y="96.4" width="2.8" height="2"/>
+          <rect class="r10-cls-16" x="1097.2" y="96.4" width="2.8" height="2"/>
+          <rect class="r10-cls-16" x="1109.5" y="96.4" width="2.8" height="2"/>
+          <rect class="r10-cls-16" x="1103.8" y="96.4" width="2.8" height="2"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g id="R10_DRIVES" data-name="R10 DRIVES">
+    <g id="DRIVE_CAGE_0" data-name="R10 DRIVE CAGE 0">
+      <rect class="r10-cls-14" x="80.5" y="13.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="242.5" y="16.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="240.6" y="16.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="73.9" y="16.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="271.3" y="13.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="275.6" y="13.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_1" data-name="R10 DRIVE CAGE 1">
+      <rect class="r10-cls-14" x="300.1" y="13.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="462.1" y="16.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="460.2" y="16.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="293.5" y="16.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="490.9" y="13.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="495.2" y="13.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_2" data-name="R10 DRIVE CAGE 2">
+      <rect class="r10-cls-14" x="519.6" y="13.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="681.6" y="16.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="679.7" y="16.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="513" y="16.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="710.4" y="13.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="714.7" y="13.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_3" data-name="R10 DRIVE CAGE 3">
+      <rect class="r10-cls-14" x="739.2" y="13.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="901.2" y="16.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="899.3" y="16.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="732.6" y="16.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="930" y="13.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="934.3" y="13.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_4" data-name="R10 DRIVE CAGE 4">
+      <rect class="r10-cls-14" x="80.5" y="39.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="242.5" y="42.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="240.6" y="42.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="73.9" y="42.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="271.3" y="39.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="275.6" y="39.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_5" data-name="R10 DRIVE CAGE 5">
+      <rect class="r10-cls-14" x="300.1" y="39.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="462.1" y="42.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="460.2" y="42.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="293.5" y="42.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="490.9" y="39.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="495.2" y="39.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_6" data-name="R10 DRIVE CAGE 6">
+      <rect class="r10-cls-14" x="519.6" y="39.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="681.6" y="42.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="679.7" y="42.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="513" y="42.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="710.4" y="39.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="714.7" y="39.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_7" data-name="R10 DRIVE CAGE 7">
+      <rect class="r10-cls-14" x="739.2" y="39.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="901.2" y="42.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="899.3" y="42.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="732.6" y="42.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="930" y="39.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="934.3" y="39.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_8" data-name="R10 DRIVE CAGE 8">
+      <rect class="r10-cls-14" x="80.5" y="65.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="242.5" y="68.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="240.6" y="68.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="73.9" y="68.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="271.3" y="65.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="275.6" y="65.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_9" data-name="R10 DRIVE CAGE 9">
+      <rect class="r10-cls-14" x="300.1" y="65.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="462.1" y="68.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="460.2" y="68.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="293.5" y="68.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="490.9" y="65.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="495.2" y="65.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_10" data-name="R10 DRIVE CAGE 10">
+      <rect class="r10-cls-14" x="519.6" y="65.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="681.6" y="68.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="679.7" y="68.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="513" y="68.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="710.4" y="65.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="714.7" y="65.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_11" data-name="R10 DRIVE CAGE 11">
+      <rect class="r10-cls-14" x="739.2" y="65.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="901.2" y="68.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="899.3" y="68.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="732.6" y="68.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="930" y="65.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="934.3" y="65.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_12" data-name="R10 DRIVE CAGE 12">
+      <rect class="r10-cls-14" x="80.5" y="91.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="242.5" y="94.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="240.6" y="94.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="73.9" y="94.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="271.3" y="91.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="275.6" y="91.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_13" data-name="R10 DRIVE CAGE 13">
+      <rect class="r10-cls-14" x="300.1" y="91.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="462.1" y="94.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="460.2" y="94.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="293.5" y="94.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="490.9" y="91.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="495.2" y="91.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_14" data-name="R10 DRIVE CAGE 14">
+      <rect class="r10-cls-14" x="519.6" y="91.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="681.6" y="94.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="679.7" y="94.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="513" y="94.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="710.4" y="91.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="714.7" y="91.1" width="7.9" height="22"/>
+    </g>
+    <g id="DRIVE_CAGE_15" data-name="R10 DRIVE CAGE 15">
+      <rect class="r10-cls-14" x="739.2" y="91.1" width="190.8" height="3.2"/>
+      <rect class="r10-cls-14" x="901.2" y="94.4" width="28.8" height="18.7"/>
+      <rect class="r10-cls-21" x="899.3" y="94.4" width="1.9" height="18.7"/>
+      <rect class="r10-cls-14" x="732.6" y="94.4" width="166.7" height="18.7"/>
+      <rect class="r10-cls-21" x="930" y="91.1" width="12.2" height="22"/>
+      <rect class="r10-cls-15" x="934.3" y="91.1" width="7.9" height="22"/>
+    </g>
+  </g>
+</svg>

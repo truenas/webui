@@ -1,6 +1,6 @@
 <mat-list role="list">
-  <ng-container *ngFor="let subItem of subMenuItems">
-    <ng-container *ngIf="!subItem.isVisible$ || (subItem.isVisible$ | async)">
+  @for (subItem of subMenuItems; track subItem) {
+    @if (!subItem.isVisible$ || (subItem.isVisible$ | async)) {
       <mat-list-item
         *ixHasAccess="!subItem.hasAccess$ || (subItem.hasAccess$ | async)"
         routerLinkActive="selected"
@@ -12,6 +12,6 @@
           {{ subItem.name | translate }}
         </a>
       </mat-list-item>
-    </ng-container>
-  </ng-container>
+    }
+  }
 </mat-list>

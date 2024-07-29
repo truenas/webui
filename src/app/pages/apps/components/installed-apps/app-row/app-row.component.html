@@ -24,53 +24,63 @@
   ></ix-app-status-cell>
 </div>
 <div class="cell cell-cpu" [matTooltip]="'Percentage of total core utilization' | translate">
-  <span *ngIf="stats && stats.cpu !== undefined; else notAvailable">
-    {{ stats.cpu.toFixed(0) }}%
-  </span>
+  @if (stats && stats.cpu !== undefined) {
+    <span>
+      {{ stats.cpu.toFixed(0) }}%
+    </span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
 </div>
 <div class="cell cell-ram" [matTooltip]="'Memory usage of app' | translate">
-  <span *ngIf="stats && stats.memory !== undefined; else notAvailable">
-    {{ stats.memory | ixFileSize }}
-  </span>
+  @if (stats?.memory !== undefined) {
+    <span>
+      {{ stats.memory | ixFileSize }}
+    </span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
 </div>
 <div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
-  <span *ngIf="stats && stats.network?.incoming !== undefined; else notAvailable">
-    {{ stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
-    -
-    {{ stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
-  </span>
+  @if (stats?.network?.incoming !== undefined) {
+    <span>
+      {{ stats.network.incoming | ixNetworkSpeed }}
+      -
+      {{ stats.network.outgoing | ixNetworkSpeed }}
+    </span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
 </div>
 <div class="cell cell-update">
   <ix-app-update-cell [app]="app" [showIcon]="true"></ix-app-update-cell>
 </div>
 <div *ixRequiresRoles="requiredRoles" class="cell cell-action">
-  <button
-    *ngIf="isAppStopped"
-    mat-icon-button
-    matTooltipPosition="above"
-    [ixTest]="[app.name, 'start']"
-    [matTooltip]="'Start' | translate"
-    [disabled]="inProgress"
-    (click)="start(); $event.stopPropagation()"
-  >
-    <ix-icon name="mdi-play"></ix-icon>
-  </button>
-  <button
-    *ngIf="!isAppStopped"
-    mat-icon-button
-    matTooltipPosition="above"
-    [ixTest]="[app.name, 'stop']"
-    [matTooltip]="'Stop' | translate"
-    [disabled]="isStartingOrStopping"
-    (click)="stop(); $event.stopPropagation()"
-  >
-    <ix-icon name="mdi-stop"></ix-icon>
-  </button>
+  @if (isAppStopped) {
+    <button
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[app.name, 'start']"
+      [matTooltip]="'Start' | translate"
+      [disabled]="inProgress"
+      (click)="start(); $event.stopPropagation()"
+    >
+      <ix-icon name="mdi-play"></ix-icon>
+    </button>
+  } @else {
+    <button
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[app.name, 'stop']"
+      [matTooltip]="'Stop' | translate"
+      [disabled]="isStartingOrStopping"
+      (click)="stop(); $event.stopPropagation()"
+    >
+      <ix-icon name="mdi-stop"></ix-icon>
+    </button>
+  }
 </div>
 
-<ng-template #notAvailable>
-  {{ 'N/A' | translate }}
-</ng-template>
 
 <div class="cell-clickable">
   <ix-icon name="mdi-chevron-right"></ix-icon>

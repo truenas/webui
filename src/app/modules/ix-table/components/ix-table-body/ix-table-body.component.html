@@ -39,20 +39,24 @@
       </button>
     </td>
   </tr>
-  <tr
-    *ngIf="detailsTemplate && isExpanded(row)"
-    ixTest="details"
-    class="details"
-    [class.hidden]="isLoading"
-  >
-    <td [attr.colspan]="displayedColumns.length + 1">
-      <ng-container *ngTemplateOutlet="detailsTemplate; context: { $implicit: row }"></ng-container>
-    </td>
-  </tr>
+
+  @if (detailsTemplate && isExpanded(row)) {
+    <tr
+      ixTest="details"
+      class="details"
+      [class.hidden]="isLoading"
+    >
+      <td [attr.colspan]="displayedColumns.length + 1">
+        <ng-container *ngTemplateOutlet="detailsTemplate; context: { $implicit: row }"></ng-container>
+      </td>
+    </tr>
+  }
 </ng-container>
 
-<td *ngIf="isLoading" [attr.colspan]="displayedColumns.length">
-  <div class="spinner-container">
-    <mat-spinner [diameter]="40"></mat-spinner>
-  </div>
-</td>
+@if (isLoading) {
+  <td [attr.colspan]="displayedColumns.length">
+    <div class="spinner-container">
+      <mat-spinner [diameter]="40"></mat-spinner>
+    </div>
+  </td>
+}

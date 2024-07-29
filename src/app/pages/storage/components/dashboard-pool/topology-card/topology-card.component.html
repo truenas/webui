@@ -20,69 +20,101 @@
       <div class="vdev-line">
         <b>{{ 'Data VDEVs' | translate }}</b>
         <div class="vdev-stats">
-          <span
-            *ngIf="!!topologyWarningsState.data && !isPoolOffline"
-            class="warning"
-            [matTooltip]="topologyWarningsState.data"
-          >
-            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-          </span>
-          <span *ngIf="!isPoolOffline" class="vdev-value">{{ topologyState.data }}</span>
-          <span
-            *ngIf="isPoolOffline"
-            class="warning"
-          >
-            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-          </span>
-          <span *ngIf="isPoolOffline" class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
+          @if (!!topologyWarningsState.data && !isPoolOffline) {
+            <span
+              class="warning"
+              [matTooltip]="topologyWarningsState.data"
+            >
+              <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+            </span>
+          }
+          @if (isPoolOffline) {
+            <span class="warning">
+              <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+            </span>
+            <span class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
+          } @else {
+            <span class="vdev-value">{{ topologyState.data }}</span>
+          }
         </div>
       </div>
       <div class="vdev-line">
         <b>{{ 'Metadata VDEVs' | translate }}</b>
-        <div *ngIf="!isPoolOffline; else notAvailable" class="vdev-stats">
-          <span *ngIf="!!topologyWarningsState.metadata" class="warning" [matTooltip]="topologyWarningsState.metadata">
-            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-          </span>
-          <span class="vdev-value">{{ topologyState.metadata }}</span>
-        </div>
+        @if (!isPoolOffline) {
+          <div class="vdev-stats">
+            @if (!!topologyWarningsState.metadata) {
+              <span class="warning" [matTooltip]="topologyWarningsState.metadata">
+                <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+              </span>
+            }
+            <span class="vdev-value">{{ topologyState.metadata }}</span>
+          </div>
+        } @else {
+          <span class="vdev-value">{{ 'N/A' | translate }}</span>
+        }
       </div>
       <div class="vdev-line">
         <b>{{ 'Log VDEVs' | translate }}</b>
-        <div *ngIf="!isPoolOffline; else notAvailable" class="vdev-stats">
-          <span *ngIf="!!topologyWarningsState.log" class="warning" [matTooltip]="topologyWarningsState.log">
-            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-          </span>
-          <span class="vdev-value">{{ topologyState.log }}</span>
-        </div>
+        @if (!isPoolOffline) {
+          <div class="vdev-stats">
+            @if (!!topologyWarningsState.log) {
+              <span class="warning" [matTooltip]="topologyWarningsState.log">
+                <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+              </span>
+            }
+            <span class="vdev-value">{{ topologyState.log }}</span>
+          </div>
+        } @else {
+          <span class="vdev-value">{{ 'N/A' | translate }}</span>
+        }
       </div>
       <div class="vdev-line">
         <b>{{ 'Cache VDEVs' | translate }}</b>
-        <div *ngIf="!isPoolOffline; else notAvailable" class="vdev-stats">
-          <span *ngIf="!!topologyWarningsState.cache" class="warning" [matTooltip]="topologyWarningsState.cache">
-            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-          </span>
-          <span class="vdev-value">{{ topologyState.cache }}</span>
-        </div>
+        @if (!isPoolOffline) {
+          <div class="vdev-stats">
+            @if (!!topologyWarningsState.cache) {
+              <span class="warning" [matTooltip]="topologyWarningsState.cache">
+                <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+              </span>
+            }
+            <span class="vdev-value">{{ topologyState.cache }}</span>
+          </div>
+        } @else {
+          <span class="vdev-value">{{ 'N/A' | translate }}</span>
+        }
       </div>
-      <div *ngIf="!isDraidLayoutDataVdevs" class="vdev-line">
-        <b>{{ 'Spare VDEVs' | translate }}</b>
-        <div *ngIf="!isPoolOffline; else notAvailable" class="vdev-stats">
-          <span *ngIf="!!topologyWarningsState.spare" class="warning" [matTooltip]="topologyWarningsState.spare">
-            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-          </span>
-          <span class="vdev-value">{{ topologyState.spare }}</span>
+      @if (!isDraidLayoutDataVdevs) {
+        <div class="vdev-line">
+          <b>{{ 'Spare VDEVs' | translate }}</b>
+          @if (!isPoolOffline) {
+            <div class="vdev-stats">
+              @if (!!topologyWarningsState.spare) {
+                <span class="warning" [matTooltip]="topologyWarningsState.spare">
+                  <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+                </span>
+              }
+              <span class="vdev-value">{{ topologyState.spare }}</span>
+            </div>
+          } @else {
+            <span class="vdev-value">{{ 'N/A' | translate }}</span>
+          }
         </div>
-      </div>
+      }
       <div class="vdev-line">
         <b>{{ 'Dedup VDEVs' | translate }}</b>
-        <div *ngIf="!isPoolOffline; else notAvailable" class="vdev-stats">
-          <span *ngIf="!!topologyWarningsState.dedup" class="warning" [matTooltip]="topologyWarningsState.dedup">
-            <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
-          </span>
-          <span class="vdev-value">{{ topologyState.dedup }}</span>
-        </div>
+        @if (!isPoolOffline) {
+          <div class="vdev-stats">
+            @if (!!topologyWarningsState.dedup) {
+              <span class="warning" [matTooltip]="topologyWarningsState.dedup">
+                <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
+              </span>
+            }
+            <span class="vdev-value">{{ topologyState.dedup }}</span>
+          </div>
+        } @else {
+          <span class="vdev-value">{{ 'N/A' | translate }}</span>
+        }
       </div>
     </div>
   </mat-card-content>
 </mat-card>
-<ng-template #notAvailable><span class="vdev-value">{{ 'N/A' | translate }}</span></ng-template>

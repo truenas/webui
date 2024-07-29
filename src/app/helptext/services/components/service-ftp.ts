@@ -13,7 +13,6 @@ export const helptextServiceFtp = {
     + '(i.e. sending/receiving a file, or receiving a directory listing).'),
   timeout_tooltip: T('Maximum number of seconds that proftpd will allow clients to stay connected without receiving\n'
     + 'any data on either the control or data connection.'),
-  rootlogin_tooltip: T('Setting this option is discouraged as it increases security risk.'),
   onlyanonymous_tooltip: T('Allow anonymous FTP logins with access to the \
  directory specified in <b>Path</b>.'),
   anonpath_tooltip: T('Set the root directory for anonymous FTP connections.'),
@@ -91,7 +90,4 @@ export const helptextServiceFtp = {
  the IP address that matches the IP address of the client.'),
   options_tooltip: T('Used to add additional <a href="https://linux.die.net/man/8/proftpd"\
  target="_blank">proftpd(8)</a> parameters.'),
-
-  rootlogin_dialog_title: T('Allow Root Login'),
-  rootlogin_dialog_message: T('Enabling this option can expose administrator credentials and is not recommended.'),
 };

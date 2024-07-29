@@ -14,7 +14,7 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -25,7 +25,8 @@ import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
@@ -88,8 +89,9 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxTableModule,
     MatButton,
     MatIconButton,
-    IxFileSizePipe,
+    FileSizePipe,
     CopyButtonComponent,
+    OrNotAvailablePipe,
   ],
   declarations: [
     DatasetsManagementComponent,

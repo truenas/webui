@@ -1,8 +1,14 @@
 import {
   ChangeDetectionStrategy, Component, input,
+  signal,
 } from '@angular/core';
-import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
-import { SystemGeneralService } from 'app/services/system-general.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Store } from '@ngrx/store';
+import { environment } from 'environments/environment';
+import { map } from 'rxjs';
+import { productTypeLabels } from 'app/enums/product-type.enum';
+import { AppState } from 'app/store';
+import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-copyright-line',
@@ -12,14 +18,10 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 })
 export class CopyrightLineComponent {
   readonly withIxLogo = input(false);
-
-  productType$ = this.systemGeneral.getProductType$;
-  copyrightYear$ = this.systemGeneral.getCopyrightYear$;
-
-  readonly ProductType = ProductType;
-  readonly productTypeLabels = productTypeLabels;
+  readonly product = toSignal(this.store$.select(selectProductType).pipe(map((type) => productTypeLabels.get(type))));
+  readonly copyrightYear = signal(environment.buildYear);
 
   constructor(
-    private systemGeneral: SystemGeneralService,
+    private store$: Store<AppState>,
   ) { }
 }

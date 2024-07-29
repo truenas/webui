@@ -1,62 +1,72 @@
-<div *ngIf="tile() as tile" class="tile">
-  <div class="tile-content">
-    <ul class="caption">
-      <span class="title">{{ tile.title | translate }}</span>
-      <div *ngIf="hasSendTasks && !tile.totalSend" class="backup-actions">
-        <ng-template *ngTemplateOutlet="backupActions()"></ng-template>
-      </div>
-    </ul>
+@if (tile(); as tile) {
+  <div class="tile">
+    <div class="tile-content">
+      <ul class="caption">
+        <span class="title">{{ tile.title | translate }}</span>
+        @if (hasSendTasks && !tile.totalSend) {
+          <div class="backup-actions">
+            <ng-template *ngTemplateOutlet="backupActions()"></ng-template>
+          </div>
+        }
+      </ul>
 
-    <div class="divider"></div>
+      <div class="divider"></div>
 
-    <ul>
-      <li>
-        <span [class]="['icon', tile.failedSend ? 'warn' : 'safe']">
-          <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
-        </span>
-        <span class="label">
-          {{ '{tasks, plural, =1 {# send task} other {# send tasks}}' | translate : { tasks: tile.totalSend } }}
-        </span>
-      </li>
-      <li>
-        <span [class]="['icon', tile.failedReceive ? 'warn' : 'safe']">
-          <ix-icon [name]="tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
-        </span>
-        <span class="label">
-          {{ '{tasks, plural, =1 {# receive task} other {# receive tasks}}' | translate : { tasks: tile.totalReceive } }}
-        </span>
-      </li>
-      <li>
-        <span [class]="['icon', tile.failedSend + tile.failedReceive ? 'warn' : 'safe']">
-          <ix-icon [name]="tile.failedSend + tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
-        </span>
-        <span class="label">
-          {{ 'Total failed' | translate }}: {{ tile.failedSend + tile.failedReceive }}
-        </span>
-      </li>
-    </ul>
+      <ul>
+        <li>
+          <span [class]="['icon', tile.failedSend ? 'warn' : 'safe']">
+            <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+          </span>
+          <span class="label">
+            {{ '{tasks, plural, =1 {# send task} other {# send tasks}}' | translate : { tasks: tile.totalSend } }}
+          </span>
+        </li>
+        <li>
+          <span [class]="['icon', tile.failedReceive ? 'warn' : 'safe']">
+            <ix-icon [name]="tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+          </span>
+          <span class="label">
+            {{ '{tasks, plural, =1 {# receive task} other {# receive tasks}}' | translate : { tasks: tile.totalReceive } }}
+          </span>
+        </li>
+        <li>
+          <span [class]="['icon', tile.failedSend + tile.failedReceive ? 'warn' : 'safe']">
+            <ix-icon [name]="tile.failedSend + tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+          </span>
+          <span class="label">
+            {{ 'Total failed' | translate }}: {{ tile.failedSend + tile.failedReceive }}
+          </span>
+        </li>
+      </ul>
 
-    <div class="divider"></div>
+      <div class="divider"></div>
 
-    <ul [style.max-width.%]="50">
-      <li>
-        <span *ngIf="!tile.lastWeekSend" class="label dash">—</span>
-        <span *ngIf="tile.lastWeekSend" class="label">
-          {{ '{tasks, plural, =1 {# sent task} other {# sent tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
-        </span>
-      </li>
-      <li>
-        <span *ngIf="!tile.lastWeekReceive" class="label dash">—</span>
-        <span *ngIf="tile.lastWeekReceive" class="label">
-          {{ '{tasks, plural, =1 {# received task} other {# received tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
-        </span>
-      </li>
-      <li>
-        <span class="label">
-          {{ 'Last successful' | translate }}:
-          {{ tile.lastSuccessfulTask ? (tile.lastSuccessfulTask.$date | formatDateTime) : ('Never' | translate) }}
-        </span>
-      </li>
-    </ul>
+      <ul [style.max-width.%]="50">
+        <li>
+          @if (tile.lastWeekSend) {
+            <span class="label">
+              {{ '{tasks, plural, =1 {# sent task} other {# sent tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
+            </span>
+          } @else {
+            <span class="label dash">—</span>
+          }
+        </li>
+        <li>
+          @if (tile.lastWeekReceive) {
+            <span class="label">
+              {{ '{tasks, plural, =1 {# received task} other {# received tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
+          </span>
+          } @else {
+            <span class="label dash">—</span>
+          }
+        </li>
+        <li>
+          <span class="label">
+            {{ 'Last successful' | translate }}:
+            {{ tile.lastSuccessfulTask ? (tile.lastSuccessfulTask.$date | formatDateTime) : ('Never' | translate) }}
+          </span>
+        </li>
+      </ul>
+    </div>
   </div>
-</div>
+}

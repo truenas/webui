@@ -8,7 +8,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -17,9 +17,10 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import {
   EnclosureHeaderComponent,
@@ -33,29 +34,42 @@ import {
 import {
   EnclosureSvgComponent,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
+import {
+  NotSupportedModelComponent,
+} from 'app/pages/system/enclosure/components/enclosure-side/not-supported-model/not-supported-model.component';
+import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
 import {
   ElementsPageComponent,
 } from 'app/pages/system/enclosure/components/pages/elements-page/elements-page.component';
+import {
+  DiskDetailsOverviewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/disk-details-overview/disk-details-overview.component';
+import { DiskDetailsComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/disk-details-overview/disks-overview-details/disk-details.component';
+import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/disks-overview/disks-overview.component';
 import { EnclosurePageComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-page.component';
 import { EnclosureSelectorComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
-import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disk-topology-description/disk-topology-description.component';
-import { DisksOverviewDetailsComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-details/disks-overview-details.component';
-import { DisksOverviewTilesComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-tiles/disks-overview-tiles.component';
-import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview.component';
-import { EnclosureDiskComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/enclosure-disk/enclosure-disk.component';
 import {
   EnclosureSideSwitchComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/enclosure-side-switch/enclosure-side-switch.component';
-import {
-  EnclosureViewComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/enclosure-view.component';
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side-switch/enclosure-side-switch.component';
+import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/disk-topology-description/disk-topology-description.component';
 import {
   PoolsLegendComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/pools-legend/pools-legend.component';
-import { VdevDisksLegendComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/vdev-disks-legend/vdev-disks-legend.component';
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-legend/pools-legend.component';
+import {
+  PoolsViewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-view.component';
+import {
+  VdevDisksLegendComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/vdev-disks-legend/vdev-disks-legend.component';
 import { SasExpanderStatusViewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/sas-expander-status-view/sas-expander-status-view.component';
+import {
+  StatusViewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/status-view/status-view.component';
+import {
+  StatusesLegendComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/status-view/statuses-legend/statuses-legend.component';
 import {
   MiniDisksOverviewComponent,
 } from 'app/pages/system/enclosure/components/pages/mini-page/mini-disks-overview/mini-disks-overview.component';
@@ -107,17 +121,17 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MatDialogClose,
     MatDialogTitle,
     EmptyComponent,
-    IxFileSizePipe,
+    FileSizePipe,
     MapValuePipe,
     NgxSkeletonLoaderModule,
     AppLoaderModule,
     DiskIconComponent,
+    TooltipComponent,
   ],
   declarations: [
     EnclosureDashboardComponent,
     DisksOverviewComponent,
-    DisksOverviewDetailsComponent,
-    DisksOverviewTilesComponent,
+    DiskDetailsComponent,
     DiskTopologyDescriptionComponent,
     EnclosureSelectorComponent,
     EnclosurePageComponent,
@@ -126,13 +140,12 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     JbofFormComponent,
     VdevDisksLegendComponent,
     SetEnclosureLabelDialogComponent,
-    EnclosureDiskComponent,
     ElementsPageComponent,
     EnclosureHeaderComponent,
     ViewElementsMenuComponent,
     EnclosureSvgComponent,
     EnclosureSideSwitchComponent,
-    EnclosureViewComponent,
+    PoolsViewComponent,
     EnclosureSideComponent,
     MiniPageComponent,
     MiniDisksOverviewComponent,
@@ -143,6 +156,11 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MiniEnclosureComponent,
     MiniSlotStatusComponent,
     PoolsLegendComponent,
+    StatusViewComponent,
+    StatusesLegendComponent,
+    DiskDetailsOverviewComponent,
+    NotSupportedModelComponent,
+    IdentifyLightComponent,
   ],
   providers: [
     EnclosureStore,

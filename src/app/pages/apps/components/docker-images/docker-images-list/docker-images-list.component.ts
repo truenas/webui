@@ -16,7 +16,7 @@ import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cel
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { createTable } from 'app/modules/ix-table/utils';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
@@ -30,7 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './docker-images-list.component.html',
   styleUrls: ['./docker-images-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [IxFileSizePipe],
+  providers: [FileSizePipe],
 })
 export class DockerImagesListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
@@ -93,7 +93,7 @@ export class DockerImagesListComponent implements OnInit {
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private fileSizePipe: IxFileSizePipe,
+    private fileSizePipe: FileSizePipe,
   ) {
   }
 

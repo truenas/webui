@@ -8,7 +8,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { GaugeChartComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/gauge-chart/gauge-chart.component';
@@ -21,7 +21,7 @@ describe('WidgetPoolComponent', () => {
     component: WidgetPoolComponent,
     imports: [
       NgxSkeletonLoaderModule,
-      IxFileSizePipe,
+      FileSizePipe,
     ],
     declarations: [
       MockComponent(GaugeChartComponent),

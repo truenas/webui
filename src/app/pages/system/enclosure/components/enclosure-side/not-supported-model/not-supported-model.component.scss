@@ -1,0 +1,69 @@
+:host {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 100px));
+  padding: 20px 10px;
+
+  &.high-count {
+    grid-template-columns: repeat(6, minmax(0, 60px));
+  }
+}
+
+.slot {
+  aspect-ratio: 16/9;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  box-sizing: border-box;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  transition: border 0.2s ease-in-out;
+
+  &.static {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border: solid 2px var(--primary);
+
+    .background,
+    .number {
+      filter: brightness(1);
+    }
+  }
+
+  &.selected {
+    border: solid 2px var(--primary);
+    outline: 1px solid var(--fg1);
+
+    .background,
+    .number {
+      filter: brightness(1.1);
+    }
+  }
+
+  .background,
+  .number {
+    align-items: center;
+    bottom: 0;
+    display: flex;
+    font-weight: 500;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: filter 0.2s ease-in-out;
+  }
+
+  .background {
+    background-color: var(--bg2);
+    filter: brightness(0.8);
+  }
+}

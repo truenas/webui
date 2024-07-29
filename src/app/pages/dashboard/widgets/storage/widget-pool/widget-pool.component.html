@@ -1,114 +1,146 @@
-<mat-card *ngIf="poolExists" class="card">
-  <mat-card-content class="card-content">
-    <div class="header">
-      <h3>{{ name | translate }}</h3>
+@if (poolExists) {
+  <mat-card class="card">
+    <mat-card-content class="card-content">
+      <div class="header">
+        <h3>{{ name | translate }}</h3>
 
-      <button
-        mat-icon-button
-        ixTest="pool-reports"
-        matTooltipPosition="above"
-        [attr.aria-label]="'Disk Reports' | translate"
-        [matTooltip]="'Disk Reports' | translate"
-        [routerLink]="['/reportsdashboard', 'disk']"
-      >
-        <ix-icon name="insert_chart"></ix-icon>
-      </button>
-    </div>
-    <div [class]="['container', size()]">
-      <ng-template #skeleton>
-        <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-      </ng-template>
-      <div class="pool-info-wrapper">
-        <div class="pool-info-top">
-          <div class="left">
-            <h3 class="pool-name">
-              <ng-container *ngIf="!isPoolLoading(); else skeleton">
-                {{ pool().name }}
-              </ng-container>
-            </h3>
-            <div class="divider"></div>
-            <div class="lines">
-              <div class="line">
-                <span class="label">{{ 'Data Topology' | translate }}:</span>
-                <span *ngIf="!isDisksLoading(); else skeleton" class="value">
-                  {{ dataTopology() }}
-                </span>
-              </div>
-              <div class="line">
-                <span class="label">{{ 'Usable Capacity' | translate }}:</span>
-                <span *ngIf="!isDatasetLoading(); else skeleton" class="value">
-                  {{ capacity() | ixFileSize }}
-                </span>
-              </div>
-              <div *ngIf="isDatasetLoading() || pool().scan?.end_time?.$date" class="line">
-                <span class="label">{{ 'Last Scrub Date' | translate }}:</span>
-                <span *ngIf="!isDatasetLoading(); else skeleton" class="value">
-                  {{ pool().scan.end_time.$date | formatDateTime }}
-                </span>
-              </div>
-              <div *ngIf="isDatasetLoading() || scanDuration()" class="line">
-                <span class="label">{{ 'Last Scan Duration' | translate }}:</span>
-                <span *ngIf="!isDatasetLoading(); else skeleton" class="value">
-                  {{ scanDuration() }}
-                </span>
+        <button
+          mat-icon-button
+          ixTest="pool-reports"
+          matTooltipPosition="above"
+          [attr.aria-label]="'Disk Reports' | translate"
+          [matTooltip]="'Disk Reports' | translate"
+          [routerLink]="['/reportsdashboard', 'disk']"
+        >
+          <ix-icon name="insert_chart"></ix-icon>
+        </button>
+      </div>
+      <div [class]="['container', size()]">
+        <ng-template #skeleton>
+          <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+        </ng-template>
+        <div class="pool-info-wrapper">
+          <div class="pool-info-top">
+            <div class="left">
+              <h3 class="pool-name">
+                @if (!isPoolLoading()) {
+                  {{ pool().name }}
+                } @else {
+                  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+                }
+              </h3>
+              <div class="divider"></div>
+              <div class="lines">
+                <div class="line">
+                  <span class="label">{{ 'Data Topology' | translate }}:</span>
+                  @if (!isDisksLoading()) {
+                    <span class="value">
+                      {{ dataTopology() }}
+                    </span>
+                  } @else {
+                    <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+                  }
+                </div>
+                <div class="line">
+                  <span class="label">{{ 'Usable Capacity' | translate }}:</span>
+                  @if (!isDatasetLoading()) {
+                    <span class="value">
+                      {{ capacity() | ixFileSize }}
+                    </span>
+                  } @else {
+                    <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+                  }
+                </div>
+                @if (isDatasetLoading() || pool().scan?.end_time?.$date) {
+                  <div class="line">
+                    <span class="label">{{ 'Last Scrub Date' | translate }}:</span>
+                    @if (!isDatasetLoading()) {
+                      <span class="value">
+                        {{ pool().scan.end_time.$date | formatDateTime }}
+                      </span>
+                    } @else {
+                      <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+                    }
+                  </div>
+                }
+                @if (isDatasetLoading() || scanDuration()) {
+                  <div class="line">
+                    <span class="label">{{ 'Last Scan Duration' | translate }}:</span>
+                    @if (!isDatasetLoading()) {
+                      <span class="value">
+                        {{ scanDuration() }}
+                      </span>
+                    } @else {
+                      <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+                    }
+                  </div>
+                }
               </div>
             </div>
+            <div class="right">
+              @if (!isDatasetLoading()) {
+                <ix-gauge-chart
+                  [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
+                  [colorBlank]="chartBlankColor"
+                  [width]="150"
+                  [height]="150"
+                  [label]="usedPercentage() / 100 | percent: '1.0-1'"
+                  [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
+                  [style]="isLowCapacity() ? 'color: var(--red);' : ''"
+                ></ix-gauge-chart>
+              } @else {
+                <ngx-skeleton-loader
+                  appearance="circle"
+                  [theme]="{ width: '130px', height: '130px', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
+                ></ngx-skeleton-loader>
+              }
+            </div>
           </div>
-          <div class="right">
-            <ix-gauge-chart
-              *ngIf="!isDatasetLoading(); else circleSkeleton"
-              [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
-              [colorBlank]="chartBlankColor"
-              [width]="150"
-              [height]="150"
-              [label]="usedPercentage() / 100 | percent: '1.0-1'"
-              [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
-              [style]="isLowCapacity() ? 'color: var(--red);' : ''"
-            ></ix-gauge-chart>
-            <ng-template #circleSkeleton>
-              <ngx-skeleton-loader
-                appearance="circle"
-                [theme]="{ width: '130px', height: '130px', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
-              ></ngx-skeleton-loader>
-            </ng-template>
-          </div>
-        </div>
-        <div class="pool-info-bottom">
-          <div>
-            <h2 class="value">
-              <ng-container *ngIf="!isPoolLoading(); else skeleton">
-                {{ pool().status }}
-              </ng-container>
-            </h2>
-            <div class="divider"></div>
-            <h6 class="label">{{ 'Pool Status' | translate }}</h6>
-          </div>
-          <div>
-            <h2 class="value">
-              <ng-container *ngIf="!isPoolLoading(); else skeleton">
-                {{ totalZfsErrors() }}
-              </ng-container>
-            </h2>
-            <div class="divider"></div>
-            <h6 class="label">{{ 'Disks w/ZFS Errors' | translate }}</h6>
-          </div>
-          <div>
-            <h2 class="value">
-              <ng-container *ngIf="!isPoolLoading(); else skeleton">
-                {{ pool().scan?.errors || 0 }}
-              </ng-container>
-            </h2>
-            <div class="divider"></div>
-            <h6 class="label">{{ 'Last Scan Errors' | translate }}</h6>
+          <div class="pool-info-bottom">
+            <div>
+              <h2 class="value">
+                @if (!isPoolLoading()) {
+                  {{ pool().status }}
+                } @else {
+                  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+                }
+              </h2>
+              <div class="divider"></div>
+              <h6 class="label">{{ 'Pool Status' | translate }}</h6>
+            </div>
+            <div>
+              <h2 class="value">
+                @if (!isPoolLoading()) {
+                  {{ totalZfsErrors() }}
+                } @else {
+                  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+                }
+              </h2>
+              <div class="divider"></div>
+              <h6 class="label">{{ 'Disks w/ZFS Errors' | translate }}</h6>
+            </div>
+            <div>
+              <h2 class="value">
+                @if (!isPoolLoading()) {
+                  {{ pool().scan?.errors || 0 }}
+                } @else {
+                  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+                }
+              </h2>
+              <div class="divider"></div>
+              <h6 class="label">{{ 'Last Scan Errors' | translate }}</h6>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </mat-card-content>
-</mat-card>
-<ix-widget-datapoint
-  *ngIf="!poolExists"
-  [size]="size()"
-  [label]="name | translate"
-  [text]="'Pool does not exist' | translate"
-></ix-widget-datapoint>
+    </mat-card-content>
+  </mat-card>
+}
+
+@if (!poolExists) {
+  <ix-widget-datapoint
+    [size]="size()"
+    [label]="name | translate"
+    [text]="'Pool does not exist' | translate"
+  ></ix-widget-datapoint>
+}

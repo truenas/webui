@@ -1,3 +1,19 @@
 <h3>{{ 'Drive Temperatures' | translate }}</h3>
 
-Not implemented.
+@if (disks()) {
+  <ul>
+    @for (disk of disks(); track disk.dev) {
+      <li class="disk">
+        <strong class="dev">{{ disk.dev }}:</strong>
+        <span class="temperature">{{ disk.temperature || ('Temperature not available.' | translate) }}</span>
+
+        @if (!disk.temperature) {
+          <ix-tooltip
+            [header]="'Temperature data missing.' | translate"
+            [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur.' | translate"
+          ></ix-tooltip>
+        }
+      </li>
+    }
+  </ul>
+}

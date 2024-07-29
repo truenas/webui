@@ -1,3 +1,4 @@
+import { fakeEs102, fakeM50, fakeMini } from 'app/core/testing/mock-enclosure/enclosure-templates/fake-series';
 import {
   mockEs102,
   mockEs102G2,
@@ -66,4 +67,8 @@ export const enclosureMocks: DashboardEnclosure[] = [
   mockEs60G2,
   mockEs102,
   mockEs102G2,
+
+  fakeM50,
+  fakeMini,
+  fakeEs102,
 ];

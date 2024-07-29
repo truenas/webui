@@ -18,6 +18,17 @@ import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-nod
 import { TreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-virtual-scroll-node-outlet.directive';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
+const components = [
+  NestedTreeNodeComponent,
+  TreeNodeComponent,
+  TreeNodeDefDirective,
+  TreeNodeOutletDirective,
+  TreeNodeToggleDirective,
+  TreeViewComponent,
+  TreeVirtualScrollNodeOutletDirective,
+  TreeVirtualScrollViewComponent,
+];
+
 @NgModule({
   imports: [
     CdkTreeModule,
@@ -32,24 +43,10 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     AngularResizeEventModule,
   ],
   declarations: [
-    NestedTreeNodeComponent,
-    TreeNodeComponent,
-    TreeNodeDefDirective,
-    TreeNodeOutletDirective,
-    TreeNodeToggleDirective,
-    TreeViewComponent,
-    TreeVirtualScrollNodeOutletDirective,
-    TreeVirtualScrollViewComponent,
+    ...components,
   ],
   exports: [
-    NestedTreeNodeComponent,
-    TreeNodeComponent,
-    TreeNodeDefDirective,
-    TreeNodeOutletDirective,
-    TreeNodeToggleDirective,
-    TreeViewComponent,
-    TreeVirtualScrollNodeOutletDirective,
-    TreeVirtualScrollViewComponent,
+    ...components,
   ],
 })
 export class TreeModule { }

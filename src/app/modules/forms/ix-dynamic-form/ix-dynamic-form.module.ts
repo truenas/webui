@@ -11,11 +11,15 @@ import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
+const components = [
+  IxDynamicFormComponent,
+  IxDynamicFormItemComponent,
+  IxDynamicWizardComponent,
+];
+
 @NgModule({
   declarations: [
-    IxDynamicFormComponent,
-    IxDynamicFormItemComponent,
-    IxDynamicWizardComponent,
+    ...components,
   ],
   imports: [
     CommonModule,
@@ -29,9 +33,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
   exports: [
     IxFormsModule,
-    IxDynamicFormComponent,
-    IxDynamicFormItemComponent,
-    IxDynamicWizardComponent,
+    ...components,
   ],
 })
 export class IxDynamicFormModule { }

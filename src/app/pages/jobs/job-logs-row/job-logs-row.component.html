@@ -1,50 +1,67 @@
 <div class="list-item">
   <h4>{{ 'Arguments' | translate }}</h4>
-  <div *ngIf="job?.arguments?.length > 0; else noneTemplate" class="logs">
-    <pre><code>{{ job.arguments | json }}</code></pre>
-    <ix-copy-button *ngIf="job?.arguments?.length > 0" [text]="job.arguments | json"></ix-copy-button>
-  </div>
-  <ng-template #noneTemplate>{{ 'No arguments are passed' | translate }}</ng-template>
+  @if (job?.arguments?.length > 0) {
+    <div class="logs">
+      <pre><code>{{ job.arguments | json }}</code></pre>
+      @if (job?.arguments?.length > 0) {
+        <ix-copy-button [text]="job.arguments | json"></ix-copy-button>
+      }
+    </div>
+  } @else {
+    {{ 'No arguments are passed' | translate }}
+  }
 </div>
 
 <div class="list-item">
   <h4>{{ 'Log Path' | translate }}</h4>
-  <div *ngIf="job.logs_path; else notAvailable" class="logs">
-    <pre><code>{{ job.logs_path }}</code></pre>
-    <ix-copy-button *ngIf="job.logs_path" [text]="job.logs_path"></ix-copy-button>
-  </div>
-  <ng-template #notAvailable>{{ 'N/A' | translate }}</ng-template>
+  @if (job.logs_path) {
+    <div class="logs">
+      <pre><code>{{ job.logs_path }}</code></pre>
+      <ix-copy-button [text]="job.logs_path"></ix-copy-button>
+    </div>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
 </div>
 
 <div class="list-item">
   <h4>{{ 'Log Excerpt' | translate }}</h4>
-  <div *ngIf="job.logs_excerpt; else noLogsTemplate" class="logs">
-    <pre><code>{{ job.logs_excerpt }}</code></pre>
-    <ix-copy-button *ngIf="job.logs_excerpt" [text]="job.logs_excerpt"></ix-copy-button>
-  </div>
-  <ng-template #noLogsTemplate>{{ 'No logs are available' | translate }}</ng-template>
+  @if (job.logs_excerpt) {
+    <div class="logs">
+      <pre><code>{{ job.logs_excerpt }}</code></pre>
+      <ix-copy-button [text]="job.logs_excerpt"></ix-copy-button>
+    </div>
+  } @else {
+    {{ 'No logs are available' | translate }}
+  }
 </div>
 
 <div class="list-item">
   <h4>{{ 'Credentials' | translate }}</h4>
-  <div *ngIf="job.credentials; else noCredentialsTemplate" class="logs">
-    <div>
-      {{
-        'Created by: {creationSource} ({creationType})' | translate: {
-          creationSource: getCredentialsCreationSource(job.credentials),
-          creationType: (job.credentials.type | mapValue: credentialTypeLabels | translate)
-        }
+  @if (job.credentials) {
+    <div class="logs">
+      <div>
+        {{
+          'Created by: {creationSource} ({creationType})' | translate: {
+            creationSource: getCredentialsCreationSource(job.credentials),
+            creationType: (job.credentials.type | mapValue: credentialTypeLabels | translate)
+          }
       }}
     </div>
   </div>
-  <ng-template #noCredentialsTemplate>{{ 'N/A' | translate }}</ng-template>
+} @else {
+  {{ 'N/A' | translate }}
+}
 </div>
 
 <div class="list-item">
   <h4>{{ 'Error' | translate }}</h4>
-  <div *ngIf="job.error; else noErrorTemplate" class="logs">
-    <pre><code>{{ job.error }}</code></pre>
-    <ix-copy-button *ngIf="job.error" [text]="job.error"></ix-copy-button>
-  </div>
-  <ng-template #noErrorTemplate>{{ 'No errors' | translate }}</ng-template>
+  @if (job.error) {
+    <div class="logs">
+      <pre><code>{{ job.error }}</code></pre>
+      <ix-copy-button [text]="job.error"></ix-copy-button>
+    </div>
+  } @else {
+    {{ 'No errors' | translate }}
+  }
 </div>

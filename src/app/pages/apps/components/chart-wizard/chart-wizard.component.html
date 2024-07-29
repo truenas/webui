@@ -1,56 +1,63 @@
 <ix-page-header [pageTitle]="pageTitle$ | async"></ix-page-header>
 
-<div *ngIf="appsLoaded" class="chart-wizard-wrapper">
-  <div class="wizard-container">
-    <div class="mini-search-card">
-      <ix-input
-        prefixIcon="search"
-        [formControl]="searchControl"
-        [placeholder]="'Search Input Fields' | translate"
-        [autocompleteOptions]="searchOptions"
-      ></ix-input>
-    </div>
-    <form [formGroup]="form" (submit)="onSubmit()">
-      <ix-dynamic-wizard
-        [dynamicSection]="dynamicSection"
-        [dynamicForm]="form"
-        (addListItem)="addItem($event)"
-        (deleteListItem)="deleteItem($event)"
-      ></ix-dynamic-wizard>
-
-      <ix-app-metadata-card
-        *ngIf="showAppMetadata"
-        [appMetadata]="catalogApp.app_metadata"
-      ></ix-app-metadata-card>
-
-      <div class="actions">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading"
-        >
-          {{ isNew ? ('Install' | translate) : ('Update' | translate) }}
-        </button>
+@if (appsLoaded) {
+  <div class="chart-wizard-wrapper">
+    <div class="wizard-container">
+      <div class="mini-search-card">
+        <ix-input
+          prefixIcon="search"
+          [formControl]="searchControl"
+          [placeholder]="'Search Input Fields' | translate"
+          [autocompleteOptions]="searchOptions"
+        ></ix-input>
       </div>
-    </form>
-  </div>
-  <div *ngIf="appsLoaded" class="search-container">
-    <div class="search-card">
-      <ix-input
-        prefixIcon="search"
-        [formControl]="searchControl"
-        [placeholder]="'Search Input Fields' | translate"
-        [autocompleteOptions]="searchOptions"
-      ></ix-input>
-      <ng-container *ngFor="let section of dynamicSection">
-        <div class="section" (click)="onSectionClick(section.name)">
-          {{ section.name }}
-          <ix-icon *ngIf="checkSectionInvalid(section)" name="warning"></ix-icon>
+      <form [formGroup]="form" (submit)="onSubmit()">
+        <ix-dynamic-wizard
+          [dynamicSection]="dynamicSection"
+          [dynamicForm]="form"
+          (addListItem)="addItem($event)"
+          (deleteListItem)="deleteItem($event)"
+        ></ix-dynamic-wizard>
+
+        @if (showAppMetadata) {
+          <ix-app-metadata-card
+            [appMetadata]="catalogApp.app_metadata"
+          ></ix-app-metadata-card>
+        }
+        <div class="actions">
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-button
+            type="submit"
+            color="primary"
+            ixTest="save"
+            [disabled]="form.invalid || isLoading"
+          >
+            {{ isNew ? ('Install' | translate) : ('Update' | translate) }}
+          </button>
         </div>
-      </ng-container>
+      </form>
     </div>
+
+    @if (appsLoaded) {
+      <div class="search-container">
+        <div class="search-card">
+          <ix-input
+            prefixIcon="search"
+            [formControl]="searchControl"
+            [placeholder]="'Search Input Fields' | translate"
+            [autocompleteOptions]="searchOptions"
+          ></ix-input>
+          @for (section of dynamicSection; track section) {
+            <div class="section" (click)="onSectionClick(section.name)">
+              {{ section.name }}
+              @if (checkSectionInvalid(section)) {
+                <ix-icon name="warning"></ix-icon>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
   </div>
-</div>
+}

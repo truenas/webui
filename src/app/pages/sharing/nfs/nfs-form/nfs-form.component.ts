@@ -6,7 +6,9 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import {
+  Observable, filter, of, switchMap, tap,
+} from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
@@ -22,6 +24,7 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -104,6 +107,7 @@ export class NfsFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
+    private datasetService: DatasetService,
     private slideInRef: IxSlideInRef<NfsFormComponent>,
     private store$: Store<ServicesState>,
     @Inject(SLIDE_IN_DATA) private data: { existingNfsShare?: NfsShare; defaultNfsShare?: NfsShare },
@@ -151,8 +155,6 @@ export class NfsFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
     const nfsShare = this.form.value;
     let request$: Observable<unknown>;
     if (this.isNew) {
@@ -161,9 +163,20 @@ export class NfsFormComponent implements OnInit {
       request$ = this.ws.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare]);
     }
 
-    request$
-      .pipe(untilDestroyed(this))
-      .subscribe({
+    this.datasetService.rootLevelDatasetWarning(
+      nfsShare.path,
+      this.translate.instant(helptextSharingNfs.root_level_warning),
+      !this.form.controls.path.dirty,
+    )
+      .pipe(
+        filter(Boolean),
+        tap(() => {
+          this.isLoading = true;
+          this.cdr.markForCheck();
+        }),
+        switchMap(() => request$),
+        untilDestroyed(this),
+      ).subscribe({
         next: () => {
           if (this.isNew) {
             this.snackbar.success(this.translate.instant('NFS share created'));

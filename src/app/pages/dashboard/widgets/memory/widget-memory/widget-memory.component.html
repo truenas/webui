@@ -18,50 +18,56 @@
     <div [class]="['container', size()]">
       <div class="stats">
         <h2 class="total-memory">
-          <ng-container *ngIf="isLoading(); else totalMemory">
+          @if (isLoading()) {
             <ngx-skeleton-loader
               class="skeleton"
               [theme]="{ height: 42, background: 'var(--alt-bg2)', opacity: 0.25 }"
             ></ngx-skeleton-loader>
-          </ng-container>
-          <ng-template #totalMemory>
+          } @else {
             {{ formatUnit(memory().total) }}
             <span class="units">GiB</span>
-          </ng-template>
+          }
         </h2>
         <div class="memory-used-caption">
           {{ 'total available' | translate }}
-          <span *ngIf="ecc$ | async">(ECC)</span>
+          @if (ecc$ | async) {
+            <span>(ECC)</span>
+          }
         </div>
 
         <div class="legend">
-          <div
-            *ngFor="let legendItem of stats()"
-            class="stats-item"
-          >
-            <div
-              class="legend-swatch"
-              [style.background-color]="legendItem.color"
-            ></div>
-            <span class="label">{{ legendItem.name }}:</span>
-
-            <ng-container *ngIf="isLoading(); else stat">
-              <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-            </ng-container>
-            <ng-template #stat>
-              {{ formatUnit(legendItem.value) }} GiB
-            </ng-template>
-          </div>
+          @for (legendItem of stats(); track legendItem.name) {
+            <div class="stats-item">
+              <div
+                class="legend-swatch"
+                [style.background-color]="legendItem.color"
+              ></div>
+              <span class="label">{{ legendItem.name }}:</span>
+              @if (isLoading()) {
+                <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+              } @else {
+                {{ formatUnit(legendItem.value) }} GiB
+              }
+            </div>
+          }
         </div>
       </div>
 
       <div class="chart">
-        <ngx-skeleton-loader
-          *ngIf="isLoading(); else chart"
-          class="skeleton"
-          appearance="circle"
-          [theme]="{ width: '100%', height: 'auto', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
-        ></ngx-skeleton-loader>
+        @if (isLoading()) {
+          <ngx-skeleton-loader
+            class="skeleton"
+            appearance="circle"
+            [theme]="{ width: '100%', height: 'auto', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
+          ></ngx-skeleton-loader>
+        } @else {
+          <canvas
+            baseChart
+            type="doughnut"
+            [data]="chartData()"
+            [options]="chartOptions()"
+          ></canvas>
+        }
         <ng-template #chart>
           <canvas
             baseChart

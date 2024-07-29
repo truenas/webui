@@ -16,6 +16,7 @@ import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -70,6 +71,7 @@ describe('AppInfoCardComponent', () => {
     component: AppInfoCardComponent,
     imports: [
       CleanLinkPipe,
+      OrNotAvailablePipe,
     ],
     declarations: [
       MockComponents(

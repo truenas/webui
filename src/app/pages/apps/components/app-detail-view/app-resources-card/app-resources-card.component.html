@@ -2,28 +2,35 @@
 
 <div class="app-list-item">
   <span class="label">{{ 'CPU Usage' | translate }}:</span>
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else cpu"></ngx-skeleton-loader>
-  <ng-template #cpu>
+  @if (isLoading$ | async) {
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+  } @else {
     <div>{{ "{cpuPercentage}% Avg. Usage" | translate: { cpuPercentage } }}</div>
-  </ng-template>
+  }
 </div>
 <div class="app-list-item">
   <span class="label">{{ 'Memory Usage' | translate }}:</span>
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else memoryUsage"></ngx-skeleton-loader>
-  <ng-template #memoryUsage>
-    <ng-container *ngIf="memoryUsed && memoryTotal; else notAvailable">
+  @if (isLoading$ | async) {
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+  } @else {
+    @if (memoryUsed && memoryTotal) {
       {{ memoryUsed | ixFileSize }} / {{ memoryTotal | ixFileSize }}
-    </ng-container>
-  </ng-template>
+    } @else {
+      {{ 'N/A' | translate }}
+    }
+  }
 </div>
 <div class="app-list-item">
   <span class="label">{{ 'Pool' | translate }}:</span>
-  <ngx-skeleton-loader *ngIf="isLoading$ | async; else selectedPool"></ngx-skeleton-loader>
-  <ng-template #selectedPool>
-    <ng-container *ngIf="(kubernetesStore.selectedPool$ | async) as selectedPool; else notAvailable">
+  @if (isLoading$ | async) {
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+  } @else {
+    @if ((kubernetesStore.selectedPool$ | async); as selectedPool) {
       {{ selectedPool }}
-    </ng-container>
-  </ng-template>
+    } @else {
+      {{ 'N/A' | translate }}
+    }
+  }
 </div>
 <div class="app-list-item">
   <span class="label">{{ 'Available Space' | translate }}:</span>
@@ -32,6 +39,3 @@
   </span>
 </div>
 
-<ng-template #notAvailable>
-  {{ 'N/A' | translate }}
-</ng-template>

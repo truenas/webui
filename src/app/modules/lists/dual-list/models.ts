@@ -23,10 +23,6 @@ export class ListSelection<T> {
     }
   }
 
-  selectAll(): void {
-    this._selectedItems = this.totalItems;
-  }
-
   unselect(itemToUnselect: T): void {
     if (!this.isSelected(itemToUnselect)) {
       throw new Error('Cannot unselect an item that is not selected');

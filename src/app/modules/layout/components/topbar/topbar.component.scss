@@ -1,4 +1,4 @@
-@import 'scss-imports/splitview';
+@import 'scss-imports/variables';
 
 :host {
   position: fixed;
@@ -21,7 +21,7 @@
     @media (max-width: $breakpoint-tablet) {
       background-color: var(--topbar);
       bottom: 0;
-      height: 48px;
+      height: $topbar-mobile-height;
       left: 0;
       padding: 0 16px;
       place-content: space-around;
@@ -29,7 +29,7 @@
       width: 100%;
 
       &.has-console-footer {
-        bottom: 47px;
+        bottom: $console-footer-height;
       }
     }
 

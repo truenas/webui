@@ -1,0 +1,18 @@
+<div
+  class="slots"
+  [class.high-count]="slots().length > highCountThreshold"
+>
+  @for (slot of slots(); track slot.drive_bay_number) {
+    <a
+      class="slot"
+      [class.selected]="slot.drive_bay_number === selectedSlot()?.drive_bay_number"
+      [class.static]="!enableMouseEvents()"
+      [ixTest]="['enclosure-slot', slot.drive_bay_number]"
+      [attr.aria-label]="'Drive Bay {n}' | translate: { n: slot.drive_bay_number }"
+      (click)="selectedSlot.set(slot)"
+    >
+      <span class="background" [style.background-color]="slotTintFn()(slot)"></span>
+      <span class="number">{{ slot.drive_bay_number }}</span>
+    </a>
+  }
+</div>

@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, inject, input,
   signal,
@@ -15,7 +14,7 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./app-card-logo.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NgIf, LazyLoadImageModule],
+  imports: [LazyLoadImageModule],
   providers: [{ provide: LAZYLOAD_IMAGE_HOOKS, useClass: ScrollHooks }],
 })
 export class AppCardLogoComponent {

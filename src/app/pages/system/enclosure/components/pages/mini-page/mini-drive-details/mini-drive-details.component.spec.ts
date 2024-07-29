@@ -1,8 +1,10 @@
 import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import {
   MiniDriveDetailsComponent,
 } from 'app/pages/system/enclosure/components/pages/mini-page/mini-drive-details/mini-drive-details.component';
@@ -15,6 +17,7 @@ describe('MiniDriveDetailsComponent', () => {
     model: 'A3',
     rotationrate: 7200,
     serial: '12345',
+    supports_identify_light: true,
     pool_info: {
       pool_name: 'pool1',
       disk_status: EnclosureDiskStatus.Online,
@@ -26,6 +29,9 @@ describe('MiniDriveDetailsComponent', () => {
 
   const createComponent = createComponentFactory({
     component: MiniDriveDetailsComponent,
+    declarations: [
+      MockComponent(IdentifyLightComponent),
+    ],
     imports: [
       MapValuePipe,
     ],
@@ -38,8 +44,8 @@ describe('MiniDriveDetailsComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
     selectedSlotSignal.set(slot);
+    spectator = createComponent();
     getItemValue = getItemValueFactory(spectator);
   });
 
@@ -78,5 +84,9 @@ describe('MiniDriveDetailsComponent', () => {
     spectator.detectChanges();
 
     expect(getItemValue('Pool:')).toMatch('Disk not attached to any pools.');
+  });
+
+  it('shows identify light when enclosure slot has support for it', () => {
+    expect(spectator.query(IdentifyLightComponent)).toExist();
   });
 });

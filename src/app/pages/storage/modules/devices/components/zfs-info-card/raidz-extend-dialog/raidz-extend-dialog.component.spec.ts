@@ -18,7 +18,7 @@ import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unus
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   RaidzExtendDialogComponent, RaidzExtendDialogParams,
@@ -36,7 +36,7 @@ describe('RaidzExtendDialogComponent', () => {
       IxFormsModule,
       ReactiveFormsModule,
       UnusedDiskSelectComponent,
-      IxFileSizePipe,
+      FileSizePipe,
     ],
     providers: [
       mockAuth(),

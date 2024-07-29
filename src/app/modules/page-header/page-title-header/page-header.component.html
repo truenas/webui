@@ -1,7 +1,7 @@
 <div class="header-container">
   <ix-breadcrumb class="breadcrumbs"></ix-breadcrumb>
   <div class="title-container">
-    <div fxLayout="row" fxLayoutAlign="center center">
+    <div class="title-and-indicator">
       <h1>{{ pageTitle ? (pageTitle | translate) : (currentTitle$ | async) | translate }}</h1>
       @if (hasNewIndicator$ | async) {
         <ix-new-page-badge></ix-new-page-badge>

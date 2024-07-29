@@ -10,6 +10,7 @@ import { environmentTemplate, environmentTs } from './variables';
 
 interface ConfigVariables {
   remote: string;
+  buildYear: number;
   mockConfig: {
     enabled: boolean;
     controllerModel: string;
@@ -20,6 +21,7 @@ interface ConfigVariables {
 
 const defaults: ConfigVariables = {
   remote: '_REMOTE_',
+  buildYear: new Date().getFullYear(),
   mockConfig: {
     enabled: false,
     controllerModel: EnclosureModel.M40,
@@ -37,12 +39,9 @@ export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void
   const configTemplate = getConfigTemplate();
   const configToWrite = configTemplate
     .replace('_REMOTE_', stringify(valuesToWrite.remote))
+    .replace('_BUILD_YEAR_', stringify(valuesToWrite.buildYear))
     .replace('_MOCK_ENABLED_', stringify(Boolean(valuesToWrite.mockConfig.enabled)))
-    .replace('_MOCK_CONTROLLER_', printEnum({
-      enumName: 'EnclosureModel',
-      enum: EnclosureModel,
-      value: valuesToWrite.mockConfig.controllerModel,
-    }))
+    .replace('_MOCK_CONTROLLER_', printModel(valuesToWrite.mockConfig.controllerModel))
     .replace('_MOCK_EXPANSIONS_', printEnumArray({
       enumName: 'EnclosureModel',
       enum: EnclosureModel,
@@ -71,8 +70,20 @@ function stringify(value: unknown): string {
   return JSON.stringify(value);
 }
 
+function printModel(value: string): string {
+  if (value.startsWith('Fake')) {
+    return `'${value}' as unknown as EnclosureModel`;
+  }
+
+  return printEnum({
+    value,
+    enum: EnclosureModel,
+    enumName: 'EnclosureModel',
+  });
+}
+
 function printEnumArray(options: { enumName: string; enum: Record<string, string>; values: string[] }): string {
-  return `[${options.values.map((value) => printEnum({ enumName: options.enumName, enum: options.enum, value })).join(', ')}]`;
+  return `[${options.values.map((value) => printModel(value)).join(', ')}]`;
 }
 
 function printEnum(options: { enumName: string; enum: Record<string, string>; value: string }): string {

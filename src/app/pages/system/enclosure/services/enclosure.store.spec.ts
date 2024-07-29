@@ -1,48 +1,58 @@
-import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
+import {
+  createServiceFactory,
+  mockProvider,
+  SpectatorService,
+} from '@ngneat/spectator/jest';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import {
-  DashboardEnclosure, DashboardEnclosureElements, DashboardEnclosureSlot, EnclosureVdevDisk,
+  DashboardEnclosure,
+  DashboardEnclosureElements,
+  DashboardEnclosureSlot, EnclosureVdevDisk,
 } from 'app/interfaces/enclosure.interface';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { DisksUpdateService } from 'app/services/disks-update.service';
+import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
+import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('EnclosureStore', () => {
   let spectator: SpectatorService<EnclosureStore>;
-
   const enclosures = [
     {
-      id: 'enclosure1',
+      id: 'enc1',
       elements: {
         [EnclosureElementType.ArrayDeviceSlot]: {
-          1: { model: 'test1' } as DashboardEnclosureSlot,
-          2: { model: 'test2' } as DashboardEnclosureSlot,
+          1: {
+            drive_bay_number: 1,
+            pool_info: {
+              pool_name: 'pool1',
+            },
+          } as DashboardEnclosureSlot,
         },
       } as DashboardEnclosureElements,
     },
     {
-      id: 'enclosure2',
+      id: 'enc2',
       elements: {
         [EnclosureElementType.ArrayDeviceSlot]: {
-          3: { model: 'test3' } as DashboardEnclosureSlot,
-          4: { model: 'test4' } as DashboardEnclosureSlot,
+          4: {
+            drive_bay_number: 4,
+            pool_info: {
+              pool_name: 'pool2',
+            },
+          } as DashboardEnclosureSlot,
         },
       } as DashboardEnclosureElements,
     },
   ] as DashboardEnclosure[];
-
   const createService = createServiceFactory({
     service: EnclosureStore,
     providers: [
       mockWebSocket([
         mockCall('webui.enclosure.dashboard', enclosures),
       ]),
-      mockProvider(ThemeService, {
-        getRgbBackgroundColorByIndex: () => [0, 0, 0],
-      }),
-      mockProvider(DisksUpdateService),
+      mockProvider(ThemeService),
     ],
   });
 
@@ -51,38 +61,111 @@ describe('EnclosureStore', () => {
     spectator.service.initiate();
   });
 
-  it('calls webui.enclosure.dashboard when loading data', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
-  });
+  describe('initiate', () => {
+    it('loads dashboard information', () => {
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
 
-  describe('addListenerForDiskUpdates', () => {
-    it('adds subscriber', () => {
-      spectator.service.addListenerForDiskUpdates();
-      expect(spectator.inject(DisksUpdateService).addSubscriber).toHaveBeenCalled();
+      expect(spectator.service.state()).toMatchObject({
+        enclosures,
+        isLoading: false,
+        selectedEnclosureIndex: 0,
+        selectedSlotNumber: null,
+        selectedView: EnclosureView.Pools,
+        selectedSide: undefined,
+      });
     });
   });
 
-  describe('removeListenerForDiskUpdates', () => {
-    it('removes subscriber', () => {
-      spectator.service.removeListenerForDiskUpdates();
-      expect(spectator.inject(DisksUpdateService).removeSubscriber).toHaveBeenCalled();
+  describe('selectEnclosure', () => {
+    it('selects new enclosure', () => {
+      spectator.service.selectEnclosure('enc2');
+
+      expect(spectator.service.state()).toMatchObject({
+        enclosures,
+        isLoading: false,
+        selectedEnclosureIndex: 1,
+        selectedSlotNumber: null,
+        selectedView: EnclosureView.Pools,
+        selectedSide: undefined,
+      });
+    });
+  });
+
+  describe('renameSelectedEnclosure', () => {
+    it('renames selected enclosure', () => {
+      spectator.service.renameSelectedEnclosure('new label');
+
+      expect(spectator.service.state().enclosures[0].label).toBe('new label');
+    });
+  });
+
+  describe('selectSlot', () => {
+    it('updates selected slot', () => {
+      const slot = enclosures[0].elements[EnclosureElementType.ArrayDeviceSlot][1];
+
+      spectator.service.selectSlot(slot.drive_bay_number);
+
+      expect(spectator.service.state().selectedSlotNumber).toBe(slot.drive_bay_number);
     });
   });
 
   describe('selectSlotByVdevDisk', () => {
-    it('selects enclosure and slot', () => {
-      expect(spectator.service.selectedEnclosure()).toEqual(enclosures[0]);
-      expect(spectator.service.selectedSlot()).toBeUndefined();
+    it('switches to vdev disk enclosure and slot', () => {
+      spectator.service.selectSlotByVdevDisk({
+        slot: 4,
+        enclosure_id: 'enc2',
+      } as EnclosureVdevDisk);
 
-      const slot = 4;
-      const vdevDisk = {
-        enclosure_id: 'enclosure2',
-        slot: slot + 1,
-      } as EnclosureVdevDisk;
-      spectator.service.selectSlotByVdevDisk(vdevDisk);
+      expect(spectator.service.state()).toMatchObject({
+        enclosures,
+        isLoading: false,
+        selectedEnclosureIndex: 1,
+        selectedSlotNumber: enclosures[1].elements[EnclosureElementType.ArrayDeviceSlot][4].drive_bay_number,
+        selectedView: EnclosureView.Pools,
+        selectedSide: undefined,
+      });
+    });
+  });
 
-      expect(spectator.service.selectedEnclosure()).toEqual(enclosures[1]);
-      expect(spectator.service.selectedSlot()).toEqual(enclosures[1].elements['Array Device Slot'][slot]);
+  describe('selectView', () => {
+    it('updates selected view', () => {
+      spectator.service.selectView(EnclosureView.Expanders);
+
+      expect(spectator.service.state().selectedView).toBe(EnclosureView.Expanders);
+    });
+  });
+
+  describe('selectSide', () => {
+    it('updates selected side', () => {
+      spectator.service.selectSide(EnclosureSide.Internal);
+
+      expect(spectator.service.state().selectedSide).toBe(EnclosureSide.Internal);
+    });
+  });
+
+  describe('selectors', () => {
+    it('selectedEnclosureSlots - returns slots of currently selected enclosure', () => {
+      spectator.service.initiate();
+
+      spectator.service.selectEnclosure('enc2');
+
+      expect(spectator.service.selectedEnclosureSlots()).toMatchObject([{
+        drive_bay_number: 4,
+        pool_info: { pool_name: 'pool2' },
+      }]);
+    });
+
+    it('poolColors - returns dictionary of pools and their colors', () => {
+      jest.spyOn(spectator.inject(ThemeService), 'getRgbBackgroundColorByIndex').mockImplementation((index) => {
+        return ['red', 'blue', 'green'][index];
+      });
+
+      const poolColors = spectator.service.poolColors();
+
+      expect(poolColors).toEqual({
+        pool1: 'red',
+        pool2: 'blue',
+      });
     });
   });
 });

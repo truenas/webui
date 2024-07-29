@@ -8,7 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ConfirmDialogComponent } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/dialog/components/error-dialog/error-dialog.component';

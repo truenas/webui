@@ -19,41 +19,49 @@
       (click)="changeFiltersVisible()"
     >
       {{ 'Filters' | translate }}
-      <ix-icon *ngIf="!showFilters" name="expand_more"></ix-icon>
-      <ix-icon *ngIf="showFilters" name="expand_less"></ix-icon>
+      @if (showFilters) {
+        <ix-icon name="expand_less"></ix-icon>
+      } @else {
+        <ix-icon name="expand_more"></ix-icon>
+      }
     </button>
   </div>
-  <div *ngIf="showFilters" class="filters-container">
-    <div class="filters">
-      <ix-filter-select-list
-        class="sort"
-        [formControl]="form.controls.sort"
-        [label]="'Sort' | translate"
-        [options]="sortOptions$"
-      ></ix-filter-select-list>
-      <div class="categories">
-        <ix-chips
-          [formControl]="form.controls.categories"
-          [label]="'Categories' | translate"
-          [autocompleteProvider]="categoriesProvider$"
-          [allowNewEntries]="false"
-        ></ix-chips>
+  @if (showFilters) {
+    <div class="filters-container">
+      <div class="filters">
+        <ix-filter-select-list
+          class="sort"
+          [formControl]="form.controls.sort"
+          [label]="'Sort' | translate"
+          [options]="sortOptions$"
+        ></ix-filter-select-list>
+        <div class="categories">
+          <ix-chips
+            [formControl]="form.controls.categories"
+            [label]="'Categories' | translate"
+            [autocompleteProvider]="categoriesProvider$"
+            [allowNewEntries]="false"
+          ></ix-chips>
+        </div>
       </div>
     </div>
-  </div>
+  }
 </div>
 
 <div class="header-numbers">
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
     <a class="header-link" ixTest="refresh-charts">
-      <a
-        *ngIf="areLoaded$ | async; else loader"
-        ixTest="available-apps"
-        [routerLink]="['/apps/available', AppExtraCategory.All]"
-      >
-        <h2>{{ (availableApps$ | async).length }}</h2>
-      </a>
+      @if (areLoaded$ | async) {
+        <a
+          ixTest="available-apps"
+          [routerLink]="['/apps/available', AppExtraCategory.All]"
+        >
+          <h2>{{ (availableApps$ | async).length }}</h2>
+        </a>
+      } @else {
+        <ngx-skeleton-loader></ngx-skeleton-loader>
+      }
       <a
         *ixRequiresRoles="requiredRoles"
         ixTest="refresh-charts"
@@ -68,12 +76,13 @@
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
     <a class="header-link" ixTest="manage-installed-apps" [routerLink]="['/apps/installed']">
-      <h2 *ngIf="areLoaded$ | async; else loader">{{ (installedApps$ | async).length }}</h2>
+      @if (areLoaded$ | async) {
+        <h2>{{ (installedApps$ | async).length }}</h2>
+      } @else {
+        <ngx-skeleton-loader></ngx-skeleton-loader>
+      }
       <span>{{ 'Manage Installed Apps' | translate }}</span>
     </a>
   </div>
 </div>
 
-<ng-template #loader>
-  <ngx-skeleton-loader></ngx-skeleton-loader>
-</ng-template>

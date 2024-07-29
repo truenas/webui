@@ -6,7 +6,7 @@
     <div class="exist-content">
       <h4 class="label">{{ 'Existing presets' | translate }}:</h4>
       <div class="presets">
-        @for (preset of presets; track preset) {
+        @for (preset of presets; track preset.id) {
           <div class="preset" [ngClass]="{ 'preset-disabled': !isCurrentAclType(preset.acltype) }">
             <div class="preset-name">{{ preset.name }}</div>
             <div class="preset-type">{{ preset.acltype }}</div>

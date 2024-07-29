@@ -13,10 +13,11 @@
   (input)="onInput(ixSearchInput.value)"
 />
 
-<span
-  *ngIf="!!ixSearchInput.value"
-  class="reset-icon reset-input"
-  (click)="onResetInput();"
->
-  <ix-icon name="mdi-close-circle"></ix-icon>
-</span>
+@if (!!ixSearchInput.value) {
+  <span
+    class="reset-icon reset-input"
+    (click)="onResetInput();"
+  >
+    <ix-icon name="mdi-close-circle"></ix-icon>
+  </span>
+}

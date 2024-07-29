@@ -4,14 +4,14 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SupportConfigUpdate } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { SupportConfig, SupportConfigUpdate } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
@@ -104,10 +104,8 @@ export class ProactiveComponent implements OnInit {
             this.supportUnavailable();
             return;
           }
-          this.form.patchValue({
-            ...config,
-            enabled: isEnabled,
-          });
+
+          this.patchFormValues(config, isEnabled);
         },
         error: (error: unknown) => {
           this.isFormDisabled = true;
@@ -125,5 +123,20 @@ export class ProactiveComponent implements OnInit {
       helptext.proactive.dialog_unavailable_title,
       helptext.proactive.dialog_unavailable_warning,
     );
+  }
+
+  patchFormValues(config: Partial<SupportConfig>, isEnabled: boolean): void {
+    const updateValues: Partial<SupportConfig> = {};
+
+    Object.keys(config).forEach((key: keyof SupportConfig) => {
+      const control = (this.form.controls[key as never] || {}) as FormControl;
+      if (config[key] !== control.value) {
+        updateValues[key] = config[key] as never;
+      }
+    });
+
+    updateValues.enabled = isEnabled;
+
+    this.form.patchValue(updateValues);
   }
 }

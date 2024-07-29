@@ -11,15 +11,26 @@
           ></ix-fake-progress-bar>
         }
         <div class="container">
-          @if (isExpandersView()) {
-            <ix-sas-expander-status-view
-              [enclosure]="enclosure()"
-            ></ix-sas-expander-status-view>
-          } @else {
-            <ix-enclosure-view [enclosure]="enclosure()"></ix-enclosure-view>
+          @switch (selectedView()) {
+            @case (EnclosureView.Pools) {
+              <ix-pools-view></ix-pools-view>
+            }
+            @case (EnclosureView.DiskStatus) {
+              <ix-status-view></ix-status-view>
+            }
+            @case (EnclosureView.Expanders) {
+              <ix-sas-expander-status-view
+                [enclosure]="enclosure()"
+              ></ix-sas-expander-status-view>
+            }
           }
         </div>
-        <ix-disks-overview></ix-disks-overview>
+
+        @if (selectedSlot()) {
+          <ix-disk-details-overview></ix-disk-details-overview>
+        } @else {
+          <ix-disks-overview></ix-disks-overview>
+        }
       </mat-card-content>
     </mat-card>
   </div>

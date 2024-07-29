@@ -20,6 +20,7 @@ export function makeArrayDeviceSlots(
       status: EnclosureStatus.Ok,
       dev: null,
       supports_identify_light: options.supportsIdentifyLight ?? false,
+      drive_bay_light_status: null,
       size: null,
       model: null,
       serial: null,

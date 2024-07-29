@@ -19,9 +19,8 @@
   ::ng-deep {
     .overlay-rect {
       cursor: pointer;
-      fill: transparent;
       fill: var(--black);
-      transition: stroke 0.2s ease, stroke-width 0.2s ease-in-out, stroke-dasharray 0.2s ease-in-out, fill-opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
+      transition: fill-opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
 
       &:hover {
         fill: var(--primary) !important;

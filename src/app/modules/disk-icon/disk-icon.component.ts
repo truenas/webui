@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 
 @Component({
   selector: 'ix-disk-icon',
@@ -12,7 +12,7 @@ import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe
   standalone: true,
   imports: [
     NgIf,
-    IxFileSizePipe,
+    FileSizePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

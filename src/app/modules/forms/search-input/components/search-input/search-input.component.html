@@ -1,15 +1,14 @@
-<ix-advanced-search
-  *ngIf="isInAdvancedMode; else simpleSearch"
-  #advancedSearch
-  [query]="advancedQuery"
-  [properties]="properties"
-  [placeholder]="advancedSearchPlaceholder"
-  (paramsChange)="advancedSearchUpdated($event)"
-  (switchToBasic)="toggleAdvancedMode()"
-  (runSearch)="runSearch.emit()"
-></ix-advanced-search>
-
-<ng-template #simpleSearch>
+@if (isInAdvancedMode) {
+  <ix-advanced-search
+    #advancedSearch
+    [query]="advancedQuery"
+    [properties]="properties"
+    [placeholder]="advancedSearchPlaceholder"
+    (paramsChange)="advancedSearchUpdated($event)"
+    (switchToBasic)="toggleAdvancedMode()"
+    (runSearch)="runSearch.emit()"
+  ></ix-advanced-search>
+} @else {
   <ix-basic-search
     [query]="basicQuery"
     [allowAdvanced]="allowAdvanced"
@@ -17,4 +16,5 @@
     (switchToAdvanced)="toggleAdvancedMode()"
     (runSearch)="runSearch.emit()"
   ></ix-basic-search>
-</ng-template>
+}
+

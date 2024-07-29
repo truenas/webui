@@ -8,7 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';

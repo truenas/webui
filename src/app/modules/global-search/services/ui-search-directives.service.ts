@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 

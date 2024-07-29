@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
@@ -25,8 +25,9 @@ import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { DashboardComponent } from 'app/pages/dashboard-old/components/dashboard/dashboard.component';
@@ -77,11 +78,12 @@ import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usa
     EmptyComponent,
     InterfaceStatusIconComponent,
     UptimePipe,
-    IxFileSizePipe,
+    FileSizePipe,
     FormatDateTimePipe,
     CopyButtonComponent,
     ViewChartAreaComponent,
     ViewChartGaugeComponent,
+    NetworkSpeedPipe,
   ],
   declarations: [
     DashboardComponent,

@@ -9,7 +9,7 @@
     <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
   </button>
   <mat-menu #elementsMenu="matMenu">
-    @for (view of views(); track view) {
+    @for (view of views(); track view.label) {
       <button
         mat-menu-item
         [ixTest]="view.label"

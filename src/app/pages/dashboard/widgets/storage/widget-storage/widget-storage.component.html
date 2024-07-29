@@ -15,131 +15,140 @@
       </button>
     </div>
     <div [class]="['container', size()]">
-      <mat-grid-list
-        *ngIf="!isLoading(); else loader"
-        [cols]="isTwoTilesInRow ? 2 : 1"
-        [gutterSize]="isThreeTilesInColumn ? '7px' : '16px'"
-        [rowHeight]="poolsInfo().length ? (isThreeTilesInColumn ? '100px' : '150px') : '300px'"
-      >
-        <mat-grid-tile *ngFor="let poolInfo of poolsInfo().slice(0, 6)" class="grid-tile">
-          <div class="tile" [class.skimpy-tile]="isThreeTilesInColumn">
-            <div class="tile-header">
-              <h4 class="tile-header-title">
-                <span
-                  matTooltipPosition="above"
-                  [matTooltipPositionAtOrigin]="true"
-                  [matTooltip]="poolInfo.name"
-                >
-                  {{ poolInfo.name }}
-                </span>
-              </h4>
-            </div>
-            <div class="tile-content">
-              <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
-                <li>
-                  <span [class]="['icon', poolInfo.status.level]">
-                    <ix-icon [name]="poolInfo.status.icon"></ix-icon>
-                  </span>
-                  <span class="label"> {{ poolInfo.status.label }}: </span>
-                  <span class="value"> {{ poolInfo.status.value }} </span>
-                </li>
-                <li>
-                  <span [class]="['icon', poolInfo.usedSpace.level]">
-                    <ix-icon [name]="poolInfo.usedSpace.icon"></ix-icon>
-                  </span>
-                  <span class="label">{{ poolInfo.usedSpace.label }}:</span>
-                  <span
-                    class="value"
-                    textLimiter
-                    [threshold]="25"
-                    [content]="poolInfo.usedSpace.value"
-                  ></span>
-                </li>
-                <li>
-                  <span [class]="['icon', poolInfo.disksWithError.level]">
-                    <ix-icon [name]="poolInfo.disksWithError.icon"></ix-icon>
-                  </span>
-                  <span class="label"> {{ poolInfo.disksWithError.label }}: </span>
-                  <span class="value"> {{ poolInfo.disksWithError.value }} </span>
-                </li>
-                <li *ngIf="!isThreeTilesInColumn && (isTwoTilesInRow || getColumnsInTile(poolInfo.name) === 1)">
-                  <span [class]="['icon', poolInfo.scan.level]">
-                    <ix-icon
-                      [name]="poolInfo.scan.icon"
-                      [matTooltip]="poolInfo.scan.value"
-                    ></ix-icon>
-                  </span>
-                  <span class="label"> {{ poolInfo.scan.label }} </span>
-                  <span
-                    *ngIf="!isTwoTilesInRow && getColumnsInTile(poolInfo.name) === 1"
-                    class="value"
-                  >{{ poolInfo.scan.value }}</span>
-                </li>
-              </ul>
-              <ng-container *ngIf="getColumnsInTile(poolInfo.name) > 1">
-                <div class="divider"></div>
-                <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
-                  <li>
-                    <span class="label"> {{ poolInfo.scan.label }}: </span>
-                    <span [class]="['icon', poolInfo.scan.level]">
-                      <ix-icon
-                        [name]="poolInfo.scan.icon"
-                        [matTooltip]="poolInfo.scan.value"
-                      ></ix-icon>
+      @if (!isLoading()) {
+        <mat-grid-list
+          [cols]="isTwoTilesInRow ? 2 : 1"
+          [gutterSize]="isThreeTilesInColumn ? '7px' : '16px'"
+          [rowHeight]="poolsInfo().length ? (isThreeTilesInColumn ? '100px' : '150px') : '300px'"
+        >
+          @for (poolInfo of poolsInfo().slice(0, 6); track poolInfo) {
+            <mat-grid-tile class="grid-tile">
+              <div class="tile" [class.skimpy-tile]="isThreeTilesInColumn">
+                <div class="tile-header">
+                  <h4 class="tile-header-title">
+                    <span
+                      matTooltipPosition="above"
+                      [matTooltipPositionAtOrigin]="true"
+                      [matTooltip]="poolInfo.name"
+                    >
+                      {{ poolInfo.name }}
                     </span>
-                  </li>
-                  <li>
-                    <span class="label"> {{ 'Free Space' | translate }}: </span>
-                    <span class="value"> {{ poolInfo.freeSpace }} </span>
-                  </li>
-                  <li>
-                    <span class="label"> {{ 'Total Disks' | translate }}: </span>
-                    <span class="value"> {{ poolInfo.totalDisks }} </span>
-                  </li>
-                </ul>
-              </ng-container>
-              <ng-container *ngIf="getColumnsInTile(poolInfo.name) > 2">
-                <div class="divider"></div>
-                <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
-                  <li>
-                    <span class="label"> {{ 'Data' | translate }}: </span>
-                    <span class="value"> {{ poolInfo.topology.data.length }} vdev </span>
-                  </li>
-                  <li>
-                    <span class="label"> {{ 'Caches' | translate }}: </span>
-                    <span class="value"> {{ poolInfo.topology.cache.length }} </span>
-                  </li>
-                  <li>
-                    <span class="label"> {{ 'Spares' | translate }}: </span>
-                    <span class="value"> {{ poolInfo.topology.spare.length }} </span>
-                  </li>
-                </ul>
-              </ng-container>
-            </div>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile *ngIf="showCreatePool" class="grid-tile">
-          <a
-            *ixRequiresRoles="requiredRoles"
-            class="create-new"
-            ixTest="create-pool"
-            [routerLink]="['/storage', 'create']"
-          >
-            <ix-icon name="mdi-database"></ix-icon>
-            <span>{{ 'Create Pool' | translate }}</span>
-          </a>
-        </mat-grid-tile>
-      </mat-grid-list>
-      <ng-template #loader>
-        <mat-grid-list gutterSize="7px" rowHeight="100px" [cols]="2">
-          <mat-grid-tile *ngFor="let tile of [0, 1, 2, 3, 4, 5]">
-            <ngx-skeleton-loader
-              class="skeleton"
-              [theme]="{ width: '100%', height: '100px', background: 'var(--alt-bg2)', opacity: 0.25, margin: 0 }"
-            ></ngx-skeleton-loader>
-          </mat-grid-tile>
+                  </h4>
+                </div>
+                <div class="tile-content">
+                  <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
+                    <li>
+                      <span [class]="['icon', poolInfo.status.level]">
+                        <ix-icon [name]="poolInfo.status.icon"></ix-icon>
+                      </span>
+                      <span class="label"> {{ poolInfo.status.label }}: </span>
+                      <span class="value"> {{ poolInfo.status.value }} </span>
+                    </li>
+                    <li>
+                      <span [class]="['icon', poolInfo.usedSpace.level]">
+                        <ix-icon [name]="poolInfo.usedSpace.icon"></ix-icon>
+                      </span>
+                      <span class="label">{{ poolInfo.usedSpace.label }}:</span>
+                      <span
+                        class="value"
+                        textLimiter
+                        [threshold]="25"
+                        [content]="poolInfo.usedSpace.value"
+                      ></span>
+                    </li>
+                    <li>
+                      <span [class]="['icon', poolInfo.disksWithError.level]">
+                        <ix-icon [name]="poolInfo.disksWithError.icon"></ix-icon>
+                      </span>
+                      <span class="label"> {{ poolInfo.disksWithError.label }}: </span>
+                      <span class="value"> {{ poolInfo.disksWithError.value }} </span>
+                    </li>
+                    @if (!isThreeTilesInColumn && (isTwoTilesInRow || getColumnsInTile(poolInfo.name) === 1)) {
+                      <li>
+                        <span [class]="['icon', poolInfo.scan.level]">
+                          <ix-icon
+                            [name]="poolInfo.scan.icon"
+                            [matTooltip]="poolInfo.scan.value"
+                          ></ix-icon>
+                        </span>
+                        <span class="label"> {{ poolInfo.scan.label }} </span>
+                        @if (!isTwoTilesInRow && getColumnsInTile(poolInfo.name) === 1) {
+                          <span
+                            class="value"
+                          >{{ poolInfo.scan.value }}</span>
+                        }
+                      </li>
+                    }
+                  </ul>
+                  @if (getColumnsInTile(poolInfo.name) > 1) {
+                    <div class="divider"></div>
+                    <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
+                      <li>
+                        <span class="label"> {{ poolInfo.scan.label }}: </span>
+                        <span [class]="['icon', poolInfo.scan.level]">
+                          <ix-icon
+                            [name]="poolInfo.scan.icon"
+                            [matTooltip]="poolInfo.scan.value"
+                          ></ix-icon>
+                        </span>
+                      </li>
+                      <li>
+                        <span class="label"> {{ 'Free Space' | translate }}: </span>
+                        <span class="value"> {{ poolInfo.freeSpace }} </span>
+                      </li>
+                      <li>
+                        <span class="label"> {{ 'Total Disks' | translate }}: </span>
+                        <span class="value"> {{ poolInfo.totalDisks }} </span>
+                      </li>
+                    </ul>
+                  }
+                  @if (getColumnsInTile(poolInfo.name) > 2) {
+                    <div class="divider"></div>
+                    <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
+                      <li>
+                        <span class="label"> {{ 'Data' | translate }}: </span>
+                        <span class="value"> {{ poolInfo.topology.data.length }} vdev </span>
+                      </li>
+                      <li>
+                        <span class="label"> {{ 'Caches' | translate }}: </span>
+                        <span class="value"> {{ poolInfo.topology.cache.length }} </span>
+                      </li>
+                      <li>
+                        <span class="label"> {{ 'Spares' | translate }}: </span>
+                        <span class="value"> {{ poolInfo.topology.spare.length }} </span>
+                      </li>
+                    </ul>
+                  }
+                </div>
+              </div>
+            </mat-grid-tile>
+          }
+          @if (showCreatePool) {
+            <mat-grid-tile class="grid-tile">
+              <a
+                *ixRequiresRoles="requiredRoles"
+                class="create-new"
+                ixTest="create-pool"
+                [routerLink]="['/storage', 'create']"
+                >
+                <ix-icon name="mdi-database"></ix-icon>
+                <span>{{ 'Create Pool' | translate }}</span>
+              </a>
+            </mat-grid-tile>
+          }
         </mat-grid-list>
-      </ng-template>
+      } @else {
+        <mat-grid-list gutterSize="7px" rowHeight="100px" [cols]="2">
+          @for (tile of [0, 1, 2, 3, 4, 5]; track tile) {
+            <mat-grid-tile>
+              <ngx-skeleton-loader
+                class="skeleton"
+                [theme]="{ width: '100%', height: '100px', background: 'var(--alt-bg2)', opacity: 0.25, margin: 0 }"
+              ></ngx-skeleton-loader>
+            </mat-grid-tile>
+          }
+        </mat-grid-list>
+      }
     </div>
   </mat-card-content>
 </mat-card>

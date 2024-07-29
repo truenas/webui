@@ -10,14 +10,15 @@
         [options]="widgetCategoriesOptions()"
         [label]="'Widget Category' | translate"
       ></ix-select>
-      <ix-select
-        *ngIf="shouldShowType"
-        class="half-width"
-        formControlName="type"
-        [required]="true"
-        [options]="widgetTypesOptions()"
-        [label]="'Widget Type' | translate"
-      ></ix-select>
+      @if (shouldShowType) {
+        <ix-select
+          class="half-width"
+          formControlName="type"
+          [required]="true"
+          [options]="widgetTypesOptions()"
+          [label]="'Widget Type' | translate"
+        ></ix-select>
+      }
       <ng-container #settingsContainer></ng-container>
     </ix-fieldset>
   </div>

@@ -1,17 +1,17 @@
 <ix-page-header [title]="'Dashboard' | translate" [loading]="isLoading()">
-  <button
-    *ngIf="!isEditing(); else editingButtons"
-    mat-button
-    color="primary"
-    ixTest="configure-dashboard"
-    [ixUiSearch]="searchableElements.elements.configure"
-    [disabled]="isLoading()"
-    (click)="onConfigure()"
-  >
-    {{ 'Configure' | translate }}
-  </button>
-
-  <ng-template #editingButtons>
+  @if (!isEditing()) {
+    <button
+      *ixNewFeatureIndicator="newFeatureConfig"
+      mat-button
+      color="primary"
+      ixTest="configure-dashboard"
+      [ixUiSearch]="searchableElements.elements.configure"
+      [disabled]="isLoading()"
+      (click)="onConfigure()"
+    >
+      {{ 'Configure' | translate }}
+    </button>
+  } @else {
     <button
       mat-button
       class="add-button"
@@ -38,17 +38,16 @@
     >
       {{ 'Cancel' | translate }}
     </button>
-  </ng-template>
+  }
 </ix-page-header>
 
-<ngx-skeleton-loader
-  *ngIf="isLoadingFirstTime(); else widgets"
-  class="groups loading"
-  [count]="6"
-  [theme]="{ background: 'var(--alt-bg2)', opacity: 0.25, margin: 0 }"
-></ngx-skeleton-loader>
-
-<ng-template #widgets>
+@if (isLoadingFirstTime()) {
+  <ngx-skeleton-loader
+    class="groups loading"
+    [count]="6"
+    [theme]="{ background: 'var(--alt-bg2)', opacity: 0.25, margin: 0 }"
+  ></ngx-skeleton-loader>
+} @else {
   <div
     class="groups"
     ixDropGrid
@@ -56,7 +55,7 @@
     [ixUiSearch]="searchableElements.elements.dashboard"
     (ixDropGridModelChange)="onGroupsReordered($event)"
   >
-    <ng-container *ngIf="renderedGroups().length > 0; else noWidgets">
+    @if (renderedGroups().length > 0) {
       <div
         *ngFor="let group of renderedGroups(); index as i; trackBy: trackByFn"
         class="group-slot"
@@ -86,10 +85,10 @@
           ></ix-widget-group>
         </div>
       </div>
-    </ng-container>
+    } @else {
+      <ix-empty [conf]="emptyDashboardConf"></ix-empty>
+    }
   </div>
-</ng-template>
+}
 
-<ng-template #noWidgets>
-  <ix-empty [conf]="emptyDashboardConf"></ix-empty>
-</ng-template>
+

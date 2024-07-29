@@ -1,11 +1,12 @@
-<button
-  *ngIf="isIconShown"
-  mat-icon-button
-  id="dirservices-manager"
-  class="topbar-button-right"
-  ixTest="directory-services-status"
-  [matTooltip]="tooltips.directory_services_monitor | translate"
-  (click)="onIndicatorClicked()"
->
-  <ix-icon name="info"></ix-icon>
-</button>
+@if (isIconShown) {
+  <button
+    mat-icon-button
+    id="dirservices-manager"
+    class="topbar-button-right"
+    ixTest="directory-services-status"
+    [matTooltip]="tooltips.directory_services_monitor | translate"
+    (click)="onIndicatorClicked()"
+  >
+    <ix-icon name="info"></ix-icon>
+  </button>
+}

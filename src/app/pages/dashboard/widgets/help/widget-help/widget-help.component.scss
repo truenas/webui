@@ -1,4 +1,4 @@
-@import 'scss-imports/cssvars';
+@import 'scss-imports/variables';
 
 .card {
   height: 100%;
@@ -9,12 +9,31 @@
 
   .container {
     display: flex;
+    flex: 1;
     flex-direction: column;
-    padding-left: 21px;
-    row-gap: 20px;
 
-    &.full .icon-wrapper > a > span {
-      display: none;
+    &.full {
+      justify-content: space-between;
+      padding-left: 21px;
+
+      &.enterprise {
+        .lines {
+          padding: 32px 0;
+        }
+      }
+
+      .lines {
+        padding: 16px 0;
+        row-gap: 24px;
+
+        @media (max-width: $breakpoint-tablet) {
+          row-gap: 12px;
+        }
+      }
+
+      .open-source {
+        padding: 1rem 0.5rem;
+      }
     }
 
     &.half,
@@ -22,7 +41,21 @@
       @extend %half-and-quarter-size;
     }
 
+    &.half {
+      padding-bottom: 8px;
+    }
+
     &.quarter {
+      padding: 8px;
+
+      @media (max-width: $breakpoint-tablet) {
+        padding-bottom: 0;
+      }
+
+      &.enterprise {
+        padding: 16px 16px 0;
+      }
+
       @media (max-width: 767px) {
         .line-item .icon-wrapper a > span {
           display: none;
@@ -45,6 +78,12 @@
   }
 }
 
+.lines {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .line-item {
   display: flex;
   flex-direction: row;
@@ -61,6 +100,13 @@
   .icon-wrapper {
     flex: 1 1 100%;
     max-width: 10%;
+
+    a {
+      align-items: center;
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 
     .ix-icon {
       color: var(--accent-txt);
@@ -82,15 +128,17 @@
 
 .open-source {
   font-size: 0.75rem;
-  padding: 1rem 0.5rem;
   text-align: center;
 }
 
 %half-and-quarter-size {
-  flex-direction: row;
-  gap: 10px;
+  gap: 8px;
   justify-content: space-around;
-  padding-bottom: 10px;
+
+  .lines {
+    flex-direction: row;
+    justify-content: space-around;
+  }
 
   .line-item {
     gap: 10px;

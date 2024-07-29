@@ -1,10 +1,11 @@
-<ix-label
-  *ngIf="label || tooltip"
-  [label]="label"
-  [tooltip]="tooltip"
-  [required]="required"
-  [ixTestOverride]="controlDirective.name"
-></ix-label>
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
 
 <div class="input-container" [class.disabled]="isDisabled">
   <div>
@@ -22,21 +23,25 @@
       />
     </label>
   </div>
-  <div *ngIf="value && value.length">
-    <p *ngFor="let file of value" class="file">
-      <span
-        tabindex="0"
-        class="file-action"
-        [matTooltip]="'Remove file' | translate"
-        (click)="removeFile(file)"
-        (keydown.enter)="removeFile(file)"
-      >
-        <ix-icon name="close"></ix-icon>
-      </span>
-      <span class="file-name">{{ file.name }}</span>
-      <span class="file-size">{{ formatSize(file.size) }}</span>
-    </p>
-  </div>
+  @if (value && value.length) {
+    <div>
+      @for (file of value; track file) {
+        <p class="file">
+          <span
+            tabindex="0"
+            class="file-action"
+            [matTooltip]="'Remove file' | translate"
+            (click)="removeFile(file)"
+            (keydown.enter)="removeFile(file)"
+          >
+            <ix-icon name="close"></ix-icon>
+          </span>
+          <span class="file-name">{{ file.name }}</span>
+          <span class="file-size">{{ formatSize(file.size) }}</span>
+        </p>
+      }
+    </div>
+  }
 </div>
 <ix-errors
   [control]="controlDirective.control"

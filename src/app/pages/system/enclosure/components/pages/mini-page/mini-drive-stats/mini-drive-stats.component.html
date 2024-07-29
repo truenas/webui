@@ -18,16 +18,16 @@
     } @else {
       <ul>
         <li class="item">
-          <div class="item-name">{{ 'Read Errors' | translate }}:</div>
-          <div class="item-value">{{ slot().pool_info.disk_read_errors | number }}</div>
+          <div class="label">{{ 'Read Errors' | translate }}:</div>
+          <div class="value">{{ slot().pool_info.disk_read_errors | number }}</div>
         </li>
         <li class="item">
-          <div class="item-name">{{ 'Write Errors' | translate }}:</div>
-          <div class="item-value">{{ slot().pool_info.disk_write_errors | number }}</div>
+          <div class="label">{{ 'Write Errors' | translate }}:</div>
+          <div class="value">{{ slot().pool_info.disk_write_errors | number }}</div>
         </li>
         <li class="item">
-          <div class="item-name">{{ 'Checksum Errors' | translate }}:</div>
-          <div class="item-value">{{ slot().pool_info.disk_checksum_errors | number }}</div>
+          <div class="label">{{ 'Checksum Errors' | translate }}:</div>
+          <div class="value">{{ slot().pool_info.disk_checksum_errors | number }}</div>
         </li>
       </ul>
     }

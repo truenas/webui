@@ -4,17 +4,18 @@
       <h3>{{ 'App' | translate }}</h3>
 
       <div *ixWithLoadingState="application() as app" class="controls">
-        <button
-          *ngIf="app?.portals"
-          mat-icon-button
-          ixTest="apps-web-portal"
-          matTooltipPosition="above"
-          [attr.aria-label]="'Web Portal' | translate"
-          [matTooltip]="'Web Portal' | translate"
-          (click)="openWebPortal(app)"
-        >
-          <ix-icon name="mdi-web"></ix-icon>
-        </button>
+        @if (app?.portals) {
+          <button
+            mat-icon-button
+            ixTest="apps-web-portal"
+            matTooltipPosition="above"
+            [attr.aria-label]="'Web Portal' | translate"
+            [matTooltip]="'Web Portal' | translate"
+            (click)="openWebPortal(app)"
+          >
+            <ix-icon name="mdi-web"></ix-icon>
+          </button>
+        }
 
         <button
           mat-icon-button
@@ -88,20 +89,37 @@
                 <div class="in-out-row">
                   <span>{{ 'In' | translate }}:</span>
                   <span *ixWithLoadingState="stats() as stats">
-                    {{ stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                    {{ stats.network.incoming | ixNetworkSpeed }}
                   </span>
                 </div>
                 <div class="in-out-row">
                   <span>{{ 'Out' | translate }}:</span>
                   <span *ixWithLoadingState="stats() as stats">
-                    {{ stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                    {{ stats.network.outgoing | ixNetworkSpeed }}
                   </span>
                 </div>
               </div>
               <small>{{ '1m Average' | translate }}</small>
             </div>
             <div class="chart-graph">
-              <ng-container *ngIf="(stats() | async).isLoading; then chartLoader; else networkChart"></ng-container>
+              @if ((stats() | async).isLoading) {
+                <ngx-skeleton-loader
+                  class="skeleton"
+                  [theme]="{
+                    width: '292px',
+                    height: '92px',
+                    background: 'var(--alt-bg2)',
+                    opacity: 0.25,
+                    margin: 0,
+                  }"
+                ></ngx-skeleton-loader>
+              } @else {
+                <ix-network-chart
+                  [showLegend]="false"
+                  [data]="networkChartData()"
+                  [aspectRatio]="3"
+                ></ix-network-chart>
+              }
             </div>
           </div>
         </div>
@@ -129,20 +147,37 @@
                 <div class="in-out-row">
                   <span>{{ 'In' | translate }}:</span>
                   <span *ixWithLoadingState="stats() as stats">
-                    {{ stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                    {{ stats.network.incoming | ixNetworkSpeed }}
                   </span>
                 </div>
                 <div class="in-out-row">
                   <span>{{ 'Out' | translate }}:</span>
                   <span *ixWithLoadingState="stats() as stats">
-                    {{ stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                    {{ stats.network.outgoing | ixNetworkSpeed }}
                   </span>
                 </div>
               </div>
               <small>{{ '1m Average' | translate }}</small>
             </div>
             <div class="chart-graph">
-              <ng-container *ngIf="(stats() | async).isLoading; then chartLoader; else networkChart"></ng-container>
+              @if ((stats() | async).isLoading) {
+                <ngx-skeleton-loader
+                  class="skeleton"
+                  [theme]="{
+                    width: '292px',
+                    height: '92px',
+                    background: 'var(--alt-bg2)',
+                    opacity: 0.25,
+                    margin: 0,
+                  }"
+                ></ngx-skeleton-loader>
+              } @else {
+                <ix-network-chart
+                  [showLegend]="false"
+                  [data]="networkChartData()"
+                  [aspectRatio]="3"
+                ></ix-network-chart>
+              }
             </div>
           </div>
         </div>
@@ -151,23 +186,4 @@
   </mat-card-content>
 </mat-card>
 
-<ng-template #chartLoader>
-  <ngx-skeleton-loader
-    class="skeleton"
-    [theme]="{
-      width: '292px',
-      height: '92px',
-      background: 'var(--alt-bg2)',
-      opacity: 0.25,
-      margin: 0,
-    }"
-  ></ngx-skeleton-loader>
-</ng-template>
 
-<ng-template #networkChart>
-  <ix-network-chart
-    [showLegend]="false"
-    [data]="networkChartData()"
-    [aspectRatio]="3"
-  ></ix-network-chart>
-</ng-template>

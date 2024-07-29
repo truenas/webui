@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';

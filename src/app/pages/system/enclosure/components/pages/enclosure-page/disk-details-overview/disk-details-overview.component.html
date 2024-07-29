@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="disk-details-header">
+    <button
+      mat-mini-fab
+      color="primary"
+      ixTest="close-details"
+      (click)="closeDetails()"
+    >
+      <ix-icon name="chevron_left"></ix-icon>
+    </button>
+    <span>
+      {{ 'Disk Details for {disk}' | translate : { disk: diskName() } }}
+    </span>
+  </div>
+
+  @if (selectedSlot().dev) {
+    <div class="disk-details-container">
+      <div class="drive">
+        <ix-disk-icon
+          [type]="selectedSlot().type"
+          [size]="selectedSlot().size"
+          [name]="selectedSlot().dev"
+        ></ix-disk-icon>
+        <div class="capacity">{{ selectedSlot().size | ixFileSize }}</div>
+        <div class="disk-actions">
+          @if (selectedSlot().supports_identify_light) {
+            <ix-identify-light></ix-identify-light>
+          }
+        </div>
+      </div>
+      <ix-disk-details
+        class="details"
+        [selectedSlot]="selectedSlot()"
+      ></ix-disk-details>
+    </div>
+  } @else {
+    <div class="slot-empty">
+      {{ 'Slot {number} is empty.' | translate : { number: selectedSlot().drive_bay_number } }}
+    </div>
+  }
+</div>

@@ -299,7 +299,7 @@ describe('InterfaceFormComponent', () => {
     });
   });
 
-  describe('edit 1', () => {
+  describe('edit network interface', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
@@ -325,7 +325,7 @@ describe('InterfaceFormComponent', () => {
     });
   });
 
-  describe('edit 2', () => {
+  describe('edit vlan', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
@@ -351,7 +351,7 @@ describe('InterfaceFormComponent', () => {
     });
   });
 
-  describe('edit 3', () => {
+  describe('edit bridge', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
@@ -382,7 +382,7 @@ describe('InterfaceFormComponent', () => {
     });
   });
 
-  describe('edit 4', () => {
+  describe('edit link aggregation', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [

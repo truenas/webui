@@ -9,35 +9,36 @@
     </div>
   </div>
 
-  <div
-    *ngIf="selectedVersion?.item_update_available; else noItemUpdate"
-    class="resource"
-    fxLayout="row"
-    fxLayoutAlign="start center"
-  >
-    <span>{{ 'Version to be upgraded to' | translate }}:</span>
-    <mat-form-field class="form-element">
-      <mat-select
-        ixTest="versions"
-        [(ngModel)]="selectedVersionKey"
-        (ngModelChange)="onVersionOptionChanged()"
-      >
-        <mat-option
-          *ngFor="let option of versionOptions | keyvalue: originalOrder"
-          [value]="option.key"
-          [ixTest]="['versions', option.value.latest_human_version]"
+  @if (selectedVersion?.item_update_available) {
+    <div
+      class="resource"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+    >
+      <span>{{ 'Version to be upgraded to' | translate }}:</span>
+      <mat-form-field class="form-element">
+        <mat-select
+          ixTest="versions"
+          [(ngModel)]="selectedVersionKey"
+          (ngModelChange)="onVersionOptionChanged()"
         >
-          {{ option.value.latest_human_version }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-
-  <ng-template #noItemUpdate>
+          @for (option of versionOptions | keyvalue: originalOrder; track option) {
+            <mat-option
+              [value]="option.key"
+              [ixTest]="['versions', option.value.latest_human_version]"
+            >
+              {{ option.value.latest_human_version }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  } @else {
     <div class="resource">
       <span>{{ 'Only image(s) will be updated' | translate }}</span>
     </div>
-  </ng-template>
+  }
+
 
   <mat-accordion>
     <mat-expansion-panel>
@@ -47,19 +48,21 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="expansion-content">
-        <div *ngIf="hasUpdateImages(); else no_image">
-          <div
-            *ngFor="let containerImage of selectedVersion.container_images_to_update | keyvalue: containerImagesOrder; let i = index"
-            class="detail-row"
-            [ngClass]="{ 'row-dark': i % 2 === 0 }"
-          >
-            <div fxLayout="row" fxLayoutAlign="start center">
-              <span fxFlex="10" class="text-center">{{ i + 1 }}</span>
-              <span>{{ containerImage.key }}</span>
-            </div>
+        @if (hasUpdateImages()) {
+          <div>
+            @for (containerImage of selectedVersion.container_images_to_update | keyvalue: containerImagesOrder; track containerImage; let i = $index) {
+              <div
+                class="detail-row"
+                [ngClass]="{ 'row-dark': i % 2 === 0 }"
+              >
+                <div fxLayout="row" fxLayoutAlign="start center">
+                  <span fxFlex="10" class="text-center">{{ i + 1 }}</span>
+                  <span>{{ containerImage.key }}</span>
+                </div>
+              </div>
+            }
           </div>
-        </div>
-        <ng-template #no_image>
+        } @else {
           <div
             fxLayout="row"
             fxLayoutAlign="start start"
@@ -67,28 +70,30 @@
           >
             {{ 'There are no images requiring upgrade' | translate }}
           </div>
-        </ng-template>
+        }
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel *ngIf="selectedVersion?.item_update_available">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{ 'Changelog' | translate }}
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <div class="expansion-content">
-        <div
-          fxLayout="row"
-          fxLayoutAlign="start start"
-          class="detail-row row-dark"
-        >
+    @if (selectedVersion?.item_update_available) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'Changelog' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="expansion-content">
           <div
-            [innerHTML]="selectedVersion.changelog || ('No Changelog' | translate)"
-          ></div>
+            fxLayout="row"
+            fxLayoutAlign="start start"
+            class="detail-row row-dark"
+          >
+            <div
+              [innerHTML]="selectedVersion.changelog || ('No Changelog' | translate)"
+            ></div>
+          </div>
         </div>
-      </div>
-    </mat-expansion-panel>
+      </mat-expansion-panel>
+    }
   </mat-accordion>
 
   <ix-form-actions>

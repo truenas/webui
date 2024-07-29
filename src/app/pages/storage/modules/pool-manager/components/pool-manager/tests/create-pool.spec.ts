@@ -13,7 +13,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   PoolManagerComponent,
@@ -37,7 +37,7 @@ describe('PoolManagerComponent – create pool', () => {
       IxFormsModule,
       ReactiveFormsModule,
       MatStepperModule,
-      IxFileSizePipe,
+      FileSizePipe,
       MapValuePipe,
       CastPipe,
     ],

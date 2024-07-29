@@ -1,6 +1,8 @@
 <div>
   <h1 mat-dialog-title>{{ 'Create Dataset' | translate }}</h1>
-  <mat-progress-bar *ngIf="isLoading$ | async" mode="indeterminate"></mat-progress-bar>
+  @if (isLoading$ | async) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
 </div>
 <div mat-dialog-content>
   <form [formGroup]="form">

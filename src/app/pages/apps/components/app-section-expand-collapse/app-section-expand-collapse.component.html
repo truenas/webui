@@ -1,14 +1,18 @@
 <div #section class="content-wrapper" (window:resize)="onResize()">
   <ng-content></ng-content>
 </div>
-<div *ngIf="isCollapsed && showButton" class="gradient"></div>
-<div *ngIf="showButton" class="more-less">
-  <button
-    type="button"
-    mat-stroked-button
-    ixTest="show-more-less"
-    (click)="changeCollapsed()"
-  >
-    {{ isCollapsed ? ('View More' | translate) : ('Collapse' | translate) }}
-  </button>
-</div>
+@if (isCollapsed && showButton) {
+  <div class="gradient"></div>
+}
+@if (showButton) {
+  <div class="more-less">
+    <button
+      type="button"
+      mat-stroked-button
+      ixTest="show-more-less"
+      (click)="changeCollapsed()"
+    >
+      {{ isCollapsed ? ('View More' | translate) : ('Collapse' | translate) }}
+    </button>
+  </div>
+}

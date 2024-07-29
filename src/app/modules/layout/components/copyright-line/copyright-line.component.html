@@ -1,11 +1,17 @@
-TrueNAS {{ productType$ | async | mapValue: productTypeLabels }} ® © {{ copyrightYear$ | async }}
+TrueNAS {{ product() }} ® © {{ copyrightYear() }}
+@if (!withIxLogo()) {
+  -
+}
 <a
   href="https://www.ixsystems.com/"
   target="_blank"
   title="iXsystems, Inc."
   ixTest="copyright"
 >
-  <img *ngIf="withIxLogo()" class="ix-logo" src="assets/images/ix_logo_full.png" alt="iX Systems">
-  <ng-container *ngIf="!withIxLogo()"> - iXsystems, Inc</ng-container>
+  @if (withIxLogo()) {
+    <img class="ix-logo" src="assets/images/ix_logo_full.png" alt="iXsystems, Inc.">
+  } @else {
+    iXsystems, Inc.
+  }
 </a>
 

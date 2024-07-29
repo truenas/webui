@@ -9,18 +9,25 @@
   (blur)="onTouch()"
 >
   {{ label }}
-  <span *ngIf="required" class="required">*</span>
+  @if (required) {
+    <span class="required">*</span>
+  }
 </mat-checkbox>
 
-<ix-tooltip
-  *ngIf="tooltip"
-  class="tooltip"
-  [header]="label"
-  [message]="tooltip"
-></ix-tooltip>
+@if (tooltip) {
+  <ix-tooltip
+    class="tooltip"
+    [header]="label"
+    [message]="tooltip"
+  ></ix-tooltip>
+}
 
-<ix-warning *ngIf="warning" [message]="warning"></ix-warning>
+@if (warning) {
+  <ix-warning [message]="warning"></ix-warning>
+}
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
-<mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+@if (hint) {
+  <mat-hint>{{ hint }}</mat-hint>
+}

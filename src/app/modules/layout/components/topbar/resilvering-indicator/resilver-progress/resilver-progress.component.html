@@ -1,14 +1,16 @@
 <h1 mat-dialog-title>{{ title | translate }}</h1>
 <mat-dialog-content class="resilver-progress-dialog">
-  <div *ngIf="state !== PoolScanState.Finished">
-    <mat-progress-bar
-      class="example-margin"
-      color="primary"
-      mode="indeterminate"
-      [value]="progressTotalPercent"
-    ></mat-progress-bar>
-    <label> {{ progressTotalPercent | number: '1.2-2' }}% </label>
-  </div>
+  @if (state !== PoolScanState.Finished) {
+    <div>
+      <mat-progress-bar
+        class="example-margin"
+        color="primary"
+        mode="indeterminate"
+        [value]="progressTotalPercent"
+      ></mat-progress-bar>
+      <label> {{ progressTotalPercent | number: '1.2-2' }}% </label>
+    </div>
+  }
   <div>{{ description | translate }}{{ diskName }}</div>
   <div>{{ statusLabel | translate }}{{ state }}</div>
 </mat-dialog-content>

@@ -4,53 +4,62 @@
       <h3>{{ 'TrueNAS Help' | translate }}</h3>
     </div>
 
-    <div [class]="['container', size()]">
-      <div class="line-item">
-        <div class="icon-wrapper">
-          <a
-            href="https://www.truenas.com/docs/"
-            ixTest="documentation"
-            target="_blank"
-          >
-            <ix-icon class="bullet-icon" name="assignment"></ix-icon>
-            <span>{{ 'Docs' | translate }}</span>
-          </a>
+    <div [class]="['container', size()]" [class.enterprise]="isEnterprise()">
+      <div class="lines">
+        <div class="line-item">
+          <div class="icon-wrapper">
+            <a
+              href="https://www.truenas.com/docs/"
+              ixTest="documentation"
+              target="_blank"
+            >
+              <ix-icon class="bullet-icon" name="assignment"></ix-icon>
+              @if (!fullSize()) {
+                <span>{{ 'Docs' | translate }}</span>
+              }
+            </a>
+          </div>
+          <div class="helptext" [innerHtml]="helptext.docs | translate"></div>
         </div>
-        <div class="helptext" [innerHtml]="helptext.docs | translate"></div>
-      </div>
-      <div class="line-item">
-        <div class="icon-wrapper">
-          <a
-            href="https://forums.truenas.com/"
-            ixTest="forums"
-            target="_blank"
-          >
-            <ix-icon class="bullet-icon" name="group"></ix-icon>
-            <span>{{ 'Forums' | translate }}</span>
-          </a>
+        <div class="line-item">
+          <div class="icon-wrapper">
+            <a
+              href="https://forums.truenas.com/"
+              ixTest="forums"
+              target="_blank"
+            >
+              <ix-icon class="bullet-icon" name="group"></ix-icon>
+              @if (!fullSize()) {
+                <span>{{ 'Forums' | translate }}</span>
+              }
+            </a>
+          </div>
+          <div class="helptext" [innerHtml]="helptext.forums | translate"></div>
         </div>
-        <div class="helptext" [innerHtml]="helptext.forums | translate"></div>
-      </div>
-      <div class="line-item">
-        <div class="icon-wrapper">
-          <a
-            href="https://www.truenas.com/newsletter/"
-            ixTest="newsletter"
-            target="_blank"
-          >
-            <ix-icon class="bullet-icon" name="mail"></ix-icon>
-            <span>{{ 'Newsletter' | translate }}</span>
-          </a>
+        <div class="line-item">
+          <div class="icon-wrapper">
+            <a
+              href="https://www.truenas.com/newsletter/"
+              ixTest="newsletter"
+              target="_blank"
+            >
+              <ix-icon class="bullet-icon" name="mail"></ix-icon>
+              @if (!fullSize()) {
+                <span>{{ 'Newsletter' | translate }}</span>
+              }
+            </a>
+          </div>
+          <div class="helptext" [innerHtml]="helptext.newsletter | translate"></div>
         </div>
-        <div class="helptext" [innerHtml]="helptext.newsletter | translate"></div>
       </div>
-      <ng-container *ngIf="productType$ | async as product">
-        <div class="open-source" [innerHtml]="helptext.opensource | translate: { product }"></div>
-      </ng-container>
-    </div>
 
-    <div class="copyright">
-      <ix-copyright-line></ix-copyright-line>
+      @if (!isEnterprise()) {
+        <div class="open-source" [innerHtml]="helptext.opensource | translate: { product: product() }"></div>
+      }
+
+      <div class="copyright">
+        <ix-copyright-line></ix-copyright-line>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>

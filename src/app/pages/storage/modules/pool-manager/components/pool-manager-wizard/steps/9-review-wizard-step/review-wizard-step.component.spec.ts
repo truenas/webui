@@ -11,7 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   InspectVdevsDialogComponent,
@@ -66,7 +66,7 @@ describe('ReviewWizardStepComponent', () => {
   const createComponent = createComponentFactory({
     component: ReviewWizardStepComponent,
     imports: [
-      IxFileSizePipe,
+      FileSizePipe,
       MapValuePipe,
     ],
     declarations: [

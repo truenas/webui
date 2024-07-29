@@ -24,10 +24,11 @@ import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
 import { NgxWebstorageModule } from 'ngx-webstorage';
+import { rootRouterConfig } from 'app/app.routing';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { DialogModule } from 'app/modules/dialog/dialog.module';
 import { FeedbackModule } from 'app/modules/feedback/feedback.module';
@@ -48,7 +49,6 @@ import { WebSocketService } from 'app/services/ws.service';
 import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
-import { rootRouterConfig } from './app.routes';
 import { AppLoaderModule } from './modules/loader/app-loader.module';
 import { AppLoaderService } from './modules/loader/app-loader.service';
 import { AuthGuardService } from './services/auth/auth-guard.service';

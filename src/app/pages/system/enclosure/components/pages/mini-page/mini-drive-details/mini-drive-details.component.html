@@ -16,23 +16,23 @@
 
 <ul class="overview">
   <li class="item">
-    <div class="item-name">{{ 'Pool' | translate }}:</div>
-    <div class="item-value">
+    <div class="label">{{ 'Pool' | translate }}:</div>
+    <div class="value">
       {{ selectedSlot().pool_info?.pool_name || ('Disk not attached to any pools.' | translate) }}
     </div>
   </li>
 
   <li class="item">
-    <div class="item-name">{{ 'Vdev' | translate }}:</div>
-    <div class="item-value">
+    <div class="label">{{ 'Vdev' | translate }}:</div>
+    <div class="value">
       {{ selectedSlot().pool_info?.vdev_name || ('Unassigned' | translate) }}
     </div>
   </li>
 
   @if (selectedSlot().pool_info) {
     <li class="item">
-      <div class="item-name">{{ 'Status' | translate }}:</div>
-      <div class="item-value">
+      <div class="label">{{ 'Status' | translate }}:</div>
+      <div class="value">
         {{ selectedSlot().pool_info.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
       </div>
     </li>
@@ -40,24 +40,30 @@
 
   @if (selectedSlot().model) {
     <li class="item">
-      <div class="item-name">{{ 'Model' | translate }}:</div>
-      <div class="item-value">{{ selectedSlot().model }}</div>
+      <div class="label">{{ 'Model' | translate }}:</div>
+      <div class="value">{{ selectedSlot().model }}</div>
     </li>
   }
 
   @if (selectedSlot().serial) {
     <li class="item">
-      <div class="item-name">{{ 'Serial' | translate }}:</div>
-      <div class="item-value">{{ selectedSlot().serial }}</div>
+      <div class="label">{{ 'Serial' | translate }}:</div>
+      <div class="value">{{ selectedSlot().serial }}</div>
     </li>
   }
 
   @if (selectedSlot().rotationrate) {
     <li class="item">
-      <div class="item-name">{{ 'Rotation Rate' | translate }}:</div>
-      <div class="item-value">
+      <div class="label">{{ 'Rotation Rate' | translate }}:</div>
+      <div class="value">
         {{ '{rate} RPM' | translate: { rate: selectedSlot().rotationrate } }}
       </div>
     </li>
   }
 </ul>
+
+@if (selectedSlot().supports_identify_light) {
+  <h3>{{ 'Identify Light' | translate }}</h3>
+
+  <ix-identify-light></ix-identify-light>
+}

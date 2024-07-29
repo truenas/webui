@@ -32,7 +32,7 @@ describe('GroupFormComponent', () => {
       name: 'Privilege 1',
       web_shell: true,
       local_groups: [{ gid: 1111, group: 'Group A' }, { gid: 2222, group: 'Group B' }],
-      ds_groups: [],
+      ds_groups: [{ gid: 1223 }],
       roles: [Role.SharingAdmin],
     },
     {
@@ -181,7 +181,7 @@ describe('GroupFormComponent', () => {
       ]);
 
       expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
-        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
+        ds_groups: [1223], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
     });
 
@@ -198,7 +198,7 @@ describe('GroupFormComponent', () => {
       await saveButton.click();
 
       expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
-        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
+        ds_groups: [1223], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
     });
   });

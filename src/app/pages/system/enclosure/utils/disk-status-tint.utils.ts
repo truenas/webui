@@ -8,7 +8,11 @@ export const diskStatusTint: TintingFunction = (slot) => {
     return null;
   }
 
-  switch (slot.pool_info.disk_status) {
+  return getDiskStatusColor(slot.pool_info.disk_status);
+};
+
+export function getDiskStatusColor(status: EnclosureDiskStatus): string {
+  switch (status) {
     case EnclosureDiskStatus.Online:
       return 'var(--green)';
     case EnclosureDiskStatus.Degraded:
@@ -20,4 +24,4 @@ export const diskStatusTint: TintingFunction = (slot) => {
     default:
       return 'var(--grey)';
   }
-};
+}
