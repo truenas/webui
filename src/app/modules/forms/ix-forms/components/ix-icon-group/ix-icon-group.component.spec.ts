@@ -34,10 +34,18 @@ describe('IxIconGroupComponent', () => {
       {
         hostProps: {
           formControl,
-          options: new Map<string, string>([
-            ['edit', 'mdi-pencil'],
-            ['delete', 'mdi-delete'],
-          ]),
+          options: [
+            {
+              value: 'edit',
+              label: 'Edit',
+              icon: 'mdi-pencil',
+            },
+            {
+              value: 'delete',
+              label: 'Delete',
+              icon: 'mdi-delete',
+            },
+          ],
           label: 'Icon group',
           tooltip: 'This is a tooltip',
           required: true,
@@ -90,5 +98,11 @@ describe('IxIconGroupComponent', () => {
   it('disables buttons when form control is disabled', async () => {
     formControl.disable();
     expect(await iconGroupHarness.isDisabled()).toBe(true);
+  });
+
+  it('adds aria-label attributes for button elements', async () => {
+    const buttons = await iconGroupHarness.getButtons();
+    expect(await (await buttons[0].host()).getAttribute('aria-label')).toBe('Edit');
+    expect(await (await buttons[1].host()).getAttribute('aria-label')).toBe('Delete');
   });
 });

@@ -1,28 +1,31 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
   ></ix-label>
 }
 
-<div class="icon-group" [attr.aria-label]="label">
-  @for (option of options | keyvalue: keepOrder; track option) {
+<div class="icon-group" role="radiogroup" [attr.aria-label]="label()">
+  @for (option of options(); track option) {
     <button
       mat-icon-button
+      role="radio"
       type="button"
       [disabled]="isDisabled"
-      [ixTest]="[controlDirective.name, option.key]"
-      [attr.aria-label]="option.key"
-      [class.selected]="value === option.key"
-      (click)="onValueChanged(option.key)"
+      [ixTest]="[controlDirective.name, option.label]"
+      [attr.aria-label]="option.label | translate"
+      [attr.data-value]="option.value"
+      [attr.aria-checked]="value === option.value"
+      [class.selected]="value === option.value"
+      (click)="onValueChanged(option.value)"
       (blur)="onTouch()"
     >
-      <ix-icon [name]="option.value"></ix-icon>
+      <ix-icon [name]="option.icon"></ix-icon>
     </button>
   } @empty {
     <span>{{ 'No options are passed' | translate }}</span>
   }
 </div>
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
