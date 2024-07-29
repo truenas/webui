@@ -20,116 +20,12 @@
           <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
         </ng-template>
         <div class="pool-info-wrapper">
-          <div class="pool-info-top">
-            <div class="left">
-              <h3 class="pool-name">
-                @if (!isPoolLoading()) {
-                  {{ pool().name }}
-                } @else {
-                  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-                }
-              </h3>
-              <div class="divider"></div>
-              <div class="lines">
-                <div class="line">
-                  <span class="label">{{ 'Data Topology' | translate }}:</span>
-                  @if (!isDisksLoading()) {
-                    <span class="value">
-                      {{ dataTopology() }}
-                    </span>
-                  } @else {
-                    <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-                  }
-                </div>
-                <div class="line">
-                  <span class="label">{{ 'Usable Capacity' | translate }}:</span>
-                  @if (!isDatasetLoading()) {
-                    <span class="value">
-                      {{ capacity() | ixFileSize }}
-                    </span>
-                  } @else {
-                    <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-                  }
-                </div>
-                @if (isDatasetLoading() || pool().scan?.end_time?.$date) {
-                  <div class="line">
-                    <span class="label">{{ 'Last Scrub Date' | translate }}:</span>
-                    @if (!isDatasetLoading()) {
-                      <span class="value">
-                        {{ pool().scan.end_time.$date | formatDateTime }}
-                      </span>
-                    } @else {
-                      <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-                    }
-                  </div>
-                }
-                @if (isDatasetLoading() || scanDuration()) {
-                  <div class="line">
-                    <span class="label">{{ 'Last Scan Duration' | translate }}:</span>
-                    @if (!isDatasetLoading()) {
-                      <span class="value">
-                        {{ scanDuration() }}
-                      </span>
-                    } @else {
-                      <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-                    }
-                  </div>
-                }
-              </div>
-            </div>
-            <div class="right">
-              @if (!isDatasetLoading()) {
-                <ix-gauge-chart
-                  [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
-                  [colorBlank]="chartBlankColor"
-                  [width]="150"
-                  [height]="150"
-                  [label]="usedPercentage() / 100 | percent: '1.0-1'"
-                  [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
-                  [style]="isLowCapacity() ? 'color: var(--red);' : ''"
-                ></ix-gauge-chart>
-              } @else {
-                <ngx-skeleton-loader
-                  appearance="circle"
-                  [theme]="{ width: '130px', height: '130px', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
-                ></ngx-skeleton-loader>
-              }
-            </div>
-          </div>
+          <ix-pool-usage-gauge [pool]="pool()"></ix-pool-usage-gauge>
+
           <div class="pool-info-bottom">
-            <div>
-              <h2 class="value">
-                @if (!isPoolLoading()) {
-                  {{ pool().status }}
-                } @else {
-                  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-                }
-              </h2>
-              <div class="divider"></div>
-              <h6 class="label">{{ 'Pool Status' | translate }}</h6>
-            </div>
-            <div>
-              <h2 class="value">
-                @if (!isPoolLoading()) {
-                  {{ totalZfsErrors() }}
-                } @else {
-                  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-                }
-              </h2>
-              <div class="divider"></div>
-              <h6 class="label">{{ 'Disks w/ZFS Errors' | translate }}</h6>
-            </div>
-            <div>
-              <h2 class="value">
-                @if (!isPoolLoading()) {
-                  {{ pool().scan?.errors || 0 }}
-                } @else {
-                  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-                }
-              </h2>
-              <div class="divider"></div>
-              <h6 class="label">{{ 'Last Scan Errors' | translate }}</h6>
-            </div>
+            <ix-pool-status [pool]="pool()"></ix-pool-status>
+            <ix-disks-with-zfs-errors [pool]="pool()"></ix-disks-with-zfs-errors>
+            <ix-last-scan-errors [pool]="pool()"></ix-last-scan-errors>
           </div>
         </div>
       </div>
