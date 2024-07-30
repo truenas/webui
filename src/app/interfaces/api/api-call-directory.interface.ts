@@ -447,6 +447,7 @@ export interface ApiCallDirectory {
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: DetailsDisk[] };
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
+  'disk.temperature': { params: [name: string]; response: number };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
