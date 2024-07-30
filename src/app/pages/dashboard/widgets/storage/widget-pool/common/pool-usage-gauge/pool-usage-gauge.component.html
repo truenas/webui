@@ -29,7 +29,7 @@
           <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
         }
       </div>
-      @if (isDatasetLoading() || pool().scan?.end_time?.$date) {
+      @if (isDatasetLoading() || pool()?.scan?.end_time?.$date) {
         <div class="line">
           <span class="label">{{ 'Last Scrub Date' | translate }}:</span>
           @if (!isDatasetLoading()) {

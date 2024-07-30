@@ -66,7 +66,7 @@ export class PoolUsageGaugeComponent implements OnInit {
   });
 
   protected scanDuration = computed(() => {
-    const scan = this.pool().scan;
+    const scan = this.pool()?.scan;
     if (!scan?.end_time?.$date || !scan?.start_time?.$date) {
       return '';
     }
