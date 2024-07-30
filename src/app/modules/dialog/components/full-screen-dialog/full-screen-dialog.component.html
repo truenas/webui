@@ -1,7 +1,11 @@
 <div class="wrapper">
   <div class="container">
-    <div class="title">{{ title | translate }}</div>
-    <p class="message">{{ message | translate }}</p>
+    @if (title) {
+      <div class="title">{{ title | translate }}</div>
+    }
+    @if (message) {
+      <p class="message" [class.pre]="data.pre">{{ message | translate }}</p>
+    }
   </div>
   @if (data.showClose) {
     <button

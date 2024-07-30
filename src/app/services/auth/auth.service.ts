@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
@@ -20,6 +20,7 @@ import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import {
   ApiCallMethod,
   ApiCallParams,
@@ -86,6 +87,7 @@ export class AuthService {
     private wsManager: WebSocketConnectionService,
     private store$: Store<AppState>,
     private ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.setupAuthenticationUpdate();
 
@@ -115,6 +117,7 @@ export class AuthService {
    * use of the lastGeneratedToken$ and setting token to null/undefined by mistake
    */
   clearAuthToken(): void {
+    this.window.sessionStorage.removeItem('loginBannerDismissed');
     this.latestTokenGenerated$.next(null);
     this.latestTokenGenerated$.complete();
     this.latestTokenGenerated$ = new ReplaySubject<string>(1);
@@ -210,6 +213,7 @@ export class AuthService {
             }
 
             this.isLoggedIn$.next(true);
+            this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
             return this.authToken$.pipe(
               take(1),
               map(() => LoginResult.Success),

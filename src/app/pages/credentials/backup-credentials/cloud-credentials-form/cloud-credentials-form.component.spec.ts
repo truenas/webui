@@ -54,7 +54,7 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
         get invalid(): boolean {
           return false;
         },
-      } as FormGroup;
+      } as Partial<FormGroup>;
     }),
   };
 });
@@ -303,6 +303,7 @@ describe('CloudCredentialsFormComponent', () => {
 
     it('shows existing values when form is opened for edit', async () => {
       spectator.component.setCredentialsForEdit();
+
       const commonFormValues = await form.getValues();
       expect(commonFormValues).toEqual({
         Name: 'My backup server',

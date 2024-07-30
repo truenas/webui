@@ -12,6 +12,7 @@
           <span class="temperature">{{ disk.temperature | orNotAvailable }}</span>
           @if (!disk.temperature) {
             <ix-tooltip
+              class="tooltip-icon"
               [header]="'Temperature data missing.' | translate"
               [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur.' | translate"
             ></ix-tooltip>

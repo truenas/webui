@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component, Input, OnDestroy, OnInit,
+  signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,7 +21,7 @@ import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { getMiniImagePath, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -55,18 +56,18 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   systemInfo: SystemInfo;
   isLoading = false;
-  productImage = '';
+  productImageSrc = signal<string>(null);
   productModel = '';
   productEnclosure: ProductEnclosure;
   updateAvailable = false;
-  isIxHardware = false;
+  protected isIxHardware = signal<boolean>(false);
   isUpdateRunning = false;
   updateMethod: 'update.update' | 'failover.upgrade' = 'update.update';
   uptimeInterval: Interval;
 
   isMobile$ = this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(map((state) => state.matches));
   isUnsupportedHardware$ = this.sysGenService.isEnterprise$.pipe(
-    map((isEnterprise) => isEnterprise && !this.productImage && !this.isIxHardware),
+    map((isEnterprise) => isEnterprise && !this.isIxHardware()),
   );
 
   get systemVersion(): string {
@@ -82,10 +83,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       return this.translate.instant('Updates Available');
     }
     return this.translate.instant('Check for Updates');
-  }
-
-  get productImageSrc(): string {
-    return 'assets/images' + (this.productImage.startsWith('/') ? this.productImage : ('/' + this.productImage));
   }
 
   constructor(
@@ -127,7 +124,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       .select(selectIsIxHardware)
       .pipe(untilDestroyed(this))
       .subscribe((isIxHardware) => {
-        this.isIxHardware = isIxHardware;
+        this.isIxHardware.set(isIxHardware);
         this.setProductImage();
         this.cdr.markForCheck();
       });
@@ -210,24 +207,19 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   setProductImage(): void {
-    if (!this.isIxHardware || !this.systemInfo) return;
+    if (!this.isIxHardware() || !this.systemInfo) return;
+    this.productImageSrc.set(
+      getProductImageSrc(this.systemInfo.system_product),
+    );
 
     if (this.systemInfo.platform.includes('MINI')) {
-      this.setMiniImage(this.systemInfo.platform);
+      this.productEnclosure = ProductEnclosure.Tower;
     } else {
-      const product = getServerProduct(this.systemInfo.platform);
-      this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
-      this.productModel = product;
+      this.productModel = getServerProduct(this.systemInfo.platform);
       this.productEnclosure = ProductEnclosure.Rackmount;
     }
 
     this.cdr.markForCheck();
-  }
-
-  setMiniImage(sysProduct: string): void {
-    this.productEnclosure = ProductEnclosure.Tower;
-
-    this.productImage = getMiniImagePath(sysProduct);
   }
 
   goToEnclosure(): void {

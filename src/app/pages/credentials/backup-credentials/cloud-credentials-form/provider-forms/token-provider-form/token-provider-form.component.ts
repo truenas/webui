@@ -1,12 +1,10 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject } from 'rxjs';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -22,7 +20,6 @@ import {
 })
 export class TokenProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   @ViewChild(OauthProviderComponent, { static: false }) oauthComponent: OauthProviderComponent;
-  private formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
 
   form = this.formBuilder.group({
     token: ['', Validators.required],
@@ -30,6 +27,7 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
 
   constructor(
     private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {
     super();
   }
@@ -53,16 +51,13 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
     }
   }
 
-  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
-    return this.formPatcher$;
-  };
-
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
       if (this.hasOAuth) {
         this.oauthComponent.form.patchValue(values);
       }
+      this.cdr.detectChanges();
     });
   }
 

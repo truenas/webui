@@ -34,8 +34,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly data$ = this.select((state) => state);
   readonly enclosureViews$ = this.select((state) => state.enclosures);
 
-  private disksUpdateSubscriptionId: string;
-
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,
@@ -130,18 +128,16 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   }
 
   listenForDiskUpdates(): void {
-    if (!this.disksUpdateSubscriptionId) {
-      this.ws.subscribe('disk.query')
-        .pipe(
-          filter((event) => [
-            IncomingApiMessageType.Added,
-            IncomingApiMessageType.Changed,
-            IncomingApiMessageType.Removed,
-          ].includes(event.msg)),
-          untilDestroyed(this),
-        )
-        .subscribe(() => this.loadData());
-    }
+    this.ws.subscribe('disk.query')
+      .pipe(
+        filter((event) => [
+          IncomingApiMessageType.Added,
+          IncomingApiMessageType.Changed,
+          IncomingApiMessageType.Removed,
+        ].includes(event.msg)),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.loadData());
   }
 
   updateSelectedEnclosureDisks(selectedEnclosure: OldEnclosure): void {

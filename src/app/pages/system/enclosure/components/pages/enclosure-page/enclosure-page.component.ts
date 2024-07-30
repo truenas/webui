@@ -4,7 +4,6 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { unsupportedEnclosureMockModel } from 'app/constants/server-series.constant';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
@@ -18,10 +17,10 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
 })
 export class EnclosurePageComponent {
   readonly enclosure = this.store.selectedEnclosure;
+  readonly enclosures = this.store.enclosures;
   readonly selectedView = this.store.selectedView;
   readonly selectedSlot = this.store.selectedSlot;
   readonly isLoading = this.store.isLoading;
-  readonly isSupportedEnclosure = computed(() => this.enclosure().model !== unsupportedEnclosureMockModel);
 
   protected readonly EnclosureView = EnclosureView;
 

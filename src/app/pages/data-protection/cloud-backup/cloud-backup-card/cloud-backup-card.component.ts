@@ -1,7 +1,7 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -92,6 +92,12 @@ export class CloudBackupCardComponent implements OnInit {
           requiredRoles: this.requiredRoles,
         },
         {
+          iconName: 'visibility',
+          tooltip: this.translate.instant('View Details'),
+          onClick: (row) => this.router.navigate(['/data-protection', 'cloud-backup'], { fragment: row.id.toString() }),
+          requiredRoles: this.requiredRoles,
+        },
+        {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
@@ -113,7 +119,7 @@ export class CloudBackupCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private appLoader: AppLoaderService,
-    private breakpointObserver: BreakpointObserver,
+    private router: Router,
     protected emptyService: EmptyService,
     @Inject(WINDOW) private window: Window,
   ) {}

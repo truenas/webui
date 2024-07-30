@@ -1,0 +1,6 @@
+<ix-widget-datapoint
+  *ixWithLoadingState="systemInfo$ as systemInfo"
+  [size]="size()"
+  [label]="name | translate"
+  [text]="systemInfo.remote_info.system_serial"
+></ix-widget-datapoint>
