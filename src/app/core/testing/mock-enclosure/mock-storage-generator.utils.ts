@@ -1,4 +1,3 @@
-import { unsupportedEnclosureMock } from 'app/constants/server-series.constant';
 import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import { addDisksToSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/disk.utils';
 import {
@@ -46,7 +45,7 @@ export class MockStorageGenerator {
   }
 
   private addEnclosure(model: EnclosureModel): void {
-    const enclosure = enclosureMocks.find((mock) => mock.model === model) || unsupportedEnclosureMock;
+    const enclosure = enclosureMocks.find((mock) => mock.model === model);
 
     this.enclosures.push(enclosure);
   }

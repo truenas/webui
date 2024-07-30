@@ -6,3 +6,9 @@
     margin-left: 5px;
   }
 }
+
+:host ::ng-deep {
+  .wide-actions {
+    width: 100px;
+  }
+}

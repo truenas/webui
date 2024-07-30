@@ -19,8 +19,8 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
+import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AccessFormComponent', () => {
   let spectator: Spectator<AccessFormComponent>;
@@ -37,9 +37,13 @@ describe('AccessFormComponent', () => {
         localStorage: {
           setItem: jest.fn,
         },
+        sessionStorage: {
+          setItem: jest.fn,
+        },
       }),
       mockWebSocket([
         mockCall('system.general.update'),
+        mockCall('system.advanced.update'),
       ]),
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of(true)),
@@ -55,6 +59,9 @@ describe('AccessFormComponent', () => {
         }, {
           selector: selectGeneralConfig,
           value: { ds_auth: true },
+        }, {
+          selector: selectAdvancedConfig,
+          value: { login_banner: 'test' },
         }],
       }),
       mockProvider(ChainedRef, chainedRef),
@@ -73,6 +80,7 @@ describe('AccessFormComponent', () => {
 
     expect(values).toEqual({
       'Token Lifetime': '300',
+      'Login Banner': 'test',
       'Allow Directory Service users to access WebUI': true,
     });
   });
@@ -84,6 +92,7 @@ describe('AccessFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Token Lifetime': '60',
+      'Login Banner': '',
       'Allow Directory Service users to access WebUI': false,
     });
 
@@ -94,7 +103,12 @@ describe('AccessFormComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('system.general.update', [{
       ds_auth: false,
     }]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('system.advanced.update', [{
+      login_banner: '',
+    }]);
     expect(store$.dispatch).toHaveBeenCalledWith(generalConfigUpdated());
+    expect(store$.dispatch).toHaveBeenCalledWith(advancedConfigUpdated());
+    expect(store$.dispatch).toHaveBeenCalledWith(loginBannerUpdated({ loginBanner: '' }));
     expect(chainedRef.close).toHaveBeenCalled();
   });
 });

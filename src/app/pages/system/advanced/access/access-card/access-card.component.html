@@ -40,6 +40,12 @@
           </span>
         </mat-list-item>
       }
+      <mat-list-item [ixUiSearch]="searchableElements.elements.loginBanner">
+        <span class="label">{{ 'Login Banner' | translate }}:</span>
+        <span *ixWithLoadingState="loginBanner$ as loginBanner" class="value">
+          {{ loginBanner || '–' }}
+        </span>
+      </mat-list-item>
     </mat-list>
   </mat-card-content>
 

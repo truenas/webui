@@ -33,82 +33,72 @@
     [isLoading]="dataProvider.isLoading$ | async"
   >
     <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
-      @if (hiddenColumns.length) {
-        <dl class="table-hidden-columns">
-          @for (column of hiddenColumns; track column) {
-            <div>
-              <b>{{ column.title | translate }}:</b>
-              <span>{{ column?.getValue?.(task) || task[column.propertyName] }}</span>
-            </div>
+      <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="task">
+        <div class="table-details-row-actions">
+          @if (!task.job || task.job?.state !== jobState.Running) {
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              [ixTest]="[task.id, 'run_now']"
+              (click)="runNow(task)"
+            >
+              <ix-icon name="play_arrow"></ix-icon>
+              <span>{{ 'Run Now' | translate }}</span>
+            </button>
           }
-          <mat-divider></mat-divider>
-        </dl>
-      }
 
-      <div class="table-details-row-actions">
-        @if (!task.job || task.job?.state !== jobState.Running) {
+          @if (task.job && task.job.state === jobState.Running) {
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              [ixTest]="[task.id, 'stop']"
+              (click)="stopCloudSyncTask(task)"
+            >
+              <ix-icon name="stop"></ix-icon>
+              <span>{{ 'Stop' | translate }}</span>
+            </button>
+          }
+
           <button
             *ixRequiresRoles="requiredRoles"
             mat-button
-            [ixTest]="[task.id, 'run_now']"
-            (click)="runNow(task)"
+            [ixTest]="[task.id, 'dry_run']"
+            (click)="dryRun(task)"
           >
-            <ix-icon name="play_arrow"></ix-icon>
-            <span>{{ 'Run Now' | translate }}</span>
+            <ix-icon name="sync"></ix-icon>
+            <span>{{ 'Dry Run' | translate }}</span>
           </button>
-        }
 
-        @if (task.job && task.job.state === jobState.Running) {
           <button
             *ixRequiresRoles="requiredRoles"
             mat-button
-            [ixTest]="[task.id, 'stop']"
-            (click)="stopCloudSyncTask(task)"
+            [ixTest]="[task.id, 'restore']"
+            (click)="restore(task)"
           >
-            <ix-icon name="stop"></ix-icon>
-            <span>{{ 'Stop' | translate }}</span>
+            <ix-icon name="restore"></ix-icon>
+            <span>{{ 'Restore' | translate }}</span>
           </button>
-        }
 
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          [ixTest]="[task.id, 'dry_run']"
-          (click)="dryRun(task)"
-        >
-          <ix-icon name="sync"></ix-icon>
-          <span>{{ 'Dry Run' | translate }}</span>
-        </button>
+          <button
+            mat-button
+            [ixTest]="[task.id, 'edit']"
+            (click)="openForm(task)"
+          >
+            <ix-icon name="edit"></ix-icon>
+            <span>{{ 'Edit' | translate }}</span>
+          </button>
 
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          [ixTest]="[task.id, 'restore']"
-          (click)="restore(task)"
-        >
-          <ix-icon name="restore"></ix-icon>
-          <span>{{ 'Restore' | translate }}</span>
-        </button>
-
-        <button
-          mat-button
-          [ixTest]="[task.id, 'edit']"
-          (click)="openForm(task)"
-        >
-          <ix-icon name="edit"></ix-icon>
-          <span>{{ 'Edit' | translate }}</span>
-        </button>
-
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          [ixTest]="[task.id, 'delete']"
-          (click)="doDelete(task)"
-        >
-          <ix-icon name="delete"></ix-icon>
-          <span>{{ 'Delete' | translate }}</span>
-        </button>
-      </div>
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-button
+            [ixTest]="[task.id, 'delete']"
+            (click)="doDelete(task)"
+          >
+            <ix-icon name="delete"></ix-icon>
+            <span>{{ 'Delete' | translate }}</span>
+          </button>
+        </div>
+      </ix-table-details-row>
     </ng-template>
   </tbody>
 </ix-table>

@@ -36,7 +36,6 @@ import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
-import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FocusService } from 'app/services/focus.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -138,7 +137,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     IxSlideInService,
     IxChainedSlideInService,
     UploadService,
-    DisksUpdateService,
     {
       provide: ErrorHandler,
       useClass: ErrorHandlerService,

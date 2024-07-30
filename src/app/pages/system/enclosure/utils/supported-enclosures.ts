@@ -40,10 +40,6 @@ const hSeries = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/h-series/h-series-front.svg',
 };
 
-const mini3E = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3-e-front.svg',
-};
-
 const eS12 = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/es12/es12-front.svg',
 };
@@ -64,21 +60,33 @@ const eS102 = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/es102/es102-top.svg',
 };
 
-const mini3x = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3x/mini3x-front.svg',
+const mini3e = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3e-front.svg',
 };
 
-const mini3xPlus = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3x-plus/mini3x-plus-front.svg',
+const mini3x = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3x-front.svg',
 };
 
 const mini3xlPlus = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/mini3xl-plus/mini3xl-plus-front.svg',
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3xl-plus-front.svg',
+};
+
+const miniR = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-r-front.svg',
 };
 
 const r20 = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/r20/r20-front.svg',
   [EnclosureSide.Rear]: 'assets/images/new-hardware/r20/r20-rear.svg',
+};
+
+const r20a = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/r20a/r20a-front.svg',
+};
+
+const r20b = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/r20b/r20b-front.svg',
 };
 
 const r30 = {
@@ -87,6 +95,14 @@ const r30 = {
 
 const r40 = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/r40/r40-front.svg',
+};
+
+const r50 = {
+  [EnclosureSide.Top]: 'assets/images/new-hardware/r50/r50-top.svg',
+};
+
+const r50b = {
+  [EnclosureSide.Top]: 'assets/images/new-hardware/r50b/r50b-top.svg',
 };
 
 const r50bm = {
@@ -112,19 +128,24 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.F130]: fSeries,
   [EnclosureModel.H10]: hSeries,
   [EnclosureModel.H20]: hSeries,
-  [EnclosureModel.Mini3E]: mini3E,
-  [EnclosureModel.Mini3EPlus]: mini3E,
+  [EnclosureModel.Mini3E]: mini3e,
+  [EnclosureModel.Mini3EPlus]: mini3e,
   [EnclosureModel.Mini3X]: mini3x,
-  [EnclosureModel.Mini3XPlus]: mini3xPlus,
+  [EnclosureModel.Mini3XPlus]: mini3x,
   [EnclosureModel.Mini3XlPlus]: mini3xlPlus,
+  [EnclosureModel.MiniR]: miniR,
   [EnclosureModel.Es12]: eS12,
   [EnclosureModel.Es24]: eS24,
   [EnclosureModel.Es60]: eS60,
   [EnclosureModel.Es102]: eS102,
   [EnclosureModel.R10]: r10,
   [EnclosureModel.R20]: r20,
+  [EnclosureModel.R20A]: r20a,
+  [EnclosureModel.R20B]: r20b,
   [EnclosureModel.R30]: r30,
   [EnclosureModel.R40]: r40,
+  [EnclosureModel.R50]: r50,
+  [EnclosureModel.R50B]: r50b,
   [EnclosureModel.R50BM]: r50bm,
   [EnclosureModel.X10]: xSeries,
   [EnclosureModel.X20]: xSeries,

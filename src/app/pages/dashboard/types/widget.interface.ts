@@ -7,26 +7,29 @@
  */
 export enum WidgetType {
   App = 'app',
-  Hostname = 'hostname',
   Ipv4Address = 'ipv4-address',
   Ipv6Address = 'ipv6-address',
   Help = 'help',
   Memory = 'memory',
-  Network = 'network',
+  Interface = 'interface',
   BackupTasks = 'backup-tasks',
   Cpu = 'cpu',
   CpuUsageGauge = 'cpu-usage-gauge',
-  CpuUsageRecentWidget = 'cpu-usage-recent',
+  CpuUsageRecent = 'cpu-usage-recent',
   CpuUsageBar = 'cpu-usage-bar',
   CpuTemperatureBar = 'cpu-temperature-bar',
   Storage = 'storage',
   SystemInfoActive = 'system-info-active',
   SystemInfoPassive = 'system-info-passive',
+  HostnameActive = 'hostname-active',
+  HostnamePassive = 'hostname-passive',
   OsVersion = 'os-version',
   SystemUptime = 'system-uptime',
   SystemImage = 'system-image',
   Pool = 'pool',
   ArbitraryText = 'arbitrary-text',
+  SerialActive = 'serial-active',
+  SerialPassive = 'serial-passive',
 }
 
 export enum SlotSize {

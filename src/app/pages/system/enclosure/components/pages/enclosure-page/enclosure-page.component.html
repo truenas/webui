@@ -1,46 +1,41 @@
-@if (isSupportedEnclosure()) {
-  <div class="view-container">
-    <mat-card>
-      <mat-card-header>
-        <ix-enclosure-header [title]="title()"></ix-enclosure-header>
-      </mat-card-header>
-      <mat-card-content>
-        @if (isLoading(); as loading) {
-          <ix-fake-progress-bar
-            [loading]="loading"
-          ></ix-fake-progress-bar>
-        }
-        <div class="container">
-          @switch (selectedView()) {
-            @case (EnclosureView.Pools) {
-              <ix-pools-view></ix-pools-view>
-            }
-            @case (EnclosureView.DiskStatus) {
-              <ix-status-view></ix-status-view>
-            }
-            @case (EnclosureView.Expanders) {
-              <ix-sas-expander-status-view
-                [enclosure]="enclosure()"
-              ></ix-sas-expander-status-view>
-            }
+<div class="view-container">
+  <mat-card>
+    <mat-card-header>
+      <ix-enclosure-header [title]="title()"></ix-enclosure-header>
+    </mat-card-header>
+    <mat-card-content>
+      @if (isLoading(); as loading) {
+        <ix-fake-progress-bar
+          [loading]="loading"
+        ></ix-fake-progress-bar>
+      }
+      <div class="container">
+        @switch (selectedView()) {
+          @case (EnclosureView.Pools) {
+            <ix-pools-view></ix-pools-view>
           }
-        </div>
-
-        @if (selectedSlot()) {
-          <ix-disk-details-overview></ix-disk-details-overview>
-        } @else {
-          <ix-disks-overview></ix-disks-overview>
+          @case (EnclosureView.DiskStatus) {
+            <ix-status-view></ix-status-view>
+          }
+          @case (EnclosureView.Expanders) {
+            <ix-sas-expander-status-view
+              [enclosure]="enclosure()"
+            ></ix-sas-expander-status-view>
+          }
         }
-      </mat-card-content>
-    </mat-card>
-  </div>
+      </div>
+
+      @if (selectedSlot()) {
+        <ix-disk-details-overview></ix-disk-details-overview>
+      } @else {
+        <ix-disks-overview></ix-disks-overview>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+@if (enclosures().length > 1) {
   <div class="selector-container">
     <ix-enclosure-selector></ix-enclosure-selector>
-  </div>
-} @else {
-  <div class="not-supported">
-    <ix-icon name="error"></ix-icon>
-    <h2>{{ 'Enclosure is not supported' | translate }}</h2>
   </div>
 }
 

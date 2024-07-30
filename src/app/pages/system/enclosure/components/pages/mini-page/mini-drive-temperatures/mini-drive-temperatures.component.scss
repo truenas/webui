@@ -5,9 +5,25 @@ h3 {
 }
 
 .disk {
+  align-items: center;
+  display: flex;
+  gap: 6px;
   margin: 8px 0 6px;
 
   .dev {
-    margin-right: 6px;
+    min-width: 32px;
+  }
+
+  ngx-skeleton-loader {
+    display: inline-flex;
+    width: 32px;
+  }
+
+  .temperature {
+    margin-right: 3px;
+  }
+
+  .tooltip-icon {
+    vertical-align: -2px;
   }
 }

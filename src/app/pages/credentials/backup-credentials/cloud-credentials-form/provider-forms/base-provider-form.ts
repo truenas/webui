@@ -6,8 +6,9 @@ import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 
 export abstract class BaseProviderFormComponent<T = CloudCredential['attributes']> {
-  abstract readonly form: FormGroup;
   provider: CloudSyncProvider;
+  abstract readonly form: FormGroup;
+  protected formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
 
   readonly helptext = helptext;
 
@@ -26,5 +27,7 @@ export abstract class BaseProviderFormComponent<T = CloudCredential['attributes'
     return nonNullAttributes as T;
   }
 
-  abstract getFormSetter$: () => BehaviorSubject<T>;
+  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
+    return this.formPatcher$;
+  };
 }

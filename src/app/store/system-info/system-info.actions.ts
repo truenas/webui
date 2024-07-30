@@ -22,11 +22,6 @@ export const productTypeLoaded = createAction(
   props<{ productType: ProductType }>(),
 );
 
-export const systemBuildTimeLoaded = createAction(
-  '[System Info API] System Build Time Loaded',
-  props<{ buildTime: number }>(),
-);
-
 export const ixHardwareLoaded = createAction(
   '[System Info API] System is IxHardware Loaded',
   props<{ isIxHardware: boolean }>(),

@@ -103,7 +103,12 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   selectEnclosure = this.updater((state, id: string) => {
-    const index = state.enclosures.findIndex((enclosure) => enclosure.id === id);
+    let index = state.enclosures.findIndex((enclosure) => enclosure.id === id);
+
+    if (index === -1) {
+      // This could happen if user navigates to a non-existent enclosure via URL.
+      index = 0;
+    }
 
     if (index === state.selectedEnclosureIndex) {
       return state;

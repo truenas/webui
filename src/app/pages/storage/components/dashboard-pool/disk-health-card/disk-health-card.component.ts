@@ -17,8 +17,7 @@ interface DiskState {
   averageTemperature: number | null;
   alerts: number;
   smartTests: number;
-  unit: string;
-  symbolText: string;
+  unit: TemperatureUnit;
 }
 
 @UntilDestroy()
@@ -46,8 +45,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     averageTemperature: null,
     alerts: 0,
     smartTests: 0,
-    unit: '',
-    symbolText: '',
+    unit: TemperatureUnit.Celsius,
   };
 
   constructor(
@@ -120,7 +118,5 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     });
 
     this.diskState.averageTemperature = avgSum / avgCounter;
-    this.diskState.unit = TemperatureUnit.Celsius;
-    this.diskState.symbolText = '°';
   }
 }

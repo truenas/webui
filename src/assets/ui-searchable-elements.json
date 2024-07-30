@@ -3128,6 +3128,26 @@
   {
     "hierarchy": [
       "System",
+      "Advanced",
+      "Access",
+      "Login Banner"
+    ],
+    "synonyms": [
+      "MOTD"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "login-banner",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
       "Advanced"
     ],
     "synonyms": [

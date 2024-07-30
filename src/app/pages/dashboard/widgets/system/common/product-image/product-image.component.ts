@@ -4,7 +4,7 @@ import {
   HostBinding,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { getProductEnclosure, getProductImage, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 
 @Component({
   selector: 'ix-product-image',
@@ -25,7 +25,7 @@ export class ProductImageComponent {
   showProductImageText = input<boolean>(true);
 
   product = computed(() => getServerProduct(this.systemProduct()));
-  productImage = computed(() => getProductImage(this.systemProduct()));
+  productImage = computed(() => getProductImageSrc(this.systemProduct()));
   productEnclosure = computed(() => {
     if (!this.hasEnclosureSupport() || !this.systemProduct()) {
       return null;
