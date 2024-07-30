@@ -4,7 +4,6 @@ import {
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   effect,
   ElementRef,
   input,
@@ -14,11 +13,10 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { delay, pairwise } from 'rxjs';
+import { delay } from 'rxjs';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -46,13 +44,6 @@ export class EnclosureSvgComponent implements OnDestroy {
   readonly enableMouseEvents = input(true);
   readonly slotTintFn = input<TintingFunction>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
-  readonly selectedOldNewValuePair = toSignal(toObservable(this.selectedSlot).pipe(pairwise()));
-  readonly previousSelectedVdevDisks = computed(() => {
-    const [prevSelectedSlot] = this.selectedOldNewValuePair();
-    return prevSelectedSlot?.pool_info?.vdev_disks?.length
-      ? [...prevSelectedSlot.pool_info.vdev_disks.map((disk) => disk.dev)]
-      : [];
-  });
 
   private keyDownListener: () => void;
   private clickListener: () => void;
@@ -249,7 +240,7 @@ export class EnclosureSvgComponent implements OnDestroy {
     const prevSlotExists = !!selectedSlot;
 
     if (newSlotExists && prevSlotExists && slot.dev === selectedSlot.dev) {
-      this.selectedSlot.set(undefined);
+      this.selectedSlot.set(null);
       return;
     }
 
@@ -271,7 +262,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   }
 
   private getSlotForTray(tray: SVGGElement): DashboardEnclosureSlot {
-    const slotNumber = Number(tray.id.split('_').pop()) + 1;
+    const slotNumber = Number(tray.id.split('_').pop());
     const traySlot = this.slots().find((slot) => slot.drive_bay_number === slotNumber);
 
     if (!traySlot) {

@@ -87,6 +87,7 @@ const r20a = {
 
 const r20b = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/r20b/r20b-front.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/r20/r20-rear.svg',
 };
 
 const r30 = {
