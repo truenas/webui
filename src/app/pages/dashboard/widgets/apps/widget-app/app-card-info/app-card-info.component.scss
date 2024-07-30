@@ -1,0 +1,49 @@
+:host {
+  background: var(--bg1);
+  display: inline-flex;
+  flex: 1 1 70%;
+  flex-direction: column;
+  max-width: 70%;
+
+  .app-header {
+    align-items: baseline;
+    border-bottom: 1px solid var(--lines);
+    display: flex;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 8px;
+  }
+
+  .app-status {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 12px;
+
+    ix-app-update-cell {
+      gap: 8px;
+    }
+
+    ::ng-deep ix-with-loading-state-loader {
+      height: 24px;
+      margin-bottom: 4px;
+      margin-top: 4px;
+    }
+  }
+
+  .ix-icon {
+    &.mdi-check-circle {
+      color: var(--green);
+    }
+
+    &.mdi-progress-wrench,
+    &.mdi-alert-circle {
+      color: var(--yellow);
+    }
+
+    &.mdi-stop-circle {
+      color: var(--red);
+    }
+  }
+}

@@ -155,7 +155,7 @@ export class ApplicationsService {
           switchMap(() => this.startApplication(app.name)),
         );
       case ChartReleaseStatus.Stopped:
-        return this.startApplication(app.name).pipe();
+        return this.startApplication(app.name);
       case ChartReleaseStatus.Deploying:
       default:
         return EMPTY;

@@ -1,0 +1,38 @@
+<div class="chart-info">
+  <h4>{{ 'Network I/O' | translate }}</h4>
+  <div class="in-out">
+    <div class="in-out-row">
+      <span>{{ 'In' | translate }}:</span>
+      <span *ixWithLoadingState="stats() as stats">
+        {{ stats.network.incoming | ixNetworkSpeed }}
+      </span>
+    </div>
+    <div class="in-out-row">
+      <span>{{ 'Out' | translate }}:</span>
+      <span *ixWithLoadingState="stats() as stats">
+        {{ stats.network.outgoing | ixNetworkSpeed }}
+      </span>
+    </div>
+  </div>
+  <small>{{ '1m Average' | translate }}</small>
+</div>
+<div class="chart-graph">
+  @if (stats().isLoading) {
+    <ngx-skeleton-loader
+      class="skeleton"
+      [theme]="{
+        width: '292px',
+        height: '92px',
+        background: 'var(--alt-bg2)',
+        opacity: 0.25,
+        margin: 0,
+      }"
+    ></ngx-skeleton-loader>
+  } @else {
+    <ix-network-chart
+      [showLegend]="false"
+      [data]="networkChartData()"
+      [aspectRatio]="3"
+    ></ix-network-chart>
+  }
+</div>

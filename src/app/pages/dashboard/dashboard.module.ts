@@ -45,6 +45,11 @@ import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.constant';
+import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-card-info/app-card-info.component';
+import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-controls/app-controls.component';
+import { AppCpuInfoComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-cpu-info/app-cpu-info.component';
+import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-memory-info/app-memory-info.component';
+import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-network-info/app-network-info.component';
 import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
 import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-empty/backup-task-empty.component';
 import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
@@ -74,6 +79,11 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     BackupTaskActionsComponent,
     BackupTaskTileComponent,
     GaugeChartComponent,
+    AppCardInfoComponent,
+    AppMemoryInfoComponent,
+    AppCpuInfoComponent,
+    AppNetworkInfoComponent,
+    AppControlsComponent,
     ...widgetComponents,
   ],
   providers: [

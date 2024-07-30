@@ -7,9 +7,12 @@ import {
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
@@ -164,6 +167,16 @@ export class WidgetResourcesService {
       filter((stats) => Boolean(appName && stats[appName])),
       map((stats) => stats[appName]),
       shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getAppStatusUpdates(appName: string): Observable<Job<ChartScaleResult, ChartScaleQueryParams>> {
+    return this.ws.subscribe('core.get_jobs').pipe(
+      filter((event: ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>) => {
+        return event.fields.method === 'chart.release.scale';
+      }),
+      filter((event) => event?.fields?.arguments[0] === appName),
+      map((event) => event.fields),
     );
   }
 

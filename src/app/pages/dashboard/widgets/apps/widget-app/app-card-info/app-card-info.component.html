@@ -1,0 +1,17 @@
+<div class="app-header">
+  <h3 *ixWithLoadingState="app() as app" class="name">{{ app.name }}</h3>
+  <div *ixWithLoadingState="app() as app" class="version">v{{ app.chart_metadata?.appVersion }}</div>
+</div>
+<div class="app-status">
+  <ix-app-status-cell
+    *ixWithLoadingState="app() as app"
+    [app]="app"
+    [job]="job()"
+    [showIcon]="true"
+  ></ix-app-status-cell>
+  <ix-app-update-cell
+    *ixWithLoadingState="app() as app"
+    [app]="app"
+    [showIcon]="true"
+  ></ix-app-update-cell>
+</div>
