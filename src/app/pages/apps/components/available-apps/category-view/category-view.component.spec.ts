@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
@@ -48,7 +47,7 @@ describe('CategoryViewComponent', () => {
         resetFilters: jest.fn(),
       }),
       mockProvider(DockerStore, {
-        selectedPool: signal('pool'),
+        selectedPool$: of('pool'),
       }),
       mockProvider(AppsStore, {
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent', 'new-and-updated']),

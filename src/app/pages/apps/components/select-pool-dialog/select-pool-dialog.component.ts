@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, OnInit,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, Observable, of } from 'rxjs';
+import {
+  forkJoin, Observable, of, take,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
@@ -15,7 +18,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +38,6 @@ export class SelectPoolDialogComponent implements OnInit {
   selectedPool: string;
 
   constructor(
-    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private dialogService: DialogService,
     private appService: ApplicationsService,
@@ -70,7 +71,7 @@ export class SelectPoolDialogComponent implements OnInit {
 
   private loadPools(): void {
     forkJoin(([
-      toObservable(this.dockerStore.selectedPool),
+      this.dockerStore.selectedPool$.pipe(take(1)),
       this.appService.getPoolList(),
     ]))
       .pipe(this.loader.withLoader(), untilDestroyed(this))

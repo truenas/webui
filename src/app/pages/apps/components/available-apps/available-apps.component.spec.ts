@@ -303,7 +303,6 @@ describe('Redirect to install app', () => {
       ),
     ],
     providers: [
-      DockerStore,
       InstalledAppsStore,
       mockProvider(AppsStatisticsService),
       mockWebSocket([
@@ -320,6 +319,9 @@ describe('Redirect to install app', () => {
       mockProvider(AppsStore, {
         availableApps$: of(appsResponse),
         isLoading$: of(false),
+      }),
+      mockProvider(DockerStore, {
+        selectedPool$: of('pool'),
       }),
     ],
     params: { appId: 'webdav', catalog: 'TRUENAS', train: 'community' },

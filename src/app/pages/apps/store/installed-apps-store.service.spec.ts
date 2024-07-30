@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Observable, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
@@ -41,8 +40,8 @@ describe('InstalledAppsStore', () => {
         patchState: jest.fn(),
       }),
       mockProvider(DockerStore, {
-        isLoading: signal(false),
-        dockerStarted: signal(true),
+        isLoading$: of(false),
+        isDockerStarted$: of(true),
       }),
       mockProvider(AppsStatisticsService),
     ],

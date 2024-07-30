@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal, ViewContainerRef } from '@angular/core';
+import { ViewContainerRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -78,7 +78,7 @@ describe('AppDetailsHeaderComponent', () => {
         },
         providers: [
           mockProvider(DockerStore, {
-            selectedPool: signal(null),
+            selectedPool$: of(null),
           }),
         ],
       });
@@ -106,7 +106,7 @@ describe('AppDetailsHeaderComponent', () => {
         },
         providers: [
           mockProvider(DockerStore, {
-            selectedPool: signal('has-pool'),
+            selectedPool$: of('has-pool'),
           }),
         ],
       });

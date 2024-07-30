@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
@@ -24,7 +24,7 @@ describe('CustomAppButtonComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(DockerStore, {
-        selectedPool: signal('selected pool'),
+        selectedPool$: of('selected pool'),
       }),
     ],
   });
@@ -52,7 +52,8 @@ describe('CustomAppButtonComponent', () => {
 
   it('disables Custom App button if pool is not set', () => {
     const store = spectator.inject(DockerStore);
-    Object.defineProperty(store, 'selectedPool', { value: signal(undefined) });
+    Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+    spectator.detectChanges();
 
     expect(button.isDisabled()).toBeTruthy();
   });

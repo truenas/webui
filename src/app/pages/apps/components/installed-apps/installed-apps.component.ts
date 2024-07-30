@@ -9,7 +9,6 @@ import {
   AfterViewInit,
   Inject,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import {
@@ -44,7 +43,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
@@ -157,7 +155,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private installedAppsStore: InstalledAppsStore,
     private dockerStore: DockerStore,
-    private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
     private appsStats: AppsStatisticsService,
@@ -278,8 +275,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.cdr.markForCheck();
 
     combineLatest([
-      toObservable(this.dockerStore.selectedPool),
-      toObservable(this.dockerStore.dockerStarted),
+      this.dockerStore.selectedPool$,
+      this.dockerStore.isDockerStarted$,
       this.installedAppsStore.installedApps$,
     ]).pipe(
       filter(([pool]) => {

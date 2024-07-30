@@ -1,7 +1,6 @@
-import { signal } from '@angular/core';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -29,7 +28,7 @@ describe('AppResourcesCardComponent', () => {
         } as DatasetDetails),
       ]),
       mockProvider(DockerStore, {
-        selectedPool: signal('pool'),
+        selectedPool$: of('pool'),
       }),
     ],
   });

@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, filter, map, switchMap, throttleTime,
@@ -25,7 +24,7 @@ export class AppResourcesCardComponent implements OnInit {
   memoryTotal: number;
   pool: string;
 
-  availableSpace$ = toObservable(this.dockerStore.selectedPool).pipe(
+  availableSpace$ = this.dockerStore.selectedPool$.pipe(
     filter((pool) => !!pool),
     switchMap((pool) => {
       return this.ws.call('pool.dataset.get_instance', [`${pool}/ix-applications`]);

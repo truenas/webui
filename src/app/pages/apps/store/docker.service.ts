@@ -1,6 +1,4 @@
-import {
-  computed, Injectable,
-} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -35,29 +33,17 @@ const initialState: DockerConfigState = {
 
 @Injectable()
 export class DockerStore extends ComponentStore<DockerConfigState> {
-  readonly isLoading = computed(() => {
-    return this.state().isLoading;
-  });
-
-  readonly selectedPool = computed(() => {
-    return this.state().pool;
-  });
-
-  readonly dockerStarted = computed(() => {
+  readonly isLoading$ = this.select((state) => state.isLoading);
+  readonly selectedPool$ = this.select((state) => state.pool);
+  readonly isDockerStarted$ = this.select((state) => {
     return [
       DockerStatus.Initializing,
       DockerStatus.Pending,
       DockerStatus.Running,
-    ].includes(this.state().statusData.status as DockerStatus);
+    ].includes(state.statusData.status as DockerStatus);
   });
-
-  readonly status = computed(() => {
-    return this.state().statusData.status;
-  });
-
-  readonly statusDescription = computed(() => {
-    return this.state().statusData.description;
-  });
+  readonly status$ = this.select((state) => state.statusData.status);
+  readonly statusDescription$ = this.select((state) => state.statusData.description);
 
   constructor(
     private ws: WebSocketService,

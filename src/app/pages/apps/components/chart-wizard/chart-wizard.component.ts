@@ -486,10 +486,16 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   private checkIfPoolIsSet(): void {
-    const pool = this.dockerStore.selectedPool();
-    if (!pool) {
-      this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
-    }
+    this.dockerStore.selectedPool$.pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (pool) => {
+        if (!pool) {
+          this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+        }
+      },
+    });
   }
 
   private handleSearchControl(): void {

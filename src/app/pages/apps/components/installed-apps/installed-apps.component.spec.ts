@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,8 +19,8 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
+import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
-import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/kubernetes-status/docker-status.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -61,8 +60,8 @@ describe('InstalledAppsComponent', () => {
     ],
     providers: [
       mockProvider(DockerStore, {
-        dockerStarted: signal(true),
-        selectedPool: signal('pool'),
+        isDockerStarted$: of(true),
+        selectedPool$: of('pool'),
       }),
       mockProvider(InstalledAppsStore, {
         isLoading$: of(false),

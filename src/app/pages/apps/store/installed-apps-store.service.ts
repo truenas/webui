@@ -1,5 +1,4 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
@@ -163,9 +162,11 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   }
 
   private loadInstalledApps(): Observable<unknown> {
-    return toObservable(this.dockerStore.isLoading).pipe(
-      filter((loading) => !loading),
-      switchMap(() => toObservable(this.dockerStore.dockerStarted)),
+    return this.dockerStore.isLoading$.pipe(
+      filter(
+        (loading) => !loading,
+      ),
+      switchMap(() => this.dockerStore.isDockerStarted$),
       filter((isDockerStarted) => isDockerStarted !== null),
       switchMap((isDockerStarted) => {
         return isDockerStarted ? this.appsService.getAllChartReleases().pipe(

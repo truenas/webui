@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
@@ -19,7 +18,7 @@ export class CustomAppButtonComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = customAppButtonElements;
 
-  customAppDisabled$ = toObservable(this.dockerStore.selectedPool).pipe(
+  customAppDisabled$ = this.dockerStore.selectedPool$.pipe(
     map((pool) => !pool),
   );
 

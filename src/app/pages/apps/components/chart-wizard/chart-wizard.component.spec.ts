@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -298,7 +297,7 @@ describe('ChartWizardComponent', () => {
         }),
       ]),
       mockProvider(DockerStore, {
-        selectedPool: signal('pool set'),
+        selectedPool$: of('pool set'),
       }),
       mockProvider(MatDialog),
       mockProvider(IxSlideInRef),
@@ -332,7 +331,7 @@ describe('ChartWizardComponent', () => {
       jest.spyOn(router, 'navigate').mockImplementation();
 
       const store = spectator.inject(DockerStore);
-      Object.defineProperty(store, 'selectedPool', { value: signal(undefined) });
+      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
       expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'app_name']);
@@ -389,7 +388,7 @@ describe('ChartWizardComponent', () => {
       jest.spyOn(router, 'navigate').mockImplementation();
 
       const store = spectator.inject(DockerStore);
-      Object.defineProperty(store, 'selectedPool', { value: signal(undefined) });
+      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
       expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'ipfs']);

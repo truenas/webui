@@ -1,6 +1,6 @@
-import { signal } from '@angular/core';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
@@ -18,7 +18,7 @@ describe('DockerStatusComponent', () => {
     spectator = createComponent({
       providers: [
         mockProvider(DockerStore, {
-          status: signal(status),
+          status$: of(status),
         }),
       ],
     });

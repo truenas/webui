@@ -14,8 +14,8 @@ export class DockerStatusComponent {
   readonly DockerStatus = DockerStatus;
   readonly dockerStatusLabels = dockerStatusLabels;
 
-  status = this.store.status;
-  statusDescription = this.store.statusDescription;
+  status$ = this.store.status$;
+  statusDescription$ = this.store.statusDescription$;
 
   constructor(private store: DockerStore) { }
 }

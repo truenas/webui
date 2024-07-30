@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -31,7 +30,8 @@ describe('SelectPoolDialogComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(DockerStore, {
-        setDockerPool: jest.fn(() => of()),
+        setDockerPool: jest.fn(() => of({ pool: 'pool' })),
+        selectedPool$: of(null),
       }),
       mockProvider(ApplicationsService, {
         getPoolList: jest.fn(() => of([
@@ -77,8 +77,8 @@ describe('SelectPoolDialogComponent', () => {
 
   it('shows migrate checkbox when existing pool is changed to a new one', async () => {
     const dockerStore = spectator.inject(DockerStore);
-    Object.defineProperty(dockerStore, 'selectedPool', {
-      value: signal('pool1'),
+    Object.defineProperty(dockerStore, 'selectedPool$', {
+      value: of('pool1'),
     });
     spectator.component.ngOnInit();
 
@@ -91,6 +91,12 @@ describe('SelectPoolDialogComponent', () => {
   });
 
   it('sets new pool and migrates applications when form is submitted', async () => {
+    const dockerStore = spectator.inject(DockerStore);
+    Object.defineProperty(dockerStore, 'selectedPool$', {
+      value: of('pool1'),
+    });
+    spectator.component.ngOnInit();
+
     await form.fillForm(
       {
         Pool: 'pool2',
