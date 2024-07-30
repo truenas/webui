@@ -96,7 +96,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
 
   setDockerPool(poolName: string): Observable<DockerConfig | Job<DockerConfig>> {
     return this.dialogService.jobDialog(
-      this.ws.job('docker.update', { pool: poolName }),
+      this.ws.job('docker.update', [{ pool: poolName }]),
       { title: this.translate.instant('Configuring...') },
     )
       .afterClosed()

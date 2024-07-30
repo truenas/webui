@@ -134,7 +134,7 @@ export interface ApiJobDirectory {
   'kmip.update': { params: [KmipConfigUpdate]; response: KmipConfig };
 
   // Docker
-  'docker.update': { params: DockerConfigUpdate; response: DockerConfig };
+  'docker.update': { params: [DockerConfigUpdate]; response: DockerConfig };
 
   // LDAP
   'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
