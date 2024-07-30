@@ -86,7 +86,7 @@ export class GenerateVdevsService {
         return a.enclosure ? -1 : 1;
       }
 
-      return a.enclosure.id.localeCompare(b.enclosure.id);
+      return a.enclosure?.id?.localeCompare(b.enclosure.id);
     });
   }
 
