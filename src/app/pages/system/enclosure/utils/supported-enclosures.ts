@@ -83,6 +83,7 @@ const r20 = {
 
 const r20a = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/r20a/r20a-front.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/r20a/r20a-rear.svg',
 };
 
 const r20b = {
@@ -100,10 +101,12 @@ const r40 = {
 
 const r50 = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/r50/r50-top.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/r50/r50-rear.svg',
 };
 
 const r50b = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/r50b/r50b-top.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/r50b/r50b-rear.svg',
 };
 
 const r50bm = {
