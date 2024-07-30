@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
@@ -26,9 +26,7 @@ export class CustomAppButtonComponent {
   constructor(
     private dockerStore: DockerStore,
     private router: Router,
-  ) {
-    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
-  }
+  ) { }
 
   navigateToCustomAppCreation(): void {
     this.router.navigate(['/apps', 'available', officialCatalog, chartsTrain, ixChartApp, 'install']);

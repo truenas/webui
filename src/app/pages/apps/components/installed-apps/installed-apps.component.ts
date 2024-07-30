@@ -488,6 +488,5 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
-    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 }

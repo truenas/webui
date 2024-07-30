@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,7 +17,6 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('SelectPoolDialogComponent', () => {
   let spectator: Spectator<SelectPoolDialogComponent>;
@@ -49,9 +47,6 @@ describe('SelectPoolDialogComponent', () => {
       }),
       mockProvider(MatDialogRef),
       mockProvider(Router),
-      mockWebSocket([
-        mockJob('docker.update'),
-      ]),
     ],
   });
 
@@ -76,11 +71,7 @@ describe('SelectPoolDialogComponent', () => {
     const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
     await chooseButton.click();
 
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'docker.update',
-      [{ pool: 'pool2' }],
-    );
+    expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith('pool2');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
@@ -110,10 +101,7 @@ describe('SelectPoolDialogComponent', () => {
     const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
     await chooseButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'docker.update',
-      [{ pool: 'pool2' }],
-    );
+    expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith('pool2');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 

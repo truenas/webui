@@ -2,10 +2,17 @@ import {
   computed, Injectable,
 } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { Observable, switchMap, tap } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  forkJoin, Observable, switchMap, tap,
+} from 'rxjs';
 import { DockerConfig, DockerStatusResponse } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface DockerConfigState {
@@ -54,12 +61,14 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
 
   constructor(
     private ws: WebSocketService,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
-    this.initialize();
   }
 
-  private initialize = this.effect((trigger$: Observable<void>) => {
+  initialize = this.effect((trigger$: Observable<void>) => {
     return trigger$.pipe(
       tap(() => {
         this.patchState((state) => {
@@ -69,56 +78,68 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
           };
         });
       }),
-      switchMap(() => this.getDockerConfig()),
-      tap((dockerConfig: DockerConfig) => {
-        this.patchState((state) => {
-          return {
-            ...state,
-            pool: dockerConfig.pool,
-          };
-        });
-      }),
-      switchMap(() => this.getDockerStatus()),
-      tap((dockerStatus: DockerStatusResponse) => {
-        this.patchState((state) => {
-          return {
-            ...state,
-            statusData: {
-              status: dockerStatus.status,
-              description: dockerStatus.description,
-            },
-          };
-        });
-      }),
-      tap(() => {
-        this.patchState((state) => {
-          return {
-            ...state,
-            isLoading: false,
-          };
-        });
-      }),
+      switchMap(() => forkJoin([
+        this.getDockerConfig(),
+        this.getDockerStatus(),
+      ])),
+      tap(
+        ([dockerConfig, dockerStatus]: [DockerConfig, DockerStatusResponse]) => {
+          this.patchState((state) => {
+            return {
+              ...state,
+              pool: dockerConfig.pool,
+              statusData: {
+                status: dockerStatus.status,
+                description: dockerStatus.description,
+              },
+              isLoading: false,
+            };
+          });
+        },
+      ),
     );
   });
 
-  getDockerConfig(): Observable<DockerConfig> {
+  private getDockerConfig(): Observable<DockerConfig> {
     return this.ws.call('docker.config');
   }
 
-  getDockerStatus(): Observable<DockerStatusResponse> {
+  private getDockerStatus(): Observable<DockerStatusResponse> {
     return this.ws.call('docker.status');
   }
 
-  setDockerPool = this.updater((state: DockerConfigState, pool: string) => {
-    return {
-      ...state,
-      pool,
-    };
-  });
+  setDockerPool(poolName: string): Observable<DockerConfig | Job<DockerConfig>> {
+    return this.dialogService.jobDialog(
+      this.ws.job('docker.update', { pool: poolName }),
+      { title: this.translate.instant('Configuring...') },
+    )
+      .afterClosed()
+      .pipe(
+        tap((job) => {
+          if (job.state === JobState.Success) {
+            this.setState((state) => {
+              return {
+                ...state,
+                pool: poolName,
+              };
+            });
+          }
+          if ([JobState.Failed, JobState.Aborted, JobState.Error].includes(job.state)) {
+            this.setState((state) => {
+              return {
+                ...state,
+                pool: null,
+              };
+            });
+          }
+        }),
+        this.errorHandler.catchError(),
+      );
+  }
 
   /**
    * Updates docker status in `DockerStore` service
-   * @returns An onservable that should be subscribed to at component level. This event subscription should only
+   * @returns An observable that should be subscribed to at component level. This event subscription should only
    * stay alive until the component subscription stays alive i.e., until the component is destroyed
    */
   dockerStatusEventUpdates(): Observable<ApiEvent<DockerStatusResponse>> {

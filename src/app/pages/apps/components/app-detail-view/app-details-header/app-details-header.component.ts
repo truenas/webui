@@ -37,9 +37,7 @@ export class AppDetailsHeaderComponent {
     private translate: TranslateService,
     private ws: WebSocketService,
     private viewContainerRef: ViewContainerRef,
-  ) {
-    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
-  }
+  ) { }
 
   get description(): string {
     const splitText = this.app?.app_readme?.split('</h1>');

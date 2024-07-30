@@ -5,13 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('AppSettingsButtonComponent', () => {
   let spectator: Spectator<AppSettingsButtonComponent>;
@@ -32,10 +30,8 @@ describe('AppSettingsButtonComponent', () => {
       }),
       mockProvider(DockerStore, {
         selectedPool: signal('pool'),
+        setDockerPool: jest.fn(() => of({})),
       }),
-      mockWebSocket([
-        mockJob('docker.update'),
-      ]),
     ],
   });
 
@@ -65,7 +61,6 @@ describe('AppSettingsButtonComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Confirm to unset pool?',
     }));
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('docker.update', [{ pool: null }]);
+    expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith(null);
   });
 });

@@ -43,7 +43,6 @@ export class AppResourcesCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.getResourcesUsageUpdates();
-    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 
   getResourcesUsageUpdates(): void {

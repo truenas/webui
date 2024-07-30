@@ -47,9 +47,7 @@ export class SelectPoolDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<SelectPoolDialogComponent>,
     private snackbar: SnackbarService,
     private dockerStore: DockerStore,
-  ) {
-    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
-  }
+  ) { }
 
   get canMigrateApplications(): boolean {
     return Boolean(this.selectedPool) && this.selectedPool !== this.form.value.pool;
@@ -60,19 +58,14 @@ export class SelectPoolDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.dialogService.jobDialog(
-      this.ws.job('docker.update', { pool: this.form.value.pool }),
-      { title: helptextApps.choosePool.jobTitle },
-    )
-      .afterClosed()
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe(() => {
-        this.snackbar.success(
-          this.translate.instant('Using pool {name}', { name: this.form.value.pool }),
-        );
-        this.dockerStore.setDockerPool(this.form.value.pool);
-        this.dialogRef.close(true);
-      });
+    this.dockerStore.setDockerPool(this.form.value.pool).pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.snackbar.success(
+        this.translate.instant('Using pool {name}', { name: this.form.value.pool }),
+      );
+      this.dialogRef.close(true);
+    });
   }
 
   private loadPools(): void {

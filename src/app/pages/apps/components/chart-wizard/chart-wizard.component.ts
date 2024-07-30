@@ -5,7 +5,6 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -81,8 +80,6 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     release_name: '',
   });
 
-  selectedPool$ = toObservable(this.dockerStore.selectedPool);
-
   searchControl = this.formBuilder.control('');
   searchOptions: Option[] = [];
 
@@ -130,7 +127,6 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.getDockerHubRateLimitInfo();
     this.listenForRouteChanges();
     this.handleSearchControl();
-    this.dockerStore.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 
   ngOnDestroy(): void {
