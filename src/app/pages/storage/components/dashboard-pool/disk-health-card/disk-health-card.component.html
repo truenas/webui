@@ -29,7 +29,7 @@
       <div class="value">
         @if (isHighestTempReady) {
           {{ diskState.highestTemperature | number }}
-          {{ diskState.symbolText }}{{ diskState.unit }}
+          {{ diskState.unit }}
         } @else {
           {{ 'No Data' | translate }}
         }
@@ -41,7 +41,7 @@
       <div class="value">
         @if (isLowestTempReady) {
           {{ diskState.lowestTemperature | number }}
-          {{ diskState.symbolText }}{{ diskState.unit }}
+          {{ diskState.unit }}
         } @else {
           {{ 'No Data' | translate }}
         }
@@ -53,7 +53,7 @@
       <div class="value">
         @if (isAverageTempReady) {
           {{ diskState.averageTemperature | number }}
-          {{ diskState.symbolText }}{{ diskState.unit }}
+          {{ diskState.unit }}
         } @else {
           {{ 'No Data' | translate }}
         }
