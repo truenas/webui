@@ -10,11 +10,9 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
-import { DockerSettingsComponent } from 'app/pages/apps/components/installed-apps/docker-settings/docker-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -30,7 +28,6 @@ export class AppSettingsButtonComponent {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -44,10 +41,6 @@ export class AppSettingsButtonComponent {
 
   onChoosePool(): void {
     this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
-  }
-
-  onAdvancedSettings(): void {
-    this.slideInService.open(DockerSettingsComponent);
   }
 
   onUnsetPool(): void {

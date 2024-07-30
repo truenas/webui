@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
-import { DockerSettingsComponent } from 'app/pages/apps/components/installed-apps/docker-settings/docker-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -57,13 +56,6 @@ describe('AppSettingsButtonComponent', () => {
     await menu.clickItem({ text: 'Choose Pool' });
 
     expect(matDialog.open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
-  });
-
-  it('shows Advanced Settings slide once Settings button -> Advanced Settings clicked', async () => {
-    await menu.open();
-    await menu.clickItem({ text: 'Advanced Settings' });
-
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DockerSettingsComponent);
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {

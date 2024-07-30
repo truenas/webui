@@ -480,25 +480,6 @@
   {
     "hierarchy": [
       "Applications",
-      "Installed",
-      "Settings",
-      "Advanced Settings"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/apps",
-      "installed",
-      "*"
-    ],
-    "routerLink": null,
-    "anchor": "advanced-settings",
-    "triggerAnchor": "app-settings",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Applications",
       "Installed"
     ],
     "synonyms": [

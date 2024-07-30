@@ -17,14 +17,7 @@
   >
     {{ 'Choose Pool' | translate }}
   </button>
-  <button
-    mat-menu-item
-    ixTest="advanced-settings"
-    [ixUiSearch]="searchableElements.elements.advancedSettings"
-    (click)="onAdvancedSettings()"
-  >
-    {{ 'Advanced Settings' | translate }}
-  </button>
+  
   @if (!!dockerStore.selectedPool()) {
     <button
       mat-menu-item

@@ -36,7 +36,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
-import { DockerSettingsComponent } from 'app/pages/apps/components/installed-apps/docker-settings/docker-settings.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -258,10 +257,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       case EmptyType.Errors:
         this.entityEmptyConf.title = helptextApps.message.not_running;
         this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = {
-          label: this.translate.instant('Open Settings'),
-          action: () => this.openAdvancedSettings(),
-        };
         break;
       case EmptyType.NoSearchResults:
         this.entityEmptyConf.title = helptextApps.message.no_search_result;
@@ -473,10 +468,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
     this.selectedApp = firstApp;
     this.cdr.markForCheck();
-  }
-
-  private openAdvancedSettings(): void {
-    this.slideInService.open(DockerSettingsComponent);
   }
 
   private resetSearch(): void {

@@ -60,7 +60,6 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
-import { DockerSettingsComponent } from 'app/pages/apps/components/installed-apps/docker-settings/docker-settings.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
@@ -101,7 +100,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppDetailsPanelComponent,
     AppContainersCardComponent,
     AppHistoryCardComponent,
-    DockerSettingsComponent,
     AppResourcesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
