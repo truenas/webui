@@ -1164,6 +1164,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 .mdc-list-item__primary-text {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
 
   > span {
     align-items: center;

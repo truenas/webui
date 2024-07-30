@@ -39,6 +39,15 @@ import { snapshotStateKey } from 'app/pages/datasets/modules/snapshots/store/sna
 import { SnapshotAddFormComponent } from './snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 
+const components = [
+  SnapshotListComponent,
+  SnapshotCloneDialogComponent,
+  SnapshotRollbackDialogComponent,
+  SnapshotBatchDeleteDialogComponent,
+  SnapshotAddFormComponent,
+  SnapshotDetailsRowComponent,
+];
+
 @NgModule({
   providers: [],
   imports: [
@@ -74,19 +83,10 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
     FormatDateTimePipe,
   ],
   declarations: [
-    SnapshotListComponent,
-    SnapshotCloneDialogComponent,
-    SnapshotRollbackDialogComponent,
-    SnapshotBatchDeleteDialogComponent,
-    SnapshotAddFormComponent,
-    SnapshotDetailsRowComponent,
+    ...components,
   ],
   exports: [
-    SnapshotListComponent,
-    SnapshotCloneDialogComponent,
-    SnapshotRollbackDialogComponent,
-    SnapshotBatchDeleteDialogComponent,
-    SnapshotAddFormComponent,
+    ...components,
   ],
 })
 export class SnapshotsModule { }

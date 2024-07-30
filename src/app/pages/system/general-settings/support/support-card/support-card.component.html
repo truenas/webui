@@ -13,17 +13,17 @@
       fxLayoutGap="16px"
       fxLayout.lt-lg="row wrap"
       fxLayoutAlign="space-evenly center"
-      [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
-      [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
+      [fxLayout.xs]="isWiderImage() ? 'column' : 'row wrap'"
+      [fxLayout.gt-md]="isWiderImage() ? 'column' : 'row wrap'"
     >
       <div
         class="product-image"
-        [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
-        [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
-        [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
-        [style.background-image]="'url(' + productImageSrc + ')'"
+        [fxFlex.gt-md]="isWiderImage() ? 'calc(200px - 32px)' : '40%'"
+        [fxFlex.gt-xs]="isWiderImage() ? 'calc(40% - 32px)' : '40%'"
+        [fxFlex.xs]="isWiderImage() ? 'calc(200px - 32px)' : '40%'"
+        [style.background-image]="'url(' + productImageSrc() + ')'"
       >
-        <img class="invisible" [src]="productImageSrc" />
+        <img class="invisible" [src]="productImageSrc()" />
       </div>
 
       @if (systemInfo) {
@@ -32,8 +32,8 @@
           fxLayoutAlign="start stretch"
           fxLayoutGap="16px"
           fxFlex.gt-xs="calc(60% - 32px)"
-          [fxFlex.gt-md]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
-          [fxFlex.xs]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
+          [fxFlex.gt-md]="isWiderImage() ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
+          [fxFlex.xs]="isWiderImage() ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
           [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
         >
           <ix-sys-info
@@ -68,7 +68,7 @@
             fxLayout="row"
             fxLayoutGap="8px"
             class="actions button-group"
-            [class.btn-fixed]="!isProductImageRack"
+            [class.btn-fixed]="!isWiderImage()"
           >
             <button
               *ixRequiresRoles="requiredRoles"
@@ -81,7 +81,7 @@
               {{ licenseButtonText | translate }}
             </button>
 
-            @if (hasLicense && !isProductImageRack) {
+            @if (hasLicense && !isWiderImage()) {
               <button
                 mat-button
                 color="default"

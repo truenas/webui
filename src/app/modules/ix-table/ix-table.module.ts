@@ -27,6 +27,7 @@ import { IxCellTextComponent } from 'app/modules/ix-table/components/ix-table-bo
 import { IxCellToggleComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { IxCellYesNoComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
 import { IxHeaderCellTextComponent } from 'app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component';
@@ -45,6 +46,36 @@ import { ScheduleToCrontabPipe } from 'app/modules/pipes/schedule-to-crontab/sch
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-selector/ix-table-columns-selector.component';
+
+const components = [
+  IxTableComponent,
+  IxTableHeadComponent,
+  IxTableBodyComponent,
+  IxTablePagerComponent,
+  IxCellTemplateComponent,
+  IxTableCellDirective,
+  IxTableDetailsRowDirective,
+  IxTableBodyCellDirective,
+  IxTableHeaderCellDirective,
+  IxCellTextComponent,
+  IxCellDateComponent,
+  IxCellRelativeDateComponent,
+  IxCellSizeComponent,
+  IxCellCheckboxComponent,
+  IxCellYesNoComponent,
+  IxCellActionsComponent,
+  IxCellToggleComponent,
+  IxCellScheduleComponent,
+  IxCellStateButtonComponent,
+  IxHeaderCellTextComponent,
+  IxHeaderCellCheckboxComponent,
+  IxTableEmptyDirective,
+  IxTableEmptyRowComponent,
+  IxTableColumnsSelectorComponent,
+  IxTablePagerShowMoreComponent,
+  IxTableExpandableRowComponent,
+  IxTableDetailsRowComponent,
+];
 
 @NgModule({
   imports: [
@@ -70,59 +101,10 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     FlexModule,
   ],
   declarations: [
-    IxTableComponent,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTablePagerComponent,
-    IxCellTemplateComponent,
-    IxTableCellDirective,
-    IxTableDetailsRowDirective,
-    IxTableBodyCellDirective,
-    IxTableHeaderCellDirective,
-    IxCellTextComponent,
-    IxCellDateComponent,
-    IxCellRelativeDateComponent,
-    IxCellSizeComponent,
-    IxCellCheckboxComponent,
-    IxCellYesNoComponent,
-    IxCellActionsComponent,
-    IxCellToggleComponent,
-    IxCellScheduleComponent,
-    IxCellStateButtonComponent,
-    IxHeaderCellTextComponent,
-    IxHeaderCellCheckboxComponent,
-    IxTableEmptyDirective,
-    IxTableEmptyRowComponent,
-    IxTableColumnsSelectorComponent,
-    IxTablePagerShowMoreComponent,
-    IxTableExpandableRowComponent,
+    ...components,
   ],
   exports: [
-    IxTableComponent,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTablePagerComponent,
-    IxTableCellDirective,
-    IxTableDetailsRowDirective,
-    IxTableBodyCellDirective,
-    IxTableHeaderCellDirective,
-    IxCellTextComponent,
-    IxCellDateComponent,
-    IxCellRelativeDateComponent,
-    IxCellSizeComponent,
-    IxCellCheckboxComponent,
-    IxCellYesNoComponent,
-    IxCellActionsComponent,
-    IxCellToggleComponent,
-    IxCellScheduleComponent,
-    IxCellStateButtonComponent,
-    IxHeaderCellTextComponent,
-    IxHeaderCellCheckboxComponent,
-    IxTableEmptyDirective,
-    IxTableEmptyRowComponent,
-    IxTableColumnsSelectorComponent,
-    IxTablePagerShowMoreComponent,
-    IxTableExpandableRowComponent,
+    ...components,
   ],
   providers: [
     FormatDateTimePipe,

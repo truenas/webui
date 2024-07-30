@@ -78,7 +78,7 @@ export class PrivilegeFormComponent implements OnInit {
   };
 
   readonly dsGroupsProvider: ChipsProvider = (query: string) => {
-    return this.ws.call('group.query', [[['local', '=', false]], { extra: { search_dscache: true } }]).pipe(
+    return this.ws.call('group.query', [[['local', '=', false]]]).pipe(
       map((groups) => {
         this.dsGroups = groups;
         const chips = groups.map((group) => group.group);

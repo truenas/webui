@@ -10,14 +10,14 @@ import {
   DiskTopologyDescriptionComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/disk-topology-description/disk-topology-description.component';
 import {
-  PoolsLegendComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-legend/pools-legend.component';
-import {
   PoolsViewComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-view.component';
 import {
   VdevDisksLegendComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/vdev-disks-legend/vdev-disks-legend.component';
+import {
+  PoolsLegendComponent,
+} from 'app/pages/system/enclosure/components/pools-legend/pools-legend.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 
@@ -85,7 +85,7 @@ describe('PoolsViewComponent', () => {
       expect(spectator.query(DiskTopologyDescriptionComponent)).toExist();
     });
 
-    it('renders legends with vdev disks', () => {
+    it('renders legend with vdev disks', () => {
       const legend = spectator.query(VdevDisksLegendComponent);
       expect(legend).toExist();
       expect(legend.poolColor).toBe('red');

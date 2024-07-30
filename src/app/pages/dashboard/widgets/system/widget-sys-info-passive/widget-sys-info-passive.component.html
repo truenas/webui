@@ -1,4 +1,4 @@
-<mat-card class="card">
+<mat-card [class]="['card', size()]">
   <mat-card-content class="card-content">
     <div [class]="['container', size()]">
       <div class="content-left fn-theme-contrast-lighter">
@@ -190,8 +190,8 @@
       <div [class]="['empty', 'container', size()]">
         <ix-icon class="icon" name="mdi-widgets"></ix-icon>
         <h3>
-          <div>{{ 'The system is not licensed for HA.' | translate }}</div>
-          <small>{{ 'Configure dashboard to edit the widget.' | translate }}</small>
+          <div>{{ 'This system is not licensed for HA.' | translate }}</div>
+          <small>{{ 'Configure dashboard to edit this widget.' | translate }}</small>
         </h3>
       </div>
     }

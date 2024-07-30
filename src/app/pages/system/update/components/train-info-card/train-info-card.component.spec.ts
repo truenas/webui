@@ -58,7 +58,7 @@ describe('TrainInfoCardComponent', () => {
     expect(spectator.queryAll('mat-card')).toHaveLength(1);
 
     const cardText = spectator.query('.stable-warning');
-    expect(cardText).toHaveText('This is not a production release, and should only be used for testing.');
+    expect(cardText).toHaveText('Selected train does not have production releases, and should only be used for testing.');
   });
 
   it('hides cards when updates are not available', () => {

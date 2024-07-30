@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, EMPTY, forkJoin, Observable, of, Subscription, from,
@@ -21,6 +22,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 
 interface SigninState {
   isLoading: boolean;
@@ -31,6 +33,7 @@ interface SigninState {
     ips?: string[];
     disabledReasons?: FailoverDisabledReason[];
   };
+  loginBanner: string;
 }
 
 const initialState: SigninState = {
@@ -38,11 +41,13 @@ const initialState: SigninState = {
   managedByTrueCommand: false,
   wasAdminSet: true,
   failover: null,
+  loginBanner: null,
 };
 
 @UntilDestroy()
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
+  loginBanner$ = this.select((state) => state.loginBanner);
   managedByTrueCommand$ = this.select((state) => state.managedByTrueCommand);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   failover$ = this.select((state) => state.failover);
@@ -73,6 +78,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
+    private actions$: Actions,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -82,6 +88,7 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => this.setLoadingState(true)),
+    switchMap(() => this.checkForLoginBanner()),
     switchMap(() => {
       return forkJoin([
         this.checkIfAdminPasswordSet(),
@@ -177,15 +184,38 @@ export class SigninStore extends ComponentStore<SigninState> {
     return '/dashboard';
   }
 
+  private checkForLoginBanner(): Observable<string> {
+    this.subscribeToLoginBannerUpdates();
+
+    return this.ws.call('system.advanced.login_banner').pipe(
+      tap((loginBanner) => this.patchState({ loginBanner })),
+    );
+  }
+
+  private subscribeToLoginBannerUpdates(): void {
+    this.actions$.pipe(ofType(loginBannerUpdated)).subscribe(({ loginBanner }) => {
+      this.window.sessionStorage.removeItem('loginBannerDismissed');
+      this.patchState({ loginBanner });
+    });
+  }
+
   private checkIfManagedByTrueCommand(): Observable<boolean> {
     return this.ws.call('truenas.managed_by_truecommand').pipe(
       tap((managedByTrueCommand) => this.patchState({ managedByTrueCommand })),
+      catchError((error) => {
+        this.errorHandler.showErrorModal(error);
+        return of(initialState.managedByTrueCommand);
+      }),
     );
   }
 
   private checkIfAdminPasswordSet(): Observable<boolean> {
     return this.ws.call('user.has_local_administrator_set_up').pipe(
       tap((wasAdminSet) => this.patchState({ wasAdminSet })),
+      catchError((error) => {
+        this.errorHandler.showErrorModal(error);
+        return of(initialState.wasAdminSet);
+      }),
     );
   }
 
@@ -201,6 +231,10 @@ export class SigninStore extends ComponentStore<SigninState> {
 
         this.subscribeToFailoverUpdates();
         return this.loadAdditionalFailoverInfo();
+      }),
+      catchError((error) => {
+        this.errorHandler.showErrorModal(error);
+        return of(undefined);
       }),
     );
   }

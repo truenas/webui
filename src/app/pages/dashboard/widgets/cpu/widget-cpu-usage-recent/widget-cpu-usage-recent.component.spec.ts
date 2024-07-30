@@ -1,5 +1,4 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
 import { ChartData } from 'chart.js';
 import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
@@ -10,15 +9,14 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetCpuUsageRecentComponent } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-recent/widget-cpu-usage-recent.component';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetCpuUsageRecentComponent', () => {
   let spectator: Spectator<WidgetCpuUsageRecentComponent>;
+  const startDate = new Date('2024-07-23'); // 1721692740000
+
   const createComponent = createComponentFactory({
     component: WidgetCpuUsageRecentComponent,
-    imports: [
-      NgxSkeletonLoaderModule,
-    ],
+    imports: [NgxSkeletonLoaderModule],
     declarations: [
       MockDirective(BaseChartDirective),
     ],
@@ -26,33 +24,31 @@ describe('WidgetCpuUsageRecentComponent', () => {
       mockProvider(
         WidgetResourcesService,
         {
-          cpuUpdate: jest.fn(() => of([
+          cpuLastMinuteStats: jest.fn(() => of([
             {
               name: 'cpu',
               data: [
-                [1714583020, 80.1, 12.2],
-                [1714586020, 50.3, 15.9],
-                [1714589020, 55.2, 16.8],
+                [0, 80.1, 12.2],
+                [0, 50.3, 15.9],
+                [0, 55.2, 16.8],
               ],
               legend: ['time', 'user', 'system'],
-              start: 1714583020,
-              end: 1714589020,
+              start: 0,
+              end: 0,
             },
           ])),
+          realtimeUpdates$: of({
+            fields: {
+              cpu: {
+                average: {
+                  user: 10,
+                  system: 20,
+                },
+              },
+            },
+          }),
         },
       ),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectSystemInfo,
-            value: {
-              model: 'Intel(R) Xeon(R) Silver 4210R CPU',
-              cores: 4,
-              physical_cores: 2,
-            },
-          },
-        ],
-      }),
       mockProvider(ThemeService, {
         currentTheme: jest.fn(() => ({
           blue: 'blue',
@@ -69,6 +65,8 @@ describe('WidgetCpuUsageRecentComponent', () => {
         size: SlotSize.Half,
       },
     });
+    const dateNowStub = jest.fn(() => startDate.getTime());
+    global.Date.now = dateNowStub;
   });
 
   it('shows title', () => {
@@ -86,18 +84,18 @@ describe('WidgetCpuUsageRecentComponent', () => {
         {
           label: 'User',
           data: [
-            { x: 1714583020000, y: 80.1 },
-            { x: 1714586020000, y: 50.3 },
-            { x: 1714589020000, y: 55.2 },
+            { x: 1721692740000, y: 80.1 },
+            { x: 1721692741000, y: 50.3 },
+            { x: 1721692742000, y: 55.2 },
           ],
           pointBackgroundColor: 'blue',
         },
         {
           label: 'System',
           data: [
-            { x: 1714583020000, y: 12.2 },
-            { x: 1714586020000, y: 15.9 },
-            { x: 1714589020000, y: 16.8 },
+            { x: 1721692740000, y: 12.2 },
+            { x: 1721692741000, y: 15.9 },
+            { x: 1721692742000, y: 16.8 },
           ],
           pointBackgroundColor: 'orange',
         },

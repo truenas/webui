@@ -30,7 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
-import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -53,6 +53,12 @@ export class AccessCardComponent implements OnInit {
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,
     map((generalConfig) => generalConfig.ds_auth),
+    toLoadingState(),
+  );
+
+  readonly loginBanner$ = this.store$.pipe(
+    waitForAdvancedConfig,
+    map((advancedConfig) => advancedConfig.login_banner),
     toLoadingState(),
   );
 

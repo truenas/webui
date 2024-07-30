@@ -173,6 +173,20 @@ describe('SchedulerModalComponent', () => {
       expect(explanationSection).toExist();
       expect(explanationSection).toHaveText('or');
     });
+
+    it('updates Preset when other form fields are updated', async () => {
+      const presetSelect = await loader.getHarness(IxSelectHarness.with({ selector: '.preset-select' }));
+      await presetSelect.setValue('Daily');
+
+      const hours = await loader.getHarness(IxInputHarness.with({ label: 'Hours' }));
+      await hours.setValue('2');
+
+      expect(await presetSelect.getValue()).toBe('');
+
+      await hours.setValue('*');
+
+      expect(await presetSelect.getValue()).toBe('Hourly');
+    });
   });
 
   describe('hideMinutes', () => {

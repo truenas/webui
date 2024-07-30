@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, TrackByFunction,
+  ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { LocaleService } from 'app/services/locale.service';
@@ -18,7 +18,6 @@ export class SchedulerDateExamplesComponent implements OnChanges {
     private localeService: LocaleService,
   ) { }
 
-  trackByIndex: TrackByFunction<number> = (index: number): number => index;
   scheduleExamples: Date[] = [];
 
   readonly maxExamples = 25;

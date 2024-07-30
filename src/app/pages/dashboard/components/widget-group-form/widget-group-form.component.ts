@@ -42,7 +42,7 @@ export class WidgetGroupFormComponent {
   ]);
 
   protected layoutControl = new FormControl(WidgetGroupLayout.Full, [Validators.required]);
-  protected readonly layoutsMap = widgetGroupIcons;
+  protected readonly layoutOptions = widgetGroupIcons;
 
   protected settingsHasErrors = computed<boolean>(() => {
     const validationErrors = this.validationErrors().slice(0, layoutToSlotSizes[this.group().layout].length);

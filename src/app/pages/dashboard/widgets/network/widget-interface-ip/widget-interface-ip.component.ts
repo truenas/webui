@@ -52,13 +52,17 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
       // TODO: Show as widget error.
       return this.translate.instant('Network interface {interface} not found.', { interface: interfaceId });
     }
+    let networkInterfaceAlias = networkInterface.aliases;
+    if (!networkInterfaceAlias.length && networkInterface?.state?.aliases?.length) {
+      networkInterfaceAlias = networkInterface.state.aliases;
+    }
 
-    const ip4aliases = networkInterface.aliases.filter((alias) => alias.type === this.interfaceType());
+    const ipAliases = networkInterfaceAlias.filter((alias) => alias.type === this.interfaceType());
 
-    if (!ip4aliases.length) {
+    if (!ipAliases.length) {
       return this.translate.instant('N/A');
     }
 
-    return ip4aliases.map((alias) => alias.address).join('\n');
+    return ipAliases.map((alias) => alias.address).join('\n');
   }
 }

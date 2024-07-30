@@ -68,8 +68,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   isCpuAvgReady = false;
   cpuData: WidgetCpuData;
 
-  readonly ScreenType = ScreenType;
-
   protected currentTheme: Theme;
 
   get isDesktop(): boolean {

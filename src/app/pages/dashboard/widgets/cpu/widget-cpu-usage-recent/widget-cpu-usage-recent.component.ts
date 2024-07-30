@@ -1,17 +1,20 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
+  signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
-import { filter, map } from 'rxjs';
+import {
+  filter, map, startWith, tap,
+} from 'rxjs';
+import { oneMinuteMillis } from 'app/constants/time.constant';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
 import { cpuUsageRecentWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-recent/widget-cpu-usage-recent.definition';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -27,43 +30,56 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
   readonly name = cpuUsageRecentWidget.name;
 
   protected isLoading = computed(() => {
-    return !this.cpuData();
+    return !this.chartData();
   });
 
-  protected cpuData = toSignal(this.resources.cpuUpdate().pipe(
-    filter((response) => !!response.length),
-    map((response) => {
-      const timeIndex = response[0].legend.indexOf('time');
-      const userIndex = response[0].legend.indexOf('user');
-      const systemIndex = response[0].legend.indexOf('system');
-      if (timeIndex === -1 || this.errorHandler.isWebSocketError(response[0].data)) {
-        return { labels: [], values: [] };
-      }
-      return {
-        labels: response[0].data.map((item) => item[timeIndex]),
-        values: response[0].data.map((item) => ([item[userIndex], item[systemIndex]])),
-      };
+  protected cpuUsage = toSignal(this.resources.realtimeUpdates$.pipe(
+    map((update) => update.fields.cpu.average),
+    tap((realtimeUpdate) => {
+      this.cachedCpuStats.update((cachedStats) => {
+        return [...cachedStats, [realtimeUpdate.user, realtimeUpdate.system]].slice(-60);
+      });
     }),
   ));
+
+  protected initialCpuStats = toSignal(this.resources.cpuLastMinuteStats().pipe(
+    filter((response) => !!response.length),
+    map((response) => {
+      const [update] = response;
+
+      const userIndex = update.legend.indexOf('user');
+      const systemIndex = update.legend.indexOf('system');
+
+      return (update.data as number[][]).slice(-60).map((item) => ([item[userIndex], item[systemIndex]]));
+    }),
+    startWith(Array.from({ length: 60 }, () => ([0, 0]))),
+  ));
+
+  protected cachedCpuStats = signal<number[][]>([]);
+  protected cpuStats = computed(() => {
+    const initialStats = this.initialCpuStats();
+    const cachedStats = this.cachedCpuStats();
+    return [...initialStats, ...cachedStats].slice(-60);
+  });
 
   constructor(
     private theme: ThemeService,
     private resources: WidgetResourcesService,
     private translate: TranslateService,
     private localeService: LocaleService,
-    private errorHandler: ErrorHandlerService,
   ) {}
 
   chartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
-    const labels = this.cpuData().labels;
-    const values = this.cpuData().values;
+    const startDate = Date.now() - oneMinuteMillis;
+    const values = this.cpuStats();
+    const labels = values.map((_, index) => (startDate + (index * 1000)));
 
     return {
       datasets: [
         {
           label: this.translate.instant('User'),
-          data: values.map((item, index) => ({ x: labels[index] * 1000, y: item[0] })),
+          data: values.map((item, index) => ({ x: labels[index], y: item[0] })),
           borderColor: currentTheme.blue,
           backgroundColor: currentTheme.blue,
           pointBackgroundColor: currentTheme.blue,
@@ -73,7 +89,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
         },
         {
           label: this.translate.instant('System'),
-          data: values.map((item, index) => ({ x: labels[index] * 1000, y: item[1] })),
+          data: values.map((item, index) => ({ x: labels[index], y: item[1] })),
           borderColor: currentTheme.orange,
           backgroundColor: currentTheme.orange,
           pointBackgroundColor: currentTheme.orange,
@@ -102,7 +118,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
         },
         tooltip: {
           callbacks: {
-            label: (item) => item.parsed.y.toFixed(1),
+            label: (item) => `${item.parsed.y.toFixed(1)}%`,
           },
         },
       },
@@ -120,9 +136,9 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
         x: {
           type: 'time',
           time: {
-            unit: 'minute',
+            unit: 'second',
             displayFormats: {
-              minute: 'HH:mm',
+              second: 'HH:mm:ss',
             },
             tooltipFormat: `${this.localeService.dateFormat} ${this.localeService.timeFormat}`,
           },

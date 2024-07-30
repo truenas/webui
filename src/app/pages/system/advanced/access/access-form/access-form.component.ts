@@ -5,7 +5,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import {
+  filter, finalize, forkJoin, Observable, take,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
@@ -18,8 +20,8 @@ import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
+import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -38,6 +40,7 @@ export class AccessFormComponent implements OnInit {
       Validators.max(2147482), // Max value is 2147482 seconds, or 24 days, 20 hours, 31 minutes, and 22 seconds.
     ]],
     ds_auth: [false],
+    login_banner: [null as string],
   });
 
   get isEnterprise(): boolean {
@@ -70,36 +73,68 @@ export class AccessFormComponent implements OnInit {
       this.form.controls.ds_auth.setValue(config.ds_auth);
       this.cdr.markForCheck();
     });
-  }
 
-  onSubmit(): void {
-    this.authService.hasRole(this.requiredRoles).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
-
-      if (this.isEnterprise) {
-        this.updateEnterpriseDsAuth();
-      } else {
-        this.showSuccessNotificationAndClose();
-      }
+    this.store$.select(selectAdvancedConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+      this.form.controls.login_banner.setValue(config.login_banner);
+      this.cdr.markForCheck();
     });
   }
 
-  private updateEnterpriseDsAuth(): void {
-    this.isLoading = true;
-    this.ws.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
-      .pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.store$.dispatch(generalConfigUpdated());
+  onSubmit(): void {
+    this.authService.hasRole(this.requiredRoles)
+      .pipe(
+        filter(Boolean),
+        take(1),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
+
+        const bannerChanged = this.form.controls.login_banner.dirty;
+
+        if (bannerChanged || this.isEnterprise) {
+          const requests$ = [];
+          this.isLoading = true;
+
+          if (bannerChanged) {
+            requests$.push(this.updateLoginBanner());
+          }
+
+          if (this.isEnterprise) {
+            requests$.push(this.updateEnterpriseDsAuth());
+          }
+
+          forkJoin(requests$)
+            .pipe(untilDestroyed(this))
+            .subscribe({
+              next: () => {
+                this.isLoading = false;
+                this.showSuccessNotificationAndClose();
+                this.cdr.markForCheck();
+              },
+              error: (error) => {
+                this.isLoading = false;
+                this.dialogService.error(this.errorHandler.parseError(error));
+                this.cdr.markForCheck();
+              },
+            });
+        } else {
           this.showSuccessNotificationAndClose();
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
-          this.cdr.markForCheck();
-        },
+        }
       });
+  }
+
+  private updateLoginBanner(): Observable<unknown> {
+    const loginBanner = this.form.value.login_banner;
+    return this.ws.call('system.advanced.update', [{ login_banner: loginBanner }])
+      .pipe(finalize(() => {
+        this.store$.dispatch(advancedConfigUpdated());
+        this.store$.dispatch(loginBannerUpdated({ loginBanner }));
+      }));
+  }
+
+  private updateEnterpriseDsAuth(): Observable<unknown> {
+    return this.ws.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
+      .pipe(finalize(() => this.store$.dispatch(generalConfigUpdated())));
   }
 
   private showSuccessNotificationAndClose(): void {

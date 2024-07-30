@@ -3,6 +3,8 @@ github_checks:
 ignore:
   - "**/*.module.ts"
   - "**/*.routing.ts"
+  - "src/environments/*"
+  - "src/*"
 coverage:
   status:
     patch:

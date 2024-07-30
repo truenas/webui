@@ -18,7 +18,7 @@
           <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
         </button>
         <mat-menu #categoriesMenu="matMenu">
-          @for (category of categories; track trackById(i, category); let i = $index) {
+          @for (category of categories; track category.id; let i = $index) {
             <button
               mat-menu-item
               [ixTest]="['category', category.id]"
@@ -32,7 +32,7 @@
     </div>
     @if (selectedCategory) {
       <form (submit)="onSubmit()">
-        @for (cls of selectedCategory.classes; track trackById($index, cls)) {
+        @for (cls of selectedCategory.classes; track cls.id) {
           <div class="class-row" [formGroup]="form.controls[cls.id]">
             <span class="class-label">{{ cls.title | translate }}</span>
             <ix-select
