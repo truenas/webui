@@ -2,6 +2,7 @@
   "": "",
   " cores at ": "",
   " threads at ": "",
+  "({n, plural, =1 {# widget} other {# widgets}})": "",
   "...": "",
   "1m Average": "",
   "2FA": "",

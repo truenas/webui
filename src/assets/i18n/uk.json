@@ -6,6 +6,7 @@
   " cores at ": "",
   " threads at ": "",
   "(Optional)": "",
+  "({n, plural, =1 {# widget} other {# widgets}})": "",
   "...": "",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "",
   "1m Average": "",

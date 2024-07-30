@@ -19,6 +19,7 @@
   "(This Controller)": "",
   "(TrueNAS Controller 1)": "",
   "(TrueNAS Controller 2)": "",
+  "({n, plural, =1 {# widget} other {# widgets}})": "",
   "+ Add a backup credential": "",
   "...": "",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "",

@@ -82,7 +82,7 @@ export const widgetRegistry = {
   [WidgetType.BackupTasks]: backupTasksWidget,
   [WidgetType.Cpu]: cpuWidget,
   [WidgetType.CpuUsageGauge]: cpuUsageGaugeWidget,
-  [WidgetType.CpuUsageRecentWidget]: cpuUsageRecentWidget,
+  [WidgetType.CpuUsageRecent]: cpuUsageRecentWidget,
   [WidgetType.CpuUsageBar]: cpuUsageBarWidget,
   [WidgetType.CpuTemperatureBar]: cpuTemperatureBarWidget,
   [WidgetType.Storage]: storageWidget,
