@@ -834,8 +834,8 @@ body {
   }
 
   .search-element-highlighted {
-
     @include pulse-box-shadow();
+
     background-color: var(--contrast-darkest) !important;
     box-shadow: 0 0 5px 5px var(--primary) !important;
     outline: 4px solid var(--primary) !important;
