@@ -24,7 +24,7 @@ describe('PoolsLegendComponent', () => {
             [EnclosureElementType.ArrayDeviceSlot]: {
               1: { pool_info: { pool_name: 'pool1' }, is_front: true } as DashboardEnclosureSlot,
               2: { pool_info: { pool_name: 'pool2' }, is_front: true } as DashboardEnclosureSlot,
-              3: { pool_info: { pool_name: 'pool1' }, is_front: true } as DashboardEnclosureSlot,
+              3: { pool_info: null, is_front: true } as DashboardEnclosureSlot,
             },
           } as DashboardEnclosureElements,
         } as DashboardEnclosure,
