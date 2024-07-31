@@ -105,36 +105,20 @@
             }
           </mat-list-item>
 
-          <mat-list-item>
-            <strong>{{ 'License' | translate }}:</strong>
-            @if (isLoaded()) {
-              @if (systemInfo()?.license) {
-                <span>
-                  {{
-                    '{license} contract, expires {date}' | translate:
-                    {
-                      license: systemInfo().license.contract_type | titlecase,
-                      date: systemInfo().license.contract_end.$value,
-                    }
-                  }}
-                </span>
-              } @else {
-                <span>
-                  {{ 'No License' | translate }}
-                </span>
-              }
-            } @else {
-              <ngx-skeleton-loader
-                class="inline-loader"
-                [theme]="{
-                  height: '20px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: 0,
-                }"
-              ></ngx-skeleton-loader>
-            }
-          </mat-list-item>
+          @if (systemInfo()?.license) {
+            <mat-list-item>
+              <strong>{{ 'Support License' | translate }}:</strong>
+              <span>
+                {{
+                  '{license} contract, expires {date}' | translate:
+                  {
+                    license: systemInfo().license.contract_type | titlecase,
+                    date: systemInfo().license.contract_end.$value,
+                  }
+                }}
+              </span>
+            </mat-list-item>
+          }
 
           @if (systemInfo()?.system_serial && isIxHardware()) {
             <mat-list-item>
