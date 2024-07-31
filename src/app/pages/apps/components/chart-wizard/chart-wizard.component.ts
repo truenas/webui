@@ -155,7 +155,6 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.appService
       .getCatalogItem(this.appId, this.catalog, this.train)
-      // .getCatalogItem('plex', 'TESTLANG', 'charts')
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (app) => {

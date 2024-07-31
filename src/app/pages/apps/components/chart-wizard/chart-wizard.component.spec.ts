@@ -286,7 +286,7 @@ describe('ChartWizardComponent', () => {
       mockWebSocket([
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
-        mockCall('catalog.get_item_details', existingCatalogApp),
+        mockCall('catalog.get_app_details', existingCatalogApp),
         mockCall('chart.release.query', [existingChartEdit]),
         mockCall('container.image.dockerhub_rate_limit', {
           total_pull_limit: 13,

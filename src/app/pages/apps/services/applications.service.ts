@@ -56,7 +56,7 @@ export class ApplicationsService {
   }
 
   getCatalogItem(name: string, catalog: string, train: string): Observable<CatalogApp> {
-    return this.ws.call('catalog.get_item_details', [name, { cache: true, catalog, train }]);
+    return this.ws.call('catalog.get_app_details', [name, { cache: true, catalog, train }]);
   }
 
   getAllAppsCategories(): Observable<string[]> {
