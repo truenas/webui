@@ -49,10 +49,6 @@ import {
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
-import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
-import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
-import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
-import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
@@ -120,10 +116,11 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CategoryViewComponent,
     CustomAppButtonComponent,
     DockerStatusComponent,
-    DockerImagesListComponent,
-    DockerImageUpdateDialogComponent,
-    DockerImageDeleteDialogComponent,
-    PullImageFormComponent,
+    // TODO: Add back the docker images components when the replacement API for `container.image` API is ready
+    // DockerImagesListComponent,
+    // DockerImageUpdateDialogComponent,
+    // DockerImageDeleteDialogComponent,
+    // PullImageFormComponent,
   ],
   imports: [
     CommonModule,

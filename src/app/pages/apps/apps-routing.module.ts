@@ -5,7 +5,6 @@ import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
 import { CategoryViewComponent } from 'app/pages/apps/components/available-apps/category-view/category-view.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
-import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
@@ -68,11 +67,12 @@ const routes: Routes = [
           },
         ],
       },
-      {
-        path: 'manage-container-images',
-        component: DockerImagesListComponent,
-        data: { title: T('Manage Container Images') },
-      },
+      // TODO: Add back the docker images route when the replacement API for `container.image` API is ready
+      // {
+      //   path: 'manage-container-images',
+      //   component: DockerImagesListComponent,
+      //   data: { title: T('Manage Container Images') },
+      // },
       {
         path: 'available',
         component: AppRouterOutletComponent,
