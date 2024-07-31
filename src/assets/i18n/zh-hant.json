@@ -2067,6 +2067,7 @@
   "MOVE": "",
   "MTU": "",
   "Machine": "",
+  "Machine Time: {machineTime} \n Browser Time: {browserTime}": "",
   "Mail Server Port": "",
   "Major": "",
   "Make Destination Dataset Read-only?": "",

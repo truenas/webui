@@ -602,6 +602,7 @@
   "MAC Address": "",
   "MOTD": "",
   "Machine": "",
+  "Machine Time: {machineTime} \n Browser Time: {browserTime}": "",
   "Mail Server Port": "",
   "Makes the group available for permissions editors over SMB protocol (and the share ACL     editor). It is not used for SMB authentication or determining the user session token or internal     permissions checks.": "",
   "Manage Advanced Settings": "",
