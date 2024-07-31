@@ -39,6 +39,7 @@ export class EnclosureSideComponent {
   });
 
   protected svgUrl = computed(() => {
-    return supportedEnclosures?.[this.enclosure().model]?.[this.shownSide()];
+    const baseUrl = supportedEnclosures?.[this.enclosure().model]?.[this.shownSide()];
+    return `${baseUrl}?uniqueIdentifier=${Date.now()}`;
   });
 }
