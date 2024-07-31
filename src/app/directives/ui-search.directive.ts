@@ -88,8 +88,15 @@ export class UiSearchDirective implements OnInit, OnDestroy {
       document.querySelector<HTMLElement>('.rightside-content-hold').scrollBy(0, -20);
     }, searchDelayConst);
 
-    setTimeout(() => {
+    const handleEvent = (): void => {
       this.renderer.removeClass(anchorRef, 'search-element-highlighted');
-    }, searchDelayConst * 15);
+      document.removeEventListener('click', handleEvent);
+      document.removeEventListener('keydown', handleEvent);
+    };
+
+    setTimeout(() => {
+      document.addEventListener('click', handleEvent, { once: true });
+      document.addEventListener('keydown', handleEvent, { once: true });
+    }, 0);
   }
 }
