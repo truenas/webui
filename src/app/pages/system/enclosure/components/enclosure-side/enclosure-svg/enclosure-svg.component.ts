@@ -115,10 +115,11 @@ export class EnclosureSvgComponent implements OnDestroy {
   private highlightSelectedSlot = effect(() => {
     const selectedSlot = this.selectedSlot();
     const slots = this.slots();
+    const svg = this.svg();
 
     this.clearSelectionStylesFromAllSlots();
 
-    if (!selectedSlot) {
+    if (!selectedSlot || !svg) {
       return;
     }
 
@@ -236,10 +237,10 @@ export class EnclosureSvgComponent implements OnDestroy {
 
   slotSelected = (slot: DashboardEnclosureSlot): void => {
     const selectedSlot = this.selectedSlot();
-    const newSlotExists = !!slot;
+    const isNewSlotEmpty = !slot.dev;
     const prevSlotExists = !!selectedSlot;
 
-    if (newSlotExists && prevSlotExists && slot.dev === selectedSlot.dev) {
+    if (!isNewSlotEmpty && prevSlotExists && slot.dev === selectedSlot.dev) {
       this.selectedSlot.set(null);
       return;
     }
