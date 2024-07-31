@@ -23,7 +23,7 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -296,7 +296,7 @@ describe('ChartWizardComponent', () => {
           error: null,
         }),
       ]),
-      mockProvider(KubernetesStore, {
+      mockProvider(DockerStore, {
         selectedPool$: of('pool set'),
       }),
       mockProvider(MatDialog),
@@ -330,7 +330,7 @@ describe('ChartWizardComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const store = spectator.inject(KubernetesStore);
+      const store = spectator.inject(DockerStore);
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
@@ -387,7 +387,7 @@ describe('ChartWizardComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const store = spectator.inject(KubernetesStore);
+      const store = spectator.inject(DockerStore);
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 

@@ -60,7 +60,6 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
-import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
@@ -84,8 +83,8 @@ import { AppHistoryCardComponent } from './components/installed-apps/app-history
 import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { DockerStatusComponent } from './components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
-import { KubernetesStatusComponent } from './components/installed-apps/kubernetes-status/kubernetes-status.component';
 
 @NgModule({
   declarations: [
@@ -101,7 +100,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppDetailsPanelComponent,
     AppContainersCardComponent,
     AppHistoryCardComponent,
-    KubernetesSettingsComponent,
     AppResourcesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
@@ -121,7 +119,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppSectionExpandCollapseComponent,
     CategoryViewComponent,
     CustomAppButtonComponent,
-    KubernetesStatusComponent,
+    DockerStatusComponent,
     DockerImagesListComponent,
     DockerImageUpdateDialogComponent,
     DockerImageDeleteDialogComponent,

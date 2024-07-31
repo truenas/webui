@@ -466,9 +466,7 @@
       "Choose Pool"
     ],
     "synonyms": [],
-    "requiredRoles": [
-      "KUBERNETES_WRITE"
-    ],
+    "requiredRoles": [],
     "anchorRouterLink": [
       "/apps",
       "installed",
@@ -476,29 +474,6 @@
     ],
     "routerLink": null,
     "anchor": "choose-pool",
-    "triggerAnchor": "app-settings",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Applications",
-      "Installed",
-      "Settings",
-      "Advanced Settings"
-    ],
-    "synonyms": [
-      "Kubernetes Settings"
-    ],
-    "requiredRoles": [
-      "KUBERNETES_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/apps",
-      "installed",
-      "*"
-    ],
-    "routerLink": null,
-    "anchor": "advanced-settings",
     "triggerAnchor": "app-settings",
     "section": "ui"
   },
@@ -518,63 +493,6 @@
     "routerLink": null,
     "anchor": "applications-installed",
     "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Applications",
-      "Installed",
-      "Settings",
-      "Node IP"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/apps",
-      "installed",
-      "*"
-    ],
-    "routerLink": null,
-    "anchor": "node-ip",
-    "triggerAnchor": "advanced-settings",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Applications",
-      "Installed",
-      "Settings",
-      "Route v4 Interface"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/apps",
-      "installed",
-      "*"
-    ],
-    "routerLink": null,
-    "anchor": "route-v4-interface",
-    "triggerAnchor": "advanced-settings",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Applications",
-      "Installed",
-      "Settings",
-      "Route v4 Gateway"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/apps",
-      "installed",
-      "*"
-    ],
-    "routerLink": null,
-    "anchor": "route-v4-gateway",
-    "triggerAnchor": "advanced-settings",
     "section": "ui"
   },
   {
