@@ -44,6 +44,7 @@ describe('MiniPageComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
+        isLoading: jest.fn(() => false),
         enclosureLabel: () => 'MINI-X',
         selectedSlot: jest.fn(() => null),
         selectedEnclosure: () => ({

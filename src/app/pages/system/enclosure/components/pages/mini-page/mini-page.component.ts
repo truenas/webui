@@ -12,6 +12,7 @@ import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclos
 export class MiniPageComponent {
   readonly enclosureLabel = this.store.enclosureLabel;
   readonly selectedSlot = this.store.selectedSlot;
+  readonly isLoading = this.store.isLoading;
 
   readonly slots = computed(() => {
     return getSlotsOfSide(this.store.selectedEnclosure(), EnclosureSide.Front);

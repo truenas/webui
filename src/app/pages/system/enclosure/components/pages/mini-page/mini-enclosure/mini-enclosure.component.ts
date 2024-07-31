@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
@@ -37,5 +38,25 @@ export class MiniEnclosureComponent {
 
   readonly slots = computed(() => {
     return getSlotsOfSide(this.store.selectedEnclosure(), EnclosureSide.Front);
+  });
+
+  readonly isMini3E = computed(() => {
+    return [
+      EnclosureModel.Mini3E,
+      EnclosureModel.Mini3EPlus,
+    ].includes(this.enclosure().model);
+  });
+
+  readonly isMini3X = computed(() => {
+    return [
+      EnclosureModel.Mini3X,
+      EnclosureModel.Mini3XPlus,
+    ].includes(this.enclosure().model);
+  });
+
+  readonly isMini3Xl = computed(() => {
+    return [
+      EnclosureModel.Mini3XlPlus,
+    ].includes(this.enclosure().model);
   });
 }
