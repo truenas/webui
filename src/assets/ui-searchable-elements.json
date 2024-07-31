@@ -3166,7 +3166,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Allowed IP Addressed"
     ],
     "synonyms": [],
@@ -3183,7 +3183,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Configure Allowed IP Addresses"
     ],
     "synonyms": [
@@ -3819,7 +3819,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Save Debug"
     ],
     "synonyms": [],
