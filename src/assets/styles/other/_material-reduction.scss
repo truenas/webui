@@ -831,6 +831,22 @@ body {
   ix-fieldset.highlighted fieldset {
     outline: 1.5px solid var(--primary);
   }
+
+  .search-element-highlighted {
+    background-color: var(--contrast-darkest) !important;
+    box-shadow: 0 0 5px 5px var(--primary-lighter) !important;
+    outline: 4px solid var(--primary) !important;
+    overflow: visible;
+
+    &:focus-visible {
+      box-shadow: 0 0 5px 5px var(--primary-lighter) !important;
+      outline: 4px solid var(--primary) !important;
+    }
+
+    &.mat-primary {
+      outline: 4px solid var(--primary-txt) !important;
+    }
+  }
 }
 
 body .mat-calendar-previous-button::after,
@@ -908,4 +924,10 @@ mat-list-item {
 
 div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
   margin: 5px 0;
+}
+
+mat-tab-nav-panel {
+  .search-element-highlighted {
+    display: block;
+  }
 }
