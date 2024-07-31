@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
@@ -82,7 +82,7 @@ export class GenerateVdevsService {
         return (a.enclosure?.drive_bay_number || 0) - (b.enclosure?.drive_bay_number || 0);
       }
 
-      if (_.isEmpty(a.enclosure) || _.isEmpty(b.enclosure)) {
+      if (isEmpty(a.enclosure) || isEmpty(b.enclosure)) {
         // Put disks without enclosure at the end
         return a.enclosure?.id ? -1 : 1;
       }
