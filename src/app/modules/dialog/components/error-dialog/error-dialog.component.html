@@ -2,7 +2,7 @@
   <ix-icon class="error-warning-icon" name="error"></ix-icon>
   {{ title | translate }}
 </h1>
-<div #errorMdContent mat-dialog-content id="err-md-content">
+<div #errorMdContent mat-dialog-content id="err-md-content" role="alertdialog">
   <div #errorMessageWrapper id="err-message-wrapper" class="err-message-wrapper">
     <span [innerHTML]="message"></span>
   </div>

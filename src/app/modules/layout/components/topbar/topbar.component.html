@@ -1,83 +1,86 @@
-<mat-toolbar class="topbar">
-  <mat-toolbar-row>
-    <!-- Sidenav toggle button -->
-    <button
-      mat-icon-button
-      id="sidenavToggle"
-      matTooltipPosition="right"
-      ixTest="toggle-sidenav"
-      [matTooltip]="tooltips.toggle_collapse | translate"
-      (click)="onSidenavIndicatorPressed()"
-    >
-      <ix-icon name="menu"></ix-icon>
-    </button>
-
-    <ix-global-search-trigger></ix-global-search-trigger>
-
-    <a class="mobile-logo" routerLink="/" ixTest="mobile-logo">
-      <div class="mobile-logo-container">
-        <ix-icon name="ix:logo_truenas_scale_mark_color" class="logomark"></ix-icon>
-        <ix-icon name="ix:logo_truenas_scale_type_color" class="logotype"></ix-icon>
-      </div>
-    </a>
-
-    <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter$ | async">
-      <ix-logo></ix-logo>
-
+<nav [attr.aria-label]="'Top bar' | translate">
+  <mat-toolbar class="topbar">
+    <mat-toolbar-row>
+      <!-- Sidenav toggle button -->
       <button
         mat-icon-button
-        matBadge="+"
-        matBadgeSize="small"
-        class="topbar-button-right"
-        ixTest="leave-feedback"
-        [matTooltip]="'Send Feedback' | translate"
-        [ixUiSearch]="searchableElements.elements.sendFeedback"
-        (click)="onFeedbackIndicatorPressed()"
+        id="sidenavToggle"
+        matTooltipPosition="right"
+        ixTest="toggle-sidenav"
+        [attr.aria-label]="'Toggle Sidenav' | translate"
+        [matTooltip]="tooltips.toggle_collapse | translate"
+        (click)="onSidenavIndicatorPressed()"
       >
-        <ix-icon name="mdi-emoticon"></ix-icon>
+        <ix-icon name="menu"></ix-icon>
       </button>
 
-      <ix-truecommand-button></ix-truecommand-button>
+      <ix-global-search-trigger></ix-global-search-trigger>
 
-      <!-- finish update -->
-      <ix-failover-upgrade-indicator></ix-failover-upgrade-indicator>
-      @if (updateIsRunning) {
+      <a class="mobile-logo" routerLink="/" ixTest="mobile-logo">
+        <div class="mobile-logo-container">
+          <ix-icon name="ix:logo_truenas_scale_mark_color" class="logomark"></ix-icon>
+          <ix-icon name="ix:logo_truenas_scale_type_color" class="logotype"></ix-icon>
+        </div>
+      </a>
+
+      <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter$ | async">
+        <ix-logo></ix-logo>
+
         <button
           mat-icon-button
-          id="update-running"
+          matBadge="+"
+          matBadgeSize="small"
           class="topbar-button-right"
-          ixTest="update-is-running"
-          [matTooltip]="tooltips.update | translate"
-          (click)="showUpdateDialog()"
+          ixTest="leave-feedback"
+          [matTooltip]="'Send Feedback' | translate"
+          [ixUiSearch]="searchableElements.elements.sendFeedback"
+          (click)="onFeedbackIndicatorPressed()"
         >
-          <ix-icon class="movement" name="system_update_alt"></ix-icon>
+          <ix-icon name="mdi-emoticon"></ix-icon>
         </button>
-      }
-      <ix-checkin-indicator></ix-checkin-indicator>
-      <ix-resilvering-indicator></ix-resilvering-indicator>
-      <ix-ha-status-icon></ix-ha-status-icon>
-      <ix-directory-services-indicator></ix-directory-services-indicator>
-      <ix-jobs-indicator></ix-jobs-indicator>
 
-      <!-- Alert toggle button -->
-      <button
-        *appLet="alertBadgeCount$ | async as alertBadgeCount"
-        matBadgeSize="small"
-        matBadgeColor="warn"
-        mat-icon-button
-        class="topbar-button-right"
-        ixTest="alerts-indicator"
-        [matBadge]="alertBadgeCount"
-        [matBadgeHidden]="alertBadgeCount === 0"
-        [matTooltip]="tooltips.alerts | translate"
-        [ixUiSearch]="searchableElements.elements.alerts"
-        (click)="onAlertIndicatorPressed()"
-      >
-        <ix-icon name="notifications"></ix-icon>
-      </button>
+        <ix-truecommand-button></ix-truecommand-button>
 
-      <ix-user-menu></ix-user-menu>
-      <ix-power-menu></ix-power-menu>
-    </div>
-  </mat-toolbar-row>
-</mat-toolbar>
+        <!-- finish update -->
+        <ix-failover-upgrade-indicator></ix-failover-upgrade-indicator>
+        @if (updateIsRunning) {
+          <button
+            mat-icon-button
+            id="update-running"
+            class="topbar-button-right"
+            ixTest="update-is-running"
+            [matTooltip]="tooltips.update | translate"
+            (click)="showUpdateDialog()"
+          >
+            <ix-icon class="movement" name="system_update_alt"></ix-icon>
+          </button>
+        }
+        <ix-checkin-indicator></ix-checkin-indicator>
+        <ix-resilvering-indicator></ix-resilvering-indicator>
+        <ix-ha-status-icon></ix-ha-status-icon>
+        <ix-directory-services-indicator></ix-directory-services-indicator>
+        <ix-jobs-indicator></ix-jobs-indicator>
+
+        <!-- Alert toggle button -->
+        <button
+          *appLet="alertBadgeCount$ | async as alertBadgeCount"
+          matBadgeSize="small"
+          matBadgeColor="warn"
+          mat-icon-button
+          class="topbar-button-right"
+          ixTest="alerts-indicator"
+          [matBadge]="alertBadgeCount"
+          [matBadgeHidden]="alertBadgeCount === 0"
+          [matTooltip]="tooltips.alerts | translate"
+          [ixUiSearch]="searchableElements.elements.alerts"
+          (click)="onAlertIndicatorPressed()"
+        >
+          <ix-icon name="notifications"></ix-icon>
+        </button>
+
+        <ix-user-menu></ix-user-menu>
+        <ix-power-menu></ix-power-menu>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</nav>

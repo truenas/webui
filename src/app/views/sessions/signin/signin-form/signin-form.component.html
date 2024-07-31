@@ -1,4 +1,4 @@
-<form [formGroup]="form" (keyup.enter)="hasTwoFactor ? loginWithOtp() : login()">
+<form [formGroup]="form" (keydown.enter)="hasTwoFactor ? loginWithOtp() : login()">
   @if (!hasTwoFactor) {
     <ix-input
       ixAutofocus
