@@ -575,6 +575,7 @@
   "Makes the group available for permissions editors over SMB protocol (and the share ACL     editor). It is not used for SMB authentication or determining the user session token or internal     permissions checks.": "",
   "Manage Advanced Settings": "",
   "Manage Apps Settings": "",
+  "Manage Catalog": "",
   "Manage Groups Server-side": "",
   "Manage NFS Shares": "",
   "Manage S.M.A.R.T. Tasks": "",

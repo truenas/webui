@@ -19,7 +19,6 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
-import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,7 +33,9 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DockerImagesListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
-  protected readonly searchableElements = dockerImagesListElements;
+  // TODO: Add back searchable elements for container images when
+  // replacement API is ready for `container.images` api
+  // protected readonly searchableElements = dockerImagesListElements;
 
   dataProvider: AsyncDataProvider<ContainerImage>;
   containerImages: ContainerImage[] = [];

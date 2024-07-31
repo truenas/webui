@@ -354,7 +354,7 @@ export interface ApiCallDirectory {
   // Catalog
   'catalog.get_app_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
   'catalog.update': { params: [CatalogUpdate]; response: Catalog };
-  'catalog.config': { params: void; response: string[] };
+  'catalog.config': { params: void; response: Catalog };
 
   // Certificate
   'certificate.acme_server_choices': { params: void; response: Choices };

@@ -27,7 +27,15 @@
       {{ 'Unset Pool' | translate }}
     </button>
   }
-  <button mat-menu-item ixTest="container-images" [routerLink]="['/apps', 'manage-container-images']">
+  <!-- TODO: Add back when replacement api for `container.images` api is ready -->
+  <!-- <button mat-menu-item ixTest="container-images" [routerLink]="['/apps', 'manage-container-images']">
     {{ 'Manage Container Images' | translate }}
+  </button> -->
+  <button
+    mat-menu-item
+    ixTest="update-preferred-trains"
+    (click)="manageCatalog()"
+  >
+    {{ 'Manage Catalog' | translate }}
   </button>
 </mat-menu>
