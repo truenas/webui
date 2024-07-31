@@ -1,11 +1,12 @@
 import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { produce } from 'immer';
 import { chain } from 'lodash';
-import { switchMap, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { DriveBayLightStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
@@ -32,6 +33,7 @@ const initialState: EnclosureState = {
   selectedSide: undefined, // Undefined means front or top and will be picked in EnclosureSideComponent.
 };
 
+@UntilDestroy()
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly stateAsSignal = toSignal(
@@ -101,6 +103,25 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       }),
     );
   });
+
+  update = this.effect((origin$) => {
+    return origin$.pipe(
+      switchMap(() => {
+        return this.ws.call('webui.enclosure.dashboard').pipe(
+          tap((enclosures: DashboardEnclosure[]) => {
+            this.patchState({ enclosures });
+          }),
+          this.errorHandler.catchError(),
+        );
+      }),
+    );
+  });
+
+  listenForDiskUpdates(): Observable<unknown> {
+    return this.ws.subscribe('disk.query').pipe(
+      tap(() => this.update()),
+    );
+  }
 
   selectEnclosure = this.updater((state, id: string) => {
     let index = state.enclosures.findIndex((enclosure) => enclosure.id === id);

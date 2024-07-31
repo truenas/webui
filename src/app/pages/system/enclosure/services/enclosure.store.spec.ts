@@ -3,7 +3,9 @@ import {
   mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import {
   DashboardEnclosure,
@@ -73,6 +75,23 @@ describe('EnclosureStore', () => {
         selectedView: EnclosureView.Pools,
         selectedSide: undefined,
       });
+    });
+  });
+
+  describe('listenForDiskUpdates', () => {
+    it('updates dashboard information when disks are changed', () => {
+      jest.spyOn(spectator.service, 'patchState').mockImplementation();
+      spectator.service.listenForDiskUpdates().subscribe();
+
+      spectator.inject(MockWebSocketService).emitSubscribeEvent({
+        msg: IncomingApiMessageType.Changed,
+        collection: 'disk.query',
+      });
+
+      expect(spectator.inject(WebSocketService).subscribe).toHaveBeenCalledWith('disk.query');
+      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('webui.enclosure.dashboard');
+
+      expect(spectator.service.patchState).toHaveBeenLastCalledWith({ enclosures });
     });
   });
 
