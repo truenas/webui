@@ -91,7 +91,7 @@
     <polygon class="es60-cls-8" points="1186.4 .1 1186.4 91.6 1158.6 91.6 1158.6 100.9 32.2 100.9 32.2 91.6 4.4 91.6 4.4 .1 1186.4 .1"/>
   </g>
   <g id="ES60_Gen_1_DRIVES" data-name="ES60 Gen 1 DRIVES">
-    <g id="DRIVE_CAGE_0" data-name="ES60 GEN 1 DRIVE CAGE 0">
+    <g id="DRIVE_CAGE_1">
       <rect class="es60-cls-8" x="-52.5" y="1478.9" width="247" height="91.4" transform="translate(1595.6 1453.6) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M111.8,1414.1c-.8.8-1.9,1.3-3.2,1.3H33.4c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -128,7 +128,7 @@
         <rect class="es60-cls-5" x="82.4" y="1395.3" width="6.1" height="5.5" transform="translate(-1312.6 1483.5) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_1" data-name="ES60 GEN 1 DRIVE CAGE 1">
+    <g id="DRIVE_CAGE_2">
       <rect class="es60-cls-8" x="40" y="1478.9" width="247" height="91.4" transform="translate(1688.1 1361.1) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M204.3,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -165,7 +165,7 @@
         <rect class="es60-cls-5" x="174.9" y="1395.3" width="6.1" height="5.5" transform="translate(-1220.1 1576) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_2" data-name="ES60 GEN 1 DRIVE CAGE 2">
+    <g id="DRIVE_CAGE_3">
       <rect class="es60-cls-8" x="132.5" y="1478.9" width="247" height="91.4" transform="translate(1780.6 1268.6) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M296.8,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -202,7 +202,7 @@
         <rect class="es60-cls-5" x="267.4" y="1395.3" width="6.1" height="5.5" transform="translate(-1127.6 1668.5) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_3" data-name="ES60 GEN 1 DRIVE CAGE 3">
+    <g id="DRIVE_CAGE_4">
       <rect class="es60-cls-8" x="225" y="1478.9" width="247" height="91.4" transform="translate(1873.1 1176.1) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M389.3,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -239,7 +239,7 @@
         <rect class="es60-cls-5" x="359.9" y="1395.3" width="6.1" height="5.5" transform="translate(-1035.1 1761) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_4" data-name="ES60 GEN 1 DRIVE CAGE 4">
+    <g id="DRIVE_CAGE_5">
       <rect class="es60-cls-8" x="317.5" y="1478.9" width="247" height="91.4" transform="translate(1965.6 1083.6) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M481.8,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -276,7 +276,7 @@
         <rect class="es60-cls-5" x="452.4" y="1395.3" width="6.1" height="5.5" transform="translate(-942.6 1853.5) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_5" data-name="ES60 GEN 1 DRIVE CAGE 5">
+    <g id="DRIVE_CAGE_6">
       <rect class="es60-cls-8" x="410" y="1478.9" width="247" height="91.4" transform="translate(2058.1 991.1) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M574.3,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -313,7 +313,7 @@
         <rect class="es60-cls-5" x="544.9" y="1395.3" width="6.1" height="5.5" transform="translate(-850.1 1946) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_6" data-name="ES60 GEN 1 DRIVE CAGE 6">
+    <g id="DRIVE_CAGE_7">
       <rect class="es60-cls-8" x="536.3" y="1478.9" width="247" height="91.4" transform="translate(2184.4 864.8) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M700.6,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -350,7 +350,7 @@
         <rect class="es60-cls-5" x="671.2" y="1395.3" width="6.1" height="5.5" transform="translate(-723.8 2072.3) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_7" data-name="ES60 GEN 1 DRIVE CAGE 7">
+    <g id="DRIVE_CAGE_8">
       <rect class="es60-cls-8" x="628.8" y="1478.9" width="247" height="91.4" transform="translate(2276.9 772.3) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M793.1,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -387,7 +387,7 @@
         <rect class="es60-cls-5" x="763.7" y="1395.3" width="6.1" height="5.5" transform="translate(-631.3 2164.8) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_8" data-name="ES60 GEN 1 DRIVE CAGE 8">
+    <g id="DRIVE_CAGE_9">
       <rect class="es60-cls-8" x="721.3" y="1478.9" width="247" height="91.4" transform="translate(2369.4 679.8) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M885.6,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -424,7 +424,7 @@
         <rect class="es60-cls-5" x="856.2" y="1395.3" width="6.1" height="5.5" transform="translate(-538.8 2257.3) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_9" data-name="ES60 GEN 1 DRIVE CAGE 9">
+    <g id="DRIVE_CAGE_10">
       <rect class="es60-cls-8" x="813.8" y="1478.9" width="247" height="91.4" transform="translate(2461.9 587.3) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M978.1,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -461,7 +461,7 @@
         <rect class="es60-cls-5" x="948.7" y="1395.3" width="6.1" height="5.5" transform="translate(-446.3 2349.8) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_10" data-name="ES60 GEN 1 DRIVE CAGE 10">
+    <g id="DRIVE_CAGE_11">
       <rect class="es60-cls-8" x="906.3" y="1478.9" width="247" height="91.4" transform="translate(2554.4 494.8) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1070.6,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -498,7 +498,7 @@
         <rect class="es60-cls-5" x="1041.2" y="1395.3" width="6.1" height="5.5" transform="translate(-353.8 2442.3) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_11" data-name="ES60 GEN 1 DRIVE CAGE 11">
+    <g id="DRIVE_CAGE_12">
       <rect class="es60-cls-8" x="998.8" y="1478.9" width="247" height="91.4" transform="translate(2646.9 402.3) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1163.1,1414.1c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -535,7 +535,7 @@
         <rect class="es60-cls-5" x="1133.7" y="1395.3" width="6.1" height="5.5" transform="translate(-261.3 2534.8) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_12" data-name="ES60 GEN 1 DRIVE CAGE 12">
+    <g id="DRIVE_CAGE_13">
       <rect class="es60-cls-8" x="-52.5" y="1158.3" width="247" height="91.4" transform="translate(1275 1133) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M111.8,1093.5c-.8.8-1.9,1.3-3.2,1.3H33.4c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -572,7 +572,7 @@
         <rect class="es60-cls-5" x="82.4" y="1074.7" width="6.1" height="5.5" transform="translate(-992 1162.9) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_13" data-name="ES60 GEN 1 DRIVE CAGE 13">
+    <g id="DRIVE_CAGE_14">
       <rect class="es60-cls-8" x="40" y="1158.3" width="247" height="91.4" transform="translate(1367.5 1040.5) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M204.3,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -609,7 +609,7 @@
         <rect class="es60-cls-5" x="174.9" y="1074.7" width="6.1" height="5.5" transform="translate(-899.5 1255.4) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_14" data-name="ES60 GEN 1 DRIVE CAGE 14">
+    <g id="DRIVE_CAGE_15">
       <rect class="es60-cls-8" x="132.5" y="1158.3" width="247" height="91.4" transform="translate(1460 948) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M296.8,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -646,7 +646,7 @@
         <rect class="es60-cls-5" x="267.4" y="1074.7" width="6.1" height="5.5" transform="translate(-807 1347.9) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_15" data-name="ES60 GEN 1 DRIVE CAGE 15">
+    <g id="DRIVE_CAGE_16">
       <rect class="es60-cls-8" x="225" y="1158.3" width="247" height="91.4" transform="translate(1552.5 855.5) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M389.3,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -683,7 +683,7 @@
         <rect class="es60-cls-5" x="359.9" y="1074.7" width="6.1" height="5.5" transform="translate(-714.5 1440.4) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_16" data-name="ES60 GEN 1 DRIVE CAGE 16">
+    <g id="DRIVE_CAGE_17">
       <rect class="es60-cls-8" x="317.5" y="1158.3" width="247" height="91.4" transform="translate(1645 763) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M481.8,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -720,7 +720,7 @@
         <rect class="es60-cls-5" x="452.4" y="1074.7" width="6.1" height="5.5" transform="translate(-622 1532.9) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_17" data-name="ES60 GEN 1 DRIVE CAGE 17">
+    <g id="DRIVE_CAGE_18">
       <rect class="es60-cls-8" x="410" y="1158.3" width="247" height="91.4" transform="translate(1737.5 670.5) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M574.3,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -757,7 +757,7 @@
         <rect class="es60-cls-5" x="544.9" y="1074.7" width="6.1" height="5.5" transform="translate(-529.5 1625.4) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_18" data-name="ES60 GEN 1 DRIVE CAGE 18">
+    <g id="DRIVE_CAGE_19">
       <rect class="es60-cls-8" x="536.3" y="1158.3" width="247" height="91.4" transform="translate(1863.8 544.2) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M700.6,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -794,7 +794,7 @@
         <rect class="es60-cls-5" x="671.2" y="1074.7" width="6.1" height="5.5" transform="translate(-403.2 1751.7) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_19" data-name="ES60 GEN 1 DRIVE CAGE 19">
+    <g id="DRIVE_CAGE_20">
       <rect class="es60-cls-8" x="628.8" y="1158.3" width="247" height="91.4" transform="translate(1956.3 451.7) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M793.1,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -831,7 +831,7 @@
         <rect class="es60-cls-5" x="763.7" y="1074.7" width="6.1" height="5.5" transform="translate(-310.7 1844.2) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_20" data-name="ES60 GEN 1 DRIVE CAGE 20">
+    <g id="DRIVE_CAGE_21">
       <rect class="es60-cls-8" x="721.3" y="1158.3" width="247" height="91.4" transform="translate(2048.8 359.2) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M885.6,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -868,7 +868,7 @@
         <rect class="es60-cls-5" x="856.2" y="1074.7" width="6.1" height="5.5" transform="translate(-218.2 1936.7) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_21" data-name="ES60 GEN 1 DRIVE CAGE 21">
+    <g id="DRIVE_CAGE_22">
       <rect class="es60-cls-8" x="813.8" y="1158.3" width="247" height="91.4" transform="translate(2141.3 266.7) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M978.1,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -905,7 +905,7 @@
         <rect class="es60-cls-5" x="948.7" y="1074.7" width="6.1" height="5.5" transform="translate(-125.7 2029.2) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_22" data-name="ES60 GEN 1 DRIVE CAGE 22">
+    <g id="DRIVE_CAGE_23">
       <rect class="es60-cls-8" x="906.3" y="1158.3" width="247" height="91.4" transform="translate(2233.8 174.2) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1070.6,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -942,7 +942,7 @@
         <rect class="es60-cls-5" x="1041.2" y="1074.7" width="6.1" height="5.5" transform="translate(-33.2 2121.7) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_23" data-name="ES60 GEN 1 DRIVE CAGE 23">
+    <g id="DRIVE_CAGE_24">
       <rect class="es60-cls-8" x="998.8" y="1158.3" width="247" height="91.4" transform="translate(2326.3 81.7) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1163.1,1093.5c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -979,7 +979,7 @@
         <rect class="es60-cls-5" x="1133.7" y="1074.7" width="6.1" height="5.5" transform="translate(59.3 2214.2) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_24" data-name="ES60 GEN 1 DRIVE CAGE 24">
+    <g id="DRIVE_CAGE_25">
       <rect class="es60-cls-8" x="-52.5" y="837.7" width="247" height="91.4" transform="translate(954.4 812.4) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M111.8,772.9c-.8.8-1.9,1.3-3.2,1.3H33.4c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1016,7 +1016,7 @@
         <rect class="es60-cls-5" x="82.4" y="754.1" width="6.1" height="5.5" transform="translate(-671.4 842.3) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_25" data-name="ES60 GEN 1 DRIVE CAGE 25">
+    <g id="DRIVE_CAGE_26">
       <rect class="es60-cls-8" x="40" y="837.7" width="247" height="91.4" transform="translate(1046.9 719.9) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M204.3,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1053,7 +1053,7 @@
         <rect class="es60-cls-5" x="174.9" y="754.1" width="6.1" height="5.5" transform="translate(-578.9 934.8) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_26" data-name="ES60 GEN 1 DRIVE CAGE 26">
+    <g id="DRIVE_CAGE_27">
       <rect class="es60-cls-8" x="132.5" y="837.7" width="247" height="91.4" transform="translate(1139.4 627.4) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M296.8,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1090,7 +1090,7 @@
         <rect class="es60-cls-5" x="267.4" y="754.1" width="6.1" height="5.5" transform="translate(-486.4 1027.3) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_27" data-name="ES60 GEN 1 DRIVE CAGE 27">
+    <g id="DRIVE_CAGE_28">
       <rect class="es60-cls-8" x="225" y="837.7" width="247" height="91.4" transform="translate(1231.9 534.9) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M389.3,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1127,7 +1127,7 @@
         <rect class="es60-cls-5" x="359.9" y="754.1" width="6.1" height="5.5" transform="translate(-393.9 1119.8) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_28" data-name="ES60 GEN 1 DRIVE CAGE 28">
+    <g id="DRIVE_CAGE_29">
       <rect class="es60-cls-8" x="317.5" y="837.7" width="247" height="91.4" transform="translate(1324.4 442.4) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M481.8,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1164,7 +1164,7 @@
         <rect class="es60-cls-5" x="452.4" y="754.1" width="6.1" height="5.5" transform="translate(-301.3 1212.3) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_29" data-name="ES60 GEN 1 DRIVE CAGE 29">
+    <g id="DRIVE_CAGE_30">
       <rect class="es60-cls-8" x="410" y="837.7" width="247" height="91.4" transform="translate(1416.9 349.9) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M574.3,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1201,7 +1201,7 @@
         <rect class="es60-cls-5" x="544.9" y="754.1" width="6.1" height="5.5" transform="translate(-208.8 1304.8) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_30" data-name="ES60 GEN 1 DRIVE CAGE 30">
+    <g id="DRIVE_CAGE_31">
       <rect class="es60-cls-8" x="536.3" y="837.7" width="247" height="91.4" transform="translate(1543.2 223.6) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M700.6,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1238,7 +1238,7 @@
         <rect class="es60-cls-5" x="671.2" y="754.1" width="6.1" height="5.5" transform="translate(-82.6 1431.1) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_31" data-name="ES60 GEN 1 DRIVE CAGE 31">
+    <g id="DRIVE_CAGE_32">
       <rect class="es60-cls-8" x="628.8" y="837.7" width="247" height="91.4" transform="translate(1635.7 131.1) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M793.1,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1275,7 +1275,7 @@
         <rect class="es60-cls-5" x="763.7" y="754.1" width="6.1" height="5.5" transform="translate(9.9 1523.6) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_32" data-name="ES60 GEN 1 DRIVE CAGE 32">
+    <g id="DRIVE_CAGE_33">
       <rect class="es60-cls-8" x="721.3" y="837.7" width="247" height="91.4" transform="translate(1728.2 38.6) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M885.6,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1312,7 +1312,7 @@
         <rect class="es60-cls-5" x="856.2" y="754.1" width="6.1" height="5.5" transform="translate(102.4 1616.1) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_33" data-name="ES60 GEN 1 DRIVE CAGE 33">
+    <g id="DRIVE_CAGE_34">
       <rect class="es60-cls-8" x="813.8" y="837.7" width="247" height="91.4" transform="translate(1820.7 -53.9) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M978.1,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1349,7 +1349,7 @@
         <rect class="es60-cls-5" x="948.7" y="754.1" width="6.1" height="5.5" transform="translate(194.9 1708.6) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_34" data-name="ES60 GEN 1 DRIVE CAGE 34">
+    <g id="DRIVE_CAGE_35">
       <rect class="es60-cls-8" x="906.3" y="837.7" width="247" height="91.4" transform="translate(1913.2 -146.4) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1070.6,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1386,7 +1386,7 @@
         <rect class="es60-cls-5" x="1041.2" y="754.1" width="6.1" height="5.5" transform="translate(287.4 1801.1) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_35" data-name="ES60 GEN 1 DRIVE CAGE 35">
+    <g id="DRIVE_CAGE_36">
       <rect class="es60-cls-8" x="998.8" y="837.7" width="247" height="91.4" transform="translate(2005.7 -238.9) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1163.1,772.9c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1423,7 +1423,7 @@
         <rect class="es60-cls-5" x="1133.7" y="754.1" width="6.1" height="5.5" transform="translate(379.9 1893.6) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_36" data-name="ES60 GEN 1 DRIVE CAGE 36">
+    <g id="DRIVE_CAGE_37">
       <rect class="es60-cls-8" x="-52.5" y="517" width="247" height="91.4" transform="translate(633.8 491.7) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M111.8,452.2c-.8.8-1.9,1.3-3.2,1.3H33.4c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1460,7 +1460,7 @@
         <rect class="es60-cls-5" x="82.4" y="433.5" width="6.1" height="5.5" transform="translate(-350.7 521.6) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_37" data-name="ES60 GEN 1 DRIVE CAGE 37">
+    <g id="DRIVE_CAGE_38">
       <rect class="es60-cls-8" x="40" y="517" width="247" height="91.4" transform="translate(726.3 399.2) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M204.3,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1497,7 +1497,7 @@
         <rect class="es60-cls-5" x="174.9" y="433.5" width="6.1" height="5.5" transform="translate(-258.2 614.1) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_38" data-name="ES60 GEN 1 DRIVE CAGE 38">
+    <g id="DRIVE_CAGE_39">
       <rect class="es60-cls-8" x="132.5" y="517" width="247" height="91.4" transform="translate(818.8 306.7) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M296.8,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1534,7 +1534,7 @@
         <rect class="es60-cls-5" x="267.4" y="433.5" width="6.1" height="5.5" transform="translate(-165.7 706.7) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_39" data-name="ES60 GEN 1 DRIVE CAGE 39">
+    <g id="DRIVE_CAGE_40">
       <rect class="es60-cls-8" x="225" y="517" width="247" height="91.4" transform="translate(911.3 214.2) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M389.3,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1571,7 +1571,7 @@
         <rect class="es60-cls-5" x="359.9" y="433.5" width="6.1" height="5.5" transform="translate(-73.2 799.2) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_40" data-name="ES60 GEN 1 DRIVE CAGE 40">
+    <g id="DRIVE_CAGE_41">
       <rect class="es60-cls-8" x="317.5" y="517" width="247" height="91.4" transform="translate(1003.8 121.7) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M481.8,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1608,7 +1608,7 @@
         <rect class="es60-cls-5" x="452.4" y="433.5" width="6.1" height="5.5" transform="translate(19.3 891.7) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_41" data-name="ES60 GEN 1 DRIVE CAGE 41">
+    <g id="DRIVE_CAGE_42">
       <rect class="es60-cls-8" x="410" y="517" width="247" height="91.4" transform="translate(1096.3 29.2) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M574.3,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1645,7 +1645,7 @@
         <rect class="es60-cls-5" x="544.9" y="433.5" width="6.1" height="5.5" transform="translate(111.8 984.2) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_42" data-name="ES60 GEN 1 DRIVE CAGE 42">
+    <g id="DRIVE_CAGE_43">
       <rect class="es60-cls-8" x="536.3" y="517" width="247" height="91.4" transform="translate(1222.6 -97.1) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M700.6,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1682,7 +1682,7 @@
         <rect class="es60-cls-5" x="671.2" y="433.5" width="6.1" height="5.5" transform="translate(238.1 1110.4) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_43" data-name="ES60 GEN 1 DRIVE CAGE 43">
+    <g id="DRIVE_CAGE_44">
       <rect class="es60-cls-8" x="628.8" y="517" width="247" height="91.4" transform="translate(1315.1 -189.6) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M793.1,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1719,7 +1719,7 @@
         <rect class="es60-cls-5" x="763.7" y="433.5" width="6.1" height="5.5" transform="translate(330.6 1202.9) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_44" data-name="ES60 GEN 1 DRIVE CAGE 44">
+    <g id="DRIVE_CAGE_45">
       <rect class="es60-cls-8" x="721.3" y="517" width="247" height="91.4" transform="translate(1407.6 -282.1) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M885.6,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1756,7 +1756,7 @@
         <rect class="es60-cls-5" x="856.2" y="433.5" width="6.1" height="5.5" transform="translate(423.1 1295.4) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_45" data-name="ES60 GEN 1 DRIVE CAGE 45">
+    <g id="DRIVE_CAGE_46">
       <rect class="es60-cls-8" x="813.8" y="517" width="247" height="91.4" transform="translate(1500.1 -374.6) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M978.1,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1793,7 +1793,7 @@
         <rect class="es60-cls-5" x="948.7" y="433.5" width="6.1" height="5.5" transform="translate(515.6 1387.9) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_46" data-name="ES60 GEN 1 DRIVE CAGE 46">
+    <g id="DRIVE_CAGE_47">
       <rect class="es60-cls-8" x="906.3" y="517" width="247" height="91.4" transform="translate(1592.6 -467.1) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1070.6,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1830,7 +1830,7 @@
         <rect class="es60-cls-5" x="1041.2" y="433.5" width="6.1" height="5.5" transform="translate(608.1 1480.4) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_47" data-name="ES60 GEN 1 DRIVE CAGE 47">
+    <g id="DRIVE_CAGE_48">
       <rect class="es60-cls-8" x="998.8" y="517" width="247" height="91.4" transform="translate(1685.1 -559.6) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1163.1,452.2c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1867,7 +1867,7 @@
         <rect class="es60-cls-5" x="1133.7" y="433.5" width="6.1" height="5.5" transform="translate(700.6 1572.9) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_48" data-name="ES60 GEN 1 DRIVE CAGE 48">
+    <g id="DRIVE_CAGE_49">
       <rect class="es60-cls-8" x="-52.5" y="196.4" width="247" height="91.4" transform="translate(313.1 171.1) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M111.8,131.6c-.8.8-1.9,1.3-3.2,1.3H33.4c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1904,7 +1904,7 @@
         <rect class="es60-cls-5" x="82.4" y="112.8" width="6.1" height="5.5" transform="translate(-30.1 201) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_49" data-name="ES60 GEN 1 DRIVE CAGE 49">
+    <g id="DRIVE_CAGE_50">
       <rect class="es60-cls-8" x="40" y="196.4" width="247" height="91.4" transform="translate(405.6 78.6) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M204.3,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1941,7 +1941,7 @@
         <rect class="es60-cls-5" x="174.9" y="112.8" width="6.1" height="5.5" transform="translate(62.4 293.5) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_50" data-name="ES60 GEN 1 DRIVE CAGE 50">
+    <g id="DRIVE_CAGE_51">
       <rect class="es60-cls-8" x="132.5" y="196.4" width="247" height="91.4" transform="translate(498.1 -13.9) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M296.8,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -1978,7 +1978,7 @@
         <rect class="es60-cls-5" x="267.4" y="112.8" width="6.1" height="5.5" transform="translate(154.9 386) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_51" data-name="ES60 GEN 1 DRIVE CAGE 51">
+    <g id="DRIVE_CAGE_52">
       <rect class="es60-cls-8" x="225" y="196.4" width="247" height="91.4" transform="translate(590.6 -106.4) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M389.3,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -2015,7 +2015,7 @@
         <rect class="es60-cls-5" x="359.9" y="112.8" width="6.1" height="5.5" transform="translate(247.4 478.5) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_52" data-name="ES60 GEN 1 DRIVE CAGE 52">
+    <g id="DRIVE_CAGE_53">
       <rect class="es60-cls-8" x="317.5" y="196.4" width="247" height="91.4" transform="translate(683.1 -198.9) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M481.8,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -2052,7 +2052,7 @@
         <rect class="es60-cls-5" x="452.4" y="112.8" width="6.1" height="5.5" transform="translate(339.9 571) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_53" data-name="ES60 GEN 1 DRIVE CAGE 53">
+    <g id="DRIVE_CAGE_54">
       <rect class="es60-cls-8" x="410" y="196.4" width="247" height="91.4" transform="translate(775.6 -291.4) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M574.3,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -2089,7 +2089,7 @@
         <rect class="es60-cls-5" x="544.9" y="112.8" width="6.1" height="5.5" transform="translate(432.4 663.5) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_54" data-name="ES60 GEN 1 DRIVE CAGE 54">
+    <g id="DRIVE_CAGE_55">
       <rect class="es60-cls-8" x="536.3" y="196.4" width="247" height="91.4" transform="translate(901.9 -417.7) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M700.6,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -2126,7 +2126,7 @@
         <rect class="es60-cls-5" x="671.2" y="112.8" width="6.1" height="5.5" transform="translate(558.7 789.8) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_55" data-name="ES60 GEN 1 DRIVE CAGE 55">
+    <g id="DRIVE_CAGE_56">
       <rect class="es60-cls-8" x="628.8" y="196.4" width="247" height="91.4" transform="translate(994.4 -510.2) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M793.1,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -2163,7 +2163,7 @@
         <rect class="es60-cls-5" x="763.7" y="112.8" width="6.1" height="5.5" transform="translate(651.2 882.3) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_56" data-name="ES60 GEN 1 DRIVE CAGE 56">
+    <g id="DRIVE_CAGE_57">
       <rect class="es60-cls-8" x="721.3" y="196.4" width="247" height="91.4" transform="translate(1086.9 -602.7) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M885.6,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -2200,7 +2200,7 @@
         <rect class="es60-cls-5" x="856.2" y="112.8" width="6.1" height="5.5" transform="translate(743.7 974.8) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_57" data-name="ES60 GEN 1 DRIVE CAGE 57">
+    <g id="DRIVE_CAGE_58">
       <rect class="es60-cls-8" x="813.8" y="196.4" width="247" height="91.4" transform="translate(1179.4 -695.2) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M978.1,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -2237,7 +2237,7 @@
         <rect class="es60-cls-5" x="948.7" y="112.8" width="6.1" height="5.5" transform="translate(836.2 1067.3) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_58" data-name="ES60 GEN 1 DRIVE CAGE 58">
+    <g id="DRIVE_CAGE_59">
       <rect class="es60-cls-8" x="906.3" y="196.4" width="247" height="91.4" transform="translate(1271.9 -787.7) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1070.6,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>
@@ -2274,7 +2274,7 @@
         <rect class="es60-cls-5" x="1041.2" y="112.8" width="6.1" height="5.5" transform="translate(928.7 1159.8) rotate(-90)"/>
       </g>
     </g>
-    <g id="DRIVE_CAGE_59" data-name="ES60 GEN 1 DRIVE CAGE 59">
+    <g id="DRIVE_CAGE_60">
       <rect class="es60-cls-8" x="998.8" y="196.4" width="247" height="91.4" transform="translate(1364.4 -880.2) rotate(90)"/>
       <g>
         <path class="es60-cls-3" d="M1163.1,131.6c-.8.8-1.9,1.3-3.2,1.3h-75.3c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h75.3c2.5,0,4.5,2,4.5,4.5s-.5,2.4-1.3,3.2Z"/>

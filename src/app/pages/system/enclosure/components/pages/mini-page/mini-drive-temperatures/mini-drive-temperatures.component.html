@@ -5,14 +5,18 @@
     @for (disk of disks(); track disk.dev) {
       <li class="disk">
         <strong class="dev">{{ disk.dev }}:</strong>
-        <span class="temperature">{{ disk.temperature || ('Temperature not available.' | translate) }}</span>
 
-        @if (!disk.temperature) {
-          <ix-tooltip
-            class="tooltip-icon"
-            [header]="'Temperature data missing.' | translate"
-            [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur.' | translate"
-          ></ix-tooltip>
+        @if (isLoading()) {
+          <ngx-skeleton-loader [theme]="{ margin: 0, background: 'var(--alt-bg2)' }"></ngx-skeleton-loader>
+        } @else {
+          <span class="temperature">{{ disk.temperature | orNotAvailable }}</span>
+          @if (!disk.temperature) {
+            <ix-tooltip
+              class="tooltip-icon"
+              [header]="'Temperature data missing.' | translate"
+              [message]="'No temperature data was reported by the system. There can be a number of reasons why this might occur.' | translate"
+            ></ix-tooltip>
+          }
         }
       </li>
     }

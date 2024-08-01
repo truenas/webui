@@ -1,3 +1,4 @@
+import { DockerConfig, DockerConfigUpdate } from 'app/enums/docker-config.interface';
 import { SetAcl } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
@@ -33,7 +34,6 @@ import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/fil
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
-import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
@@ -74,7 +74,6 @@ export interface ApiJobDirectory {
   // Catalog
   'catalog.create': { params: [CatalogCreate]; response: Catalog };
   'catalog.sync': { params: [label: string]; response: void };
-  'catalog.sync_all': { params: void; response: void };
 
   // Certificate
   'certificate.create': { params: [CertificateCreate]; response: Certificate };
@@ -133,8 +132,8 @@ export interface ApiJobDirectory {
   // KMIP
   'kmip.update': { params: [KmipConfigUpdate]; response: KmipConfig };
 
-  // Kubernetes
-  'kubernetes.update': { params: [Partial<KubernetesConfigUpdate>]; response: KubernetesConfig };
+  // Docker
+  'docker.update': { params: [DockerConfigUpdate]; response: DockerConfig };
 
   // LDAP
   'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };

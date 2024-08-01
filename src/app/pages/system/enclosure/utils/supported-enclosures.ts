@@ -81,12 +81,32 @@ const r20 = {
   [EnclosureSide.Rear]: 'assets/images/new-hardware/r20/r20-rear.svg',
 };
 
+const r20a = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/r20a/r20a-front.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/r20a/r20a-rear.svg',
+};
+
+const r20b = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/r20b/r20b-front.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/r20/r20-rear.svg',
+};
+
 const r30 = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/r30/r30-front.svg',
 };
 
 const r40 = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/r40/r40-front.svg',
+};
+
+const r50 = {
+  [EnclosureSide.Top]: 'assets/images/new-hardware/r50/r50-top.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/r50/r50-rear.svg',
+};
+
+const r50b = {
+  [EnclosureSide.Top]: 'assets/images/new-hardware/r50b/r50b-top.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/r50b/r50b-rear.svg',
 };
 
 const r50bm = {
@@ -124,8 +144,12 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.Es102]: eS102,
   [EnclosureModel.R10]: r10,
   [EnclosureModel.R20]: r20,
+  [EnclosureModel.R20A]: r20a,
+  [EnclosureModel.R20B]: r20b,
   [EnclosureModel.R30]: r30,
   [EnclosureModel.R40]: r40,
+  [EnclosureModel.R50]: r50,
+  [EnclosureModel.R50B]: r50b,
   [EnclosureModel.R50BM]: r50bm,
   [EnclosureModel.X10]: xSeries,
   [EnclosureModel.X20]: xSeries,

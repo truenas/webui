@@ -36,15 +36,13 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
-import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
@@ -156,8 +154,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private installedAppsStore: InstalledAppsStore,
-    private kubernetesStore: KubernetesStore,
-    private slideInService: IxSlideInService,
+    private dockerStore: DockerStore,
     private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
     private appsStats: AppsStatisticsService,
@@ -257,10 +254,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       case EmptyType.Errors:
         this.entityEmptyConf.title = helptextApps.message.not_running;
         this.entityEmptyConf.message = undefined;
-        this.entityEmptyConf.button = {
-          label: this.translate.instant('Open Settings'),
-          action: () => this.openAdvancedSettings(),
-        };
         break;
       case EmptyType.NoSearchResults:
         this.entityEmptyConf.title = helptextApps.message.no_search_result;
@@ -282,8 +275,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.cdr.markForCheck();
 
     combineLatest([
-      this.kubernetesStore.selectedPool$,
-      this.kubernetesStore.isKubernetesStarted$,
+      this.dockerStore.selectedPool$,
+      this.dockerStore.isDockerStarted$,
       this.installedAppsStore.installedApps$,
     ]).pipe(
       filter(([pool]) => {
@@ -294,13 +287,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         }
         return !!pool;
       }),
-      filter(([,kubernetesStarted]) => {
-        if (!kubernetesStarted) {
+      filter(([,dockerStarted]) => {
+        if (!dockerStarted) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.Errors);
           this.cdr.markForCheck();
         }
-        return !!kubernetesStarted;
+        return !!dockerStarted;
       }),
       filter(([,,charts]) => {
         if (!charts.length) {
@@ -472,10 +465,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
     this.selectedApp = firstApp;
     this.cdr.markForCheck();
-  }
-
-  private openAdvancedSettings(): void {
-    this.slideInService.open(KubernetesSettingsComponent);
   }
 
   private resetSearch(): void {

@@ -479,7 +479,7 @@
       </g>
     </g>
     <g id="MINI_X_DRIVES" data-name="MINI X+ DRIVES">
-      <g id="DRIVE_CAGE_6" data-name="MINI X+ DRIVE CAGE 6">
+      <g id="DRIVE_CAGE_7" data-name="MINI X+ DRIVE CAGE 6">
         <rect class="mini3x-cls-21" x="190.4" y="500" width="217.6" height="41.6"/>
         <path class="mini3x-cls-6" d="M357.3,509.2c-3,3-4.8,7.1-4.8,11.6,0,7,4.4,13.1,10.7,15.4v5.4h-172.8v-41.6h172.8v5.4c-2.2.8-4.2,2.1-5.8,3.8Z"/>
         <g>
@@ -506,7 +506,7 @@
           <rect class="mini3x-cls-17" x="395.1" y="508.9" width="5" height="7.2"/>
         </g>
       </g>
-      <g id="DRIVE_CAGE_5" data-name="MINI X+ DRIVE CAGE 5">
+      <g id="DRIVE_CAGE_6" data-name="MINI X+ DRIVE CAGE 5">
         <rect class="mini3x-cls-21" x="190.4" y="452" width="217.6" height="41.6"/>
         <path class="mini3x-cls-6" d="M357.3,461.2c-3,3-4.8,7.1-4.8,11.6,0,7,4.4,13.1,10.7,15.4v5.4h-172.8v-41.6h172.8v5.4c-2.2.8-4.2,2.1-5.8,3.8Z"/>
         <g>
@@ -533,7 +533,7 @@
           <rect class="mini3x-cls-17" x="395.1" y="461" width="5" height="7.2"/>
         </g>
       </g>
-      <g id="DRIVE_CAGE_4" data-name="MINI X+ DRIVE CAGE 4">
+      <g id="DRIVE_CAGE_5" data-name="MINI X+ DRIVE CAGE 4">
         <rect class="mini3x-cls-21" x="161.7" y="360.3" width="286.1" height="72.7"/>
         <rect class="mini3x-cls-13" x="447.7" y="360.3" width="5.5" height="72.7" transform="translate(900.9 793.3) rotate(180)"/>
         <rect class="mini3x-cls-13" x="150.2" y="360.3" width="11.5" height="8.4" transform="translate(311.8 728.9) rotate(180)"/>
@@ -603,7 +603,7 @@
           </g>
         </g>
       </g>
-      <g id="DRIVE_CAGE_3" data-name="MINI X+ DRIVE CAGE 3">
+      <g id="DRIVE_CAGE_4" data-name="MINI X+ DRIVE CAGE 3">
         <rect class="mini3x-cls-21" x="161.7" y="281.6" width="286.1" height="72.7"/>
         <rect class="mini3x-cls-13" x="447.7" y="281.6" width="5.5" height="72.7" transform="translate(900.9 635.9) rotate(180)"/>
         <rect class="mini3x-cls-13" x="150.2" y="281.6" width="11.5" height="8.4" transform="translate(311.8 571.5) rotate(180)"/>
@@ -673,7 +673,7 @@
           </g>
         </g>
       </g>
-      <g id="DRIVE_CAGE_2" data-name="MINI X+ DRIVE CAGE 2">
+      <g id="DRIVE_CAGE_3" data-name="MINI X+ DRIVE CAGE 2">
         <rect class="mini3x-cls-21" x="161.7" y="202.9" width="286.1" height="72.7"/>
         <rect class="mini3x-cls-13" x="447.7" y="202.9" width="5.5" height="72.7" transform="translate(900.9 478.5) rotate(180)"/>
         <rect class="mini3x-cls-13" x="150.2" y="202.9" width="11.5" height="8.4" transform="translate(311.8 414.1) rotate(180)"/>
@@ -743,7 +743,7 @@
           </g>
         </g>
       </g>
-      <g id="DRIVE_CAGE_1" data-name="MINI X+ DRIVE CAGE 1">
+      <g id="DRIVE_CAGE_2" data-name="MINI X+ DRIVE CAGE 1">
         <rect class="mini3x-cls-21" x="161.7" y="124.2" width="286.1" height="72.7"/>
         <rect class="mini3x-cls-13" x="447.7" y="124.2" width="5.5" height="72.7" transform="translate(900.9 321.1) rotate(180)"/>
         <rect class="mini3x-cls-13" x="150.2" y="124.2" width="11.5" height="8.4" transform="translate(311.8 256.7) rotate(180)"/>
@@ -813,7 +813,7 @@
           </g>
         </g>
       </g>
-      <g id="DRIVE_CAGE_0" data-name="MINI X+ DRIVE CAGE 0">
+      <g id="DRIVE_CAGE_1" data-name="MINI X+ DRIVE CAGE 0">
         <rect class="mini3x-cls-21" x="161.7" y="45.5" width="286.1" height="72.7"/>
         <rect class="mini3x-cls-13" x="447.7" y="45.5" width="5.5" height="72.7" transform="translate(900.9 163.7) rotate(180)"/>
         <rect class="mini3x-cls-13" x="150.2" y="45.5" width="11.5" height="8.4" transform="translate(311.8 99.3) rotate(180)"/>

@@ -104,7 +104,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   private getDashboardGroups(dashState: WidgetGroup[] | OldDashboardConfigItem[]): WidgetGroup[] {
     return dashState.map((widget) => {
       if (!widget.hasOwnProperty('layout')) {
-        const oldDashboardWidget = widget as unknown as OldDashboardConfigItem;
+        const oldDashboardWidget = widget as OldDashboardConfigItem;
         return {
           layout: WidgetGroupLayout.Full,
           slots: [{

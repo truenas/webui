@@ -132,7 +132,7 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
       .pipe(idNameArrayToOptions(), untilDestroyed(this))
       .subscribe((options) => {
         if (this.hasSignedBy && options.length) {
-          this.form.patchValue({ signedby: options[0].value as number });
+          this.form.patchValue({ signedby: options[0].value });
         }
         this.signingAuthorities = options;
         this.signingAuthorities$ = of(options);

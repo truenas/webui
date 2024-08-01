@@ -1,6 +1,7 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
+import { DockerConfig, DockerStatusResponse } from 'app/enums/docker-config.interface';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -165,8 +166,6 @@ import {
   SshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig } from 'app/interfaces/kmip-config.interface';
-import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
-import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import {
@@ -447,6 +446,7 @@ export interface ApiCallDirectory {
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: DetailsDisk[] };
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
+  'disk.temperature': { params: [name: string]; response: number };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
@@ -610,10 +610,9 @@ export interface ApiCallDirectory {
   'kmip.kmip_sync_pending': { params: void; response: boolean };
   'kmip.sync_keys': { params: void; response: void };
 
-  // Kubernetes
-  'kubernetes.bindip_choices': { params: void; response: Choices };
-  'kubernetes.config': { params: void; response: KubernetesConfig };
-  'kubernetes.status': { params: void; response: KubernetesStatusData };
+  // Docker
+  'docker.config': { params: void; response: DockerConfig };
+  'docker.status': { params: void; response: DockerStatusResponse };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };
