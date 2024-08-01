@@ -1,4 +1,5 @@
 @import 'scss-imports/cssvars';
+@import 'mixins/animations';
 
 /* TYPOGRAPHY */
 
@@ -800,6 +801,21 @@ body {
   ix-fieldset.highlighted fieldset {
     outline: 1.5px solid var(--primary);
   }
+
+  .search-element-highlighted {
+    @include pulse-box-shadow();
+
+    background-color: var(--contrast-darkest) !important;
+    box-shadow: none;
+    outline: 0;
+    overflow: visible;
+
+    @media (prefers-reduced-motion) {
+      &::after {
+        animation: none;
+      }
+    }
+  }
 }
 
 body .mat-calendar-previous-button::after,
@@ -877,4 +893,10 @@ mat-list-item {
 
 div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
   margin: 5px 0;
+}
+
+mat-tab-nav-panel {
+  .search-element-highlighted {
+    display: block;
+  }
 }
