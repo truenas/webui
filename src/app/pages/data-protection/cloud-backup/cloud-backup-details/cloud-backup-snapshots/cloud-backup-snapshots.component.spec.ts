@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
@@ -14,6 +15,8 @@ import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-prot
 import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 const cloudBackupSnapshots = [
   {
@@ -56,6 +59,20 @@ describe('CloudBackupSnapshotsComponent', () => {
       }),
       mockProvider(IxSlideInRef, {
         slideInClosed$: of(true),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectGeneralConfig,
+            value: {
+              timezone: 'Europe/Kiev',
+            },
+          },
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+        ],
       }),
     ],
   });
