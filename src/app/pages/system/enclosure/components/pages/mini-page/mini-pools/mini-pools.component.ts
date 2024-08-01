@@ -8,7 +8,8 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MiniPoolsComponent {
-  readonly slots = this.store.selectedEnclosureSlots;
+  readonly enclosure = this.store.selectedEnclosure;
+  readonly selectedSide = this.store.selectedSide;
   readonly poolColors = this.store.poolColors;
 
   constructor(

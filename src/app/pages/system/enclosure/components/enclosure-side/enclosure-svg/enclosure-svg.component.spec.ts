@@ -15,10 +15,10 @@ describe('EnclosureSvgComponent', () => {
 <svg>
   <rect x="0" y="0" width="100" height="100" fill="red"></rect>
   <g id="Drives">
-    <g id="DRIVE_CAGE_0">
+    <g id="DRIVE_CAGE_1">
       <rect x="0" y="0" width="100" height="100" fill="green"></rect>
     </g>
-    <g id="DRIVE_CAGE_1">
+    <g id="DRIVE_CAGE_2">
       <rect x="0" y="100" width="100" height="100" fill="blue"></rect>
     </g>
   </g>
@@ -87,8 +87,8 @@ describe('EnclosureSvgComponent', () => {
     it('loads svg and shows it using svgUrl and SvgCacheService service', () => {
       expect(spectator.query('.svg-container')).toHaveDescendant('svg');
       expect(spectator.query('.svg-container svg')).toHaveDescendant('g[id="Drives"]');
-      expect(spectator.query('.svg-container svg g[id="Drives"] ')).toHaveDescendant('g[id="DRIVE_CAGE_0"]');
       expect(spectator.query('.svg-container svg g[id="Drives"] ')).toHaveDescendant('g[id="DRIVE_CAGE_1"]');
+      expect(spectator.query('.svg-container svg g[id="Drives"] ')).toHaveDescendant('g[id="DRIVE_CAGE_2"]');
       expect(spectator.inject(SvgCacheService).loadSvg).toHaveBeenCalledWith('/assets/m1.svg');
     });
 
