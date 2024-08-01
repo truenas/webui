@@ -7,7 +7,6 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { PoolUsageGaugeComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/pool-usage-gauge/pool-usage-gauge.component';
-import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
 import { WidgetPoolUsageGaugeComponent } from 'app/pages/dashboard/widgets/storage/widget-pool-usage-gauge/widget-pool-usage-gauge.component';
 
 describe('WidgetPoolUsageGaugeComponent', () => {
@@ -21,16 +20,14 @@ describe('WidgetPoolUsageGaugeComponent', () => {
     ],
   });
 
-  const mockSettings: WidgetPoolSettings = {
-    poolId: '1',
-  };
-
   describe('pool exists', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: {
           size: SlotSize.Quarter,
-          settings: mockSettings,
+          settings: {
+            poolId: 1,
+          },
         },
         providers: [
           mockProvider(WidgetResourcesService, {
@@ -58,7 +55,9 @@ describe('WidgetPoolUsageGaugeComponent', () => {
       spectator = createComponent({
         props: {
           size: SlotSize.Quarter,
-          settings: mockSettings,
+          settings: {
+            poolId: 1,
+          },
         },
         providers: [
           mockProvider(WidgetResourcesService, {

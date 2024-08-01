@@ -22,15 +22,7 @@ ESLint is set up to ensure that the code is up to the format standards that we w
 
 ### Translating the UI
 
-If you want to contribute to the translation of our UI, you can do so by editing one of the `[language_name].json` files under `src\assets\i18n\`. In each of those files, text strings and their translations in the relevant language are kept as key/value pairs e.g.,
-
-`
-{
-  ...,
-  "Translate this text": "[Translation]",
-  ...
-}
-`
+See the [TRANSLATING.md](https://github.com/truenas/webui/blob/master/TRANSLATING.md) for more information on how to translate the UI.
 
 ## Tests
 

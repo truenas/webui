@@ -7,7 +7,6 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { LastScanErrorsComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/last-scan-errors/last-scan-errors.component';
-import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
 import { WidgetPoolLastScanErrorsComponent } from 'app/pages/dashboard/widgets/storage/widget-pool-last-scan-errors/widget-pool-scan-errors.component';
 
 describe('WidgetPoolLastScanErrorsComponent', () => {
@@ -21,16 +20,14 @@ describe('WidgetPoolLastScanErrorsComponent', () => {
     ],
   });
 
-  const mockSettings: WidgetPoolSettings = {
-    poolId: '1',
-  };
-
   describe('pool exists', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: {
           size: SlotSize.Quarter,
-          settings: mockSettings,
+          settings: {
+            poolId: 1,
+          },
         },
         providers: [
           mockProvider(WidgetResourcesService, {
@@ -58,7 +55,9 @@ describe('WidgetPoolLastScanErrorsComponent', () => {
       spectator = createComponent({
         props: {
           size: SlotSize.Quarter,
-          settings: mockSettings,
+          settings: {
+            poolId: 1,
+          },
         },
         providers: [
           mockProvider(WidgetResourcesService, {
