@@ -837,22 +837,9 @@ body {
     @include pulse-box-shadow();
 
     background-color: var(--contrast-darkest) !important;
-    box-shadow: 0 0 5px 5px var(--primary) !important;
-    outline: 4px solid var(--primary) !important;
+    box-shadow: none;
+    outline: 0;
     overflow: visible;
-
-    &:focus-visible {
-      box-shadow: 0 0 5px 5px var(--primary) !important;
-      outline: 4px solid var(--primary) !important;
-    }
-
-    &.mat-primary {
-      outline: 4px solid var(--primary-txt) !important;
-
-      &:focus-visible {
-        box-shadow: 0 0 5px 5px var(--fg2) !important;
-      }
-    }
 
     @media (prefers-reduced-motion) {
       &::after {
