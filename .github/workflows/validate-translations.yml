@@ -12,6 +12,15 @@ on:
       - 'src/assets/i18n/**'
 
 jobs:
+  install:
+    name: Checkout and Install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/prepare
+
   lint-translations:
     name: Validate translation strings
     needs: [install]
