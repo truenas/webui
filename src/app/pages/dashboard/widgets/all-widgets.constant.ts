@@ -1,5 +1,7 @@
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { appWidget } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app.definition';
+import { appInfoWidget } from 'app/pages/dashboard/widgets/apps/widget-app-info/widget-app-info.definition';
+import { appStatsWidget } from 'app/pages/dashboard/widgets/apps/widget-app-stats/widget-app-stats.definition';
 import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
 import { cpuTemperatureBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temperature-bar/widget-cpu-temperature-bar.definition';
@@ -32,6 +34,8 @@ import { systemUptimeWidget } from 'app/pages/dashboard/widgets/system/widget-sy
 export const widgetComponents = [
   appWidget.component,
   appWidget.settingsComponent,
+  appInfoWidget.component,
+  appStatsWidget.component,
   ipv4AddressWidget.component,
   ipv4AddressWidget.settingsComponent,
   helpWidget.component,
@@ -61,6 +65,8 @@ export const widgetComponents = [
 
 export const widgetRegistry = {
   [WidgetType.App]: appWidget,
+  [WidgetType.AppInfo]: appInfoWidget,
+  [WidgetType.AppStats]: appStatsWidget,
   [WidgetType.Pool]: poolWidget,
   [WidgetType.Ipv4Address]: ipv4AddressWidget,
   [WidgetType.Ipv6Address]: ipv6AddressWidget,

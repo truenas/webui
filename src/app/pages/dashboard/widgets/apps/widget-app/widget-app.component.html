@@ -2,10 +2,7 @@
   <mat-card-content *ixWithLoadingState="app() as application" class="card-content">
     <div class="header">
       <h3>{{ 'App' | translate }}</h3>
-
-      <div class="controls">
-        <ix-app-controls [app]="app() | async"></ix-app-controls>
-      </div>
+      <ix-app-controls [app]="app() | async"></ix-app-controls>
     </div>
 
     <div [class]="['container', size()]">
