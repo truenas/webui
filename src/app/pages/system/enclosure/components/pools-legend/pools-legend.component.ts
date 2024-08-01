@@ -3,7 +3,9 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { chain } from 'lodash';
-import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
+import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
+import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 import { unassignedColor } from 'app/pages/system/enclosure/utils/unassigned-color.const';
 
 @Component({
@@ -13,8 +15,13 @@ import { unassignedColor } from 'app/pages/system/enclosure/utils/unassigned-col
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolsLegendComponent {
-  readonly slots = input.required<DashboardEnclosureSlot[]>();
+  readonly enclosure = input.required<DashboardEnclosure>();
+  readonly side = input.required<EnclosureSide>();
   readonly poolColors = input.required<Record<string, string>>();
+
+  readonly slots = computed(() => {
+    return getSlotsOfSide(this.enclosure(), this.side());
+  });
 
   readonly legend = computed(() => {
     const poolColors = this.poolColors();

@@ -35,7 +35,8 @@
     ></ix-vdev-disks-legend>
   } @else {
     <ix-pools-legend
-      [slots]="selectedEnclosureSlots()"
+      [enclosure]="enclosure()"
+      [side]="selectedSide()"
       [poolColors]="poolColors()"
     ></ix-pools-legend>
   }
