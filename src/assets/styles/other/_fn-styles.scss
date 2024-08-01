@@ -64,16 +64,16 @@ button.mat-mdc-button.mat-accent:focus-visible,
 .ix-dark button:focus-visible,
 button:focus-visible {
   border-color: transparent !important;
-  box-shadow: 0 0 0 1.5px var(--focus-brd) inset !important;
+  box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
   outline-width: 0;
 }
 
 .mdc-button--outlined:focus-visible {
-  outline: 1.5px solid var(--primary) !important;
+  outline: 1.5px solid var(--primary);
 }
 
 a:focus-visible {
-  box-shadow: 0 0 0 1.5px var(--alt-bg2) inset !important;
+  box-shadow: 0 0 0 1.5px var(--alt-bg2) inset;
 }
 
 a {
