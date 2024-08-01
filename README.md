@@ -104,35 +104,9 @@ yarn install
 
 This should bring the yarn environment back to a usable state.
 
-# Translating Text to Other Languages
+# Translating UI
 
-All JSON files for translating TrueNAS's web interface are included in this repository under [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n). \
-These can be edited using your editor of choice or directly via the GitHub Web based code editing system.
-
-Translation needs to be added to the right part of the string. For example:
-
-```
-"1 day": "1 jour",
-```
-
-Some strings may use [ICU Message Format](https://formatjs.io/docs/core-concepts/icu-syntax/#plural-format) for pluralization.\
-You can move tokens around and adjust them for your language.
-
-For example:
-
-```
-Deleted {n, plural, one {# snapshot} other {# snapshots}}
-```
-
-can be translated in Russian as:
-
-```
-{n, plural, =1 {Снимок удален} few{# снимка удалено} other {# снимков удалено}}
-```
-
-You can test your strings in an [online editor](http://format-message.github.io/icu-message-format-for-translators/editor.html).
-
-String files are often changed by developers and other contributors, so it's better to make multiple smaller PRs instead of trying to translate everything at once.
+See the [TRANSLATING.md](https://github.com/truenas/webui/blob/master/TRANSLATING.md) for more information on how to translate the UI.
 
 # Contributing
 
