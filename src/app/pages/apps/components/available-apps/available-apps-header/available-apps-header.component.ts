@@ -122,7 +122,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   refreshCharts(): void {
     this.dialogService.jobDialog(
-      this.ws.job('catalog.sync_all'),
+      this.ws.job('catalog.sync'),
       {
         title: this.translate.instant(helptextApps.refreshing),
         canMinimize: true,

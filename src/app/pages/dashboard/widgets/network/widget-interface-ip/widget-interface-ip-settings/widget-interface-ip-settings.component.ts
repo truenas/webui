@@ -1,10 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  ChangeDetectionStrategy, Component, effect, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map } from 'rxjs';
+import { filter, map, startWith } from 'rxjs';
+import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -28,18 +30,24 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
   protected networkInterfaceOptions$ = this.resources.networkInterfaces$.pipe(
     filter((state) => !!state.value && !state.isLoading),
     map((state) => state.value),
-    map((interfaces) => interfaces.map((result) => ({
-      label: result.name,
-      value: result.id,
-    }))),
+    startWith([]),
+    idNameArrayToOptions(),
   );
+  private firstOption = toSignal(this.networkInterfaceOptions$.pipe(map((opts) => opts[0]?.value)));
 
   private readonly formFieldNames = ['interface'];
   constructor(
     public widgetSettingsRef: WidgetSettingsRef<WidgetInterfaceIpSettings>,
     private fb: FormBuilder,
     private resources: WidgetResourcesService,
-  ) { }
+  ) {
+    effect(() => {
+      const firstOption = this.firstOption();
+      if (!this.widgetSettingsRef.getSettings()?.interface && firstOption) {
+        this.form.controls.interface.setValue(firstOption);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.setCurrentSettings();
@@ -48,9 +56,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
 
   private setCurrentSettings(): void {
     const settings = this.widgetSettingsRef.getSettings();
-    if (!settings) {
-      return;
-    }
+    if (!settings) return;
     this.form.controls.interface.setValue(settings.interface);
   }
 

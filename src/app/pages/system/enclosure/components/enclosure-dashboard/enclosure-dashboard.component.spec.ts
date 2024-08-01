@@ -4,6 +4,7 @@ import {
   mockProvider,
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
@@ -25,6 +26,7 @@ describe('EnclosureDashboardComponent', () => {
           label: 'Current label',
         } as DashboardEnclosure),
         initiate: jest.fn(),
+        listenForDiskUpdates: jest.fn(() => of()),
         selectEnclosure: jest.fn(),
       }),
     ],

@@ -138,7 +138,7 @@
     </g>
   </g>
   <g id="MINI_E_DRIVES">
-    <g id="DRIVE_CAGE_3">
+    <g id="DRIVE_CAGE_4">
       <rect x="100.16" y="335.17" width="286.06" height="72.72" style="fill: #0d0d0d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
       <rect x="386.21" y="335.17" width="5.47" height="72.72" transform="translate(777.9 743.06) rotate(180)" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
       <rect x="88.64" y="335.17" width="11.52" height="8.35" transform="translate(188.79 678.69) rotate(180)" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -209,7 +209,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_2">
+    <g id="DRIVE_CAGE_3">
       <rect x="100.16" y="254.62" width="286.06" height="72.72" style="fill: #0d0d0d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
       <rect x="386.21" y="254.62" width="5.47" height="72.72" transform="translate(777.9 581.96) rotate(180)" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
       <rect x="88.64" y="254.62" width="11.52" height="8.35" transform="translate(188.79 517.59) rotate(180)" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -280,7 +280,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_1">
+    <g id="DRIVE_CAGE_2">
       <rect x="99.54" y="174.69" width="286.06" height="72.72" style="fill: #0d0d0d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
       <rect x="385.6" y="174.69" width="5.47" height="72.72" transform="translate(776.67 422.1) rotate(180)" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
       <rect x="88.02" y="174.69" width="11.52" height="8.35" transform="translate(187.56 357.73) rotate(180)" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -351,7 +351,7 @@
         </g>
       </g>
     </g>
-    <g id="DRIVE_CAGE_0">
+    <g id="DRIVE_CAGE_1">
       <g>
         <rect x="100.16" y="94.48" width="286.06" height="72.72" style="fill: #2b2b2b;"/>
         <rect x="386.21" y="94.48" width="5.47" height="72.72" style="fill: #2b2b2b;"/>

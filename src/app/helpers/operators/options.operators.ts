@@ -32,7 +32,7 @@ export function redundantListToUniqueOptions(): OperatorFunction<string[], Optio
   });
 }
 
-export function idNameArrayToOptions(): OperatorFunction<{ id: number; name: string }[], Option[]> {
+export function idNameArrayToOptions<T = number>(): OperatorFunction<{ id: T; name: string }[], Option<T>[]> {
   return map((options) => {
     return options.map((option) => ({ label: option.name, value: option.id }));
   });

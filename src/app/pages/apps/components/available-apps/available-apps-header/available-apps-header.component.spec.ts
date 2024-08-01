@@ -41,7 +41,7 @@ describe('AvailableAppsHeaderComponent', () => {
       mockAuth(),
       mockWebSocket([
         mockCall('chart.release.query', [{}, {}, {}] as ChartRelease[]),
-        mockJob('catalog.sync_all'),
+        mockJob('catalog.sync'),
       ]),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([{}, {}, {}] as ChartRelease[]),
@@ -129,6 +129,6 @@ describe('AvailableAppsHeaderComponent', () => {
     spectator.click(spectator.query(byText('Refresh Charts')));
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('catalog.sync_all');
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('catalog.sync');
   });
 });

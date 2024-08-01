@@ -52,30 +52,6 @@ export const helptextApps = {
     action: T('Create Pool'),
   },
 
-  kubForm: {
-    title: T('Kubernetes Settings'),
-    reInit: {
-      title: T('Settings Requiring Re-Initialization'),
-      formWarning: T('Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.'),
-      modalWarning: T('You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.'),
-    },
-    validateHostPath: {
-      title: T('Validate Host Path'),
-      warning: T(`Disabling host path validation may result in undefined behavior from TrueNAS system
-      services that access host paths mounted within kubernetes.<br>
-      Undefined behavior may include loss of access to data through inadvertent permissions changes,
-      loss of data due to lack of validation of application compatibility, and application stability issues.<br><br>
-      As such, this configuration is unsupported and bug reports in which this configuration plays a role
-      may be closed as a user configuration issue without further investigation.`),
-    },
-    enable_container_image_update: {
-      placeholder: T('Enable Container Image Updates'),
-    },
-    configure_gpus: {
-      placeholder: T('Enable GPU support'),
-    },
-  },
-
   charts: {
     delete_dialog: {
       title: T('Delete'),

@@ -12,9 +12,8 @@
   <div class="app-image-holder">
     <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
   </div>
-  @if (!!(kubernetesStore.selectedPool$ | async)) {
+  @if (!!(dockerStore.selectedPool$ | async)) {
     <button
-      *ixRequiresRoles="requiredRoles"
       mat-button
       color="primary"
       [ixTest]="[app?.name, 'install']"
@@ -29,7 +28,6 @@
     </button>
   } @else {
     <button
-      *ixRequiresRoles="requiredRoles"
       mat-button
       color="primary"
       ixTest="setup-pool"

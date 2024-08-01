@@ -4,9 +4,9 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
+import { hasMiniSpecificPage } from 'app/pages/system/enclosure/utils/has-mini-specific-page.utils';
 
 @UntilDestroy()
 @Component({
@@ -36,15 +36,7 @@ export class EnclosurePageComponent {
       return;
     }
 
-    const minisWithOwnPage = [
-      EnclosureModel.Mini3E,
-      EnclosureModel.Mini3EPlus,
-      EnclosureModel.Mini3X,
-      EnclosureModel.Mini3XPlus,
-      EnclosureModel.Mini3XlPlus,
-    ];
-
-    if (!minisWithOwnPage.includes(enclosure.model)) {
+    if (!hasMiniSpecificPage(enclosure)) {
       return;
     }
 
