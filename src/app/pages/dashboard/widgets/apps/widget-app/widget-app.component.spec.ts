@@ -16,11 +16,11 @@ import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/ap
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-card-info/app-card-info.component';
-import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-controls/app-controls.component';
-import { AppCpuInfoComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-cpu-info/app-cpu-info.component';
-import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-memory-info/app-memory-info.component';
-import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/widget-app/app-network-info/app-network-info.component';
+import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-card-info/app-card-info.component';
+import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/common/app-controls/app-controls.component';
+import { AppCpuInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-cpu-info/app-cpu-info.component';
+import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-memory-info/app-memory-info.component';
+import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-network-info/app-network-info.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { WidgetAppComponent } from './widget-app.component';
