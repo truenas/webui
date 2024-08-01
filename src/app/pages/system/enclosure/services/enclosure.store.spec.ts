@@ -73,7 +73,7 @@ describe('EnclosureStore', () => {
         selectedEnclosureIndex: 0,
         selectedSlotNumber: null,
         selectedView: EnclosureView.Pools,
-        selectedSide: undefined,
+        selectedSide: EnclosureSide.Front,
       });
     });
   });
@@ -105,7 +105,7 @@ describe('EnclosureStore', () => {
         selectedEnclosureIndex: 1,
         selectedSlotNumber: null,
         selectedView: EnclosureView.Pools,
-        selectedSide: undefined,
+        selectedSide: EnclosureSide.Front,
       });
     });
   });
@@ -141,7 +141,7 @@ describe('EnclosureStore', () => {
         selectedEnclosureIndex: 1,
         selectedSlotNumber: enclosures[1].elements[EnclosureElementType.ArrayDeviceSlot][4].drive_bay_number,
         selectedView: EnclosureView.Pools,
-        selectedSide: undefined,
+        selectedSide: EnclosureSide.Front,
       });
     });
   });

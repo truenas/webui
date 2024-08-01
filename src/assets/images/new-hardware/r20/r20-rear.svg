@@ -376,7 +376,7 @@
     <polygon class="r20-rear-cls-3" points="1263 .1 1263 22.7 1260.2 22.7 1260.2 2.9 1250.3 2.9 1250.3 13.1 1171.9 13.1 1171.9 23.9 242.1 23.9 242.1 2.9 2.9 2.9 2.9 22.7 .1 22.7 .1 .1 1263 .1"/>
   </g>
   <g id="R20_SATA_Cache" data-name="R20 SATA Cache">
-    <g id="R20_SATA_CACHE_1" data-name="R20 SATA CACHE 1">
+    <g id="DRIVE_CAGE_13">
       <rect class="r20-rear-cls-3" x="1185.2" y="29.7" width="3.2" height="190.8"/>
       <rect class="r20-rear-cls-3" x="1188.5" y="29.7" width="18.7" height="28.8"/>
       <rect class="r20-rear-cls-5" x="1188.5" y="58.5" width="18.7" height="1.9"/>
@@ -384,7 +384,7 @@
       <rect class="r20-rear-cls-5" x="1185.2" y="17.5" width="22" height="12.2"/>
       <rect class="r20-rear-cls-11" x="1185.2" y="17.5" width="22" height="7.9"/>
     </g>
-    <g id="R20_SATA_CACHE_2" data-name="R20 SATA CACHE 2">
+    <g id="DRIVE_CAGE_14">
       <rect class="r20-rear-cls-3" x="1210" y="29.7" width="3.2" height="190.8"/>
       <rect class="r20-rear-cls-3" x="1213.2" y="29.7" width="18.7" height="28.8"/>
       <rect class="r20-rear-cls-5" x="1213.2" y="58.5" width="18.7" height="1.9"/>
