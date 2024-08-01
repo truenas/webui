@@ -1,6 +1,7 @@
 {
   "": "",
   "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "",
+  "Support License": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{coreCount, plural, one {# core} other {# cores} }": "",
   "{n, plural, =0 {No Errors} one {# Error} other {# Errors}}": "",
@@ -2842,7 +2843,6 @@
   "No Encryption (less secure, but faster)": "Gan Criptiú (níos lú slán, ach níos tapúla)",
   "No Inherit": "Gan Oidhreacht",
   "No Isolated GPU Device(s) configured": "Níl aon Ghléas(anna) GPU Scoite cumraithe",
-  "No License": "Gan Ceadúnas",
   "No Logs": "Uimh Logchomhaid",
   "No Pods Found": "Níor aimsíodh pods",
   "No Pools": "Uimh Linnte",
