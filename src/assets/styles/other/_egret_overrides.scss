@@ -20,17 +20,6 @@ div.mat-toolbar {
   width: 100%;
 }
 
-/* Tabbed navigation is fixed too */
-.tab-header-fixed .mat-mdc-tab-header {
-  background: #efefef;
-  flex-shrink: 0;
-  overflow: hidden;
-  position: fixed !important;
-  top: 104px;
-  width: 100%;
-  z-index: 2;
-}
-
 .mat-mdc-tab-body-wrapper {
   padding: 16px;
 }

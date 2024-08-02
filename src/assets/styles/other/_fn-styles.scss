@@ -64,16 +64,16 @@ button.mat-mdc-button.mat-accent:focus-visible,
 .ix-dark button:focus-visible,
 button:focus-visible {
   border-color: transparent !important;
-  box-shadow: 0 0 0 1.5px var(--focus-brd) inset !important;
+  box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
   outline-width: 0;
 }
 
 .mdc-button--outlined:focus-visible {
-  outline: 1.5px solid var(--primary) !important;
+  outline: 1.5px solid var(--primary);
 }
 
 a:focus-visible {
-  box-shadow: 0 0 0 1.5px var(--alt-bg2) inset !important;
+  box-shadow: 0 0 0 1.5px var(--alt-bg2) inset;
 }
 
 a {
@@ -141,110 +141,12 @@ samp {
 }
 
 /*---- Common -----*/
-.m-0 {
-  margin: 0 !important;
-}
-
-.mt-1 {
-  margin-top: 1rem !important;
-}
-
-.mr-1 {
-  margin-right: 1rem !important;
-}
-
-.mb-1 {
-  margin-bottom: 1rem !important;
-}
-
-.ml-1 {
-  margin-left: 1rem !important;
-}
-
-.pb-1 {
-  padding-bottom: 1rem !important;
-}
-
-.p-0 {
-  padding: 0 !important;
-}
-
-.p-1 {
-  padding: 1rem !important;
-}
-
-.height-100 {
-  min-height: 100vh;
-}
-
-.mat-box-shadow {
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-}
-
 .text-center {
   text-align: center;
 }
 
 .font-normal {
   font-weight: normal !important;
-}
-
-.text-muted {
-  color: rgba(0, 0, 0, 0.54) !important;
-}
-
-.material-icons.icon-sm {
-  font-size: 18px !important;
-  height: 18px;
-  line-height: 18px !important;
-  width: 18px;
-}
-
-.material-icons.icon-xs {
-  font-size: 13px !important;
-  height: 13px;
-  line-height: 13px;
-  width: 13px;
-}
-
-.mat-mdc-card.default {
-  padding: 0;
-}
-
-.mat-mdc-card.default .mat-mdc-card-title {
-  font-weight: 600;
-  line-height: 1;
-  padding: 1rem;
-}
-
-.mat-mdc-card.default > :first-child {
-  border-radius: 2px 2px 0 0;
-}
-
-.mat-mdc-card.default .mat-mdc-card-subtitle:first-child {
-  padding-top: 1rem;
-}
-
-.mat-mdc-card.default .mat-mdc-card-subtitle {
-  line-height: 1;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.mat-mdc-card.default .mat-mdc-card-content {
-  margin-bottom: 0;
-  padding: 1rem;
-  position: relative;
-}
-
-.mat-mdc-card.default .mat-mdc-card-actions,
-.mat-mdc-card.default .mat-mdc-card-actions:last-child {
-  margin: 0;
-  padding: 0.5rem;
-}
-
-.mat-mdc-card.default > :last-child {
-  border-radius: 0 0 2px 2px;
 }
 
 .mat-mdc-card {
@@ -255,34 +157,6 @@ samp {
 .mat-divider.full-width {
   margin-left: -24px;
   margin-right: -24px;
-}
-
-.mat-mdc-card.p-0 .mat-mdc-card-title .card-title-text {
-  padding: 1rem 1.5rem;
-}
-
-.mat-mdc-card.p-0 .mat-mdc-card-title .card-title-text .card-control {
-  height: 24px;
-  line-height: 24px;
-  width: 24px;
-}
-
-.mat-mdc-card.p-0 .mat-mdc-card-title .card-title-text .mat-mdc-card-subtitle {
-  margin: 0;
-}
-
-.mat-mdc-card.p-0 .mat-mdc-card-title .mat-divider {
-  border-top-color: rgba(0, 0, 0, 0.04);
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.mat-mdc-card.p-0 .mat-mdc-card-image {
-  margin: 0 0 1rem !important;
-}
-
-.mat-mdc-card.p-0 .mat-mdc-card-content {
-  padding: 0 1.5rem 1.5rem;
 }
 
 .mat-mdc-button,
@@ -315,19 +189,6 @@ samp {
   width: 100%;
 }
 
-.ct-legend {
-  list-style-type: none;
-  position: relative;
-  top: -2.3em !important;
-  z-index: 10;
-}
-
-.ct-legend li {
-  margin-bottom: 4px !important;
-  margin-left: 5px !important;
-  padding-left: 22px !important;
-}
-
 /*---- Third party adjust -----*/
 /*--------- Material ---------*/
 mat-list a[mat-list-item] .mat-mdc-list-item-unscoped-content,
@@ -348,10 +209,6 @@ body .mat-mdc-select-trigger {
 
 .mat-mdc-option-text {
   word-break: break-all;
-}
-
-.empty-row {
-  padding: 1rem;
 }
 
 /*-------- Scrollbar ---------*/
@@ -571,32 +428,6 @@ body * {
   }
 }
 
-.session-progress {
-  position: absolute !important;
-  top: 0;
-  z-index: 9999;
-}
-
-.session-form-hold {
-  margin: 0 auto;
-  max-width: 400px;
-  position: relative;
-  width: 100%;
-}
-
-.session-form-hold > .mat-mdc-card {
-  border: 0;
-  margin: 0;
-}
-
-/*---- Forms -----*/
-.fileupload-drop-zone {
-  border: 1px dashed rgba(0, 0, 0, 0.15);
-  height: 120px;
-  padding: 48px;
-  text-align: center;
-}
-
 /*---- Chrome autocomplete Forms -----*/
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -615,16 +446,6 @@ input:-webkit-autofill {
 .messages .mat-mdc-list-item-unscoped-content {
   font-size: 0.875rem !important;
   padding: 0 !important;
-}
-
-/*---- Calendar -----*/
-.card-title-text.calendar-title {
-  padding: 0.5rem 1.5rem !important;
-}
-
-.cal-event-action .material-icons {
-  margin: 6px;
-  vertical-align: sub;
 }
 
 /*---- Chats -----*/
