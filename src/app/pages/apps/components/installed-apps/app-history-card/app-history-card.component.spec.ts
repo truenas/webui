@@ -8,7 +8,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { AppHistoryCardComponent } from 'app/pages/apps/components/installed-apps/app-history-card/app-history-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
@@ -62,7 +62,7 @@ describe('AppHistoryCardComponent', () => {
   const app = {
     id: 'ix-test-app',
     name: 'ix-test-app',
-  } as ChartRelease;
+  } as App;
 
   const createComponent = createComponentFactory({
     component: AppHistoryCardComponent,

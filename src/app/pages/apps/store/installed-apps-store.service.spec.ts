@@ -4,7 +4,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
@@ -16,10 +16,10 @@ describe('InstalledAppsStore', () => {
   let spectator: SpectatorService<InstalledAppsStore>;
   let testScheduler: TestScheduler;
 
-  const installedChartReleases: ChartRelease[] = [
+  const installedChartReleases: App[] = [
     {
       name: 'minio',
-    } as ChartRelease,
+    } as App,
   ];
 
   const createService = createServiceFactory({
@@ -29,12 +29,12 @@ describe('InstalledAppsStore', () => {
         getInstalledAppsStatusUpdates: jest.fn(() => {
           return of() as Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>>;
         }),
-        getInstalledAppsUpdates: jest.fn(() => of()) as () => Observable<ApiEvent<ChartRelease>>,
+        getInstalledAppsUpdates: jest.fn(() => of()) as () => Observable<ApiEvent<App>>,
         getAllChartReleases: jest.fn(() => {
           return of([
             ...installedChartReleases,
-          ] as ChartRelease[]);
-        }) as () => Observable<ChartRelease[]>,
+          ] as App[]);
+        }) as () => Observable<App[]>,
       }),
       mockProvider(AppsStore, {
         patchState: jest.fn(),

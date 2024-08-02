@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -46,7 +46,7 @@ describe('WidgetAppComponent', () => {
     },
     catalog: 'truenas',
     catalog_train: 'charts',
-  } as ChartRelease;
+  } as App;
 
   const createComponent = createComponentFactory({
     component: WidgetAppComponent,

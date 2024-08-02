@@ -46,7 +46,7 @@ export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
   version?: string;
 }
 
-export interface ChartRelease {
+export interface App {
   name: string;
   title: string;
   info: ChartInfo;
@@ -101,16 +101,15 @@ export interface ChartReleaseVersion {
   version: number;
 }
 
-export interface ChartReleaseCreate {
+export interface AppCreate {
   values: Record<string, ChartFormValue>;
-  catalog: string;
-  item: string;
-  release_name: string;
+  app_name: string;
+  catalog_app: string;
   train: string;
   version: string;
 }
 
-export interface ChartReleaseUpdate {
+export interface AppUpdate {
   values: Record<string, ChartFormValue>;
 }
 
@@ -119,7 +118,7 @@ export interface ChartReleaseUpgrade {
   values?: Record<string, ChartFormValue>;
 }
 
-export type ChartReleaseQueryParams = QueryParams<ChartRelease, {
+export type ChartReleaseQueryParams = QueryParams<App, {
   extra?: {
     retrieve_resources?: boolean;
     include_chart_schema?: boolean;

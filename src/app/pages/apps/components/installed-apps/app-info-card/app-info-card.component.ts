@@ -11,7 +11,7 @@ import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -32,7 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppInfoCardComponent {
-  @Input() app: ChartRelease;
+  @Input() app: App;
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
   @Input() status: AppStatus;
@@ -79,7 +79,7 @@ export class AppInfoCardComponent {
     return startCase(name);
   }
 
-  portalLink(app: ChartRelease, name = 'web_portal'): void {
+  portalLink(app: App, name = 'web_portal'): void {
     this.redirect.openWindow(app.portals[name][0]);
   }
 

@@ -13,7 +13,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -51,7 +51,7 @@ describe('AppInfoCardComponent', () => {
     },
     catalog: 'TRUENAS',
     catalog_train: 'charts',
-  } as ChartRelease;
+  } as App;
 
   const upgradeSummary = {} as UpgradeSummary;
 

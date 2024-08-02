@@ -10,7 +10,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -40,7 +40,7 @@ const fakeAppOne = {
     icon: 'path-to-icon',
   },
   container_images_update_available: false,
-} as ChartRelease;
+} as App;
 
 const fakeAppTwo = {
   name: 'test-app-two',
@@ -62,7 +62,7 @@ const fakeAppTwo = {
     icon: 'path-to-icon',
   },
   container_images_update_available: true,
-} as ChartRelease;
+} as App;
 
 const fakeUpgradeSummary: UpgradeSummary = {
   container_images_to_update: {

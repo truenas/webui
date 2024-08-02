@@ -4,7 +4,7 @@ import { ImgFallbackModule } from 'ngx-img-fallback';
 import { officialCatalog } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
-import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -19,7 +19,7 @@ describe('AppRowComponent', () => {
     status: ChartReleaseStatus.Active,
     chart_metadata: { icon: 'https://image/' },
     catalog: officialCatalog,
-  } as ChartRelease;
+  } as App;
 
   const stats = {
     cpu: 50.155,

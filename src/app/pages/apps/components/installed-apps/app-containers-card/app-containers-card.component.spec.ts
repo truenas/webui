@@ -9,7 +9,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
-import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartContainerImage, App } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppContainersCardComponent } from './app-containers-card.component';
 
@@ -44,7 +44,7 @@ describe('AppContainersCardComponent', () => {
       pods: [{}],
       statefulsets: [{}],
     },
-  } as ChartRelease;
+  } as App;
 
   const createComponent = createComponentFactory({
     component: AppContainersCardComponent,

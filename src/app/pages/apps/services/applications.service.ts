@@ -15,7 +15,7 @@ import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface'
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent, ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
+import { App, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -76,13 +76,13 @@ export class ApplicationsService {
     return this.ws.call('app.similar', [app.name, app.catalog, app.train]);
   }
 
-  getAllChartReleases(): Observable<ChartRelease[]> {
+  getAllApps(): Observable<App[]> {
     const secondOption = { extra: { history: true, stats: true } };
-    return this.ws.call('chart.release.query', [[], secondOption]);
+    return this.ws.call('app.query', [[], secondOption]);
   }
 
-  getChartRelease(name: string): Observable<ChartRelease[]> {
-    return this.ws.call('chart.release.query', [[['name', '=', name]], {
+  getApp(name: string): Observable<App[]> {
+    return this.ws.call('app.query', [[['name', '=', name]], {
       extra: { include_chart_schema: true, history: true },
     }]);
   }
@@ -99,7 +99,7 @@ export class ApplicationsService {
     );
   }
 
-  getChartReleaseWithResources(name: string): Observable<ChartRelease[]> {
+  getChartReleaseWithResources(name: string): Observable<App[]> {
     const secondOption = { extra: { retrieve_resources: true } };
     return this.ws.call('chart.release.query', [[['name', '=', name]], secondOption]);
   }
@@ -124,7 +124,7 @@ export class ApplicationsService {
     return this.ws.job('chart.release.scale', [name, { replica_count: 0 }]);
   }
 
-  restartApplication(app: ChartRelease): Observable<Job<ChartScaleResult>> {
+  restartApplication(app: App): Observable<Job<ChartScaleResult>> {
     switch (app.status) {
       case ChartReleaseStatus.Active:
         return this.stopApplication(app.name).pipe(

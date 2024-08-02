@@ -9,7 +9,7 @@ import { map } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { Role } from 'app/enums/role.enum';
-import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartContainerImage, App } from 'app/interfaces/chart-release.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -23,7 +23,7 @@ import { getPorts } from 'app/pages/apps/utils/get-ports';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppContainersCardComponent implements OnChanges {
-  @Input() app: ChartRelease;
+  @Input() app: App;
   isLoading = false;
   readonly chartReleaseStatus = ChartReleaseStatus;
 
@@ -97,7 +97,7 @@ export class AppContainersCardComponent implements OnChanges {
     });
   }
 
-  getPorts(app: ChartRelease): string {
+  getPorts(app: App): string {
     return getPorts(app.used_ports);
   }
 

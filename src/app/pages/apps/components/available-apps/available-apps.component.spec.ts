@@ -14,7 +14,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -309,7 +309,7 @@ describe('Redirect to install app', () => {
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
-        mockCall('chart.release.query', [{} as ChartRelease]),
+        mockCall('chart.release.query', [{} as App]),
         mockCall('service.started', true),
       ]),
       mockProvider(AuthService, {

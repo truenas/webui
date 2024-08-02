@@ -11,7 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -40,7 +40,7 @@ describe('InstalledAppsComponent', () => {
     catalog: 'test-catalog',
     catalog_train: 'test-catalog-train',
     status: ChartReleaseStatus.Active,
-  } as ChartRelease;
+  } as App;
 
   const createComponent = createComponentFactory({
     component: InstalledAppsComponent,

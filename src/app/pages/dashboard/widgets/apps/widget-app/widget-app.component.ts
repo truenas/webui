@@ -16,7 +16,7 @@ import {
   tap,
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -107,7 +107,7 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
     private snackbar: SnackbarService,
   ) {}
 
-  onRestartApp(app: ChartRelease): void {
+  onRestartApp(app: App): void {
     this.appRestarting.set(true);
     this.snackbar.success(this.translate.instant('App is restarting'));
 
@@ -119,7 +119,7 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
       });
   }
 
-  openWebPortal(app: ChartRelease): void {
+  openWebPortal(app: App): void {
     this.redirect.openWindow(app.portals['web_portal'][0]);
   }
 

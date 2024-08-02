@@ -10,9 +10,9 @@ import {
   ChartScaleResult,
 } from 'app/interfaces/chart-release-event.interface';
 import {
-  ChartRelease,
-  ChartReleaseCreate,
-  ChartReleaseUpdate,
+  App,
+  AppCreate,
+  AppUpdate,
   ChartReleaseUpgrade,
 } from 'app/interfaces/chart-release.interface';
 import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
@@ -78,13 +78,17 @@ export interface ApiJobDirectory {
   'certificate.delete': { params: [id: number, force?: boolean]; response: boolean };
   'certificate.update': { params: [id: number, update: CertificateUpdate]; response: Certificate };
 
+  // App
+  'app.create': { params: [AppCreate]; response: App };
+  'app.update': { params: [string, AppUpdate]; response: App };
+
   // Chart Release
-  'chart.release.create': { params: [ChartReleaseCreate]; response: ChartRelease };
+  'chart.release.create': { params: [AppCreate]; response: App };
   'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
-  'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: ChartRelease };
+  'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
   'chart.release.scale': { params: ChartScaleQueryParams; response: ChartScaleResult };
-  'chart.release.update': { params: [name: string, update: ChartReleaseUpdate]; response: ChartRelease };
-  'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
+  'chart.release.update': { params: [name: string, update: AppUpdate]; response: App };
+  'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };

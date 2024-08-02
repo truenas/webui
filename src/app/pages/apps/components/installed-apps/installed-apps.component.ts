@@ -26,7 +26,7 @@ import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -66,8 +66,8 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
 export class InstalledAppsComponent implements OnInit, AfterViewInit {
   protected readonly searchableElements = installedAppsElements;
 
-  dataSource: ChartRelease[] = [];
-  selectedApp: ChartRelease;
+  dataSource: App[] = [];
+  selectedApp: App;
   isLoading = false;
   filterString = '';
   showMobileDetails = false;
@@ -86,7 +86,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     title: helptextApps.message.loading,
   };
 
-  get filteredApps(): ChartRelease[] {
+  get filteredApps(): App[] {
     return this.dataSource
       .filter((app) => app?.name?.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));
   }
@@ -129,13 +129,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .some((app) => app.update_available || app.container_images_update_available);
   }
 
-  get startedCheckedApps(): ChartRelease[] {
+  get startedCheckedApps(): App[] {
     return this.dataSource.filter(
       (app) => app.status === ChartReleaseStatus.Active && this.selection.isSelected(app.id),
     );
   }
 
-  get stoppedCheckedApps(): ChartRelease[] {
+  get stoppedCheckedApps(): App[] {
     return this.dataSource.filter(
       (app) => app.status === ChartReleaseStatus.Stopped && this.selection.isSelected(app.id),
     );
@@ -202,7 +202,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       });
   }
 
-  trackAppBy(index: number, item: ChartRelease): string {
+  trackAppBy(index: number, item: App): string {
     return item.name;
   }
 
@@ -210,7 +210,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.showMobileDetails = false;
   }
 
-  viewDetails(app: ChartRelease): void {
+  viewDetails(app: App): void {
     this.selectAppForDetails(app.id);
 
     this.router.navigate([
@@ -417,7 +417,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.appsStats.getStatsForApp(name);
   }
 
-  sortChanged(sort: Sort, charts?: ChartRelease[]): void {
+  sortChanged(sort: Sort, charts?: App[]): void {
     this.sortingInfo = sort;
 
     this.dataSource = (charts || this.dataSource).sort((a, b) => {

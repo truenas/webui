@@ -8,7 +8,7 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -16,7 +16,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface InstalledAppsState {
-  installedApps: ChartRelease[];
+  installedApps: App[];
   isLoading: boolean;
 }
 
@@ -119,7 +119,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       }),
       switchMap((apiEvent: ApiEvent) => combineLatest([
         of(apiEvent),
-        this.appsService.getChartRelease(apiEvent.id as string),
+        this.appsService.getApp(apiEvent.id as string),
       ])),
       tap(([apiEvent, chartReleases]) => {
         if (!chartReleases?.length) {
@@ -169,8 +169,8 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       switchMap(() => this.dockerStore.isDockerStarted$),
       filter((isDockerStarted) => isDockerStarted !== null),
       switchMap((isDockerStarted) => {
-        return isDockerStarted ? this.appsService.getAllChartReleases().pipe(
-          tap((installedApps: ChartRelease[]) => {
+        return isDockerStarted ? this.appsService.getAllApps().pipe(
+          tap((installedApps: App[]) => {
             this.patchState((state: InstalledAppsState): InstalledAppsState => {
               return {
                 ...state,

@@ -7,7 +7,7 @@ import {
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -141,7 +141,7 @@ export class WidgetResourcesService {
     );
   }
 
-  getApp(appName: string): Observable<ChartRelease> {
+  getApp(appName: string): Observable<App> {
     return this.ws.call(
       'chart.release.query',
       [

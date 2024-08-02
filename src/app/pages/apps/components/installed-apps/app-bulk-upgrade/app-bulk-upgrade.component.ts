@@ -17,7 +17,7 @@ import {
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
+import { App, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -35,12 +35,12 @@ export class AppBulkUpgradeComponent {
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
   form = this.formBuilder.group<Record<string, string>>({});
-  bulkItems = new Map<string, BulkListItem<ChartRelease>>();
+  bulkItems = new Map<string, BulkListItem<App>>();
   loadingMap = new Map<string, boolean>();
   optionsMap = new Map<string, Observable<Option[]>>();
   upgradeSummaryMap = new Map<string, UpgradeSummary>();
 
-  readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<ChartRelease>>> = (_, entry) => entry.key;
+  readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<App>>> = (_, entry) => entry.key;
   readonly imagePlaceholder = appImagePlaceholder;
   protected readonly requiredRoles = [Role.AppsWrite];
 
@@ -51,7 +51,7 @@ export class AppBulkUpgradeComponent {
     private dialogRef: MatDialogRef<AppBulkUpgradeComponent>,
     private appService: ApplicationsService,
     private snackbar: SnackbarService,
-    @Inject(MAT_DIALOG_DATA) private apps: ChartRelease[],
+    @Inject(MAT_DIALOG_DATA) private apps: App[],
   ) {
     this.apps = this.apps.filter((app) => app.update_available || app.container_images_update_available);
 
@@ -75,7 +75,7 @@ export class AppBulkUpgradeComponent {
     return item.state === BulkListItemState.Error && Boolean(item.message);
   }
 
-  onExpand(row: KeyValue<string, BulkListItem<ChartRelease>>): void {
+  onExpand(row: KeyValue<string, BulkListItem<App>>): void {
     if (this.upgradeSummaryMap.has(row.key)) {
       return;
     }

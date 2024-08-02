@@ -55,7 +55,7 @@ import {
   ChartReleaseEvent,
 } from 'app/interfaces/chart-release-event.interface';
 import {
-  ChartRelease,
+  App,
   ChartReleaseQueryParams,
   ChartReleaseUpgradeParams,
 } from 'app/interfaces/chart-release.interface';
@@ -376,12 +376,15 @@ export interface ApiCallDirectory {
     response: CertificateAuthority;
   };
 
+  // Apps
+  'app.query': { params: ChartReleaseQueryParams; response: App[] };
+
   // Chart
   'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
   'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
-  'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
+  'chart.release.query': { params: ChartReleaseQueryParams; response: App[] };
   'chart.release.upgrade_summary': { params: ChartReleaseUpgradeParams; response: UpgradeSummary };
 
   // CloudBackup

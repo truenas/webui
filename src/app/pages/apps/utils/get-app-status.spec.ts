@@ -1,7 +1,7 @@
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
@@ -16,7 +16,7 @@ describe('getAppStatus', () => {
     catalog: 'test-catalog',
     catalog_train: 'test-catalog-train',
     status: ChartReleaseStatus.Active,
-  } as ChartRelease;
+  } as App;
   const job = {
     arguments: ['fake-name', { replica_count: 1 }] as ChartScaleQueryParams,
     state: JobState.Success,

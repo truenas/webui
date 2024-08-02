@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
-import { ChartFormValue, ChartRelease, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
+import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -258,7 +258,7 @@ describe('ChartWizardComponent', () => {
         ],
       },
     },
-  } as ChartRelease;
+  } as App;
 
   const createComponent = createComponentFactory({
     component: ChartWizardComponent,

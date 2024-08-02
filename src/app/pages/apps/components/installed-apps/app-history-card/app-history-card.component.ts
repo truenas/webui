@@ -4,7 +4,7 @@ import {
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { map, take } from 'rxjs';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 @UntilDestroy()
@@ -15,7 +15,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppHistoryCardComponent implements OnInit, OnChanges {
-  readonly app = input.required<ChartRelease>();
+  readonly app = input.required<App>();
 
   protected isLoading = false;
   protected events: ChartReleaseEvent[] = [];

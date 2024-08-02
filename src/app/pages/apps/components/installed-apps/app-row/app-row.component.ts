@@ -5,7 +5,7 @@ import {
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
@@ -16,7 +16,7 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppRowComponent {
-  @Input() app: ChartRelease;
+  @Input() app: App;
   @Input() stats: ChartReleaseStats;
   @Input() status: AppStatus;
   @Input() selected: boolean;
