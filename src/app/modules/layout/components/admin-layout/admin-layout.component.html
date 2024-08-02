@@ -8,7 +8,7 @@
     [disableClose]="sidenavMode !== 'over'"
     (closedStart)="onMenuClosed()"
   >
-    <div id="scroll-area" class="navigation-hold" fxLayout="column">
+    <div id="scroll-area" class="navigation-hold">
       <div [ngClass]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]">
         <a routerLink="/dashboard" class="logo" ixTest="main-logo">
           <ix-icon
