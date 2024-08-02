@@ -1353,6 +1353,7 @@
   "MOTD": "",
   "MOTD Banner": "",
   "MTU": "",
+  "Machine Time: {machineTime} \n Browser Time: {browserTime}": "",
   "Mail Server Port": "",
   "Main menu": "",
   "Major": "",

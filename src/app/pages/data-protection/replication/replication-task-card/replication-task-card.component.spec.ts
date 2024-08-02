@@ -23,7 +23,8 @@ import { ReplicationWizardComponent } from 'app/pages/data-protection/replicatio
 import { DownloadService } from 'app/services/download.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectGeneralConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('ReplicationTaskCardComponent', () => {
   let spectator: Spectator<ReplicationTaskCardComponent>;
@@ -65,8 +66,17 @@ describe('ReplicationTaskCardComponent', () => {
     providers: [
       mockAuth(),
       provideMockStore({
-        initialState: {},
         selectors: [
+          {
+            selector: selectGeneralConfig,
+            value: {
+              timezone: 'Europe/Kiev',
+            },
+          },
+          {
+            selector: selectPreferences,
+            value: {},
+          },
           {
             selector: selectSystemConfigState,
             value: {},

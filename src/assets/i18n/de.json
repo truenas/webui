@@ -1746,6 +1746,7 @@
   "MAC Address": "",
   "MOTD": "",
   "MOTD Banner": "",
+  "Machine Time: {machineTime} \n Browser Time: {browserTime}": "",
   "Mail Server Port": "",
   "Main menu": "",
   "Major": "",

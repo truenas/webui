@@ -22,7 +22,8 @@ import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsy
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectGeneralConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('RsyncTaskListComponent', () => {
   let spectator: Spectator<RsyncTaskListComponent>;
@@ -99,6 +100,16 @@ describe('RsyncTaskListComponent', () => {
         selectors: [
           {
             selector: selectSystemConfigState,
+            value: {},
+          },
+          {
+            selector: selectGeneralConfig,
+            value: {
+              timezone: 'Europe/Kiev',
+            },
+          },
+          {
+            selector: selectPreferences,
             value: {},
           },
         ],
