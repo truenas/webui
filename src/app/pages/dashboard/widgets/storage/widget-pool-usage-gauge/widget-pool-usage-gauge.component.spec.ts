@@ -70,7 +70,7 @@ describe('WidgetPoolUsageGaugeComponent', () => {
 
     it('should render "Pool does not exist" message', () => {
       const component = spectator.query(WidgetDatapointComponent);
-      expect(component.label).toBe('Pool Usage Gauge');
+      expect(component.label).toBe('Pool Usage');
       expect(component.text).toBe('Pool does not exist');
     });
   });

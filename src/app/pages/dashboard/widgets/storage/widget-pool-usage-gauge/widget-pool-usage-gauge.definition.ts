@@ -14,7 +14,7 @@ export interface WidgetPoolSettings {
 }
 
 export const poolUsageGaugeWidget = dashboardWidget({
-  name: T('Pool Usage Gauge'),
+  name: T('Pool Usage'),
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
   category: WidgetCategory.Storage,
   component: WidgetPoolUsageGaugeComponent,

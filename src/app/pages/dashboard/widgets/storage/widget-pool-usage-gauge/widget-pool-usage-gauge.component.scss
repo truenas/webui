@@ -9,7 +9,19 @@
 :host ::ng-deep .container {
   &.full {
     .pool-info-top {
+      flex-wrap: wrap;
+      gap: 10px;
       height: 307px;
+      justify-content: center;
+      text-align: center;
+
+      .left .lines {
+        gap: 3px !important;
+
+        .line {
+          justify-content: center;
+        }
+      }
     }
   }
 
@@ -56,9 +68,15 @@
 
       .right {
         ix-gauge-chart .label {
-          font-size: 15px;
+          font-size: 20px;
         }
       }
+    }
+
+    ix-gauge-chart,
+    ngx-skeleton-loader {
+      position: relative;
+      top: -6px;
     }
 
     .divider-label {

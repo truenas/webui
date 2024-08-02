@@ -16,9 +16,6 @@
         </button>
       </div>
       <div [class]="['container', size()]">
-        <ng-template #skeleton>
-          <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-        </ng-template>
         <div class="pool-info-wrapper">
           <ix-pool-usage-gauge [pool]="pool()"></ix-pool-usage-gauge>
 
