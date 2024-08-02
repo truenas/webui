@@ -14,7 +14,7 @@ import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartReleaseEvent, ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
+import { ChartReleaseEvent, AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { App, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -77,7 +77,7 @@ export class ApplicationsService {
   }
 
   getAllApps(): Observable<App[]> {
-    const secondOption = { extra: { history: true, stats: true } };
+    const secondOption = { extra: { retrieve_config: true, stats: true } };
     return this.ws.call('app.query', [[], secondOption]);
   }
 
@@ -91,10 +91,10 @@ export class ApplicationsService {
     return this.ws.subscribe('chart.release.query');
   }
 
-  getInstalledAppsStatusUpdates(): Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>> {
+  getInstalledAppsStatusUpdates(): Observable<ApiEvent<Job<void, AppStartQueryParams>>> {
     return this.ws.subscribe('core.get_jobs').pipe(
-      filter((event: ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>) => {
-        return event.fields.method === 'chart.release.scale';
+      filter((event: ApiEvent<Job<void, AppStartQueryParams>>) => {
+        return ['app.start', 'app.stop'].includes(event.fields.method);
       }),
     );
   }
@@ -116,15 +116,15 @@ export class ApplicationsService {
     return this.ws.call('chart.release.upgrade_summary', payload);
   }
 
-  startApplication(name: string): Observable<Job<ChartScaleResult>> {
-    return this.ws.job('chart.release.scale', [name, { replica_count: 1 }]);
+  startApplication(name: string): Observable<Job<void>> {
+    return this.ws.job('app.start', [name]);
   }
 
-  stopApplication(name: string): Observable<Job<ChartScaleResult>> {
-    return this.ws.job('chart.release.scale', [name, { replica_count: 0 }]);
+  stopApplication(name: string): Observable<Job<void>> {
+    return this.ws.job('app.stop', [name]);
   }
 
-  restartApplication(app: App): Observable<Job<ChartScaleResult>> {
+  restartApplication(app: App): Observable<Job<void>> {
     switch (app.status) {
       case ChartReleaseStatus.Active:
         return this.stopApplication(app.name).pipe(

@@ -17,7 +17,7 @@ describe('AppRowComponent', () => {
   const app = {
     name: 'app_name',
     status: ChartReleaseStatus.Active,
-    chart_metadata: { icon: 'https://image/' },
+    metadata: { icon: 'https://image/' },
     catalog: officialCatalog,
   } as App;
 

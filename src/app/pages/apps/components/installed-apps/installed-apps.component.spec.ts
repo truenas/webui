@@ -34,7 +34,7 @@ describe('InstalledAppsComponent', () => {
   const app = {
     id: 'ix-test-app',
     name: 'test-app',
-    chart_metadata: {
+    metadata: {
       name: 'rude-cardinal',
     },
     catalog: 'test-catalog',

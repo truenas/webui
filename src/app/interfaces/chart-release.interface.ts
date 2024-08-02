@@ -54,7 +54,7 @@ export interface App {
   hooks: unknown[];
   version: number;
   namespace: string;
-  chart_metadata: ChartMetadata;
+  metadata: ChartMetadata;
   app_metadata: AppMetadata;
   id: string;
   catalog: string;
@@ -91,7 +91,7 @@ export interface ChartReleaseStats {
 export interface ChartReleaseVersion {
   catalog: string;
   catalog_train: string;
-  chart_metadata: ChartMetadata;
+  metadata: ChartMetadata;
   config: Record<string, ChartFormValue>;
   human_version: string;
   id: string;
@@ -120,6 +120,7 @@ export interface ChartReleaseUpgrade {
 
 export type ChartReleaseQueryParams = QueryParams<App, {
   extra?: {
+    retrieve_config?: boolean;
     retrieve_resources?: boolean;
     include_chart_schema?: boolean;
     history?: boolean;
@@ -185,7 +186,7 @@ export interface ChartSchemaNode {
 export interface ChartSchema {
   app_readme: string;
   changelog: string;
-  chart_metadata: ChartMetadata;
+  metadata: ChartMetadata;
   detailed_readme: string;
   human_version: string;
   location: string;

@@ -39,7 +39,7 @@ describe('AppAvailableInfoCardComponent', () => {
           ...fakeApp,
           versions: {
             '1.0.9': {
-              chart_metadata: {
+              metadata: {
                 sources: [
                   'https://github.com/home-assistant/home-assistant',
                   'https://github.com/truenas/charts/tree/master/library/ix-dev/charts/home-assistant',

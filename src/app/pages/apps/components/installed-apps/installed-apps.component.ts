@@ -25,7 +25,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
+import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -72,7 +72,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   filterString = '';
   showMobileDetails = false;
   isMobileView = false;
-  appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
+  appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
   sortingInfo: Sort = {
     active: SortableField.Application,
@@ -316,7 +316,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   start(name: string): void {
     this.appService.startApplication(name)
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
+      .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
@@ -326,7 +326,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   stop(name: string): void {
     this.appService.stopApplication(name)
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
+      .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();

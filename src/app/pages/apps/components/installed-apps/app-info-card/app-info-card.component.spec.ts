@@ -40,7 +40,7 @@ describe('AppInfoCardComponent', () => {
       },
     } as Record<string, unknown>,
     update_available: true,
-    chart_metadata: {
+    metadata: {
       name: 'ix-test-app',
       icon: '',
       sources: [

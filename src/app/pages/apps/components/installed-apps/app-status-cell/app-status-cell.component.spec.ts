@@ -1,7 +1,7 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
+import { AppStartQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -19,7 +19,7 @@ describe('AppStatusCellComponent', () => {
 
   function setupTest(
     app: App,
-    job?: Job<ChartScaleResult, ChartScaleQueryParams>,
+    job?: Job<ChartScaleResult, AppStartQueryParams>,
   ): void {
     spectator = createHost(`
       <ix-app-status-cell [app]="app" [job]="job"></ix-app-status-cell>
@@ -48,9 +48,9 @@ describe('AppStatusCellComponent', () => {
     setupTest(
       { status: ChartReleaseStatus.Stopped } as unknown as App,
       {
-        arguments: ['fake-name', { replica_count: 1 }] as ChartScaleQueryParams,
+        arguments: ['fake-name', { replica_count: 1 }] as AppStartQueryParams,
         state: JobState.Running,
-      } as Job<ChartScaleResult, ChartScaleQueryParams>,
+      } as Job<ChartScaleResult, AppStartQueryParams>,
     );
 
     expect(spectator.query('span')).toHaveText('Starting');
@@ -60,9 +60,9 @@ describe('AppStatusCellComponent', () => {
     setupTest(
       { status: ChartReleaseStatus.Active } as unknown as App,
       {
-        arguments: ['fake-name', { replica_count: 0 }] as ChartScaleQueryParams,
+        arguments: ['fake-name', { replica_count: 0 }] as AppStartQueryParams,
         state: JobState.Running,
-      } as Job<ChartScaleResult, ChartScaleQueryParams>,
+      } as Job<ChartScaleResult, AppStartQueryParams>,
     );
 
     expect(spectator.query('span')).toHaveText('Stopping');

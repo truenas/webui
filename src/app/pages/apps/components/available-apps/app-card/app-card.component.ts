@@ -32,7 +32,7 @@ export class AppCardComponent {
 
   navigateToAllInstalledPage(): void {
     this.installedAppsStore.installedApps$.pipe(
-      map((apps) => apps.filter((app) => (app.chart_metadata.name === this.app.name
+      map((apps) => apps.filter((app) => (app.metadata.name === this.app.name
         && app.catalog === this.app.catalog && app.catalog_train === this.app.train))),
       untilDestroyed(this),
     ).subscribe((apps) => {

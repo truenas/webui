@@ -6,7 +6,7 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import {
   ChartRollbackParams,
-  ChartScaleQueryParams,
+  AppStartQueryParams,
   ChartScaleResult,
 } from 'app/interfaces/chart-release-event.interface';
 import {
@@ -81,12 +81,14 @@ export interface ApiJobDirectory {
   // App
   'app.create': { params: [AppCreate]; response: App };
   'app.update': { params: [string, AppUpdate]; response: App };
+  'app.start': { params: AppStartQueryParams; response: void };
+  'app.stop': { params: AppStartQueryParams; response: void };
 
   // Chart Release
   'chart.release.create': { params: [AppCreate]; response: App };
   'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
   'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
-  'chart.release.scale': { params: ChartScaleQueryParams; response: ChartScaleResult };
+  'chart.release.scale': { params: AppStartQueryParams; response: ChartScaleResult };
   'chart.release.update': { params: [name: string, update: AppUpdate]; response: App };
   'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: App };
 

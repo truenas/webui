@@ -1,6 +1,6 @@
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
+import { ChartScaleResult, AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
@@ -10,7 +10,7 @@ describe('getAppStatus', () => {
   const app = {
     id: 'ix-test-app',
     name: 'test-app',
-    chart_metadata: {
+    metadata: {
       name: 'rude-cardinal',
     },
     catalog: 'test-catalog',
@@ -18,9 +18,9 @@ describe('getAppStatus', () => {
     status: ChartReleaseStatus.Active,
   } as App;
   const job = {
-    arguments: ['fake-name', { replica_count: 1 }] as ChartScaleQueryParams,
+    arguments: ['fake-name', { replica_count: 1 }] as AppStartQueryParams,
     state: JobState.Success,
-  } as Job<ChartScaleResult, ChartScaleQueryParams>;
+  } as Job<ChartScaleResult, AppStartQueryParams>;
 
   it('should return Started', () => {
     const result = getAppStatus(app, job);

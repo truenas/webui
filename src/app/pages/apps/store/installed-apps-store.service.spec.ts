@@ -3,7 +3,7 @@ import { Observable, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
+import { AppStartQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -27,7 +27,7 @@ describe('InstalledAppsStore', () => {
     providers: [
       mockProvider(ApplicationsService, {
         getInstalledAppsStatusUpdates: jest.fn(() => {
-          return of() as Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>>;
+          return of() as Observable<ApiEvent<Job<ChartScaleResult, AppStartQueryParams>>>;
         }),
         getInstalledAppsUpdates: jest.fn(() => of()) as () => Observable<ApiEvent<App>>,
         getAllChartReleases: jest.fn(() => {

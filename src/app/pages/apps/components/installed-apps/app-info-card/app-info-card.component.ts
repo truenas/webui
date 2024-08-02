@@ -72,7 +72,7 @@ export class AppInfoCardComponent {
   }
 
   get ixChartApp(): boolean {
-    return this.app.chart_metadata.name === ixChartApp;
+    return this.app.metadata.name === ixChartApp;
   }
 
   portalName(name = 'web_portal'): string {

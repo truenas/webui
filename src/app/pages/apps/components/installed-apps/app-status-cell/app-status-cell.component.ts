@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
+import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -24,7 +24,7 @@ import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
 })
 export class AppStatusCellComponent {
   app = input.required<App>();
-  job = input<Job<ChartScaleResult, ChartScaleQueryParams>>();
+  job = input<Job<void, AppStartQueryParams>>();
   showIcon = input<boolean>(false);
 
   @HostBinding('class') get hostClasses(): string[] {

@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
-import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
+import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
@@ -20,7 +20,7 @@ export class AppRowComponent {
   @Input() stats: ChartReleaseStats;
   @Input() status: AppStatus;
   @Input() selected: boolean;
-  @Input() job?: Job<ChartScaleResult, ChartScaleQueryParams>;
+  @Input() job?: Job<void, AppStartQueryParams>;
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
   @Output() clickStatus = new EventEmitter<void>();

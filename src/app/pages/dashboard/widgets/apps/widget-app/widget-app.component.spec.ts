@@ -6,7 +6,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
+import { ChartScaleResult, AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -40,7 +40,7 @@ describe('WidgetAppComponent', () => {
     status: ChartReleaseStatus.Active,
     update_available: true,
     container_images_update_available: false,
-    chart_metadata: {
+    metadata: {
       icon: 'http://localhost/test-app.png',
       appVersion: '1.0',
     },
@@ -82,7 +82,7 @@ describe('WidgetAppComponent', () => {
       mockProvider(ApplicationsService, {
         restartApplication: jest.fn(() => of(true)),
         getInstalledAppsStatusUpdates: jest.fn(() => {
-          return of() as Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>>;
+          return of() as Observable<ApiEvent<Job<ChartScaleResult, AppStartQueryParams>>>;
         }),
       }),
       mockProvider(DialogService, {

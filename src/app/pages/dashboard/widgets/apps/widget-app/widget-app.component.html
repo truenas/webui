@@ -44,7 +44,7 @@
 
     <div [class]="['container', size()]">
       <div class="app-header-row">
-        <ix-app-card-logo [url]="(application() | async)?.value?.chart_metadata?.icon"></ix-app-card-logo>
+        <ix-app-card-logo [url]="(application() | async)?.value?.metadata?.icon"></ix-app-card-logo>
 
         <div class="app-info">
           <div class="app-header">
@@ -52,7 +52,7 @@
               {{ app.name }}
             </h3>
             <div *ixWithLoadingState="application() as app" class="version">
-              v{{ app.chart_metadata?.appVersion }}
+              v{{ app.metadata?.appVersion }}
             </div>
           </div>
           <div class="app-status">

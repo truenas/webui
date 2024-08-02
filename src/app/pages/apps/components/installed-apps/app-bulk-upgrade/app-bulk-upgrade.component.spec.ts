@@ -36,7 +36,7 @@ const fakeAppOne = {
   human_latest_version: '2022.10_1.0.8',
   pod_status: { desired: 1, available: 1 },
   used_ports: [],
-  chart_metadata: {
+  metadata: {
     icon: 'path-to-icon',
   },
   container_images_update_available: false,
@@ -58,7 +58,7 @@ const fakeAppTwo = {
   human_latest_version: '25_1.6.34',
   pod_status: { desired: 2, available: 2 },
   used_ports: [],
-  chart_metadata: {
+  metadata: {
     icon: 'path-to-icon',
   },
   container_images_update_available: true,

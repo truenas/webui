@@ -51,7 +51,7 @@ export interface CatalogApp {
 export interface CatalogAppVersion {
   app_readme: string;
   changelog: string;
-  chart_metadata: ChartMetadata;
+  metadata: ChartMetadata;
   detailed_readme: string;
   healthy: boolean;
   healthy_error: string;
