@@ -1,0 +1,11 @@
+<div class="item">
+  <h2 class="value">
+    @if (!isPoolLoading()) {
+      {{ totalZfsErrors() }}
+    } @else {
+      <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+    }
+  </h2>
+  <div class="divider"></div>
+  <h6 class="label">{{ 'Disks w/ZFS Errors' | translate }}</h6>
+</div>

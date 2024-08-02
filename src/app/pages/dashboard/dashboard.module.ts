@@ -52,9 +52,13 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
 import { CpuChartGaugeComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-chart-gauge/cpu-chart-gauge.component';
 import { CpuCoreBarComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-core-bar/cpu-core-bar.component';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
+import { DisksWithZfsErrorsComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/disks-with-zfs-errors/disks-with-zfs-errors.component';
+import { LastScanErrorsComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/last-scan-errors/last-scan-errors.component';
+import { PoolStatusComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/pool-status/pool-status.component';
 import { GaugeChartComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/gauge-chart/gauge-chart.component';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
+import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/pool-usage-gauge/pool-usage-gauge.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +78,10 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     BackupTaskActionsComponent,
     BackupTaskTileComponent,
     GaugeChartComponent,
+    PoolUsageGaugeComponent,
+    DisksWithZfsErrorsComponent,
+    PoolStatusComponent,
+    LastScanErrorsComponent,
     ...widgetComponents,
   ],
   providers: [
