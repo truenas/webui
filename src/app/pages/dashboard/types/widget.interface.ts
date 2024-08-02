@@ -17,7 +17,7 @@ export enum WidgetType {
   BackupTasks = 'backup-tasks',
   Cpu = 'cpu',
   CpuUsageGauge = 'cpu-usage-gauge',
-  CpuUsageRecentWidget = 'cpu-usage-recent',
+  CpuUsageRecent = 'cpu-usage-recent',
   CpuUsageBar = 'cpu-usage-bar',
   CpuTemperatureBar = 'cpu-temperature-bar',
   Storage = 'storage',

@@ -42,7 +42,7 @@
         <div
           class="sidenav-copyright-icon"
           matTooltipPosition="right"
-          [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + (copyrightYear$ | async) + ' by iXsystems, Inc.'"
+          [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + copyrightYear() + ' by iXsystems, Inc.'"
         >
           <ix-icon name="copyright"></ix-icon>
         </div>
@@ -77,10 +77,13 @@
     <div class="overlay" [class.isdark]="isOpenSecondaryMenu" (click)="toggleMenu()"></div>
 
     <!-- App content -->
-    <div class="rightside-content-hold" [class.has-console-footer]="hasConsoleFooter$ | async">
+    <main
+      class="rightside-content-hold"
+      [class.has-console-footer]="hasConsoleFooter$ | async"
+    >
       <ix-default-page-header></ix-default-page-header>
       <router-outlet></router-outlet>
-    </div>
+    </main>
     @if (hasConsoleFooter$ | async) {
       <ix-console-footer></ix-console-footer>
     }

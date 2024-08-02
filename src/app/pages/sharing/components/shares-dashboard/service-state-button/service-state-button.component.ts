@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -10,14 +12,14 @@ import { Service } from 'app/interfaces/service.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceStateButtonComponent {
-  @Input() service: Service;
-  @Input() count: number;
+  readonly service = input<Service>();
+  readonly count = input<number>();
 
-  readonly serviceStatus = ServiceStatus;
-  readonly serviceNames = serviceNames;
+  protected readonly serviceStatus = ServiceStatus;
+  protected readonly serviceNames = serviceNames;
 
-  get statusClass(): string {
-    switch (this.service?.state) {
+  readonly statusClass = computed(() => {
+    switch (this.service()?.state) {
       case ServiceStatus.Running:
         return 'fn-theme-primary';
       case ServiceStatus.Stopped:
@@ -25,5 +27,5 @@ export class ServiceStateButtonComponent {
       default:
         return 'fn-theme-orange';
     }
-  }
+  });
 }

@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="R50_REAR" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1270.7 496.3">
+  <g id="R50_CHASSIS">
+    <g id="_Group_">
+      <rect x="21.7" y=".1" width="1230.1" height="496.1" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <polygon points="1267.7 3 1267.7 22.8 1264.8 22.8 1264.8 5.9 1251.8 5.9 1251.8 496.2 18.9 496.2 18.9 5.9 5.9 5.9 5.9 22.8 3 22.8 3 3 21.7 3 21.7 493.3 1248.9 493.3 1248.9 3 1267.7 3" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="42.2 .1 42.2 3 3 3 3 22.8 .1 22.8 .1 .1 42.2 .1" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="42.2" y=".1" width="4.5" height="2.9" style="fill: #b0b2b1; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="46.8" y=".1" width="190.6" height="4.3" style="fill: #c3c8c6; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="237.4" y=".1" width="4.6" height="2.9" style="fill: #b0b2b1; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="1270.6 .1 1270.6 22.8 1267.7 22.8 1267.7 3 242 3 242 .1 1270.6 .1" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="46.8" y="4.4" width="190.6" height="2.9" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="246.6 248.5 246.6 493.3 220.4 493.3 220.4 490.4 243.7 490.4 243.7 251.4 35.4 251.4 35.4 490.4 60.6 490.4 60.6 493.3 32.5 493.3 32.5 248.5 246.6 248.5" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="44.5" y="248.5" width="190.1" height="7.1" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M18.8,248.5h13c2,0,3.6,1.6,3.6,3.6v237.6c0,2-1.6,3.6-3.6,3.6h-13v-244.8h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <path d="M250.2,248.5h13.4v244.8h-13.4c-2,0-3.6-1.6-3.6-3.6v-237.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="260.8" y="244.2" width="2.9" height="4.3" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="257.9" y="3" width="5.8" height="241.2" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <polygon points="1176.2 171.8 1176.2 459.8 1164.5 472.3 1164.5 488.9 1160 493.2 1140.1 493.2 1135.6 488.9 1135.6 472.3 1123.9 459.8 1123.9 171.8 1116.3 162 1116.3 150.1 1168.6 150.1 1168.6 162 1176.2 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1116.3" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1137.2" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="1234.8 171.8 1234.8 459.8 1223.1 472.3 1223.1 488.9 1218.6 493.2 1198.7 493.2 1194.2 488.9 1194.2 472.3 1182.5 459.8 1182.5 171.8 1174.9 162 1174.9 150.1 1227.2 150.1 1227.2 162 1234.8 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1174.9" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1195.7" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="1117.7 171.8 1117.7 459.8 1106 472.3 1106 488.9 1101.5 493.2 1081.6 493.2 1077.1 488.9 1077.1 472.3 1065.4 459.8 1065.4 171.8 1057.8 162 1057.8 150.1 1110.1 150.1 1110.1 162 1117.7 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1057.8" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1078.6" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="1059.1 171.8 1059.1 459.8 1047.4 472.3 1047.4 488.9 1042.9 493.2 1023 493.2 1018.5 488.9 1018.5 472.3 1006.8 459.8 1006.8 171.8 999.2 162 999.2 150.1 1051.5 150.1 1051.5 162 1059.1 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="999.2" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1020" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="1000.5 171.8 1000.5 459.8 988.8 472.3 988.8 488.9 984.3 493.2 964.4 493.2 959.9 488.9 959.9 472.3 948.2 459.8 948.2 171.8 940.6 162 940.6 150.1 992.9 150.1 992.9 162 1000.5 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="940.6" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="961.5" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="942 171.8 942 459.8 930.3 472.3 930.3 488.9 925.8 493.2 905.9 493.2 901.4 488.9 901.4 472.3 889.7 459.8 889.7 171.8 882.1 162 882.1 150.1 934.4 150.1 934.4 162 942 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="882.1" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="902.9" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="883.4 171.8 883.4 459.8 871.7 472.3 871.7 488.9 867.2 493.2 847.3 493.2 842.8 488.9 842.8 472.3 831.1 459.8 831.1 171.8 823.5 162 823.5 150.1 875.8 150.1 875.8 162 883.4 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="823.5" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="844.3" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <polygon points="1248.9 152.3 1248.9 493.2 1227.1 493.2 1227.1 478.8 1190.4 478.8 1190.4 493.2 1168.5 493.2 1168.5 478.8 1131.8 478.8 1131.8 493.2 1109.9 493.2 1109.9 478.8 1073.2 478.8 1073.2 493.2 1051.3 493.2 1051.3 478.8 1014.6 478.8 1014.6 493.2 992.8 493.2 992.8 478.8 956.1 478.8 956.1 493.2 934.3 493.2 934.3 478.8 897.6 478.8 897.6 493.2 875.7 493.2 875.7 478.8 839 478.8 839 493.2 370.1 493.2 370.1 152.3 839 152.3 839 463.7 875.7 463.7 875.7 152.3 897.6 152.3 897.6 463.7 934.3 463.7 934.3 152.3 956.1 152.3 956.1 463.7 992.8 463.7 992.8 152.3 1014.6 152.3 1014.6 463.7 1051.3 463.7 1051.3 152.3 1073.2 152.3 1073.2 463.7 1109.9 463.7 1109.9 152.3 1131.8 152.3 1131.8 463.7 1168.5 463.7 1168.5 152.3 1190.4 152.3 1190.4 463.7 1227.1 463.7 1227.1 152.3 1248.9 152.3" style="fill: #d8d8d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <g>
+          <g>
+            <rect x="391.1" y="429.4" width="89.3" height="35.7" rx="2.8" ry="2.8" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M412.6,443.4c0-.2-.1-.4-.2-.7l.2.7Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M459.1,442.5c0,.3-.2.7-.3,1l.3-1Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M455.6,455.1c0,.2-.1.5-.2.7l.2-.7Z" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <line x1="415.9" y1="455.5" x2="415.9" y2="455.3" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M459.2,441.1c0,.5,0,1-.1,1.4h0l-.3,1h0l-3.2,11.6-.2.7c-.9,2.8-3.6,4.9-6.7,4.9h-25.9c-3.3,0-6.1-2.3-6.9-5.3l-3.3-12-.2-.7h0c-.1-.5-.2-1.1-.2-1.6,0-3.9,3.2-7.1,7.1-7.1h32.8c3.9,0,7.1,3.2,7.1,7.1h0Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M457.6,441.9c0,.4,0,.8-.1,1.2h0l-.3.9h0l-3,10.2-.2.6c-.9,2.5-3.4,4.3-6.3,4.3h-24.1c-3.1,0-5.7-2-6.4-4.7l-3.1-10.5-.2-.6h0c-.1-.5-.2-.9-.2-1.4,0-3.4,3-6.2,6.6-6.2h30.5c3.7,0,6.6,2.8,6.6,6.2h.2Z" style="stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <g>
+              <circle cx="426.2" cy="450.1" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="432.7" cy="450.1" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="439.1" cy="450.1" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="445.6" cy="450.1" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="422.8" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="429.3" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="435.7" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="442.2" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="448.6" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            </g>
+            <polygon points="403.6 441.5 396.9 441.5 393.6 447.3 396.9 453.1 403.6 453.1 407 447.3 403.6 441.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="400.3" cy="447.3" r="4.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="400.3" cy="447.3" r="3.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="474.6 441.5 467.9 441.5 464.5 447.3 467.9 453.1 474.6 453.1 477.9 447.3 474.6 441.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="471.2" cy="447.3" r="4.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="471.2" cy="447.3" r="3.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          </g>
+          <g>
+            <rect x="701.4" y="429.4" width="89.3" height="35.7" rx="2.8" ry="2.8" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M722.9,443.4c0-.2,0-.4-.2-.7l.2.7Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M769.4,442.5c0,.3-.2.7-.3,1l.3-1Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M765.9,455.1c0,.2,0,.5-.2.7l.2-.7Z" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <line x1="726.3" y1="455.5" x2="726.2" y2="455.3" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M769.5,441.1v1.4h0l-.3,1h0l-3.2,11.6-.2.7c-.9,2.8-3.6,4.9-6.7,4.9h-25.9c-3.3,0-6.1-2.3-6.9-5.3l-3.3-12-.2-.7h0c0-.5-.2-1.1-.2-1.6,0-3.9,3.2-7.1,7.1-7.1h32.8c3.9,0,7.1,3.2,7.1,7.1h-.1Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M767.9,441.9v1.2h0l-.3.9h0l-3,10.2-.2.6c-.9,2.5-3.4,4.3-6.3,4.3h-24.1c-3.1,0-5.7-2-6.4-4.7l-3.1-10.5-.2-.6h0c0-.5-.2-.9-.2-1.4,0-3.4,3-6.2,6.6-6.2h30.5c3.7,0,6.6,2.8,6.6,6.2h.2-.1Z" style="fill: #475eab; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="733" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="739.4" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="745.9" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="752.3" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="758.8" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="733" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="739.4" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="745.9" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="752.3" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="758.8" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="736" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="742.5" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="748.9" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="755.4" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="761.8" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="713.9 441.5 707.2 441.5 703.9 447.3 707.2 453.1 713.9 453.1 717.3 447.3 713.9 441.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="710.6" cy="447.3" r="4.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="710.6" cy="447.3" r="3.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="784.9 441.5 778.2 441.5 774.8 447.3 778.2 453.1 784.9 453.1 788.2 447.3 784.9 441.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="781.5" cy="447.3" r="4.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="781.5" cy="447.3" r="3.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          </g>
+          <g>
+            <g>
+              <rect x="484.7" y="375.2" width="50.4" height="85" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <g>
+                <polygon points="527.6 410.7 492.2 410.7 492.2 400.9 492 400.9 492 399.6 493.2 399.6 493.2 394.6 492 394.6 492 393.3 492.2 393.3 492.2 388.1 499.4 388.1 499.4 383.4 503.5 383.4 503.5 380.3 516.3 380.3 516.3 383.4 520.5 383.4 520.5 388.1 527.6 388.1 527.6 393.3 527.8 393.3 527.8 394.6 526.6 394.6 526.6 399.6 527.8 399.6 527.8 400.9 527.6 400.9 527.6 410.7" style="fill: #fff; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="527.6 410.7 492.2 410.7 492.2 400.9 492 400.9 492 399.6 493.2 399.6 493.2 394.6 492 394.6 492 393.3 492.2 393.3 492.2 388.1 499.4 388.1 499.4 383.4 503.5 383.4 503.5 380.3 516.3 380.3 516.3 383.4 520.5 383.4 520.5 388.1 527.6 388.1 527.6 393.3 527.8 393.3 527.8 394.6 526.6 394.6 526.6 399.6 527.8 399.6 527.8 400.9 527.6 400.9 527.6 410.7" style="fill: #fff; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="527.6 410.7 492.2 410.7 492.2 400.9 492 400.9 492 399.6 493.2 399.6 493.2 394.6 492 394.6 492 393.3 492.2 393.3 492.2 388.1 499.4 388.1 499.4 383.4 503.5 383.4 503.5 380.3 516.3 380.3 516.3 383.4 520.5 383.4 520.5 388.1 527.6 388.1 527.6 393.3 527.8 393.3 527.8 394.6 526.6 394.6 526.6 399.6 527.8 399.6 527.8 400.9 527.6 400.9 527.6 410.7" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="493.8 393.3 492.2 393.3 492.2 388.1 499.4 388.1 499.4 383.4 503.5 383.4 503.5 385 500.9 385 500.9 389.7 493.8 389.7 493.8 393.3" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="527.6 393.3 526 393.3 526 389.7 518.9 389.7 518.9 385 516.3 385 516.3 383.4 520.4 383.4 520.4 388.1 527.6 388.1 527.6 393.3" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="527.6 410.7 492.2 410.7 492.2 400.9 493.8 400.9 493.8 409.2 526 409.2 526 400.9 527.6 400.9 527.6 410.7" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="521.8" y="382.2" width="8.2" height="4.6" style="fill: #d8d8d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="489.8" y="382.3" width="8.2" height="4.6" style="fill: #e1dc9b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              </g>
+            </g>
+            <rect x="492.6" y="444.1" width="34.7" height="15.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="494.2" y="445.6" width="31.4" height="5.4" style="fill: #333; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="492.6" y="419.9" width="34.7" height="15.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="494.2" y="421.4" width="31.4" height="5.4" style="fill: #333; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          </g>
+          <g>
+            <rect x="542.3" y="418.4" width="38.9" height="41.8" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <g>
+              <rect x="544.4" y="443.8" width="34.7" height="15.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <rect x="546.1" y="445.4" width="31.4" height="5.4" style="fill: #3954a5; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <rect x="544.4" y="419.6" width="34.7" height="15.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <rect x="546.1" y="421.2" width="31.4" height="5.4" style="fill: #3954a5; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            </g>
+          </g>
+          <g>
+            <path d="M373.1,346.8v124.6h449.3v-124.6h-449.3ZM477.6,454.1c-1.7,1.7-4.2,2.8-6.8,2.8h-7.5v6.1h-55v-6.1h-7.5c-5.3,0-9.6-4.3-9.6-9.6s1.1-5.1,2.8-6.8c1.8-1.7,4.1-2.8,6.8-2.8h7.5v-6.1h55v6.1h7.5c5.3,0,9.6,4.3,9.6,9.6s-1.1,5.1-2.8,6.8ZM531.1,459.2h-42.4v-16.8h42.4v16.8ZM531.1,436.7h-42.4v-18.5h42.4v18.5ZM531.1,412.5h-42.4v-35h42.4v35ZM581.2,459.2h-38.9v-16.8h38.9v16.8ZM581.2,436.7h-38.9v-18.2h38.9v18.2ZM787.9,454.1c-1.7,1.7-4.2,2.8-6.8,2.8h-7.5v6.1h-55v-6.1h-7.5c-5.3,0-9.6-4.3-9.6-9.6s1.1-5.1,2.8-6.8c1.8-1.7,4.2-2.8,6.8-2.8h7.5v-6.1h55v6.1h7.5c5.3,0,9.6,4.3,9.6,9.6s-1.1,5.1-2.8,6.8ZM812.9,462.8c-.9.9-2.1,1.4-3.4,1.4h-7.8c-2.6,0-4.8-2.2-4.8-4.8s.5-2.5,1.4-3.4,2.1-1.4,3.4-1.4h7.8c2.7,0,4.8,2.2,4.8,4.8s-.5,2.5-1.4,3.4Z" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M814.3,459.5c0,1.3-.5,2.5-1.4,3.4s-2.1,1.4-3.4,1.4h-7.8c-2.6,0-4.8-2.2-4.8-4.8s.5-2.5,1.4-3.4,2.1-1.4,3.4-1.4h7.8c2.7,0,4.8,2.2,4.8,4.8Z" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="801" y="457.2" width="9.2" height="4.6" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <g>
+              <path d="M425.6,426.8c-.2,0-.3-.1-.3-.3v-6.8c0-.2.1-.3.3-.3s.3.1.3.3v6.8c0,.2-.1.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M445.8,426.8c-.2,0-.3-.1-.3-.3v-6.8c0-.2.1-.3.3-.3s.3.1.3.3v6.8c0,.2-.1.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M435.7,426.8c-.2,0-.3-.1-.3-.3v-6.8c0-.2.1-.3.3-.3s.3.1.3.3v6.8c0,.2-.1.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M430.7,426.8c-1.9,0-3.4-1.7-3.4-3.7s1.5-3.7,3.4-3.7,3.4,1.7,3.4,3.7-1.5,3.7-3.4,3.7ZM430.7,420c-1.6,0-2.9,1.4-2.9,3.1s1.3,3.1,2.9,3.1,2.9-1.4,2.9-3.1-1.3-3.1-2.9-3.1Z" style="fill: #fff;"/>
+              <path d="M440.8,426.8c-1.9,0-3.4-1.7-3.4-3.7s1.5-3.7,3.4-3.7,3.4,1.7,3.4,3.7-1.5,3.7-3.4,3.7ZM440.8,420c-1.6,0-2.9,1.4-2.9,3.1s1.3,3.1,2.9,3.1,2.9-1.4,2.9-3.1-1.3-3.1-2.9-3.1Z" style="fill: #fff;"/>
+            </g>
+            <g>
+              <path d="M736.3,428c-.2,0-.3-.1-.3-.3v-9.2c0-.2,0-.3.3-.3s.3.1.3.3v9.2c0,.2,0,.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M755.8,428c-.2,0-.3-.1-.3-.3v-9.2c0-.2,0-.3.3-.3s.3.1.3.3v9.2c0,.2,0,.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M746.1,428.5c-1.8,0-3.6,0-4.8-.1-2.3-.2-2.5-.4-2.5-.7v-9.2c0-.3,0-.8,7.3-.8s7.3.6,7.3.8v9.2c0,.3,0,.8-7.3.8h0ZM739.3,427.6c1.2.5,12.3.5,13.5,0v-8.9c-1.2-.5-12.3-.5-13.5,0v8.9Z" style="fill: #fff;"/>
+            </g>
+            <path d="M515.3,368.6h-1.6v-1.2h1.6s.2,0,.2-.2,0-.2-.2-.2h-5.2v-1.2h1.6s.2,0,.2-.2v-3s0-.2-.2-.2h-3.6s-.2,0-.2.2v3s0,.2.2.2h1.6v1.2h-5.2s-.2,0-.2.2,0,.2.2.2h1.6v1.2h-1.6s-.2,0-.2.2v3s0,.2.2.2h3.6s.2,0,.2-.2v-3s0-.2-.2-.2h-1.6v-1.2h6.9v1.2h-1.6s-.2,0-.2.2v3s0,.2.2.2h3.6s.2,0,.2-.2v-3s0-.2-.2-.2h-.1ZM508.3,365.6v-2.6h3.3v2.6h-3.3ZM507.9,368.9v2.6h-3.3v-2.6h3.3ZM515.1,371.5h-3.3v-2.6h3.3v2.6Z" style="fill: #fff;"/>
+          </g>
+          <g>
+            <polygon points="822.4 346.8 822.4 471.3 817 465.9 817 352.2 822.4 346.8" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="822.4 471.3 373.1 471.3 378.5 465.9 817 465.9 822.4 471.3" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="378.5 352.2 378.5 465.9 373.1 471.3 373.1 346.8 378.5 352.2" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="822.4 346.8 817 352.2 378.5 352.2 373.1 346.8 822.4 346.8" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          </g>
+          <g>
+            <rect x="592.5" y="430.1" width="42.4" height="28.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="593.8" y="388.9" width="39.8" height="26.2" style="fill: #cfcfc6; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="592.5 387.6 634.9 387.6 634.9 458.9 592.5 458.9 592.5 387.6 592.5 387.6" style="fill: none;"/>
+            <rect x="592.4" y="387.6" width="42.4" height="28.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M589.4,386.3v73.9h48.5v-73.9h-48.5ZM633.6,457.6h-39.8v-26.2h39.8v26.2ZM633.6,415.1h-39.8v-26.2h39.8v26.2Z" style="fill: #c3c8c6; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="605.3" y="415.2" width="16.8" height="1.3" style="fill: #4c4c4c; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M606.7,415.2v-1.8h14v1.8c0,.4-.3.7-.7.7h-12.7c-.4,0-.7-.3-.7-.7h.1Z" style="fill: #989898; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="605.3" y="430.1" width="16.8" height="1.3" style="fill: #4c4c4c; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M620.7,431.4v1.8h-14v-1.8c0-.4.3-.7.7-.7h12.7c.4,0,.7.3.7.7h-.1Z" style="fill: #989898; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="606.4 426.8 608.7 420.7 611.2 426.8 606.4 426.8 606.4 426.8" style="fill: #4d4c4d; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="624.3 427.1 626.7 421 629.1 427.1 624.3 427.1 624.3 427.1" style="fill: #4d4c4d; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="616.5 420.9 618.9 426.9 621.4 420.9 616.5 420.9 616.5 420.9" style="fill: #4d4c4d; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="598.7 420.7 601.1 426.7 603.5 420.7 598.7 420.7 598.7 420.7" style="fill: #4d4c4d; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          </g>
+        </g>
+        <path d="M560.3,395.3l1-1.4c.2-.3.5-.3.8-.2,0,0,.1,0,.2.2h0l1,1.4c.3.3.1.7-.3.7h-.8v7.7c0,.2.2.2.3,0l1.6-1.6c.2-.3.4-.6.4-1h0v-1.6h0c-.4,0-.8-.3-.8-.8h0v-.8c0-.4.4-.8.8-.8h.8c.4,0,.8.3.8.8h0v.8c0,.4-.3.8-.7.8h0v1.6h0c0,.7-.3,1.2-.7,1.6h0l-2,2c-.3.2-.5.6-.5,1h0v3.2c.9.2,1.5,1.2,1.3,2.1s-1.2,1.5-2.1,1.3-1.5-1.2-1.3-2.1c.1-.7.7-1.2,1.3-1.3h0v-.8c0-.4-.1-.8-.5-1.1h0l-2-2c-.4-.4-.7-1-.7-1.5h0v-1.6c-.5-.2-.8-.6-.8-1.1h0c0-.7.5-1.2,1.2-1.2s1.2.5,1.2,1.2h0c0,.5-.3,1-.8,1.1h0v1.6c0,.4.2.8.5,1h0l1.6,1.6c.1.1.3.1.3,0v-10.1h-.8c-.5,0-.6-.3-.3-.7h0Z" style="fill: #fff;"/>
+      </g>
+    </g>
+    <polygon points="1248.9 113.9 1248.9 152.3 370.1 152.3 370.1 493.3 263.6 493.3 263.6 113.9 1248.9 113.9" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <g>
+      <g>
+        <circle cx="288.4" cy="347.9" r="9" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M293.1,346.9v2.2h-1.2c-.2,0-.9,0-1.5.6-.7.6-.7,1.5-.7,1.6v1.2h-2.2v-1.2c0-.1,0-1-.7-1.6-.6-.6-1.4-.6-1.5-.6h-1.2v-2.2h1.2c.2,0,.9,0,1.5-.6.7-.6.7-1.5.7-1.6v-1.2h2.2v1.2c0,.1,0,1,.7,1.6.6.6,1.4.6,1.5.6h1.2Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <circle cx="288.4" cy="293.9" r="9" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M293.1,292.9v2.2h-1.2c-.2,0-.9,0-1.5.6-.7.6-.7,1.5-.7,1.6v1.2h-2.2v-1.2c0-.1,0-1-.7-1.6-.6-.6-1.4-.6-1.5-.6h-1.2v-2.2h1.2c.2,0,.9,0,1.5-.6.7-.6.7-1.5.7-1.6v-1.2h2.2v1.2c0,.1,0,1,.7,1.6.6.6,1.4.6,1.5.6h1.2Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <rect x="282.9" y="312.4" width="11.2" height="10.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="283.8" y="315.4" width="9.2" height="4.6" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+    <path d="M1235.5,3h13.4v110.9h-13.4c-2,0-3.6-1.6-3.6-3.6V6.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <path d="M940.3,3h13.4v110.9h-13.4c-2,0-3.6-1.6-3.6-3.6V6.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <path d="M645.2,3h13.4v110.9h-13.4c-2,0-3.6-1.6-3.6-3.6V6.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <path d="M350,3h13.4v110.9h-13.4c-2,0-3.6-1.6-3.6-3.6V6.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <path d="M342.8,3h-79.1v110.9h79.1c2,0,3.6-1.6,3.6-3.6V6.6c0-2-1.6-3.6-3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+  </g>
+  <g id="R50_CASE_FANS">
+    <g id="R50_CASE_FAN_1">
+      <rect x="363.4" y="5.9" width="278.2" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="363.4" y="10.2" width="278.2" height="103.7" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="363.4" y="3" width="278.2" height="2.9" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <rect x="430.5" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="445.2" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="459.9" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="474.6" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="489.4" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="504.1" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="518.8" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="533.5" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="548.2" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="562.9" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="577.6" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="577.6" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="562.9" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="548.2" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="533.5" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="518.8" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="504.1" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="489.4" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="474.6" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="459.9" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="445.2" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="430.5" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="415.8" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="415.8" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="415.8" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="430.5" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="445.2" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="459.9" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="474.6" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="489.4" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="504.1" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="518.8" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="533.5" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="548.2" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="562.9" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="577.6" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="592.4" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="592.4" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="592.4" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="592.4" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="577.6" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="562.9" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="548.2" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="533.5" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="518.8" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="504.1" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="489.4" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="474.6" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="459.9" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="445.2" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="430.5" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="415.8" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="401.1" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="401.1" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="401.1" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="401.1" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <g>
+          <circle cx="382.8" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="382.8" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="622.3" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="622.3" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="461.4" y="5.9" width="53" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M470.2,10.2h35.3v3.1c0,1.7-1.4,3.1-3.1,3.1h-29c-1.7,0-3.1-1.4-3.1-3.1v-3.1h-.1Z" style="fill: #c6c6be; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    </g>
+    <g id="R50_CASE_FAN_2">
+      <rect x="658.6" y="5.9" width="278.2" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="658.6" y="10.2" width="278.2" height="103.7" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="658.6" y="3" width="278.2" height="2.9" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <rect x="725.7" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="740.4" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="755.1" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="769.8" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="784.6" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="799.3" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="814" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="828.7" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="843.4" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="858.1" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="872.8" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="872.8" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="858.1" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="843.4" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="828.7" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="814" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="799.3" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="784.6" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="769.8" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="755.1" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="740.4" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="725.7" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="711" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="711" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="711" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="725.7" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="740.4" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="755.1" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="769.8" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="784.6" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="799.3" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="814" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="828.7" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="843.4" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="858.1" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="872.8" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="887.6" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="887.6" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="887.6" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="887.6" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="872.8" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="858.1" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="843.4" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="828.7" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="814" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="799.3" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="784.6" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="769.8" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="755.1" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="740.4" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="725.7" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="711" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="696.3" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="696.3" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="696.3" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="696.3" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <g>
+          <circle cx="677.9" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="677.9" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="917.4" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="917.4" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="756.5" y="5.9" width="53" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M765.4,10.2h35.3v3.1c0,1.7-1.4,3.1-3.1,3.1h-29c-1.7,0-3.1-1.4-3.1-3.1v-3.1h-.1Z" style="fill: #c6c6be; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    </g>
+    <g id="R50_CASE_FAN_3">
+      <rect x="953.7" y="5.9" width="278.2" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="953.7" y="10.2" width="278.2" height="103.7" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="953.7" y="3" width="278.2" height="2.9" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <rect x="1020.8" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1035.5" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1050.2" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1064.9" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1079.7" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1094.4" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1109.1" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1123.8" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1138.5" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1153.2" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1167.9" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1167.9" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1153.2" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1138.5" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1123.8" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1109.1" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1094.4" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1079.7" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1064.9" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1050.2" y="63.9" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1035.5" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1020.8" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1006.1" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1006.1" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1006.1" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1020.8" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1035.5" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1050.2" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1064.9" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1079.7" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1094.4" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1109.1" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1123.8" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1138.5" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1153.2" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1167.9" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1182.7" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1182.7" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1182.7" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1182.7" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1167.9" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1153.2" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1138.5" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1123.8" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1109.1" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1094.4" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1079.7" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1064.9" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1050.2" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1035.5" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1020.8" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1006.1" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="991.4" y="79.1" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="991.4" y="64" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="991.4" y="48.8" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="991.4" y="33.6" width="11.5" height="11.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <g>
+          <circle cx="973.1" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="973.1" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="1212.6" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="1212.6" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="1051.7" y="5.9" width="53" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M1060.5,10.2h35.3v3.1c0,1.7-1.4,3.1-3.1,3.1h-29c-1.7,0-3.1-1.4-3.1-3.1v-3.1h-.1Z" style="fill: #c6c6be; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    </g>
+  </g>
+  <g id="R50_POWER_SUPPLIES">
+    <g id="R50_PSU_1">
+      <g>
+        <rect x="206.5" y="379.6" width="35.1" height="2.2" style="fill: #a4a4a5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M241.6,384.3l-.2,104.5c0,.3-.2.5-.5.5H38.3c-.3,0-.5-.2-.5-.5v-107.6c0-.3.2-.5.5-.5h177.1v2.2h2.2l.2-.3,23.3,1c.3,0,.5.2.5.5v.2h0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M242.7,381.7h-25.2v2.4h23.3c.3,0,.5.2.5.5v103c0,.3-.2.5-.5.5H38.3c-.3,0-.5-.2-.5-.5v-105.2c0-.3.2-.5.5-.5h177.1v-2.4H36.4c-.6,0-1,.5-1,1v109c0,.6.4,1,1,1h206.3c.5,0,1-.4,1-1v-106.8c0-.5-.5-1-1-1h0Z" style="fill: #d7d7d7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <g>
+          <path d="M155.4,387.8c-.1-2.8-1.3-5.4-3.1-7.3-2.1-2.2-5-3.6-8.3-3.6H53.2c-4.3,0-8.1,2.4-10,6-.5,1-.9,2-1.1,3.1,0,.6-.2,1.2-.2,1.8v91.4c0,2.8,1,5.3,2.6,7.3l.3.3c2.1,2.3,5.1,3.8,8.5,3.8h90.9c6.3,0,11.4-5.1,11.4-11.4v-91.4h-.2ZM144.1,382.6c3.1,0,5.7,2.5,5.7,5.7s-.2,1.5-.4,2.1c-.4,1.1-1.2,2-2.2,2.6-.9.6-1.9.9-3.1.9s-2.3-.4-3.3-1c-1-.7-1.7-1.6-2.1-2.7-.2-.6-.3-1.2-.3-1.9,0-3.1,2.5-5.7,5.7-5.7h0ZM124.1,379.8c4.1,2,8,4.4,11.6,7.2,0,.4-.1.9-.1,1.3,0,.8.1,1.5.3,2.2.3,1,.7,1.9,1.3,2.7,1.5,2.2,4.1,3.6,7,3.6s.9,0,1.3-.1c2.5,3.1,4.6,6.4,6.4,10-2.5,6.5-6.1,12.5-10.6,17.6-.7.7-1.3,1.5-2,2.2-1.6,1.6-3.3,3.2-5.1,4.6-.2-2.5-.6-4.9-1.3-7.2-.3-1.1-.7-2.3-1.1-3.3-2.1-5.2-5.3-9.7-9.4-13.4.2-3.5.1-6.9-.3-10.3,0-1-.2-1.9-.4-2.9-.8-4.9-2.2-9.6-4.1-14.2h6.7-.2,0ZM73.2,379.8h41.1c2.2,4.9,3.8,10,4.5,15.3,0,1,.3,2,.4,2.9.2,2.3.3,4.6.2,7-2-1.4-4.1-2.7-6.4-3.7-1.1-.5-2.2-.9-3.3-1.3-3.5-1.2-7.2-1.8-11.1-1.8s-3.4.1-5.1.4c-2.5-2.4-5.2-4.5-8.1-6.5-.8-.5-1.6-1.1-2.5-1.6-2.3-1.4-4.6-2.6-7-3.6-3.2-1.4-6.4-2.4-9.8-3.2,2.3-1.5,4.6-2.8,7.1-4h0v.1ZM53.2,382.6c3.1,0,5.7,2.5,5.7,5.7s-2.5,5.7-5.7,5.7-5.7-2.5-5.7-5.7,2.5-5.7,5.7-5.7ZM44.7,408.3c.3-.5.5-1.1.8-1.6,1.4-2.8,3.1-5.5,4.9-8,.5-.7,1-1.3,1.5-2,.4,0,.9.1,1.3.1,4.7,0,8.5-3.8,8.5-8.5s0-.9,0-1.3c.4-.3.9-.7,1.3-1,4.4.8,8.7,2.2,12.7,4,2.2,1,4.4,2.1,6.4,3.4.8.5,1.7,1,2.5,1.6,1.9,1.3,3.8,2.7,5.5,4.3-2.4.6-4.8,1.5-7,2.5s-2.1,1.1-3.1,1.7c-4.7,2.9-8.7,6.9-11.6,11.5-8.4,1-16.5,3.7-23.8,8v-14.7h.2-.1ZM44.7,459.2v-32.8c6.7-4.3,14.2-7.1,22.1-8.2-1.9,4-3.2,8.4-3.5,13v3.5c0,3.6.7,7,1.8,10.2-5.1,7.8-8.4,16.7-9.5,26.1-.7-.2-1.5-.3-2.2-.3s-.9,0-1.3.1c-2.5-3.2-4.7-6.6-6.5-10.2-.2-.5-.5-.9-.7-1.4h-.2ZM53.2,484.9c-3.1,0-5.7-2.5-5.7-5.7s2.5-5.7,5.7-5.7,5.7,2.5,5.7,5.7-2.5,5.7-5.7,5.7ZM73.2,487.7c-4.1-2-8-4.4-11.6-7.2v-1.3c0-2.9-1.4-5.4-3.6-6.9.8-8.6,3.6-16.8,8.1-24.1,1.8,4.1,4.5,7.9,7.7,11,.8.8,1.7,1.6,2.6,2.3,2.7,2.2,5.8,3.9,9.1,5.3,2.3,7.6,6.1,14.8,11.2,20.9h-23.6.1ZM135.7,480.5c-.4.3-.8.7-1.3,1-1,.8-2.1,1.5-3.2,2.2-2.3,1.5-4.7,2.8-7.1,4h-23.6c-5.2-5.8-9.1-12.5-11.6-19.8,3.1.9,6.3,1.3,9.7,1.3s2.4,0,3.6-.2c1.2-.1,2.3-.3,3.5-.5,3.5-.7,6.8-1.9,9.8-3.6,9.6,4.2,20.3,5.8,30.8,4.5-.3.4-.7.9-1,1.3-.4,0-.9-.1-1.3-.1-4.7,0-8.5,3.8-8.5,8.5s0,.9.1,1.3h.1v.1ZM144.1,484.9c-3.1,0-5.7-2.5-5.7-5.7s2.5-5.7,5.7-5.7,5.7,2.5,5.7,5.7-2.5,5.7-5.7,5.7ZM152.6,459.2c-1.2,2.5-2.5,4.8-3.9,7.1-10.2,1.7-20.6.6-30.1-3.1,3.7-2.5,6.9-5.8,9.5-9.5.7-1,1.3-2,1.8-3,2.6-4.8,4.1-10.2,4.2-15.9,2.8-2,5.3-4.3,7.7-6.8.7-.7,1.3-1.4,2-2.2,3.5-4.1,6.5-8.6,8.8-13.5v47h0v-.1Z" style="fill: #272626; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M63.1,434.7c0,3.6.7,7,1.8,10.2-5.1,7.8-8.4,16.7-9.5,26.1-.7-.2-1.5-.3-2.2-.3s-.9,0-1.3.1c-2.5-3.2-4.7-6.6-6.5-10.2-.2-.5-.5-.9-.7-1.4v-32.8c6.7-4.3,14.2-7.1,22.1-8.2-1.9,4-3.2,8.4-3.5,13v3.5h-.2Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M96.7,487.7h-23.5c-4.1-2-8-4.4-11.6-7.2v-1.3c0-2.9-1.4-5.4-3.6-6.9.8-8.6,3.6-16.8,8.1-24.1,1.8,4.1,4.5,7.9,7.7,11,.8.8,1.7,1.6,2.6,2.3,2.7,2.2,5.8,3.9,9.1,5.3,2.3,7.6,6.1,14.8,11.2,20.9h0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.4,469.4c-.3.4-.7.9-1,1.3-.4,0-.9-.1-1.3-.1-4.7,0-8.5,3.8-8.5,8.5s0,.9.1,1.3c-.4.3-.8.7-1.3,1-1,.8-2.1,1.5-3.2,2.2-2.3,1.5-4.7,2.8-7.1,4h-23.6c-5.2-5.8-9.1-12.5-11.6-19.8,3.1.9,6.3,1.3,9.7,1.3s2.4,0,3.6-.2c1.2-.1,2.3-.3,3.5-.5,3.5-.7,6.8-1.9,9.8-3.6,9.6,4.2,20.3,5.8,30.8,4.5h.1v.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M152.6,412.2v47c-1.2,2.5-2.5,4.8-3.9,7.1-10.2,1.7-20.6.6-30.1-3.1,3.7-2.5,6.9-5.8,9.5-9.5.7-1,1.3-2,1.8-3,2.6-4.8,4.1-10.2,4.2-15.9,2.8-2,5.3-4.3,7.7-6.8.7-.7,1.3-1.4,2-2.2,3.5-4.1,6.5-8.6,8.8-13.5h0v-.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M151.8,406.7c-2.5,6.5-6.1,12.5-10.6,17.6-.7.7-1.3,1.5-2,2.2-1.6,1.6-3.3,3.2-5.1,4.6-.2-2.5-.6-4.9-1.3-7.2-.3-1.1-.7-2.3-1.1-3.3-2.1-5.2-5.3-9.7-9.4-13.4.2-3.5,0-6.9-.3-10.3,0-1-.2-1.9-.4-2.9-.8-4.9-2.2-9.6-4.1-14.2h6.7c4.1,2,8,4.4,11.6,7.2,0,.4-.1.9-.1,1.3,0,.8.1,1.5.3,2.2.3,1,.7,1.9,1.3,2.7,1.5,2.2,4.1,3.6,7,3.6s.9,0,1.3-.1c2.5,3.1,4.6,6.4,6.4,10h-.2,0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M119.5,405c-2-1.4-4.1-2.7-6.4-3.7-1.1-.5-2.2-.9-3.3-1.3-3.5-1.2-7.2-1.8-11.1-1.8s-3.4.1-5.1.4c-2.5-2.4-5.2-4.5-8.1-6.5-.8-.5-1.6-1.1-2.5-1.6-2.3-1.4-4.6-2.6-7-3.6-3.2-1.4-6.4-2.4-9.8-3.2,2.3-1.5,4.6-2.8,7.1-4h41.1c2.2,4.9,3.8,10,4.5,15.3,0,1,.3,2,.4,2.9.2,2.3.3,4.6.2,7h0v.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M90.1,399.3c-2.4.6-4.8,1.5-7,2.5s-2.1,1.1-3.1,1.7c-4.7,2.9-8.7,6.9-11.6,11.5-8.4,1-16.5,3.7-23.8,8v-14.7c.3-.5.5-1.1.8-1.6,1.4-2.8,3.1-5.5,4.9-8,.5-.7,1-1.3,1.5-2,.4,0,.9.1,1.3.1,4.7,0,8.5-3.8,8.5-8.5s0-.9,0-1.3c.4-.3.9-.7,1.3-1,4.4.8,8.7,2.2,12.7,4,2.2,1,4.4,2.1,6.4,3.4.8.5,1.7,1,2.5,1.6,1.9,1.3,3.8,2.7,5.5,4.3h.2-.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <path d="M42.9,377h23c1.1,0,2,.9,2,2v9.5h0c0,4.2-2.1,7.9-5.2,10.2,0,0,3.2,0,8.1,1.3-1.4,1.1-2.6,2.3-3.9,3.6-6.6-1.5-11.4-1.5-13.1-1.5-3.5,4.9-6.3,10.4-8.1,16.3v29.4c1.8,6,4.6,11.5,8.2,16.5.2.3.5.7.8,1h.7c3.4,0,6.4,1.3,8.7,3.5,0-1.3.4-3.8,1.3-7.1,1.1,1.4,2.4,2.7,3.7,3.8-.9,3.8-1.2,7-1.4,9.3.2,1,.4,2,.4,3h0v9.5c0,1.1-.9,2-2,2h-20.9v1.2h-4.2v-10.9h-3.1v-89.2h3.1v-11.5c0-.5.2-1,.6-1.4,0,0,.2-.2.3-.2.3-.2.7-.3,1.1-.3h-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M131.8,377h26.7c.4,0,.8.1,1.1.3.2.2.4.3.5.5.2.3.3.7.3,1.1v3.9h2.5v-3.3h78.7c1.1,0,2,.9,2,2v11.9c0,.3-.2.5-.5.5h-1.9v2.4h1.9c.3,0,.5.2.5.5v11.2c0,.3-.2.5-.5.5h-1.9v2.4h1.9c.3,0,.5.2.5.5v77.1c0,1.1-.9,2-2,2h-40.2c-.3,0-.5-.2-.5-.5v-1.9h-2.4v1.9c0,.3-.2.5-.5.5h-11c-.3,0-.5-.2-.5-.5v-1.9h-2.4v1.9c0,.3-.2.5-.5.5h-26.9c-.3,0-.5-.2-.5-.5v-1.9h-2.3v.7c0,.3-.2.5-.5.5h-21.7c-1.1,0-2-.9-2-2v-9.5h0c0-3.7,1.6-7,4.1-9.3-1.3-.1-3.8-.5-7.1-1.3,1.4-1.1,2.7-2.4,3.9-3.7,5.8,1.3,10.2,1.5,12.4,1.5h0c.2-.3.4-.5.6-.8,3.6-4.9,6.4-10.5,8.2-16.5v-29.4c-1.8-6-4.6-11.5-8.2-16.5-.2-.3-.5-.7-.8-1h-.7c-3.3,0-6.3-1.3-8.5-3.4,0,.6-.2,3.5-1.3,7.9-1.1-1.4-2.3-2.7-3.6-3.9.9-4.1,1.3-7.5,1.4-9.9-.3-1-.4-2.2-.4-3.3h0v-9.5c0-1.1.9-2,2-2v.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M123.8,461.6c2.5.8,4.8,1.5,6.9,2-1.2,1.3-2.5,2.5-3.9,3.7-2.1-.6-4.6-1.3-7.3-2.4,1.5-1,2.9-2.1,4.2-3.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M128.8,401.7c1.3,1.2,2.5,2.5,3.6,3.9-.5,2.1-1.3,4.6-2.3,7.3-1-1.5-2.1-2.9-3.3-4.2.8-2.5,1.5-4.8,2-7h0Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M123.5,416.8c1.4-2.9,2.5-5.6,3.4-8.2,1.2,1.3,2.3,2.7,3.3,4.2h0c-1,2.7-2.4,5.6-4.1,8.6,1.7,3.7,2.6,7.8,2.6,12.2,0,10.3-5.2,19.3-13.1,24.7,2.8,1.4,5.6,2.5,8.2,3.4-1.3,1.2-2.8,2.3-4.2,3.3-2.7-1.1-5.6-2.4-8.6-4.1h0c-3.7,1.6-7.9,2.6-12.2,2.6-10.2,0-19.2-5.1-24.6-13-1.4,2.8-2.5,5.6-3.4,8.2-1.2-1.3-2.3-2.7-3.3-4.2,1-2.7,2.4-5.5,4.1-8.5-1.7-3.7-2.6-7.9-2.6-12.3,0-10.2,5.1-19.2,13-24.6-2.8-1.4-5.6-2.5-8.2-3.4,1.3-1.2,2.7-2.3,4.2-3.3,2.6,1,5.5,2.4,8.5,4.1,3.7-1.7,7.9-2.6,12.3-2.6,10.2,0,19.3,5.2,24.6,13h0l.1-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M67.6,454.4c1,1.5,2.1,2.9,3.3,4.2-.8,2.5-1.5,4.8-2,6.9-1.3-1.2-2.5-2.5-3.7-3.8.5-2.1,1.3-4.6,2.3-7.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M70.8,400c2.1.5,4.6,1.3,7.3,2.3-1.5,1-2.9,2.1-4.2,3.3-2.5-.8-4.8-1.5-6.9-2,1.2-1.3,2.5-2.5,3.9-3.6h-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <circle cx="192.4" cy="480.2" r="7" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="215.4 379.6 206.5 379.6 206.5 382 206.5 382.8 215.4 382.8 215.4 379.6" style="fill: #d7d7d7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="181.6" y="379.6" width="24.9" height="2.4" style="fill: #a4a4a5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="223.4" y="414.5" width="15.8" height="42.5" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <circle cx="232.9" cy="402.5" r="8.4" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <circle cx="232.9" cy="402.5" r="3.9" style="fill: #d7d5d6; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <g>
+          <circle cx="51.8" cy="388.62" r="9.8" transform="translate(-338.32 427.51) rotate(-88.1)" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M56.8,387.5v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="141.9" cy="388.7" r="9.8" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.9,387.5v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="51.75" cy="478.7" r="9.8" transform="translate(-428.4 514.56) rotate(-88.1)" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M56.8,477.6v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="141.9" cy="478.8" r="9.8" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.9,477.6v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="39.9" y="421.9" width="114" height="23.2" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <path d="M222.7,386.9v79.5c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4v-79.5c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4Z" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M211,398.1v57c0,2-1.7,3.7-3.8,3.7h-22.5c-1,0-1.9-.4-2.5-1l-.2-.2-13.9-13.2-.5-.5h0c-.6-.7-.9-1.5-.9-2.4v-30c0-.9.4-1.8.9-2.4h0l.5-.5,13.9-13.2.2-.2c.7-.6,1.6-1,2.5-1h22.5c2.1,0,3.8,1.6,3.8,3.7v.2Z" style="fill: #030303; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <g>
+          <rect x="187.4" y="403.1" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="189.9" y="405.6" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="405.6" x2="203" y2="403.1" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="405.6" x2="187.4" y2="403.1" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="408.3" x2="187.4" y2="410.8" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="408.3" x2="203" y2="410.8" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <rect x="173.1" y="422.7" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="175.6" y="425.3" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="186.2" y1="425.3" x2="188.7" y2="422.7" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="175.6" y1="425.3" x2="173.1" y2="422.7" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="175.6" y1="427.9" x2="173.1" y2="430.5" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="186.2" y1="427.9" x2="188.7" y2="430.5" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <rect x="187.4" y="442.3" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="189.9" y="444.9" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="444.9" x2="203" y2="442.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="444.9" x2="187.4" y2="442.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="447.5" x2="187.4" y2="450.1" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="447.5" x2="203" y2="450.1" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <g>
+        <rect x="239.2" y="414.5" width="2.1" height="42.2" style="fill: #737374; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="216.4" y="438.3" width="25" height="42.5" style="fill: #828183; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="210.1" y="434.1" width="11.5" height="51" rx="3.6" ry="3.6" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+    <g id="R50_PSU_2">
+      <g>
+        <rect x="206.5" y="264.8" width="35.1" height="2.2" style="fill: #a4a4a5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M241.6,269.5l-.2,104.5c0,.3-.2.5-.5.5H38.3c-.3,0-.5-.2-.5-.5v-107.6c0-.3.2-.5.5-.5h177.1v2.2h2.2l.2-.3,23.3,1c.3,0,.5.2.5.5v.2h0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M242.7,266.9h-25.2v2.4h23.3c.3,0,.5.2.5.5v103c0,.3-.2.5-.5.5H38.3c-.3,0-.5-.2-.5-.5v-105.2c0-.3.2-.5.5-.5h177.1v-2.4H36.4c-.6,0-1,.5-1,1v109c0,.6.4,1,1,1h206.3c.5,0,1-.4,1-1v-106.8c0-.5-.5-1-1-1h0Z" style="fill: #d7d7d7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <g>
+          <path d="M155.4,273c-.1-2.8-1.3-5.4-3.1-7.3-2.1-2.2-5-3.6-8.3-3.6H53.2c-4.3,0-8.1,2.4-10,6-.5,1-.9,2-1.1,3.1,0,.6-.2,1.2-.2,1.8v91.4c0,2.8,1,5.3,2.6,7.3l.3.3c2.1,2.3,5.1,3.8,8.5,3.8h90.9c6.3,0,11.4-5.1,11.4-11.4v-91.4h-.2ZM144.1,267.8c3.1,0,5.7,2.5,5.7,5.7s-.2,1.5-.4,2.1c-.4,1.1-1.2,2-2.2,2.6-.9.6-1.9.9-3.1.9s-2.3-.4-3.3-1c-1-.7-1.7-1.6-2.1-2.7-.2-.6-.3-1.2-.3-1.9,0-3.1,2.5-5.7,5.7-5.7h0ZM124.1,265c4.1,2,8,4.4,11.6,7.2,0,.4-.1.9-.1,1.3,0,.8.1,1.5.3,2.2.3,1,.7,1.9,1.3,2.7,1.5,2.2,4.1,3.6,7,3.6s.9,0,1.3-.1c2.5,3.1,4.6,6.4,6.4,10-2.5,6.5-6.1,12.5-10.6,17.6-.7.7-1.3,1.5-2,2.2-1.6,1.6-3.3,3.2-5.1,4.6-.2-2.5-.6-4.9-1.3-7.2-.3-1.1-.7-2.3-1.1-3.3-2.1-5.2-5.3-9.7-9.4-13.4.2-3.5.1-6.9-.3-10.3,0-1-.2-1.9-.4-2.9-.8-4.9-2.2-9.6-4.1-14.2h6.7-.2,0ZM73.2,265h41.1c2.2,4.9,3.8,10,4.5,15.3,0,1,.3,2,.4,2.9.2,2.3.3,4.6.2,7-2-1.4-4.1-2.7-6.4-3.7-1.1-.5-2.2-.9-3.3-1.3-3.5-1.2-7.2-1.8-11.1-1.8s-3.4.1-5.1.4c-2.5-2.4-5.2-4.5-8.1-6.5-.8-.5-1.6-1.1-2.5-1.6-2.3-1.4-4.6-2.6-7-3.6-3.2-1.4-6.4-2.4-9.8-3.2,2.3-1.5,4.6-2.8,7.1-4h0v.1ZM53.2,267.8c3.1,0,5.7,2.5,5.7,5.7s-2.5,5.7-5.7,5.7-5.7-2.5-5.7-5.7,2.5-5.7,5.7-5.7ZM44.7,293.5c.3-.5.5-1.1.8-1.6,1.4-2.8,3.1-5.5,4.9-8,.5-.7,1-1.3,1.5-2,.4,0,.9.1,1.3.1,4.7,0,8.5-3.8,8.5-8.5s0-.9,0-1.3c.4-.3.9-.7,1.3-1,4.4.8,8.7,2.2,12.7,4,2.2,1,4.4,2.1,6.4,3.4.8.5,1.7,1,2.5,1.6,1.9,1.3,3.8,2.7,5.5,4.3-2.4.6-4.8,1.5-7,2.5s-2.1,1.1-3.1,1.7c-4.7,2.9-8.7,6.9-11.6,11.5-8.4,1-16.5,3.7-23.8,8v-14.7h.2-.1ZM44.7,344.4v-32.8c6.7-4.3,14.2-7.1,22.1-8.2-1.9,4-3.2,8.4-3.5,13v3.5c0,3.6.7,7,1.8,10.2-5.1,7.8-8.4,16.7-9.5,26.1-.7-.2-1.5-.3-2.2-.3s-.9,0-1.3.1c-2.5-3.2-4.7-6.6-6.5-10.2-.2-.5-.5-.9-.7-1.4h-.2ZM53.2,370.1c-3.1,0-5.7-2.5-5.7-5.7s2.5-5.7,5.7-5.7,5.7,2.5,5.7,5.7-2.5,5.7-5.7,5.7ZM73.2,372.9c-4.1-2-8-4.4-11.6-7.2v-1.3c0-2.9-1.4-5.4-3.6-6.9.8-8.6,3.6-16.8,8.1-24.1,1.8,4.1,4.5,7.9,7.7,11,.8.8,1.7,1.6,2.6,2.3,2.7,2.2,5.8,3.9,9.1,5.3,2.3,7.6,6.1,14.8,11.2,20.9h-23.6.1ZM135.7,365.7c-.4.3-.8.7-1.3,1-1,.8-2.1,1.5-3.2,2.2-2.3,1.5-4.7,2.8-7.1,4h-23.6c-5.2-5.8-9.1-12.5-11.6-19.8,3.1.9,6.3,1.3,9.7,1.3s2.4,0,3.6-.2c1.2-.1,2.3-.3,3.5-.5,3.5-.7,6.8-1.9,9.8-3.6,9.6,4.2,20.3,5.8,30.8,4.5-.3.4-.7.9-1,1.3-.4,0-.9-.1-1.3-.1-4.7,0-8.5,3.8-8.5,8.5s0,.9.1,1.3h.1v.1ZM144.1,370.1c-3.1,0-5.7-2.5-5.7-5.7s2.5-5.7,5.7-5.7,5.7,2.5,5.7,5.7-2.5,5.7-5.7,5.7ZM152.6,344.4c-1.2,2.5-2.5,4.8-3.9,7.1-10.2,1.7-20.6.6-30.1-3.1,3.7-2.5,6.9-5.8,9.5-9.5.7-1,1.3-2,1.8-3,2.6-4.8,4.1-10.2,4.2-15.9,2.8-2,5.3-4.3,7.7-6.8.7-.7,1.3-1.4,2-2.2,3.5-4.1,6.5-8.6,8.8-13.5v47h0v-.1Z" style="fill: #272626; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M63.1,319.9c0,3.6.7,7,1.8,10.2-5.1,7.8-8.4,16.7-9.5,26.1-.7-.2-1.5-.3-2.2-.3s-.9,0-1.3.1c-2.5-3.2-4.7-6.6-6.5-10.2-.2-.5-.5-.9-.7-1.4v-32.8c6.7-4.3,14.2-7.1,22.1-8.2-1.9,4-3.2,8.4-3.5,13v3.5h-.2Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M96.7,372.9h-23.5c-4.1-2-8-4.4-11.6-7.2v-1.3c0-2.9-1.4-5.4-3.6-6.9.8-8.6,3.6-16.8,8.1-24.1,1.8,4.1,4.5,7.9,7.7,11,.8.8,1.7,1.6,2.6,2.3,2.7,2.2,5.8,3.9,9.1,5.3,2.3,7.6,6.1,14.8,11.2,20.9h0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.4,354.6c-.3.4-.7.9-1,1.3-.4,0-.9-.1-1.3-.1-4.7,0-8.5,3.8-8.5,8.5s0,.9.1,1.3c-.4.3-.8.7-1.3,1-1,.8-2.1,1.5-3.2,2.2-2.3,1.5-4.7,2.8-7.1,4h-23.6c-5.2-5.8-9.1-12.5-11.6-19.8,3.1.9,6.3,1.3,9.7,1.3s2.4,0,3.6-.2c1.2-.1,2.3-.3,3.5-.5,3.5-.7,6.8-1.9,9.8-3.6,9.6,4.2,20.3,5.8,30.8,4.5h.1v.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M152.6,297.4v47c-1.2,2.5-2.5,4.8-3.9,7.1-10.2,1.7-20.6.6-30.1-3.1,3.7-2.5,6.9-5.8,9.5-9.5.7-1,1.3-2,1.8-3,2.6-4.8,4.1-10.2,4.2-15.9,2.8-2,5.3-4.3,7.7-6.8.7-.7,1.3-1.4,2-2.2,3.5-4.1,6.5-8.6,8.8-13.5h0v-.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M151.8,291.9c-2.5,6.5-6.1,12.5-10.6,17.6-.7.7-1.3,1.5-2,2.2-1.6,1.6-3.3,3.2-5.1,4.6-.2-2.5-.6-4.9-1.3-7.2-.3-1.1-.7-2.3-1.1-3.3-2.1-5.2-5.3-9.7-9.4-13.4.2-3.5,0-6.9-.3-10.3,0-1-.2-1.9-.4-2.9-.8-4.9-2.2-9.6-4.1-14.2h6.7c4.1,2,8,4.4,11.6,7.2,0,.4-.1.9-.1,1.3,0,.8.1,1.5.3,2.2.3,1,.7,1.9,1.3,2.7,1.5,2.2,4.1,3.6,7,3.6s.9,0,1.3-.1c2.5,3.1,4.6,6.4,6.4,10h-.2,0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M119.5,290.2c-2-1.4-4.1-2.7-6.4-3.7-1.1-.5-2.2-.9-3.3-1.3-3.5-1.2-7.2-1.8-11.1-1.8s-3.4.1-5.1.4c-2.5-2.4-5.2-4.5-8.1-6.5-.8-.5-1.6-1.1-2.5-1.6-2.3-1.4-4.6-2.6-7-3.6-3.2-1.4-6.4-2.4-9.8-3.2,2.3-1.5,4.6-2.8,7.1-4h41.1c2.2,4.9,3.8,10,4.5,15.3,0,1,.3,2,.4,2.9.2,2.3.3,4.6.2,7h0v.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M90.1,284.5c-2.4.6-4.8,1.5-7,2.5s-2.1,1.1-3.1,1.7c-4.7,2.9-8.7,6.9-11.6,11.5-8.4,1-16.5,3.7-23.8,8v-14.7c.3-.5.5-1.1.8-1.6,1.4-2.8,3.1-5.5,4.9-8,.5-.7,1-1.3,1.5-2,.4,0,.9.1,1.3.1,4.7,0,8.5-3.8,8.5-8.5s0-.9,0-1.3c.4-.3.9-.7,1.3-1,4.4.8,8.7,2.2,12.7,4,2.2,1,4.4,2.1,6.4,3.4.8.5,1.7,1,2.5,1.6,1.9,1.3,3.8,2.7,5.5,4.3h.2-.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <path d="M42.9,262.2h23c1.1,0,2,.9,2,2v9.5h0c0,4.2-2.1,7.9-5.2,10.2,0,0,3.2,0,8.1,1.3-1.4,1.1-2.6,2.3-3.9,3.6-6.6-1.5-11.4-1.5-13.1-1.5-3.5,4.9-6.3,10.4-8.1,16.3v29.4c1.8,6,4.6,11.5,8.2,16.5.2.3.5.7.8,1h.7c3.4,0,6.4,1.3,8.7,3.5,0-1.3.4-3.8,1.3-7.1,1.1,1.4,2.4,2.7,3.7,3.8-.9,3.8-1.2,7-1.4,9.3.2,1,.4,2,.4,3h0v9.5c0,1.1-.9,2-2,2h-20.9v1.2h-4.2v-10.9h-3.1v-89.2h3.1v-11.5c0-.5.2-1,.6-1.4,0,0,.2-.2.3-.2.3-.2.7-.3,1.1-.3h-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M131.8,262.2h26.7c.4,0,.8.1,1.1.3.2.2.4.3.5.5.2.3.3.7.3,1.1v3.9h2.5v-3.3h78.7c1.1,0,2,.9,2,2v11.9c0,.3-.2.5-.5.5h-1.9v2.4h1.9c.3,0,.5.2.5.5v11.2c0,.3-.2.5-.5.5h-1.9v2.4h1.9c.3,0,.5.2.5.5v77.1c0,1.1-.9,2-2,2h-40.2c-.3,0-.5-.2-.5-.5v-1.9h-2.4v1.9c0,.3-.2.5-.5.5h-11c-.3,0-.5-.2-.5-.5v-1.9h-2.4v1.9c0,.3-.2.5-.5.5h-26.9c-.3,0-.5-.2-.5-.5v-1.9h-2.3v.7c0,.3-.2.5-.5.5h-21.7c-1.1,0-2-.9-2-2v-9.5h0c0-3.7,1.6-7,4.1-9.3-1.3-.1-3.8-.5-7.1-1.3,1.4-1.1,2.7-2.4,3.9-3.7,5.8,1.3,10.2,1.5,12.4,1.5h0c.2-.3.4-.5.6-.8,3.6-4.9,6.4-10.5,8.2-16.5v-29.4c-1.8-6-4.6-11.5-8.2-16.5-.2-.3-.5-.7-.8-1h-.7c-3.3,0-6.3-1.3-8.5-3.4,0,.6-.2,3.5-1.3,7.9-1.1-1.4-2.3-2.7-3.6-3.9.9-4.1,1.3-7.5,1.4-9.9-.3-1-.4-2.2-.4-3.3h0v-9.5c0-1.1.9-2,2-2v.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M123.8,346.8c2.5.8,4.8,1.5,6.9,2-1.2,1.3-2.5,2.5-3.9,3.7-2.1-.6-4.6-1.3-7.3-2.4,1.5-1,2.9-2.1,4.2-3.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M128.8,286.9c1.3,1.2,2.5,2.5,3.6,3.9-.5,2.1-1.3,4.6-2.3,7.3-1-1.5-2.1-2.9-3.3-4.2.8-2.5,1.5-4.8,2-7h0Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M123.5,302c1.4-2.9,2.5-5.6,3.4-8.2,1.2,1.3,2.3,2.7,3.3,4.2h0c-1,2.7-2.4,5.6-4.1,8.6,1.7,3.7,2.6,7.8,2.6,12.2,0,10.3-5.2,19.3-13.1,24.7,2.8,1.4,5.6,2.5,8.2,3.4-1.3,1.2-2.8,2.3-4.2,3.3-2.7-1.1-5.6-2.4-8.6-4.1h0c-3.7,1.6-7.9,2.6-12.2,2.6-10.2,0-19.2-5.1-24.6-13-1.4,2.8-2.5,5.6-3.4,8.2-1.2-1.3-2.3-2.7-3.3-4.2,1-2.7,2.4-5.5,4.1-8.5-1.7-3.7-2.6-7.9-2.6-12.3,0-10.2,5.1-19.2,13-24.6-2.8-1.4-5.6-2.5-8.2-3.4,1.3-1.2,2.7-2.3,4.2-3.3,2.6,1,5.5,2.4,8.5,4.1,3.7-1.7,7.9-2.6,12.3-2.6,10.2,0,19.3,5.2,24.6,13h0l.1-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M67.6,339.6c1,1.5,2.1,2.9,3.3,4.2-.8,2.5-1.5,4.8-2,6.9-1.3-1.2-2.5-2.5-3.7-3.8.5-2.1,1.3-4.6,2.3-7.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M70.8,285.2c2.1.5,4.6,1.3,7.3,2.3-1.5,1-2.9,2.1-4.2,3.3-2.5-.8-4.8-1.5-6.9-2,1.2-1.3,2.5-2.5,3.9-3.6h-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <circle cx="192.4" cy="365.4" r="7" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="215.4 264.8 206.5 264.8 206.5 267.2 206.5 268 215.4 268 215.4 264.8" style="fill: #d7d7d7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="181.6" y="264.8" width="24.9" height="2.4" style="fill: #a4a4a5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="223.4" y="299.7" width="15.8" height="42.5" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <circle cx="232.9" cy="287.7" r="8.4" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <circle cx="232.9" cy="287.7" r="3.9" style="fill: #d7d5d6; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <g>
+          <circle cx="51.77" cy="273.91" r="9.8" transform="translate(-223.71 316.57) rotate(-88.1)" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M56.8,272.7v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="141.9" cy="273.9" r="9.8" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.9,272.7v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="51.82" cy="364" r="9.8" transform="translate(-313.7 403.72) rotate(-88.1)" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M56.8,362.8v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="141.9" cy="364" r="9.8" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.9,362.8v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="39.9" y="307.1" width="114" height="23.2" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <path d="M222.7,272.1v79.5c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4v-79.5c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4Z" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M211,283.3v57c0,2-1.7,3.7-3.8,3.7h-22.5c-1,0-1.9-.4-2.5-1l-.2-.2-13.9-13.2-.5-.5h0c-.6-.7-.9-1.5-.9-2.4v-30c0-.9.4-1.8.9-2.4h0l.5-.5,13.9-13.2.2-.2c.7-.6,1.6-1,2.5-1h22.5c2.1,0,3.8,1.6,3.8,3.7v.2Z" style="fill: #030303; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <g>
+          <rect x="187.4" y="288.3" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="189.9" y="290.8" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="290.8" x2="203" y2="288.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="290.8" x2="187.4" y2="288.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="293.5" x2="187.4" y2="296" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="293.5" x2="203" y2="296" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <rect x="173.1" y="307.9" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="175.6" y="310.5" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="186.2" y1="310.5" x2="188.7" y2="307.9" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="175.6" y1="310.5" x2="173.1" y2="307.9" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="175.6" y1="313.1" x2="173.1" y2="315.7" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="186.2" y1="313.1" x2="188.7" y2="315.7" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <rect x="187.4" y="327.5" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="189.9" y="330.1" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="330.1" x2="203" y2="327.5" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="330.1" x2="187.4" y2="327.5" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="332.7" x2="187.4" y2="335.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="332.7" x2="203" y2="335.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <g>
+        <rect x="239.2" y="299.7" width="2.1" height="42.2" style="fill: #737374; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="216.4" y="323.5" width="25" height="42.5" style="fill: #828183; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="210.1" y="319.3" width="11.5" height="51" rx="3.6" ry="3.6" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+  </g>
+  <g id="DRIVE_CAGE_49">
+    <g>
+      <rect x="32.24" y="10.07" width="214.84" height="7.54" style="fill: #181818; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.24" y="53.08" width="19.04" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="51.29" y="53.08" width="159.73" height="8.79" style="fill: #e5e5e5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="210.94" y="53.08" width="36.14" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.24" y="34.56" width="214.84" height="18.45" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.32" y="17.6" width="214.84" height="16.96" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="41.95 34.56 32.24 34.56 32.24 8.34 37.62 8.34 39.19 17.6 41.95 34.56" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="241.71 8.34 247.08 8.34 247.08 34.56 237.45 34.56 241.71 8.34" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="40.23" y="8.34" width="198.93" height="1.73" style="fill: #adc174; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M92.65,17.6l5.9-8.16c.52-.71,1.27-1.1,2.17-1.1h77.96c.82,0,1.64.39,2.17,1.1l5.9,8.16h-94.09,0Z" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="51.29" y="53.08" width="159.73" height="8.79" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="50.69 8.34 50.69 17.6 39.19 17.6 37.62 8.34 50.69 8.34" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="228.71 8.34 228.71 17.6 240.21 17.6 241.71 8.34 228.71 8.34" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M51.29,59.28v5.97h-19.04v-5.97c0-1.57,1.19-2.83,2.69-2.83h13.67c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M247.08,59.28v5.97h-36.14v-5.97c0-1.57,1.19-2.83,2.69-2.83h30.77c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M211.01,59.28v5.97H51.29v-5.97c0-1.57,1.19-2.83,2.69-2.83h154.35c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="37.62 8.34 41.95 34.56 50.99 34.56 50.99 8.34 37.62 8.34" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="228.41 34.56 237.45 34.56 241.71 8.34 228.41 8.34 228.41 34.56" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="50.99" y="8.34" width="177.43" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="113.94" y="8.34" width="51.6" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    </g>
+    <g>
+      <rect x="23.43" y="11.4" width="232.54" height="44.35" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="255.97" y="24.9" width="2.31" height="17.35" style="fill: #3d5aa8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="28.66 7 250.74 7 250.74 11.32 249.47 11.32 249.47 8.34 29.93 8.34 29.93 11.32 28.66 11.32 28.66 7" style="fill: #bfbfbf; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="251.94" y="22.39" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="244.02" y="23.57" width="1.57" height="19.94" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="247.98" y="22.39" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <rect x="24.85" y="57.87" width="2.84" height="2.83" style="fill: #b7b7b7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="24.85 55.75 30.38 55.75 30.38 63.52 24.85 63.52 24.85 60.7 27.69 60.7 27.69 57.87 24.85 57.87 24.85 55.75" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+  </g>
+  <g id="DRIVE_CAGE_50">
+    <g>
+      <rect x="31.63" y="68.68" width="214.84" height="7.54" style="fill: #181818; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="31.63" y="111.7" width="19.04" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="50.67" y="111.7" width="159.73" height="8.79" style="fill: #e5e5e5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="210.32" y="111.7" width="36.14" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="31.63" y="93.17" width="214.84" height="18.45" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="31.7" y="76.22" width="214.84" height="16.96" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="41.34 93.17 31.63 93.17 31.63 66.96 37 66.96 38.57 76.22 41.34 93.17" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="241.09 66.96 246.47 66.96 246.47 93.17 236.83 93.17 241.09 66.96" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="39.62" y="66.96" width="198.93" height="1.73" style="fill: #adc174; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M92.04,76.22l5.9-8.16c.52-.71,1.27-1.1,2.17-1.1h77.96c.82,0,1.64.39,2.17,1.1l5.9,8.16h-94.09,0Z" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="50.67" y="111.7" width="159.73" height="8.79" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="50.07 66.96 50.07 76.22 38.57 76.22 37 66.96 50.07 66.96" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="228.1 66.96 228.1 76.22 239.6 76.22 241.09 66.96 228.1 66.96" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M50.67,117.9v5.97h-19.04v-5.97c0-1.57,1.19-2.83,2.69-2.83h13.67c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M246.47,117.9v5.97h-36.14v-5.97c0-1.57,1.19-2.83,2.69-2.83h30.77c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M210.4,117.9v5.97H50.67v-5.97c0-1.57,1.19-2.83,2.69-2.83h154.35c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="37 66.96 41.34 93.17 50.37 93.17 50.37 66.96 37 66.96" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="227.8 93.17 236.83 93.17 241.09 66.96 227.8 66.96 227.8 93.17" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="50.37" y="66.96" width="177.43" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="113.32" y="66.96" width="51.6" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    </g>
+    <g>
+      <rect x="22.82" y="70.02" width="232.54" height="44.35" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="255.35" y="83.52" width="2.31" height="17.35" style="fill: #3d5aa8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="28.04 65.62 250.13 65.62 250.13 69.94 248.86 69.94 248.86 66.96 29.31 66.96 29.31 69.94 28.04 69.94 28.04 65.62" style="fill: #bfbfbf; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="251.32" y="81.01" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="243.41" y="82.18" width="1.57" height="19.94" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="247.36" y="81.01" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <rect x="24.24" y="116.49" width="2.84" height="2.83" style="fill: #b7b7b7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="24.24 114.37 29.76 114.37 29.76 122.14 24.24 122.14 24.24 119.31 27.07 119.31 27.07 116.49 24.24 116.49 24.24 114.37" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+  </g>
+  <g id="DRIVE_CAGE_51">
+    <g>
+      <rect x="32.09" y="128.75" width="214.84" height="7.54" style="fill: #181818; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.09" y="171.77" width="19.04" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="51.13" y="171.77" width="159.73" height="8.79" style="fill: #e5e5e5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="210.78" y="171.77" width="36.14" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.09" y="153.24" width="214.84" height="18.45" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.16" y="136.28" width="214.84" height="16.96" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="41.79 153.24 32.09 153.24 32.09 127.02 37.46 127.02 39.03 136.28 41.79 153.24" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="241.55 127.02 246.92 127.02 246.92 153.24 237.29 153.24 241.55 127.02" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="40.08" y="127.02" width="198.93" height="1.73" style="fill: #adc174; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M92.5,136.28l5.9-8.16c.52-.71,1.27-1.1,2.17-1.1h77.96c.82,0,1.64.39,2.17,1.1l5.9,8.16h-94.09,0Z" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="51.13" y="171.77" width="159.73" height="8.79" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="50.53 127.02 50.53 136.28 39.03 136.28 37.46 127.02 50.53 127.02" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="228.55 127.02 228.55 136.28 240.05 136.28 241.55 127.02 228.55 127.02" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M51.13,177.97v5.97h-19.04v-5.97c0-1.57,1.19-2.83,2.69-2.83h13.67c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M246.92,177.97v5.97h-36.14v-5.97c0-1.57,1.19-2.83,2.69-2.83h30.77c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M210.86,177.97v5.97H51.13v-5.97c0-1.57,1.19-2.83,2.69-2.83h154.35c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="37.46 127.02 41.79 153.24 50.83 153.24 50.83 127.02 37.46 127.02" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="228.26 153.24 237.29 153.24 241.55 127.02 228.26 127.02 228.26 153.24" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="50.83" y="127.02" width="177.43" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="113.78" y="127.02" width="51.6" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    </g>
+    <g>
+      <rect x="23.27" y="130.08" width="232.54" height="44.35" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="255.81" y="143.58" width="2.31" height="17.35" style="fill: #3d5aa8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="28.5 125.69 250.58 125.69 250.58 130 249.31 130 249.31 127.02 29.77 127.02 29.77 130 28.5 130 28.5 125.69" style="fill: #bfbfbf; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="251.78" y="141.07" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="243.86" y="142.25" width="1.57" height="19.94" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="247.82" y="141.07" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <rect x="24.69" y="176.55" width="2.84" height="2.83" style="fill: #b7b7b7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="24.69 174.43 30.22 174.43 30.22 182.21 24.69 182.21 24.69 179.38 27.53 179.38 27.53 176.55 24.69 176.55 24.69 174.43" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+  </g>
+</svg>

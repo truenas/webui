@@ -10,7 +10,6 @@
 
 <mat-menu #menu="matMenu" overlapTrigger="false">
   <button
-    *ixRequiresRoles="requiredRoles"
     mat-menu-item
     ixTest="choose-pool"
     [ixUiSearch]="searchableElements.elements.choosePool"
@@ -18,18 +17,9 @@
   >
     {{ 'Choose Pool' | translate }}
   </button>
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-menu-item
-    ixTest="advanced-settings"
-    [ixUiSearch]="searchableElements.elements.advancedSettings"
-    (click)="onAdvancedSettings()"
-  >
-    {{ 'Advanced Settings' | translate }}
-  </button>
-  @if (!!(kubernetesStore.selectedPool$ | async)) {
+  
+  @if (!!(dockerStore.selectedPool$ | async)) {
     <button
-      *ixRequiresRoles="requiredRoles"
       mat-menu-item
       ixTest="unset-pool"
       (click)="onUnsetPool()"

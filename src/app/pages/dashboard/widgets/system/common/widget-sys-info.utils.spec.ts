@@ -1,6 +1,6 @@
 import { Codename } from 'app/enums/codename.enum';
 import {
-  getMiniImagePath, getProductEnclosure, getProductImage, getServerProduct, getSystemVersion,
+  getProductEnclosure, getProductImageSrc, getServerProduct, getSystemVersion,
   isRackmount,
 } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 
@@ -28,19 +28,23 @@ describe('getServerProduct', () => {
   });
 });
 
-describe('getProductImage', () => {
+describe('getProductImageSrc', () => {
   it('should return the correct image path for provided product', () => {
-    expect(getProductImage('TRUENAS-M40-HA')).toBe('assets/images/servers/M40.png');
-    expect(getProductImage('TRUENAS-MINI-R')).toBe('assets/images/servers/MINI-R.png');
-    expect(getProductImage('FREENAS-MINI-XL')).toBe('assets/images/freenas_mini_xl_cropped.png');
-  });
-});
-
-describe('getMiniImagePath', () => {
-  it('should return the correct image path for provided product', () => {
-    expect(getMiniImagePath('TRUENAS-M40-HA')).toBeUndefined();
-    expect(getMiniImagePath('TRUENAS-MINI-R')).toBe('servers/MINI-R.png');
-    expect(getMiniImagePath('FREENAS-MINI-XL')).toBe('freenas_mini_xl_cropped.png');
+    expect(
+      getProductImageSrc('TRUENAS-M40-HA', true),
+    ).toBe('assets/images/servers/M40.png');
+    expect(
+      getProductImageSrc('TRUENAS-MINI-R', true),
+    ).toBe('assets/images/servers/MINI-R.png');
+    expect(
+      getProductImageSrc('FREENAS-MINI-XL', true),
+    ).toBe('assets/images/freenas_mini_xl_cropped.png');
+    expect(
+      getProductImageSrc('TRUENAS-MINI-R', true),
+    ).toBe('assets/images/servers/MINI-R.png');
+    expect(
+      getProductImageSrc('FREENAS-MINI-XL', true),
+    ).toBe('assets/images/freenas_mini_xl_cropped.png');
   });
 });
 

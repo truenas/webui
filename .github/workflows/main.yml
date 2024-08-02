@@ -51,18 +51,6 @@ jobs:
       - name: Build
         run: yarn lint
 
-  lint-translations:
-    name: Validate translation strings
-    needs: [install]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install
-        uses: ./.github/actions/prepare
-      - name: Validate
-        run: yarn run validate-translations
-
   test:
     name: Run tests
     needs: [install]

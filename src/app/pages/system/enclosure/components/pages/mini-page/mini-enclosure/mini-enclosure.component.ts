@@ -25,14 +25,8 @@ export class MiniEnclosureComponent {
     private store: EnclosureStore,
   ) {}
 
-  protected onSlotSelected(slot: DashboardEnclosureSlot): void {
-    // For Minis view, selecting an empty slot is akin to unselecting the slot.
-    if (!slot.dev) {
-      this.store.selectSlot(null);
-      return;
-    }
-
-    this.store.selectSlot(slot.drive_bay_number);
+  protected onSlotSelected(slot: DashboardEnclosureSlot | null): void {
+    this.store.selectSlot(slot ? slot.drive_bay_number : null);
   }
 
   readonly slots = computed(() => {

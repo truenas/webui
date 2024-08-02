@@ -1,13 +1,15 @@
 import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { produce } from 'immer';
 import { chain } from 'lodash';
-import { switchMap, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { DriveBayLightStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
+import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -29,9 +31,10 @@ const initialState: EnclosureState = {
   selectedEnclosureIndex: 0,
   selectedSlotNumber: null,
   selectedView: EnclosureView.Pools,
-  selectedSide: undefined, // Undefined means front or top and will be picked in EnclosureSideComponent.
+  selectedSide: undefined,
 };
 
+@UntilDestroy()
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly stateAsSignal = toSignal(
@@ -91,7 +94,12 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       switchMap(() => {
         return this.ws.call('webui.enclosure.dashboard').pipe(
           tap((enclosures: DashboardEnclosure[]) => {
-            this.patchState({ enclosures });
+            this.patchState((state) => {
+              return {
+                enclosures,
+                selectedSide: getDefaultSide(enclosures[state.selectedEnclosureIndex]),
+              };
+            });
           }),
           this.errorHandler.catchError(),
           finalize(() => {
@@ -102,8 +110,32 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     );
   });
 
+  update = this.effect((origin$) => {
+    return origin$.pipe(
+      switchMap(() => {
+        return this.ws.call('webui.enclosure.dashboard').pipe(
+          tap((enclosures: DashboardEnclosure[]) => {
+            this.patchState({ enclosures });
+          }),
+          this.errorHandler.catchError(),
+        );
+      }),
+    );
+  });
+
+  listenForDiskUpdates(): Observable<unknown> {
+    return this.ws.subscribe('disk.query').pipe(
+      tap(() => this.update()),
+    );
+  }
+
   selectEnclosure = this.updater((state, id: string) => {
-    const index = state.enclosures.findIndex((enclosure) => enclosure.id === id);
+    let index = state.enclosures.findIndex((enclosure) => enclosure.id === id);
+
+    if (index === -1) {
+      // This could happen if user navigates to a non-existent enclosure via URL.
+      index = 0;
+    }
 
     if (index === state.selectedEnclosureIndex) {
       return state;
@@ -113,7 +145,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       ...state,
       selectedEnclosureIndex: index,
       selectedSlotNumber: null,
-      selectedSide: undefined,
+      selectedSide: getDefaultSide(state.enclosures[index]),
       selectedView: EnclosureView.Pools,
     };
   });

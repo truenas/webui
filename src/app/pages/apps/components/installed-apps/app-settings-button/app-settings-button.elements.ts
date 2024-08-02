@@ -11,7 +11,6 @@ export const appSettingsButtonElements = {
     },
     advancedSettings: {
       hierarchy: [T('Advanced Settings')],
-      synonyms: [T('Kubernetes Settings')],
       anchor: 'advanced-settings',
     },
     choosePool: {

@@ -146,7 +146,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
     expect(items).toEqual([
       'Platform: TRUENAS-M40-HA',
       'Version: ElectricEel-24.10.0-MASTER-20240301-233006',
-      'License: Best contract, expires 2025-01-01',
+      'Support License: Best contract, expires 2025-01-01',
       'System Serial: AA-00002',
       'Hostname: test-hostname-b',
       'Uptime: 1 minute 17 seconds as of 2024-03-15 10:34:11',

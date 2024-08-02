@@ -26,6 +26,7 @@ export class EnclosureDashboardComponent {
     private ws: WebSocketService,
   ) {
     this.enclosureStore.initiate();
+    this.enclosureStore.listenForDiskUpdates().pipe(untilDestroyed(this)).subscribe();
 
     this.route.paramMap
       .pipe(untilDestroyed(this))

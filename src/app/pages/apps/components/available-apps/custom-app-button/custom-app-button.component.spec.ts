@@ -10,7 +10,7 @@ import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 
 describe('CustomAppButtonComponent', () => {
   let spectator: SpectatorRouting<CustomAppButtonComponent>;
@@ -23,7 +23,7 @@ describe('CustomAppButtonComponent', () => {
     declarations: [MockComponent(AppCardComponent)],
     providers: [
       mockAuth(),
-      mockProvider(KubernetesStore, {
+      mockProvider(DockerStore, {
         selectedPool$: of('selected pool'),
       }),
     ],
@@ -51,8 +51,9 @@ describe('CustomAppButtonComponent', () => {
   });
 
   it('disables Custom App button if pool is not set', () => {
-    const store = spectator.inject(KubernetesStore);
+    const store = spectator.inject(DockerStore);
     Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+    spectator.detectChanges();
 
     expect(button.isDisabled()).toBeTruthy();
   });

@@ -1,8 +1,9 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { IconGroupOption } from 'app/modules/forms/ix-forms/components/ix-icon-group/icon-group-option.interface';
 
 @UntilDestroy()
 @Component({
@@ -12,30 +13,30 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxIconGroupComponent implements ControlValueAccessor {
-  @Input({ required: true }) options: Map<string, string>;
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
+  readonly options = input.required<IconGroupOption[]>();
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
 
-  isDisabled = false;
-  value: string;
+  protected isDisabled = false;
+  protected value: IconGroupOption['value'];
 
   constructor(
-    public controlDirective: NgControl,
+    protected controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
   }
 
-  onChange: (value: string) => void = (): void => {};
-  onTouch: () => void = (): void => {};
+  protected onChange: (value: IconGroupOption['value']) => void = (): void => {};
+  protected onTouch: () => void = (): void => {};
 
-  writeValue(value: string): void {
-    this.value = this.options.has(value) ? value : null;
+  writeValue(value: IconGroupOption['value']): void {
+    this.value = value;
     this.cdr.markForCheck();
   }
 
-  registerOnChange(onChange: (value: string) => void): void {
+  registerOnChange(onChange: (value: IconGroupOption['value']) => void): void {
     this.onChange = onChange;
   }
 
@@ -48,12 +49,8 @@ export class IxIconGroupComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  onValueChanged(value: string): void {
+  protected onValueChanged(value: IconGroupOption['value']): void {
     this.writeValue(value);
     this.onChange(this.value);
-  }
-
-  protected keepOrder(): number {
-    return 0;
   }
 }

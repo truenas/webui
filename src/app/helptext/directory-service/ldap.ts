@@ -46,7 +46,7 @@ export const helptextLdap = {
   ldap_auxiliary_parameters_tooltip: T('Additional options for <a\
  href="https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5"\
  target="_blank">nslcd.conf</a>.'),
-  ldap_schema_tooltip: T('Select a schema when Samba Schema is set.'),
+  ldap_schema_tooltip: T('Select a schema when LDAP NSS schema is set.'),
   ldap_enable_tooltip: T('Activates the configuration. Unset to disable the\
  configuration without deleting it.'),
 };

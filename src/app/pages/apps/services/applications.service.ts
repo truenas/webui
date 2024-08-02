@@ -9,7 +9,6 @@ import { ixChartApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -17,11 +16,8 @@ import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent, ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
-import { Choices } from 'app/interfaces/choices.interface';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
-import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -39,28 +35,12 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 export class ApplicationsService {
   constructor(private ws: WebSocketService, private translate: TranslateService) {}
 
-  getKubernetesStatus(): Observable<KubernetesStatusData> {
-    return this.ws.call('kubernetes.status');
-  }
-
-  getKubernetesStatusUpdates(): Observable<ApiEvent<KubernetesStatusData>> {
-    return this.ws.subscribe('kubernetes.state');
-  }
-
-  getKubernetesConfig(): Observable<KubernetesConfig> {
-    return this.ws.call('kubernetes.config');
-  }
-
   getPoolList(): Observable<Pool[]> {
     return this.ws.call('pool.query');
   }
 
   getChartReleaseNames(): Observable<{ name: string }[]> {
     return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
-  }
-
-  getBindIpChoices(): Observable<Choices> {
-    return this.ws.call('kubernetes.bindip_choices');
   }
 
   getContainerConfig(): Observable<ContainerConfig> {
@@ -73,10 +53,6 @@ export class ApplicationsService {
 
   getInterfaces(): Observable<NetworkInterface[]> {
     return this.ws.call('interface.query');
-  }
-
-  getKubernetesServiceStarted(): Observable<boolean> {
-    return this.ws.call('service.started', [ServiceName.Kubernetes]);
   }
 
   getCatalogItem(name: string, catalog: string, train: string): Observable<CatalogApp> {

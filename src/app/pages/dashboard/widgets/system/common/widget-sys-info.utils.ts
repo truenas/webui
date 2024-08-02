@@ -6,24 +6,27 @@ export function getServerProduct(systemProduct: string): string {
   return serverSeries.find((series) => systemProduct?.includes(series));
 }
 
-export function getMiniImagePath(systemProduct: string): string {
-  return Object.values(miniSeries).find((series) => series.images.includes(systemProduct))?.pathImg;
-}
+export function getProductImageSrc(
+  systemProduct: string,
+  cropDefaultImg = false,
+): string | null {
+  const defaultImg = cropDefaultImg ? 'ix-original-cropped.png' : 'ix-original.svg';
+  const getProductImageName = (productName: string): string | null => {
+    if (productName?.includes('MINI')) {
+      const getImage = Object.values(miniSeries).find(
+        (series) => series.images.includes(productName),
+      )?.pathImg;
+      return getImage || null;
+    }
+    const product = serverSeries.find((series) => productName?.includes(series));
+    return product ? `/servers/${product}.png` : null;
+  };
 
-export function getProductImage(systemProduct: string): string {
-  if (!systemProduct) {
-    return '';
+  const imgName = getProductImageName(systemProduct);
+  if (!imgName) {
+    return 'assets/images/' + defaultImg;
   }
-
-  let product: string;
-
-  if (systemProduct.includes('MINI')) {
-    product = getMiniImagePath(systemProduct);
-  } else {
-    product = getServerProduct(systemProduct) ? `servers/${getServerProduct(systemProduct)}.png` : 'ix-original.svg';
-  }
-
-  return product ? `assets/images/${product}` : '';
+  return 'assets/images' + (imgName.startsWith('/') ? imgName : ('/' + imgName));
 }
 
 /**

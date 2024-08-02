@@ -1,8 +1,14 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import {
+  DashboardEnclosure,
+  DashboardEnclosureElements,
+  DashboardEnclosureSlot,
+} from 'app/interfaces/enclosure.interface';
 import {
   PoolsLegendComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/pools-view/pools-legend/pools-legend.component';
+} from 'app/pages/system/enclosure/components/pools-legend/pools-legend.component';
+import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 
 describe('PoolsLegendComponent', () => {
   let spectator: Spectator<PoolsLegendComponent>;
@@ -13,12 +19,16 @@ describe('PoolsLegendComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        slots: [
-          { pool_info: { pool_name: 'pool1' } },
-          { pool_info: { pool_name: 'pool2' } },
-          { pool_info: { pool_name: 'pool1' } },
-          {},
-        ] as DashboardEnclosureSlot[],
+        enclosure: {
+          elements: {
+            [EnclosureElementType.ArrayDeviceSlot]: {
+              1: { pool_info: { pool_name: 'pool1' }, is_front: true } as DashboardEnclosureSlot,
+              2: { pool_info: { pool_name: 'pool2' }, is_front: true } as DashboardEnclosureSlot,
+              3: { pool_info: null, is_front: true } as DashboardEnclosureSlot,
+            },
+          } as DashboardEnclosureElements,
+        } as DashboardEnclosure,
+        side: EnclosureSide.Front,
         poolColors: {
           pool1: 'red',
           pool2: 'blue',

@@ -43,7 +43,7 @@ describe('WidgetPoolComponent', () => {
     spectator = createComponent({
       props: {
         settings: {
-          poolId: '1',
+          poolId: 1,
         },
         size: SlotSize.Full,
       },
@@ -88,7 +88,7 @@ describe('WidgetPoolComponent', () => {
             },
           } as Pool)),
           getDatasetById: jest.fn(() => of({
-            id: '1',
+            id: 1,
             available: {
               parsed: 557187072,
             },

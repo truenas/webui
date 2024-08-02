@@ -10,7 +10,6 @@ export enum ServiceName {
   Cifs = 'cifs',
   Ups = 'ups',
   Http = 'http',
-  Kubernetes = 'kubernetes',
 }
 
 export const serviceNames = new Map<ServiceName, string>([

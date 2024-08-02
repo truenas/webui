@@ -1,5 +1,7 @@
 <h3>{{ 'Pools' | translate }}</h3>
 
-<!-- TODO: Same pool list as in normal enclosure -->
-
-Not implemented.
+<ix-pools-legend
+  [enclosure]="enclosure()"
+  [side]="selectedSide()"
+  [poolColors]="poolColors()"
+></ix-pools-legend>

@@ -1,7 +1,14 @@
+import { signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
-import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import {
+  DashboardEnclosure,
+  DashboardEnclosureElements,
+  DashboardEnclosureSlot,
+} from 'app/interfaces/enclosure.interface';
 import {
   MiniDisksOverviewComponent,
 } from 'app/pages/system/enclosure/components/pages/mini-page/mini-disks-overview/mini-disks-overview.component';
@@ -30,6 +37,15 @@ describe('MiniPageComponent', () => {
     { dev: 'ada2', is_front: true },
   ] as DashboardEnclosureSlot[];
 
+  const selectedEnclosure = signal({
+    elements: {
+      [EnclosureElementType.ArrayDeviceSlot]: {
+        1: slots[0],
+        2: slots[1],
+      },
+    } as DashboardEnclosureElements,
+  } as DashboardEnclosure);
+
   const createComponent = createComponentFactory({
     component: MiniPageComponent,
     declarations: [
@@ -44,17 +60,11 @@ describe('MiniPageComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
+        selectedEnclosure,
         enclosureLabel: () => 'MINI-X',
         selectedSlot: jest.fn(() => null),
-        selectedEnclosure: () => ({
-          elements: {
-            [EnclosureElementType.ArrayDeviceSlot]: {
-              1: slots[0],
-              2: slots[1],
-            },
-          },
-        }),
       }),
+      mockProvider(Router),
     ],
   });
 
@@ -70,7 +80,6 @@ describe('MiniPageComponent', () => {
   it('shows pools and enclosure components', () => {
     const pools = spectator.query(MiniPoolsComponent);
     expect(pools).toExist();
-    expect(pools.slots).toMatchObject(slots);
 
     const enclosures = spectator.query(MiniEnclosureComponent);
     expect(enclosures).toExist();
@@ -99,5 +108,16 @@ describe('MiniPageComponent', () => {
       expect(driveStats).toExist();
       expect(driveStats.slot).toMatchObject(slots[0]);
     });
+  });
+
+  it('redirects to normal enclosure view when selected enclosure is not a MINI', () => {
+    selectedEnclosure.set({
+      id: '123',
+      model: EnclosureModel.M40,
+      elements: {},
+    } as DashboardEnclosure);
+    spectator.detectChanges();
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system', 'viewenclosure', '123']);
   });
 });

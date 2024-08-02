@@ -10,8 +10,6 @@
 }
 
 .svg-container {
-  fill-opacity: 0.3;
-
   &.static {
     pointer-events: none;
   }
@@ -20,6 +18,7 @@
     .overlay-rect {
       cursor: pointer;
       fill: var(--black);
+      fill-opacity: 0.3;
       transition: fill-opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
 
       &:hover {
@@ -37,6 +36,22 @@
         &.tinted {
           fill: var(--primary) !important;
         }
+      }
+
+      &.selected-vdev-disk {
+        filter: brightness(1.5);
+        stroke: white;
+        stroke-dasharray: none;
+        stroke-width: 4px;
+
+        &.tinted {
+          fill: var(--primary) !important;
+        }
+      }
+
+      &.not-selected-vdev-disk {
+        fill: black;
+        opacity: 0.5;
       }
     }
   }

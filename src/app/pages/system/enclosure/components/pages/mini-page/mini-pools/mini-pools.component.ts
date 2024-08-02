@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 @Component({
   selector: 'ix-mini-pools',
@@ -8,5 +8,11 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MiniPoolsComponent {
-  readonly slots = input.required<DashboardEnclosureSlot[]>();
+  readonly enclosure = this.store.selectedEnclosure;
+  readonly selectedSide = this.store.selectedSide;
+  readonly poolColors = this.store.poolColors;
+
+  constructor(
+    private store: EnclosureStore,
+  ) {}
 }

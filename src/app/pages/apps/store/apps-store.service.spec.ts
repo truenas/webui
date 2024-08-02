@@ -6,7 +6,6 @@ import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
-import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsState, AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -72,10 +71,6 @@ describe('AppsStore', () => {
         getLatestApps: jest.fn(() => of([{ ...installedAndRecommendedApp }])) as () => Observable<AvailableApp[]>,
         getInstalledAppsUpdates: jest.fn(() => of()) as () => Observable<ApiEvent<ChartRelease>>,
         getAllAppsCategories: jest.fn(() => of(['storage', 'media'])) as () => Observable<string[]>,
-        getKubernetesConfig: jest.fn(() => {
-          return of({ pool: 'ix-applications-pool' } as KubernetesConfig);
-        }) as () => Observable<KubernetesConfig>,
-        getKubernetesServiceStarted: jest.fn(() => of(true)) as () => Observable<boolean>,
         getAllChartReleases: jest.fn(() => {
           return of([
             ...installedChartReleases,

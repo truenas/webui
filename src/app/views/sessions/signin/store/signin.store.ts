@@ -202,12 +202,20 @@ export class SigninStore extends ComponentStore<SigninState> {
   private checkIfManagedByTrueCommand(): Observable<boolean> {
     return this.ws.call('truenas.managed_by_truecommand').pipe(
       tap((managedByTrueCommand) => this.patchState({ managedByTrueCommand })),
+      catchError((error) => {
+        this.errorHandler.showErrorModal(error);
+        return of(initialState.managedByTrueCommand);
+      }),
     );
   }
 
   private checkIfAdminPasswordSet(): Observable<boolean> {
     return this.ws.call('user.has_local_administrator_set_up').pipe(
       tap((wasAdminSet) => this.patchState({ wasAdminSet })),
+      catchError((error) => {
+        this.errorHandler.showErrorModal(error);
+        return of(initialState.wasAdminSet);
+      }),
     );
   }
 
@@ -223,6 +231,10 @@ export class SigninStore extends ComponentStore<SigninState> {
 
         this.subscribeToFailoverUpdates();
         return this.loadAdditionalFailoverInfo();
+      }),
+      catchError((error) => {
+        this.errorHandler.showErrorModal(error);
+        return of(undefined);
       }),
     );
   }

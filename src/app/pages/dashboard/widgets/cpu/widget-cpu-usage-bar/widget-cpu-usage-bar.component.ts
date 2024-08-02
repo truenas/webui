@@ -5,7 +5,7 @@ import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.inte
 import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
-import { cpuUsageBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usege-bar/widget-cpu-usage-bar.definition';
+import { cpuUsageBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-bar/widget-cpu-usage-bar.definition';
 
 @Component({
   selector: 'ix-widget-cpu-usage-bar',

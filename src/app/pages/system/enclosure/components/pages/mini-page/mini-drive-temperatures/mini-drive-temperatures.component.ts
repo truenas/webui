@@ -1,7 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, OnDestroy, computed,
+  ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
@@ -13,22 +14,23 @@ import { DiskTemperatureService } from 'app/services/disk-temperature.service';
   styleUrl: './mini-drive-temperatures.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MiniDriveTemperaturesComponent implements OnDestroy {
-  private temperature = toSignal(this.diskTemperatureService.temperature$);
-
+export class MiniDriveTemperaturesComponent {
+  private temperature = toSignal(this.diskTemperatureService.getTemperature());
+  private celsius = TemperatureUnit.Celsius;
   private readonly slots = computed(() => {
     return getSlotsOfSide(this.store.selectedEnclosure(), EnclosureSide.Front);
   });
 
+  isLoading = computed(() => !this.temperature());
+
   protected readonly disks = computed(() => {
     return this.slots()
       .filter((slot) => slot.dev)
-      .map((slot) => {
-        const value = this.temperature()?.values?.[slot.dev] || null;
-        const symbolText = `${this.temperature()?.symbolText}C`;
+      .map(({ dev }) => {
+        const data = this.temperature();
         return {
-          dev: slot.dev,
-          temperature: value !== null ? `${value} ${symbolText}` : undefined,
+          dev,
+          temperature: data?.[dev] ? `${data[dev]} ${this.celsius}` : null,
         };
       });
   });
@@ -36,12 +38,5 @@ export class MiniDriveTemperaturesComponent implements OnDestroy {
   constructor(
     private store: EnclosureStore,
     private diskTemperatureService: DiskTemperatureService,
-  ) {
-    this.diskTemperatureService.listenForTemperatureUpdates();
-    this.diskTemperatureService.diskTemperaturesSubscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.diskTemperatureService.diskTemperaturesUnsubscribe();
-  }
+  ) { }
 }

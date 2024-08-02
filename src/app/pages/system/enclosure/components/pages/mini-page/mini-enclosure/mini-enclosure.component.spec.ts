@@ -105,11 +105,4 @@ describe('MiniEnclosureComponent', () => {
 
     expect(spectator.inject(EnclosureStore).selectSlot).toHaveBeenCalledWith(1);
   });
-
-  it('unselects slots when an empty slot is clicked on in enclosure svg', () => {
-    const enclosureComponent = spectator.query(EnclosureSideStubComponent);
-    enclosureComponent.selectedSlot.set(enclosure.elements[EnclosureElementType.ArrayDeviceSlot][3]);
-
-    expect(spectator.inject(EnclosureStore).selectSlot).toHaveBeenCalledWith(null);
-  });
 });
