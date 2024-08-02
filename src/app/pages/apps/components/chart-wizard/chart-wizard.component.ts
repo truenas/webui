@@ -154,7 +154,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.isNew = true;
     this.isLoading = true;
     this.appService
-      .getCatalogItem(this.appId, this.catalog, this.train)
+      .getCatalogItem(this.appId, this.train)
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (app) => {

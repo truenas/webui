@@ -56,7 +56,7 @@ export class ApplicationsService {
     return this.ws.call('interface.query');
   }
 
-  getCatalogItem(name: string, catalog: string, train: string): Observable<CatalogApp> {
+  getCatalogItem(name: string, train: string): Observable<CatalogApp> {
     return this.ws.call('catalog.get_app_details', [name, { train }]);
   }
 
