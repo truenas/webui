@@ -3866,7 +3866,6 @@
   "Please specify the name of the image to pull. Format for the name is \"registry/repo/image\"": "Будь ласка, вкажіть назву зображення для отримання. Формат назви: \"registry/repo/image\"",
   "Please specify trains from which UI should retrieve available applications for the catalog.": "Будь ласка, вкажіть поїзди, з яких інтерфейс користувача має отримати доступні програми для каталогу.",
   "Please wait": "Будь ласка, зачекайте",
-  "Pod Logs": "Журнали Pod",
   "Pod Name": "Назва Pod",
   "Pod Shell": "Pod Shell",
   "Pods": "Pod-и",

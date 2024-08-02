@@ -3649,7 +3649,6 @@
   "Please specify the name of the image to pull. Format for the name is \"registry/repo/image\"": "请指定要拉取的镜像的名称。名称格式为 \"registry/repo/image\"",
   "Please specify trains from which UI should retrieve available applications for the catalog.": "请指定 UI 应从中检索目录可用应用程序的分支。",
   "Please wait": "请稍后",
-  "Pod Logs": "Pod 日志",
   "Pod Name": "Pod 名",
   "Pod Shell": "Pod Shell",
   "Pods": "Pods",

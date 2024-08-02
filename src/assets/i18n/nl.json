@@ -3603,7 +3603,6 @@
   "Please specify the name of the image to pull. Format for the name is \"registry/repo/image\"": "De naam opgeven van de image die je wilt ophalen. Formaat voor de naam is \"registry/repo/image\"",
   "Please specify trains from which UI should retrieve available applications for the catalog.": "Trains aangeven van welke gebruikersinterface beschikbare applicaties voor de catalogus moeten worden opgehaald.",
   "Please wait": "Even wachten",
-  "Pod Logs": "Pod loggingen",
   "Pod Name": "Podnaam",
   "Pod Shell": "Podshell",
   "Pods": "Pods",

@@ -33,8 +33,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DockerImagesListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
-  // TODO: Add back searchable elements for container images when
-  // replacement API is ready for `container.images` api
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
   // protected readonly searchableElements = dockerImagesListElements;
 
   dataProvider: AsyncDataProvider<ContainerImage>;

@@ -118,7 +118,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CustomAppButtonComponent,
     DockerStatusComponent,
     CatalogSettingsComponent,
-    // TODO: Add back the docker images components when the replacement API for `container.image` API is ready
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
     // DockerImagesListComponent,
     // DockerImageUpdateDialogComponent,
     // DockerImageDeleteDialogComponent,

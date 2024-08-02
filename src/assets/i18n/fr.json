@@ -3727,7 +3727,6 @@
   "Please specify the name of the image to pull. Format for the name is \"registry/repo/image\"": "Veuillez spécifier le nom de l'image à extraire. Le format du nom est \"registry/repo/image\"",
   "Please specify trains from which UI should retrieve available applications for the catalog.": "Veuillez spécifier les cannaux à partir desquels l'interface utilisateur doit récupérer les applications disponibles pour le catalogue.",
   "Please wait": "Veuillez patienter",
-  "Pod Logs": "Logs du pod",
   "Pod Name": "Nom du pod",
   "Pod Shell": "Shell du pod",
   "Pods": "Pods",
