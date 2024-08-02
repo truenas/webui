@@ -3,13 +3,13 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { WidgetSettingsComponent, dashboardWidget } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
+import { WidgetAppMemoryComponent } from 'app/pages/dashboard/widgets/apps/widget-app-memory/widget-app-memory.component';
 import { WidgetAppSettingsComponent } from 'app/pages/dashboard/widgets/apps/widget-app-settings/widget-app-settings.component';
-import { WidgetAppStatsComponent } from 'app/pages/dashboard/widgets/apps/widget-app-stats/widget-app-stats.component';
 
-export const appStatsWidget = dashboardWidget({
-  name: T('Application Stats'),
-  supportedSizes: [SlotSize.Half],
+export const appMemoryWidget = dashboardWidget({
+  name: T('Application Memory'),
+  supportedSizes: [SlotSize.Quarter],
   category: WidgetCategory.Apps,
-  component: WidgetAppStatsComponent,
+  component: WidgetAppMemoryComponent,
   settingsComponent: WidgetAppSettingsComponent as Type<WidgetSettingsComponent>,
 });

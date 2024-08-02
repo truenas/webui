@@ -12,21 +12,17 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-card-info/app-card-info.component';
 import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/common/app-controls/app-controls.component';
 import { AppCpuInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-cpu-info/app-cpu-info.component';
-import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-memory-info/app-memory-info.component';
-import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-network-info/app-network-info.component';
-import { WidgetAppStatsComponent } from 'app/pages/dashboard/widgets/apps/widget-app-stats/widget-app-stats.component';
+import { WidgetAppCpuComponent } from 'app/pages/dashboard/widgets/apps/widget-app-cpu/widget-app-cpu.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
-describe('WidgetAppStatsComponent', () => {
-  let spectator: Spectator<WidgetAppStatsComponent>;
+describe('WidgetAppCpuComponent', () => {
+  let spectator: Spectator<WidgetAppCpuComponent>;
 
   const app = {
     id: 'testapp',
@@ -46,7 +42,7 @@ describe('WidgetAppStatsComponent', () => {
   } as ChartRelease;
 
   const createComponent = createComponentFactory({
-    component: WidgetAppStatsComponent,
+    component: WidgetAppCpuComponent,
     imports: [
       MapValuePipe,
       NetworkSpeedPipe,
@@ -55,12 +51,8 @@ describe('WidgetAppStatsComponent', () => {
     ],
     declarations: [
       MockComponents(
-        AppCardInfoComponent,
-        AppCardLogoComponent,
         AppControlsComponent,
         AppCpuInfoComponent,
-        AppMemoryInfoComponent,
-        AppNetworkInfoComponent,
       ),
     ],
     providers: [
@@ -97,7 +89,7 @@ describe('WidgetAppStatsComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        size: SlotSize.Half,
+        size: SlotSize.Quarter,
         settings: { appName: app.name },
       },
     });
@@ -105,7 +97,6 @@ describe('WidgetAppStatsComponent', () => {
 
   it('checks components', () => {
     expect(spectator.query(AppControlsComponent)).toBeTruthy();
-    expect(spectator.query(AppMemoryInfoComponent)).toBeTruthy();
-    expect(spectator.query(AppNetworkInfoComponent)).toBeTruthy();
+    expect(spectator.query(AppCpuInfoComponent)).toBeTruthy();
   });
 });

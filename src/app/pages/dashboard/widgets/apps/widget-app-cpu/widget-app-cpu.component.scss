@@ -25,25 +25,18 @@
   }
 
   .container {
-    padding-bottom: 8px;
-    padding-top: 8px;
+    height: 100%;
   }
 }
 
-.app-header-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 6px;
-  min-height: 112px;
-}
-
-ix-app-card-logo {
+ix-app-cpu-info {
   align-items: center;
-  aspect-ratio: 2;
   background: var(--bg1);
-  display: inline-flex;
-  flex: 1 1 30%;
-  max-width: 30%;
-  padding: 0;
-  place-content: center center;
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-evenly;
+  max-width: 100%;
+  text-align: center;
 }

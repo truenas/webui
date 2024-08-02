@@ -8,12 +8,12 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app.definition';
 
 @Component({
-  selector: 'ix-widget-app-stats',
-  templateUrl: './widget-app-stats.component.html',
-  styleUrls: ['./widget-app-stats.component.scss'],
+  selector: 'ix-widget-app-cpu',
+  templateUrl: './widget-app-cpu.component.html',
+  styleUrls: ['./widget-app-cpu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetAppStatsComponent implements WidgetComponent<WidgetAppSettings> {
+export class WidgetAppCpuComponent implements WidgetComponent<WidgetAppSettings> {
   size = input.required<SlotSize>();
   settings = input.required<WidgetAppSettings>();
 

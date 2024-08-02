@@ -8,7 +8,8 @@
 export enum WidgetType {
   App = 'app',
   AppInfo = 'app-info',
-  AppStats = 'app-stats',
+  AppMemory = 'app-memory',
+  AppCpu = 'app-cpu',
   Ipv4Address = 'ipv4-address',
   Ipv6Address = 'ipv6-address',
   Help = 'help',
