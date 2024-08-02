@@ -3,11 +3,21 @@
 .session-form-hold {
   margin: 0 auto;
   max-width: 480px;
+  position: relative;
   width: 100%;
 
   .mat-mdc-card-content {
     padding: 0 !important;
   }
+
+  > .mat-mdc-card {
+    border: 0;
+    margin: 0;
+  }
+}
+
+.login-form {
+  min-height: 100vh;
 }
 
 .page-wrap {

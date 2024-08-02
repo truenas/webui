@@ -57,6 +57,7 @@ describe('EnclosureSideComponent', () => {
   };
 
   beforeEach(() => {
+    jest.spyOn(Date, 'now').mockReturnValue(1234567890);
     spectator = createComponent({ props });
   });
 
@@ -68,13 +69,18 @@ describe('EnclosureSideComponent', () => {
     expect(svg.enableMouseEvents).toBe(props.enableMouseEvents);
     expect(svg.slots)
       .toEqual(Object.values(props.enclosure.elements[EnclosureElementType.ArrayDeviceSlot]).slice(0, 2));
-    expect(svg.svgUrl).toBe(supportedEnclosures[props.enclosure.model][props.side]);
+
+    const baseUrl = supportedEnclosures[props.enclosure.model][props.side];
+
+    expect(svg.svgUrl).toBe(`${baseUrl}?uniqueIdentifier=1234567890`);
   });
 
   it('automatically selects Front or Top enclosure based on what is available when side is undefined', () => {
     spectator.setInput('side', undefined);
 
     const svg = spectator.query(EnclosureSvgStubComponent);
-    expect(svg.svgUrl).toBe(supportedEnclosures[props.enclosure.model][EnclosureSide.Front]);
+    const baseUrl = supportedEnclosures[props.enclosure.model][EnclosureSide.Front];
+
+    expect(svg.svgUrl).toBe(`${baseUrl}?uniqueIdentifier=1234567890`);
   });
 });
