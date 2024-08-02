@@ -6,69 +6,43 @@
     <div>
       @if (!item.isVisible$ || (item.isVisible$ | async)) {
         <!-- links and submenus -->
-        @if (item.type !== MenuItemType.Separator) {
-          <mat-list-item
-            class="sidebar-list-item sidenav-link"
-            role="listitem"
-            routerLinkActive="highlighted"
-            [id]="'nav-' + i"
-            [class.has-submenu]="item.type === MenuItemType.SlideOut"
-            [class.highlighted]="isHighlighted === item.state"
-            (click)="updateHighlightedClass(item.state)"
-          >
-            @if (item.type === MenuItemType.Link) {
-              <a
-                matTooltipPosition="right"
-                [ixTest]="getItemName(item)"
-                [routerLink]="getRouterLink(item.state)"
-                [name]="getItemName(item)"
-                [matTooltip]="isSidenavCollapsed() ? (item.tooltip | translate) : null"
-                (click)="closeMenu()"
+        <mat-list-item
+          class="sidebar-list-item sidenav-link"
+          role="listitem"
+          routerLinkActive="highlighted"
+          [id]="'nav-' + i"
+          [class.has-submenu]="item.type === MenuItemType.SlideOut"
+          [class.highlighted]="isHighlighted === item.state"
+          (click)="updateHighlightedClass(item.state)"
+        >
+          @if (item.type === MenuItemType.Link) {
+            <a
+              matTooltipPosition="right"
+              [ixTest]="getItemName(item)"
+              [routerLink]="getRouterLink(item.state)"
+              [name]="getItemName(item)"
+              [matTooltip]="isSidenavCollapsed() ? (item.tooltip | translate) : null"
+              (click)="closeMenu()"
+            >
+              <ix-icon [name]="item.icon"></ix-icon>
+              <span>{{ item.name | translate }}</span>
+            </a>
+          } @else if (item.type === MenuItemType.SlideOut) {
+            <a
+              tabindex="0"
+              matTooltipPosition="right"
+              [ixTest]="getItemName(item)"
+              [name]="getItemName(item)"
+              [matTooltip]="isSidenavCollapsed() ? (item.tooltip | translate) : null"
+              (click)="toggleMenu(item.state, item.sub)"
+              (keyup.enter)="toggleMenu(item.state, item.sub)"
               >
-                <ix-icon [name]="item.icon"></ix-icon>
-                <span>{{ item.name | translate }}</span>
-              </a>
-            }
-            @if (item.type === MenuItemType.SlideOut) {
-              <a
-                tabindex="0"
-                matTooltipPosition="right"
-                [ixTest]="getItemName(item)"
-                [name]="getItemName(item)"
-                [matTooltip]="isSidenavCollapsed() ? (item.tooltip | translate) : null"
-                (click)="toggleMenu(item.state, item.sub)"
-                (keyup.enter)="toggleMenu(item.state, item.sub)"
-                >
-                <ix-icon [name]="item.icon"></ix-icon>
-                <span>{{ item.name | translate }}</span>
-                <ix-icon class="menu-caret">keyboard_arrow_right</ix-icon>
-              </a>
-            }
-            @if (item.type === MenuItemType.ExternalLink) {
-              <a
-                target="_blank"
-                matTooltipPosition="right"
-                [ixTest]="getItemName(item)"
-                [href]="item.state"
-                [name]="getItemName(item)"
-                [matTooltip]="isSidenavCollapsed() ? (item.tooltip | translate) : null"
-              >
-                <ix-icon [name]="item.icon"></ix-icon>
-                <span>{{ item.name | translate }}</span>
-              </a>
-            }
-          </mat-list-item>
-        }
-        @if (item.type === MenuItemType.Separator) {
-          <div class="mt-1 mb-1">
-            <mat-divider></mat-divider>
-            @if (item.name) {
-              <span class="nav-section-title text-muted">
-                {{ item.name | translate }}
-              </span>
-            }
-          </div>
-        }
+              <ix-icon [name]="item.icon"></ix-icon>
+              <span>{{ item.name | translate }}</span>
+              <ix-icon class="menu-caret">keyboard_arrow_right</ix-icon>
+            </a>
+          }
+        </mat-list-item>
       }
     </div>
   }
