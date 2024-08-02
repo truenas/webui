@@ -25,7 +25,7 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check register and unregister', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service, {} as Window);
+      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
       directive.config = { anchor: 'anchor' };
 
       spectator.service.register(directive);
@@ -36,7 +36,7 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check get method', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service, {} as Window);
+      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
       directive.config = { anchor: 'anchor' };
 
       spectator.service.register(directive);
@@ -50,7 +50,7 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check directiveAdded$ BehaviorSubject', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service, {} as Window);
+      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
       directive.config = { anchor: 'anchor' };
 
       spectator.service.register(directive);
@@ -66,7 +66,7 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check size method', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service, {} as Window);
+      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
       directive.config = { anchor: 'anchor' };
 
       spectator.service.register(directive);

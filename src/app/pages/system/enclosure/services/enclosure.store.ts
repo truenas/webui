@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
+import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -30,7 +31,7 @@ const initialState: EnclosureState = {
   selectedEnclosureIndex: 0,
   selectedSlotNumber: null,
   selectedView: EnclosureView.Pools,
-  selectedSide: undefined, // Undefined means front or top and will be picked in EnclosureSideComponent.
+  selectedSide: undefined,
 };
 
 @UntilDestroy()
@@ -93,7 +94,12 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       switchMap(() => {
         return this.ws.call('webui.enclosure.dashboard').pipe(
           tap((enclosures: DashboardEnclosure[]) => {
-            this.patchState({ enclosures });
+            this.patchState((state) => {
+              return {
+                enclosures,
+                selectedSide: getDefaultSide(enclosures[state.selectedEnclosureIndex]),
+              };
+            });
           }),
           this.errorHandler.catchError(),
           finalize(() => {
@@ -139,7 +145,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       ...state,
       selectedEnclosureIndex: index,
       selectedSlotNumber: null,
-      selectedSide: undefined,
+      selectedSide: getDefaultSide(state.enclosures[index]),
       selectedView: EnclosureView.Pools,
     };
   });

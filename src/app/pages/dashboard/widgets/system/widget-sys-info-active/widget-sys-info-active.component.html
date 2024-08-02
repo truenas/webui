@@ -110,10 +110,9 @@
             }
           </mat-list-item>
 
-          <mat-list-item>
-            <strong>{{ 'License' | translate }}:</strong>
-            @if (isLoaded()) {
-              @if (systemInfo()?.license) {
+          @if (systemInfo()?.license) {
+            <mat-list-item>
+              <strong>{{ 'Support License' | translate }}:</strong>
                 <span>
                   {{
                     '{license} contract, expires {date}' | translate:
@@ -123,32 +122,8 @@
                     }
                   }}
                 </span>
-              } @else {
-                <span>
-                  {{ 'No License' | translate }}
-                  <a
-                    ixTest="add-license"
-                    mat-icon-button
-                    matTooltipPosition="above"
-                    [matTooltip]="'Add License' | translate"
-                    [routerLink]="['/system', 'support']"
-                  >
-                    <ix-icon name="add_circle"></ix-icon>
-                  </a>
-                </span>
-              }
-          } @else {
-            <ngx-skeleton-loader
-              class="inline-loader"
-              [theme]="{
-                height: '20px',
-                background: 'var(--alt-bg2)',
-                opacity: 0.25,
-                margin: 0,
-              }"
-            ></ngx-skeleton-loader>
+            </mat-list-item>
           }
-          </mat-list-item>
 
           @if (systemInfo()?.system_serial && isIxHardware()) {
             <mat-list-item>

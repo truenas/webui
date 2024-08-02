@@ -1,0 +1,28 @@
+.item {
+  align-items: center;
+  background: var(--bg1);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0.7;
+  width: 100%;
+
+  .label {
+    margin: 8px 0;
+  }
+
+  .value {
+    margin: 18px 0;
+  }
+
+  .divider {
+    background: var(--bg2);
+    height: 2px;
+    width: 100%;
+  }
+}
+
+.skeleton {
+  display: inline-flex;
+  width: 120px;
+}

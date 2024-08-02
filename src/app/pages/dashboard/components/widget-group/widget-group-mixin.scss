@@ -40,6 +40,7 @@
     overflow: auto;
 
     ::ng-deep mat-card {
+      height: 100%;
       margin: 0;
     }
   }

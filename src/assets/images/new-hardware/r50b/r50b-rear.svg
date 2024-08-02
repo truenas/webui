@@ -1,0 +1,1064 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="R50B_REAR" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1270.7 496.3">
+  <g id="R50B_CHASSIS">
+    <g id="_Group_">
+      <rect x="21.7" y=".1" width="1230.1" height="496.1" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <polygon points="1267.7 3 1267.7 22.8 1264.8 22.8 1264.8 5.9 1251.8 5.9 1251.8 496.2 18.9 496.2 18.9 5.9 5.9 5.9 5.9 22.8 3 22.8 3 3 21.7 3 21.7 493.3 1248.9 493.3 1248.9 3 1267.7 3" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="42.2 .1 42.2 3 3 3 3 22.8 .1 22.8 .1 .1 42.2 .1" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="42.2" y=".1" width="4.5" height="2.9" style="fill: #b0b2b1; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="46.8" y=".1" width="190.6" height="4.3" style="fill: #c3c8c6; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="237.4" y=".1" width="4.6" height="2.9" style="fill: #b0b2b1; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="1270.6 .1 1270.6 22.8 1267.7 22.8 1267.7 3 242 3 242 .1 1270.6 .1" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="46.8" y="4.4" width="190.6" height="2.9" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="246.6 248.5 246.6 493.3 220.4 493.3 220.4 490.4 243.7 490.4 243.7 251.4 35.4 251.4 35.4 490.4 60.6 490.4 60.6 493.3 32.5 493.3 32.5 248.5 246.6 248.5" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="44.5" y="248.5" width="190.1" height="7.1" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M18.8,248.5h13c2,0,3.6,1.6,3.6,3.6v237.6c0,2-1.6,3.6-3.6,3.6h-13v-244.8h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <path d="M250.2,248.5h13.4v244.8h-13.4c-2,0-3.6-1.6-3.6-3.6v-237.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="260.8" y="244.2" width="2.9" height="4.3" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="257.9" y="3" width="5.8" height="241.2" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <polygon points="1176.2 171.8 1176.2 459.8 1164.5 472.3 1164.5 488.9 1160 493.2 1140.1 493.2 1135.6 488.9 1135.6 472.3 1123.9 459.8 1123.9 171.8 1116.3 162 1116.3 150.1 1168.6 150.1 1168.6 162 1176.2 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1116.3" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1137.2" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="1234.8 171.8 1234.8 459.8 1223.1 472.3 1223.1 488.9 1218.6 493.2 1198.7 493.2 1194.2 488.9 1194.2 472.3 1182.5 459.8 1182.5 171.8 1174.9 162 1174.9 150.1 1227.2 150.1 1227.2 162 1234.8 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1174.9" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1195.7" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="1117.7 171.8 1117.7 459.8 1106 472.3 1106 488.9 1101.5 493.2 1081.6 493.2 1077.1 488.9 1077.1 472.3 1065.4 459.8 1065.4 171.8 1057.8 162 1057.8 150.1 1110.1 150.1 1110.1 162 1117.7 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1057.8" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1078.6" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="1059.1 171.8 1059.1 459.8 1047.4 472.3 1047.4 488.9 1042.9 493.2 1023 493.2 1018.5 488.9 1018.5 472.3 1006.8 459.8 1006.8 171.8 999.2 162 999.2 150.1 1051.5 150.1 1051.5 162 1059.1 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="999.2" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="1020" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="1000.5 171.8 1000.5 459.8 988.8 472.3 988.8 488.9 984.3 493.2 964.4 493.2 959.9 488.9 959.9 472.3 948.2 459.8 948.2 171.8 940.6 162 940.6 150.1 992.9 150.1 992.9 162 1000.5 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="940.6" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="961.5" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="942 171.8 942 459.8 930.3 472.3 930.3 488.9 925.8 493.2 905.9 493.2 901.4 488.9 901.4 472.3 889.7 459.8 889.7 171.8 882.1 162 882.1 150.1 934.4 150.1 934.4 162 942 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="882.1" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="902.9" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <polygon points="883.4 171.8 883.4 459.8 871.7 472.3 871.7 488.9 867.2 493.2 847.3 493.2 842.8 488.9 842.8 472.3 831.1 459.8 831.1 171.8 823.5 162 823.5 150.1 875.8 150.1 875.8 162 883.4 171.8" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="823.5" y="150.1" width="52.3" height="2.2" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="844.3" y="152.3" width="26.1" height="271.9" rx="13" ry="13" style="fill: #ccccce; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <polygon points="1248.9 152.3 1248.9 493.2 1227.1 493.2 1227.1 478.8 1190.4 478.8 1190.4 493.2 1168.5 493.2 1168.5 478.8 1131.8 478.8 1131.8 493.2 1109.9 493.2 1109.9 478.8 1073.2 478.8 1073.2 493.2 1051.3 493.2 1051.3 478.8 1014.6 478.8 1014.6 493.2 992.8 493.2 992.8 478.8 956.1 478.8 956.1 493.2 934.3 493.2 934.3 478.8 897.6 478.8 897.6 493.2 875.7 493.2 875.7 478.8 839 478.8 839 493.2 370.1 493.2 370.1 152.3 839 152.3 839 463.7 875.7 463.7 875.7 152.3 897.6 152.3 897.6 463.7 934.3 463.7 934.3 152.3 956.1 152.3 956.1 463.7 992.8 463.7 992.8 152.3 1014.6 152.3 1014.6 463.7 1051.3 463.7 1051.3 152.3 1073.2 152.3 1073.2 463.7 1109.9 463.7 1109.9 152.3 1131.8 152.3 1131.8 463.7 1168.5 463.7 1168.5 152.3 1190.4 152.3 1190.4 463.7 1227.1 463.7 1227.1 152.3 1248.9 152.3" style="fill: #d8d8d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <g>
+          <g>
+            <rect x="391.1" y="429.4" width="89.3" height="35.7" rx="2.8" ry="2.8" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M412.6,443.4c0-.2-.1-.4-.2-.7l.2.7Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M459.1,442.5c0,.3-.2.7-.3,1l.3-1Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M455.6,455.1c0,.2-.1.5-.2.7l.2-.7Z" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <line x1="415.9" y1="455.5" x2="415.9" y2="455.3" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M459.2,441.1c0,.5,0,1-.1,1.4h0l-.3,1h0l-3.2,11.6-.2.7c-.9,2.8-3.6,4.9-6.7,4.9h-25.9c-3.3,0-6.1-2.3-6.9-5.3l-3.3-12-.2-.7h0c-.1-.5-.2-1.1-.2-1.6,0-3.9,3.2-7.1,7.1-7.1h32.8c3.9,0,7.1,3.2,7.1,7.1h0Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M457.6,441.9c0,.4,0,.8-.1,1.2h0l-.3.9h0l-3,10.2-.2.6c-.9,2.5-3.4,4.3-6.3,4.3h-24.1c-3.1,0-5.7-2-6.4-4.7l-3.1-10.5-.2-.6h0c-.1-.5-.2-.9-.2-1.4,0-3.4,3-6.2,6.6-6.2h30.5c3.7,0,6.6,2.8,6.6,6.2h.2Z" style="stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <g>
+              <circle cx="426.2" cy="450.1" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="432.7" cy="450.1" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="439.1" cy="450.1" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="445.6" cy="450.1" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="422.8" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="429.3" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="435.7" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="442.2" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <circle cx="448.6" cy="444.5" r="1.5" style="fill: #a0833a; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            </g>
+            <polygon points="403.6 441.5 396.9 441.5 393.6 447.3 396.9 453.1 403.6 453.1 407 447.3 403.6 441.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="400.3" cy="447.3" r="4.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="400.3" cy="447.3" r="3.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="474.6 441.5 467.9 441.5 464.5 447.3 467.9 453.1 474.6 453.1 477.9 447.3 474.6 441.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="471.2" cy="447.3" r="4.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="471.2" cy="447.3" r="3.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          </g>
+          <g>
+            <rect x="701.4" y="429.4" width="89.3" height="35.7" rx="2.8" ry="2.8" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M722.9,443.4c0-.2,0-.4-.2-.7l.2.7Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M769.4,442.5c0,.3-.2.7-.3,1l.3-1Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M765.9,455.1c0,.2,0,.5-.2.7l.2-.7Z" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <line x1="726.3" y1="455.5" x2="726.2" y2="455.3" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M769.5,441.1v1.4h0l-.3,1h0l-3.2,11.6-.2.7c-.9,2.8-3.6,4.9-6.7,4.9h-25.9c-3.3,0-6.1-2.3-6.9-5.3l-3.3-12-.2-.7h0c0-.5-.2-1.1-.2-1.6,0-3.9,3.2-7.1,7.1-7.1h32.8c3.9,0,7.1,3.2,7.1,7.1h-.1Z" style="fill: none; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M767.9,441.9v1.2h0l-.3.9h0l-3,10.2-.2.6c-.9,2.5-3.4,4.3-6.3,4.3h-24.1c-3.1,0-5.7-2-6.4-4.7l-3.1-10.5-.2-.6h0c0-.5-.2-.9-.2-1.4,0-3.4,3-6.2,6.6-6.2h30.5c3.7,0,6.6,2.8,6.6,6.2h.2-.1Z" style="fill: #475eab; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="733" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="739.4" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="745.9" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="752.3" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="758.8" cy="441.7" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="733" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="739.4" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="745.9" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="752.3" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="758.8" cy="453" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="736" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="742.5" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="748.9" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="755.4" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="761.8" cy="447.4" r="1.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="713.9 441.5 707.2 441.5 703.9 447.3 707.2 453.1 713.9 453.1 717.3 447.3 713.9 441.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="710.6" cy="447.3" r="4.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="710.6" cy="447.3" r="3.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="784.9 441.5 778.2 441.5 774.8 447.3 778.2 453.1 784.9 453.1 788.2 447.3 784.9 441.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="781.5" cy="447.3" r="4.5" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <circle cx="781.5" cy="447.3" r="3.5" style="fill: #131313; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          </g>
+          <g>
+            <g>
+              <rect x="484.7" y="375.2" width="50.4" height="85" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <g>
+                <polygon points="527.6 410.7 492.2 410.7 492.2 400.9 492 400.9 492 399.6 493.2 399.6 493.2 394.6 492 394.6 492 393.3 492.2 393.3 492.2 388.1 499.4 388.1 499.4 383.4 503.5 383.4 503.5 380.3 516.3 380.3 516.3 383.4 520.5 383.4 520.5 388.1 527.6 388.1 527.6 393.3 527.8 393.3 527.8 394.6 526.6 394.6 526.6 399.6 527.8 399.6 527.8 400.9 527.6 400.9 527.6 410.7" style="fill: #fff; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="527.6 410.7 492.2 410.7 492.2 400.9 492 400.9 492 399.6 493.2 399.6 493.2 394.6 492 394.6 492 393.3 492.2 393.3 492.2 388.1 499.4 388.1 499.4 383.4 503.5 383.4 503.5 380.3 516.3 380.3 516.3 383.4 520.5 383.4 520.5 388.1 527.6 388.1 527.6 393.3 527.8 393.3 527.8 394.6 526.6 394.6 526.6 399.6 527.8 399.6 527.8 400.9 527.6 400.9 527.6 410.7" style="fill: #fff; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="527.6 410.7 492.2 410.7 492.2 400.9 492 400.9 492 399.6 493.2 399.6 493.2 394.6 492 394.6 492 393.3 492.2 393.3 492.2 388.1 499.4 388.1 499.4 383.4 503.5 383.4 503.5 380.3 516.3 380.3 516.3 383.4 520.5 383.4 520.5 388.1 527.6 388.1 527.6 393.3 527.8 393.3 527.8 394.6 526.6 394.6 526.6 399.6 527.8 399.6 527.8 400.9 527.6 400.9 527.6 410.7" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="493.8 393.3 492.2 393.3 492.2 388.1 499.4 388.1 499.4 383.4 503.5 383.4 503.5 385 500.9 385 500.9 389.7 493.8 389.7 493.8 393.3" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="527.6 393.3 526 393.3 526 389.7 518.9 389.7 518.9 385 516.3 385 516.3 383.4 520.4 383.4 520.4 388.1 527.6 388.1 527.6 393.3" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <polygon points="527.6 410.7 492.2 410.7 492.2 400.9 493.8 400.9 493.8 409.2 526 409.2 526 400.9 527.6 400.9 527.6 410.7" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="521.8" y="382.2" width="8.2" height="4.6" style="fill: #d8d8d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="489.8" y="382.3" width="8.2" height="4.6" style="fill: #e1dc9b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              </g>
+            </g>
+            <rect x="492.6" y="444.1" width="34.7" height="15.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="494.2" y="445.6" width="31.4" height="5.4" style="fill: #333; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="492.6" y="419.9" width="34.7" height="15.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="494.2" y="421.4" width="31.4" height="5.4" style="fill: #333; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          </g>
+          <g>
+            <rect x="542.3" y="418.4" width="38.9" height="41.8" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <g>
+              <rect x="544.4" y="443.8" width="34.7" height="15.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <rect x="546.1" y="445.4" width="31.4" height="5.4" style="fill: #3954a5; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <rect x="544.4" y="419.6" width="34.7" height="15.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <rect x="546.1" y="421.2" width="31.4" height="5.4" style="fill: #3954a5; stroke: #010101; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            </g>
+          </g>
+          <g>
+            <rect x="588.4" y="427.8" width="50.4" height="32.4" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <g>
+              <polygon points="631.3 458.2 595.9 458.2 595.9 448.3 595.7 448.3 595.7 447 596.8 447 596.8 442 595.7 442 595.7 440.7 595.9 440.7 595.9 435.6 603 435.6 603 430.9 607.2 430.9 607.2 427.8 620 427.8 620 430.9 624.1 430.9 624.1 435.6 631.3 435.6 631.3 440.7 631.5 440.7 631.5 442 630.3 442 630.3 447 631.5 447 631.5 448.3 631.3 448.3 631.3 458.2" style="fill: #fff; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="631.3 458.2 595.9 458.2 595.9 448.3 595.7 448.3 595.7 447 596.8 447 596.8 442 595.7 442 595.7 440.7 595.9 440.7 595.9 435.6 603 435.6 603 430.9 607.2 430.9 607.2 427.8 620 427.8 620 430.9 624.1 430.9 624.1 435.6 631.3 435.6 631.3 440.7 631.5 440.7 631.5 442 630.3 442 630.3 447 631.5 447 631.5 448.3 631.3 448.3 631.3 458.2" style="fill: #fff; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="631.3 458.2 595.9 458.2 595.9 448.3 595.7 448.3 595.7 447 596.8 447 596.8 442 595.7 442 595.7 440.7 595.9 440.7 595.9 435.6 603 435.6 603 430.9 607.2 430.9 607.2 427.8 620 427.8 620 430.9 624.1 430.9 624.1 435.6 631.3 435.6 631.3 440.7 631.5 440.7 631.5 442 630.3 442 630.3 447 631.5 447 631.5 448.3 631.3 448.3 631.3 458.2" style="fill: #181818; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="597.5 440.7 595.9 440.7 595.9 435.6 603 435.6 603 430.9 607.2 430.9 607.2 432.5 604.6 432.5 604.6 437.1 597.5 437.1 597.5 440.7" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="631.3 440.7 629.7 440.7 629.7 437.1 622.5 437.1 622.5 432.5 619.9 432.5 619.9 430.9 624.1 430.9 624.1 435.6 631.3 435.6 631.3 440.7" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="631.3 458.2 595.9 458.2 595.9 448.3 597.5 448.3 597.5 456.6 629.7 456.6 629.7 448.3 631.3 448.3 631.3 458.2" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <rect x="631.3" y="428.9" width="5.8" height="9.7" style="fill: #d8d8d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <g>
+                <rect x="622.5" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="614.2" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="617" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="619.7" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="611.5" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="603.3" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="606" y="448.3" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="608.8" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              </g>
+              <rect x="590.2" y="428.8" width="5.8" height="9.7" style="fill: #d8d8d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            </g>
+            <rect x="642.9" y="427.8" width="50.4" height="32.4" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <g>
+              <polygon points="685.8 458.2 650.4 458.2 650.4 448.3 650.2 448.3 650.2 447 651.4 447 651.4 442 650.2 442 650.2 440.7 650.4 440.7 650.4 435.6 657.5 435.6 657.5 430.9 661.7 430.9 661.7 427.8 674.5 427.8 674.5 430.9 678.6 430.9 678.6 435.6 685.8 435.6 685.8 440.7 686 440.7 686 442 684.8 442 684.8 447 686 447 686 448.3 685.8 448.3 685.8 458.2" style="fill: #fff; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="685.8 458.2 650.4 458.2 650.4 448.3 650.2 448.3 650.2 447 651.4 447 651.4 442 650.2 442 650.2 440.7 650.4 440.7 650.4 435.6 657.5 435.6 657.5 430.9 661.7 430.9 661.7 427.8 674.5 427.8 674.5 430.9 678.6 430.9 678.6 435.6 685.8 435.6 685.8 440.7 686 440.7 686 442 684.8 442 684.8 447 686 447 686 448.3 685.8 448.3 685.8 458.2" style="fill: #fff; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="685.8 458.2 650.4 458.2 650.4 448.3 650.2 448.3 650.2 447 651.4 447 651.4 442 650.2 442 650.2 440.7 650.4 440.7 650.4 435.6 657.5 435.6 657.5 430.9 661.7 430.9 661.7 427.8 674.5 427.8 674.5 430.9 678.6 430.9 678.6 435.6 685.8 435.6 685.8 440.7 686 440.7 686 442 684.8 442 684.8 447 686 447 686 448.3 685.8 448.3 685.8 458.2" style="fill: #181818; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="652 440.7 650.4 440.7 650.4 435.6 657.5 435.6 657.5 430.9 661.7 430.9 661.7 432.5 659.1 432.5 659.1 437.1 652 437.1 652 440.7" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="685.8 440.7 684.2 440.7 684.2 437.1 677.1 437.1 677.1 432.5 674.5 432.5 674.5 430.9 678.6 430.9 678.6 435.6 685.8 435.6 685.8 440.7" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <polygon points="685.8 458.2 650.4 458.2 650.4 448.3 652 448.3 652 456.6 684.2 456.6 684.2 448.3 685.8 448.3 685.8 458.2" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <rect x="685.8" y="428.9" width="5.8" height="9.7" style="fill: #d8d8d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              <g>
+                <rect x="677" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="668.8" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="671.5" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="674.2" y="448.3" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="666" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="657.8" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="660.6" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+                <rect x="663.3" y="448.2" width="1.4" height="8.4" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+              </g>
+              <rect x="644.6" y="428.8" width="5.8" height="9.7" style="fill: #d8d8d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            </g>
+          </g>
+          <g>
+            <path d="M373.1,346.8v124.6h449.3v-124.6h-449.3ZM477.6,454.1c-1.7,1.7-4.2,2.8-6.8,2.8h-7.5v6.1h-55v-6.1h-7.5c-5.3,0-9.6-4.3-9.6-9.6s1.1-5.1,2.8-6.8c1.8-1.7,4.1-2.8,6.8-2.8h7.5v-6.1h55v6.1h7.5c5.3,0,9.6,4.3,9.6,9.6s-1.1,5.1-2.8,6.8ZM531.1,459.2h-42.4v-16.8h42.4v16.8ZM531.1,436.7h-42.4v-18.5h42.4v18.5ZM531.1,412.5h-42.4v-35h42.4v35ZM581.2,459.2h-38.9v-16.8h38.9v16.8ZM581.2,436.7h-38.9v-18.2h38.9v18.2ZM638.8,458.9h-50.4v-31.2h50.4v31.2ZM693.3,458.9h-50.4v-31.2h50.4v31.2ZM787.9,454.1c-1.7,1.7-4.2,2.8-6.8,2.8h-7.5v6.1h-55v-6.1h-7.5c-5.3,0-9.6-4.3-9.6-9.6s1.1-5.1,2.8-6.8c1.8-1.7,4.2-2.8,6.8-2.8h7.5v-6.1h55v6.1h7.5c5.3,0,9.6,4.3,9.6,9.6s-1.1,5.1-2.8,6.8ZM812.9,462.8c-.9.9-2.1,1.4-3.4,1.4h-7.8c-2.6,0-4.8-2.2-4.8-4.8s.5-2.5,1.4-3.4,2.1-1.4,3.4-1.4h7.8c2.7,0,4.8,2.2,4.8,4.8s-.5,2.5-1.4,3.4Z" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <path d="M814.3,459.5c0,1.3-.5,2.5-1.4,3.4s-2.1,1.4-3.4,1.4h-7.8c-2.6,0-4.8-2.2-4.8-4.8s.5-2.5,1.4-3.4,2.1-1.4,3.4-1.4h7.8c2.7,0,4.8,2.2,4.8,4.8Z" style="fill: #515251; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <rect x="801" y="457.2" width="9.2" height="4.6" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <g>
+              <path d="M425.6,426.8c-.2,0-.3-.1-.3-.3v-6.8c0-.2.1-.3.3-.3s.3.1.3.3v6.8c0,.2-.1.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M445.8,426.8c-.2,0-.3-.1-.3-.3v-6.8c0-.2.1-.3.3-.3s.3.1.3.3v6.8c0,.2-.1.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M435.7,426.8c-.2,0-.3-.1-.3-.3v-6.8c0-.2.1-.3.3-.3s.3.1.3.3v6.8c0,.2-.1.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M430.7,426.8c-1.9,0-3.4-1.7-3.4-3.7s1.5-3.7,3.4-3.7,3.4,1.7,3.4,3.7-1.5,3.7-3.4,3.7ZM430.7,420c-1.6,0-2.9,1.4-2.9,3.1s1.3,3.1,2.9,3.1,2.9-1.4,2.9-3.1-1.3-3.1-2.9-3.1Z" style="fill: #fff;"/>
+              <path d="M440.8,426.8c-1.9,0-3.4-1.7-3.4-3.7s1.5-3.7,3.4-3.7,3.4,1.7,3.4,3.7-1.5,3.7-3.4,3.7ZM440.8,420c-1.6,0-2.9,1.4-2.9,3.1s1.3,3.1,2.9,3.1,2.9-1.4,2.9-3.1-1.3-3.1-2.9-3.1Z" style="fill: #fff;"/>
+            </g>
+            <path d="M622.8,415.3h-2.8v-2h2.8c.2,0,.3-.1.3-.3s0-.3-.3-.3h-8.9v-2h2.8s.3-.1.3-.3v-5c0-.2,0-.3-.3-.3h-6.1c-.2,0-.3.1-.3.3v5c0,.2,0,.3.3.3h2.8v2h-8.9c-.2,0-.3.1-.3.3s0,.3.3.3h2.8v2h-2.8c-.2,0-.3.1-.3.3v5c0,.1,0,.3.3.3h6.1s.3-.1.3-.3v-5c0-.2,0-.3-.3-.3h-2.8v-2h11.7v2h-2.8c-.2,0-.3.1-.3.3v5c0,.1,0,.3.3.3h6.1c.2,0,.3-.1.3-.3v-5c0-.2,0-.3-.3-.3h0ZM610.8,410.3v-4.5h5.6v4.5h-5.6ZM610.2,415.9v4.5h-5.6v-4.5h5.6ZM622.5,420.3h-5.6v-4.5h5.6v4.5Z" style="fill: #fff;"/>
+            <path d="M677.3,415.3h-2.8v-2h2.8c.2,0,.3-.1.3-.3s0-.3-.3-.3h-8.9v-2h2.8s.3-.1.3-.3v-5c0-.2,0-.3-.3-.3h-6.1c-.2,0-.3.1-.3.3v5c0,.2,0,.3.3.3h2.8v2h-8.9c-.2,0-.3.1-.3.3s0,.3.3.3h2.8v2h-2.8c-.2,0-.3.1-.3.3v5c0,.1,0,.3.3.3h6.1s.3-.1.3-.3v-5c0-.2,0-.3-.3-.3h-2.8v-2h11.7v2h-2.8c-.2,0-.3.1-.3.3v5c0,.1,0,.3.3.3h6.1c.2,0,.3-.1.3-.3v-5c0-.2,0-.3-.3-.3h0ZM665.3,410.3v-4.5h5.6v4.5h-5.6ZM664.8,415.9v4.5h-5.6v-4.5h5.6ZM677,420.3h-5.6v-4.5h5.6v4.5Z" style="fill: #fff;"/>
+            <g>
+              <path d="M736.3,428c-.2,0-.3-.1-.3-.3v-9.2c0-.2,0-.3.3-.3s.3.1.3.3v9.2c0,.2,0,.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M755.8,428c-.2,0-.3-.1-.3-.3v-9.2c0-.2,0-.3.3-.3s.3.1.3.3v9.2c0,.2,0,.3-.3.3Z" style="fill: #fff;"/>
+              <path d="M746.1,428.5c-1.8,0-3.6,0-4.8-.1-2.3-.2-2.5-.4-2.5-.7v-9.2c0-.3,0-.8,7.3-.8s7.3.6,7.3.8v9.2c0,.3,0,.8-7.3.8h0ZM739.3,427.6c1.2.5,12.3.5,13.5,0v-8.9c-1.2-.5-12.3-.5-13.5,0v8.9Z" style="fill: #fff;"/>
+            </g>
+            <path d="M515.3,368.6h-1.6v-1.2h1.6s.2,0,.2-.2,0-.2-.2-.2h-5.2v-1.2h1.6s.2,0,.2-.2v-3s0-.2-.2-.2h-3.6s-.2,0-.2.2v3s0,.2.2.2h1.6v1.2h-5.2s-.2,0-.2.2,0,.2.2.2h1.6v1.2h-1.6s-.2,0-.2.2v3s0,.2.2.2h3.6s.2,0,.2-.2v-3s0-.2-.2-.2h-1.6v-1.2h6.9v1.2h-1.6s-.2,0-.2.2v3s0,.2.2.2h3.6s.2,0,.2-.2v-3s0-.2-.2-.2h-.1ZM508.3,365.6v-2.6h3.3v2.6h-3.3ZM507.9,368.9v2.6h-3.3v-2.6h3.3ZM515.1,371.5h-3.3v-2.6h3.3v2.6Z" style="fill: #fff;"/>
+          </g>
+          <g>
+            <polygon points="822.4 346.8 822.4 471.3 817 465.9 817 352.2 822.4 346.8" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="822.4 471.3 373.1 471.3 378.5 465.9 817 465.9 822.4 471.3" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="378.5 352.2 378.5 465.9 373.1 471.3 373.1 346.8 378.5 352.2" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+            <polygon points="822.4 346.8 817 352.2 378.5 352.2 373.1 346.8 822.4 346.8" style="fill: #bcbcbc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          </g>
+        </g>
+        <path d="M560.3,395.3l1-1.4c.2-.3.5-.3.8-.2,0,0,.1,0,.2.2h0l1,1.4c.3.3.1.7-.3.7h-.8v7.7c0,.2.2.2.3,0l1.6-1.6c.2-.3.4-.6.4-1h0v-1.6h0c-.4,0-.8-.3-.8-.8h0v-.8c0-.4.4-.8.8-.8h.8c.4,0,.8.3.8.8h0v.8c0,.4-.3.8-.7.8h0v1.6h0c0,.7-.3,1.2-.7,1.6h0l-2,2c-.3.2-.5.6-.5,1h0v3.2c.9.2,1.5,1.2,1.3,2.1s-1.2,1.5-2.1,1.3-1.5-1.2-1.3-2.1c.1-.7.7-1.2,1.3-1.3h0v-.8c0-.4-.1-.8-.5-1.1h0l-2-2c-.4-.4-.7-1-.7-1.5h0v-1.6c-.5-.2-.8-.6-.8-1.1h0c0-.7.5-1.2,1.2-1.2s1.2.5,1.2,1.2h0c0,.5-.3,1-.8,1.1h0v1.6c0,.4.2.8.5,1h0l1.6,1.6c.1.1.3.1.3,0v-10.1h-.8c-.5,0-.6-.3-.3-.7h0Z" style="fill: #fff;"/>
+      </g>
+    </g>
+    <polygon points="1248.9 113.9 1248.9 152.3 370.1 152.3 370.1 493.3 263.6 493.3 263.6 113.9 1248.9 113.9" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <g>
+      <g>
+        <circle cx="288.4" cy="347.9" r="9" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M293.1,346.9v2.2h-1.2c-.2,0-.9,0-1.5.6-.7.6-.7,1.5-.7,1.6v1.2h-2.2v-1.2c0-.1,0-1-.7-1.6-.6-.6-1.4-.6-1.5-.6h-1.2v-2.2h1.2c.2,0,.9,0,1.5-.6.7-.6.7-1.5.7-1.6v-1.2h2.2v1.2c0,.1,0,1,.7,1.6.6.6,1.4.6,1.5.6h1.2Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <circle cx="288.4" cy="293.9" r="9" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M293.1,292.9v2.2h-1.2c-.2,0-.9,0-1.5.6-.7.6-.7,1.5-.7,1.6v1.2h-2.2v-1.2c0-.1,0-1-.7-1.6-.6-.6-1.4-.6-1.5-.6h-1.2v-2.2h1.2c.2,0,.9,0,1.5-.6.7-.6.7-1.5.7-1.6v-1.2h2.2v1.2c0,.1,0,1,.7,1.6.6.6,1.4.6,1.5.6h1.2Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <rect x="282.9" y="312.4" width="11.2" height="10.5" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="283.8" y="315.4" width="9.2" height="4.6" style="fill: #999; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+    <path d="M1235.5,3h13.4v110.9h-13.4c-2,0-3.6-1.6-3.6-3.6V6.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <path d="M940.3,3h13.4v110.9h-13.4c-2,0-3.6-1.6-3.6-3.6V6.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <path d="M645.2,3h13.4v110.9h-13.4c-2,0-3.6-1.6-3.6-3.6V6.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <path d="M350,3h13.4v110.9h-13.4c-2,0-3.6-1.6-3.6-3.6V6.6c0-2,1.6-3.6,3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    <path d="M342.8,3h-79.1v110.9h79.1c2,0,3.6-1.6,3.6-3.6V6.6c0-2-1.6-3.6-3.6-3.6h0Z" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+  </g>
+  <g id="R50B_CASE_FANS">
+    <g id="R50B_CASE_FAN_1">
+      <rect x="363.4" y="5.9" width="278.2" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="363.4" y="10.2" width="278.2" height="103.7" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="363.4" y="3" width="278.2" height="2.9" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <g>
+          <circle cx="382.8" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="382.8" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="622.3" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="622.3" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="461.4" y="5.9" width="53" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M470.2,10.2h35.3v3.1c0,1.7-1.4,3.1-3.1,3.1h-29c-1.7,0-3.1-1.4-3.1-3.1v-3.1h-.1Z" style="fill: #c6c6be; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <g>
+          <polygon points="577.1 82.8 574.9 86.6 570.5 86.6 568.3 82.8 570.5 79 574.9 79 577.1 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="577.1 72.5 574.9 76.3 570.5 76.3 568.3 72.5 570.5 68.7 574.9 68.7 577.1 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="577.1 62.1 574.9 65.9 570.5 65.9 568.3 62.1 570.5 58.3 574.9 58.3 577.1 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="577.1 51.8 574.9 55.6 570.5 55.6 568.3 51.8 570.5 48 574.9 48 577.1 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="577.1 41.4 574.9 45.2 570.5 45.2 568.3 41.4 570.5 37.6 574.9 37.6 577.1 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="594.7 82.8 592.5 86.6 588.1 86.6 585.9 82.8 588.1 79 592.5 79 594.7 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="594.7 72.5 592.5 76.3 588.1 76.3 585.9 72.5 588.1 68.7 592.5 68.7 594.7 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="594.7 62.1 592.5 65.9 588.1 65.9 585.9 62.1 588.1 58.3 592.5 58.3 594.7 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="594.7 51.8 592.5 55.6 588.1 55.6 585.9 51.8 588.1 48 592.5 48 594.7 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="594.7 41.4 592.5 45.2 588.1 45.2 585.9 41.4 588.1 37.6 592.5 37.6 594.7 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="585.8 67.3 583.6 71.1 579.2 71.1 577 67.3 579.2 63.5 583.6 63.5 585.8 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="585.8 77.6 583.6 81.4 579.2 81.4 577 77.6 579.2 73.8 583.6 73.8 585.8 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="585.8 88 583.6 91.8 579.2 91.8 577 88 579.2 84.2 583.6 84.2 585.8 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="585.8 46.5 583.6 50.3 579.2 50.3 577 46.5 579.2 42.7 583.6 42.7 585.8 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="585.8 56.8 583.6 60.6 579.2 60.6 577 56.8 579.2 53 583.6 53 585.8 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="585.8 36.2 583.6 40 579.2 40 577 36.2 579.2 32.4 583.6 32.4 585.8 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="603.4 67.3 601.2 71.1 596.8 71.1 594.6 67.3 596.8 63.5 601.2 63.5 603.4 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="603.4 77.6 601.2 81.4 596.8 81.4 594.6 77.6 596.8 73.8 601.2 73.8 603.4 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="603.4 88 601.2 91.8 596.8 91.8 594.6 88 596.8 84.2 601.2 84.2 603.4 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="603.4 46.5 601.2 50.3 596.8 50.3 594.6 46.5 596.8 42.7 601.2 42.7 603.4 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="603.4 56.8 601.2 60.6 596.8 60.6 594.6 56.8 596.8 53 601.2 53 603.4 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="603.4 36.2 601.2 40 596.8 40 594.6 36.2 596.8 32.4 601.2 32.4 603.4 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="568.3 67.3 566.1 71.1 561.7 71.1 559.5 67.3 561.7 63.5 566.1 63.5 568.3 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="568.3 77.6 566.1 81.4 561.7 81.4 559.5 77.6 561.7 73.8 566.1 73.8 568.3 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="568.3 88 566.1 91.8 561.7 91.8 559.5 88 561.7 84.2 566.1 84.2 568.3 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="568.3 46.5 566.1 50.3 561.7 50.3 559.5 46.5 561.7 42.7 566.1 42.7 568.3 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="568.3 56.8 566.1 60.6 561.7 60.6 559.5 56.8 561.7 53 566.1 53 568.3 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="568.3 36.2 566.1 40 561.7 40 559.5 36.2 561.7 32.4 566.1 32.4 568.3 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="550.8 67.3 548.6 71.1 544.2 71.1 542 67.3 544.2 63.5 548.6 63.5 550.8 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="550.8 77.6 548.6 81.4 544.2 81.4 542 77.6 544.2 73.8 548.6 73.8 550.8 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="550.8 88 548.6 91.8 544.2 91.8 542 88 544.2 84.2 548.6 84.2 550.8 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="550.8 46.5 548.6 50.3 544.2 50.3 542 46.5 544.2 42.7 548.6 42.7 550.8 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="550.8 56.8 548.6 60.6 544.2 60.6 542 56.8 544.2 53 548.6 53 550.8 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="550.8 36.2 548.6 40 544.2 40 542 36.2 544.2 32.4 548.6 32.4 550.8 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="533.2 67.3 531 71.1 526.6 71.1 524.4 67.3 526.6 63.5 531 63.5 533.2 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="533.2 77.6 531 81.4 526.6 81.4 524.4 77.6 526.6 73.8 531 73.8 533.2 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="533.2 88 531 91.8 526.6 91.8 524.4 88 526.6 84.2 531 84.2 533.2 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="533.2 46.5 531 50.3 526.6 50.3 524.4 46.5 526.6 42.7 531 42.7 533.2 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="533.2 56.8 531 60.6 526.6 60.6 524.4 56.8 526.6 53 531 53 533.2 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="533.2 36.2 531 40 526.6 40 524.4 36.2 526.6 32.4 531 32.4 533.2 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="515.7 67.3 513.5 71.1 509.1 71.1 506.9 67.3 509.1 63.5 513.5 63.5 515.7 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="515.7 77.6 513.5 81.4 509.1 81.4 506.9 77.6 509.1 73.8 513.5 73.8 515.7 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="515.7 88 513.5 91.8 509.1 91.8 506.9 88 509.1 84.2 513.5 84.2 515.7 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="515.7 46.5 513.5 50.3 509.1 50.3 506.9 46.5 509.1 42.7 513.5 42.7 515.7 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="515.7 56.8 513.5 60.6 509.1 60.6 506.9 56.8 509.1 53 513.5 53 515.7 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="515.7 36.2 513.5 40 509.1 40 506.9 36.2 509.1 32.4 513.5 32.4 515.7 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="498.2 67.3 496 71.1 491.6 71.1 489.4 67.3 491.6 63.5 496 63.5 498.2 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="498.2 77.6 496 81.4 491.6 81.4 489.4 77.6 491.6 73.8 496 73.8 498.2 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="498.2 88 496 91.8 491.6 91.8 489.4 88 491.6 84.2 496 84.2 498.2 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="498.2 46.5 496 50.3 491.6 50.3 489.4 46.5 491.6 42.7 496 42.7 498.2 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="498.2 56.8 496 60.6 491.6 60.6 489.4 56.8 491.6 53 496 53 498.2 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="498.2 36.2 496 40 491.6 40 489.4 36.2 491.6 32.4 496 32.4 498.2 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="480.6 67.3 478.4 71.1 474 71.1 471.8 67.3 474 63.5 478.4 63.5 480.6 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="480.6 77.6 478.4 81.4 474 81.4 471.8 77.6 474 73.8 478.4 73.8 480.6 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="480.6 88 478.4 91.8 474 91.8 471.8 88 474 84.2 478.4 84.2 480.6 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="480.6 46.5 478.4 50.3 474 50.3 471.8 46.5 474 42.7 478.4 42.7 480.6 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="480.6 56.8 478.4 60.6 474 60.6 471.8 56.8 474 53 478.4 53 480.6 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="480.6 36.2 478.4 40 474 40 471.8 36.2 474 32.4 478.4 32.4 480.6 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="463.1 67.3 460.9 71.1 456.5 71.1 454.3 67.3 456.5 63.5 460.9 63.5 463.1 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="463.1 77.6 460.9 81.4 456.5 81.4 454.3 77.6 456.5 73.8 460.9 73.8 463.1 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="463.1 88 460.9 91.8 456.5 91.8 454.3 88 456.5 84.2 460.9 84.2 463.1 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="463.1 46.5 460.9 50.3 456.5 50.3 454.3 46.5 456.5 42.7 460.9 42.7 463.1 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="463.1 56.8 460.9 60.6 456.5 60.6 454.3 56.8 456.5 53 460.9 53 463.1 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="463.1 36.2 460.9 40 456.5 40 454.3 36.2 456.5 32.4 460.9 32.4 463.1 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="445.5 67.3 443.3 71.1 438.9 71.1 436.7 67.3 438.9 63.5 443.3 63.5 445.5 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="445.5 77.6 443.3 81.4 438.9 81.4 436.7 77.6 438.9 73.8 443.3 73.8 445.5 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="445.5 88 443.3 91.8 438.9 91.8 436.7 88 438.9 84.2 443.3 84.2 445.5 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="445.5 46.5 443.3 50.3 438.9 50.3 436.7 46.5 438.9 42.7 443.3 42.7 445.5 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="445.5 56.8 443.3 60.6 438.9 60.6 436.7 56.8 438.9 53 443.3 53 445.5 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="445.5 36.2 443.3 40 438.9 40 436.7 36.2 438.9 32.4 443.3 32.4 445.5 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="428 67.3 425.8 71.1 421.4 71.1 419.2 67.3 421.4 63.5 425.8 63.5 428 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="428 77.6 425.8 81.4 421.4 81.4 419.2 77.6 421.4 73.8 425.8 73.8 428 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="428 88 425.8 91.8 421.4 91.8 419.2 88 421.4 84.2 425.8 84.2 428 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="428 46.5 425.8 50.3 421.4 50.3 419.2 46.5 421.4 42.7 425.8 42.7 428 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="428 56.8 425.8 60.6 421.4 60.6 419.2 56.8 421.4 53 425.8 53 428 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="428 36.2 425.8 40 421.4 40 419.2 36.2 421.4 32.4 425.8 32.4 428 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="410.5 67.3 408.3 71.1 403.9 71.1 401.7 67.3 403.9 63.5 408.3 63.5 410.5 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="410.5 77.6 408.3 81.4 403.9 81.4 401.7 77.6 403.9 73.8 408.3 73.8 410.5 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="410.5 88 408.3 91.8 403.9 91.8 401.7 88 403.9 84.2 408.3 84.2 410.5 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="410.5 46.5 408.3 50.3 403.9 50.3 401.7 46.5 403.9 42.7 408.3 42.7 410.5 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="410.5 56.8 408.3 60.6 403.9 60.6 401.7 56.8 403.9 53 408.3 53 410.5 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="410.5 36.2 408.3 40 403.9 40 401.7 36.2 403.9 32.4 408.3 32.4 410.5 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="559.6 82.8 557.4 86.6 553 86.6 550.8 82.8 553 79 557.4 79 559.6 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="559.6 72.5 557.4 76.3 553 76.3 550.8 72.5 553 68.7 557.4 68.7 559.6 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="559.6 62.1 557.4 65.9 553 65.9 550.8 62.1 553 58.3 557.4 58.3 559.6 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="559.6 51.8 557.4 55.6 553 55.6 550.8 51.8 553 48 557.4 48 559.6 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="559.6 41.4 557.4 45.2 553 45.2 550.8 41.4 553 37.6 557.4 37.6 559.6 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="542.1 82.8 539.9 86.6 535.5 86.6 533.3 82.8 535.5 79 539.9 79 542.1 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="542.1 72.5 539.9 76.3 535.5 76.3 533.3 72.5 535.5 68.7 539.9 68.7 542.1 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="542.1 62.1 539.9 65.9 535.5 65.9 533.3 62.1 535.5 58.3 539.9 58.3 542.1 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="542.1 51.8 539.9 55.6 535.5 55.6 533.3 51.8 535.5 48 539.9 48 542.1 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="542.1 41.4 539.9 45.2 535.5 45.2 533.3 41.4 535.5 37.6 539.9 37.6 542.1 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="524.5 82.8 522.3 86.6 517.9 86.6 515.7 82.8 517.9 79 522.3 79 524.5 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="524.5 72.5 522.3 76.3 517.9 76.3 515.7 72.5 517.9 68.7 522.3 68.7 524.5 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="524.5 62.1 522.3 65.9 517.9 65.9 515.7 62.1 517.9 58.3 522.3 58.3 524.5 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="524.5 51.8 522.3 55.6 517.9 55.6 515.7 51.8 517.9 48 522.3 48 524.5 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="524.5 41.4 522.3 45.2 517.9 45.2 515.7 41.4 517.9 37.6 522.3 37.6 524.5 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="507 82.8 504.8 86.6 500.4 86.6 498.2 82.8 500.4 79 504.8 79 507 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="507 72.5 504.8 76.3 500.4 76.3 498.2 72.5 500.4 68.7 504.8 68.7 507 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="507 62.1 504.8 65.9 500.4 65.9 498.2 62.1 500.4 58.3 504.8 58.3 507 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="507 51.8 504.8 55.6 500.4 55.6 498.2 51.8 500.4 48 504.8 48 507 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="507 41.4 504.8 45.2 500.4 45.2 498.2 41.4 500.4 37.6 504.8 37.6 507 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="489.4 82.8 487.2 86.6 482.8 86.6 480.6 82.8 482.8 79 487.2 79 489.4 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="489.4 72.5 487.2 76.3 482.8 76.3 480.6 72.5 482.8 68.7 487.2 68.7 489.4 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="489.4 62.1 487.2 65.9 482.8 65.9 480.6 62.1 482.8 58.3 487.2 58.3 489.4 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="489.4 51.8 487.2 55.6 482.8 55.6 480.6 51.8 482.8 48 487.2 48 489.4 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="489.4 41.4 487.2 45.2 482.8 45.2 480.6 41.4 482.8 37.6 487.2 37.6 489.4 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="471.9 82.8 469.7 86.6 465.3 86.6 463.1 82.8 465.3 79 469.7 79 471.9 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="471.9 72.5 469.7 76.3 465.3 76.3 463.1 72.5 465.3 68.7 469.7 68.7 471.9 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="471.9 62.1 469.7 65.9 465.3 65.9 463.1 62.1 465.3 58.3 469.7 58.3 471.9 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="471.9 51.8 469.7 55.6 465.3 55.6 463.1 51.8 465.3 48 469.7 48 471.9 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="471.9 41.4 469.7 45.2 465.3 45.2 463.1 41.4 465.3 37.6 469.7 37.6 471.9 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="454.4 82.8 452.2 86.6 447.8 86.6 445.6 82.8 447.8 79 452.2 79 454.4 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="454.4 72.5 452.2 76.3 447.8 76.3 445.6 72.5 447.8 68.7 452.2 68.7 454.4 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="454.4 62.1 452.2 65.9 447.8 65.9 445.6 62.1 447.8 58.3 452.2 58.3 454.4 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="454.4 51.8 452.2 55.6 447.8 55.6 445.6 51.8 447.8 48 452.2 48 454.4 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="454.4 41.4 452.2 45.2 447.8 45.2 445.6 41.4 447.8 37.6 452.2 37.6 454.4 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="436.8 82.8 434.6 86.6 430.2 86.6 428 82.8 430.2 79 434.6 79 436.8 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="436.8 72.5 434.6 76.3 430.2 76.3 428 72.5 430.2 68.7 434.6 68.7 436.8 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="436.8 62.1 434.6 65.9 430.2 65.9 428 62.1 430.2 58.3 434.6 58.3 436.8 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="436.8 51.8 434.6 55.6 430.2 55.6 428 51.8 430.2 48 434.6 48 436.8 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="436.8 41.4 434.6 45.2 430.2 45.2 428 41.4 430.2 37.6 434.6 37.6 436.8 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="419.3 82.8 417.1 86.6 412.7 86.6 410.5 82.8 412.7 79 417.1 79 419.3 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="419.3 72.5 417.1 76.3 412.7 76.3 410.5 72.5 412.7 68.7 417.1 68.7 419.3 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="419.3 62.1 417.1 65.9 412.7 65.9 410.5 62.1 412.7 58.3 417.1 58.3 419.3 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="419.3 51.8 417.1 55.6 412.7 55.6 410.5 51.8 412.7 48 417.1 48 419.3 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="419.3 41.4 417.1 45.2 412.7 45.2 410.5 41.4 412.7 37.6 417.1 37.6 419.3 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+    </g>
+    <g id="R50B_CASE_FAN_2">
+      <rect x="658.6" y="5.9" width="278.2" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="658.6" y="10.2" width="278.2" height="103.7" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="658.6" y="3" width="278.2" height="2.9" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <g>
+          <circle cx="677.9" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="677.9" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="917.4" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="917.4" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="756.5" y="5.9" width="53" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M765.4,10.2h35.3v3.1c0,1.7-1.4,3.1-3.1,3.1h-29c-1.7,0-3.1-1.4-3.1-3.1v-3.1h-.1Z" style="fill: #c6c6be; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <g>
+          <polygon points="872.3 82.8 870.1 86.6 865.7 86.6 863.5 82.8 865.7 79 870.1 79 872.3 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="872.3 72.5 870.1 76.3 865.7 76.3 863.5 72.5 865.7 68.7 870.1 68.7 872.3 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="872.3 62.1 870.1 65.9 865.7 65.9 863.5 62.1 865.7 58.3 870.1 58.3 872.3 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="872.3 51.8 870.1 55.6 865.7 55.6 863.5 51.8 865.7 48 870.1 48 872.3 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="872.3 41.4 870.1 45.2 865.7 45.2 863.5 41.4 865.7 37.6 870.1 37.6 872.3 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="889.8 82.8 887.6 86.6 883.2 86.6 881 82.8 883.2 79 887.6 79 889.8 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="889.8 72.5 887.6 76.3 883.2 76.3 881 72.5 883.2 68.7 887.6 68.7 889.8 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="889.8 62.1 887.6 65.9 883.2 65.9 881 62.1 883.2 58.3 887.6 58.3 889.8 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="889.8 51.8 887.6 55.6 883.2 55.6 881 51.8 883.2 48 887.6 48 889.8 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="889.8 41.4 887.6 45.2 883.2 45.2 881 41.4 883.2 37.6 887.6 37.6 889.8 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="881 67.3 878.8 71.1 874.4 71.1 872.2 67.3 874.4 63.5 878.8 63.5 881 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="881 77.6 878.8 81.4 874.4 81.4 872.2 77.6 874.4 73.8 878.8 73.8 881 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="881 88 878.8 91.8 874.4 91.8 872.2 88 874.4 84.2 878.8 84.2 881 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="881 46.5 878.8 50.3 874.4 50.3 872.2 46.5 874.4 42.7 878.8 42.7 881 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="881 56.8 878.8 60.6 874.4 60.6 872.2 56.8 874.4 53 878.8 53 881 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="881 36.2 878.8 40 874.4 40 872.2 36.2 874.4 32.4 878.8 32.4 881 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="898.5 67.3 896.3 71.1 891.9 71.1 889.7 67.3 891.9 63.5 896.3 63.5 898.5 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="898.5 77.6 896.3 81.4 891.9 81.4 889.7 77.6 891.9 73.8 896.3 73.8 898.5 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="898.5 88 896.3 91.8 891.9 91.8 889.7 88 891.9 84.2 896.3 84.2 898.5 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="898.5 46.5 896.3 50.3 891.9 50.3 889.7 46.5 891.9 42.7 896.3 42.7 898.5 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="898.5 56.8 896.3 60.6 891.9 60.6 889.7 56.8 891.9 53 896.3 53 898.5 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="898.5 36.2 896.3 40 891.9 40 889.7 36.2 891.9 32.4 896.3 32.4 898.5 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="863.5 67.3 861.3 71.1 856.9 71.1 854.7 67.3 856.9 63.5 861.3 63.5 863.5 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="863.5 77.6 861.3 81.4 856.9 81.4 854.7 77.6 856.9 73.8 861.3 73.8 863.5 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="863.5 88 861.3 91.8 856.9 91.8 854.7 88 856.9 84.2 861.3 84.2 863.5 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="863.5 46.5 861.3 50.3 856.9 50.3 854.7 46.5 856.9 42.7 861.3 42.7 863.5 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="863.5 56.8 861.3 60.6 856.9 60.6 854.7 56.8 856.9 53 861.3 53 863.5 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="863.5 36.2 861.3 40 856.9 40 854.7 36.2 856.9 32.4 861.3 32.4 863.5 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="845.9 67.3 843.7 71.1 839.3 71.1 837.1 67.3 839.3 63.5 843.7 63.5 845.9 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="845.9 77.6 843.7 81.4 839.3 81.4 837.1 77.6 839.3 73.8 843.7 73.8 845.9 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="845.9 88 843.7 91.8 839.3 91.8 837.1 88 839.3 84.2 843.7 84.2 845.9 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="845.9 46.5 843.7 50.3 839.3 50.3 837.1 46.5 839.3 42.7 843.7 42.7 845.9 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="845.9 56.8 843.7 60.6 839.3 60.6 837.1 56.8 839.3 53 843.7 53 845.9 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="845.9 36.2 843.7 40 839.3 40 837.1 36.2 839.3 32.4 843.7 32.4 845.9 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="828.4 67.3 826.2 71.1 821.8 71.1 819.6 67.3 821.8 63.5 826.2 63.5 828.4 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="828.4 77.6 826.2 81.4 821.8 81.4 819.6 77.6 821.8 73.8 826.2 73.8 828.4 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="828.4 88 826.2 91.8 821.8 91.8 819.6 88 821.8 84.2 826.2 84.2 828.4 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="828.4 46.5 826.2 50.3 821.8 50.3 819.6 46.5 821.8 42.7 826.2 42.7 828.4 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="828.4 56.8 826.2 60.6 821.8 60.6 819.6 56.8 821.8 53 826.2 53 828.4 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="828.4 36.2 826.2 40 821.8 40 819.6 36.2 821.8 32.4 826.2 32.4 828.4 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="810.8 67.3 808.6 71.1 804.2 71.1 802 67.3 804.2 63.5 808.6 63.5 810.8 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="810.8 77.6 808.6 81.4 804.2 81.4 802 77.6 804.2 73.8 808.6 73.8 810.8 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="810.8 88 808.6 91.8 804.2 91.8 802 88 804.2 84.2 808.6 84.2 810.8 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="810.8 46.5 808.6 50.3 804.2 50.3 802 46.5 804.2 42.7 808.6 42.7 810.8 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="810.8 56.8 808.6 60.6 804.2 60.6 802 56.8 804.2 53 808.6 53 810.8 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="810.8 36.2 808.6 40 804.2 40 802 36.2 804.2 32.4 808.6 32.4 810.8 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="793.3 67.3 791.1 71.1 786.7 71.1 784.5 67.3 786.7 63.5 791.1 63.5 793.3 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="793.3 77.6 791.1 81.4 786.7 81.4 784.5 77.6 786.7 73.8 791.1 73.8 793.3 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="793.3 88 791.1 91.8 786.7 91.8 784.5 88 786.7 84.2 791.1 84.2 793.3 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="793.3 46.5 791.1 50.3 786.7 50.3 784.5 46.5 786.7 42.7 791.1 42.7 793.3 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="793.3 56.8 791.1 60.6 786.7 60.6 784.5 56.8 786.7 53 791.1 53 793.3 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="793.3 36.2 791.1 40 786.7 40 784.5 36.2 786.7 32.4 791.1 32.4 793.3 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="775.8 67.3 773.6 71.1 769.2 71.1 767 67.3 769.2 63.5 773.6 63.5 775.8 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="775.8 77.6 773.6 81.4 769.2 81.4 767 77.6 769.2 73.8 773.6 73.8 775.8 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="775.8 88 773.6 91.8 769.2 91.8 767 88 769.2 84.2 773.6 84.2 775.8 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="775.8 46.5 773.6 50.3 769.2 50.3 767 46.5 769.2 42.7 773.6 42.7 775.8 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="775.8 56.8 773.6 60.6 769.2 60.6 767 56.8 769.2 53 773.6 53 775.8 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="775.8 36.2 773.6 40 769.2 40 767 36.2 769.2 32.4 773.6 32.4 775.8 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="758.2 67.3 756 71.1 751.6 71.1 749.4 67.3 751.6 63.5 756 63.5 758.2 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="758.2 77.6 756 81.4 751.6 81.4 749.4 77.6 751.6 73.8 756 73.8 758.2 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="758.2 88 756 91.8 751.6 91.8 749.4 88 751.6 84.2 756 84.2 758.2 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="758.2 46.5 756 50.3 751.6 50.3 749.4 46.5 751.6 42.7 756 42.7 758.2 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="758.2 56.8 756 60.6 751.6 60.6 749.4 56.8 751.6 53 756 53 758.2 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="758.2 36.2 756 40 751.6 40 749.4 36.2 751.6 32.4 756 32.4 758.2 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="740.7 67.3 738.5 71.1 734.1 71.1 731.9 67.3 734.1 63.5 738.5 63.5 740.7 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="740.7 77.6 738.5 81.4 734.1 81.4 731.9 77.6 734.1 73.8 738.5 73.8 740.7 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="740.7 88 738.5 91.8 734.1 91.8 731.9 88 734.1 84.2 738.5 84.2 740.7 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="740.7 46.5 738.5 50.3 734.1 50.3 731.9 46.5 734.1 42.7 738.5 42.7 740.7 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="740.7 56.8 738.5 60.6 734.1 60.6 731.9 56.8 734.1 53 738.5 53 740.7 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="740.7 36.2 738.5 40 734.1 40 731.9 36.2 734.1 32.4 738.5 32.4 740.7 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="723.2 67.3 721 71.1 716.6 71.1 714.4 67.3 716.6 63.5 721 63.5 723.2 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="723.2 77.6 721 81.4 716.6 81.4 714.4 77.6 716.6 73.8 721 73.8 723.2 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="723.2 88 721 91.8 716.6 91.8 714.4 88 716.6 84.2 721 84.2 723.2 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="723.2 46.5 721 50.3 716.6 50.3 714.4 46.5 716.6 42.7 721 42.7 723.2 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="723.2 56.8 721 60.6 716.6 60.6 714.4 56.8 716.6 53 721 53 723.2 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="723.2 36.2 721 40 716.6 40 714.4 36.2 716.6 32.4 721 32.4 723.2 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="705.6 67.3 703.4 71.1 699 71.1 696.8 67.3 699 63.5 703.4 63.5 705.6 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="705.6 77.6 703.4 81.4 699 81.4 696.8 77.6 699 73.8 703.4 73.8 705.6 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="705.6 88 703.4 91.8 699 91.8 696.8 88 699 84.2 703.4 84.2 705.6 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="705.6 46.5 703.4 50.3 699 50.3 696.8 46.5 699 42.7 703.4 42.7 705.6 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="705.6 56.8 703.4 60.6 699 60.6 696.8 56.8 699 53 703.4 53 705.6 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="705.6 36.2 703.4 40 699 40 696.8 36.2 699 32.4 703.4 32.4 705.6 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="854.7 82.8 852.5 86.6 848.1 86.6 845.9 82.8 848.1 79 852.5 79 854.7 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="854.7 72.5 852.5 76.3 848.1 76.3 845.9 72.5 848.1 68.7 852.5 68.7 854.7 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="854.7 62.1 852.5 65.9 848.1 65.9 845.9 62.1 848.1 58.3 852.5 58.3 854.7 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="854.7 51.8 852.5 55.6 848.1 55.6 845.9 51.8 848.1 48 852.5 48 854.7 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="854.7 41.4 852.5 45.2 848.1 45.2 845.9 41.4 848.1 37.6 852.5 37.6 854.7 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="837.2 82.8 835 86.6 830.6 86.6 828.4 82.8 830.6 79 835 79 837.2 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="837.2 72.5 835 76.3 830.6 76.3 828.4 72.5 830.6 68.7 835 68.7 837.2 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="837.2 62.1 835 65.9 830.6 65.9 828.4 62.1 830.6 58.3 835 58.3 837.2 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="837.2 51.8 835 55.6 830.6 55.6 828.4 51.8 830.6 48 835 48 837.2 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="837.2 41.4 835 45.2 830.6 45.2 828.4 41.4 830.6 37.6 835 37.6 837.2 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="819.7 82.8 817.5 86.6 813.1 86.6 810.9 82.8 813.1 79 817.5 79 819.7 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="819.7 72.5 817.5 76.3 813.1 76.3 810.9 72.5 813.1 68.7 817.5 68.7 819.7 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="819.7 62.1 817.5 65.9 813.1 65.9 810.9 62.1 813.1 58.3 817.5 58.3 819.7 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="819.7 51.8 817.5 55.6 813.1 55.6 810.9 51.8 813.1 48 817.5 48 819.7 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="819.7 41.4 817.5 45.2 813.1 45.2 810.9 41.4 813.1 37.6 817.5 37.6 819.7 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="802.1 82.8 799.9 86.6 795.5 86.6 793.3 82.8 795.5 79 799.9 79 802.1 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="802.1 72.5 799.9 76.3 795.5 76.3 793.3 72.5 795.5 68.7 799.9 68.7 802.1 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="802.1 62.1 799.9 65.9 795.5 65.9 793.3 62.1 795.5 58.3 799.9 58.3 802.1 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="802.1 51.8 799.9 55.6 795.5 55.6 793.3 51.8 795.5 48 799.9 48 802.1 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="802.1 41.4 799.9 45.2 795.5 45.2 793.3 41.4 795.5 37.6 799.9 37.6 802.1 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="784.6 82.8 782.4 86.6 778 86.6 775.8 82.8 778 79 782.4 79 784.6 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="784.6 72.5 782.4 76.3 778 76.3 775.8 72.5 778 68.7 782.4 68.7 784.6 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="784.6 62.1 782.4 65.9 778 65.9 775.8 62.1 778 58.3 782.4 58.3 784.6 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="784.6 51.8 782.4 55.6 778 55.6 775.8 51.8 778 48 782.4 48 784.6 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="784.6 41.4 782.4 45.2 778 45.2 775.8 41.4 778 37.6 782.4 37.6 784.6 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="767 82.8 764.8 86.6 760.4 86.6 758.2 82.8 760.4 79 764.8 79 767 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="767 72.5 764.8 76.3 760.4 76.3 758.2 72.5 760.4 68.7 764.8 68.7 767 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="767 62.1 764.8 65.9 760.4 65.9 758.2 62.1 760.4 58.3 764.8 58.3 767 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="767 51.8 764.8 55.6 760.4 55.6 758.2 51.8 760.4 48 764.8 48 767 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="767 41.4 764.8 45.2 760.4 45.2 758.2 41.4 760.4 37.6 764.8 37.6 767 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="749.5 82.8 747.3 86.6 742.9 86.6 740.7 82.8 742.9 79 747.3 79 749.5 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="749.5 72.5 747.3 76.3 742.9 76.3 740.7 72.5 742.9 68.7 747.3 68.7 749.5 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="749.5 62.1 747.3 65.9 742.9 65.9 740.7 62.1 742.9 58.3 747.3 58.3 749.5 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="749.5 51.8 747.3 55.6 742.9 55.6 740.7 51.8 742.9 48 747.3 48 749.5 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="749.5 41.4 747.3 45.2 742.9 45.2 740.7 41.4 742.9 37.6 747.3 37.6 749.5 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="732 82.8 729.8 86.6 725.4 86.6 723.2 82.8 725.4 79 729.8 79 732 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="732 72.5 729.8 76.3 725.4 76.3 723.2 72.5 725.4 68.7 729.8 68.7 732 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="732 62.1 729.8 65.9 725.4 65.9 723.2 62.1 725.4 58.3 729.8 58.3 732 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="732 51.8 729.8 55.6 725.4 55.6 723.2 51.8 725.4 48 729.8 48 732 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="732 41.4 729.8 45.2 725.4 45.2 723.2 41.4 725.4 37.6 729.8 37.6 732 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="714.4 82.8 712.2 86.6 707.8 86.6 705.6 82.8 707.8 79 712.2 79 714.4 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="714.4 72.5 712.2 76.3 707.8 76.3 705.6 72.5 707.8 68.7 712.2 68.7 714.4 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="714.4 62.1 712.2 65.9 707.8 65.9 705.6 62.1 707.8 58.3 712.2 58.3 714.4 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="714.4 51.8 712.2 55.6 707.8 55.6 705.6 51.8 707.8 48 712.2 48 714.4 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="714.4 41.4 712.2 45.2 707.8 45.2 705.6 41.4 707.8 37.6 712.2 37.6 714.4 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+    </g>
+    <g id="R50B_CASE_FAN_3">
+      <rect x="953.7" y="5.9" width="278.2" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="953.7" y="10.2" width="278.2" height="103.7" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="953.7" y="3" width="278.2" height="2.9" style="fill: #eaeaea; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <g>
+          <circle cx="973.1" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="973.1" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="1212.6" cy="79.1" r="8.6" style="fill: #eaeaea; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <circle cx="1212.6" cy="79.1" r="2.8" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="1051.7" y="5.9" width="53" height="4.3" style="fill: #ccc; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M1060.5,10.2h35.3v3.1c0,1.7-1.4,3.1-3.1,3.1h-29c-1.7,0-3.1-1.4-3.1-3.1v-3.1h-.1Z" style="fill: #c6c6be; stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <g>
+          <polygon points="1167.4 82.8 1165.2 86.6 1160.8 86.6 1158.6 82.8 1160.8 79 1165.2 79 1167.4 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1167.4 72.5 1165.2 76.3 1160.8 76.3 1158.6 72.5 1160.8 68.7 1165.2 68.7 1167.4 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1167.4 62.1 1165.2 65.9 1160.8 65.9 1158.6 62.1 1160.8 58.3 1165.2 58.3 1167.4 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1167.4 51.8 1165.2 55.6 1160.8 55.6 1158.6 51.8 1160.8 48 1165.2 48 1167.4 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1167.4 41.4 1165.2 45.2 1160.8 45.2 1158.6 41.4 1160.8 37.6 1165.2 37.6 1167.4 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1185 82.8 1182.8 86.6 1178.4 86.6 1176.2 82.8 1178.4 79 1182.8 79 1185 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1185 72.5 1182.8 76.3 1178.4 76.3 1176.2 72.5 1178.4 68.7 1182.8 68.7 1185 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1185 62.1 1182.8 65.9 1178.4 65.9 1176.2 62.1 1178.4 58.3 1182.8 58.3 1185 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1185 51.8 1182.8 55.6 1178.4 55.6 1176.2 51.8 1178.4 48 1182.8 48 1185 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1185 41.4 1182.8 45.2 1178.4 45.2 1176.2 41.4 1178.4 37.6 1182.8 37.6 1185 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1176.1 67.3 1173.9 71.1 1169.5 71.1 1167.3 67.3 1169.5 63.5 1173.9 63.5 1176.1 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1176.1 77.6 1173.9 81.4 1169.5 81.4 1167.3 77.6 1169.5 73.8 1173.9 73.8 1176.1 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1176.1 88 1173.9 91.8 1169.5 91.8 1167.3 88 1169.5 84.2 1173.9 84.2 1176.1 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1176.1 46.5 1173.9 50.3 1169.5 50.3 1167.3 46.5 1169.5 42.7 1173.9 42.7 1176.1 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1176.1 56.8 1173.9 60.6 1169.5 60.6 1167.3 56.8 1169.5 53 1173.9 53 1176.1 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1176.1 36.2 1173.9 40 1169.5 40 1167.3 36.2 1169.5 32.4 1173.9 32.4 1176.1 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1193.7 67.3 1191.5 71.1 1187.1 71.1 1184.9 67.3 1187.1 63.5 1191.5 63.5 1193.7 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1193.7 77.6 1191.5 81.4 1187.1 81.4 1184.9 77.6 1187.1 73.8 1191.5 73.8 1193.7 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1193.7 88 1191.5 91.8 1187.1 91.8 1184.9 88 1187.1 84.2 1191.5 84.2 1193.7 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1193.7 46.5 1191.5 50.3 1187.1 50.3 1184.9 46.5 1187.1 42.7 1191.5 42.7 1193.7 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1193.7 56.8 1191.5 60.6 1187.1 60.6 1184.9 56.8 1187.1 53 1191.5 53 1193.7 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1193.7 36.2 1191.5 40 1187.1 40 1184.9 36.2 1187.1 32.4 1191.5 32.4 1193.7 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1158.6 67.3 1156.4 71.1 1152 71.1 1149.8 67.3 1152 63.5 1156.4 63.5 1158.6 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1158.6 77.6 1156.4 81.4 1152 81.4 1149.8 77.6 1152 73.8 1156.4 73.8 1158.6 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1158.6 88 1156.4 91.8 1152 91.8 1149.8 88 1152 84.2 1156.4 84.2 1158.6 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1158.6 46.5 1156.4 50.3 1152 50.3 1149.8 46.5 1152 42.7 1156.4 42.7 1158.6 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1158.6 56.8 1156.4 60.6 1152 60.6 1149.8 56.8 1152 53 1156.4 53 1158.6 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1158.6 36.2 1156.4 40 1152 40 1149.8 36.2 1152 32.4 1156.4 32.4 1158.6 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1141.1 67.3 1138.9 71.1 1134.5 71.1 1132.3 67.3 1134.5 63.5 1138.9 63.5 1141.1 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1141.1 77.6 1138.9 81.4 1134.5 81.4 1132.3 77.6 1134.5 73.8 1138.9 73.8 1141.1 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1141.1 88 1138.9 91.8 1134.5 91.8 1132.3 88 1134.5 84.2 1138.9 84.2 1141.1 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1141.1 46.5 1138.9 50.3 1134.5 50.3 1132.3 46.5 1134.5 42.7 1138.9 42.7 1141.1 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1141.1 56.8 1138.9 60.6 1134.5 60.6 1132.3 56.8 1134.5 53 1138.9 53 1141.1 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1141.1 36.2 1138.9 40 1134.5 40 1132.3 36.2 1134.5 32.4 1138.9 32.4 1141.1 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1123.5 67.3 1121.3 71.1 1116.9 71.1 1114.7 67.3 1116.9 63.5 1121.3 63.5 1123.5 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1123.5 77.6 1121.3 81.4 1116.9 81.4 1114.7 77.6 1116.9 73.8 1121.3 73.8 1123.5 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1123.5 88 1121.3 91.8 1116.9 91.8 1114.7 88 1116.9 84.2 1121.3 84.2 1123.5 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1123.5 46.5 1121.3 50.3 1116.9 50.3 1114.7 46.5 1116.9 42.7 1121.3 42.7 1123.5 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1123.5 56.8 1121.3 60.6 1116.9 60.6 1114.7 56.8 1116.9 53 1121.3 53 1123.5 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1123.5 36.2 1121.3 40 1116.9 40 1114.7 36.2 1116.9 32.4 1121.3 32.4 1123.5 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1106 67.3 1103.8 71.1 1099.4 71.1 1097.2 67.3 1099.4 63.5 1103.8 63.5 1106 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1106 77.6 1103.8 81.4 1099.4 81.4 1097.2 77.6 1099.4 73.8 1103.8 73.8 1106 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1106 88 1103.8 91.8 1099.4 91.8 1097.2 88 1099.4 84.2 1103.8 84.2 1106 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1106 46.5 1103.8 50.3 1099.4 50.3 1097.2 46.5 1099.4 42.7 1103.8 42.7 1106 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1106 56.8 1103.8 60.6 1099.4 60.6 1097.2 56.8 1099.4 53 1103.8 53 1106 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1106 36.2 1103.8 40 1099.4 40 1097.2 36.2 1099.4 32.4 1103.8 32.4 1106 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1088.5 67.3 1086.3 71.1 1081.9 71.1 1079.7 67.3 1081.9 63.5 1086.3 63.5 1088.5 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1088.5 77.6 1086.3 81.4 1081.9 81.4 1079.7 77.6 1081.9 73.8 1086.3 73.8 1088.5 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1088.5 88 1086.3 91.8 1081.9 91.8 1079.7 88 1081.9 84.2 1086.3 84.2 1088.5 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1088.5 46.5 1086.3 50.3 1081.9 50.3 1079.7 46.5 1081.9 42.7 1086.3 42.7 1088.5 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1088.5 56.8 1086.3 60.6 1081.9 60.6 1079.7 56.8 1081.9 53 1086.3 53 1088.5 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1088.5 36.2 1086.3 40 1081.9 40 1079.7 36.2 1081.9 32.4 1086.3 32.4 1088.5 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1070.9 67.3 1068.7 71.1 1064.3 71.1 1062.1 67.3 1064.3 63.5 1068.7 63.5 1070.9 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1070.9 77.6 1068.7 81.4 1064.3 81.4 1062.1 77.6 1064.3 73.8 1068.7 73.8 1070.9 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1070.9 88 1068.7 91.8 1064.3 91.8 1062.1 88 1064.3 84.2 1068.7 84.2 1070.9 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1070.9 46.5 1068.7 50.3 1064.3 50.3 1062.1 46.5 1064.3 42.7 1068.7 42.7 1070.9 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1070.9 56.8 1068.7 60.6 1064.3 60.6 1062.1 56.8 1064.3 53 1068.7 53 1070.9 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1070.9 36.2 1068.7 40 1064.3 40 1062.1 36.2 1064.3 32.4 1068.7 32.4 1070.9 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1053.4 67.3 1051.2 71.1 1046.8 71.1 1044.6 67.3 1046.8 63.5 1051.2 63.5 1053.4 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1053.4 77.6 1051.2 81.4 1046.8 81.4 1044.6 77.6 1046.8 73.8 1051.2 73.8 1053.4 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1053.4 88 1051.2 91.8 1046.8 91.8 1044.6 88 1046.8 84.2 1051.2 84.2 1053.4 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1053.4 46.5 1051.2 50.3 1046.8 50.3 1044.6 46.5 1046.8 42.7 1051.2 42.7 1053.4 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1053.4 56.8 1051.2 60.6 1046.8 60.6 1044.6 56.8 1046.8 53 1051.2 53 1053.4 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1053.4 36.2 1051.2 40 1046.8 40 1044.6 36.2 1046.8 32.4 1051.2 32.4 1053.4 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1035.8 67.3 1033.6 71.1 1029.2 71.1 1027 67.3 1029.2 63.5 1033.6 63.5 1035.8 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1035.8 77.6 1033.6 81.4 1029.2 81.4 1027 77.6 1029.2 73.8 1033.6 73.8 1035.8 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1035.8 88 1033.6 91.8 1029.2 91.8 1027 88 1029.2 84.2 1033.6 84.2 1035.8 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1035.8 46.5 1033.6 50.3 1029.2 50.3 1027 46.5 1029.2 42.7 1033.6 42.7 1035.8 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1035.8 56.8 1033.6 60.6 1029.2 60.6 1027 56.8 1029.2 53 1033.6 53 1035.8 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1035.8 36.2 1033.6 40 1029.2 40 1027 36.2 1029.2 32.4 1033.6 32.4 1035.8 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1018.3 67.3 1016.1 71.1 1011.7 71.1 1009.5 67.3 1011.7 63.5 1016.1 63.5 1018.3 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1018.3 77.6 1016.1 81.4 1011.7 81.4 1009.5 77.6 1011.7 73.8 1016.1 73.8 1018.3 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1018.3 88 1016.1 91.8 1011.7 91.8 1009.5 88 1011.7 84.2 1016.1 84.2 1018.3 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1018.3 46.5 1016.1 50.3 1011.7 50.3 1009.5 46.5 1011.7 42.7 1016.1 42.7 1018.3 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1018.3 56.8 1016.1 60.6 1011.7 60.6 1009.5 56.8 1011.7 53 1016.1 53 1018.3 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1018.3 36.2 1016.1 40 1011.7 40 1009.5 36.2 1011.7 32.4 1016.1 32.4 1018.3 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1000.8 67.3 998.6 71.1 994.2 71.1 992 67.3 994.2 63.5 998.6 63.5 1000.8 67.3" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1000.8 77.6 998.6 81.4 994.2 81.4 992 77.6 994.2 73.8 998.6 73.8 1000.8 77.6" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1000.8 88 998.6 91.8 994.2 91.8 992 88 994.2 84.2 998.6 84.2 1000.8 88" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1000.8 46.5 998.6 50.3 994.2 50.3 992 46.5 994.2 42.7 998.6 42.7 1000.8 46.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1000.8 56.8 998.6 60.6 994.2 60.6 992 56.8 994.2 53 998.6 53 1000.8 56.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1000.8 36.2 998.6 40 994.2 40 992 36.2 994.2 32.4 998.6 32.4 1000.8 36.2" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1149.9 82.8 1147.7 86.6 1143.3 86.6 1141.1 82.8 1143.3 79 1147.7 79 1149.9 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1149.9 72.5 1147.7 76.3 1143.3 76.3 1141.1 72.5 1143.3 68.7 1147.7 68.7 1149.9 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1149.9 62.1 1147.7 65.9 1143.3 65.9 1141.1 62.1 1143.3 58.3 1147.7 58.3 1149.9 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1149.9 51.8 1147.7 55.6 1143.3 55.6 1141.1 51.8 1143.3 48 1147.7 48 1149.9 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1149.9 41.4 1147.7 45.2 1143.3 45.2 1141.1 41.4 1143.3 37.6 1147.7 37.6 1149.9 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1132.4 82.8 1130.2 86.6 1125.8 86.6 1123.6 82.8 1125.8 79 1130.2 79 1132.4 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1132.4 72.5 1130.2 76.3 1125.8 76.3 1123.6 72.5 1125.8 68.7 1130.2 68.7 1132.4 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1132.4 62.1 1130.2 65.9 1125.8 65.9 1123.6 62.1 1125.8 58.3 1130.2 58.3 1132.4 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1132.4 51.8 1130.2 55.6 1125.8 55.6 1123.6 51.8 1125.8 48 1130.2 48 1132.4 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1132.4 41.4 1130.2 45.2 1125.8 45.2 1123.6 41.4 1125.8 37.6 1130.2 37.6 1132.4 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1114.8 82.8 1112.6 86.6 1108.2 86.6 1106 82.8 1108.2 79 1112.6 79 1114.8 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1114.8 72.5 1112.6 76.3 1108.2 76.3 1106 72.5 1108.2 68.7 1112.6 68.7 1114.8 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1114.8 62.1 1112.6 65.9 1108.2 65.9 1106 62.1 1108.2 58.3 1112.6 58.3 1114.8 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1114.8 51.8 1112.6 55.6 1108.2 55.6 1106 51.8 1108.2 48 1112.6 48 1114.8 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1114.8 41.4 1112.6 45.2 1108.2 45.2 1106 41.4 1108.2 37.6 1112.6 37.6 1114.8 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1097.3 82.8 1095.1 86.6 1090.7 86.6 1088.5 82.8 1090.7 79 1095.1 79 1097.3 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1097.3 72.5 1095.1 76.3 1090.7 76.3 1088.5 72.5 1090.7 68.7 1095.1 68.7 1097.3 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1097.3 62.1 1095.1 65.9 1090.7 65.9 1088.5 62.1 1090.7 58.3 1095.1 58.3 1097.3 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1097.3 51.8 1095.1 55.6 1090.7 55.6 1088.5 51.8 1090.7 48 1095.1 48 1097.3 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1097.3 41.4 1095.1 45.2 1090.7 45.2 1088.5 41.4 1090.7 37.6 1095.1 37.6 1097.3 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1079.7 82.8 1077.5 86.6 1073.1 86.6 1070.9 82.8 1073.1 79 1077.5 79 1079.7 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1079.7 72.5 1077.5 76.3 1073.1 76.3 1070.9 72.5 1073.1 68.7 1077.5 68.7 1079.7 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1079.7 62.1 1077.5 65.9 1073.1 65.9 1070.9 62.1 1073.1 58.3 1077.5 58.3 1079.7 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1079.7 51.8 1077.5 55.6 1073.1 55.6 1070.9 51.8 1073.1 48 1077.5 48 1079.7 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1079.7 41.4 1077.5 45.2 1073.1 45.2 1070.9 41.4 1073.1 37.6 1077.5 37.6 1079.7 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1062.2 82.8 1060 86.6 1055.6 86.6 1053.4 82.8 1055.6 79 1060 79 1062.2 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1062.2 72.5 1060 76.3 1055.6 76.3 1053.4 72.5 1055.6 68.7 1060 68.7 1062.2 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1062.2 62.1 1060 65.9 1055.6 65.9 1053.4 62.1 1055.6 58.3 1060 58.3 1062.2 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1062.2 51.8 1060 55.6 1055.6 55.6 1053.4 51.8 1055.6 48 1060 48 1062.2 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1062.2 41.4 1060 45.2 1055.6 45.2 1053.4 41.4 1055.6 37.6 1060 37.6 1062.2 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1044.7 82.8 1042.5 86.6 1038.1 86.6 1035.9 82.8 1038.1 79 1042.5 79 1044.7 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1044.7 72.5 1042.5 76.3 1038.1 76.3 1035.9 72.5 1038.1 68.7 1042.5 68.7 1044.7 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1044.7 62.1 1042.5 65.9 1038.1 65.9 1035.9 62.1 1038.1 58.3 1042.5 58.3 1044.7 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1044.7 51.8 1042.5 55.6 1038.1 55.6 1035.9 51.8 1038.1 48 1042.5 48 1044.7 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1044.7 41.4 1042.5 45.2 1038.1 45.2 1035.9 41.4 1038.1 37.6 1042.5 37.6 1044.7 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1027.1 82.8 1024.9 86.6 1020.5 86.6 1018.3 82.8 1020.5 79 1024.9 79 1027.1 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1027.1 72.5 1024.9 76.3 1020.5 76.3 1018.3 72.5 1020.5 68.7 1024.9 68.7 1027.1 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1027.1 62.1 1024.9 65.9 1020.5 65.9 1018.3 62.1 1020.5 58.3 1024.9 58.3 1027.1 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1027.1 51.8 1024.9 55.6 1020.5 55.6 1018.3 51.8 1020.5 48 1024.9 48 1027.1 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1027.1 41.4 1024.9 45.2 1020.5 45.2 1018.3 41.4 1020.5 37.6 1024.9 37.6 1027.1 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <polygon points="1009.6 82.8 1007.4 86.6 1003 86.6 1000.8 82.8 1003 79 1007.4 79 1009.6 82.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1009.6 72.5 1007.4 76.3 1003 76.3 1000.8 72.5 1003 68.7 1007.4 68.7 1009.6 72.5" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1009.6 62.1 1007.4 65.9 1003 65.9 1000.8 62.1 1003 58.3 1007.4 58.3 1009.6 62.1" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1009.6 51.8 1007.4 55.6 1003 55.6 1000.8 51.8 1003 48 1007.4 48 1009.6 51.8" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <polygon points="1009.6 41.4 1007.4 45.2 1003 45.2 1000.8 41.4 1003 37.6 1007.4 37.6 1009.6 41.4" style="stroke: #231f20; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g id="R50B_POWER_SUPPLIES">
+    <g id="R50B_PSU_1">
+      <g>
+        <rect x="206.5" y="379.6" width="35.1" height="2.2" style="fill: #a4a4a5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M241.6,384.3l-.2,104.5c0,.3-.2.5-.5.5H38.3c-.3,0-.5-.2-.5-.5v-107.6c0-.3.2-.5.5-.5h177.1v2.2h2.2l.2-.3,23.3,1c.3,0,.5.2.5.5v.2h0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M242.7,381.7h-25.2v2.4h23.3c.3,0,.5.2.5.5v103c0,.3-.2.5-.5.5H38.3c-.3,0-.5-.2-.5-.5v-105.2c0-.3.2-.5.5-.5h177.1v-2.4H36.4c-.6,0-1,.5-1,1v109c0,.6.4,1,1,1h206.3c.5,0,1-.4,1-1v-106.8c0-.5-.5-1-1-1h0Z" style="fill: #d7d7d7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <g>
+          <path d="M155.4,387.8c-.1-2.8-1.3-5.4-3.1-7.3-2.1-2.2-5-3.6-8.3-3.6H53.2c-4.3,0-8.1,2.4-10,6-.5,1-.9,2-1.1,3.1,0,.6-.2,1.2-.2,1.8v91.4c0,2.8,1,5.3,2.6,7.3l.3.3c2.1,2.3,5.1,3.8,8.5,3.8h90.9c6.3,0,11.4-5.1,11.4-11.4v-91.4h-.2ZM144.1,382.6c3.1,0,5.7,2.5,5.7,5.7s-.2,1.5-.4,2.1c-.4,1.1-1.2,2-2.2,2.6-.9.6-1.9.9-3.1.9s-2.3-.4-3.3-1c-1-.7-1.7-1.6-2.1-2.7-.2-.6-.3-1.2-.3-1.9,0-3.1,2.5-5.7,5.7-5.7h0ZM124.1,379.8c4.1,2,8,4.4,11.6,7.2,0,.4-.1.9-.1,1.3,0,.8.1,1.5.3,2.2.3,1,.7,1.9,1.3,2.7,1.5,2.2,4.1,3.6,7,3.6s.9,0,1.3-.1c2.5,3.1,4.6,6.4,6.4,10-2.5,6.5-6.1,12.5-10.6,17.6-.7.7-1.3,1.5-2,2.2-1.6,1.6-3.3,3.2-5.1,4.6-.2-2.5-.6-4.9-1.3-7.2-.3-1.1-.7-2.3-1.1-3.3-2.1-5.2-5.3-9.7-9.4-13.4.2-3.5.1-6.9-.3-10.3,0-1-.2-1.9-.4-2.9-.8-4.9-2.2-9.6-4.1-14.2h6.7-.2,0ZM73.2,379.8h41.1c2.2,4.9,3.8,10,4.5,15.3,0,1,.3,2,.4,2.9.2,2.3.3,4.6.2,7-2-1.4-4.1-2.7-6.4-3.7-1.1-.5-2.2-.9-3.3-1.3-3.5-1.2-7.2-1.8-11.1-1.8s-3.4.1-5.1.4c-2.5-2.4-5.2-4.5-8.1-6.5-.8-.5-1.6-1.1-2.5-1.6-2.3-1.4-4.6-2.6-7-3.6-3.2-1.4-6.4-2.4-9.8-3.2,2.3-1.5,4.6-2.8,7.1-4h0v.1ZM53.2,382.6c3.1,0,5.7,2.5,5.7,5.7s-2.5,5.7-5.7,5.7-5.7-2.5-5.7-5.7,2.5-5.7,5.7-5.7ZM44.7,408.3c.3-.5.5-1.1.8-1.6,1.4-2.8,3.1-5.5,4.9-8,.5-.7,1-1.3,1.5-2,.4,0,.9.1,1.3.1,4.7,0,8.5-3.8,8.5-8.5s0-.9,0-1.3c.4-.3.9-.7,1.3-1,4.4.8,8.7,2.2,12.7,4,2.2,1,4.4,2.1,6.4,3.4.8.5,1.7,1,2.5,1.6,1.9,1.3,3.8,2.7,5.5,4.3-2.4.6-4.8,1.5-7,2.5s-2.1,1.1-3.1,1.7c-4.7,2.9-8.7,6.9-11.6,11.5-8.4,1-16.5,3.7-23.8,8v-14.7h.2-.1ZM44.7,459.2v-32.8c6.7-4.3,14.2-7.1,22.1-8.2-1.9,4-3.2,8.4-3.5,13v3.5c0,3.6.7,7,1.8,10.2-5.1,7.8-8.4,16.7-9.5,26.1-.7-.2-1.5-.3-2.2-.3s-.9,0-1.3.1c-2.5-3.2-4.7-6.6-6.5-10.2-.2-.5-.5-.9-.7-1.4h-.2ZM53.2,484.9c-3.1,0-5.7-2.5-5.7-5.7s2.5-5.7,5.7-5.7,5.7,2.5,5.7,5.7-2.5,5.7-5.7,5.7ZM73.2,487.7c-4.1-2-8-4.4-11.6-7.2v-1.3c0-2.9-1.4-5.4-3.6-6.9.8-8.6,3.6-16.8,8.1-24.1,1.8,4.1,4.5,7.9,7.7,11,.8.8,1.7,1.6,2.6,2.3,2.7,2.2,5.8,3.9,9.1,5.3,2.3,7.6,6.1,14.8,11.2,20.9h-23.6.1ZM135.7,480.5c-.4.3-.8.7-1.3,1-1,.8-2.1,1.5-3.2,2.2-2.3,1.5-4.7,2.8-7.1,4h-23.6c-5.2-5.8-9.1-12.5-11.6-19.8,3.1.9,6.3,1.3,9.7,1.3s2.4,0,3.6-.2c1.2-.1,2.3-.3,3.5-.5,3.5-.7,6.8-1.9,9.8-3.6,9.6,4.2,20.3,5.8,30.8,4.5-.3.4-.7.9-1,1.3-.4,0-.9-.1-1.3-.1-4.7,0-8.5,3.8-8.5,8.5s0,.9.1,1.3h.1v.1ZM144.1,484.9c-3.1,0-5.7-2.5-5.7-5.7s2.5-5.7,5.7-5.7,5.7,2.5,5.7,5.7-2.5,5.7-5.7,5.7ZM152.6,459.2c-1.2,2.5-2.5,4.8-3.9,7.1-10.2,1.7-20.6.6-30.1-3.1,3.7-2.5,6.9-5.8,9.5-9.5.7-1,1.3-2,1.8-3,2.6-4.8,4.1-10.2,4.2-15.9,2.8-2,5.3-4.3,7.7-6.8.7-.7,1.3-1.4,2-2.2,3.5-4.1,6.5-8.6,8.8-13.5v47h0v-.1Z" style="fill: #272626; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M63.1,434.7c0,3.6.7,7,1.8,10.2-5.1,7.8-8.4,16.7-9.5,26.1-.7-.2-1.5-.3-2.2-.3s-.9,0-1.3.1c-2.5-3.2-4.7-6.6-6.5-10.2-.2-.5-.5-.9-.7-1.4v-32.8c6.7-4.3,14.2-7.1,22.1-8.2-1.9,4-3.2,8.4-3.5,13v3.5h-.2Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M96.7,487.7h-23.5c-4.1-2-8-4.4-11.6-7.2v-1.3c0-2.9-1.4-5.4-3.6-6.9.8-8.6,3.6-16.8,8.1-24.1,1.8,4.1,4.5,7.9,7.7,11,.8.8,1.7,1.6,2.6,2.3,2.7,2.2,5.8,3.9,9.1,5.3,2.3,7.6,6.1,14.8,11.2,20.9h0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.4,469.4c-.3.4-.7.9-1,1.3-.4,0-.9-.1-1.3-.1-4.7,0-8.5,3.8-8.5,8.5s0,.9.1,1.3c-.4.3-.8.7-1.3,1-1,.8-2.1,1.5-3.2,2.2-2.3,1.5-4.7,2.8-7.1,4h-23.6c-5.2-5.8-9.1-12.5-11.6-19.8,3.1.9,6.3,1.3,9.7,1.3s2.4,0,3.6-.2c1.2-.1,2.3-.3,3.5-.5,3.5-.7,6.8-1.9,9.8-3.6,9.6,4.2,20.3,5.8,30.8,4.5h.1v.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M152.6,412.2v47c-1.2,2.5-2.5,4.8-3.9,7.1-10.2,1.7-20.6.6-30.1-3.1,3.7-2.5,6.9-5.8,9.5-9.5.7-1,1.3-2,1.8-3,2.6-4.8,4.1-10.2,4.2-15.9,2.8-2,5.3-4.3,7.7-6.8.7-.7,1.3-1.4,2-2.2,3.5-4.1,6.5-8.6,8.8-13.5h0v-.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M151.8,406.7c-2.5,6.5-6.1,12.5-10.6,17.6-.7.7-1.3,1.5-2,2.2-1.6,1.6-3.3,3.2-5.1,4.6-.2-2.5-.6-4.9-1.3-7.2-.3-1.1-.7-2.3-1.1-3.3-2.1-5.2-5.3-9.7-9.4-13.4.2-3.5,0-6.9-.3-10.3,0-1-.2-1.9-.4-2.9-.8-4.9-2.2-9.6-4.1-14.2h6.7c4.1,2,8,4.4,11.6,7.2,0,.4-.1.9-.1,1.3,0,.8.1,1.5.3,2.2.3,1,.7,1.9,1.3,2.7,1.5,2.2,4.1,3.6,7,3.6s.9,0,1.3-.1c2.5,3.1,4.6,6.4,6.4,10h-.2,0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M119.5,405c-2-1.4-4.1-2.7-6.4-3.7-1.1-.5-2.2-.9-3.3-1.3-3.5-1.2-7.2-1.8-11.1-1.8s-3.4.1-5.1.4c-2.5-2.4-5.2-4.5-8.1-6.5-.8-.5-1.6-1.1-2.5-1.6-2.3-1.4-4.6-2.6-7-3.6-3.2-1.4-6.4-2.4-9.8-3.2,2.3-1.5,4.6-2.8,7.1-4h41.1c2.2,4.9,3.8,10,4.5,15.3,0,1,.3,2,.4,2.9.2,2.3.3,4.6.2,7h0v.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M90.1,399.3c-2.4.6-4.8,1.5-7,2.5s-2.1,1.1-3.1,1.7c-4.7,2.9-8.7,6.9-11.6,11.5-8.4,1-16.5,3.7-23.8,8v-14.7c.3-.5.5-1.1.8-1.6,1.4-2.8,3.1-5.5,4.9-8,.5-.7,1-1.3,1.5-2,.4,0,.9.1,1.3.1,4.7,0,8.5-3.8,8.5-8.5s0-.9,0-1.3c.4-.3.9-.7,1.3-1,4.4.8,8.7,2.2,12.7,4,2.2,1,4.4,2.1,6.4,3.4.8.5,1.7,1,2.5,1.6,1.9,1.3,3.8,2.7,5.5,4.3h.2-.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <path d="M42.9,377h23c1.1,0,2,.9,2,2v9.5h0c0,4.2-2.1,7.9-5.2,10.2,0,0,3.2,0,8.1,1.3-1.4,1.1-2.6,2.3-3.9,3.6-6.6-1.5-11.4-1.5-13.1-1.5-3.5,4.9-6.3,10.4-8.1,16.3v29.4c1.8,6,4.6,11.5,8.2,16.5.2.3.5.7.8,1h.7c3.4,0,6.4,1.3,8.7,3.5,0-1.3.4-3.8,1.3-7.1,1.1,1.4,2.4,2.7,3.7,3.8-.9,3.8-1.2,7-1.4,9.3.2,1,.4,2,.4,3h0v9.5c0,1.1-.9,2-2,2h-20.9v1.2h-4.2v-10.9h-3.1v-89.2h3.1v-11.5c0-.5.2-1,.6-1.4,0,0,.2-.2.3-.2.3-.2.7-.3,1.1-.3h-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M131.8,377h26.7c.4,0,.8.1,1.1.3.2.2.4.3.5.5.2.3.3.7.3,1.1v3.9h2.5v-3.3h78.7c1.1,0,2,.9,2,2v11.9c0,.3-.2.5-.5.5h-1.9v2.4h1.9c.3,0,.5.2.5.5v11.2c0,.3-.2.5-.5.5h-1.9v2.4h1.9c.3,0,.5.2.5.5v77.1c0,1.1-.9,2-2,2h-40.2c-.3,0-.5-.2-.5-.5v-1.9h-2.4v1.9c0,.3-.2.5-.5.5h-11c-.3,0-.5-.2-.5-.5v-1.9h-2.4v1.9c0,.3-.2.5-.5.5h-26.9c-.3,0-.5-.2-.5-.5v-1.9h-2.3v.7c0,.3-.2.5-.5.5h-21.7c-1.1,0-2-.9-2-2v-9.5h0c0-3.7,1.6-7,4.1-9.3-1.3-.1-3.8-.5-7.1-1.3,1.4-1.1,2.7-2.4,3.9-3.7,5.8,1.3,10.2,1.5,12.4,1.5h0c.2-.3.4-.5.6-.8,3.6-4.9,6.4-10.5,8.2-16.5v-29.4c-1.8-6-4.6-11.5-8.2-16.5-.2-.3-.5-.7-.8-1h-.7c-3.3,0-6.3-1.3-8.5-3.4,0,.6-.2,3.5-1.3,7.9-1.1-1.4-2.3-2.7-3.6-3.9.9-4.1,1.3-7.5,1.4-9.9-.3-1-.4-2.2-.4-3.3h0v-9.5c0-1.1.9-2,2-2v.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M123.8,461.6c2.5.8,4.8,1.5,6.9,2-1.2,1.3-2.5,2.5-3.9,3.7-2.1-.6-4.6-1.3-7.3-2.4,1.5-1,2.9-2.1,4.2-3.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M128.8,401.7c1.3,1.2,2.5,2.5,3.6,3.9-.5,2.1-1.3,4.6-2.3,7.3-1-1.5-2.1-2.9-3.3-4.2.8-2.5,1.5-4.8,2-7h0Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M123.5,416.8c1.4-2.9,2.5-5.6,3.4-8.2,1.2,1.3,2.3,2.7,3.3,4.2h0c-1,2.7-2.4,5.6-4.1,8.6,1.7,3.7,2.6,7.8,2.6,12.2,0,10.3-5.2,19.3-13.1,24.7,2.8,1.4,5.6,2.5,8.2,3.4-1.3,1.2-2.8,2.3-4.2,3.3-2.7-1.1-5.6-2.4-8.6-4.1h0c-3.7,1.6-7.9,2.6-12.2,2.6-10.2,0-19.2-5.1-24.6-13-1.4,2.8-2.5,5.6-3.4,8.2-1.2-1.3-2.3-2.7-3.3-4.2,1-2.7,2.4-5.5,4.1-8.5-1.7-3.7-2.6-7.9-2.6-12.3,0-10.2,5.1-19.2,13-24.6-2.8-1.4-5.6-2.5-8.2-3.4,1.3-1.2,2.7-2.3,4.2-3.3,2.6,1,5.5,2.4,8.5,4.1,3.7-1.7,7.9-2.6,12.3-2.6,10.2,0,19.3,5.2,24.6,13h0l.1-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M67.6,454.4c1,1.5,2.1,2.9,3.3,4.2-.8,2.5-1.5,4.8-2,6.9-1.3-1.2-2.5-2.5-3.7-3.8.5-2.1,1.3-4.6,2.3-7.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M70.8,400c2.1.5,4.6,1.3,7.3,2.3-1.5,1-2.9,2.1-4.2,3.3-2.5-.8-4.8-1.5-6.9-2,1.2-1.3,2.5-2.5,3.9-3.6h-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <circle cx="192.4" cy="480.2" r="7" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="215.4 379.6 206.5 379.6 206.5 382 206.5 382.8 215.4 382.8 215.4 379.6" style="fill: #d7d7d7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="181.6" y="379.6" width="24.9" height="2.4" style="fill: #a4a4a5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="223.4" y="414.5" width="15.8" height="42.5" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <circle cx="232.9" cy="402.5" r="8.4" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <circle cx="232.9" cy="402.5" r="3.9" style="fill: #d7d5d6; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <g>
+          <circle cx="51.8" cy="388.62" r="9.8" transform="translate(-338.32 427.51) rotate(-88.1)" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M56.8,387.5v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="141.9" cy="388.7" r="9.8" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.9,387.5v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="51.75" cy="478.7" r="9.8" transform="translate(-428.4 514.56) rotate(-88.1)" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M56.8,477.6v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="141.9" cy="478.8" r="9.8" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.9,477.6v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="39.9" y="421.9" width="114" height="23.2" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <path d="M222.7,386.9v79.5c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4v-79.5c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4Z" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M211,398.1v57c0,2-1.7,3.7-3.8,3.7h-22.5c-1,0-1.9-.4-2.5-1l-.2-.2-13.9-13.2-.5-.5h0c-.6-.7-.9-1.5-.9-2.4v-30c0-.9.4-1.8.9-2.4h0l.5-.5,13.9-13.2.2-.2c.7-.6,1.6-1,2.5-1h22.5c2.1,0,3.8,1.6,3.8,3.7v.2Z" style="fill: #030303; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <g>
+          <rect x="187.4" y="403.1" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="189.9" y="405.6" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="405.6" x2="203" y2="403.1" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="405.6" x2="187.4" y2="403.1" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="408.3" x2="187.4" y2="410.8" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="408.3" x2="203" y2="410.8" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <rect x="173.1" y="422.7" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="175.6" y="425.3" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="186.2" y1="425.3" x2="188.7" y2="422.7" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="175.6" y1="425.3" x2="173.1" y2="422.7" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="175.6" y1="427.9" x2="173.1" y2="430.5" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="186.2" y1="427.9" x2="188.7" y2="430.5" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <rect x="187.4" y="442.3" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="189.9" y="444.9" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="444.9" x2="203" y2="442.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="444.9" x2="187.4" y2="442.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="447.5" x2="187.4" y2="450.1" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="447.5" x2="203" y2="450.1" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <g>
+        <rect x="239.2" y="414.5" width="2.1" height="42.2" style="fill: #737374; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="216.4" y="438.3" width="25" height="42.5" style="fill: #828183; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="210.1" y="434.1" width="11.5" height="51" rx="3.6" ry="3.6" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+    <g id="R50B_PSU_2">
+      <g>
+        <rect x="206.5" y="264.8" width="35.1" height="2.2" style="fill: #a4a4a5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M241.6,269.5l-.2,104.5c0,.3-.2.5-.5.5H38.3c-.3,0-.5-.2-.5-.5v-107.6c0-.3.2-.5.5-.5h177.1v2.2h2.2l.2-.3,23.3,1c.3,0,.5.2.5.5v.2h0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M242.7,266.9h-25.2v2.4h23.3c.3,0,.5.2.5.5v103c0,.3-.2.5-.5.5H38.3c-.3,0-.5-.2-.5-.5v-105.2c0-.3.2-.5.5-.5h177.1v-2.4H36.4c-.6,0-1,.5-1,1v109c0,.6.4,1,1,1h206.3c.5,0,1-.4,1-1v-106.8c0-.5-.5-1-1-1h0Z" style="fill: #d7d7d7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <g>
+          <path d="M155.4,273c-.1-2.8-1.3-5.4-3.1-7.3-2.1-2.2-5-3.6-8.3-3.6H53.2c-4.3,0-8.1,2.4-10,6-.5,1-.9,2-1.1,3.1,0,.6-.2,1.2-.2,1.8v91.4c0,2.8,1,5.3,2.6,7.3l.3.3c2.1,2.3,5.1,3.8,8.5,3.8h90.9c6.3,0,11.4-5.1,11.4-11.4v-91.4h-.2ZM144.1,267.8c3.1,0,5.7,2.5,5.7,5.7s-.2,1.5-.4,2.1c-.4,1.1-1.2,2-2.2,2.6-.9.6-1.9.9-3.1.9s-2.3-.4-3.3-1c-1-.7-1.7-1.6-2.1-2.7-.2-.6-.3-1.2-.3-1.9,0-3.1,2.5-5.7,5.7-5.7h0ZM124.1,265c4.1,2,8,4.4,11.6,7.2,0,.4-.1.9-.1,1.3,0,.8.1,1.5.3,2.2.3,1,.7,1.9,1.3,2.7,1.5,2.2,4.1,3.6,7,3.6s.9,0,1.3-.1c2.5,3.1,4.6,6.4,6.4,10-2.5,6.5-6.1,12.5-10.6,17.6-.7.7-1.3,1.5-2,2.2-1.6,1.6-3.3,3.2-5.1,4.6-.2-2.5-.6-4.9-1.3-7.2-.3-1.1-.7-2.3-1.1-3.3-2.1-5.2-5.3-9.7-9.4-13.4.2-3.5.1-6.9-.3-10.3,0-1-.2-1.9-.4-2.9-.8-4.9-2.2-9.6-4.1-14.2h6.7-.2,0ZM73.2,265h41.1c2.2,4.9,3.8,10,4.5,15.3,0,1,.3,2,.4,2.9.2,2.3.3,4.6.2,7-2-1.4-4.1-2.7-6.4-3.7-1.1-.5-2.2-.9-3.3-1.3-3.5-1.2-7.2-1.8-11.1-1.8s-3.4.1-5.1.4c-2.5-2.4-5.2-4.5-8.1-6.5-.8-.5-1.6-1.1-2.5-1.6-2.3-1.4-4.6-2.6-7-3.6-3.2-1.4-6.4-2.4-9.8-3.2,2.3-1.5,4.6-2.8,7.1-4h0v.1ZM53.2,267.8c3.1,0,5.7,2.5,5.7,5.7s-2.5,5.7-5.7,5.7-5.7-2.5-5.7-5.7,2.5-5.7,5.7-5.7ZM44.7,293.5c.3-.5.5-1.1.8-1.6,1.4-2.8,3.1-5.5,4.9-8,.5-.7,1-1.3,1.5-2,.4,0,.9.1,1.3.1,4.7,0,8.5-3.8,8.5-8.5s0-.9,0-1.3c.4-.3.9-.7,1.3-1,4.4.8,8.7,2.2,12.7,4,2.2,1,4.4,2.1,6.4,3.4.8.5,1.7,1,2.5,1.6,1.9,1.3,3.8,2.7,5.5,4.3-2.4.6-4.8,1.5-7,2.5s-2.1,1.1-3.1,1.7c-4.7,2.9-8.7,6.9-11.6,11.5-8.4,1-16.5,3.7-23.8,8v-14.7h.2-.1ZM44.7,344.4v-32.8c6.7-4.3,14.2-7.1,22.1-8.2-1.9,4-3.2,8.4-3.5,13v3.5c0,3.6.7,7,1.8,10.2-5.1,7.8-8.4,16.7-9.5,26.1-.7-.2-1.5-.3-2.2-.3s-.9,0-1.3.1c-2.5-3.2-4.7-6.6-6.5-10.2-.2-.5-.5-.9-.7-1.4h-.2ZM53.2,370.1c-3.1,0-5.7-2.5-5.7-5.7s2.5-5.7,5.7-5.7,5.7,2.5,5.7,5.7-2.5,5.7-5.7,5.7ZM73.2,372.9c-4.1-2-8-4.4-11.6-7.2v-1.3c0-2.9-1.4-5.4-3.6-6.9.8-8.6,3.6-16.8,8.1-24.1,1.8,4.1,4.5,7.9,7.7,11,.8.8,1.7,1.6,2.6,2.3,2.7,2.2,5.8,3.9,9.1,5.3,2.3,7.6,6.1,14.8,11.2,20.9h-23.6.1ZM135.7,365.7c-.4.3-.8.7-1.3,1-1,.8-2.1,1.5-3.2,2.2-2.3,1.5-4.7,2.8-7.1,4h-23.6c-5.2-5.8-9.1-12.5-11.6-19.8,3.1.9,6.3,1.3,9.7,1.3s2.4,0,3.6-.2c1.2-.1,2.3-.3,3.5-.5,3.5-.7,6.8-1.9,9.8-3.6,9.6,4.2,20.3,5.8,30.8,4.5-.3.4-.7.9-1,1.3-.4,0-.9-.1-1.3-.1-4.7,0-8.5,3.8-8.5,8.5s0,.9.1,1.3h.1v.1ZM144.1,370.1c-3.1,0-5.7-2.5-5.7-5.7s2.5-5.7,5.7-5.7,5.7,2.5,5.7,5.7-2.5,5.7-5.7,5.7ZM152.6,344.4c-1.2,2.5-2.5,4.8-3.9,7.1-10.2,1.7-20.6.6-30.1-3.1,3.7-2.5,6.9-5.8,9.5-9.5.7-1,1.3-2,1.8-3,2.6-4.8,4.1-10.2,4.2-15.9,2.8-2,5.3-4.3,7.7-6.8.7-.7,1.3-1.4,2-2.2,3.5-4.1,6.5-8.6,8.8-13.5v47h0v-.1Z" style="fill: #272626; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M63.1,319.9c0,3.6.7,7,1.8,10.2-5.1,7.8-8.4,16.7-9.5,26.1-.7-.2-1.5-.3-2.2-.3s-.9,0-1.3.1c-2.5-3.2-4.7-6.6-6.5-10.2-.2-.5-.5-.9-.7-1.4v-32.8c6.7-4.3,14.2-7.1,22.1-8.2-1.9,4-3.2,8.4-3.5,13v3.5h-.2Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M96.7,372.9h-23.5c-4.1-2-8-4.4-11.6-7.2v-1.3c0-2.9-1.4-5.4-3.6-6.9.8-8.6,3.6-16.8,8.1-24.1,1.8,4.1,4.5,7.9,7.7,11,.8.8,1.7,1.6,2.6,2.3,2.7,2.2,5.8,3.9,9.1,5.3,2.3,7.6,6.1,14.8,11.2,20.9h0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.4,354.6c-.3.4-.7.9-1,1.3-.4,0-.9-.1-1.3-.1-4.7,0-8.5,3.8-8.5,8.5s0,.9.1,1.3c-.4.3-.8.7-1.3,1-1,.8-2.1,1.5-3.2,2.2-2.3,1.5-4.7,2.8-7.1,4h-23.6c-5.2-5.8-9.1-12.5-11.6-19.8,3.1.9,6.3,1.3,9.7,1.3s2.4,0,3.6-.2c1.2-.1,2.3-.3,3.5-.5,3.5-.7,6.8-1.9,9.8-3.6,9.6,4.2,20.3,5.8,30.8,4.5h.1v.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M152.6,297.4v47c-1.2,2.5-2.5,4.8-3.9,7.1-10.2,1.7-20.6.6-30.1-3.1,3.7-2.5,6.9-5.8,9.5-9.5.7-1,1.3-2,1.8-3,2.6-4.8,4.1-10.2,4.2-15.9,2.8-2,5.3-4.3,7.7-6.8.7-.7,1.3-1.4,2-2.2,3.5-4.1,6.5-8.6,8.8-13.5h0v-.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M151.8,291.9c-2.5,6.5-6.1,12.5-10.6,17.6-.7.7-1.3,1.5-2,2.2-1.6,1.6-3.3,3.2-5.1,4.6-.2-2.5-.6-4.9-1.3-7.2-.3-1.1-.7-2.3-1.1-3.3-2.1-5.2-5.3-9.7-9.4-13.4.2-3.5,0-6.9-.3-10.3,0-1-.2-1.9-.4-2.9-.8-4.9-2.2-9.6-4.1-14.2h6.7c4.1,2,8,4.4,11.6,7.2,0,.4-.1.9-.1,1.3,0,.8.1,1.5.3,2.2.3,1,.7,1.9,1.3,2.7,1.5,2.2,4.1,3.6,7,3.6s.9,0,1.3-.1c2.5,3.1,4.6,6.4,6.4,10h-.2,0Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M119.5,290.2c-2-1.4-4.1-2.7-6.4-3.7-1.1-.5-2.2-.9-3.3-1.3-3.5-1.2-7.2-1.8-11.1-1.8s-3.4.1-5.1.4c-2.5-2.4-5.2-4.5-8.1-6.5-.8-.5-1.6-1.1-2.5-1.6-2.3-1.4-4.6-2.6-7-3.6-3.2-1.4-6.4-2.4-9.8-3.2,2.3-1.5,4.6-2.8,7.1-4h41.1c2.2,4.9,3.8,10,4.5,15.3,0,1,.3,2,.4,2.9.2,2.3.3,4.6.2,7h0v.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M90.1,284.5c-2.4.6-4.8,1.5-7,2.5s-2.1,1.1-3.1,1.7c-4.7,2.9-8.7,6.9-11.6,11.5-8.4,1-16.5,3.7-23.8,8v-14.7c.3-.5.5-1.1.8-1.6,1.4-2.8,3.1-5.5,4.9-8,.5-.7,1-1.3,1.5-2,.4,0,.9.1,1.3.1,4.7,0,8.5-3.8,8.5-8.5s0-.9,0-1.3c.4-.3.9-.7,1.3-1,4.4.8,8.7,2.2,12.7,4,2.2,1,4.4,2.1,6.4,3.4.8.5,1.7,1,2.5,1.6,1.9,1.3,3.8,2.7,5.5,4.3h.2-.1Z" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <path d="M42.9,262.2h23c1.1,0,2,.9,2,2v9.5h0c0,4.2-2.1,7.9-5.2,10.2,0,0,3.2,0,8.1,1.3-1.4,1.1-2.6,2.3-3.9,3.6-6.6-1.5-11.4-1.5-13.1-1.5-3.5,4.9-6.3,10.4-8.1,16.3v29.4c1.8,6,4.6,11.5,8.2,16.5.2.3.5.7.8,1h.7c3.4,0,6.4,1.3,8.7,3.5,0-1.3.4-3.8,1.3-7.1,1.1,1.4,2.4,2.7,3.7,3.8-.9,3.8-1.2,7-1.4,9.3.2,1,.4,2,.4,3h0v9.5c0,1.1-.9,2-2,2h-20.9v1.2h-4.2v-10.9h-3.1v-89.2h3.1v-11.5c0-.5.2-1,.6-1.4,0,0,.2-.2.3-.2.3-.2.7-.3,1.1-.3h-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M131.8,262.2h26.7c.4,0,.8.1,1.1.3.2.2.4.3.5.5.2.3.3.7.3,1.1v3.9h2.5v-3.3h78.7c1.1,0,2,.9,2,2v11.9c0,.3-.2.5-.5.5h-1.9v2.4h1.9c.3,0,.5.2.5.5v11.2c0,.3-.2.5-.5.5h-1.9v2.4h1.9c.3,0,.5.2.5.5v77.1c0,1.1-.9,2-2,2h-40.2c-.3,0-.5-.2-.5-.5v-1.9h-2.4v1.9c0,.3-.2.5-.5.5h-11c-.3,0-.5-.2-.5-.5v-1.9h-2.4v1.9c0,.3-.2.5-.5.5h-26.9c-.3,0-.5-.2-.5-.5v-1.9h-2.3v.7c0,.3-.2.5-.5.5h-21.7c-1.1,0-2-.9-2-2v-9.5h0c0-3.7,1.6-7,4.1-9.3-1.3-.1-3.8-.5-7.1-1.3,1.4-1.1,2.7-2.4,3.9-3.7,5.8,1.3,10.2,1.5,12.4,1.5h0c.2-.3.4-.5.6-.8,3.6-4.9,6.4-10.5,8.2-16.5v-29.4c-1.8-6-4.6-11.5-8.2-16.5-.2-.3-.5-.7-.8-1h-.7c-3.3,0-6.3-1.3-8.5-3.4,0,.6-.2,3.5-1.3,7.9-1.1-1.4-2.3-2.7-3.6-3.9.9-4.1,1.3-7.5,1.4-9.9-.3-1-.4-2.2-.4-3.3h0v-9.5c0-1.1.9-2,2-2v.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M123.8,346.8c2.5.8,4.8,1.5,6.9,2-1.2,1.3-2.5,2.5-3.9,3.7-2.1-.6-4.6-1.3-7.3-2.4,1.5-1,2.9-2.1,4.2-3.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M128.8,286.9c1.3,1.2,2.5,2.5,3.6,3.9-.5,2.1-1.3,4.6-2.3,7.3-1-1.5-2.1-2.9-3.3-4.2.8-2.5,1.5-4.8,2-7h0Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M123.5,302c1.4-2.9,2.5-5.6,3.4-8.2,1.2,1.3,2.3,2.7,3.3,4.2h0c-1,2.7-2.4,5.6-4.1,8.6,1.7,3.7,2.6,7.8,2.6,12.2,0,10.3-5.2,19.3-13.1,24.7,2.8,1.4,5.6,2.5,8.2,3.4-1.3,1.2-2.8,2.3-4.2,3.3-2.7-1.1-5.6-2.4-8.6-4.1h0c-3.7,1.6-7.9,2.6-12.2,2.6-10.2,0-19.2-5.1-24.6-13-1.4,2.8-2.5,5.6-3.4,8.2-1.2-1.3-2.3-2.7-3.3-4.2,1-2.7,2.4-5.5,4.1-8.5-1.7-3.7-2.6-7.9-2.6-12.3,0-10.2,5.1-19.2,13-24.6-2.8-1.4-5.6-2.5-8.2-3.4,1.3-1.2,2.7-2.3,4.2-3.3,2.6,1,5.5,2.4,8.5,4.1,3.7-1.7,7.9-2.6,12.3-2.6,10.2,0,19.3,5.2,24.6,13h0l.1-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M67.6,339.6c1,1.5,2.1,2.9,3.3,4.2-.8,2.5-1.5,4.8-2,6.9-1.3-1.2-2.5-2.5-3.7-3.8.5-2.1,1.3-4.6,2.3-7.3h.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M70.8,285.2c2.1.5,4.6,1.3,7.3,2.3-1.5,1-2.9,2.1-4.2,3.3-2.5-.8-4.8-1.5-6.9-2,1.2-1.3,2.5-2.5,3.9-3.6h-.1Z" style="fill: #d8d9d8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <circle cx="192.4" cy="365.4" r="7" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="215.4 264.8 206.5 264.8 206.5 267.2 206.5 268 215.4 268 215.4 264.8" style="fill: #d7d7d7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="181.6" y="264.8" width="24.9" height="2.4" style="fill: #a4a4a5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="223.4" y="299.7" width="15.8" height="42.5" style="fill: #010101; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <circle cx="232.9" cy="287.7" r="8.4" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <circle cx="232.9" cy="287.7" r="3.9" style="fill: #d7d5d6; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+      <g>
+        <g>
+          <circle cx="51.77" cy="273.91" r="9.8" transform="translate(-223.71 316.57) rotate(-88.1)" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M56.8,272.7v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="141.9" cy="273.9" r="9.8" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.9,272.7v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="51.82" cy="364" r="9.8" transform="translate(-313.7 403.72) rotate(-88.1)" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M56.8,362.8v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <circle cx="141.9" cy="364" r="9.8" style="fill: #f3f4f4; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <path d="M146.9,362.8v2.4h-1.3c-.2,0-1,0-1.7.7-.8.7-.8,1.6-.8,1.8v1.3h-2.4v-1.3c0-.1,0-1.1-.8-1.8-.7-.6-1.5-.7-1.7-.7h-1.3v-2.4h1.3c.2,0,1,0,1.7-.7.8-.7.8-1.6.8-1.8v-1.3h2.4v1.3c0,.1,0,1.1.8,1.8.7.6,1.5.7,1.7.7h1.3Z" style="fill: #c0bebe; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <rect x="39.9" y="307.1" width="114" height="23.2" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <path d="M222.7,272.1v79.5c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4v-79.5c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4Z" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <path d="M211,283.3v57c0,2-1.7,3.7-3.8,3.7h-22.5c-1,0-1.9-.4-2.5-1l-.2-.2-13.9-13.2-.5-.5h0c-.6-.7-.9-1.5-.9-2.4v-30c0-.9.4-1.8.9-2.4h0l.5-.5,13.9-13.2.2-.2c.7-.6,1.6-1,2.5-1h22.5c2.1,0,3.8,1.6,3.8,3.7v.2Z" style="fill: #030303; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <g>
+          <rect x="187.4" y="288.3" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="189.9" y="290.8" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="290.8" x2="203" y2="288.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="290.8" x2="187.4" y2="288.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="293.5" x2="187.4" y2="296" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="293.5" x2="203" y2="296" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <rect x="173.1" y="307.9" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="175.6" y="310.5" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="186.2" y1="310.5" x2="188.7" y2="307.9" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="175.6" y1="310.5" x2="173.1" y2="307.9" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="175.6" y1="313.1" x2="173.1" y2="315.7" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="186.2" y1="313.1" x2="188.7" y2="315.7" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+        <g>
+          <rect x="187.4" y="327.5" width="15.6" height="7.8" style="fill: #2a292b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <rect x="189.9" y="330.1" width="10.6" height="2.6" style="fill: #818781; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="330.1" x2="203" y2="327.5" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="330.1" x2="187.4" y2="327.5" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="189.9" y1="332.7" x2="187.4" y2="335.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+          <line x1="200.5" y1="332.7" x2="203" y2="335.3" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        </g>
+      </g>
+      <g>
+        <rect x="239.2" y="299.7" width="2.1" height="42.2" style="fill: #737374; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="216.4" y="323.5" width="25" height="42.5" style="fill: #828183; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <rect x="210.1" y="319.3" width="11.5" height="51" rx="3.6" ry="3.6" style="fill: #2e2e2f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+  </g>
+  <g id="DRIVE_CAGE_49">
+    <g>
+      <rect x="32.65" y="12.07" width="214.84" height="7.54" style="fill: #181818; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.65" y="55.08" width="19.04" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="51.7" y="55.08" width="159.73" height="8.79" style="fill: #e5e5e5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="211.35" y="55.08" width="36.14" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.65" y="36.56" width="214.84" height="18.45" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.73" y="19.6" width="214.84" height="16.96" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="42.36 36.56 32.65 36.56 32.65 10.34 38.03 10.34 39.6 19.6 42.36 36.56" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="242.12 10.34 247.49 10.34 247.49 36.56 237.86 36.56 242.12 10.34" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="40.64" y="10.34" width="198.93" height="1.73" style="fill: #adc174; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M93.06,19.6l5.9-8.16c.52-.71,1.27-1.1,2.17-1.1h77.96c.82,0,1.64.39,2.17,1.1l5.9,8.16h-94.09,0Z" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="51.7" y="55.08" width="159.73" height="8.79" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="51.1 10.34 51.1 19.6 39.6 19.6 38.03 10.34 51.1 10.34" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="229.12 10.34 229.12 19.6 240.62 19.6 242.12 10.34 229.12 10.34" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M51.7,61.28v5.97h-19.04v-5.97c0-1.57,1.19-2.83,2.69-2.83h13.67c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M247.49,61.28v5.97h-36.14v-5.97c0-1.57,1.19-2.83,2.69-2.83h30.77c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M211.42,61.28v5.97H51.7v-5.97c0-1.57,1.19-2.83,2.69-2.83h154.35c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="38.03 10.34 42.36 36.56 51.4 36.56 51.4 10.34 38.03 10.34" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="228.82 36.56 237.86 36.56 242.12 10.34 228.82 10.34 228.82 36.56" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="51.4" y="10.34" width="177.43" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="114.35" y="10.34" width="51.6" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    </g>
+    <g>
+      <rect x="23.84" y="13.4" width="232.54" height="44.35" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="256.38" y="26.9" width="2.31" height="17.35" style="fill: #3d5aa8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="29.07 9 251.15 9 251.15 13.32 249.88 13.32 249.88 10.34 30.34 10.34 30.34 13.32 29.07 13.32 29.07 9" style="fill: #bfbfbf; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="252.35" y="24.39" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="244.43" y="25.57" width="1.57" height="19.94" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="248.39" y="24.39" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <rect x="25.26" y="59.87" width="2.84" height="2.83" style="fill: #b7b7b7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="25.26 57.75 30.79 57.75 30.79 65.52 25.26 65.52 25.26 62.7 28.1 62.7 28.1 59.87 25.26 59.87 25.26 57.75" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+  </g>
+  <g id="DRIVE_CAGE_50">
+    <g>
+      <rect x="32.04" y="70.68" width="214.84" height="7.54" style="fill: #181818; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.04" y="113.7" width="19.04" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="51.08" y="113.7" width="159.73" height="8.79" style="fill: #e5e5e5; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="210.73" y="113.7" width="36.14" height="8.79" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.04" y="95.17" width="214.84" height="18.45" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="32.11" y="78.22" width="214.84" height="16.96" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="41.75 95.17 32.04 95.17 32.04 68.96 37.41 68.96 38.98 78.22 41.75 95.17" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="241.5 68.96 246.88 68.96 246.88 95.17 237.24 95.17 241.5 68.96" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="40.03" y="68.96" width="198.93" height="1.73" style="fill: #adc174; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M92.45,78.22l5.9-8.16c.52-.71,1.27-1.1,2.17-1.1h77.96c.82,0,1.64.39,2.17,1.1l5.9,8.16h-94.09,0Z" style="fill: #2d2d2d; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="51.08" y="113.7" width="159.73" height="8.79" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="50.48 68.96 50.48 78.22 38.98 78.22 37.41 68.96 50.48 68.96" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="228.51 68.96 228.51 78.22 240.01 78.22 241.5 68.96 228.51 68.96" style="fill: #333; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M51.08,119.9v5.97h-19.04v-5.97c0-1.57,1.19-2.83,2.69-2.83h13.67c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M246.88,119.9v5.97h-36.14v-5.97c0-1.57,1.19-2.83,2.69-2.83h30.77c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <path d="M210.81,119.9v5.97H51.08v-5.97c0-1.57,1.19-2.83,2.69-2.83h154.35c1.49,0,2.69,1.26,2.69,2.83Z" style="fill: #cccccb; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="37.41 68.96 41.75 95.17 50.78 95.17 50.78 68.96 37.41 68.96" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="228.21 95.17 237.24 95.17 241.5 68.96 228.21 68.96 228.21 95.17" style="fill: #2b2b2b; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="50.78" y="68.96" width="177.43" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="113.73" y="68.96" width="51.6" height="26.22" style="fill: #3a3a3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+    </g>
+    <g>
+      <rect x="23.23" y="72.02" width="232.54" height="44.35" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="255.76" y="85.52" width="2.31" height="17.35" style="fill: #3d5aa8; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <polygon points="28.45 67.62 250.54 67.62 250.54 71.94 249.27 71.94 249.27 68.96 29.72 68.96 29.72 71.94 28.45 71.94 28.45 67.62" style="fill: #bfbfbf; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="251.73" y="83.01" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="243.82" y="84.18" width="1.57" height="19.94" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <rect x="247.77" y="83.01" width="1.57" height="22.21" style="fill: #8c8c8c; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      <g>
+        <rect x="24.65" y="118.49" width="2.84" height="2.83" style="fill: #b7b7b7; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+        <polygon points="24.65 116.37 30.17 116.37 30.17 124.14 24.65 124.14 24.65 121.31 27.48 121.31 27.48 118.49 24.65 118.49 24.65 116.37" style="fill: #7f7f7f; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .2px;"/>
+      </g>
+    </g>
+  </g>
+</svg>

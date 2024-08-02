@@ -1,0 +1,17 @@
+:host ::ng-deep {
+  .container {
+    &.quarter {
+      padding-top: 0;
+
+      .item .value {
+        margin: 26px 0;
+      }
+    }
+  }
+
+  ngx-skeleton-loader {
+    span {
+      margin-bottom: 0 !important;
+    }
+  }
+}

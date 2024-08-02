@@ -5,6 +5,7 @@ import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclo
 import {
   TintingFunction,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
+import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
 import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/utils/supported-enclosures';
 
@@ -35,10 +36,11 @@ export class EnclosureSideComponent {
       return this.side();
     }
 
-    return this.enclosure().top_loaded ? EnclosureSide.Top : EnclosureSide.Front;
+    return getDefaultSide(this.enclosure());
   });
 
   protected svgUrl = computed(() => {
-    return supportedEnclosures?.[this.enclosure().model]?.[this.shownSide()];
+    const baseUrl = supportedEnclosures?.[this.enclosure().model]?.[this.shownSide()];
+    return `${baseUrl}?uniqueIdentifier=${Date.now()}`;
   });
 }
