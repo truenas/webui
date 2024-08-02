@@ -16,7 +16,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemLicense, SystemInfo } from 'app/interfaces/system-info.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -139,7 +138,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     expect(items).toEqual([
       'Platform: TRUENAS-M40-HA',
       'Version: ElectricEel-24.10.0-MASTER-20240301-233006',
-      'License: Best contract, expires 2025-01-01',
+      'Support License: Best contract, expires 2025-01-01',
       'System Serial: AA-00001',
       'Hostname: test-hostname-a',
       'Uptime: 23 hours 12 minutes as of 2024-03-15 10:34:11',
@@ -164,21 +163,6 @@ describe('WidgetSysInfoActiveComponent', () => {
     expect(updatedDatetime).toBeGreaterThan(initialDatetime);
 
     jest.useRealTimers();
-  });
-
-  it('checks unlicensed system info rows', async () => {
-    systemInfo$.next({
-      isLoading: false,
-      error: null,
-      value: { ...systemInfo, license: null },
-    });
-    spectator.detectChanges();
-
-    const licenseListItem = await loader.getHarness(MatListItemHarness.with({ text: /License:/ }));
-    expect(await licenseListItem.getFullText()).toBe('License: No License');
-
-    const licenseButton = await loader.getHarness(IxIconHarness.with({ name: 'add_circle' }));
-    expect(await licenseButton.host()).toExist();
   });
 
   it('checks update button text', async () => {

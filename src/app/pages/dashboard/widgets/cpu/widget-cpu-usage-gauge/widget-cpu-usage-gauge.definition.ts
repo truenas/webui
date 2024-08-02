@@ -5,7 +5,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetCpuUsageGaugeComponent } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-gauge/widget-cpu-usage-gauge.component';
 
 export const cpuUsageGaugeWidget = dashboardWidget({
-  name: T('CPU Usage Gauge'),
+  name: T('CPU Usage'),
   supportedSizes: [SlotSize.Quarter],
   category: WidgetCategory.Cpu,
   component: WidgetCpuUsageGaugeComponent,

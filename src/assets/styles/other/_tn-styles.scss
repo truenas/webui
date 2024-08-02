@@ -32,10 +32,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   @include mat.all-component-themes($ix-theme);
 
   .mat-bg-primary,
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
-  .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
-  .fileupload-drop-zone.dz-file-over,
-  .toolbar-avatar.online > .status-dot {
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret) {
     background: map-get($md-primary, 500) !important;
     color: #fff !important;
   }
@@ -120,9 +117,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-fab.mat-primary,
   .mat-mini-fab.mat-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
-  .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
-  .fileupload-drop-zone.dz-file-over,
-  .toolbar-avatar.online > .status-dot,
   .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error):not(.mat-step-icon-state-number):not(.mat-step-icon-state-edit) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
@@ -233,10 +227,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(background-color, --primary, $primary, !important);
   }
 
-  #test-alert {
-    @include variable(color, --fg2, $fg2);
-  }
-
   .mat-mdc-form-field.mat-focused.mat-primary {
     @include variable(color, --fg2, $fg2, !important);
   }
@@ -302,21 +292,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: var(--disabled-opacity);
   }
 
-  .egret-swatch,
   .mat-radio-outer-circle {
     @include variable(border-color, --primary, $primary);
   }
 
   .mat-expansion-indicator::after,
-  button.card-close,
   .mat-pseudo-checkbox {
     @include variable(color, --fg1, $fg1);
-  }
-
-  .toggle-children {
-    filter: invert(50%);
-    left: 4px;
-    top: 5px;
   }
 
   .mat-mdc-menu-item[disabled] {
@@ -348,38 +330,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: var(--hover-bg) !important;
   }
 
-  // Treelists in storage/volumes
-  .mat-expansion-panel-body {
-    position: relative;
-  }
-
-  .dx-treelist-container {
-    background: transparent;
-  }
-
-  .dx-treelist-headers {
-    border-bottom: none;
-  }
-
-  .dx-treelist-rowsview {
-    border: 0;
-  }
-
-  .dx-treelist .dx-column-lines> td {
-    border-left: solid 1px rgba(128, 128, 128, 0.1);
-    border-right: none;
-  }
-
-  .dx-treelist .dx-row-lines > td {
-    border-color: rgba(128, 128, 128, 0.1);
-  }
-
-  tr.dx-row:nth-child(odd) {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-
-  // END Treelist styles
-
   //Entity Module Overrides
   .mat-mdc-card-actions .mat-mdc-button {
     margin-left: 1px !important;
@@ -388,15 +338,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .form-card.mat-mdc-card {
     font-size: 12px;
-  }
-
-  .fieldset-label {
-    margin-bottom: 16px;
-    min-width: 100%;
-  }
-
-  .combo-box-menu.mat-mdc-menu-panel {
-    max-height: 256px;
   }
 
   /////////////////// END SpecSelectors
@@ -434,34 +375,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mdc-dialog__actions {
     min-height: inherit;
     padding: 0 24px 20px;
-  }
-
-  .overflow-dialog .mat-mdc-dialog-container {
-    max-height: calc(100vh - 100px);
-    overflow: auto !important;
-  }
-
-  .ix-overflow-dialog .mat-mdc-dialog-container {
-    max-height: calc(100vh - 100px);
-    overflow: auto !important;
-    padding-top: 0;
-
-    .mdc-card {
-      border: 0 !important;
-      margin: 0 !important;
-    }
-
-    ix-modal-header {
-      // reset width to avoid horizontal scrolling
-      .mat-mdc-progress-bar {
-        left: 0;
-        max-width: 100%;
-      }
-
-      .ix-slidein-title-bar {
-        margin: 0 !important;
-      }
-    }
   }
 
   .mat-mdc-dialog-title {
@@ -514,26 +427,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  // To fix alignment issues w/checkboxes on Create Pool page
-  .headerCheckBox {
-    left: 16px;
-    position: relative;
-  }
-
-  // For Detach Pools functions on volumes-list.component.ts
-  #pool_detach_warning,
-  #pool_processes {
-    margin-bottom: 15px;
-  }
-
   // Style the ix logo with the primary theme color
   .ix-logo {
     @include variable(fill, --primary, $primary);
-  }
-
-  // Color the small lock icon with theme colors
-  .app-user-name .icon-xs {
-    @include variable(color, --fg2, $fg2, !important);
   }
 
   .mat-spinner circle {
@@ -580,10 +476,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: var(--disabled-opacity);
   }
 
-  #vdev__close-button {
-    color: var(--primary) !important;
-  }
-
   // style nav chevrons on datatable pager w/regard to theme
   .mdc-button__label .mat-mdc-paginator-decrement,
   .mdc-button__label .mat-mdc-paginator-increment {
@@ -606,10 +498,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Fix icon color in notification area
-  .info-icon {
-    @include variable(color, --primary, $primary, !important);
-  }
-
   .mat-spinner circle {
     @include variable(stroke, --primary, $primary, !important);
   }
@@ -866,22 +754,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--fg2) !important;
   }
 
-  .ui-treetable-thead {
-    text-align: left;
-    vertical-align: top;
-  }
-
-  .ui-treetable-resizable .ui-treetable-tbody>tr>td {
-    max-width: 300px;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    white-space: nowrap;
-  }
-
-  #acme_directory_uri mat-form-field {
-    width: 50%;
-  }
-
   mat-radio-group .radio-option-tooltip {
     left: 5px;
     position: relative;
@@ -932,18 +804,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     word-wrap: break-word;
   }
 
-  .fieldset-container {
-    .disabled-select .mat-mdc-select-arrow {
-      opacity: var(--disabled-opacity);
-    }
-
-    #failover_address,
-    #failover_virtual_address {
-      width: 85%;
-    }
-
-  }
-
   ix-iscsi .mat-mdc-tab-links {
     flex-wrap: wrap;
   }
@@ -963,25 +823,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-select-panel,
   .mat-mdc-select-panel {
     max-height: 50vh !important; // values over 50vh will push last visible element out the screen
-  }
-
-  tree-viewport {
-    max-height: 300px;
-    overflow: auto;
-  }
-
-  .chip-warn {
-    background-color: var(--red) !important;
-    color: white !important;
-
-    .ix-icon {
-      color: white !important;
-      opacity: 0.8 !important;
-    }
-  }
-
-  .entity-table-cell-error {
-    color: var(--red) !important;
   }
 
   mat-hint {
@@ -1073,18 +914,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  .complex-table-data {
-    font-size: 85%;
-    margin-bottom: 5px;
-    margin-top: 5px;
-  }
-
-  .key-textarea {
-    height: 280px;
-    resize: none;
-    width: 540px;
-  }
-
   button.menu-toggle {
     .mdc-button__label {
       align-items: center;
@@ -1116,38 +945,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .form-element select[disabled],
   .form-element textarea[disabled] {
     opacity: var(--disabled-opacity);
-  }
-
-  .search-icon-wrapper {
-    cursor: default;
-    user-select: none;
-
-    .mat-icon {
-      align-items: center;
-      display: flex;
-      font-size: 150%;
-      justify-content: center;
-    }
-  }
-
-  .reset-icon-wrapper {
-    cursor: pointer;
-    opacity: 0.5;
-    user-select: none;
-
-    .ix-icon,
-    .mat-icon {
-      align-items: center;
-      display: flex;
-      font-size: 150%;
-      justify-content: center;
-    }
-
-    &.invisible {
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
-    }
   }
 
   // focus state styles for mat-form-field

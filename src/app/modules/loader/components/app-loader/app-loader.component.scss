@@ -1,3 +1,7 @@
+:host {
+  text-align: center;
+}
+
 mat-spinner {
   margin: auto;
 }
@@ -7,6 +11,7 @@ mat-spinner {
   overflow: hidden;
 }
 
-h6 {
-  padding-top: 15px;
+.title {
+  margin: 0;
+  padding: 15px 0 0;
 }

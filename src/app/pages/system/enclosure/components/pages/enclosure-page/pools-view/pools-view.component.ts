@@ -14,7 +14,6 @@ import { makePoolTintFunction } from 'app/pages/system/enclosure/utils/make-pool
 export class PoolsViewComponent {
   readonly enclosure = this.store.selectedEnclosure;
   readonly selectedSlot = this.store.selectedSlot;
-  readonly selectedEnclosureSlots = this.store.selectedEnclosureSlots;
   readonly selectedSide = this.store.selectedSide;
   readonly poolColors = this.store.poolColors;
 
@@ -22,8 +21,8 @@ export class PoolsViewComponent {
     private store: EnclosureStore,
   ) {}
 
-  protected onSlotSelected(slot: DashboardEnclosureSlot): void {
-    this.store.selectSlot(slot.drive_bay_number);
+  protected onSlotSelected(slot: DashboardEnclosureSlot | null): void {
+    this.store.selectSlot(slot ? slot.drive_bay_number : null);
   }
 
   readonly slotTintFn = computed(() => {
