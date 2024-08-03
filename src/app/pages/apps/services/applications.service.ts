@@ -7,15 +7,15 @@ import {
 } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartReleaseEvent, AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
+import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
+import { App, AppUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -39,7 +39,7 @@ export class ApplicationsService {
   }
 
   getChartReleaseNames(): Observable<{ name: string }[]> {
-    return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
+    return this.ws.call('app.query', [[], { select: ['name'] }]);
   }
 
   // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
@@ -56,7 +56,7 @@ export class ApplicationsService {
     return this.ws.call('interface.query');
   }
 
-  getCatalogItem(name: string, train: string): Observable<CatalogApp> {
+  getCatalogAppDetails(name: string, train: string): Observable<CatalogApp> {
     return this.ws.call('catalog.get_app_details', [name, { train }]);
   }
 
@@ -88,7 +88,7 @@ export class ApplicationsService {
   }
 
   getInstalledAppsUpdates(): Observable<ApiEvent> {
-    return this.ws.subscribe('chart.release.query');
+    return this.ws.subscribe('app.query');
   }
 
   getInstalledAppsStatusUpdates(): Observable<ApiEvent<Job<void, AppStartQueryParams>>> {
@@ -99,21 +99,12 @@ export class ApplicationsService {
     );
   }
 
-  getChartReleaseWithResources(name: string): Observable<App[]> {
-    const secondOption = { extra: { retrieve_resources: true } };
-    return this.ws.call('chart.release.query', [[['name', '=', name]], secondOption]);
-  }
-
-  getChartReleaseEvents(name: string): Observable<ChartReleaseEvent[]> {
-    return this.ws.call('chart.release.events', [name]);
-  }
-
-  getChartUpgradeSummary(name: string, version?: string): Observable<UpgradeSummary> {
-    const payload: ChartReleaseUpgradeParams = [name];
+  getChartUpgradeSummary(name: string, version?: string): Observable<AppUpgradeSummary> {
+    const payload: AppUpgradeParams = [name];
     if (version) {
-      payload.push({ item_version: version });
+      payload.push({ app_version: version });
     }
-    return this.ws.call('chart.release.upgrade_summary', payload);
+    return this.ws.call('app.upgrade_summary', payload);
   }
 
   startApplication(name: string): Observable<Job<void>> {
@@ -125,15 +116,15 @@ export class ApplicationsService {
   }
 
   restartApplication(app: App): Observable<Job<void>> {
-    switch (app.status) {
-      case ChartReleaseStatus.Active:
+    switch (app.state) {
+      case CatalogAppState.Active:
         return this.stopApplication(app.name).pipe(
           filter((job) => job.state === JobState.Success),
           switchMap(() => this.startApplication(app.name)),
         );
-      case ChartReleaseStatus.Stopped:
+      case CatalogAppState.Stopped:
         return this.startApplication(app.name).pipe();
-      case ChartReleaseStatus.Deploying:
+      case CatalogAppState.Deploying:
       default:
         return EMPTY;
     }

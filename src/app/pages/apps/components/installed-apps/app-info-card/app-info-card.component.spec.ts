@@ -12,7 +12,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
@@ -53,7 +53,7 @@ describe('AppInfoCardComponent', () => {
     catalog_train: 'charts',
   } as App;
 
-  const upgradeSummary = {} as UpgradeSummary;
+  const upgradeSummary = {} as AppUpgradeSummary;
 
   const mockDialogRef = {
     componentInstance: {
@@ -99,8 +99,8 @@ describe('AppInfoCardComponent', () => {
       mockProvider(RedirectService),
       mockAuth(),
       mockWebSocket([
-        mockJob('chart.release.upgrade'),
-        mockJob('chart.release.delete'),
+        mockJob('app.upgrade'),
+        mockJob('app.delete'),
       ]),
     ],
   });
@@ -191,7 +191,7 @@ describe('AppInfoCardComponent', () => {
       message: 'Delete test-user-app-name?',
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'chart.release.delete',
+      'app.delete',
       [app.name, { delete_unused_images: true }],
     );
   });

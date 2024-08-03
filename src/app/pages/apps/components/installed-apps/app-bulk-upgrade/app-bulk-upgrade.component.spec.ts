@@ -9,7 +9,7 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -29,7 +29,7 @@ const fakeAppOne = {
   catalog_train: 'charts',
   path: '/mnt/tank/ix-applications/releases/test-pihole',
   dataset: 'tank/ix-applications/releases/test-pihole',
-  status: 'ACTIVE',
+  state: 'ACTIVE',
   history: {},
   update_available: true,
   human_version: '2022.10_1.0.7',
@@ -51,7 +51,7 @@ const fakeAppTwo = {
   catalog_train: 'charts',
   path: '/mnt/tank/ix-applications/releases/test-nextcloud',
   dataset: 'tank/ix-applications/releases/test-nextcloud',
-  status: 'ACTIVE',
+  state: 'ACTIVE',
   history: {},
   update_available: true,
   human_version: '25_1.6.33',
@@ -64,17 +64,7 @@ const fakeAppTwo = {
   container_images_update_available: true,
 } as App;
 
-const fakeUpgradeSummary: UpgradeSummary = {
-  container_images_to_update: {
-    '1.0.1': {
-      id: '1.0.1',
-      update_available: true,
-    },
-    '1.0.2': {
-      id: '1.0.1',
-      update_available: true,
-    },
-  },
+const fakeUpgradeSummary: AppUpgradeSummary = {
   changelog: '<h1>Changelog</h1>',
   available_versions_for_upgrade: [
     {
@@ -90,8 +80,6 @@ const fakeUpgradeSummary: UpgradeSummary = {
       human_version: '24.0.6_15.3.34',
     },
   ],
-  item_update_available: true,
-  image_update_available: true,
   latest_version: '15.3.36',
   upgrade_version: '15.3.36',
   latest_human_version: '24.0.6_15.3.36',
@@ -119,8 +107,8 @@ describe('AppBulkUpgradeComponent', () => {
       mockProvider(SnackbarService),
       mockWebSocket([
         mockJob('core.bulk'),
-        mockCall('chart.release.upgrade_summary', fakeUpgradeSummary),
-        mockJob('chart.release.upgrade', fakeSuccessfulJob(fakeAppOne)),
+        mockCall('app.upgrade_summary', fakeUpgradeSummary),
+        mockJob('app.upgrade', fakeSuccessfulJob(fakeAppOne)),
       ]),
       mockAuth(),
     ],
@@ -138,9 +126,9 @@ describe('AppBulkUpgradeComponent', () => {
   });
 
   it('checks for the correct payload and success toast', async () => {
-    const jobArguments: CoreBulkQuery = ['chart.release.upgrade', [
-      ['test-app-one', { item_version: '1.0.8' }],
-      ['test-app-two', { item_version: '1.6.34' }],
+    const jobArguments: CoreBulkQuery = ['app.upgrade', [
+      ['test-app-one', { app_version: '1.0.8' }],
+      ['test-app-two', { app_version: '1.6.34' }],
     ]];
 
     const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));

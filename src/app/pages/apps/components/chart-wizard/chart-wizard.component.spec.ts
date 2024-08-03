@@ -279,15 +279,15 @@ describe('ChartWizardComponent', () => {
         })),
       }),
       mockProvider(ApplicationsService, {
-        getCatalogItem: jest.fn(() => of(existingCatalogApp)),
-        getChartRelease: jest.fn(() => of([existingChartEdit])),
-        getAllChartReleases: jest.fn(() => of([existingChartEdit])),
+        getCatalogAppDetails: jest.fn(() => of(existingCatalogApp)),
+        getApp: jest.fn(() => of([existingChartEdit])),
+        getAllApps: jest.fn(() => of([existingChartEdit])),
       }),
       mockWebSocket([
-        mockJob('chart.release.create'),
-        mockJob('chart.release.update'),
+        mockJob('app.create'),
+        mockJob('app.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
-        mockCall('chart.release.query', [existingChartEdit]),
+        mockCall('app.query', [existingChartEdit]),
         // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
         // mockCall('container.image.dockerhub_rate_limit', {
         //   total_pull_limit: 13,
@@ -355,7 +355,7 @@ describe('ChartWizardComponent', () => {
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-        'chart.release.update',
+        'app.update',
         ['app_name', {
           values: {
             timezone: 'Europe/Paris',
@@ -443,7 +443,7 @@ describe('ChartWizardComponent', () => {
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-        'chart.release.create',
+        'app.create',
         [{
           catalog: 'TRUENAS',
           item: 'ipfs',
@@ -481,16 +481,6 @@ describe('ChartWizardComponent', () => {
     });
 
     // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-    // it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
-    //   expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
-    //     data: {
-    //       total_pull_limit: 13,
-    //       total_time_limit_in_secs: 21600,
-    //       remaining_pull_limit: 3,
-    //       remaining_time_limit_in_secs: 21600,
-    //       error: null,
-    //     },
-    //   });
-    // });
+    // Add a test that shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5
   });
 });

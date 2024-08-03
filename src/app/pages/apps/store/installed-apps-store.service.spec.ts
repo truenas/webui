@@ -7,7 +7,6 @@ import { AppStartQueryParams, ChartScaleResult } from 'app/interfaces/chart-rele
 import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -30,7 +29,7 @@ describe('InstalledAppsStore', () => {
           return of() as Observable<ApiEvent<Job<ChartScaleResult, AppStartQueryParams>>>;
         }),
         getInstalledAppsUpdates: jest.fn(() => of()) as () => Observable<ApiEvent<App>>,
-        getAllChartReleases: jest.fn(() => {
+        getAllApps: jest.fn(() => {
           return of([
             ...installedChartReleases,
           ] as App[]);
@@ -43,7 +42,6 @@ describe('InstalledAppsStore', () => {
         isLoading$: of(false),
         isDockerStarted$: of(true),
       }),
-      mockProvider(AppsStatisticsService),
     ],
   });
 

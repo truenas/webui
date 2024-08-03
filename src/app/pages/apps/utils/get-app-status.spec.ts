@@ -1,9 +1,8 @@
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ChartScaleResult, AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
 
 describe('getAppStatus', () => {
@@ -15,7 +14,7 @@ describe('getAppStatus', () => {
     },
     catalog: 'test-catalog',
     catalog_train: 'test-catalog-train',
-    status: ChartReleaseStatus.Active,
+    state: CatalogAppState.Active,
   } as App;
   const job = {
     arguments: ['fake-name', { replica_count: 1 }] as AppStartQueryParams,
@@ -25,22 +24,22 @@ describe('getAppStatus', () => {
   it('should return Started', () => {
     const result = getAppStatus(app, job);
 
-    expect(result).toEqual(AppStatus.Started);
+    expect(result).toEqual(CatalogAppState.Started);
   });
 
   it('should return Starting', () => {
     const result = getAppStatus(app, { ...job, state: JobState.Running });
 
-    expect(result).toEqual(AppStatus.Starting);
+    expect(result).toEqual(CatalogAppState.Starting);
   });
 
   it('should return Deploying', () => {
     const result = getAppStatus({
       ...app,
-      status: ChartReleaseStatus.Deploying,
+      state: CatalogAppState.Deploying,
     });
 
-    expect(result).toEqual(AppStatus.Deploying);
+    expect(result).toEqual(CatalogAppState.Deploying);
   });
 
   it('should return Stopping', () => {
@@ -50,19 +49,19 @@ describe('getAppStatus', () => {
       arguments: ['fake-name', { replica_count: 0 }],
     });
 
-    expect(result).toEqual(AppStatus.Stopping);
+    expect(result).toEqual(CatalogAppState.Stopping);
   });
 
   it('should return Stopped', () => {
     const result = getAppStatus({
       ...app,
-      status: ChartReleaseStatus.Stopped,
+      state: CatalogAppState.Stopped,
     }, {
       ...job,
       state: JobState.Success,
       arguments: ['fake-name', { replica_count: 0 }],
     });
 
-    expect(result).toEqual(AppStatus.Stopped);
+    expect(result).toEqual(CatalogAppState.Stopped);
   });
 });

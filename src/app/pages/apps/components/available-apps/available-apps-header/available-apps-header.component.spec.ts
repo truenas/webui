@@ -40,7 +40,7 @@ describe('AvailableAppsHeaderComponent', () => {
     providers: [
       mockAuth(),
       mockWebSocket([
-        mockCall('chart.release.query', [{}, {}, {}] as App[]),
+        mockCall('app.query', [{}, {}, {}] as App[]),
         mockJob('catalog.sync'),
       ]),
       mockProvider(InstalledAppsStore, {

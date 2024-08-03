@@ -1,4 +1,4 @@
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { App } from 'app/interfaces/chart-release.interface';
@@ -10,14 +10,14 @@ export function getAppStatus(app: App, job?: Job<void, AppStartQueryParams>): Ap
 
   let status: AppStatus;
 
-  switch (app.status) {
-    case ChartReleaseStatus.Active:
+  switch (app.state) {
+    case CatalogAppState.Active:
       status = AppStatus.Started;
       break;
-    case ChartReleaseStatus.Deploying:
+    case CatalogAppState.Deploying:
       status = AppStatus.Deploying;
       break;
-    case ChartReleaseStatus.Stopped:
+    case CatalogAppState.Stopped:
       status = AppStatus.Stopped;
       break;
   }
@@ -46,7 +46,7 @@ export function getAppStatus(app: App, job?: Job<void, AppStartQueryParams>): Ap
       job.state === JobState.Success
       // TODO: `replica_count` is no longer applicable. Figure out what is the replacement for this logic
       // && params.replica_count >= 1
-      && app.status !== ChartReleaseStatus.Deploying
+      && app.state !== CatalogAppState.Deploying
     ) {
       status = AppStatus.Started;
     }
@@ -54,7 +54,7 @@ export function getAppStatus(app: App, job?: Job<void, AppStartQueryParams>): Ap
       job.state === JobState.Success
       // TODO: `replica_count` is no longer applicable. Figure out what is the replacement for this logic
       // && params.replica_count === 0
-      && app.status !== ChartReleaseStatus.Deploying
+      && app.state !== CatalogAppState.Deploying
     ) {
       status = AppStatus.Stopped;
     }

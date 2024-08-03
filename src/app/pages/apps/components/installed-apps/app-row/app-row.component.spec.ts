@@ -3,8 +3,8 @@ import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { officialCatalog } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
-import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { App } from 'app/interfaces/chart-release.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -16,19 +16,19 @@ describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
   const app = {
     name: 'app_name',
-    status: ChartReleaseStatus.Active,
+    state: CatalogAppState.Active,
     metadata: { icon: 'https://image/' },
     catalog: officialCatalog,
   } as App;
 
-  const stats = {
-    cpu: 50.155,
-    memory: 20000000,
-    network: {
-      incoming: 50000000,
-      outgoing: 55500000,
-    },
-  } as ChartReleaseStats;
+  // const stats = {
+  //   cpu: 50.155,
+  //   memory: 20000000,
+  //   network: {
+  //     incoming: 50000000,
+  //     outgoing: 55500000,
+  //   },
+  // } as ChartReleaseStats;
 
   const status = AppStatus.Started;
 
@@ -49,7 +49,7 @@ describe('AppRowComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { app, status, stats },
+      props: { app, status },
     });
   });
 

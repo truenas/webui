@@ -23,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AppRollbackModalComponent {
   form = this.formBuilder.group({
-    item_version: ['', Validators.required],
+    app_version: ['', Validators.required],
     rollback_snapshot: [false],
   });
 
@@ -69,7 +69,7 @@ export class AppRollbackModalComponent {
 
   private selectFirstVersion(): void {
     this.form.patchValue({
-      item_version: Object.keys(this.chartRelease.history)[0],
+      app_version: Object.keys(this.chartRelease.history)[0],
     });
   }
 }

@@ -10,7 +10,7 @@ import { filter, map, take } from 'rxjs';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -90,7 +90,7 @@ export class AppInfoCardComponent {
       this.loader.withLoader(),
       this.errorHandler.catchError(),
       untilDestroyed(this),
-    ).subscribe((summary: UpgradeSummary) => {
+    ).subscribe((summary: AppUpgradeSummary) => {
       this.matDialog.open(AppUpgradeDialogComponent, {
         width: '50vw',
         minWidth: '500px',
@@ -104,7 +104,7 @@ export class AppInfoCardComponent {
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe((version: string) => {
           this.dialogService.jobDialog(
-            this.ws.job('chart.release.upgrade', [name, { item_version: version }]),
+            this.ws.job('app.upgrade', [name, { app_version: version }]),
             { title: helptextApps.charts.upgrade_dialog.job },
           )
             .afterClosed()
@@ -131,7 +131,7 @@ export class AppInfoCardComponent {
 
   executeDelete(name: string): void {
     this.dialogService.jobDialog(
-      this.ws.job('chart.release.delete', [name, { delete_unused_images: true }]),
+      this.ws.job('app.delete', [name, { remove_images: true }]),
       { title: helptextApps.charts.delete_dialog.job },
     )
       .afterClosed()

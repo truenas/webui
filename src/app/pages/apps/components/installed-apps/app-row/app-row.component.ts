@@ -5,7 +5,7 @@ import {
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
@@ -17,7 +17,6 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 })
 export class AppRowComponent {
   @Input() app: App;
-  @Input() stats: ChartReleaseStats;
   @Input() status: AppStatus;
   @Input() selected: boolean;
   @Input() job?: Job<void, AppStartQueryParams>;

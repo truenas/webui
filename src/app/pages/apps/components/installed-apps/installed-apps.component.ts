@@ -20,13 +20,13 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter, Observable,
 } from 'rxjs';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -38,7 +38,6 @@ import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-app
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
@@ -114,13 +113,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get isBulkStartDisabled(): boolean {
     return this.dataSource.every((app) => [
-      ChartReleaseStatus.Active,
-      ChartReleaseStatus.Deploying,
-    ].includes(app.status));
+      CatalogAppState.Active,
+      CatalogAppState.Deploying,
+    ].includes(app.state));
   }
 
   get isBulkStopDisabled(): boolean {
-    return this.dataSource.every((app) => ChartReleaseStatus.Stopped === app.status);
+    return this.dataSource.every((app) => CatalogAppState.Stopped === app.state);
   }
 
   get isBulkUpgradeDisabled(): boolean {
@@ -131,13 +130,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get startedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.status === ChartReleaseStatus.Active && this.selection.isSelected(app.id),
+      (app) => app.state === CatalogAppState.Active && this.selection.isSelected(app.id),
     );
   }
 
   get stoppedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.status === ChartReleaseStatus.Stopped && this.selection.isSelected(app.id),
+      (app) => app.state === CatalogAppState.Stopped && this.selection.isSelected(app.id),
     );
   }
 
@@ -157,7 +156,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private dockerStore: DockerStore,
     private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
-    private appsStats: AppsStatisticsService,
     private store$: Store<AppState>,
     private location: Location,
     @Inject(WINDOW) private window: Window,
@@ -379,7 +377,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.dialogService.jobDialog(
-          this.ws.job('core.bulk', ['chart.release.delete', checkedNames.map((item) => [item])]),
+          this.ws.job('core.bulk', ['app.delete', checkedNames.map((item) => [item])]),
           { title: helptextApps.charts.delete_dialog.job },
         )
           .afterClosed()
@@ -410,11 +408,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     const job = this.appJobs.get(name);
 
     return getAppStatus(app, job);
-  }
-
-  // TODO: Rework this and getAppStatus above to be computed when dataSource is populated.
-  getAppStats(name: string): Observable<ChartReleaseStats> {
-    return this.appsStats.getStatsForApp(name);
   }
 
   sortChanged(sort: Sort, charts?: App[]): void {

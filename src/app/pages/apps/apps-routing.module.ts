@@ -57,6 +57,7 @@ const routes: Routes = [
                 component: PodShellComponent,
                 data: { title: T('Pod Shell') },
               },
+              // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
               // {
               //   path: 'logs/:podName/:command/:tail_lines',
               //   component: PodLogsComponent,

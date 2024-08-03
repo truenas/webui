@@ -6,10 +6,10 @@ import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { Role } from 'app/enums/role.enum';
-import { ChartContainerImage, App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -25,9 +25,10 @@ import { getPorts } from 'app/pages/apps/utils/get-ports';
 export class AppContainersCardComponent implements OnChanges {
   @Input() app: App;
   isLoading = false;
-  readonly chartReleaseStatus = ChartReleaseStatus;
+  readonly chartReleaseStatus = CatalogAppState;
 
-  containerImages: Record<string, ChartContainerImage>;
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+  // containerImages: Record<string, ChartContainerImage>;
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
@@ -38,7 +39,8 @@ export class AppContainersCardComponent implements OnChanges {
     private router: Router,
     private translate: TranslateService,
   ) {
-    this.containerImages = this.app?.resources?.container_images;
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+    // this.containerImages = this.app?.resources?.container_images;
   }
 
   ngOnChanges(): void {
@@ -79,14 +81,15 @@ export class AppContainersCardComponent implements OnChanges {
 
   private getResources(): void {
     this.isLoading = true;
-    this.appService.getChartReleaseWithResources(this.app.name).pipe(
+    this.appService.getApp(this.app.name).pipe(
       map((apps) => apps[0]),
       untilDestroyed(this),
     ).subscribe({
       next: (app) => {
         this.app = app;
         this.isLoading = false;
-        this.containerImages = this.app?.resources?.container_images;
+        // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+        // this.containerImages = this.app?.resources?.container_images;
         this.cdr.markForCheck();
       },
       error: () => {

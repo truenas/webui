@@ -21,6 +21,7 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 export interface ApiEventDirectory {
   'alert.list': { response: Alert };
   'chart.release.query': { response: App };
+  'app.query': { response: App };
   'chart.release.statistics': { response: ChartStatisticsUpdate[] };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };

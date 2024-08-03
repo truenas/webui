@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ChartScaleResult, AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { App } from 'app/interfaces/chart-release.interface';
@@ -37,7 +37,7 @@ describe('WidgetAppComponent', () => {
     portals: {
       web_portal: ['http://test.com'],
     } as Record<string, string[]>,
-    status: ChartReleaseStatus.Active,
+    state: CatalogAppState.Active,
     update_available: true,
     container_images_update_available: false,
     metadata: {
@@ -67,11 +67,6 @@ describe('WidgetAppComponent', () => {
       mockProvider(WidgetResourcesService, {
         serverTime$: of(new Date()),
         getApp: () => of(app),
-        getAppStats: () => of({
-          cpu: 55,
-          memory: 1234,
-          network: { in: 100, out: 200 },
-        }),
       }),
       mockProvider(ThemeService, {
         currentTheme: () => ({ blue: '#0000FF', orange: '#FFA500' }),
@@ -136,25 +131,4 @@ describe('WidgetAppComponent', () => {
     expect(snackbarSpy).toHaveBeenCalledWith('App is restarting');
     expect(restartSpy).toHaveBeenCalledWith(app);
   });
-
-  it('checks cpu usage', () => {
-    expect(spectator.query('.cpu-usage h3')).toHaveText('55%');
-    expect(spectator.query('.cpu-usage strong')).toHaveText('CPU Usage');
-  });
-
-  it('checks memory usage', () => {
-    expect(spectator.query('.memory-usage h3')).toHaveText('1KiB');
-    expect(spectator.query('.memory-usage strong')).toHaveText('Memory Usage');
-  });
-
-  it('should generate correct network chart data', () => {
-    const chartData = spectator.component.networkStats();
-
-    expect(chartData).toHaveLength(60);
-    expect(chartData[chartData.length - 1]).toEqual([100, 200]);
-    expect(chartData[chartData.length - 2]).toEqual([0, 0]);
-    expect(chartData[chartData.length - 3]).toEqual([0, 0]);
-  });
-
-  // TODO: Add tests for disk chart data
 });

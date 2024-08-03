@@ -35,7 +35,7 @@ describe('AppAvailableInfoCardComponent', () => {
     ],
     providers: [
       mockProvider(ApplicationsService, {
-        getCatalogItem: jest.fn(() => of({
+        getCatalogAppDetails: jest.fn(() => of({
           ...fakeApp,
           versions: {
             '1.0.9': {

@@ -73,7 +73,7 @@ describe('AppRollbackModalComponent', () => {
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'chart.release.rollback',
-      ['my-app', { item_version: '0.9.8', rollback_snapshot: true }],
+      ['my-app', { app_version: '0.9.8', rollback_snapshot: true }],
     );
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });

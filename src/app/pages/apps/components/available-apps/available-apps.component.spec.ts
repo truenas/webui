@@ -31,7 +31,6 @@ import {
   CustomAppButtonComponent,
 } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
-import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -244,7 +243,6 @@ describe('Finding app', () => {
     providers: [
       DockerStore,
       InstalledAppsStore,
-      mockProvider(AppsStatisticsService),
       mockWebSocket([]),
       mockProvider(AppsStore, {
         isLoading$: of(false),
@@ -304,12 +302,11 @@ describe('Redirect to install app', () => {
     ],
     providers: [
       InstalledAppsStore,
-      mockProvider(AppsStatisticsService),
       mockWebSocket([
-        mockJob('chart.release.create'),
-        mockJob('chart.release.update'),
+        mockJob('app.create'),
+        mockJob('app.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
-        mockCall('chart.release.query', [{} as App]),
+        mockCall('app.query', [{} as App]),
         mockCall('service.started', true),
       ]),
       mockProvider(AuthService, {

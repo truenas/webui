@@ -9,7 +9,7 @@ import { MockDeclaration, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/chart-release.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -22,7 +22,6 @@ import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-
 import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -39,7 +38,7 @@ describe('InstalledAppsComponent', () => {
     },
     catalog: 'test-catalog',
     catalog_train: 'test-catalog-train',
-    status: ChartReleaseStatus.Active,
+    state: CatalogAppState.Active,
   } as App;
 
   const createComponent = createComponentFactory({
@@ -94,7 +93,6 @@ describe('InstalledAppsComponent', () => {
           fields: { arguments: ['test-app', { replica_count: 1 }], state: JobState.Success },
         })),
       }),
-      mockProvider(AppsStatisticsService),
       {
         provide: ActivatedRoute,
         useValue: {

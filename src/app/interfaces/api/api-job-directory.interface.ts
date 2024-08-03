@@ -8,12 +8,14 @@ import {
   ChartRollbackParams,
   AppStartQueryParams,
   ChartScaleResult,
+  AppDeleteParams,
 } from 'app/interfaces/chart-release-event.interface';
 import {
   App,
   AppCreate,
   AppUpdate,
-  ChartReleaseUpgrade,
+  AppUpgrade,
+  AppUpgradeParams,
 } from 'app/interfaces/chart-release.interface';
 import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
@@ -83,6 +85,8 @@ export interface ApiJobDirectory {
   'app.update': { params: [string, AppUpdate]; response: App };
   'app.start': { params: AppStartQueryParams; response: void };
   'app.stop': { params: AppStartQueryParams; response: void };
+  'app.delete': { params: AppDeleteParams; response: boolean };
+  'app.upgrade': { params: AppUpgradeParams; response: App };
 
   // Chart Release
   'chart.release.create': { params: [AppCreate]; response: App };
@@ -90,7 +94,7 @@ export interface ApiJobDirectory {
   'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
   'chart.release.scale': { params: AppStartQueryParams; response: ChartScaleResult };
   'chart.release.update': { params: [name: string, update: AppUpdate]; response: App };
-  'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: App };
+  'chart.release.upgrade': { params: [name: string, upgrade: AppUpgrade]; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };

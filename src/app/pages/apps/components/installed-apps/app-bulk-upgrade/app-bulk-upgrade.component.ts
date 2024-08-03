@@ -16,8 +16,8 @@ import {
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { App, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
+import { App, AppUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -38,7 +38,7 @@ export class AppBulkUpgradeComponent {
   bulkItems = new Map<string, BulkListItem<App>>();
   loadingMap = new Map<string, boolean>();
   optionsMap = new Map<string, Observable<Option[]>>();
-  upgradeSummaryMap = new Map<string, UpgradeSummary>();
+  upgradeSummaryMap = new Map<string, AppUpgradeSummary>();
 
   readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<App>>> = (_, entry) => entry.key;
   readonly imagePlaceholder = appImagePlaceholder;
@@ -53,19 +53,20 @@ export class AppBulkUpgradeComponent {
     private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) private apps: App[],
   ) {
-    this.apps = this.apps.filter((app) => app.update_available || app.container_images_update_available);
+    this.apps = this.apps.filter((app) => app.upgrade_available || app.container_images_update_available);
 
     this.setInitialValues();
     this.detectFormChanges();
   }
 
-  hasUpdatesForImages(name: string): boolean {
-    const summary = this.upgradeSummaryMap.get(name);
-    if (!summary) {
-      return false;
-    }
-    return summary.image_update_available && Object.keys(summary.container_images_to_update).length > 0;
-  }
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+  // hasUpdatesForImages(name: string): boolean {
+  //   const summary = this.upgradeSummaryMap.get(name);
+  //   if (!summary) {
+  //     return false;
+  //   }
+  //   return summary.image_update_available && Object.keys(summary.container_images_to_update).length > 0;
+  // }
 
   hasErrors(name: string): boolean {
     const item = this.bulkItems.get(name);
@@ -112,13 +113,13 @@ export class AppBulkUpgradeComponent {
   }
 
   onSubmit(): void {
-    const payload: ChartReleaseUpgradeParams[] = Object.entries(this.form.value).map(([name, version]) => {
+    const payload: AppUpgradeParams[] = Object.entries(this.form.value).map(([name, version]) => {
       this.bulkItems.set(name, { ...this.bulkItems.get(name), state: BulkListItemState.Running });
-      return [name, { item_version: version }];
+      return [name, { app_version: version }];
     });
 
     this.ws
-      .job('core.bulk', ['chart.release.upgrade', payload])
+      .job('core.bulk', ['app.upgrade', payload])
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.dialogRef.close();

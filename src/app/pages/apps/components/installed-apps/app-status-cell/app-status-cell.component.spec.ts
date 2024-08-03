@@ -1,5 +1,5 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { AppStartQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { App } from 'app/interfaces/chart-release.interface';
@@ -27,26 +27,26 @@ describe('AppStatusCellComponent', () => {
   }
 
   it('checks status for running app', () => {
-    setupTest({ status: ChartReleaseStatus.Active } as unknown as App);
+    setupTest({ status: CatalogAppState.Active } as unknown as App);
 
     expect(spectator.query('span')).toHaveText('Running');
   });
 
   it('checks status for stopped app', () => {
-    setupTest({ status: ChartReleaseStatus.Stopped } as unknown as App);
+    setupTest({ status: CatalogAppState.Stopped } as unknown as App);
 
     expect(spectator.query('span')).toHaveText('Stopped');
   });
 
   it('checks status for deploying app', () => {
-    setupTest({ status: ChartReleaseStatus.Deploying } as unknown as App);
+    setupTest({ status: CatalogAppState.Deploying } as unknown as App);
 
     expect(spectator.query('span')).toHaveText('Deploying');
   });
 
   it('checks status for starting app', () => {
     setupTest(
-      { status: ChartReleaseStatus.Stopped } as unknown as App,
+      { status: CatalogAppState.Stopped } as unknown as App,
       {
         arguments: ['fake-name', { replica_count: 1 }] as AppStartQueryParams,
         state: JobState.Running,
@@ -58,7 +58,7 @@ describe('AppStatusCellComponent', () => {
 
   it('checks status for stopping app', () => {
     setupTest(
-      { status: ChartReleaseStatus.Active } as unknown as App,
+      { status: CatalogAppState.Active } as unknown as App,
       {
         arguments: ['fake-name', { replica_count: 0 }] as AppStartQueryParams,
         state: JobState.Running,
