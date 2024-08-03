@@ -3,6 +3,7 @@ import { appWidget } from 'app/pages/dashboard/widgets/apps/widget-app/widget-ap
 import { appCpuWidget } from 'app/pages/dashboard/widgets/apps/widget-app-cpu/widget-app-cpu.definition';
 import { appInfoWidget } from 'app/pages/dashboard/widgets/apps/widget-app-info/widget-app-info.definition';
 import { appMemoryWidget } from 'app/pages/dashboard/widgets/apps/widget-app-memory/widget-app-memory.definition';
+import { appNetworkWidget } from 'app/pages/dashboard/widgets/apps/widget-app-network/widget-app-network.definition';
 import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
 import { cpuTemperatureBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temperature-bar/widget-cpu-temperature-bar.definition';
@@ -38,6 +39,7 @@ export const widgetComponents = [
   appInfoWidget.component,
   appMemoryWidget.component,
   appCpuWidget.component,
+  appNetworkWidget.component,
   ipv4AddressWidget.component,
   ipv4AddressWidget.settingsComponent,
   helpWidget.component,
@@ -70,6 +72,7 @@ export const widgetRegistry = {
   [WidgetType.AppInfo]: appInfoWidget,
   [WidgetType.AppMemory]: appMemoryWidget,
   [WidgetType.AppCpu]: appCpuWidget,
+  [WidgetType.AppNetwork]: appNetworkWidget,
   [WidgetType.Pool]: poolWidget,
   [WidgetType.Ipv4Address]: ipv4AddressWidget,
   [WidgetType.Ipv6Address]: ipv6AddressWidget,

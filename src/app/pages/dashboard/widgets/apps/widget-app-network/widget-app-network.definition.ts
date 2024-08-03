@@ -3,13 +3,13 @@ import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { dashboardWidget } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app.definition';
-import { WidgetAppCpuComponent } from 'app/pages/dashboard/widgets/apps/widget-app-cpu/widget-app-cpu.component';
+import { WidgetAppNetworkComponent } from 'app/pages/dashboard/widgets/apps/widget-app-network/widget-app-network.component';
 import { WidgetAppSettingsComponent } from 'app/pages/dashboard/widgets/apps/widget-app-settings/widget-app-settings.component';
 
-export const appCpuWidget = dashboardWidget<WidgetAppSettings>({
-  name: T('Application CPU Usage'),
-  supportedSizes: [SlotSize.Quarter],
+export const appNetworkWidget = dashboardWidget<WidgetAppSettings>({
+  name: T('Application Network'),
+  supportedSizes: [SlotSize.Half],
   category: WidgetCategory.Apps,
-  component: WidgetAppCpuComponent,
+  component: WidgetAppNetworkComponent,
   settingsComponent: WidgetAppSettingsComponent,
 });

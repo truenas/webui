@@ -10,6 +10,7 @@ export enum WidgetType {
   AppInfo = 'app-info',
   AppMemory = 'app-memory',
   AppCpu = 'app-cpu',
+  AppNetwork = 'app-network',
   Ipv4Address = 'ipv4-address',
   Ipv6Address = 'ipv6-address',
   Help = 'help',

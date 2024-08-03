@@ -1,4 +1,3 @@
-import { } from '@ngneat/spectator';
 import { Spectator, mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -42,13 +41,13 @@ describe('AppNetworkInfoComponent', () => {
 
   it('checks title', () => {
     const title = spectator.query('h4');
-    expect(title).toBe('Network I/O');
+    expect(title).toHaveText('Network I/O');
   });
 
   it('checks in-out rows', () => {
     const inOutRows = spectator.queryAll('.in-out-row');
-    expect(inOutRows[0]).toHaveText('In:123');
-    expect(inOutRows[1]).toHaveText('Out:123');
+    expect(inOutRows[0]).toHaveText('In: 123 b/s');
+    expect(inOutRows[1]).toHaveText('Out: 456 b/s');
   });
 
   it('should generate correct network chart data', () => {
