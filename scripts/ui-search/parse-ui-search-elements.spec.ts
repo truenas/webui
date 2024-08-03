@@ -1,4 +1,6 @@
 import * as fs from 'fs';
+import { Role } from 'app/enums/role.enum';
+import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { parseUiSearchElements } from './parse-ui-search-elements';
 
@@ -45,17 +47,17 @@ describe('Create UI Searchable Element Item', () => {
         routerLink: null,
         anchor: 'non-static',
         triggerAnchor: null,
-        section: 'ui',
+        section: GlobalSearchSection.Ui,
       },
       {
         hierarchy: ['Credentials', 'Groups', 'Add'],
         synonyms: ['New Group'],
-        requiredRoles: ['SYSTEM_AUDIT_WRITE'],
+        requiredRoles: [Role.SystemAuditWrite],
         anchorRouterLink: ['/credentials', 'groups'],
         routerLink: ['/groups', 'add'],
         anchor: 'add-group',
         triggerAnchor: null,
-        section: 'ui',
+        section: GlobalSearchSection.Ui,
       },
     ]);
   });

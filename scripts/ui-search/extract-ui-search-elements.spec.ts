@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { Role } from 'app/enums/role.enum';
+import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { extractComponentFileContent } from './extract-component-file-content';
 import { extractUiSearchElements } from './extract-ui-search-elements';
 import { findComponentFiles } from './find-component-files';
@@ -15,7 +16,7 @@ const mockUiElements = [
   {
     hierarchy: [
       'System',
-      'Advanced',
+      'Advanced Settings',
       'Audit',
       'Reservation',
     ],
@@ -23,7 +24,7 @@ const mockUiElements = [
       'Audit',
     ],
     requiredRoles: [
-      'SYSTEM_AUDIT_WRITE',
+      Role.SystemAuditWrite,
     ],
     anchorRouterLink: [
       '/system',
@@ -31,7 +32,7 @@ const mockUiElements = [
     ],
     anchor: 'reservation',
     triggerAnchor: 'configure-audit',
-    section: 'ui',
+    section: GlobalSearchSection.Ui,
   },
   {
     hierarchy: [
@@ -43,7 +44,7 @@ const mockUiElements = [
       'Groups',
     ],
     requiredRoles: [
-      'ACCOUNT_WRITE',
+      Role.AccountWrite,
     ],
     anchorRouterLink: [
       '/credentials',
@@ -51,7 +52,7 @@ const mockUiElements = [
     ],
     anchor: 'add-group',
     triggerAnchor: null,
-    section: 'ui',
+    section: GlobalSearchSection.Ui,
   },
 ];
 
@@ -98,7 +99,7 @@ describe('Parsing and Role Extraction', () => {
       {
         elements: {
           add: {
-            requiredRoles: ['IPMI_WRITE'],
+            requiredRoles: [Role.IpmiWrite],
           },
         },
       },

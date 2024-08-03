@@ -16,6 +16,10 @@ import { memoryWidget } from 'app/pages/dashboard/widgets/memory/widget-memory/w
 import { interfaceWidget } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.definition';
 import { ipv4AddressWidget, ipv6AddressWidget } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { poolWidget } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
+import { poolDisksWithZfsErrorsWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-disks-with-zfs-errors/widget-pool-disks-with-zfs-errors.definition';
+import { poolLastScanErrorsWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-last-scan-errors/widget-pool-last-scan-errors.definition';
+import { poolStatusWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-status/widget-pool-status.definition';
+import { poolUsageGaugeWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-usage-gauge/widget-pool-usage-gauge.definition';
 import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.definition';
 import { hostnameActiveWidget } from 'app/pages/dashboard/widgets/system/widget-hostname-active/widget-hostname-active.definition';
 import {
@@ -58,6 +62,10 @@ export const widgetComponents = [
   systemUptimeWidget.component,
   systemImageWidget.component,
   poolWidget.component,
+  poolUsageGaugeWidget.component,
+  poolStatusWidget.component,
+  poolDisksWithZfsErrorsWidget.component,
+  poolLastScanErrorsWidget.component,
   poolWidget.settingsComponent,
   arbitraryTextWidget.component,
   arbitraryTextWidget.settingsComponent,
@@ -74,6 +82,10 @@ export const widgetRegistry = {
   [WidgetType.AppCpu]: appCpuWidget,
   [WidgetType.AppNetwork]: appNetworkWidget,
   [WidgetType.Pool]: poolWidget,
+  [WidgetType.PoolUsageGauge]: poolUsageGaugeWidget,
+  [WidgetType.PoolStatus]: poolStatusWidget,
+  [WidgetType.PoolDisksWithZfsErrors]: poolDisksWithZfsErrorsWidget,
+  [WidgetType.PoolLastScanErrors]: poolLastScanErrorsWidget,
   [WidgetType.Ipv4Address]: ipv4AddressWidget,
   [WidgetType.Ipv6Address]: ipv6AddressWidget,
   [WidgetType.Help]: helpWidget,

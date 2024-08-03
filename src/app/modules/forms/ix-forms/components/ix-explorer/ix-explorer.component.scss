@@ -51,9 +51,22 @@
     }
   }
 
-  ::ng-deep .tree-node {
-    // Wrap long file names
-    word-break: break-all;
+  ::ng-deep {
+    tree-viewport {
+      max-height: 300px;
+      overflow: auto;
+    }
+
+    .tree-node {
+      // Wrap long file names
+      word-break: break-all;
+    }
+
+    .toggle-children {
+      filter: invert(50%);
+      left: 4px;
+      top: 5px;
+    }
   }
 
   .node-container {
