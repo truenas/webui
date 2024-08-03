@@ -633,8 +633,8 @@ class side_Menu:
     directory_Services = submenu_Anchor('Directory Services')
     apps = menu_Anchor('Apps')
     system_Setting = menu_Anchor('System')
-    general = submenu_Anchor('General')
-    advanced = submenu_Anchor('Advanced')
+    general = submenu_Anchor('General Settings')
+    advanced = submenu_Anchor('Advanced Settings')
     failover = submenu_Anchor('Failover')
     services = submenu_Anchor('Services')
 
