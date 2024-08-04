@@ -308,7 +308,7 @@ describe('Redirect to install app', () => {
       mockWebSocket([
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
-        mockCall('catalog.get_item_details', existingCatalogApp),
+        mockCall('catalog.get_app_details', existingCatalogApp),
         mockCall('chart.release.query', [{} as ChartRelease]),
         mockCall('service.started', true),
       ]),

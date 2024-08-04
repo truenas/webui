@@ -16,7 +16,6 @@ import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent, ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
-import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -43,20 +42,22 @@ export class ApplicationsService {
     return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
   }
 
-  getContainerConfig(): Observable<ContainerConfig> {
-    return this.ws.call('container.config');
-  }
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+  // getContainerConfig(): Observable<ContainerConfig> {
+  //   return this.ws.call('container.config');
+  // }
 
-  updateContainerConfig(enableImageUpdates: boolean): Observable<ContainerConfig> {
-    return this.ws.call('container.update', [{ enable_image_updates: enableImageUpdates }]);
-  }
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+  // updateContainerConfig(enableImageUpdates: boolean): Observable<ContainerConfig> {
+  //   return this.ws.call('container.update', [{ enable_image_updates: enableImageUpdates }]);
+  // }
 
   getInterfaces(): Observable<NetworkInterface[]> {
     return this.ws.call('interface.query');
   }
 
-  getCatalogItem(name: string, catalog: string, train: string): Observable<CatalogApp> {
-    return this.ws.call('catalog.get_item_details', [name, { cache: true, catalog, train }]);
+  getCatalogItem(name: string, train: string): Observable<CatalogApp> {
+    return this.ws.call('catalog.get_app_details', [name, { train }]);
   }
 
   getAllAppsCategories(): Observable<string[]> {

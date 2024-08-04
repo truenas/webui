@@ -286,15 +286,16 @@ describe('ChartWizardComponent', () => {
       mockWebSocket([
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
-        mockCall('catalog.get_item_details', existingCatalogApp),
+        mockCall('catalog.get_app_details', existingCatalogApp),
         mockCall('chart.release.query', [existingChartEdit]),
-        mockCall('container.image.dockerhub_rate_limit', {
-          total_pull_limit: 13,
-          total_time_limit_in_secs: 21600,
-          remaining_pull_limit: 3,
-          remaining_time_limit_in_secs: 21600,
-          error: null,
-        }),
+        // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+        // mockCall('container.image.dockerhub_rate_limit', {
+        //   total_pull_limit: 13,
+        //   total_time_limit_in_secs: 21600,
+        //   remaining_pull_limit: 3,
+        //   remaining_time_limit_in_secs: 21600,
+        //   error: null,
+        // }),
       ]),
       mockProvider(DockerStore, {
         selectedPool$: of('pool set'),
@@ -479,16 +480,17 @@ describe('ChartWizardComponent', () => {
       });
     });
 
-    it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
-        data: {
-          total_pull_limit: 13,
-          total_time_limit_in_secs: 21600,
-          remaining_pull_limit: 3,
-          remaining_time_limit_in_secs: 21600,
-          error: null,
-        },
-      });
-    });
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+    // it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
+    //   expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
+    //     data: {
+    //       total_pull_limit: 13,
+    //       total_time_limit_in_secs: 21600,
+    //       remaining_pull_limit: 3,
+    //       remaining_time_limit_in_secs: 21600,
+    //       error: null,
+    //     },
+    //   });
+    // });
   });
 });

@@ -3,7 +3,6 @@ import { SetAcl } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { Catalog, CatalogCreate } from 'app/interfaces/catalog.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import {
   ChartRollbackParams,
@@ -72,7 +71,6 @@ export interface ApiJobDirectory {
   'bootenv.delete': { params: [string]; response: boolean };
 
   // Catalog
-  'catalog.create': { params: [CatalogCreate]; response: Catalog };
   'catalog.sync': { params: [label: string]; response: void };
 
   // Certificate

@@ -9,10 +9,11 @@ import { officialCatalog } from 'app/constants/catalog.constants';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -26,7 +27,7 @@ export class AppSettingsButtonComponent {
   readonly searchableElements = appSettingsButtonElements;
 
   constructor(
-    private ws: WebSocketService,
+    private ixSlideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -52,5 +53,9 @@ export class AppSettingsButtonComponent {
         this.snackbar.success(this.translate.instant('Pool has been unset.'));
       });
     });
+  }
+
+  manageCatalog(): void {
+    this.ixSlideInService.open(CatalogSettingsComponent);
   }
 }

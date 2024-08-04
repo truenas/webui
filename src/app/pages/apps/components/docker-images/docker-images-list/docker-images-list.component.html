@@ -6,7 +6,6 @@
     mat-button
     color="primary"
     ixTest="pull-image"
-    [ixUiSearch]="searchableElements.elements.pullImage"
     (click)="doAdd()"
   >
     {{ 'Pull Image' | translate }}
@@ -15,7 +14,6 @@
 
 <ix-table
   class="table"
-  [ixUiSearch]="searchableElements.elements.dockerImagesList"
   [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
 >
