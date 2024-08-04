@@ -13,6 +13,7 @@ ix-fake-progress-bar {
 :host {
   display: flex;
   gap: 5px;
+  height: calc(100% - 150px);
 
   @media (max-width: $breakpoint-md) {
     flex-direction: column-reverse;
@@ -26,24 +27,45 @@ ix-fake-progress-bar {
     }
   }
 
-  ::ng-deep .mat-mdc-card {
+  .mat-mdc-card {
+    height: 100%;
     margin: 0;
+  }
+
+  .mat-mdc-card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
   }
 
   .container {
     align-items: stretch;
     background-color: var(--contrast-darkest);
     display: flex;
+    height: 100%;
     justify-content: center;
-    min-height: 40vh;
+    min-height: 330px;
     padding: 0;
 
     @media (max-width: $breakpoint-md) {
-      min-height: 30vh;
+      height: auto;
+      min-height: auto;
+    }
+
+    ::ng-deep {
+      .enclosure-image {
+        max-height: 250px;
+      }
     }
   }
 }
 
 .view-container {
   flex-grow: 1;
+  height: 100%;
+
+  @media (max-width: $breakpoint-md) {
+    height: 0;
+  }
 }

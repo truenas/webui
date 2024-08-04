@@ -43,12 +43,14 @@
 .left-column {
   @media (max-width: $breakpoint-md) {
     margin-top: 10px;
+    min-height: 45px;
   }
 }
 
 .right-column {
   @media (max-width: $breakpoint-md) {
     margin-bottom: 10px;
+    min-height: 100px;
   }
 }
 
