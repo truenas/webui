@@ -10,6 +10,7 @@
             @for (result of sectionResults; track trackById(i, result); let i = $index) {
               <div
                 class="search-result"
+                role="link"
                 [attr.tabindex]="result.section === GlobalSearchSection.RecentSearches ? i + 1 : 0"
                 [class.highlighted-result]="isSearchInputFocused && isSameHierarchyResult(firstAvailableSearchResult, result)"
                 [ixTest]="['search-result', result.hierarchy.join('-')]"

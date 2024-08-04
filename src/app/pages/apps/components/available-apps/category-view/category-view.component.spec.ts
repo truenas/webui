@@ -14,7 +14,7 @@ import {
 } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { CategoryViewComponent } from './category-view.component';
 
 describe('CategoryViewComponent', () => {
@@ -46,7 +46,7 @@ describe('CategoryViewComponent', () => {
         applyFilters: jest.fn(),
         resetFilters: jest.fn(),
       }),
-      mockProvider(KubernetesStore, {
+      mockProvider(DockerStore, {
         selectedPool$: of('pool'),
       }),
       mockProvider(AppsStore, {

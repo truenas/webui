@@ -13,6 +13,11 @@
           [provider]="language.provider"
           [required]="true"
         ></ix-combobox>
+
+        @if (!(isEnterprise$ | async) || true) {
+          <p class="language-hint" [innerHtml]="language.hint | translate"></p>
+        }
+
         <ix-select
           [label]="kbdMap.label | translate"
           [tooltip]="kbdMap.tooltip | translate"

@@ -16,6 +16,8 @@ export class SnackbarService {
 
   success(message: string): MatSnackBarRef<SnackbarComponent> {
     return this.matSnackBar.openFromComponent(SnackbarComponent, {
+      announcementMessage: message,
+      politeness: 'assertive',
       data: {
         message,
         icon: 'check',

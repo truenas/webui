@@ -7,9 +7,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -17,8 +15,7 @@ import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 
 describe('SelectPoolDialogComponent', () => {
   let spectator: Spectator<SelectPoolDialogComponent>;
@@ -32,12 +29,11 @@ describe('SelectPoolDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(KubernetesStore, {
-        updatePoolAndKubernetesConfig: jest.fn(() => of()),
-        updateSelectedPool: jest.fn(() => of()),
+      mockProvider(DockerStore, {
+        setDockerPool: jest.fn(() => of({ pool: 'pool' })),
+        selectedPool$: of(null),
       }),
       mockProvider(ApplicationsService, {
-        getKubernetesConfig: jest.fn(() => of({})),
         getPoolList: jest.fn(() => of([
           { name: 'pool1' },
           { name: 'pool2' },
@@ -51,9 +47,6 @@ describe('SelectPoolDialogComponent', () => {
       }),
       mockProvider(MatDialogRef),
       mockProvider(Router),
-      mockWebSocket([
-        mockJob('kubernetes.update'),
-      ]),
     ],
   });
 
@@ -61,9 +54,6 @@ describe('SelectPoolDialogComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-
-    const kubernetesStore = spectator.inject(KubernetesStore);
-    jest.spyOn(kubernetesStore, 'updatePoolAndKubernetesConfig').mockReturnValue(of({} as KubernetesConfig));
   });
 
   it('loads pools available in system and shows them in the dropdown', async () => {
@@ -81,19 +71,15 @@ describe('SelectPoolDialogComponent', () => {
     const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
     await chooseButton.click();
 
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'kubernetes.update',
-      [{ pool: 'pool2' }],
-    );
+    expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith('pool2');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('shows migrate checkbox when existing pool is changed to a new one', async () => {
-    const appService = spectator.inject(ApplicationsService);
-    jest.spyOn(appService, 'getKubernetesConfig').mockReturnValue(of({
-      pool: 'pool1',
-    } as KubernetesConfig));
+    const dockerStore = spectator.inject(DockerStore);
+    Object.defineProperty(dockerStore, 'selectedPool$', {
+      value: of('pool1'),
+    });
     spectator.component.ngOnInit();
 
     await form.fillForm({
@@ -105,6 +91,12 @@ describe('SelectPoolDialogComponent', () => {
   });
 
   it('sets new pool and migrates applications when form is submitted', async () => {
+    const dockerStore = spectator.inject(DockerStore);
+    Object.defineProperty(dockerStore, 'selectedPool$', {
+      value: of('pool1'),
+    });
+    spectator.component.ngOnInit();
+
     await form.fillForm(
       {
         Pool: 'pool2',
@@ -115,10 +107,7 @@ describe('SelectPoolDialogComponent', () => {
     const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
     await chooseButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'kubernetes.update',
-      [{ migrate_applications: true, pool: 'pool2' }],
-    );
+    expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith('pool2');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 

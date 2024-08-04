@@ -48,7 +48,7 @@ import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -119,7 +119,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     private loader: AppLoaderService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
-    private kubernetesStore: KubernetesStore,
+    private dockerStore: DockerStore,
     private ws: WebSocketService,
   ) {}
 
@@ -486,10 +486,15 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   private checkIfPoolIsSet(): void {
-    this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
-      if (!pool) {
-        this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
-      }
+    this.dockerStore.selectedPool$.pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (pool) => {
+        if (!pool) {
+          this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+        }
+      },
     });
   }
 

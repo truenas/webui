@@ -9,8 +9,8 @@ import { Job } from 'app/interfaces/job.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 
 describe('InstalledAppsStore', () => {
   let spectator: SpectatorService<InstalledAppsStore>;
@@ -39,9 +39,9 @@ describe('InstalledAppsStore', () => {
       mockProvider(AppsStore, {
         patchState: jest.fn(),
       }),
-      mockProvider(KubernetesStore, {
+      mockProvider(DockerStore, {
         isLoading$: of(false),
-        isKubernetesStarted$: of(true),
+        isDockerStarted$: of(true),
       }),
       mockProvider(AppsStatisticsService),
     ],

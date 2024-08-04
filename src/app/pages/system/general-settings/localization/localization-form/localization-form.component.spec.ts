@@ -23,6 +23,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('LocalizationFormComponent', () => {
   let spectator: Spectator<LocalizationFormComponent>;
@@ -86,6 +87,10 @@ describe('LocalizationFormComponent', () => {
               dateFormat: '2021-10-16',
               timeFormat: '16:22:14 (24 Hours)',
             },
+          },
+          {
+            selector: selectIsEnterprise,
+            value: false,
           },
         ],
       }),

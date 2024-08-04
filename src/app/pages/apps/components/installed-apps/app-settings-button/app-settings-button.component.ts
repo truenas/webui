@@ -6,16 +6,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { officialCatalog } from 'app/constants/catalog.constants';
-import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
-import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -29,26 +25,18 @@ export class AppSettingsButtonComponent {
   readonly officialCatalog = officialCatalog;
   readonly searchableElements = appSettingsButtonElements;
 
-  protected readonly requiredRoles = [Role.KubernetesWrite];
-
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private errorHandler: ErrorHandlerService,
-    protected kubernetesStore: KubernetesStore,
+    protected dockerStore: DockerStore,
     private viewContainerRef: ViewContainerRef,
   ) { }
 
   onChoosePool(): void {
     this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
-  }
-
-  onAdvancedSettings(): void {
-    this.slideInService.open(KubernetesSettingsComponent);
   }
 
   onUnsetPool(): void {
@@ -58,16 +46,11 @@ export class AppSettingsButtonComponent {
       hideCheckbox: true,
       buttonText: helptextApps.choosePool.unsetPool.confirm.button,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.dialogService.jobDialog(
-        this.ws.job('kubernetes.update', [{ pool: null }]),
-        { title: helptextApps.choosePool.jobTitle },
-      )
-        .afterClosed()
-        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-        .subscribe(() => {
-          this.kubernetesStore.updateSelectedPool(null);
-          this.snackbar.success(this.translate.instant('Pool has been unset.'));
-        });
+      this.dockerStore.setDockerPool(null).pipe(
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.snackbar.success(this.translate.instant('Pool has been unset.'));
+      });
     });
   }
 }
