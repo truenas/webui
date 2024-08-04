@@ -1,0 +1,27 @@
+@if (poolExists) {
+  <mat-card class="card">
+    <mat-card-content class="card-content">
+      <div class="header">
+        <h3>
+          @if (!pool()?.name) {
+            <ngx-skeleton-loader></ngx-skeleton-loader>
+          } @else {
+            {{ pool().name }}
+          }
+        </h3>
+      </div>
+
+      <div [class]="['container', size()]">
+        <ix-last-scan-errors [pool]="pool()"></ix-last-scan-errors>
+      </div>
+    </mat-card-content>
+  </mat-card>
+}
+
+@if (!poolExists) {
+  <ix-widget-datapoint
+    [size]="size()"
+    [label]="name | translate"
+    [text]="'Pool does not exist' | translate"
+  ></ix-widget-datapoint>
+}

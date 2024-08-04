@@ -1,4 +1,5 @@
 @import 'scss-imports/cssvars';
+@import 'mixins/animations';
 
 /* TYPOGRAPHY */
 
@@ -448,26 +449,18 @@ table.mat-mdc-table {
 }
 
 th.mat-mdc-table-sticky,
-thead.ui-treetable-thead th,
 .mat-mdc-table thead th {
   background-color: var(--contrast-darker) !important;
   background-color: rgba(0, 0, 0, 0.1);
   vertical-align: middle;
 }
 
-.ui-treetable tr,
 tr.mat-header-row,
 .mat-mdc-table thead tr {
   height: 48px;
   max-height: 48px;
 }
 
-.ui-treetable tr {
-  border: unset;
-  border-bottom: solid 1px var(--lines);
-}
-
-.ui-treetable tr,
 .mat-mdc-row,
 .mat-header-row,
 .mat-footer-row,
@@ -533,28 +526,9 @@ td.mat-cell .ix-icon.expansion-trigger {
 
 td.mat-cell.mat-mdc-table-sticky.hover::before,
 td.mat-cell.mat-mdc-table-sticky .hover,
-.ui-treetable tr:hover,
 .mat-mdc-row:hover,
 tr.mat-mdc-row:hover {
   background: rgba(0, 0, 0, 0.1) !important;
-}
-
-.mat-mdc-table tr.details-row {
-  height: 0;
-  min-height: 0;
-}
-
-.mat-mdc-table tr.details-row td {
-  width: 100%;
-}
-
-/* TreeTable Specific Rules */
-.ui-treetable tr > td:nth-child(1) {
-  padding-left: 16px;
-}
-
-thead.ui-treetable-thead tr {
-  border-top: solid 1px var(--lines);
 }
 
 /* Material Lists */
@@ -590,10 +564,6 @@ mat-card.mat-mdc-card .mat-mdc-list-base {
 
 .mat-expansion-panel.no-padding .mat-expansion-panel-body {
   padding: 0;
-}
-
-.mat-expansion-panel.no-padding .mat-expansion-panel-body .ui-treetable-thead>tr>th:nth-child(1) {
-  padding-left: 18px;
 }
 
 input::-ms-reveal,
@@ -831,6 +801,21 @@ body {
   ix-fieldset.highlighted fieldset {
     outline: 1.5px solid var(--primary);
   }
+
+  .search-element-highlighted {
+    @include pulse-box-shadow();
+
+    background-color: var(--contrast-darkest) !important;
+    box-shadow: none;
+    outline: 0;
+    overflow: visible;
+
+    @media (prefers-reduced-motion) {
+      &::after {
+        animation: none;
+      }
+    }
+  }
 }
 
 body .mat-calendar-previous-button::after,
@@ -908,4 +893,10 @@ mat-list-item {
 
 div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
   margin: 5px 0;
+}
+
+mat-tab-nav-panel {
+  .search-element-highlighted {
+    display: block;
+  }
 }

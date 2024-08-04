@@ -1,0 +1,11 @@
+<div class="item">
+  <h2 class="value">
+    @if (!isPoolLoading()) {
+      {{ pool().scan?.errors || 0 }}
+    } @else {
+      <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+    }
+  </h2>
+  <div class="divider"></div>
+  <h6 class="label">{{ 'Last Scan Errors' | translate }}</h6>
+</div>

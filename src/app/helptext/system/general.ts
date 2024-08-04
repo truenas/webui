@@ -77,6 +77,9 @@ export const helptextSystemGeneral = {
   stg_language: {
     placeholder: T('Language'),
     tooltip: T('Select a language from the drop-down menu.'),
+    hint: T('Languages other than <i>English</i> are provided by \
+     the community and may be incomplete. \
+     <a href="https://github.com/truenas/webui/blob/master/TRANSLATING.md" target="_blank">Learn how to contribute.</a>'),
   },
 
   stg_kbdmap: {

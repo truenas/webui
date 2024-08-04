@@ -3,8 +3,6 @@ import { Observable } from 'rxjs';
 export enum MenuItemType {
   Link = 'link',
   SlideOut = 'slideOut',
-  Separator = 'separator',
-  ExternalLink = 'extLink',
 }
 
 export interface MenuItem {
