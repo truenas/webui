@@ -26,6 +26,7 @@ import { AppState } from 'app/store';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -53,11 +54,13 @@ export class LocalizationFormComponent implements OnInit {
     readonly fcName: 'language';
     label: string;
     tooltip: string;
+    hint: string;
     provider: SimpleAsyncComboboxProvider;
   } = {
     fcName: 'language',
     label: helptext.stg_language.placeholder,
     tooltip: helptext.stg_language.tooltip,
+    hint: helptext.stg_language.hint,
     provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
   };
 
@@ -108,6 +111,8 @@ export class LocalizationFormComponent implements OnInit {
     label: helptext.time_format.placeholder,
     tooltip: helptext.time_format.tooltip,
   };
+
+  protected isEnterprise$ = this.store$.select(selectIsEnterprise);
 
   constructor(
     private sysGeneralService: SystemGeneralService,

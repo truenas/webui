@@ -1,0 +1,76 @@
+<div class="pool-info-top">
+  <div class="left">
+    <h3 class="pool-name">
+      @if (!isPoolLoading()) {
+        {{ pool().name }}
+      } @else {
+        <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+      }
+    </h3>
+    <div class="divider"></div>
+    <div class="lines">
+      <div class="line">
+        <span class="label">{{ 'Data Topology' | translate }}:</span>
+        @if (!isDisksLoading()) {
+          <span class="value">
+            {{ dataTopology() }}
+          </span>
+        } @else {
+          <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+        }
+      </div>
+      <div class="line">
+        <span class="label">{{ 'Usable Capacity' | translate }}:</span>
+        @if (!isDatasetLoading()) {
+          <span class="value">
+            {{ capacity() | ixFileSize }}
+          </span>
+        } @else {
+          <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+        }
+      </div>
+      @if (isDatasetLoading() || pool()?.scan?.end_time?.$date) {
+        <div class="line">
+          <span class="label">{{ 'Last Scrub Date' | translate }}:</span>
+          @if (!isDatasetLoading()) {
+            <span class="value">
+              {{ pool().scan.end_time.$date | formatDateTime }}
+            </span>
+          } @else {
+            <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+          }
+        </div>
+      }
+      @if (isDatasetLoading() || scanDuration()) {
+        <div class="line">
+          <span class="label">{{ 'Last Scan Duration' | translate }}:</span>
+          @if (!isDatasetLoading()) {
+            <span class="value">
+              {{ scanDuration() }}
+            </span>
+          } @else {
+            <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+          }
+        </div>
+      }
+    </div>
+  </div>
+  <div class="right">
+    @if (!isDatasetLoading()) {
+      <ix-gauge-chart
+        [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
+        [colorBlank]="chartBlankColor"
+        [width]="size()"
+        [height]="size()"
+        [label]="usedPercentage() / 100 | percent: '1.0-1'"
+        [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
+        [style]="isLowCapacity() ? 'color: var(--red);' : ''"
+      ></ix-gauge-chart>
+    } @else {
+      <ngx-skeleton-loader
+        appearance="circle"
+        [theme]="{ width: size() * 0.8 + 'px', height: size() * 0.8 + 'px', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
+      ></ngx-skeleton-loader>
+    }
+  </div>
+</div>

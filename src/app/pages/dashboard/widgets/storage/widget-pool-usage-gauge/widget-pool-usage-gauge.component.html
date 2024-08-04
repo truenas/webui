@@ -1,0 +1,40 @@
+@if (poolExists) {
+  <mat-card class="card">
+    <mat-card-content class="card-content">
+      @if (size() === SlotSize.Full) {
+        <div class="header">
+          <h3>{{ name | translate }}</h3>
+        </div>
+      } @else {
+        <div class="header">
+          <h3>
+            @if (!pool()?.name) {
+              <ngx-skeleton-loader></ngx-skeleton-loader>
+            } @else {
+              {{ pool().name }}
+            }
+          </h3>
+        </div>
+      }
+
+      <div [class]="['container', size()]">
+        <ix-pool-usage-gauge
+          [size]="size() === SlotSize.Full ? 140 : size() === SlotSize.Half ? 110 : 85"
+          [pool]="pool()"
+        ></ix-pool-usage-gauge>
+
+        @if (size() === SlotSize.Quarter) {
+          <h6 class="divider-label">{{ name | translate }}</h6>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+}
+
+@if (!poolExists) {
+  <ix-widget-datapoint
+    [size]="size()"
+    [label]="name | translate"
+    [text]="'Pool does not exist' | translate"
+  ></ix-widget-datapoint>
+}
