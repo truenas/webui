@@ -72,7 +72,6 @@ import { CategoryViewComponent } from './components/available-apps/category-view
 import { CustomAppButtonComponent } from './components/available-apps/custom-app-button/custom-app-button.component';
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
-import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
 import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
@@ -92,7 +91,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppRowComponent,
     AppDetailsPanelComponent,
     AppContainersCardComponent,
-    AppHistoryCardComponent,
     AppResourcesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,

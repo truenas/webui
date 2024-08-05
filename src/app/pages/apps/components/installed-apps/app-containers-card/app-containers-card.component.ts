@@ -7,11 +7,10 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { CatalogAppState } from 'app/enums/chart-release-status.enum';
-import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { Role } from 'app/enums/role.enum';
 import { App } from 'app/interfaces/chart-release.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
-import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
+// import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { getPorts } from 'app/pages/apps/utils/get-ports';
 
@@ -47,37 +46,40 @@ export class AppContainersCardComponent implements OnChanges {
     this.getResources();
   }
 
-  shellButtonPressed(containerImageKey: string): void {
-    this.matDialog.open(PodSelectDialogComponent, {
-      minWidth: '650px',
-      maxWidth: '850px',
-      data: {
-        containerImageKey,
-        app: this.app,
-        appName: this.app.name,
-        title: this.translate.instant('Choose pod'),
-        type: PodSelectDialogType.Shell,
-        customSubmit: (values: PodDialogFormValue) => this.shellDialogSubmit(values),
-      },
-    });
-  }
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
+  // shellButtonPressed(containerImageKey: string): void {
+  // this.matDialog.open(PodSelectDialogComponent, {
+  //   minWidth: '650px',
+  //   maxWidth: '850px',
+  //   data: {
+  //     containerImageKey,
+  //     app: this.app,
+  //     appName: this.app.name,
+  //     title: this.translate.instant('Choose pod'),
+  //     type: PodSelectDialogType.Shell,
+  //     customSubmit: (values: PodDialogFormValue) => this.shellDialogSubmit(values),
+  //   },
+  // });
+  // }
 
-  viewLogsButtonPressed(containerImageKey: string): void {
-    this.matDialog.open(PodSelectDialogComponent, {
-      minWidth: '650px',
-      maxWidth: '850px',
-      data: {
-        containerImageKey,
-        app: this.app,
-        appName: this.app.name,
-        title: this.translate.instant('Choose pod'),
-        type: PodSelectDialogType.Logs,
-        customSubmit: (formValueDialog: PodDialogFormValue) => {
-          this.logDialogSubmit(formValueDialog);
-        },
-      },
-    });
-  }
+  // viewLogsButtonPressed(containerImageKey: string): void {
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
+
+  // this.matDialog.open(PodSelectDialogComponent, {
+  //   minWidth: '650px',
+  //   maxWidth: '850px',
+  //   data: {
+  //     containerImageKey,
+  //     app: this.app,
+  //     appName: this.app.name,
+  //     title: this.translate.instant('Choose pod'),
+  //     type: PodSelectDialogType.Logs,
+  //     customSubmit: (formValueDialog: PodDialogFormValue) => {
+  //       this.logDialogSubmit(formValueDialog);
+  //     },
+  //   },
+  // });
+  // }
 
   private getResources(): void {
     this.isLoading = true;
