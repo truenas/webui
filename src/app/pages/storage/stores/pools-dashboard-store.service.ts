@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { ComponentStore } from '@ngrx/component-store';
+import { tapResponse } from '@ngrx/operators';
 import _ from 'lodash';
 import {
   combineLatest, forkJoin, Observable, of, tap,
