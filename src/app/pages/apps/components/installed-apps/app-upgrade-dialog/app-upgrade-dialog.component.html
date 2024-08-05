@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  @if (selectedVersion?.item_update_available) {
+  @if (selectedVersion?.available_versions_for_upgrade?.length) {
     <div
       class="resource"
       fxLayout="row"
@@ -41,7 +41,8 @@
 
 
   <mat-accordion>
-    <mat-expansion-panel>
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130379 -->
+    <!-- <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ 'Images ( to be updated )' | translate }}
@@ -72,9 +73,9 @@
           </div>
         }
       </div>
-    </mat-expansion-panel>
+    </mat-expansion-panel> -->
 
-    @if (selectedVersion?.item_update_available) {
+    @if (selectedVersion?.available_versions_for_upgrade?.length) {
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>

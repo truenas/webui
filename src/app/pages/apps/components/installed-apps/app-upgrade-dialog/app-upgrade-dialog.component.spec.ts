@@ -24,7 +24,6 @@ const fakeUpgradeSummary = {
       human_version: '8.7.0_1.0.2',
     },
   ],
-  item_update_available: true,
   image_update_available: false,
   latest_version: '1.0.2',
   upgrade_version: '1.0.2',

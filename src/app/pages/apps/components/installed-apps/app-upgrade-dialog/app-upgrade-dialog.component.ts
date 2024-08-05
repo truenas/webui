@@ -59,7 +59,6 @@ export class AppUpgradeDialogComponent {
             changelog: null,
             // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
             // container_images_to_update: null,
-            // item_update_available: null,
             available_versions_for_upgrade: null,
           });
         }
@@ -91,7 +90,6 @@ export class AppUpgradeDialogComponent {
           this.selectedVersion.changelog = summary.changelog;
           // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
           // this.selectedVersion.container_images_to_update = summary.container_images_to_update;
-          // this.selectedVersion.item_update_available = summary.item_update_available;
           this.selectedVersion.fetched = true;
         });
     }
