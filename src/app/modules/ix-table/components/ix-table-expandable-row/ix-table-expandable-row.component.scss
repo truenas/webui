@@ -28,7 +28,9 @@
   }
 
   .actions {
+    display: flex;
     flex: 1;
+    gap: 8px;
     padding: 8px 0;
 
     ::ng-deep {

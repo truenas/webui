@@ -59,3 +59,9 @@ mat-dialog-content.job-dialog {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+.description-line {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}

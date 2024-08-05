@@ -1,103 +1,97 @@
 <div
   class="dashboard"
-  fxLayout="column"
-  fxLayoutGap="8px"
   [ixUiSearch]="searchableElements.elements.network"
 >
-  <div class="content" fxLayout="column" fxLayout.lg="row" fxLayoutGap="8px">
-    <div class="right-column" fxFlex="100" fxFlex.lg="65">
-      <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
-        @if (hasPendingChanges) {
-          <mat-card class="pending-changes-card">
-            <mat-card-content>
-              @if (!checkinWaiting) {
-                <div>
-                  <p>{{ helptext.pending_changes_text | translate }}</p>
-                  <p>
-                    {{ helptext.checkin_text | translate }}
-                    <mat-form-field floatPlaceholder="never" id="timeout-field">
-                      <input
-                        matInput
-                        ixTest="checkin-timeout"
-                        [pattern]="checkinTimeoutPattern"
-                        [(ngModel)]="checkinTimeout"
-                      />
-                    </mat-form-field>
-                    {{ helptext.checkin_text_2 | translate }}
-                  </p>
-                </div>
-              } @else {
-                <div>
-                  <p>
-                    {{ helptext.pending_checkin_text | translate: { x: checkinRemaining } }}
-                  </p>
-                </div>
-              }
-            </mat-card-content>
-
-            <mat-card-actions class="interface-pending-actions">
-              @if (!checkinWaiting) {
-                <button
-                  mat-button
-                  ixTest="test-changes"
-                  [disabled]="isHaEnabled"
-                  (click)="commitPendingChanges()"
-                >
-                  {{ helptext.commit_button | translate }}
-                </button>
-              }
-
-              @if (checkinWaiting) {
-                <button
-                  mat-button
-                  ixTest="save-changes"
-                  [disabled]="isHaEnabled"
-                  (click)="checkInNow()"
-                >
-                  {{ helptext.keep_button | translate }}
-                </button>
-              }
-
-              <button
-                mat-button
-                ixTest="revert-changes"
-                [disabled]="isHaEnabled"
-                (click)="rollbackPendingChanges()"
-              >
-                {{ helptext.rollback_button | translate }}
-              </button>
-            </mat-card-actions>
-
-            @if (isHaEnabled) {
-              <div class="disabled-notice">
-                {{ helptext.ha_enabled_text | translate }}
-                (
-                <span
-                  class="pseudolink"
-                  (click)="goToHa()"
-                >
-                  {{ helptext.go_to_ha | translate }}
-                </span>
-                ).
+  <div class="content">
+    <div class="left-column">
+      @if (hasPendingChanges) {
+        <mat-card class="pending-changes-card">
+          <mat-card-content>
+            @if (!checkinWaiting) {
+              <div>
+                <p>{{ helptext.pending_changes_text | translate }}</p>
+                <p>
+                  {{ helptext.checkin_text | translate }}
+                  <mat-form-field floatPlaceholder="never" id="timeout-field">
+                    <input
+                      matInput
+                      ixTest="checkin-timeout"
+                      [pattern]="checkinTimeoutPattern"
+                      [(ngModel)]="checkinTimeout"
+                    />
+                  </mat-form-field>
+                  {{ helptext.checkin_text_2 | translate }}
+                </p>
+              </div>
+            } @else {
+              <div>
+                <p>
+                  {{ helptext.pending_checkin_text | translate: { x: checkinRemaining } }}
+                </p>
               </div>
             }
-          </mat-card>
-        }
-        <ix-interfaces-card
-          [isHaEnabled]="isHaEnabled"
-          (interfacesUpdated)="loadCheckinStatusAfterChange()"
-        ></ix-interfaces-card>
-        <ix-network-configuration-card
-          class="dashboard-card"
-        ></ix-network-configuration-card>
-      </div>
+          </mat-card-content>
+
+          <mat-card-actions class="interface-pending-actions">
+            @if (!checkinWaiting) {
+              <button
+                mat-button
+                ixTest="test-changes"
+                [disabled]="isHaEnabled"
+                (click)="commitPendingChanges()"
+              >
+                {{ helptext.commit_button | translate }}
+              </button>
+            }
+
+            @if (checkinWaiting) {
+              <button
+                mat-button
+                ixTest="save-changes"
+                [disabled]="isHaEnabled"
+                (click)="checkInNow()"
+              >
+                {{ helptext.keep_button | translate }}
+              </button>
+            }
+
+            <button
+              mat-button
+              ixTest="revert-changes"
+              [disabled]="isHaEnabled"
+              (click)="rollbackPendingChanges()"
+            >
+              {{ helptext.rollback_button | translate }}
+            </button>
+          </mat-card-actions>
+
+          @if (isHaEnabled) {
+            <div class="disabled-notice">
+              {{ helptext.ha_enabled_text | translate }}
+              (
+              <span
+                class="pseudolink"
+                (click)="goToHa()"
+              >
+                {{ helptext.go_to_ha | translate }}
+              </span>
+              ).
+            </div>
+          }
+        </mat-card>
+      }
+      <ix-interfaces-card
+        [isHaEnabled]="isHaEnabled"
+        (interfacesUpdated)="loadCheckinStatusAfterChange()"
+      ></ix-interfaces-card>
+      <ix-network-configuration-card
+        class="dashboard-card"
+      ></ix-network-configuration-card>
     </div>
 
-    <div class="left-column" fxFlex="100" fxFlex.lg="35">
-      <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
-        <ix-static-routes></ix-static-routes>
-        <ix-ipmi-card></ix-ipmi-card>
-      </div>
+    <div class="right-column">
+      <ix-static-routes></ix-static-routes>
+      <ix-ipmi-card></ix-ipmi-card>
     </div>
   </div>
 </div>
