@@ -446,6 +446,7 @@ export interface ApiCallDirectory {
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
+  'disk.get_instance': { params: [id: string, params?: { extra: { supports_smart: boolean } }]; response: Disk };
 
   // Enclosure
   'enclosure2.query': { params: void; response: Enclosure[] };

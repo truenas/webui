@@ -1,6 +1,7 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
 } from '@angular/core';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,7 +10,7 @@ import _ from 'lodash';
 import {
   Observable,
 } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
@@ -30,8 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartInfoCardComponent implements OnChanges {
-  @Input() topologyDisk: TopologyDisk;
-  @Input() disk: Disk;
+  topologyDisk = input<TopologyDisk>();
+  disk = input<Disk>();
 
   readonly requiredRoles = [Role.FullAdmin];
 
@@ -44,6 +45,12 @@ export class SmartInfoCardComponent implements OnChanges {
   readonly tasksMessage = T('{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured');
 
   private readonly maxResultCategories = 4;
+
+  hasSmartSupport = toSignal(toObservable(this.disk).pipe(
+    filter(Boolean),
+    switchMap((disk) => this.ws.call('disk.get_instance', [disk.identifier, { extra: { supports_smart: true } }])),
+    map((disk) => disk.supports_smart),
+  ));
 
   constructor(
     private ws: WebSocketService,
@@ -58,10 +65,11 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   onManualTest(): void {
+    const disk = this.disk();
     const testDialog = this.matDialog.open(ManualTestDialogComponent, {
       data: {
-        selectedDisks: [this.disk],
-        diskIdsWithSmart: [this.disk.identifier],
+        selectedDisks: [disk],
+        diskIdsWithSmart: [disk.identifier],
       } as ManualTestDialogParams,
     });
     testDialog
@@ -73,7 +81,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadTestResults(): void {
-    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyDisk.disk]]]).pipe(
+    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyDisk().disk]]]).pipe(
       map((testResults) => {
         const results = testResults[0]?.tests ?? [];
         return results.filter((result) => result.status !== SmartTestResultStatus.Running);
@@ -99,7 +107,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadSmartTasks(): void {
-    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyDisk.disk]).pipe(
+    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyDisk().disk]).pipe(
       map((tasks) => tasks.length),
       toLoadingState(),
     );

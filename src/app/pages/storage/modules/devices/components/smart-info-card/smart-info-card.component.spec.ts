@@ -67,6 +67,10 @@ describe('SmartInfoCardComponent', () => {
           { id: 1 },
           { id: 2 },
         ] as SmartTestTask[]),
+        mockCall('disk.get_instance', {
+          ...disk,
+          supports_smart: true,
+        } as Disk),
       ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -179,5 +183,12 @@ describe('SmartInfoCardComponent', () => {
     });
   });
 
-  // TODO: handle cases when SMART is not supported
+  it('checks if disk do not supports SMART', () => {
+    jest.spyOn(spectator.inject(WebSocketService), 'call').mockImplementation(() => of({ supports_smart: false }));
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('disk.get_instance', ['disk-1', { extra: { supports_smart: true } }]);
+
+    const runTestButton = spectator.query(byText('Run Manual Test'));
+    expect(runTestButton).not.toExist();
+  });
 });
