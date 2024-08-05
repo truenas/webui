@@ -60,15 +60,9 @@
     ></tbody>
   </ix-table>
 
-  @if (iscsiShares.length > 4) {
-    <a
-      class="view-all"
-      [ixTest]="['iscsi-share', 'view-all']"
-      [routerLink]="['/sharing', 'iscsi', 'target']"
-    >
-      <span>
-        {{ 'View All' | translate }}
-      </span>
-    </a>
-  }
+  <ix-table-pager-show-more
+    [pageSize]="4"
+    [dataProvider]="dataProvider"
+    [routerLink]="['/sharing', 'iscsi', 'target']"
+  ></ix-table-pager-show-more>
 </mat-card>

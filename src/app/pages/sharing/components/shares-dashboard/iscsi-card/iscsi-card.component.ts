@@ -4,9 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  tap, map, filter, switchMap,
-} from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
@@ -15,6 +13,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.elements';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
@@ -42,7 +41,6 @@ export class IscsiCardComponent implements OnInit {
 
   protected readonly searchableElements = iscsiCardElements;
 
-  iscsiShares: IscsiTarget[] = [];
   dataProvider: AsyncDataProvider<IscsiTarget>;
 
   columns = createTable<IscsiTarget>([
@@ -85,13 +83,10 @@ export class IscsiCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const iscsiShares$ = this.ws.call('iscsi.target.query').pipe(
-      tap((iscsiShares) => this.iscsiShares = iscsiShares),
-      map((iscsiShares) => iscsiShares.slice(0, 4)),
-      untilDestroyed(this),
-    );
+    const iscsiShares$ = this.ws.call('iscsi.target.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
-    this.getIscsiTargets();
+    this.setDefaultSort();
+    this.dataProvider.load();
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
@@ -104,7 +99,7 @@ export class IscsiCardComponent implements OnInit {
     }
 
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getIscsiTargets();
+      this.dataProvider.load();
     });
   }
 
@@ -118,7 +113,7 @@ export class IscsiCardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.getIscsiTargets();
+        this.dataProvider.load();
       },
       error: (err) => {
         this.dialogService.error(this.errorHandler.parseError(err));
@@ -126,7 +121,10 @@ export class IscsiCardComponent implements OnInit {
     });
   }
 
-  private getIscsiTargets(): void {
-    this.dataProvider.load();
+  setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 0, // index column
+      direction: SortDirection.Asc,
+    });
   }
 }

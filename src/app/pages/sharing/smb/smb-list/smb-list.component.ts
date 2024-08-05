@@ -76,7 +76,7 @@ export class SmbListComponent implements OnInit {
             row.enabled = share.enabled;
           },
           error: (error: unknown) => {
-            this.refresh();
+            this.dataProvider.load();
             this.dialog.error(this.errorHandler.parseError(error));
           },
         });
@@ -95,7 +95,7 @@ export class SmbListComponent implements OnInit {
             const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: smbShare } });
             slideInRef.slideInClosed$
               .pipe(take(1), filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.refresh());
+              .subscribe(() => this.dataProvider.load());
           },
         },
         {
@@ -115,7 +115,7 @@ export class SmbListComponent implements OnInit {
                   this.appLoader.close();
                   const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
                   slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-                    this.refresh();
+                    this.dataProvider.load();
                   });
                 });
             }
@@ -155,8 +155,8 @@ export class SmbListComponent implements OnInit {
                 this.ws.call('sharing.smb.delete', [row.id]).pipe(
                   this.appLoader.withLoader(),
                   untilDestroyed(this),
-                ).subscribe({
-                  next: () => this.refresh(),
+                ).subscribe(() => {
+                  this.dataProvider.load();
                 });
               },
             });
@@ -188,7 +188,7 @@ export class SmbListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<SmbShare>(shares$);
-    this.refresh();
+    this.dataProvider.load();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
       this.onListFiltered(this.filterString);
     });
@@ -206,7 +206,7 @@ export class SmbListComponent implements OnInit {
     const slideInRef = this.slideInService.open(SmbFormComponent);
     slideInRef.slideInClosed$.pipe(take(1), filter(Boolean), untilDestroyed(this)).subscribe({
       next: () => {
-        this.refresh();
+        this.dataProvider.load();
       },
     });
   }
@@ -228,12 +228,8 @@ export class SmbListComponent implements OnInit {
 
   private lockedPathDialog(path: string): void {
     this.dialog.error({
-      title: helptextSharingSmb.action_edit_acl_dialog.title,
+      title: this.translate.instant('Error'),
       message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
     });
-  }
-
-  private refresh(): void {
-    this.dataProvider.load();
   }
 }

@@ -1,17 +1,16 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  tap, map, filter, switchMap, BehaviorSubject, of,
+  map, filter, switchMap, BehaviorSubject, of,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
-import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -22,6 +21,7 @@ import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cell
 import {
   yesNoColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -45,24 +45,23 @@ export class SmbCardComponent implements OnInit {
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
-  smbShares: SmbShare[] = [];
   dataProvider: AsyncDataProvider<SmbShare>;
 
   columns = createTable<SmbShare>([
     textColumn({
-      title: this.translate.instant(helptextSharingSmb.column_name),
+      title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
     textColumn({
-      title: this.translate.instant(helptextSharingSmb.column_path),
+      title: this.translate.instant('Path'),
       propertyName: 'path_local',
     }),
     textColumn({
-      title: this.translate.instant(helptextSharingSmb.column_comment),
+      title: this.translate.instant('Description'),
       propertyName: 'comment',
     }),
     toggleColumn({
-      title: this.translate.instant(helptextSharingSmb.column_enabled),
+      title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
@@ -112,26 +111,22 @@ export class SmbCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private router: Router,
     private store$: Store<ServicesState>,
   ) {}
 
   ngOnInit(): void {
-    const smbShares$ = this.ws.call('sharing.smb.query').pipe(
-      tap((smbShares) => this.smbShares = smbShares),
-      map((smbShares) => smbShares.slice(0, 4)),
-      untilDestroyed(this),
-    );
+    const smbShares$ = this.ws.call('sharing.smb.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
-    this.getSmbShares();
+    this.setDefaultSort();
+    this.dataProvider.load();
   }
 
   openForm(row?: SmbShare): void {
     const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: row } });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getSmbShares();
+      this.dataProvider.load();
     });
   }
 
@@ -145,7 +140,7 @@ export class SmbCardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.getSmbShares();
+        this.dataProvider.load();
       },
       error: (err) => {
         this.dialogService.error(this.errorHandler.parseError(err));
@@ -166,7 +161,7 @@ export class SmbCardComponent implements OnInit {
             const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
 
             slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.getSmbShares();
+              this.dataProvider.load();
             });
           },
           error: (error: unknown) => {
@@ -190,13 +185,9 @@ export class SmbCardComponent implements OnInit {
 
   private showLockedPathDialog(path: string): void {
     this.dialogService.error({
-      title: helptextSharingSmb.action_edit_acl_dialog.title,
+      title: this.translate.instant('Error'),
       message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
     });
-  }
-
-  private getSmbShares(): void {
-    this.dataProvider.load();
   }
 
   private onChangeEnabledState(row: SmbShare): void {
@@ -207,22 +198,19 @@ export class SmbCardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.getSmbShares();
+        this.dataProvider.load();
       },
       error: (error: unknown) => {
-        this.getSmbShares();
+        this.dataProvider.load();
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
 
-  private updateEnabledFieldVisibility(hidden: boolean): void {
-    this.columns = this.columns.map((column) => {
-      if (column.propertyName === 'enabled') {
-        return { ...column, hidden };
-      }
-      return column;
+  setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 0, // index column
+      direction: SortDirection.Asc,
     });
-    this.cdr.markForCheck();
   }
 }
