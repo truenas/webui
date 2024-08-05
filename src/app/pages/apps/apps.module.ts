@@ -57,6 +57,7 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
+import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
@@ -97,7 +98,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
     // PodLogsComponent,
     // PodShellComponent,
-    // PodSelectDialogComponent,
+    PodSelectDialogComponent,
     // PodSelectLogsDialogComponent,
     AppUpgradeDialogComponent,
     AppDetailsHeaderComponent,
