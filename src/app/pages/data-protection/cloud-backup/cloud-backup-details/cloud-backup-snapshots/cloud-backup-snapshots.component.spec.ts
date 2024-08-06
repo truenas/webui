@@ -5,8 +5,9 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -15,6 +16,7 @@ import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-prot
 import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -50,6 +52,9 @@ describe('CloudBackupSnapshotsComponent', () => {
       mockWebSocket([
         mockCall('cloud_backup.list_snapshots', cloudBackupSnapshots),
       ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockProvider(StorageService),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
@@ -106,6 +111,13 @@ describe('CloudBackupSnapshotsComponent', () => {
         snapshot: cloudBackupSnapshots[1],
       },
     });
+  });
+
+  it('opens delete dialog when "Delete" button is pressed', async () => {
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
+    await deleteButton.click();
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.delete', [1]);
   });
 
   it('should show table rows', async () => {

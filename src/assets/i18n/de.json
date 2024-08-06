@@ -885,6 +885,7 @@
   "Delete Rsync Task <b>\"{name}\"</b>?": "",
   "Delete S.M.A.R.T. Test <b>\"{name}\"</b>?": "",
   "Delete Scrub Task <b>\"{name}\"</b>?": "",
+  "Delete Snapshot": "",
   "Delete Static Route": "",
   "Delete Sysctl": "",
   "Delete Sysctl Variable {variable}?": "",

@@ -4,10 +4,11 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -49,6 +50,12 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
           onClick: (row) => this.restore(row),
           requiredRoles: this.requiredRoles,
         },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          requiredRoles: [Role.FullAdmin],
+          onClick: (row) => this.doDelete(row),
+        },
       ],
     }),
   ], {
@@ -61,6 +68,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     private slideIn: IxSlideInService,
     private translate: TranslateService,
     private ws: WebSocketService,
+    private dialog: DialogService,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -96,5 +104,24 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
         this.getCloudBackupSnapshots();
       },
     });
+  }
+
+  doDelete(row: CloudBackupSnapshot): void {
+    this.dialog
+      .confirm({
+        title: this.translate.instant('Delete Snapshot'),
+        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
+          name: row.hostname,
+        }),
+        buttonText: this.translate.instant('Delete'),
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.ws.call('zfs.snapshot.delete', [row.id])),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.getCloudBackupSnapshots();
+      });
   }
 }
