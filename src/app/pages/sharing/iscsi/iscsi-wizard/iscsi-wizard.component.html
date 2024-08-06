@@ -11,23 +11,24 @@
         <ng-template matStepLabel>{{ 'Create or Choose Block Device' | translate }}</ng-template>
         <ix-device-wizard-step [form]="form.controls.device"></ix-device-wizard-step>
         <div class="step-buttons">
-          <button
-            mat-button
-            matStepperNext
-            color="primary"
-            type="button"
-            ixTest="next"
-            [disabled]="form.controls.device.invalid"
-            [fxHide]="!isNewTarget"
-          >{{ 'Next' | translate }}</button>
-          <button
-            mat-button
-            color="primary"
-            type="submit"
-            ixTest="save"
-            [disabled]="form.invalid || isLoading"
-            [fxHide]="isNewTarget"
-          >{{ 'Save' | translate }}</button>
+          @if (isNewTarget) {
+            <button
+              mat-button
+              matStepperNext
+              color="primary"
+              type="button"
+              ixTest="next"
+              [disabled]="form.controls.device.invalid"
+            >{{ 'Next' | translate }}</button>
+          } @else {
+            <button
+              mat-button
+              color="primary"
+              type="submit"
+              ixTest="save"
+              [disabled]="form.invalid || isLoading"
+            >{{ 'Save' | translate }}</button>
+          }
         </div>
       </mat-step>
       @if (isNewTarget) {

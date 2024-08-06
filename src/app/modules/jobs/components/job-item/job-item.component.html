@@ -6,7 +6,7 @@
   [matTooltipPosition]="'left'"
 >
   <div class="job-item-body" (click)="clickable() && open()">
-    <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
+    <div class="description-line">
       <span class="job-description">
         {{ job().description ? job().description : job().method }}
       </span>

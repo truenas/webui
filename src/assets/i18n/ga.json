@@ -1,6 +1,9 @@
 {
   "": "",
+  "General Settings": "",
   "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "",
+  "Machine Time: {machineTime} \n Browser Time: {browserTime}": "",
+  "Manage Catalog": "",
   "Pool Usage": "",
   "Support License": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
@@ -3118,7 +3121,6 @@
   "Please specify trains from which UI should retrieve available applications for the catalog.": "Sonraigh le do thoil traenacha ónar cheart don Chomhéadain na feidhmchláir atá ar fáil don chatalóg a aisghabháil.",
   "Please visit our support page for help.": "Tabhair cuairt ar ár leathanach tacaíochta chun cabhair a fháil.",
   "Please wait": "Fán le do thoil",
-  "Pod Logs": "Logchomhaid Pod",
   "Pod Name": "Ainm an Phota",
   "Pod Shell": "Pod Bhlaosc",
   "Pods": "Potaí",

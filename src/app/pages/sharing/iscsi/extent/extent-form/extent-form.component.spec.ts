@@ -8,7 +8,6 @@ import { KiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
-import { mntPath } from 'app/enums/mnt-path.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -81,40 +80,32 @@ describe('ExtentFormComponent', () => {
     it('shows values for an existing extent when form is opened for add', async () => {
       const values = await form.getValues();
       expect(values).toEqual({
-        'Available Space Threshold (%)': '',
         Description: '',
         Device: '',
         'Disable Physical Block Size Reporting': false,
         'Enable TPC': true,
         Enabled: true,
         'Extent Type': 'Device',
-        Filesize: '',
         'LUN RPM': 'SSD',
         'Logical Block Size': '512',
         Name: '',
-        'Path to the Extent': mntPath,
         'Read-only': false,
-        Serial: '',
         'Xen initiator compat mode': false,
       });
     });
 
     it('add new extent when form is submitted', async () => {
       await form.fillForm({
-        'Available Space Threshold (%)': '70',
         Description: 'new_comment',
         Device: 'value_device_2',
         'Disable Physical Block Size Reporting': true,
         'Enable TPC': false,
         Enabled: false,
         'Extent Type': 'Device',
-        Filesize: '1033',
         'LUN RPM': '5400',
         'Logical Block Size': '1024',
         Name: 'new_name',
-        'Path to the Extent': '/mnt/opt',
         'Read-only': true,
-        Serial: 'serial_number',
         'Xen initiator compat mode': true,
       });
 
@@ -122,7 +113,7 @@ describe('ExtentFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
-        avail_threshold: 70,
+        avail_threshold: null,
         blocksize: 1024,
         comment: 'new_comment',
         disk: 'key_device_2',
@@ -133,8 +124,8 @@ describe('ExtentFormComponent', () => {
         pblocksize: true,
         ro: true,
         rpm: '5400',
-        serial: 'serial_number',
-        type: 'DISK',
+        serial: '',
+        type: IscsiExtentType.Disk,
         xen: true,
       }]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
@@ -155,9 +146,7 @@ describe('ExtentFormComponent', () => {
     it('shows values for an existing extent when form is opened for edit', async () => {
       const values = await form.getValues();
       expect(values).toEqual({
-        'Available Space Threshold (%)': '50',
         Description: 'test_comment',
-        Device: 'value_device_2',
         'Disable Physical Block Size Reporting': true,
         'Enable TPC': false,
         Enabled: false,

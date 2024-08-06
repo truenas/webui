@@ -10,7 +10,7 @@
  * Example of creating a new searchable element:
 
   export const customSearchableElements = {
-    hierarchy: [T('System'), T('Advanced'), T('Access')],
+    hierarchy: [T('System'), T('Advanced Settings'), T('Access')],
     anchorRouterLink: ['/system', 'advanced'],
     elements: {
       configureAccess: {

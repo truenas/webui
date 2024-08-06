@@ -40,9 +40,6 @@ import {
 } from 'app/interfaces/bootenv.interface';
 import {
   Catalog, CatalogApp,
-  CatalogItems,
-  CatalogItemsQueryParams,
-  CatalogQueryParams,
   CatalogUpdate, GetItemDetailsParams,
 } from 'app/interfaces/catalog.interface';
 import {
@@ -355,11 +352,9 @@ export interface ApiCallDirectory {
   'bootenv.update': { params: UpdateBootenvParams; response: string };
 
   // Catalog
-  'catalog.delete': { params: [name: string]; response: boolean };
-  'catalog.get_item_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
-  'catalog.items': { params: [label: string, params?: CatalogItemsQueryParams]; response: CatalogItems };
-  'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
-  'catalog.update': { params: [id: string, update: CatalogUpdate]; response: Catalog };
+  'catalog.get_app_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
+  'catalog.update': { params: [CatalogUpdate]; response: Catalog };
+  'catalog.config': { params: void; response: Catalog };
 
   // Certificate
   'certificate.acme_server_choices': { params: void; response: Choices };

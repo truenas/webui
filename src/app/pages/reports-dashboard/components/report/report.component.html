@@ -4,23 +4,14 @@
     (mouseenter)="setChartInteractive(true)"
     (mouseleave)="setChartInteractive(false)"
   >
-    <mat-card
-      fxLayout="row wrap"
-      fxLayoutAlign="space-between stretch"
-      [class.loading]="!isReady"
-    >
+    <mat-card class="card" [class.loading]="!isReady">
       @if (isReady) {
-        <mat-toolbar-row
-          fxLayout="row wrap"
-          fxLayoutAlign="space-between center"
-          fxFlex="100%"
-          class="mat-card-toolbar"
-        >
-          <mat-card-title fxFlex="65%" fxLayoutAlign="start center">
+        <mat-toolbar-row class="mat-card-toolbar toolbar">
+          <mat-card-title class="title">
             <h3 class="mat-card-title-text">{{ reportTitle | translate }}</h3>
           </mat-card-title>
           <!-- Controls/Tools -->
-          <div fxFlex="35%" class="line-chart-tools-wrapper">
+          <div class="line-chart-tools-wrapper">
             @if (localControls && !report?.errorConf) {
               <div class="line-chart-tools">
                 <div class="steps-group" aria-label="Steps">
@@ -83,13 +74,8 @@
         }
 
       @if (isReady && !report?.errorConf) {
-        <mat-card-content
-          fxLayout="row wrap"
-          fxLayout.gt-xs="row wrap"
-          fxLayoutAlign="space-between start"
-          fxFlex="100"
-        >
-          <div class="chart-wrapper-outer" fxFlex="calc(100% - 420px)">
+        <mat-card-content class="card-content">
+          <div class="chart-wrapper-outer">
             <div class="chart-wrapper">
               <ix-linechart
                 [chartId]="chartId"
@@ -124,11 +110,11 @@
             </div>
           </div>
 
-          <section #legendElement class="legend" fxFlex="420px" fxLayout="column" fxLayoutAlign="start">
+          <section #legendElement class="legend">
             @if (report && data?.legend) {
-              <div class="legend-timestamp" fxFlex="32px" fxLayoutAlign="start center">
+              <div class="legend-timestamp">
                 @if (data && legendData?.xHTML && shouldShowLegendValue) {
-                  <h4 fxLayoutGap="8px" fxLayoutAlign="start center">
+                  <h4>
                     <strong>{{ 'Time' | translate }}:</strong>
                     @if (legendData?.xHTML) {
                       <span class="font-normal">
@@ -141,7 +127,7 @@
             }
 
             @if (report && data?.legend) {
-              <div class="legend-group-wrapper" fxFlex="calc(100% - 64px)">
+              <div class="legend-group-wrapper">
                 <table class="legend-table" [ixTest]="['reports-table', report.title]">
                   <!-- Table Header-->
                   <tr class="legend-group header" ixTest="table-header">
@@ -190,7 +176,7 @@
               </div>
             }
             @if (legendData?.stackedTotalHTML && shouldShowTotal && shouldShowLegendValue) {
-              <h4 class="legend-timestamp" fxFlex="32px" fxLayoutGap="8px">
+              <h4 class="total-line">
                 <strong>{{ 'Total' | translate }}:</strong>
                 <span>{{ legendData.stackedTotalHTML | translate }}</span>
               </h4>
@@ -200,12 +186,7 @@
       }
 
       @if (isReady && report?.errorConf) {
-        <mat-card-content
-          fxLayout="row wrap"
-          fxLayout.gt-xs="row wrap"
-          fxLayoutAlign="space-between start"
-          fxFlex="100"
-        >
+        <mat-card-content>
           <ix-empty [conf]="report.errorConf"></ix-empty>
         </mat-card-content>
       }

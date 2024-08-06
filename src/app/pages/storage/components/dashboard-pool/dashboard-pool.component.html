@@ -37,12 +37,7 @@
       </div>
     </div>
 
-    <div
-      gdGap="8px"
-      gdColumns="calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(25% - 6px)"
-      gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
-      gdColumns.lt-md="auto"
-    >
+    <div class="cards">
       <ix-topology-card
         [poolState]="pool"
         [disks]="disks"
@@ -67,20 +62,12 @@
     <div class="pool-header">
       <ngx-skeleton-loader></ngx-skeleton-loader>
     </div>
-    <div
-      gdGap="8px"
-      gdColumns="calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(25% - 6px)"
-      gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
-      gdColumns.lt-md="auto"
-    >
+    <div class="cards">
       @for (_ of counter(4); track _) {
         <mat-card class="card">
           <mat-card-content>
             @for (_ of counter(5); track _) {
-              <ngx-skeleton-loader
-                fxLayout="column"
-                fxLayoutAlign="center"
-              ></ngx-skeleton-loader>
+              <ngx-skeleton-loader></ngx-skeleton-loader>
             }
           </mat-card-content>
         </mat-card>

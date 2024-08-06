@@ -66,42 +66,42 @@
               [required]="true"
             ></ix-select>
 
-            <ix-select
-              formControlName="disk"
-              [label]="helptext.extent_placeholder_disk | translate"
-              [options]="disks$"
-              [tooltip]="helptext.extent_tooltip_disk | translate"
-              [required]="true"
-              [fxHide]="!isDevice"
-            ></ix-select>
+            @if (isDevice) {
+              <ix-select
+                formControlName="disk"
+                [label]="helptext.extent_placeholder_disk | translate"
+                [options]="disks$"
+                [tooltip]="helptext.extent_tooltip_disk | translate"
+                [required]="true"
+              ></ix-select>
+            } @else {
+              <ix-explorer
+                formControlName="path"
+                [nodeProvider]="treeNodeProvider"
+                [label]="helptext.extent_placeholder_path | translate"
+                [tooltip]="helptext.extent_tooltip_path | translate"
+                [required]="true"
+              ></ix-explorer>
 
-            <ix-explorer
-              formControlName="path"
-              [nodeProvider]="treeNodeProvider"
-              [label]="helptext.extent_placeholder_path | translate"
-              [tooltip]="helptext.extent_tooltip_path | translate"
-              [required]="true"
-              [fxHide]="isDevice"
-            ></ix-explorer>
+              <ix-input
+                formControlName="filesize"
+                [label]="helptext.extent_placeholder_filesize | translate"
+                [tooltip]="helptext.extent_tooltip_filesize | translate"
+                [placeholder]="helptext.extent_placeholder_filesize | translate"
+                [required]="true"
+                [parse]="formatter.memorySizeParsing"
+                [format]="formatter.memorySizeFormatting"
+              ></ix-input>
+            }
 
-            <ix-input
-              formControlName="filesize"
-              [label]="helptext.extent_placeholder_filesize | translate"
-              [tooltip]="helptext.extent_tooltip_filesize | translate"
-              [placeholder]="helptext.extent_placeholder_filesize | translate"
-              [required]="true"
-              [fxHide]="isDevice"
-              [parse]="formatter.memorySizeParsing"
-              [format]="formatter.memorySizeFormatting"
-            ></ix-input>
-
-            <ix-input
-              formControlName="serial"
-              [label]="helptext.extent_placeholder_serial | translate"
-              [tooltip]="helptext.extent_tooltip_serial | translate"
-              [placeholder]="helptext.extent_placeholder_serial | translate"
-              [fxHide]="isNew"
-            ></ix-input>
+            @if (!isNew) {
+              <ix-input
+                formControlName="serial"
+                [label]="helptext.extent_placeholder_serial | translate"
+                [tooltip]="helptext.extent_tooltip_serial | translate"
+                [placeholder]="helptext.extent_placeholder_serial | translate"
+              ></ix-input>
+            }
 
             <ix-select
               formControlName="blocksize"
@@ -117,14 +117,15 @@
               [tooltip]="helptext.extent_tooltip_pblocksize | translate"
             ></ix-checkbox>
 
-            <ix-input
-              formControlName="avail_threshold"
-              type="number"
-              [label]="helptext.extent_placeholder_avail_threshold | translate"
-              [tooltip]="helptext.extent_tooltip_avail_threshold | translate"
-              [placeholder]="helptext.extent_placeholder_avail_threshold | translate"
-              [fxHide]="!isAvailableThreshold"
-            ></ix-input>
+            @if (isAvailableThreshold) {
+              <ix-input
+                formControlName="avail_threshold"
+                type="number"
+                [label]="helptext.extent_placeholder_avail_threshold | translate"
+                [tooltip]="helptext.extent_tooltip_avail_threshold | translate"
+                [placeholder]="helptext.extent_placeholder_avail_threshold | translate"
+              ></ix-input>
+            }
           </ix-fieldset>
         </div>
       </div>
