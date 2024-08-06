@@ -4656,7 +4656,9 @@
       "Localization Settings"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "general"
