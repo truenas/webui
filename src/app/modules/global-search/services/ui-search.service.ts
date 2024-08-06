@@ -4,12 +4,14 @@ import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import Fuse from 'fuse.js';
 import {
   BehaviorSubject,
-  Observable, filter, first, from, map, mergeMap, of, tap, toArray,
+  Observable, combineLatest, filter, first, from, map, mergeMap, of, tap, toArray,
 } from 'rxjs';
+import { GlobalSearchVisibleToken } from 'app/modules/global-search/enums/global-search-visible-token.enum';
 import { GlobalSearchProvider } from 'app/modules/global-search/interfaces/global-search-provider.interface';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { sortSearchResults } from 'app/modules/global-search/services/utils/sort-search-results';
 import { AuthService } from 'app/services/auth/auth.service';
+import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +30,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
   constructor(
     private authService: AuthService,
     private translate: TranslateService,
+    private navService: NavigationService,
   ) {
     this.translate.onLangChange.subscribe(() => this.fuseSearch = this.generateFuseSearch());
   }
@@ -38,13 +41,24 @@ export class UiSearchProvider implements GlobalSearchProvider {
 
     return from(sortedResults).pipe(
       mergeMap((item) => {
-        if (!item.requiredRoles.length) {
-          return of(item);
-        }
-
-        return this.authService.hasRole(item.requiredRoles).pipe(
+        return combineLatest([
+          item.requiredRoles.length ? this.authService.hasRole(item.requiredRoles) : of(true),
+          this.navService.hasFailover$,
+          this.navService.hasEnclosure$,
+          this.navService.hasVms$,
+        ]).pipe(
           first(),
-          filter((hasRole) => hasRole),
+          filter(([hasRole, hasFailover, hasEnclosure, hasVms]) => {
+            switch (true) {
+              case !hasRole:
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Failover) && !hasFailover:
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Enclosure) && !hasEnclosure:
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Vms) && !hasVms:
+                return false;
+              default:
+                return true;
+            }
+          }),
           map(() => item),
         );
       }),

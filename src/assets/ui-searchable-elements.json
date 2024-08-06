@@ -6,6 +6,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "jobs-history",
     "triggerAnchor": null,
@@ -18,6 +19,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "power-menu",
     "triggerAnchor": "power-menu",
@@ -35,6 +37,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "restart",
     "triggerAnchor": "power-menu",
@@ -53,6 +56,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "shut-down",
     "triggerAnchor": "power-menu",
@@ -77,6 +81,7 @@
       "File Ticket"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "send-feedback",
     "triggerAnchor": null,
@@ -91,6 +96,7 @@
       "Notifications"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "alerts",
     "triggerAnchor": null,
@@ -103,6 +109,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "user-menu",
     "triggerAnchor": "user-menu",
@@ -122,6 +129,7 @@
       "User password"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "change-password",
     "triggerAnchor": "user-menu",
@@ -135,6 +143,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "guide",
     "triggerAnchor": "user-menu",
@@ -148,6 +157,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "about",
     "triggerAnchor": "user-menu",
@@ -168,6 +178,7 @@
       "Drop session"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "log-out",
     "triggerAnchor": "user-menu",
@@ -182,6 +193,7 @@
       "TrueCommand"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "routerLink": null,
     "anchor": "tc-status",
     "triggerAnchor": null,
@@ -195,6 +207,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "groups"
@@ -219,6 +232,7 @@
     "requiredRoles": [
       "ACCOUNT_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "groups"
@@ -237,6 +251,7 @@
       "Local Groups"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "groups"
@@ -261,6 +276,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "groups",
@@ -279,6 +295,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "groups",
@@ -297,6 +314,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "users"
@@ -321,6 +339,7 @@
     "requiredRoles": [
       "ACCOUNT_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "users"
@@ -343,6 +362,7 @@
       "Administrators"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "users"
@@ -358,6 +378,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/apikeys"
     ],
@@ -375,6 +396,7 @@
       "Apps"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/apps",
       "available"
@@ -394,6 +416,7 @@
     "requiredRoles": [
       "APPS_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/apps",
       "available"
@@ -411,6 +434,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/apps",
       "installed",
@@ -430,6 +454,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/apps",
       "installed",
@@ -449,6 +474,7 @@
       "Apps"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/apps",
       "installed"
@@ -467,6 +493,7 @@
       "Logs"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "audit"
@@ -483,6 +510,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "backup-credentials"
@@ -499,6 +527,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "backup-credentials"
@@ -530,6 +559,7 @@
     "requiredRoles": [
       "CLOUD_SYNC_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "backup-credentials"
@@ -546,6 +576,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "backup-credentials"
@@ -569,6 +600,7 @@
     "requiredRoles": [
       "KEYCHAIN_CREDENTIAL_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "backup-credentials"
@@ -590,6 +622,7 @@
       "SSH Key"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "backup-credentials"
@@ -616,6 +649,7 @@
     "requiredRoles": [
       "KEYCHAIN_CREDENTIAL_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "backup-credentials"
@@ -633,6 +667,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "certificates"
@@ -660,6 +695,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "certificates"
@@ -677,6 +713,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "certificates"
@@ -701,6 +738,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "certificates"
@@ -724,6 +762,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "certificates"
@@ -740,6 +779,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "certificates"
@@ -759,6 +799,7 @@
       "CSRs"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "certificates"
@@ -787,6 +828,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "certificates"
@@ -803,6 +845,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "kmip"
@@ -825,6 +868,7 @@
       "Add Widget"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/dashboard"
     ],
@@ -841,6 +885,7 @@
       "Widgets"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/dashboard"
     ],
@@ -866,6 +911,7 @@
     "requiredRoles": [
       "CLOUD_BACKUP_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "cloud-backup"
@@ -885,6 +931,7 @@
       "Cloud Backup"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "cloud-backup"
@@ -908,6 +955,7 @@
     "requiredRoles": [
       "CLOUD_SYNC_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "cloudsync"
@@ -945,6 +993,7 @@
       "Yandex"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "cloudsync"
@@ -962,6 +1011,7 @@
       "Tasks"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection"
     ],
@@ -985,6 +1035,7 @@
       "REPLICATION_TASK_WRITE",
       "REPLICATION_TASK_WRITE_PULL"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "replication"
@@ -1003,6 +1054,7 @@
       "Tasks"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "replication"
@@ -1026,6 +1078,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "rsync"
@@ -1044,6 +1097,7 @@
       "Tasks"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "rsync"
@@ -1061,6 +1115,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "scrub",
@@ -1085,6 +1140,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "scrub"
@@ -1103,6 +1159,7 @@
       "Tasks"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "scrub"
@@ -1125,6 +1182,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection"
     ],
@@ -1159,6 +1217,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "smart"
@@ -1181,6 +1240,7 @@
       "Disk Tests"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "smart"
@@ -1200,6 +1260,7 @@
       "Integrate Snapshots with VMware"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection"
     ],
@@ -1229,6 +1290,7 @@
     "requiredRoles": [
       "SNAPSHOT_TASK_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "snapshot"
@@ -1247,6 +1309,7 @@
       "Tasks"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "snapshot"
@@ -1263,6 +1326,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/data-protection",
       "vmware-snapshots"
@@ -1284,6 +1348,7 @@
     "requiredRoles": [
       "SNAPSHOT_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1302,6 +1367,7 @@
       "Snapshot Manager"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1323,6 +1389,7 @@
       "Snapshot Task Manager"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1344,6 +1411,7 @@
       "Replication Task Manager"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1365,6 +1433,7 @@
       "Rsync Task Manager"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1386,6 +1455,7 @@
       "User Quota Manager"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1409,6 +1479,7 @@
       "Group Quota Manager"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1436,6 +1507,7 @@
     "requiredRoles": [
       "DATASET_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1458,6 +1530,7 @@
     "requiredRoles": [
       "DATASET_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1476,6 +1549,7 @@
       "Dataset Information"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1494,6 +1568,7 @@
       "Dataset Capacity Management"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1512,6 +1587,7 @@
       "Dataset ZFS Encryption"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1530,6 +1606,7 @@
       "Dataset Data Protection"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1548,6 +1625,7 @@
       "Dataset Roles"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1567,6 +1645,7 @@
       "ACL"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/datasets"
     ],
@@ -1588,6 +1667,7 @@
     "requiredRoles": [
       "DIRECTORY_SERVICE_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/directoryservice",
       "idmap"
@@ -1604,6 +1684,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/directoryservice",
       "idmap"
@@ -1627,6 +1708,7 @@
     "requiredRoles": [
       "DIRECTORY_SERVICE_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/directoryservice",
       "kerberoskeytabs"
@@ -1643,6 +1725,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/directoryservice",
       "kerberoskeytabs"
@@ -1666,6 +1749,7 @@
     "requiredRoles": [
       "DIRECTORY_SERVICE_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/directoryservice",
       "kerberosrealms"
@@ -1682,6 +1766,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/directoryservice",
       "kerberosrealms"
@@ -1703,6 +1788,7 @@
     "requiredRoles": [
       "DIRECTORY_SERVICE_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "directory-services"
@@ -1722,6 +1808,7 @@
     "requiredRoles": [
       "DIRECTORY_SERVICE_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "directory-services"
@@ -1738,6 +1825,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "directory-services"
@@ -1759,6 +1847,7 @@
       "History"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/jobs"
     ],
@@ -1782,6 +1871,7 @@
     "requiredRoles": [
       "NETWORK_INTERFACE_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1801,6 +1891,7 @@
       "Network Interface Card"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1816,6 +1907,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1833,6 +1925,7 @@
       "Show Ipmi Events"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1861,6 +1954,7 @@
       "Lan"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1879,6 +1973,7 @@
       "Network Settings"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1896,6 +1991,7 @@
       "NS"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1914,6 +2010,7 @@
       "Static Routing"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1935,6 +2032,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1949,6 +2047,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/network"
     ],
@@ -1974,6 +2073,7 @@
     "requiredRoles": [
       "REPORTING_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard",
       "exporters"
@@ -1990,6 +2090,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard",
       "exporters"
@@ -2006,6 +2107,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard"
     ],
@@ -2025,6 +2127,7 @@
       "CPU Utilization"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard",
       "cpu"
@@ -2048,6 +2151,7 @@
       "disk writes"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard",
       "disk"
@@ -2070,6 +2174,7 @@
       "Memory Utilization"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard",
       "memory"
@@ -2092,6 +2197,7 @@
       "Network Traffic"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard",
       "network"
@@ -2112,6 +2218,7 @@
       "Uptime"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard",
       "system"
@@ -2131,6 +2238,7 @@
       "UPS Utilization"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard",
       "ups"
@@ -2151,6 +2259,7 @@
       "ZFS Utilization"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard",
       "zfs"
@@ -2169,6 +2278,7 @@
       "View Netdata"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard"
     ],
@@ -2185,6 +2295,7 @@
       "Stats"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/reportsdashboard"
     ],
@@ -2203,6 +2314,7 @@
       "Samba"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "services"
@@ -2220,6 +2332,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "services"
@@ -2237,6 +2350,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "services"
@@ -2254,6 +2368,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "services"
@@ -2271,6 +2386,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "services"
@@ -2288,6 +2404,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "services"
@@ -2305,6 +2422,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "services"
@@ -2324,6 +2442,7 @@
       "Smart"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "services"
@@ -2340,6 +2459,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "services"
@@ -2356,6 +2476,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing"
     ],
@@ -2383,6 +2504,7 @@
       "New Share"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing"
     ],
@@ -2402,6 +2524,7 @@
       "Create Share"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing"
     ],
@@ -2418,6 +2541,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -2437,6 +2561,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -2455,6 +2580,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -2473,6 +2599,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -2491,6 +2618,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -2509,6 +2637,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -2527,6 +2656,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -2545,6 +2675,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
@@ -2572,6 +2703,7 @@
       "SHARING_NFS_WRITE",
       "SHARING_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "nfs"
@@ -2588,6 +2720,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "nfs"
@@ -2605,6 +2738,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "nfs",
@@ -2633,6 +2767,7 @@
       "SHARING_SMB_WRITE",
       "SHARING_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "smb"
@@ -2651,6 +2786,7 @@
       "Samba"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "smb"
@@ -2672,6 +2808,7 @@
       "SMB Sessions"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "smb",
@@ -2695,6 +2832,7 @@
       "SMB Locks"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "smb",
@@ -2718,6 +2856,7 @@
       "SMB Shares"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "smb",
@@ -2741,6 +2880,7 @@
       "SMB Notifications"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "smb",
@@ -2765,6 +2905,7 @@
       "Prompt"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "shell"
@@ -2787,6 +2928,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2804,6 +2946,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2819,6 +2962,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2834,6 +2978,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2849,6 +2994,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2864,6 +3010,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2879,6 +3026,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2896,6 +3044,7 @@
     "requiredRoles": [
       "REPORTING_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2914,6 +3063,7 @@
       "Edit Auto TRIM"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2933,6 +3083,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2955,6 +3106,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2978,6 +3130,7 @@
       "Datasets"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
     ],
@@ -2995,6 +3148,7 @@
       "Manage Disks"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/storage",
       "disks"
@@ -3015,6 +3169,7 @@
       "Sessions"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3037,6 +3192,7 @@
     "requiredRoles": [
       "AUTH_SESSIONS_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3059,6 +3215,7 @@
     "requiredRoles": [
       "AUTH_SESSIONS_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3079,6 +3236,7 @@
       "Session Token Lifetime"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3099,6 +3257,7 @@
       "MOTD"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3117,6 +3276,7 @@
       "Settings"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3134,6 +3294,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3155,6 +3316,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3172,6 +3334,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3194,6 +3357,7 @@
     "requiredRoles": [
       "SYSTEM_AUDIT_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3212,6 +3376,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3230,6 +3395,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3248,6 +3414,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3266,6 +3433,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3284,6 +3452,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3301,6 +3470,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3323,6 +3493,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3343,6 +3514,7 @@
       "Show Text Console without Password Prompt"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3361,6 +3533,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3379,6 +3552,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3397,6 +3571,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3415,6 +3590,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3441,6 +3617,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3457,6 +3634,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "cron"
@@ -3474,6 +3652,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3497,6 +3676,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3519,6 +3699,7 @@
       "2FA"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3539,6 +3720,7 @@
       "Tolerance Window"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3559,6 +3741,7 @@
       "Enable Two Factor Authentication for SSH"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3583,6 +3766,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3599,6 +3783,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "initshutdown"
@@ -3616,6 +3801,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3638,6 +3824,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3656,6 +3843,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3673,6 +3861,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3695,6 +3884,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3713,6 +3903,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3730,6 +3921,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3752,6 +3944,7 @@
     "requiredRoles": [
       "REPLICATION_TASK_CONFIG_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3770,6 +3963,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3787,6 +3981,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system/advanced"
     ],
@@ -3803,6 +3998,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3825,6 +4021,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3845,6 +4042,7 @@
       "SED User"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3863,6 +4061,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3883,6 +4082,7 @@
       "Pools"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3905,6 +4105,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3923,6 +4124,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3943,6 +4145,7 @@
       "Add Sysctl"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3973,6 +4176,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -3989,6 +4193,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "tunable"
@@ -4006,6 +4211,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -4028,6 +4234,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -4046,6 +4253,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -4064,6 +4272,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -4082,6 +4291,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -4100,6 +4310,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -4118,6 +4329,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -4139,6 +4351,7 @@
       "Configure Alerts"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "alert-settings",
@@ -4167,6 +4380,7 @@
     "requiredRoles": [
       "ALERT_LIST_WRITE"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "alert-settings",
@@ -4189,6 +4403,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "boot"
@@ -4210,6 +4425,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "boot"
@@ -4228,6 +4444,7 @@
       "Create boot environment"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "boot"
@@ -4245,6 +4462,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "boot",
@@ -4263,6 +4481,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [
+      "ENCLOSURE"
+    ],
     "anchorRouterLink": [
       "/system",
       "oldviewenclosure",
@@ -4280,6 +4501,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [
+      "FAILOVER"
+    ],
     "anchorRouterLink": [
       "/system",
       "failover"
@@ -4298,6 +4522,9 @@
     "synonyms": [],
     "requiredRoles": [
       "FAILOVER_WRITE"
+    ],
+    "visibleTokens": [
+      "FAILOVER"
     ],
     "anchorRouterLink": [
       "/system",
@@ -4318,6 +4545,9 @@
     "requiredRoles": [
       "FAILOVER_WRITE"
     ],
+    "visibleTokens": [
+      "FAILOVER"
+    ],
     "anchorRouterLink": [
       "/system",
       "failover"
@@ -4335,6 +4565,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4357,6 +4588,7 @@
       "Set email"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4378,6 +4610,7 @@
       "Gmail"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4396,6 +4629,7 @@
       "Settings"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4413,6 +4647,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4433,6 +4668,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4451,6 +4687,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4469,6 +4706,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4489,6 +4727,7 @@
       "Web Interface Address"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4509,6 +4748,7 @@
       "Web Interface Address"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4529,6 +4769,7 @@
       "Web Interface Port"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4550,6 +4791,7 @@
       "SSL Web Interface Port"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4568,6 +4810,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4586,6 +4829,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4604,6 +4848,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4622,6 +4867,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4639,6 +4885,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4657,6 +4904,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4677,6 +4925,7 @@
       "Translate App"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4695,6 +4944,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4713,6 +4963,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4731,6 +4982,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4749,6 +5001,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4768,6 +5021,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4796,6 +5050,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4823,6 +5078,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4851,6 +5107,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4870,6 +5127,7 @@
       "Add NTP Server"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4894,6 +5152,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "general"
@@ -4911,6 +5170,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "support",
@@ -4928,6 +5188,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "support"
@@ -4951,6 +5212,7 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "support"
@@ -4970,6 +5232,7 @@
       "Rate this page"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "support"
@@ -4988,6 +5251,9 @@
       "Enclosure"
     ],
     "requiredRoles": [],
+    "visibleTokens": [
+      "ENCLOSURE"
+    ],
     "anchorRouterLink": [
       "/system",
       "oldviewenclosure"
@@ -5009,6 +5275,7 @@
       "Upload Manual Update File"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "update",
@@ -5033,6 +5300,7 @@
       "Download Updates"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "update"
@@ -5057,6 +5325,7 @@
       "Update Release Notes"
     ],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
       "update"
@@ -5073,6 +5342,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "two-factor"
@@ -5090,6 +5360,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
+    "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
       "two-factor"
@@ -5115,6 +5386,9 @@
     "requiredRoles": [
       "VM_WRITE"
     ],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/vm"
     ],
@@ -5132,6 +5406,9 @@
       "Virtualization"
     ],
     "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
     "anchorRouterLink": [
       "/vm"
     ],
