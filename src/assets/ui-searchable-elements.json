@@ -3007,7 +3007,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Access"
     ],
     "synonyms": [
@@ -3027,7 +3027,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Access",
       "Terminate Other Sessions"
     ],
@@ -3049,7 +3049,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Access",
       "Configure Access"
     ],
@@ -3071,7 +3071,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Access",
       "Token Lifetime"
     ],
@@ -3091,7 +3091,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Access",
       "Login Banner"
     ],
@@ -3111,7 +3111,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced"
+      "Advanced Settings"
     ],
     "synonyms": [
       "Settings"
@@ -3122,14 +3122,14 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system-advanced",
+    "anchor": "system-advanced-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Allowed IP Addressed"
     ],
     "synonyms": [],
@@ -3146,7 +3146,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Configure Allowed IP Addresses"
     ],
     "synonyms": [
@@ -3167,7 +3167,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Audit"
     ],
     "synonyms": [],
@@ -3184,7 +3184,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Audit",
       "Configure Audit"
     ],
@@ -3206,7 +3206,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Audit",
       "Retention"
     ],
@@ -3224,7 +3224,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Audit",
       "Reservation"
     ],
@@ -3242,7 +3242,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Audit",
       "Quota"
     ],
@@ -3260,7 +3260,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Audit",
       "Quota Fill Warning"
     ],
@@ -3278,7 +3278,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Audit",
       "Quota Fill Critical"
     ],
@@ -3296,7 +3296,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Console"
     ],
     "synonyms": [],
@@ -3313,7 +3313,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Console",
       "Configure Console"
     ],
@@ -3335,7 +3335,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Console",
       "Console Menu"
     ],
@@ -3355,7 +3355,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Console",
       "Enable Serial Console"
     ],
@@ -3373,7 +3373,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Console",
       "Serial Port"
     ],
@@ -3391,7 +3391,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Console",
       "Serial Speed"
     ],
@@ -3409,7 +3409,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Console",
       "MOTD Banner"
     ],
@@ -3427,7 +3427,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Cron Jobs",
       "Add Cron Job"
     ],
@@ -3469,7 +3469,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Global Two Factor Authentication"
     ],
     "synonyms": [],
@@ -3486,7 +3486,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Global Two Factor Authentication",
       "Configure Global Two Factor Authentication"
     ],
@@ -3509,7 +3509,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Global Two Factor Authentication",
       "Global 2FA Enable"
     ],
@@ -3531,7 +3531,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Global Two Factor Authentication",
       "Window"
     ],
@@ -3551,7 +3551,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Global Two Factor Authentication",
       "SSH"
     ],
@@ -3571,7 +3571,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Init/Shutdown Scripts",
       "Add Init/Shutdown Script"
     ],
@@ -3611,7 +3611,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Isolated GPU Device(s)"
     ],
     "synonyms": [],
@@ -3628,7 +3628,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Isolated GPU Device(s)",
       "Configure Isolated GPU Devices"
     ],
@@ -3650,7 +3650,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Isolated GPU Device(s)",
       "GPUs"
     ],
@@ -3668,7 +3668,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Kernel"
     ],
     "synonyms": [],
@@ -3685,7 +3685,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Kernel",
       "Configure Kernel"
     ],
@@ -3707,7 +3707,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Kernel",
       "Enable Kernel Debug"
     ],
@@ -3725,7 +3725,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Replication"
     ],
     "synonyms": [],
@@ -3742,7 +3742,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Replication",
       "Configure Replication"
     ],
@@ -3764,7 +3764,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Replication",
       "Replication Tasks Limit"
     ],
@@ -3782,7 +3782,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Save Debug"
     ],
     "synonyms": [],
@@ -3798,7 +3798,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Self-Encrypting Drive"
     ],
     "synonyms": [],
@@ -3815,7 +3815,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Self-Encrypting Drive",
       "Configure Self-Encrypting Drive"
     ],
@@ -3837,7 +3837,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Self-Encrypting Drive",
       "ATA Security User"
     ],
@@ -3857,7 +3857,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Self-Encrypting Drive",
       "SED Password"
     ],
@@ -3875,7 +3875,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Storage"
     ],
     "synonyms": [
@@ -3895,7 +3895,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Storage",
       "Configure Storage"
     ],
@@ -3917,7 +3917,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Storage",
       "System Data Pool"
     ],
@@ -3935,7 +3935,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Sysctl"
     ],
     "synonyms": [
@@ -3955,7 +3955,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Sysctl",
       "Add Sysctl"
     ],
@@ -4001,7 +4001,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Syslog"
     ],
     "synonyms": [],
@@ -4018,7 +4018,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Syslog",
       "Configure Syslog"
     ],
@@ -4040,7 +4040,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Syslog",
       "Use FQDN for Logging"
     ],
@@ -4058,7 +4058,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Syslog",
       "Syslog Level"
     ],
@@ -4076,7 +4076,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Syslog",
       "Syslog Server"
     ],
@@ -4094,7 +4094,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Syslog",
       "Syslog Transport"
     ],
@@ -4112,7 +4112,7 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
+      "Advanced Settings",
       "Syslog",
       "Include Audit Logs"
     ],
@@ -4330,7 +4330,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Email"
     ],
     "synonyms": [],
@@ -4347,7 +4347,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Email",
       "Configure Email"
     ],
@@ -4369,7 +4369,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Email",
       "Send Method"
     ],
@@ -4390,7 +4390,7 @@
   {
     "hierarchy": [
       "System",
-      "General"
+      "General Settings"
     ],
     "synonyms": [
       "Settings"
@@ -4401,14 +4401,14 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "system-general",
+    "anchor": "system-general-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI"
     ],
     "synonyms": [],
@@ -4425,7 +4425,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "GUI Settings"
     ],
@@ -4445,7 +4445,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "Theme"
     ],
@@ -4463,7 +4463,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "SSL Certificate"
     ],
@@ -4481,7 +4481,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "IPv4 Address"
     ],
@@ -4501,7 +4501,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "IPv6 Address"
     ],
@@ -4521,7 +4521,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "HTTP Port"
     ],
@@ -4541,7 +4541,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "HTTPS Port"
     ],
@@ -4562,7 +4562,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "SSL Protocols"
     ],
@@ -4580,7 +4580,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "HTTPS Redirect"
     ],
@@ -4598,7 +4598,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "Usage Collection"
     ],
@@ -4616,7 +4616,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "GUI",
       "Show Console Messages"
     ],
@@ -4634,7 +4634,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Localization"
     ],
     "synonyms": [],
@@ -4651,7 +4651,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Localization",
       "Localization Settings"
     ],
@@ -4669,7 +4669,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Localization",
       "Language"
     ],
@@ -4689,7 +4689,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Localization",
       "Date Format"
     ],
@@ -4707,7 +4707,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Localization",
       "Time Format"
     ],
@@ -4725,7 +4725,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Localization",
       "Timezone"
     ],
@@ -4743,7 +4743,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Localization",
       "Console Keyboard Map"
     ],
@@ -4761,7 +4761,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Manage Configuration"
     ],
     "synonyms": [],
@@ -4780,7 +4780,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Manage Configuration",
       "Download File"
     ],
@@ -4808,7 +4808,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Manage Configuration",
       "Upload File"
     ],
@@ -4835,7 +4835,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "Manage Configuration",
       "Reset to Defaults"
     ],
@@ -4863,7 +4863,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "NTP Server"
     ],
     "synonyms": [
@@ -4882,7 +4882,7 @@
   {
     "hierarchy": [
       "System",
-      "General",
+      "General Settings",
       "NTP Server",
       "Add NTP Server"
     ],

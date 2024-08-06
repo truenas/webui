@@ -1,3 +1,4 @@
+@import 'scss-imports/cssvars';
 @import 'mixins/cards';
 
 :host {
@@ -27,6 +28,20 @@
   }
 }
 
+.cards {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: calc(50% - 4px) calc(50% - 4px);
+
+  @media #{$media-lt-md} {
+    grid-template-columns: auto;
+  }
+
+  @media #{$media-gt-lg} {
+    grid-template-columns: calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(25% - 6px);
+  }
+}
+
 .skeleton-content {
   .pool-header {
     ngx-skeleton-loader {
@@ -45,7 +60,7 @@
     ngx-skeleton-loader {
       display: inline-block;
       height: 20px;
-      margin: 10px 0;
+      margin: 8px 0;
       width: 100%;
 
       ::ng-deep .loader {

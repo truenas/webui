@@ -669,6 +669,7 @@
   "Front": "",
   "Full path to the pool, dataset or directory to share.   The path must reside within a pool. Mandatory.": "",
   "Gathering data...": "",
+  "General Settings": "",
   "Generate": "",
   "Generate CSR": "",
   "Generate Certificate": "",

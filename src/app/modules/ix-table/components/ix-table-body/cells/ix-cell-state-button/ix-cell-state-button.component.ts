@@ -57,7 +57,13 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
   }
 
   protected onButtonClick(): void {
-    const state = (this.row as RowState).state;
+    let state = (this.row as RowState).state;
+
+    if (this.job?.state && !state) {
+      state = {
+        state: this.job.state,
+      } as RowState['state'];
+    }
 
     if (this.job && state) {
       if (this.job.state === JobState.Running) {

@@ -32,16 +32,16 @@ const routes: Routes = [
       redirectTo: 'general',
     }, {
       path: 'general',
-      data: { title: T('General'), breadcrumb: null, icon: 'build' },
+      data: { title: T('General Settings'), breadcrumb: null, icon: 'build' },
       children: [{
         path: '',
         component: GeneralSettingsComponent,
-        data: { title: T('General'), breadcrumb: null },
+        data: { title: T('General Settings'), breadcrumb: null },
       }],
     }, {
       path: 'advanced',
       component: AdvancedSettingsComponent,
-      data: { title: T('Advanced'), breadcrumb: null, icon: 'settings' },
+      data: { title: T('Advanced Settings'), breadcrumb: null, icon: 'settings' },
     }, {
       path: 'viewenclosure',
       data: {
