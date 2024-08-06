@@ -1,5 +1,5 @@
+import { Terminal, IDisposable, ITerminalAddon } from '@xterm/xterm';
 import { Subscription } from 'rxjs';
-import { Terminal, IDisposable, ITerminalAddon } from 'xterm';
 import { ShellService } from 'app/services/shell.service';
 
 /**
