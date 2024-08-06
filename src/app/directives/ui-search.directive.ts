@@ -78,11 +78,11 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   }
 
   private highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
-    if (!anchorRef) return;
+    if (shouldClick && anchorRef) setTimeout(() => anchorRef.click(), searchDelayConst);
+
+    if (!anchorRef || shouldClick) return;
 
     this.renderer.addClass(anchorRef, 'search-element-highlighted');
-
-    if (shouldClick) setTimeout(() => anchorRef.click(), searchDelayConst);
 
     const removeHighlightStyling = (): void => {
       this.renderer.removeClass(anchorRef, 'search-element-highlighted');
