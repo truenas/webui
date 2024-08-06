@@ -31,6 +31,8 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     return hierarchyItem;
   }
 
+  private removeHighlightTimeout: number | null = null;
+
   constructor(
     private renderer: Renderer2,
     private elementRef: ElementRef<HTMLElement>,
@@ -82,18 +84,22 @@ export class UiSearchDirective implements OnInit, OnDestroy {
 
     if (shouldClick) setTimeout(() => anchorRef.click(), searchDelayConst);
 
+    const removeHighlightStyling = (): void => {
+      this.renderer.removeClass(anchorRef, 'search-element-highlighted');
+      ['click', 'keydown'].forEach((event) => document.removeEventListener(event, removeHighlightStyling));
+    };
+
     setTimeout(() => {
       anchorRef.focus();
       anchorRef.scrollIntoView();
       document.querySelector<HTMLElement>('.rightside-content-hold').scrollBy(0, -20);
+      ['click', 'keydown'].forEach((event) => document.addEventListener(event, removeHighlightStyling, { once: true }));
     }, searchDelayConst);
 
-    const removeHighlightStyling = (): void => this.renderer.removeClass(anchorRef, 'search-element-highlighted');
+    if (this.removeHighlightTimeout) {
+      clearTimeout(this.removeHighlightTimeout);
+    }
 
-    setTimeout(() => removeHighlightStyling(), searchDelayConst * 25);
-
-    setTimeout(() => {
-      ['click', 'keydown'].forEach((event) => document.addEventListener(event, removeHighlightStyling, { once: true }));
-    }, 0);
+    this.removeHighlightTimeout = setTimeout(() => removeHighlightStyling(), 4000) as unknown as number;
   }
 }
