@@ -2,6 +2,8 @@ import { DOCUMENT } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef, ChangeDetectorRef,
   Inject,
+  AfterViewInit,
+  OnDestroy,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,6 +21,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { FocusService } from 'app/services/focus.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SidenavService } from 'app/services/sidenav.service';
@@ -32,13 +35,15 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrls: ['./global-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GlobalSearchComponent implements OnInit {
+export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
+  @ViewChild('searchBoxWrapper') searchBoxWrapper: ElementRef<HTMLElement>;
 
   searchControl = new FormControl<string>('');
   searchResults: UiSearchableElement[];
   isLoading = false;
   systemVersion: string;
+  detachOverlay: () => void; // passed from global-search-trigger
 
   get isSearchInputFocused(): boolean {
     return document.activeElement === this.searchInput?.nativeElement;
@@ -54,6 +59,7 @@ export class GlobalSearchComponent implements OnInit {
     private slideInService: IxSlideInService,
     private chainedSlideInService: IxChainedSlideInService,
     private dialogService: DialogService,
+    private focusService: FocusService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
@@ -64,11 +70,23 @@ export class GlobalSearchComponent implements OnInit {
     this.setInitialSearchResults();
   }
 
+  ngAfterViewInit(): void {
+    this.searchBoxWrapper.nativeElement.addEventListener('focusout', this.handleFocusOut.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    this.searchBoxWrapper.nativeElement.removeEventListener('focusout', this.handleFocusOut.bind(this));
+  }
+
   handleKeyDown(event: KeyboardEvent): void {
     switch (event.key) {
       case 'ArrowDown':
       case 'Tab':
         event.preventDefault();
+
+        if (event.key === 'Tab') {
+          this.handleTabOutFromGlobalSearch(event);
+        }
 
         if (!event.shiftKey) {
           if (this.isSearchInputFocused) moveToNextFocusableElement();
@@ -176,5 +194,30 @@ export class GlobalSearchComponent implements OnInit {
       this.searchDirectives.get(config).highlight(config);
       this.closeAllBackdrops();
     });
+  }
+
+  private handleTabOutFromGlobalSearch(event: KeyboardEvent): void {
+    const focusableElements = this.focusService.getFocusableElements(this.searchBoxWrapper.nativeElement);
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      this.detachOverlay();
+      setTimeout(() => {
+        this.focusService.focusFirstFocusableElement(this.document.querySelector('mat-toolbar-row'));
+      });
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      this.detachOverlay();
+      setTimeout(() => {
+        this.focusService.focusFirstFocusableElement(document.querySelector('.topbar-mobile-footer'));
+      });
+    }
+  }
+
+  private handleFocusOut(event: FocusEvent): void {
+    const relatedTarget = event.relatedTarget as HTMLElement;
+    if (!relatedTarget || !this.searchBoxWrapper.nativeElement.contains(relatedTarget)) {
+      this.detachOverlay();
+    }
   }
 }
