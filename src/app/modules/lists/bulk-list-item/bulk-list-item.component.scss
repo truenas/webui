@@ -10,6 +10,12 @@
   flex-direction: row;
 }
 
+.bulk-list-item {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
+
 .bulk-list-item-state {
   align-items: center;
   display: inline-flex;

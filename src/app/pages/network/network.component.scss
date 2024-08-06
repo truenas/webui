@@ -1,5 +1,27 @@
+@import 'scss-imports/cssvars';
+
 div.content {
-  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+
+  .right-column {
+    flex-basis: 35%;
+  }
+
+  .left-column {
+    flex-basis: 65%;
+    gap: 8px;
+  }
+
+  @media #{$media-lt-md} {
+    flex-direction: column;
+
+    .right-column,
+    .left-column {
+      flex-basis: 100%;
+    }
+  }
 }
 
 div.right-column div.left-column {
