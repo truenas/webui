@@ -7,6 +7,7 @@
   .card .container {
     background-color: var(--contrast-darker);
     display: flex;
+    flex-wrap: wrap;
     gap: 26px;
     padding: 24px 28px 56px;
 

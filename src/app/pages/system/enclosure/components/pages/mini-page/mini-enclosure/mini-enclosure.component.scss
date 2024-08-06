@@ -1,5 +1,6 @@
 :host {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   justify-content: space-evenly;
 }
@@ -84,5 +85,5 @@
 }
 
 .enclosure {
-  min-width: 300px;
+  min-width: 250px;
 }
