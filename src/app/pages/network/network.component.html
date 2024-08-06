@@ -10,6 +10,7 @@
             @if (!checkinWaiting) {
               <div>
                 <p>{{ helptext.pending_changes_text | translate }}</p>
+
                 <p>
                   {{ helptext.checkin_text | translate }}
                   <mat-form-field floatPlaceholder="never" id="timeout-field">
@@ -25,15 +26,13 @@
                     />
                   </mat-form-field>
                   {{ helptext.checkin_text_2 | translate }}
-
                 </p>
-                <ng-container *ngIf="checkinTimeoutField.invalid && (checkinTimeoutField.dirty || checkinTimeoutField.touched)">
-                  <mat-error *ngIf="!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern">
-                    <span
-                      [innerHTML]="'Value must be greater than {label}' | translate: { label: checkinTimeoutMinValue }"
-                    ></span>
-                  </mat-error>
-                </ng-container>
+
+                <mat-error *ngIf="!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern">
+                  <span
+                    [innerHTML]="'Value must be greater than {label}' | translate: { label: checkinTimeoutMinValue }"
+                  ></span>
+                </mat-error>
               </div>
             } @else {
               <div>
