@@ -13,6 +13,9 @@ import {
 import {
   EnclosureSideComponent,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
+import {
+  NotSupportedModelComponent,
+} from 'app/pages/system/enclosure/components/enclosure-side/not-supported-model/not-supported-model.component';
 import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/utils/supported-enclosures';
 
 // TODO: Not properly supported in ng-mocks yet https://github.com/help-me-mom/ng-mocks/issues/8634
@@ -35,6 +38,7 @@ describe('EnclosureSideComponent', () => {
     component: EnclosureSideComponent,
     declarations: [
       MockComponent(EnclosureSvgStubComponent),
+      MockComponent(NotSupportedModelComponent),
     ],
   });
 
@@ -57,7 +61,6 @@ describe('EnclosureSideComponent', () => {
   };
 
   beforeEach(() => {
-    jest.spyOn(Date, 'now').mockReturnValue(1234567890);
     spectator = createComponent({ props });
   });
 
@@ -69,18 +72,24 @@ describe('EnclosureSideComponent', () => {
     expect(svg.enableMouseEvents).toBe(props.enableMouseEvents);
     expect(svg.slots)
       .toEqual(Object.values(props.enclosure.elements[EnclosureElementType.ArrayDeviceSlot]).slice(0, 2));
-
-    const baseUrl = supportedEnclosures[props.enclosure.model][props.side];
-
-    expect(svg.svgUrl).toBe(`${baseUrl}?uniqueIdentifier=1234567890`);
+    expect(svg.svgUrl).toBe(supportedEnclosures[props.enclosure.model][props.side]);
   });
 
   it('automatically selects Front or Top enclosure based on what is available when side is undefined', () => {
     spectator.setInput('side', undefined);
 
     const svg = spectator.query(EnclosureSvgStubComponent);
-    const baseUrl = supportedEnclosures[props.enclosure.model][EnclosureSide.Front];
+    expect(svg.svgUrl).toBe(supportedEnclosures[props.enclosure.model][EnclosureSide.Front]);
+  });
 
-    expect(svg.svgUrl).toBe(`${baseUrl}?uniqueIdentifier=1234567890`);
+  it('renders Not supported model component when svg url is not available', () => {
+    spectator.setInput('enclosure', {
+      ...props.enclosure,
+      model: 'fake-model',
+    });
+
+    const notSupportedModel = spectator.query(NotSupportedModelComponent);
+    expect(notSupportedModel).toExist();
+    expect(notSupportedModel.model).toBe('fake-model');
   });
 });
