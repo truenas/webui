@@ -14,14 +14,26 @@
                   {{ helptext.checkin_text | translate }}
                   <mat-form-field floatPlaceholder="never" id="timeout-field">
                     <input
+                      #checkinTimeoutField="ngModel"
                       matInput
+                      type="number"
                       ixTest="checkin-timeout"
+                      min="10"
+                      required
                       [pattern]="checkinTimeoutPattern"
                       [(ngModel)]="checkinTimeout"
                     />
                   </mat-form-field>
                   {{ helptext.checkin_text_2 | translate }}
+
                 </p>
+                <ng-container *ngIf="checkinTimeoutField.invalid && (checkinTimeoutField.dirty || checkinTimeoutField.touched)">
+                  <mat-error *ngIf="!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern">
+                    <span
+                      [innerHTML]="'Value must be greater than {label}' | translate: { label: checkinTimeoutMinValue }"
+                    ></span>
+                  </mat-error>
+                </ng-container>
               </div>
             } @else {
               <div>
@@ -37,7 +49,7 @@
               <button
                 mat-button
                 ixTest="test-changes"
-                [disabled]="isHaEnabled"
+                [disabled]="isHaEnabled || isCheckinTimeoutFieldInvalid"
                 (click)="commitPendingChanges()"
               >
                 {{ helptext.commit_button | translate }}
