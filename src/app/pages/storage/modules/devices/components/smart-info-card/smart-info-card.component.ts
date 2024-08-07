@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
 } from '@angular/core';
-import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,7 +9,7 @@ import _ from 'lodash';
 import {
   Observable,
 } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
@@ -33,6 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class SmartInfoCardComponent implements OnChanges {
   topologyDisk = input<TopologyDisk>();
   disk = input<Disk>();
+  hasSmartTestSupport = input(false);
 
   readonly requiredRoles = [Role.FullAdmin];
 
@@ -45,12 +45,6 @@ export class SmartInfoCardComponent implements OnChanges {
   readonly tasksMessage = T('{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured');
 
   private readonly maxResultCategories = 4;
-
-  hasSmartSupport = toSignal(toObservable(this.disk).pipe(
-    filter(Boolean),
-    switchMap((disk) => this.ws.call('disk.get_instance', [disk.identifier, { extra: { supports_smart: true } }])),
-    map((disk) => disk.supports_smart),
-  ));
 
   constructor(
     private ws: WebSocketService,

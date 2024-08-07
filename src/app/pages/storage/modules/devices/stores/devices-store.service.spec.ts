@@ -63,6 +63,7 @@ describe('DevicesStore', () => {
           diskDictionary: {},
           poolId: 4,
           selectedNodeGuid: null,
+          disksWithSmartSupport: [],
         },
         b: {
           isLoading: false,
@@ -88,6 +89,7 @@ describe('DevicesStore', () => {
           },
           poolId: 4,
           selectedNodeGuid: null,
+          disksWithSmartSupport: [],
         },
       });
     });
@@ -126,6 +128,27 @@ describe('DevicesStore', () => {
         expect.objectContaining({ guid: 'data' }),
         expect.objectContaining({ guid: 'guid1' }),
       ]);
+    });
+  });
+
+  describe('loadDisksWithSmartSupport', () => {
+    it('loads disks with SMART support and sets disksWithSmartSupport in state', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockWebSocket = spectator.inject(WebSocketService);
+        jest.spyOn(mockWebSocket, 'call').mockReturnValue(cold('-b|', { b: { sda: 'sda', sdb: 'sdb', sdc: 'sdc' } }));
+
+        spectator.service.loadDisksWithSmartSupport();
+
+        expect(mockWebSocket.call).toHaveBeenCalledWith('smart.test.disk_choices');
+        expectObservable(spectator.service.state$).toBe('ab', {
+          a: expect.objectContaining({
+            disksWithSmartSupport: [],
+          }),
+          b: expect.objectContaining({
+            disksWithSmartSupport: ['sda', 'sdb', 'sdc'],
+          }),
+        });
+      });
     });
   });
 });
