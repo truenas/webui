@@ -19,8 +19,8 @@
                       matInput
                       type="number"
                       ixTest="checkin-timeout"
-                      min="10"
                       required
+                      [min]="checkinTimeoutMinValue"
                       [pattern]="checkinTimeoutPattern"
                       [(ngModel)]="checkinTimeout"
                     />
