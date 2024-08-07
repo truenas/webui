@@ -2,6 +2,7 @@ import {
   Component, ChangeDetectionStrategy, input,
   signal,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -27,6 +28,7 @@ export class AppControlsComponent {
     private redirect: RedirectService,
     private snackbar: SnackbarService,
     private appService: ApplicationsService,
+    private router: Router,
   ) {}
 
   onRestartApp(app: App): void {
@@ -44,6 +46,13 @@ export class AppControlsComponent {
   }
 
   openWebPortal(app: App): void {
-    this.redirect.openWindow(app.portals.web_portal[0]);
+    const webPortal = Object.values(app.portals);
+    if (webPortal?.[0]) {
+      this.redirect.openWindow(webPortal[0]);
+    }
+  }
+
+  openAppDetails(app: App): void {
+    this.router.navigate(['/apps', 'installed', app.catalog_train, app.id]);
   }
 }

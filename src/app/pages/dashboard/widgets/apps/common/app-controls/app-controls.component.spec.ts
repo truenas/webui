@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, Observable } from 'rxjs';
 import { CatalogAppState } from 'app/enums/chart-release-status.enum';
@@ -22,8 +23,8 @@ describe('AppControlsComponent', () => {
     id: 'testapp',
     name: 'TestApp',
     portals: {
-      web_portal: ['http://test.com'],
-    } as Record<string, string[]>,
+      'Web UI': 'http://test.com',
+    } as Record<string, string>,
     status: CatalogAppState.Active,
     upgrade_available: true,
     container_images_update_available: false,
@@ -31,8 +32,7 @@ describe('AppControlsComponent', () => {
       icon: 'http://localhost/test-app.png',
       app_version: '1.0',
     },
-    catalog: 'truenas',
-    catalog_train: 'charts',
+    catalog_train: 'stable',
   } as unknown as App;
 
   const createComponent = createComponentFactory({
@@ -85,5 +85,14 @@ describe('AppControlsComponent', () => {
 
     expect(snackbarSpy).toHaveBeenCalledWith('App is restarting');
     expect(restartSpy).toHaveBeenCalledWith(app);
+  });
+
+  it('checks redirect to installed apps page', async () => {
+    jest.spyOn(spectator.inject(Router), 'navigate');
+
+    const appButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-cog' }));
+    await appButton.click();
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'installed', app.catalog_train, app.id]);
   });
 });

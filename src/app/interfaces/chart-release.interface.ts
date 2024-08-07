@@ -105,7 +105,7 @@ export interface App {
   human_version: string;
   human_latest_version: string;
   container_images_update_available: boolean;
-  portals: Record<string, string[]>;
+  portals: Record<string, string>;
   chart_schema: ChartSchema;
   history: Record<string, ChartReleaseVersion>;
   resources?: ChartResources;

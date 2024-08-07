@@ -30,7 +30,7 @@
     matTooltipPosition="above"
     [attr.aria-label]="'Check App Details' | translate"
     [matTooltip]="'Check App Details' | translate"
-    [routerLink]="['/apps', 'installed', app.catalog, app.catalog_train, app.id]"
+    (click)="openAppDetails(app)"
   >
     <ix-icon name="mdi-cog"></ix-icon>
   </button>
