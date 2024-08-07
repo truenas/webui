@@ -5,7 +5,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -18,7 +18,7 @@ import { RedirectService } from 'app/services/redirect.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppControlsComponent {
-  app = input.required<LoadingState<ChartRelease>>();
+  app = input.required<LoadingState<App>>();
 
   protected isRestarting = signal<boolean>(false);
 
@@ -29,7 +29,7 @@ export class AppControlsComponent {
     private appService: ApplicationsService,
   ) {}
 
-  onRestartApp(app: ChartRelease): void {
+  onRestartApp(app: App): void {
     this.isRestarting.set(true);
     this.snackbar.success(this.translate.instant('App is restarting'));
 
@@ -43,7 +43,7 @@ export class AppControlsComponent {
       });
   }
 
-  openWebPortal(app: ChartRelease): void {
+  openWebPortal(app: App): void {
     this.redirect.openWindow(app.portals.web_portal[0]);
   }
 }

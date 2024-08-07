@@ -7,7 +7,7 @@
 
     <div [class]="['container', size()]">
       <div class="app-header-row">
-        <ix-app-card-logo [url]="application?.chart_metadata?.icon"></ix-app-card-logo>
+        <ix-app-card-logo [url]="application?.metadata?.icon"></ix-app-card-logo>
         <ix-app-card-info [app]="app() | async" [job]="job() | async"></ix-app-card-info>
       </div>
     </div>
