@@ -178,7 +178,7 @@ describe('AppInfoCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/apps', 'installed', app.catalog, app.catalog_train, app.id, 'edit']);
+    expect(router.navigate).toHaveBeenCalledWith(['/apps', 'installed', app.catalog_train, app.id, 'edit']);
   });
 
   it('opens delete app dialog when Delete button is pressed', async () => {

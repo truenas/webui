@@ -75,7 +75,7 @@ export class JobsPanelComponent {
 
     const title = job.description ? job.description : job.method;
 
-    this.dialog.jobDialog<ApiJobMethod, ApiJobResponse<ApiJobMethod>>(
+    this.dialog.jobDialog(
       this.store$.select(selectJob(job.id)) as Observable<Job<ApiJobResponse<ApiJobMethod>>>,
       {
         title,

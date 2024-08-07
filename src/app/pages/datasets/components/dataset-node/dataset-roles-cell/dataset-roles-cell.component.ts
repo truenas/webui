@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import _ from 'lodash';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { isDatasetHasShares, isRootDataset, ixApplications } from 'app/pages/datasets/utils/dataset.utils';
+import { doesDatasetHaveShares, isRootDataset, ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
   selector: 'ix-dataset-roles-cell',
@@ -12,26 +12,14 @@ import { isDatasetHasShares, isRootDataset, ixApplications } from 'app/pages/dat
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetRolesCellComponent {
-  @Input() dataset: DatasetDetails;
-  @Input() isSystemDataset: boolean;
+  readonly dataset = input.required<DatasetDetails>();
+  readonly isSystemDataset = input.required<boolean>();
 
-  get isRoot(): boolean {
-    return isRootDataset(this.dataset);
-  }
+  readonly isRoot = computed(() => isRootDataset(this.dataset()));
 
-  get isApplications(): boolean {
-    return this.dataset.name.endsWith(ixApplications);
-  }
+  readonly isApps = computed(() => this.dataset().name.endsWith(ixAppsDataset));
+  readonly appNames = computed(() => _.uniq(this.dataset().apps.map((app) => app.name)).join(', '));
+  readonly vmNames = computed(() => _.uniq(this.dataset().vms.map((vm) => vm.name)).join(', '));
 
-  get appsNames(): string {
-    return _.uniq(this.dataset.apps.map((app) => app.name)).join(', ');
-  }
-
-  get vmsNames(): string {
-    return _.uniq(this.dataset.vms.map((app) => app.name)).join(', ');
-  }
-
-  get hasShares(): boolean {
-    return isDatasetHasShares(this.dataset);
-  }
+  readonly hasShares = computed(() => doesDatasetHaveShares(this.dataset()));
 }

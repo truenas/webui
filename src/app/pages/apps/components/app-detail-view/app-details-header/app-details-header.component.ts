@@ -50,7 +50,6 @@ export class AppDetailsHeaderComponent {
       map((apps) => {
         return apps.filter((app) => {
           return app.metadata.name === this.app.name
-            && app.catalog === this.app.catalog
             && app.catalog_train === this.app.train;
         });
       }),
@@ -91,7 +90,7 @@ export class AppDetailsHeaderComponent {
   navigateToInstallPage(): void {
     this.showAgreementWarning().pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.router.navigate(['/apps', 'available', this.app.catalog, this.app.train, this.app.name, 'install']);
+        this.router.navigate(['/apps', 'available', this.app.train, this.app.name, 'install']);
       },
     });
   }

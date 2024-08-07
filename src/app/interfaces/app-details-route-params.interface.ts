@@ -1,1 +1,1 @@
-export interface AppDetailsRouteParams { appId: string; catalog: string; train: string }
+export interface AppDetailsRouteParams { appId: string; train: string }
