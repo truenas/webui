@@ -100,11 +100,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get appsUpdateAvailable(): number {
     return this.dataSource
-      .filter((app) => app.update_available || app.container_images_update_available).length;
+      .filter((app) => app.upgrade_available || app.container_images_update_available).length;
   }
 
   get hasUpdates(): boolean {
-    return this.dataSource.some((app) => app.update_available || app.container_images_update_available);
+    return this.dataSource.some((app) => app.upgrade_available || app.container_images_update_available);
   }
 
   get checkedAppsNames(): string[] {
@@ -125,7 +125,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   get isBulkUpgradeDisabled(): boolean {
     return !this.checkedAppsNames
       .map((name) => this.dataSource.find((app) => app.name === name))
-      .some((app) => app.update_available || app.container_images_update_available);
+      .some((app) => app.upgrade_available || app.container_images_update_available);
   }
 
   get startedCheckedApps(): App[] {
@@ -357,7 +357,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onBulkUpgrade(updateAll = false): void {
     const apps = this.dataSource.filter((app) => (
-      updateAll ? app.update_available || app.container_images_update_available : this.selection.isSelected(app.id)
+      updateAll ? app.upgrade_available || app.container_images_update_available : this.selection.isSelected(app.id)
     ));
     this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
       .afterClosed()
@@ -423,8 +423,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           return doSortCompare(this.getAppStatus(a.name), this.getAppStatus(b.name), isAsc);
         case SortableField.Updates:
           return doSortCompare(
-            (a.update_available || a.container_images_update_available) ? 1 : 0,
-            (b.update_available || b.container_images_update_available) ? 1 : 0,
+            (a.upgrade_available || a.container_images_update_available) ? 1 : 0,
+            (b.upgrade_available || b.container_images_update_available) ? 1 : 0,
             isAsc,
           );
         default:
