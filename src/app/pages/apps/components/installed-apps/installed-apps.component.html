@@ -185,7 +185,6 @@
               [class.selected]="selectedApp.id === app.id"
               [selected]="selection.isSelected(app.id)"
               [status]="getAppStatus(app.name)"
-              [stats]="getAppStats(app.name) | async"
               [job]="appJobs.get(app.name)"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"

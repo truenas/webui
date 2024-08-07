@@ -35,11 +35,11 @@ describe('AppAvailableInfoCardComponent', () => {
     ],
     providers: [
       mockProvider(ApplicationsService, {
-        getCatalogItem: jest.fn(() => of({
+        getCatalogAppDetails: jest.fn(() => of({
           ...fakeApp,
           versions: {
             '1.0.9': {
-              chart_metadata: {
+              metadata: {
                 sources: [
                   'https://github.com/home-assistant/home-assistant',
                   'https://github.com/truenas/charts/tree/master/library/ix-dev/charts/home-assistant',

@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
@@ -19,7 +19,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   imports: [TranslateModule, MapValuePipe, MatTooltipModule, IxIconModule],
 })
 export class AppUpdateCellComponent {
-  app = input.required<ChartRelease>();
+  app = input.required<App>();
   showIcon = input<boolean>(false);
 
   @HostBinding('class') get hostClasses(): string[] {

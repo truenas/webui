@@ -28,8 +28,8 @@ import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue,
   ChartFormValues,
-  ChartRelease,
-  ChartReleaseCreate,
+  App,
+  AppCreate,
   ChartSchema,
   ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
@@ -73,7 +73,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   subscription = new Subscription();
   chartSchema: ChartSchema['schema'];
 
-  forbiddenAppNames$ = this.appService.getAllChartReleases().pipe(map((apps) => apps.map((app) => app.name)));
+  forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
   form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
@@ -154,7 +154,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.isNew = true;
     this.isLoading = true;
     this.appService
-      .getCatalogItem(this.appId, this.train)
+      .getCatalogAppDetails(this.appId, this.train)
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (app) => {
@@ -225,24 +225,23 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   saveData(data: ChartFormValues): void {
-    let job$: Observable<Job<ChartRelease>>;
+    let job$: Observable<Job<App>>;
 
     if (this.isNew) {
       const version = data.version;
       delete data.version;
-      job$ = this.ws.job('chart.release.create', [
+      job$ = this.ws.job('app.create', [
         {
-          catalog: this.catalog,
-          item: this.catalogApp.name,
-          release_name: data.release_name,
+          values: data,
+          catalog_app: data.release_name,
+          app_name: this.catalogApp.name,
           train: this.train,
           version,
-          values: data,
-        } as ChartReleaseCreate,
+        } as AppCreate,
       ]);
     } else {
       delete data.release_name;
-      job$ = this.ws.job('chart.release.update', [
+      job$ = this.ws.job('app.update', [
         this.config.release_name as string,
         { values: data },
       ]);
@@ -291,7 +290,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.isNew = false;
     this.isLoading = true;
     this.appService
-      .getChartRelease(this.appId)
+      .getApp(this.appId)
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (releases) => {
@@ -389,7 +388,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setChartForEdit(chart: ChartRelease): void {
+  private setChartForEdit(chart: App): void {
     this.rootDynamicSection = [];
     this.isNew = false;
     this.config = chart.config;

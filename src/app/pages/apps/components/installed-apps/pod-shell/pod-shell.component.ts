@@ -6,12 +6,11 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, Observable, Subject, Subscriber,
 } from 'rxjs';
-import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { helptextShell } from 'app/helptext/shell/shell';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/terminal.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
+// import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -87,18 +86,19 @@ export class PodShellComponent implements TerminalConfiguration {
     });
   }
 
-  customReconnectAction(): void {
-    this.matDialog.open(PodSelectDialogComponent, {
-      minWidth: '650px',
-      maxWidth: '850px',
-      data: {
-        appName: this.chartReleaseName,
-        type: PodSelectDialogType.Shell,
-        title: 'Choose pod',
-        customSubmit: (dialogFormValue: PodDialogFormValue) => this.onChooseShell(dialogFormValue),
-      },
-    });
-  }
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
+  // customReconnectAction(): void {
+  //   this.matDialog.open(PodSelectDialogComponent, {
+  //     minWidth: '650px',
+  //     maxWidth: '850px',
+  //     data: {
+  //       appName: this.chartReleaseName,
+  //       type: PodSelectDialogType.Shell,
+  //       title: 'Choose pod',
+  //       customSubmit: (dialogFormValue: PodDialogFormValue) => this.onChooseShell(dialogFormValue),
+  //     },
+  //   });
+  // }
 
   onChooseShell(value: PodDialogFormValue): void {
     this.podName = value.pods;

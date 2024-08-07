@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, EventEmitter, input, Output,
 } from '@angular/core';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 @Component({
@@ -11,7 +11,7 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDetailsPanelComponent {
-  readonly app = input<ChartRelease>();
+  readonly app = input<App>();
   readonly status = input<AppStatus>();
 
   @Output() startApp = new EventEmitter<void>();
