@@ -32,7 +32,7 @@ describe.skip('AppRowComponent', () => {
   //   },
   // } as ChartReleaseStats;
 
-  const status = AppStatus.Started;
+  const status = AppStatus.Running;
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,

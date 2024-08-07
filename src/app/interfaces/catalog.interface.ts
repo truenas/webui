@@ -76,7 +76,8 @@ export interface CatalogAppVersion {
 
 export interface ChartMetadata {
   apiVersion: string;
-  appVersion: string;
+  appVersion?: string;
+  app_version: string;
   dependencies: ChartMetadataDependency[];
   latest_chart_version: string;
   description: string;

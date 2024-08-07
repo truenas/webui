@@ -1,6 +1,6 @@
 <div class="app-header">
   <h3 *ixWithLoadingState="app() as app" class="name">{{ app.name }}</h3>
-  <div *ixWithLoadingState="app() as app" class="version">v{{ app.metadata?.appVersion }}</div>
+  <div *ixWithLoadingState="app() as app" class="version">v{{ app.metadata?.app_version }}</div>
 </div>
 <div class="app-status">
   <ix-app-status-cell

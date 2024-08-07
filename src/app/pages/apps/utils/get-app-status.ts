@@ -12,7 +12,7 @@ export function getAppStatus(app: App, job?: Job<void, AppStartQueryParams>): Ap
 
   switch (app.state) {
     case CatalogAppState.Active:
-      status = AppStatus.Started;
+      status = AppStatus.Running;
       break;
     case CatalogAppState.Deploying:
       status = AppStatus.Deploying;
@@ -48,7 +48,7 @@ export function getAppStatus(app: App, job?: Job<void, AppStartQueryParams>): Ap
       // && params.replica_count >= 1
       && app.state !== CatalogAppState.Deploying
     ) {
-      status = AppStatus.Started;
+      status = AppStatus.Running;
     }
     if (
       job.state === JobState.Success
