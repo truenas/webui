@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { ChartSchemaNode } from 'app/interfaces/app.interface';
 
 @Component({
   selector: 'ix-list',

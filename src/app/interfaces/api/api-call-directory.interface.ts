@@ -27,6 +27,11 @@ import {
 } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
+import {
+  App,
+  AppQueryParams,
+  AppUpgradeParams,
+} from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
@@ -51,11 +56,6 @@ import {
   CertificateProfiles,
   ExtendedKeyUsageChoices,
 } from 'app/interfaces/certificate.interface';
-import {
-  App,
-  ChartReleaseQueryParams,
-  AppUpgradeParams,
-} from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import {
   CloudBackup,
@@ -374,7 +374,7 @@ export interface ApiCallDirectory {
   };
 
   // Apps
-  'app.query': { params: ChartReleaseQueryParams; response: App[] };
+  'app.query': { params: AppQueryParams; response: App[] };
   'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
 
   // Chart

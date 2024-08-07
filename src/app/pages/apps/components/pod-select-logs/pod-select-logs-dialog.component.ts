@@ -66,9 +66,9 @@ export class PodSelectLogsDialogComponent implements OnInit {
         return EMPTY;
       }),
       untilDestroyed(this),
-    ).subscribe((charts) => {
-      charts.forEach((chart) => {
-        this.apps.push(chart.name);
+    ).subscribe((apps) => {
+      apps.forEach((app) => {
+        this.apps.push(app.name);
       });
       this.fillForm();
     });

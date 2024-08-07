@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import {
   AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaList, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';

@@ -20,13 +20,12 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter,
 } from 'rxjs';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -370,14 +369,14 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     const checkedNames = this.checkedAppsNames;
     const name = checkedNames.join(', ');
     this.dialogService.confirm({
-      title: helptextApps.charts.delete_dialog.title,
+      title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.dialogService.jobDialog(
           this.ws.job('core.bulk', ['app.delete', checkedNames.map((item) => [item])]),
-          { title: helptextApps.charts.delete_dialog.job },
+          { title: helptextApps.apps.delete_dialog.job },
         )
           .afterClosed()
           .pipe(this.errorHandler.catchError(), untilDestroyed(this))
@@ -409,10 +408,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return getAppStatus(app, job);
   }
 
-  sortChanged(sort: Sort, charts?: App[]): void {
+  sortChanged(sort: Sort, apps?: App[]): void {
     this.sortingInfo = sort;
 
-    this.dataSource = (charts || this.dataSource).sort((a, b) => {
+    this.dataSource = (apps || this.dataSource).sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
       switch (sort.active as SortableField) {
@@ -437,9 +436,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const app = appId && this.dataSource.find((chart) => chart.id === appId);
-    if (app) {
-      this.selectedApp = app;
+    const selectedApp = appId && this.dataSource.find((app) => app.id === appId);
+    if (selectedApp) {
+      this.selectedApp = selectedApp;
       this.cdr.markForCheck();
       return;
     }

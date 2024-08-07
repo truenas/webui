@@ -52,7 +52,7 @@ export const helptextApps = {
     action: T('Create Pool'),
   },
 
-  charts: {
+  apps: {
     delete_dialog: {
       title: T('Delete'),
       job: T('Deleting...'),
@@ -72,7 +72,7 @@ export const helptextApps = {
     },
   },
 
-  chartForm: {
+  appForm: {
     title: T('Install Application'),
     editTitle: T('Edit Application Settings'),
     parseError: {
@@ -99,7 +99,7 @@ export const helptextApps = {
     externalLabel: T('Add External Interfaces'),
   },
 
-  chartWizard: {
+  appWizard: {
     nameGroup: {
       label: 'Application Name',
       version: 'Version',

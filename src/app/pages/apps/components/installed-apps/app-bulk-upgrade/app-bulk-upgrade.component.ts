@@ -16,8 +16,8 @@ import {
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
+import { App, AppUpgradeParams } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { App, AppUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';

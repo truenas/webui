@@ -1,5 +1,5 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 

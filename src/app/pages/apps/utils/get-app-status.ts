@@ -1,6 +1,5 @@
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
