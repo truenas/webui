@@ -20,6 +20,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { WebSocketService } from 'app/services/ws.service';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 
 const fakeAppOne = {
   name: 'test-app-one',
@@ -30,7 +31,7 @@ const fakeAppOne = {
   catalog_train: 'charts',
   path: '/mnt/tank/ix-applications/releases/test-pihole',
   dataset: 'tank/ix-applications/releases/test-pihole',
-  state: 'ACTIVE',
+  state: CatalogAppState.Active,
   history: {},
   upgrade_available: true,
   human_version: '2022.10_1.0.7',
@@ -52,7 +53,7 @@ const fakeAppTwo = {
   catalog_train: 'charts',
   path: '/mnt/tank/ix-applications/releases/test-nextcloud',
   dataset: 'tank/ix-applications/releases/test-nextcloud',
-  state: 'ACTIVE',
+  state: CatalogAppState.Active,
   history: {},
   upgrade_available: true,
   human_version: '25_1.6.33',

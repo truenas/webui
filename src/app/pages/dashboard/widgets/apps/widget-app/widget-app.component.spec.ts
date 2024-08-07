@@ -32,8 +32,8 @@ describe('WidgetAppComponent', () => {
     id: 'testapp',
     name: 'TestApp',
     portals: {
-      web_portal: ['http://test.com'],
-    } as Record<string, string[]>,
+      'Web UI': 'http://test.com',
+    } as Record<string, string>,
     state: CatalogAppState.Active,
     upgrade_available: true,
     container_images_update_available: false,
@@ -42,7 +42,7 @@ describe('WidgetAppComponent', () => {
       appVersion: '1.0',
     },
     catalog: 'truenas',
-    catalog_train: 'charts',
+    catalog_train: 'stable',
   } as App;
 
   const createComponent = createComponentFactory({
@@ -68,6 +68,8 @@ describe('WidgetAppComponent', () => {
       mockProvider(WidgetResourcesService, {
         serverTime$: of(new Date()),
         getApp: () => of(app),
+        getAppStats: () => of(),
+        getAppStatusUpdates: () => of(),
       }),
       mockProvider(RedirectService, {
         openWindow: jest.fn(),
