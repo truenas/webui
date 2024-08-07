@@ -5,7 +5,7 @@ import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ixApplications } from 'app/pages/datasets/utils/dataset.utils';
+import { ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -26,7 +26,7 @@ export class RolesCardComponent {
   protected readonly smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   get isApplications(): boolean {
-    return this.dataset.name && this.dataset.name.endsWith(ixApplications);
+    return this.dataset.name && this.dataset.name.endsWith(ixAppsDataset);
   }
 
   get appsNames(): string {
