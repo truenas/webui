@@ -5,7 +5,11 @@
     </h3>
   </mat-card-header>
   <mat-card-content>
-    <!-- TODO: Loading state -->
+    @if (isLoading(); as loading) {
+      <ix-fake-progress-bar
+        [loading]="loading"
+      ></ix-fake-progress-bar>
+    }
     <div class="container">
       <div class="enclosure-column">
         <ix-mini-pools></ix-mini-pools>
