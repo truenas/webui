@@ -7,14 +7,12 @@ import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interface
 import {
   ChartRollbackParams,
   AppStartQueryParams,
-  ChartScaleResult,
   AppDeleteParams,
 } from 'app/interfaces/chart-release-event.interface';
 import {
   App,
   AppCreate,
   AppUpdate,
-  AppUpgrade,
   AppUpgradeParams,
 } from 'app/interfaces/chart-release.interface';
 import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
@@ -89,12 +87,7 @@ export interface ApiJobDirectory {
   'app.upgrade': { params: AppUpgradeParams; response: App };
 
   // Chart Release
-  'chart.release.create': { params: [AppCreate]; response: App };
-  'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
   'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
-  'chart.release.scale': { params: AppStartQueryParams; response: ChartScaleResult };
-  'chart.release.update': { params: [name: string, update: AppUpdate]; response: App };
-  'chart.release.upgrade': { params: [name: string, upgrade: AppUpgrade]; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };

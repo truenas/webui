@@ -142,7 +142,7 @@ describe('RolesCardComponent', () => {
       name: 'root/ix-applications',
     });
     expect(spectator.query('.apps.value')).toHaveText(
-      'This dataset is used to store Kubernetes config and other container related data',
+      'This dataset is used to store apps config and other container related data',
     );
   });
 

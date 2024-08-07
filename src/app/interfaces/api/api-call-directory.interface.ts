@@ -52,9 +52,6 @@ import {
   ExtendedKeyUsageChoices,
 } from 'app/interfaces/certificate.interface';
 import {
-  ChartReleaseEvent,
-} from 'app/interfaces/chart-release-event.interface';
-import {
   App,
   ChartReleaseQueryParams,
   AppUpgradeParams,
@@ -381,12 +378,8 @@ export interface ApiCallDirectory {
   'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
 
   // Chart
-  'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
-  'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
-  'chart.release.query': { params: ChartReleaseQueryParams; response: App[] };
-  'chart.release.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
 
   // CloudBackup
   'cloud_backup.abort': { params: [id: number]; response: void };

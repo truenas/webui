@@ -1043,6 +1043,7 @@
   "This dataset is used by: {apps}": "",
   "This dataset is used by: {vms}": "",
   "This dataset is used to store Kubernetes config and other container related data": "",
+  "This dataset is used to store apps config and other container related data": "",
   "This disk is part of the exported pool {pool}. Wiping this disk will make {pool} unable\n  to import. You will lose any and all data in {pool}. Please make sure that any sensitive data in {pool} is backed up before wiping this disk.": "",
   "This is a production system": "",
   "This node is currently configuring the system dataset.": "",

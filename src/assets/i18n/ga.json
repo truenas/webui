@@ -7,6 +7,7 @@
   "Network Reconnection Issue": "",
   "Pool Usage": "",
   "Support License": "",
+  "This dataset is used to store apps config and other container related data": "",
   "We encountered an issue while applying the new network changes.  Unfortunately, we were unable to reconnect to the system after the changes were implemented.  As a result, we have restored the previous network configuration to ensure continued connectivity.": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{coreCount, plural, one {# core} other {# cores} }": "",
