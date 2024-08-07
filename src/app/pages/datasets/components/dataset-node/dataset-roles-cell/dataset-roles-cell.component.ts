@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import _ from 'lodash';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { doesDatasetHaveShares, isRootDataset, ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { doesDatasetHaveShares, ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
   selector: 'ix-dataset-roles-cell',
@@ -14,8 +14,6 @@ import { doesDatasetHaveShares, isRootDataset, ixAppsDataset } from 'app/pages/d
 export class DatasetRolesCellComponent {
   readonly dataset = input.required<DatasetDetails>();
   readonly isSystemDataset = input.required<boolean>();
-
-  readonly isRoot = computed(() => isRootDataset(this.dataset()));
 
   readonly isApps = computed(() => this.dataset().name.endsWith(ixAppsDataset));
   readonly appNames = computed(() => _.uniq(this.dataset().apps.map((app) => app.name)).join(', '));

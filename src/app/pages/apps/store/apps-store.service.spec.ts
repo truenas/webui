@@ -82,7 +82,6 @@ describe('AppsStore', () => {
           ...initialState,
           availableApps: [...availableApps],
           categories: ['storage', 'media'],
-          catalogs: ['TRUENAS'],
           latestApps: [{ ...installedAndRecommendedApp }],
           recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'recommended'] }],
 
