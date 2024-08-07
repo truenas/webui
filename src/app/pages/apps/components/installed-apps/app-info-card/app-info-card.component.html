@@ -5,6 +5,7 @@
     </h3>
     <div>
       <button
+        *ixRequiresRoles="requiredRoles"
         id="edit-app"
         mat-button
         [ixTest]="[app?.name, 'edit']"
@@ -12,18 +13,18 @@
       >
         {{ 'Edit' | translate }}
       </button>
-      <ng-container *ixRequiresRoles="requiredRoles">
-        @if (hasUpdates) {
-          <button
-            id="update-app"
-            mat-button
-            [ixTest]="[app?.name, 'update']"
-            (click)="updateButtonPressed()"
-          >
-            {{ 'Update' | translate }}
-          </button>
-        }
-      </ng-container>
+
+      @if (hasUpdates) {
+        <button
+          *ixRequiresRoles="requiredRoles"
+          id="update-app"
+          mat-button
+          [ixTest]="[app?.name, 'update']"
+          (click)="updateButtonPressed()"
+        >
+          {{ 'Update' | translate }}
+        </button>
+      }
     </div>
   </mat-card-header>
   <mat-card-content>
