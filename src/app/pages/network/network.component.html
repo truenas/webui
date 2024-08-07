@@ -30,7 +30,7 @@
 
                 <mat-error *ngIf="!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern">
                   <span>
-                    {{ 'Value must be greater than {label}' | translate: { label: checkinTimeoutMinValue } }}
+                    {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
                   </span>
                 </mat-error>
               </div>
