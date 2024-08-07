@@ -6,6 +6,7 @@
 
 .slots-and-numbers {
   padding-top: 20px;
+  position: relative;
 
   .slot-number {
     background-color: var(--primary);
@@ -18,16 +19,67 @@
   }
 
   .slot {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     white-space: nowrap;
+  }
+
+  &.mini-3e {
+    padding-top: 55px;
+  }
+
+  &.mini-3x {
+    padding-top: 28px;
+
+    .slot:nth-last-child(2) {
+      margin-bottom: 1px;
+    }
+  }
+
+  &.mini-3xl {
+    padding-top: 50px;
+
+    .slot:nth-child(4) {
+      margin-bottom: 44px;
+    }
+
+    .slot:last-child {
+      position: absolute;
+      top: 5px;
+    }
   }
 }
 
 .disk-status {
   padding-top: 20px;
+  position: relative;
 
   .slot {
-    margin-bottom: 7px;
+    margin-bottom: 11.5px;
+  }
+
+  &.mini-3e {
+    padding-top: 55px;
+  }
+
+  &.mini-3x {
+    padding-top: 28px;
+
+    .slot:nth-last-child(2) {
+      margin-bottom: -2px;
+    }
+  }
+
+  &.mini-3xl {
+    padding-top: 50px;
+
+    .slot:nth-child(4) {
+      margin-bottom: 38px;
+    }
+
+    .slot:last-child {
+      position: absolute;
+      top: 5px;
+    }
   }
 }
 
