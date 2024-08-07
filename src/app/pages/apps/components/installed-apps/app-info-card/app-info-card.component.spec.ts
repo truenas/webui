@@ -192,7 +192,7 @@ describe('AppInfoCardComponent', () => {
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'app.delete',
-      [app.name, { delete_unused_images: true }],
+      [app.name, { remove_images: true }],
     );
   });
 
