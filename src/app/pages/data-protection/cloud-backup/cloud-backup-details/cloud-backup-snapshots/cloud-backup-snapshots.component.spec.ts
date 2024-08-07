@@ -113,13 +113,6 @@ describe('CloudBackupSnapshotsComponent', () => {
     });
   });
 
-  it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
-    await deleteButton.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.delete', [1]);
-  });
-
   it('should show table rows', async () => {
     const expectedRows = [
       ['Snapshot Time', 'Hostname', ''],
@@ -129,5 +122,12 @@ describe('CloudBackupSnapshotsComponent', () => {
 
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('opens delete dialog when "Delete" button is pressed', async () => {
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
+    await deleteButton.click();
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.delete_snapshot', [1, 'second']);
   });
 });
