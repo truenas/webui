@@ -174,7 +174,7 @@ export class NetworkComponent implements OnInit {
     );
   }
 
-  private handleWaitingCheckIn(seconds: number): void {
+  private handleWaitingCheckIn(seconds: number, isAfterInterfaceCommit = false): void {
     if (seconds !== null) {
       if (seconds > 0 && this.checkinRemaining === null) {
         this.checkinRemaining = Math.round(seconds);
@@ -197,6 +197,14 @@ export class NetworkComponent implements OnInit {
       this.checkinRemaining = null;
       if (this.checkinInterval) {
         clearInterval(this.checkinInterval);
+      }
+      // Inform user that we have restored the previous network configuration to ensure continued connectivity.
+      if (isAfterInterfaceCommit) {
+        this.hasPendingChanges = false;
+        this.dialogService.warn(
+          this.translate.instant(this.helptext.network_reconnection_issue),
+          this.translate.instant(this.helptext.network_reconnection_issue_text),
+        );
       }
     }
   }
@@ -252,7 +260,7 @@ export class NetworkComponent implements OnInit {
               .subscribe((checkInSeconds) => {
                 this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: false }));
                 this.interfacesStore.loadInterfaces();
-                this.handleWaitingCheckIn(checkInSeconds);
+                this.handleWaitingCheckIn(checkInSeconds, true);
                 this.cdr.markForCheck();
               });
           });

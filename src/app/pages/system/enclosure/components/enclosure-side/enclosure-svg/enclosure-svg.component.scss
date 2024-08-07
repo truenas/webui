@@ -2,6 +2,7 @@
 
 :host {
   display: block;
+  max-height: inherit;
 
   @media (max-width: $breakpoint-md) {
     margin: 0 auto;
@@ -10,11 +11,18 @@
 }
 
 .svg-container {
+  max-height: inherit;
+  text-align: center;
+
   &.static {
     pointer-events: none;
   }
 
   ::ng-deep {
+    svg {
+      max-height: inherit;
+    }
+
     .overlay-rect {
       cursor: pointer;
       fill: var(--black);
