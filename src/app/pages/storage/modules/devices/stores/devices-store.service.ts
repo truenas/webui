@@ -122,7 +122,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
       switchMap(() => {
         return this.ws.call('smart.test.disk_choices').pipe(
           tap((disksWithSmartSupport) => {
-            this.patchState({ disksWithSmartSupport: Object.keys(disksWithSmartSupport) });
+            this.patchState({ disksWithSmartSupport: Object.values(disksWithSmartSupport) });
           }),
         );
       }),

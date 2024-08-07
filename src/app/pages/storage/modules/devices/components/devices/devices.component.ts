@@ -97,6 +97,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.devicesStore.loadDisksWithSmartSupport();
     this.poolId = Number(this.route.snapshot.paramMap.get('poolId'));
     this.devicesStore.loadNodes(this.poolId);
     this.listenForRouteChanges();

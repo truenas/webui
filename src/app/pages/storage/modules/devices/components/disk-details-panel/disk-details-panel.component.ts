@@ -47,7 +47,7 @@ export class DiskDetailsPanelComponent {
   }
 
   get hasSmartTestSupport(): boolean {
-    return this.disksWithSmartSupport.includes(this.disk.name);
+    return this.disksWithSmartSupport.includes(this.disk.devname);
   }
 
   onCloseMobileDetails(): void {
