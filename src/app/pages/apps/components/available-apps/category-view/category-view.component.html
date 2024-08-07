@@ -16,8 +16,8 @@
     @for (app of apps$ | async; track trackByAppId($index, app)) {
       <ix-app-card
         [app]="app"
-        [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
-        (keyup.enter)="router.navigate(['/apps', 'available', app.catalog, app.train, app.name])"
+        [routerLink]="['/apps', 'available', app.train, app.name]"
+        (keyup.enter)="router.navigate(['/apps', 'available', app.train, app.name])"
       ></ix-app-card>
     }
   </div>

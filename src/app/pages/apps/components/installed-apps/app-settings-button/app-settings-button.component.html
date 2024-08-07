@@ -17,7 +17,7 @@
   >
     {{ 'Choose Pool' | translate }}
   </button>
-  
+
   @if (!!(dockerStore.selectedPool$ | async)) {
     <button
       mat-menu-item
@@ -36,6 +36,6 @@
     ixTest="update-preferred-trains"
     (click)="manageCatalog()"
   >
-    {{ 'Manage Catalog' | translate }}
+    {{ 'Train Settings' | translate }}
   </button>
 </mat-menu>

@@ -336,7 +336,7 @@ describe('ChartWizardComponent', () => {
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'app_name']);
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'charts', 'app_name']);
     });
 
     it('shows values for an existing data when form is opened for edit', () => {
@@ -393,7 +393,7 @@ describe('ChartWizardComponent', () => {
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'TRUENAS', 'charts', 'ipfs']);
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'charts', 'ipfs']);
     });
 
     it('checks validation error when app name already in use', async () => {

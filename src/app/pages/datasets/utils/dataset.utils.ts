@@ -3,7 +3,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
-export const ixApplications = 'ix-applications';
+export const ixAppsDataset = 'ix-apps';
 
 export function getDatasetLabel(dataset: Pick<Dataset, 'name'>): string {
   if (!dataset?.name) {
@@ -38,24 +38,24 @@ export function isPropertyInherited(property: ZfsProperty<unknown>): boolean {
     || property.source === ZfsPropertySource.Default;
 }
 
-export function isDatasetOrChildrenHasShares(dataset: DatasetDetails): boolean {
+export function doesDatasetOrChildrenHaveShares(dataset: DatasetDetails): boolean {
   if (dataset.nfs_shares?.length || dataset.smb_shares?.length || dataset.iscsi_shares?.length) {
     return true;
   }
   for (const child of dataset.children) {
-    if (isDatasetOrChildrenHasShares(child)) {
+    if (doesDatasetOrChildrenHaveShares(child)) {
       return true;
     }
   }
   return false;
 }
 
-export function isDatasetHasShares(dataset: DatasetDetails): boolean {
+export function doesDatasetHaveShares(dataset: DatasetDetails): boolean {
   if (!dataset.children?.length) {
     return false;
   }
   for (const child of dataset.children) {
-    if (isDatasetOrChildrenHasShares(child)) {
+    if (doesDatasetOrChildrenHaveShares(child)) {
       return true;
     }
   }

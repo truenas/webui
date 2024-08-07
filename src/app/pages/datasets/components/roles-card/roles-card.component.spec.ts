@@ -136,13 +136,13 @@ describe('RolesCardComponent', () => {
     );
   });
 
-  it('shows apps row when dataset has name `ix-applications`', () => {
+  it('shows apps row when dataset has name `ix-apps`', () => {
     spectator.setInput('dataset', {
       ...datasetDummy,
-      name: 'root/ix-applications',
+      name: 'root/ix-apps',
     });
     expect(spectator.query('.apps.value')).toHaveText(
-      'This dataset is used to store Kubernetes config and other container related data',
+      'This dataset is used to store apps config and other container related data',
     );
   });
 

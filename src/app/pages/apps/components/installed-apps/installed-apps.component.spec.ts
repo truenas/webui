@@ -69,7 +69,6 @@ describe('InstalledAppsComponent', () => {
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([]),
-        catalogs$: of([]),
       }),
       provideMockStore({
         selectors: [
@@ -119,7 +118,7 @@ describe('InstalledAppsComponent', () => {
   it('shows details', () => {
     spectator.click(spectator.query('ix-app-row'));
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([
-      '/apps/installed', 'test-catalog', 'test-catalog-train', 'ix-test-app',
+      '/apps/installed', 'test-catalog-train', 'ix-test-app',
     ]);
   });
 

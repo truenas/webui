@@ -166,8 +166,17 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       ),
       switchMap(() => this.dockerStore.isDockerStarted$),
       filter((isDockerStarted) => isDockerStarted !== null),
+      tap((isDockerStarted) => {
+        if (isDockerStarted) {
+          this.subscribeToInstalledAppsUpdates();
+        }
+      }),
       switchMap((isDockerStarted) => {
-        return isDockerStarted ? this.appsService.getAllApps().pipe(
+        if (!isDockerStarted) {
+          return of([]);
+        }
+
+        return this.appsService.getAllApps().pipe(
           tap((installedApps: App[]) => {
             this.patchState((state: InstalledAppsState): InstalledAppsState => {
               return {
@@ -175,11 +184,8 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
                 installedApps: [...installedApps],
               };
             });
-            if (isDockerStarted) {
-              this.subscribeToInstalledAppsUpdates();
-            }
           }),
-        ) : of([]);
+        );
       }),
     );
   }

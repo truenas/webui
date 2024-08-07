@@ -1,8 +1,6 @@
-/* eslint-disable */
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
-import { officialCatalog } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { App } from 'app/interfaces/chart-release.interface';
@@ -13,24 +11,13 @@ import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
-// TODO:
-describe.skip('AppRowComponent', () => {
+describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
   const app = {
     name: 'app_name',
     state: CatalogAppState.Active,
     metadata: { icon: 'https://image/' },
-    catalog: officialCatalog,
   } as App;
-
-  // const stats = {
-  //   cpu: 50.155,
-  //   memory: 20000000,
-  //   network: {
-  //     incoming: 50000000,
-  //     outgoing: 55500000,
-  //   },
-  // } as ChartReleaseStats;
 
   const status = AppStatus.Running;
 
@@ -51,7 +38,11 @@ describe.skip('AppRowComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { app, status },
+      props: {
+        app,
+        status,
+        selected: false,
+      },
     });
   });
 
@@ -71,7 +62,8 @@ describe.skip('AppRowComponent', () => {
     expect(updateCell.hasUpdate).toBeFalsy();
   });
 
-  it('shows app usages statistics', () => {
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130471
+  it.skip('shows app usages statistics', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('50%');
     expect(spectator.query('.cell-ram')).toHaveText('19.07 MiB');
     expect(spectator.query('.cell-network')).toHaveText('50 Mb/s - 55.5 Mb/s');
