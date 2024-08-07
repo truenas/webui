@@ -38,7 +38,7 @@ describe('WidgetAppComponent', () => {
       web_portal: ['http://test.com'],
     } as Record<string, string[]>,
     state: CatalogAppState.Active,
-    update_available: true,
+    upgrade_available: true,
     container_images_update_available: false,
     metadata: {
       icon: 'http://localhost/test-app.png',

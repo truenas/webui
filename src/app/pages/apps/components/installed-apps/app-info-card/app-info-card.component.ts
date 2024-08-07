@@ -68,7 +68,7 @@ export class AppInfoCardComponent {
   ) {}
 
   get hasUpdates(): boolean {
-    return this.app?.update_available || this.app?.container_images_update_available;
+    return this.app?.upgrade_available || this.app?.container_images_update_available;
   }
 
   get ixChartApp(): boolean {
