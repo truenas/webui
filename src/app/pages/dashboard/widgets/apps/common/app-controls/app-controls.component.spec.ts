@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, Observable } from 'rxjs';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,16 +24,16 @@ describe('AppControlsComponent', () => {
     portals: {
       web_portal: ['http://test.com'],
     } as Record<string, string[]>,
-    status: ChartReleaseStatus.Active,
-    update_available: true,
+    status: CatalogAppState.Active,
+    upgrade_available: true,
     container_images_update_available: false,
-    chart_metadata: {
+    metadata: {
       icon: 'http://localhost/test-app.png',
-      appVersion: '1.0',
+      app_version: '1.0',
     },
     catalog: 'truenas',
     catalog_train: 'charts',
-  } as ChartRelease;
+  } as unknown as App;
 
   const createComponent = createComponentFactory({
     component: AppControlsComponent,
@@ -45,7 +45,7 @@ describe('AppControlsComponent', () => {
       mockProvider(ApplicationsService, {
         restartApplication: jest.fn(() => of(true)),
         getInstalledAppsStatusUpdates: jest.fn(() => {
-          return of() as Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>>;
+          return of() as Observable<ApiEvent<Job<void, AppStartQueryParams>>>;
         }),
       }),
       mockProvider(SnackbarService, {
@@ -61,7 +61,7 @@ describe('AppControlsComponent', () => {
           isLoading: false,
           error: null,
           value: app,
-        } as LoadingState<ChartRelease>,
+        } as LoadingState<App>,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

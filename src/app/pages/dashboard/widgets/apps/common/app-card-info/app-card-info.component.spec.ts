@@ -2,8 +2,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
@@ -24,12 +24,12 @@ describe('AppCardInfoComponent', () => {
           error: null,
           value: {
             name: 'TestApp',
-            chart_metadata: {
-              appVersion: '1.0.0',
+            metadata: {
+              app_version: '1.0.0',
             },
           },
-        } as LoadingState<ChartRelease>,
-        job: {} as Job<ChartScaleResult, ChartScaleQueryParams>,
+        } as LoadingState<App>,
+        job: {} as Job<void, AppStartQueryParams>,
       },
     });
   });

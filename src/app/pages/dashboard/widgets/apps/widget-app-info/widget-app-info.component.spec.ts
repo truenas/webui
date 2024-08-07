@@ -2,10 +2,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -31,16 +31,16 @@ describe('WidgetAppInfoComponent', () => {
     portals: {
       web_portal: ['http://test.com'],
     } as Record<string, string[]>,
-    status: ChartReleaseStatus.Active,
-    update_available: true,
+    status: CatalogAppState.Active,
+    upgrade_available: true,
     container_images_update_available: false,
-    chart_metadata: {
+    metadata: {
       icon: 'http://localhost/test-app.png',
-      appVersion: '1.0',
+      app_version: '1.0',
     },
     catalog: 'truenas',
     catalog_train: 'charts',
-  } as ChartRelease;
+  } as unknown as App;
 
   const createComponent = createComponentFactory({
     component: WidgetAppInfoComponent,
@@ -70,7 +70,7 @@ describe('WidgetAppInfoComponent', () => {
       mockProvider(ApplicationsService, {
         restartApplication: jest.fn(() => of(true)),
         getInstalledAppsStatusUpdates: jest.fn(() => {
-          return of() as Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>>;
+          return of() as Observable<ApiEvent<Job<void, AppStartQueryParams>>>;
         }),
       }),
       mockProvider(DialogService, {
