@@ -28,7 +28,6 @@
 .disk-details-container {
   display: flex;
   height: 100%;
-  overflow: auto;
 
   @media (max-width: $breakpoint-sm) {
     flex-wrap: wrap;
@@ -72,5 +71,6 @@
   font-size: 20px;
   height: 100%;
   justify-content: center;
+  min-height: 200px;
   padding-bottom: 5px;
 }

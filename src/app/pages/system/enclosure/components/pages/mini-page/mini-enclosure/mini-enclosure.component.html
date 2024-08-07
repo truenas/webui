@@ -1,4 +1,9 @@
-<div class="slots-and-numbers">
+<div
+  class="slots-and-numbers"
+  [class.mini-3e]="isMini3E()"
+  [class.mini-3x]="isMini3X()"
+  [class.mini-3xl]="isMini3Xl()"
+>
   @for (slot of slots(); track slot.drive_bay_number; let index = $index) {
     <div class="slot">
       <span class="slot-number">{{ index + 1 }}</span>
@@ -18,7 +23,12 @@
   ></ix-enclosure-side>
 </div>
 
-<div class="disk-status">
+<div
+  class="disk-status"
+  [class.mini-3e]="isMini3E()"
+  [class.mini-3x]="isMini3X()"
+  [class.mini-3xl]="isMini3Xl()"
+>
   @for (slot of slots(); track slot.drive_bay_number; let index = $index) {
     <div class="slot">
       <div class="slot-status">

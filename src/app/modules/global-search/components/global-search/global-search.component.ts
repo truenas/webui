@@ -216,7 +216,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private handleFocusOut(event: FocusEvent): void {
     const relatedTarget = event.relatedTarget as HTMLElement;
-    if (!relatedTarget || !this.searchBoxWrapper.nativeElement.contains(relatedTarget)) {
+    if (relatedTarget && !this.searchBoxWrapper.nativeElement.contains(relatedTarget)) {
       this.detachOverlay();
     }
   }
