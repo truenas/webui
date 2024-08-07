@@ -72,7 +72,7 @@ export class ApplicationsService {
     return this.getAppsFetchCall('app.available', filters).pipe(filterIgnoredApps());
   }
 
-  getAppSimilarApps(app: AvailableApp): Observable<AvailableApp[]> {
+  getSimilarApps(app: AvailableApp): Observable<AvailableApp[]> {
     return this.ws.call('app.similar', [app.name, app.train]);
   }
 
