@@ -49,7 +49,7 @@ export class AppDetailsHeaderComponent {
     this.installedAppsStore.installedApps$.pipe(
       map((apps) => {
         return apps.filter((app) => {
-          return app.chart_metadata.name === this.app.name
+          return app.metadata.name === this.app.name
             && app.catalog === this.app.catalog
             && app.catalog_train === this.app.train;
         });

@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="details-item">
-        <div class="label">{{ 'Deployments' | translate }}:</div>
+        <div class="lael">{{ 'Deployments' | translate }}:</div>
         <div class="value">
           @if (app?.resources?.deployments) {
             {{ app.resources.deployments.length }}
@@ -51,7 +51,8 @@
         </div>
       </div>
     </div>
-    <div class="containers">
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130379 -->
+    <!-- <div class="containers">
       <h4>{{ 'Containers' | translate }}</h4>
       <div class="container-list">
         @if (!isLoading || containerImages) {
@@ -102,7 +103,7 @@
           <ngx-skeleton-loader></ngx-skeleton-loader>
         }
       </div>
-    </div>
+    </div> -->
   </mat-card-content>
 </mat-card>
 

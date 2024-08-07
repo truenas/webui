@@ -10,7 +10,7 @@
 <div class="cell cell-name">
   <div class="name">
     <div class="app-logo">
-      <img [src]="app.chart_metadata.icon" [src-fallback]="imagePlaceholder" />
+      <img [src]="app.metadata.icon" [src-fallback]="imagePlaceholder" />
     </div>
 
     <div class="app-name">{{ app.name }}</div>
@@ -22,35 +22,6 @@
     [job]="job"
     (click)="statusPressed(); $event.stopPropagation()"
   ></ix-app-status-cell>
-</div>
-<div class="cell cell-cpu" [matTooltip]="'Percentage of total core utilization' | translate">
-  @if (stats && stats.cpu !== undefined) {
-    <span>
-      {{ stats.cpu.toFixed(0) }}%
-    </span>
-  } @else {
-    {{ 'N/A' | translate }}
-  }
-</div>
-<div class="cell cell-ram" [matTooltip]="'Memory usage of app' | translate">
-  @if (stats?.memory !== undefined) {
-    <span>
-      {{ stats.memory | ixFileSize }}
-    </span>
-  } @else {
-    {{ 'N/A' | translate }}
-  }
-</div>
-<div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
-  @if (stats?.network?.incoming !== undefined) {
-    <span>
-      {{ stats.network.incoming | ixNetworkSpeed }}
-      -
-      {{ stats.network.outgoing | ixNetworkSpeed }}
-    </span>
-  } @else {
-    {{ 'N/A' | translate }}
-  }
 </div>
 <div class="cell cell-update">
   <ix-app-update-cell [app]="app" [showIcon]="true"></ix-app-update-cell>

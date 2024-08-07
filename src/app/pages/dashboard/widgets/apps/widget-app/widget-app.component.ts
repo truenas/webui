@@ -2,14 +2,12 @@ import {
   Component, ChangeDetectionStrategy, input,
   computed,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app.definition';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-app',
   templateUrl: './widget-app.component.html',

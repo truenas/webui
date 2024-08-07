@@ -1,4 +1,4 @@
-<mat-card class="card" fxLayout="column" [ixUiSearch]="searchableElements.elements.zfsHealth">
+<mat-card class="card" [ixUiSearch]="searchableElements.elements.zfsHealth">
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'ZFS Health' | translate }}
@@ -52,7 +52,7 @@
 
   </mat-card-header>
 
-  <mat-card-content fxLayout="column" fxFlex="100">
+  <mat-card-content class="card-content">
     <div class="details-item">
       <div class="label">{{ 'Pool Status' | translate }}:</div>
       <div class="value">{{ pool.status | mapValue: poolStatusLabels | translate }}</div>

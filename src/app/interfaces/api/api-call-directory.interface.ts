@@ -27,7 +27,7 @@ import {
 } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { LoginQuery } from 'app/interfaces/auth.interface';
@@ -40,9 +40,6 @@ import {
 } from 'app/interfaces/bootenv.interface';
 import {
   Catalog, CatalogApp,
-  CatalogItems,
-  CatalogItemsQueryParams,
-  CatalogQueryParams,
   CatalogUpdate, GetItemDetailsParams,
 } from 'app/interfaces/catalog.interface';
 import {
@@ -58,9 +55,9 @@ import {
   ChartReleaseEvent,
 } from 'app/interfaces/chart-release-event.interface';
 import {
-  ChartRelease,
+  App,
   ChartReleaseQueryParams,
-  ChartReleaseUpgradeParams,
+  AppUpgradeParams,
 } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import {
@@ -355,11 +352,9 @@ export interface ApiCallDirectory {
   'bootenv.update': { params: UpdateBootenvParams; response: string };
 
   // Catalog
-  'catalog.delete': { params: [name: string]; response: boolean };
-  'catalog.get_item_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
-  'catalog.items': { params: [label: string, params?: CatalogItemsQueryParams]; response: CatalogItems };
-  'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
-  'catalog.update': { params: [id: string, update: CatalogUpdate]; response: Catalog };
+  'catalog.get_app_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
+  'catalog.update': { params: [CatalogUpdate]; response: Catalog };
+  'catalog.config': { params: void; response: Catalog };
 
   // Certificate
   'certificate.acme_server_choices': { params: void; response: Choices };
@@ -381,13 +376,17 @@ export interface ApiCallDirectory {
     response: CertificateAuthority;
   };
 
+  // Apps
+  'app.query': { params: ChartReleaseQueryParams; response: App[] };
+  'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
+
   // Chart
   'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
   'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
-  'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
-  'chart.release.upgrade_summary': { params: ChartReleaseUpgradeParams; response: UpgradeSummary };
+  'chart.release.query': { params: ChartReleaseQueryParams; response: App[] };
+  'chart.release.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
 
   // CloudBackup
   'cloud_backup.abort': { params: [id: number]; response: void };

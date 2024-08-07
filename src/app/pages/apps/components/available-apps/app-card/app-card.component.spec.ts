@@ -3,7 +3,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -17,7 +17,7 @@ describe('AppCardComponent', () => {
     ],
     providers: [
       mockProvider(InstalledAppsStore, {
-        installedApps$: of([{}, {}, {}] as ChartRelease[]),
+        installedApps$: of([{}, {}, {}] as App[]),
       }),
     ],
   });

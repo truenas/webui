@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { ChartRollbackParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -23,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AppRollbackModalComponent {
   form = this.formBuilder.group({
-    item_version: ['', Validators.required],
+    app_version: ['', Validators.required],
     rollback_snapshot: [false],
   });
 
@@ -38,7 +38,7 @@ export class AppRollbackModalComponent {
     private dialogService: DialogService,
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) private chartRelease: ChartRelease,
+    @Inject(MAT_DIALOG_DATA) private chartRelease: App,
   ) {
     this.setVersionOptions();
   }
@@ -69,7 +69,7 @@ export class AppRollbackModalComponent {
 
   private selectFirstVersion(): void {
     this.form.patchValue({
-      item_version: Object.keys(this.chartRelease.history)[0],
+      app_version: Object.keys(this.chartRelease.history)[0],
     });
   }
 }

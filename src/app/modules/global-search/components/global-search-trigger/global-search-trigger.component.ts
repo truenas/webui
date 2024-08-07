@@ -47,7 +47,7 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
 
     this.overlayRef = this.overlay.create(overlayConfig);
 
-    this.overlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => this.detachOverlay());
+    this.overlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => this.detachOverlayAndFocusMainContent());
   }
 
   protected showOverlay(): void {
@@ -56,21 +56,27 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
     }
 
     const searchResultsPortal = new ComponentPortal(GlobalSearchComponent, this.viewContainerRef);
-    this.overlayRef.attach(searchResultsPortal);
+    const componentRef = this.overlayRef.attach(searchResultsPortal);
+    componentRef.instance.detachOverlay = this.detachOverlay.bind(this);
+
     this.cdr.markForCheck();
 
     this.searchProvider.selectionChanged$
       .pipe(take(1), delay(searchDelayConst), untilDestroyed(this))
-      .subscribe(() => this.detachOverlay());
+      .subscribe(() => this.detachOverlayAndFocusMainContent());
   }
 
   @HostListener('document:keydown.escape')
+  private detachOverlayAndFocusMainContent(): void {
+    this.detachOverlay();
+    this.focusService.focusFirstFocusableElement(document.querySelector('main'));
+  }
+
   private detachOverlay(): void {
     if (!this.overlayRef.hasAttached()) {
       return;
     }
     this.overlayRef.detach();
-    this.focusService.focusFirstFocusableElement(document.querySelector<HTMLElement>('.rightside-content-hold'));
     this.cdr.markForCheck();
   }
 }

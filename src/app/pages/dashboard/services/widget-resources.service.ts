@@ -2,14 +2,13 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { subHours, subMinutes } from 'date-fns';
 import {
-  Observable, Subject, combineLatestWith, debounceTime, filter,
+  EMPTY,
+  Observable, Subject, combineLatestWith, debounceTime,
   forkJoin, map, repeat, shareReplay, switchMap, take, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -35,14 +34,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetResourcesService {
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
-  readonly appStatsUpdates$ = this.ws.subscribe('chart.release.statistics').pipe(
-    map((event) => {
-      return event.fields.reduce((acc, { id, stats }) => {
-        acc[id] = stats;
-        return acc;
-      }, {} as Record<string, ChartReleaseStats>);
-    }),
-  );
+
   readonly refreshInterval$ = timer(0, 5000);
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
@@ -67,11 +59,7 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly installedApps$ = this.ws.call('chart.release.query', [
-    [], { extra: { history: true, stats: true } },
-  ]).pipe(
-    toLoadingState(),
-  );
+  readonly installedApps$ = this.ws.call('app.query').pipe(toLoadingState());
 
   readonly pools$ = this.ws.callAndSubscribe('pool.query');
 
@@ -144,14 +132,8 @@ export class WidgetResourcesService {
     );
   }
 
-  getApp(appName: string): Observable<ChartRelease> {
-    return this.ws.call(
-      'chart.release.query',
-      [
-        [['name', '=', appName]],
-        { extra: { history: true, stats: true } },
-      ],
-    ).pipe(
+  getApp(appName: string): Observable<App> {
+    return this.ws.call('app.query', [[['name', '=', appName]]]).pipe(
       map((apps) => {
         if (apps.length === 0) {
           throw new Error(`App «${appName}» not found. Configure widget to choose another app.`);
@@ -163,21 +145,27 @@ export class WidgetResourcesService {
   }
 
   getAppStats(appName: string): Observable<ChartReleaseStats> {
-    return this.appStatsUpdates$.pipe(
-      filter((stats) => Boolean(appName && stats[appName])),
-      map((stats) => stats[appName]),
-      shareReplay({ bufferSize: 1, refCount: true }),
-    );
+    console.error(`getAppStats(${appName}) not implemented yet`);
+    // TODO: Fix when stats API is ready
+    return EMPTY;
+    // return this.appStatsUpdates$.pipe(
+    //   filter((stats) => Boolean(appName && stats[appName])),
+    //   map((stats) => stats[appName]),
+    //   shareReplay({ bufferSize: 1, refCount: true }),
+    // );
   }
 
-  getAppStatusUpdates(appName: string): Observable<Job<ChartScaleResult, ChartScaleQueryParams>> {
-    return this.ws.subscribe('core.get_jobs').pipe(
-      filter((event: ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>) => {
-        return event.fields.method === 'chart.release.scale';
-      }),
-      filter((event) => event?.fields?.arguments[0] === appName),
-      map((event) => event.fields),
-    );
+  getAppStatusUpdates(appName: string): Observable<Job> {
+    console.error(`getAppStatusUpdates(${appName}) not implemented yet`);
+    // TODO: Fix when stats API is ready
+    return EMPTY;
+    // return this.ws.subscribe('core.get_jobs').pipe(
+    //   filter((event: ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>) => {
+    //     return event.fields.method === 'chart.release.scale';
+    //   }),
+    //   filter((event) => event?.fields?.arguments[0] === appName),
+    //   map((event) => event.fields),
+    // );
   }
 
   constructor(

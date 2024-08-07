@@ -2,10 +2,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartScaleResult, AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -34,16 +34,16 @@ describe('WidgetAppComponent', () => {
     portals: {
       web_portal: ['http://test.com'],
     } as Record<string, string[]>,
-    status: ChartReleaseStatus.Active,
+    state: CatalogAppState.Active,
     update_available: true,
     container_images_update_available: false,
-    chart_metadata: {
+    metadata: {
       icon: 'http://localhost/test-app.png',
       appVersion: '1.0',
     },
     catalog: 'truenas',
     catalog_train: 'charts',
-  } as ChartRelease;
+  } as App;
 
   const createComponent = createComponentFactory({
     component: WidgetAppComponent,
@@ -68,11 +68,6 @@ describe('WidgetAppComponent', () => {
       mockProvider(WidgetResourcesService, {
         serverTime$: of(new Date()),
         getApp: () => of(app),
-        getAppStats: () => of({
-          cpu: 55,
-          memory: 1234,
-          network: { in: 100, out: 200 },
-        }),
       }),
       mockProvider(RedirectService, {
         openWindow: jest.fn(),
@@ -80,7 +75,7 @@ describe('WidgetAppComponent', () => {
       mockProvider(ApplicationsService, {
         restartApplication: jest.fn(() => of(true)),
         getInstalledAppsStatusUpdates: jest.fn(() => {
-          return of() as Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>>;
+          return of() as Observable<ApiEvent<Job<ChartScaleResult, AppStartQueryParams>>>;
         }),
       }),
       mockProvider(DialogService, {

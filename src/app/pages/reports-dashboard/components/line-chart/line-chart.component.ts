@@ -14,7 +14,7 @@ import { TinyColor } from '@ctrl/tinycolor';
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
-import { kb, Mb } from 'app/constants/bits.constant';
+import { Gb, kb, Mb } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
@@ -269,7 +269,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   axisLabelFormatter = (numero: number): string => {
     if (this.report?.name === ReportingGraphName.NetworkInterface) {
-      if (numero < kb) {
+      if (numero < Mb) {
+        if (this.yLabelPrefix === 'Gb') {
+          numero /= Gb;
+        }
         if (this.yLabelPrefix === 'Mb') {
           numero /= Mb;
         }

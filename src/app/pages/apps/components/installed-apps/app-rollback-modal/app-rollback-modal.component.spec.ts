@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { ChartRelease, ChartReleaseVersion } from 'app/interfaces/chart-release.interface';
+import { App, ChartReleaseVersion } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -33,8 +33,8 @@ describe('AppRollbackModalComponent', () => {
           history: {
             '0.9.9': {} as ChartReleaseVersion,
             '0.9.8': {} as ChartReleaseVersion,
-          } as ChartRelease['history'],
-        } as ChartRelease,
+          } as App['history'],
+        } as App,
       },
       mockAuth(),
       mockWebSocket([
@@ -73,7 +73,7 @@ describe('AppRollbackModalComponent', () => {
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'chart.release.rollback',
-      ['my-app', { item_version: '0.9.8', rollback_snapshot: true }],
+      ['my-app', { app_version: '0.9.8', rollback_snapshot: true }],
     );
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });

@@ -35,7 +35,7 @@ describe('ApplicationsService', () => {
     service: ApplicationsService,
     providers: [
       mockWebSocket([
-        mockCall('chart.release.upgrade_summary'),
+        mockCall('app.upgrade_summary'),
         mockCall('app.available', appsResponse),
         mockCall('app.latest', appsResponse),
       ]),
@@ -73,12 +73,12 @@ describe('ApplicationsService', () => {
   describe('getChartUpgradeSummary', () => {
     it('loads summary without version', async () => {
       await firstValueFrom(spectator.service.getChartUpgradeSummary('test'));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('chart.release.upgrade_summary', ['test']);
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.upgrade_summary', ['test']);
     });
     it('loads summary with version', async () => {
       await firstValueFrom(spectator.service.getChartUpgradeSummary('test', '2.0'));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('chart.release.upgrade_summary', [
-        'test', { item_version: '2.0' },
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.upgrade_summary', [
+        'test', { app_version: '2.0' },
       ]);
     });
   });

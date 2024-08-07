@@ -28,7 +28,6 @@
         (stopApp)="stopApp.emit()"
       ></ix-app-info-card>
       <ix-app-containers-card [app]="app()"></ix-app-containers-card>
-      <ix-app-history-card [app]="app()"></ix-app-history-card>
       @if (app()?.app_metadata) {
         <ix-app-metadata-card
           [appMetadata]="app().app_metadata"
