@@ -317,7 +317,7 @@ export interface ApiCallDirectory {
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.categories': { params: void; response: string[] };
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
-  'app.similar': { params: [app_name: string, catalog: string, train: string]; response: AvailableApp[] };
+  'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
 
   // Audit
   'audit.config': { params: void; response: AuditConfig };

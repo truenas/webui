@@ -73,7 +73,7 @@ export class ApplicationsService {
   }
 
   getAppSimilarApps(app: AvailableApp): Observable<AvailableApp[]> {
-    return this.ws.call('app.similar', [app.name, app.catalog, app.train]);
+    return this.ws.call('app.similar', [app.name, app.train]);
   }
 
   getAllApps(): Observable<App[]> {
