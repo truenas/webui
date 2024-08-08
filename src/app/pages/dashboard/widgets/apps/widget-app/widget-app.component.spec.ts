@@ -36,7 +36,7 @@ describe('WidgetAppComponent', () => {
     portals: {
       web_portal: ['http://test.com'],
     } as Record<string, string[]>,
-    state: CatalogAppState.Active,
+    state: CatalogAppState.Running,
     upgrade_available: true,
     container_images_update_available: false,
     metadata: {

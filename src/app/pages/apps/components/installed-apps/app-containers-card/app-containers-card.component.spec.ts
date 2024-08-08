@@ -23,7 +23,7 @@ describe.skip('AppContainersCardComponent', () => {
     id: 'ix-test-app',
     name: 'ix-test-app',
     upgrade_available: true,
-    state: CatalogAppState.Active,
+    state: CatalogAppState.Running,
     used_ports: [{
       port: 22, protocol: 'TCP',
     }, {

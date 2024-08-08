@@ -38,7 +38,7 @@ describe('InstalledAppsComponent', () => {
     },
     catalog: 'test-catalog',
     catalog_train: 'test-catalog-train',
-    state: CatalogAppState.Active,
+    state: CatalogAppState.Running,
   } as App;
 
   const createComponent = createComponentFactory({

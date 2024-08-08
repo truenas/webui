@@ -15,7 +15,7 @@ describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
   const app = {
     name: 'app_name',
-    state: CatalogAppState.Active,
+    state: CatalogAppState.Running,
     metadata: { icon: 'https://image/' },
   } as App;
 

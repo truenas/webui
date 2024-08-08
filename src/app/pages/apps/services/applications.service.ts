@@ -118,7 +118,7 @@ export class ApplicationsService {
 
   restartApplication(app: App): Observable<Job<void>> {
     switch (app.state) {
-      case CatalogAppState.Active:
+      case CatalogAppState.Running:
         return this.stopApplication(app.name).pipe(
           filter((job) => job.state === JobState.Success),
           switchMap(() => this.startApplication(app.name)),

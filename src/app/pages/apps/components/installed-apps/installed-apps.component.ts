@@ -112,7 +112,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get isBulkStartDisabled(): boolean {
     return this.dataSource.every((app) => [
-      CatalogAppState.Active,
+      CatalogAppState.Running,
       CatalogAppState.Deploying,
     ].includes(app.state));
   }
@@ -129,7 +129,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get startedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === CatalogAppState.Active && this.selection.isSelected(app.id),
+      (app) => app.state === CatalogAppState.Running && this.selection.isSelected(app.id),
     );
   }
 

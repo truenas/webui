@@ -15,7 +15,7 @@ describe.skip('getAppStatus', () => {
     },
     catalog: 'test-catalog',
     catalog_train: 'test-catalog-train',
-    state: CatalogAppState.Active,
+    state: CatalogAppState.Running,
   } as App;
   // const job = {
   //   arguments: ['fake-name', { replica_count: 1 }] as AppStartQueryParams,
