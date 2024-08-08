@@ -29,6 +29,6 @@ export class AppUpdateCellComponent {
   hasUpdate = computed(() => {
     const app = this.app();
 
-    return app.update_available || app.container_images_update_available;
+    return app.upgrade_available || app.container_images_update_available;
   });
 }

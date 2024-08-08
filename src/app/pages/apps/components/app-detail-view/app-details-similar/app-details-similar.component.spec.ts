@@ -29,7 +29,7 @@ describe('AppDetailsSimilarComponent', () => {
     ],
     providers: [
       mockProvider(ApplicationsService, {
-        getAppSimilarApps: jest.fn(() => of(similarApps)),
+        getSimilarApps: jest.fn(() => of(similarApps)),
       }),
     ],
   });
@@ -43,7 +43,7 @@ describe('AppDetailsSimilarComponent', () => {
   });
 
   it('loads and shows similar apps', () => {
-    expect(spectator.inject(ApplicationsService).getAppSimilarApps).toHaveBeenCalledWith(currentApp);
+    expect(spectator.inject(ApplicationsService).getSimilarApps).toHaveBeenCalledWith(currentApp);
 
     const appCards = spectator.queryAll(AppCardComponent);
     expect(appCards).toHaveLength(2);

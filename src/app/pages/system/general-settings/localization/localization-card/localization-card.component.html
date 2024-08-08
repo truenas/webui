@@ -1,12 +1,9 @@
 <mat-card [ixUiSearch]="searchableElements.elements.localization">
   <mat-toolbar-row>
     <h3>{{ helptext.localeTitle | translate }}</h3>
-    <div
-      *ixRequiresRoles="requiredRoles"
-      class="actions action-icon"
-    >
+    <div *ixWithLoadingState="generalConfig$ as generalConfig" class="actions action-icon">
       <button
-        *ixWithLoadingState="generalConfig$ as generalConfig"
+        *ixRequiresRoles="requiredRoles"
         mat-button
         color="default"
         [ixTest]="['localization', 'settings']"

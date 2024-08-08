@@ -22,7 +22,7 @@ describe.skip('AppContainersCardComponent', () => {
   const app = {
     id: 'ix-test-app',
     name: 'ix-test-app',
-    update_available: true,
+    upgrade_available: true,
     state: CatalogAppState.Active,
     used_ports: [{
       port: 22, protocol: 'TCP',

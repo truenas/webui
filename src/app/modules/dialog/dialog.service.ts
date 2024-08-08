@@ -4,7 +4,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
-import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import {
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
@@ -148,7 +147,7 @@ export class DialogService {
    *
    * If you need more control over JobProgressDialogComponent, use it directly.
    */
-  jobDialog<M extends ApiJobMethod, R extends ApiJobResponse<M>>(
+  jobDialog<R>(
     job$: Observable<Job<R>>,
     { title, description, canMinimize }: {
       title?: string;

@@ -9,7 +9,7 @@ export const localizationCardElements = {
       anchor: 'localization-card',
     },
     settings: {
-      anchor: 'localization-card',
+      anchor: 'localization-settings',
       hierarchy: [T('Localization Settings')],
     },
     language: {

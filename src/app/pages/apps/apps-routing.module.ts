@@ -38,7 +38,7 @@ const routes: Routes = [
             component: InstalledAppsComponent,
           },
           {
-            path: ':catalog/:train/:appId',
+            path: ':train/:appId',
             component: AppRouterOutletComponent,
             data: { breadcrumb: null },
             children: [
@@ -87,7 +87,7 @@ const routes: Routes = [
             component: CategoryViewComponent,
           },
           {
-            path: ':catalog/:train/:appId',
+            path: ':train/:appId',
             component: AppRouterOutletComponent,
             resolve: { breadcrumb: appNameResolver },
             children: [

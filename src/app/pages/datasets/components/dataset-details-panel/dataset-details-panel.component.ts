@@ -12,7 +12,7 @@ import { datasetDetailsPanelElements } from 'app/pages/datasets/components/datas
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isDatasetHasShares, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
+import { doesDatasetHaveShares, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -42,7 +42,7 @@ export class DatasetDetailsPanelComponent {
   }
 
   get datasetHasChildrenWithShares(): boolean {
-    return isDatasetHasShares(this.dataset);
+    return doesDatasetHaveShares(this.dataset);
   }
 
   get hasPermissions(): boolean {

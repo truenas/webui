@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Observable, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
@@ -12,8 +11,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { AppsState, AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-// TODO:
-describe.skip('AppsStore', () => {
+describe('AppsStore', () => {
   let spectator: SpectatorService<AppsStore>;
   let testScheduler: TestScheduler;
 
@@ -22,15 +20,8 @@ describe.skip('AppsStore', () => {
     recommendedApps: [],
     latestApps: [],
     categories: [],
-    catalogs: [],
     isLoading: false,
   };
-
-  const installedChartReleases: App[] = [
-    {
-      name: 'minio',
-    } as App,
-  ];
 
   const installedAndRecommendedApp: AvailableApp = {
     catalog: 'TRUENAS',
@@ -73,11 +64,6 @@ describe.skip('AppsStore', () => {
         getLatestApps: jest.fn(() => of([{ ...installedAndRecommendedApp }])) as () => Observable<AvailableApp[]>,
         getInstalledAppsUpdates: jest.fn(() => of()) as () => Observable<ApiEvent<App>>,
         getAllAppsCategories: jest.fn(() => of(['storage', 'media'])) as () => Observable<string[]>,
-        // getAllChartReleases: jest.fn(() => {
-        //   return of([
-        //     ...installedChartReleases,
-        //   ] as App[]);
-        // }) as () => Observable<App[]>,
         convertDateToRelativeDate: jest.fn(() => ''),
       }),
     ],
@@ -96,7 +82,6 @@ describe.skip('AppsStore', () => {
           ...initialState,
           availableApps: [...availableApps],
           categories: ['storage', 'media'],
-          catalogs: ['TRUENAS'],
           latestApps: [{ ...installedAndRecommendedApp }],
           recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'recommended'] }],
 

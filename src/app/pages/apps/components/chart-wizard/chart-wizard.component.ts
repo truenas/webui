@@ -61,7 +61,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ChartWizardComponent implements OnInit, OnDestroy {
   appId: string;
-  catalog: string;
   train: string;
   config: Record<string, ChartFormValue>;
   catalogApp: CatalogApp;
@@ -260,19 +259,18 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.router.navigate(['/apps/installed', this.catalog, this.train, this.appId]);
+    this.router.navigate(['/apps/installed', this.train, this.appId]);
   }
 
   private listenForRouteChanges(): void {
     this.activatedRoute.parent.params
       .pipe(
-        filter((params: AppDetailsRouteParams) => !!params.appId && !!params.catalog && !!params.train),
+        filter((params: AppDetailsRouteParams) => !!params.appId && !!params.train),
         untilDestroyed(this),
       )
-      .subscribe(({ train, catalog, appId }) => {
+      .subscribe(({ train, appId }) => {
         this.appId = appId;
         this.train = train;
-        this.catalog = catalog;
         this.isLoading = false;
         this.cdr.markForCheck();
 
@@ -490,7 +488,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (pool) => {
         if (!pool) {
-          this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+          this.router.navigate(['/apps/available', this.train, this.appId]);
         }
       },
     });

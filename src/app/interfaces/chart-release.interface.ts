@@ -100,7 +100,6 @@ export interface App {
   dataset: string;
   used_ports: UsedPort[];
   pod_status: PodStatus;
-  update_available: boolean;
   state: CatalogAppState;
   upgrade_available: boolean;
   human_version: string;

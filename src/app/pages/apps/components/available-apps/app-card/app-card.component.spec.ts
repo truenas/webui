@@ -1,7 +1,6 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { App } from 'app/interfaces/chart-release.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
@@ -30,7 +29,6 @@ describe('AppCardComponent', () => {
           icon_url: 'https://www.seti.org/logo.png',
           description: 'Use your computer to help SETI@home search for extraterrestrial intelligence.',
           latest_version: '1.0.0',
-          catalog: officialCatalog,
           train: 'charts',
           installed: true,
         } as AvailableApp,

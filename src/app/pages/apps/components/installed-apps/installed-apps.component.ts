@@ -18,7 +18,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, Observable,
+  combineLatest, filter,
 } from 'rxjs';
 import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -100,11 +100,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get appsUpdateAvailable(): number {
     return this.dataSource
-      .filter((app) => app.update_available || app.container_images_update_available).length;
+      .filter((app) => app.upgrade_available || app.container_images_update_available).length;
   }
 
   get hasUpdates(): boolean {
-    return this.dataSource.some((app) => app.update_available || app.container_images_update_available);
+    return this.dataSource.some((app) => app.upgrade_available || app.container_images_update_available);
   }
 
   get checkedAppsNames(): string[] {
@@ -125,7 +125,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   get isBulkUpgradeDisabled(): boolean {
     return !this.checkedAppsNames
       .map((name) => this.dataSource.find((app) => app.name === name))
-      .some((app) => app.update_available || app.container_images_update_available);
+      .some((app) => app.upgrade_available || app.container_images_update_available);
   }
 
   get startedCheckedApps(): App[] {
@@ -212,7 +212,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.selectAppForDetails(app.id);
 
     this.router.navigate([
-      '/apps/installed', app.catalog, app.catalog_train, app.id,
+      '/apps/installed', app.catalog_train, app.id,
     ]);
 
     if (this.isMobileView) {
@@ -293,18 +293,18 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         }
         return !!dockerStarted;
       }),
-      filter(([,,charts]) => {
-        if (!charts.length) {
+      filter(([,, apps]) => {
+        if (!apps.length) {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.NoPageData);
           this.cdr.markForCheck();
         }
-        return !!charts.length;
+        return !!apps.length;
       }),
       untilDestroyed(this),
     ).subscribe({
-      next: ([,,charts]) => {
-        this.sortChanged(this.sortingInfo, charts);
+      next: ([,, apps]) => {
+        this.sortChanged(this.sortingInfo, apps);
         this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
         this.cdr.markForCheck();
       },
@@ -335,8 +335,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     if (!this.appJobs.has(name)) {
       return;
     }
-    // TODO: Improve type inheritance
-    const job$ = this.store$.select(selectJob(this.appJobs.get(name).id)) as Observable<Job<string>>;
+    const job$ = this.store$.select(selectJob(this.appJobs.get(name).id));
     this.dialogService.jobDialog(job$, { title: name, canMinimize: true })
       .afterClosed()
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
@@ -357,7 +356,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onBulkUpgrade(updateAll = false): void {
     const apps = this.dataSource.filter((app) => (
-      updateAll ? app.update_available || app.container_images_update_available : this.selection.isSelected(app.id)
+      updateAll ? app.upgrade_available || app.container_images_update_available : this.selection.isSelected(app.id)
     ));
     this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
       .afterClosed()
@@ -423,8 +422,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           return doSortCompare(this.getAppStatus(a.name), this.getAppStatus(b.name), isAsc);
         case SortableField.Updates:
           return doSortCompare(
-            (a.update_available || a.container_images_update_available) ? 1 : 0,
-            (b.update_available || b.container_images_update_available) ? 1 : 0,
+            (a.upgrade_available || a.container_images_update_available) ? 1 : 0,
+            (b.upgrade_available || b.container_images_update_available) ? 1 : 0,
             isAsc,
           );
         default:
@@ -450,8 +449,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   private selectFirstApp(): void {
     const [firstApp] = this.dataSource;
-    if (firstApp.catalog && firstApp.catalog_train && firstApp.id) {
-      this.location.replaceState(['/apps', 'installed', firstApp.catalog, firstApp.catalog_train, firstApp.id].join('/'));
+    if (firstApp.catalog_train && firstApp.id) {
+      this.location.replaceState(['/apps', 'installed', firstApp.catalog_train, firstApp.id].join('/'));
     } else {
       this.location.replaceState(['/apps', 'installed'].join('/'));
     }
