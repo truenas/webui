@@ -1,7 +1,7 @@
 import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
-import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import {
   DynamicFormSchemaCheckbox,
   DynamicFormSchemaDict,

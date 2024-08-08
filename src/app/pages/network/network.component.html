@@ -10,18 +10,29 @@
             @if (!checkinWaiting) {
               <div>
                 <p>{{ helptext.pending_changes_text | translate }}</p>
+
                 <p>
                   {{ helptext.checkin_text | translate }}
                   <mat-form-field floatPlaceholder="never" id="timeout-field">
                     <input
+                      #checkinTimeoutField="ngModel"
                       matInput
+                      type="number"
                       ixTest="checkin-timeout"
+                      required
+                      [min]="checkinTimeoutMinValue"
                       [pattern]="checkinTimeoutPattern"
                       [(ngModel)]="checkinTimeout"
                     />
                   </mat-form-field>
                   {{ helptext.checkin_text_2 | translate }}
                 </p>
+
+                <mat-error *ngIf="!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern">
+                  <span>
+                    {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
+                  </span>
+                </mat-error>
               </div>
             } @else {
               <div>
@@ -37,7 +48,7 @@
               <button
                 mat-button
                 ixTest="test-changes"
-                [disabled]="isHaEnabled"
+                [disabled]="isHaEnabled || isCheckinTimeoutFieldInvalid"
                 (click)="commitPendingChanges()"
               >
                 {{ helptext.commit_button | translate }}

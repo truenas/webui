@@ -7,15 +7,14 @@ import {
 } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { App, AppStartQueryParams, AppUpgradeParams } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App, AppUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -72,8 +71,8 @@ export class ApplicationsService {
     return this.getAppsFetchCall('app.available', filters).pipe(filterIgnoredApps());
   }
 
-  getAppSimilarApps(app: AvailableApp): Observable<AvailableApp[]> {
-    return this.ws.call('app.similar', [app.name, app.catalog, app.train]);
+  getSimilarApps(app: AvailableApp): Observable<AvailableApp[]> {
+    return this.ws.call('app.similar', [app.name, app.train]);
   }
 
   getAllApps(): Observable<App[]> {

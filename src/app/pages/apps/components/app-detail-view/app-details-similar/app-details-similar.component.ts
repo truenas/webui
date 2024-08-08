@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, OnChanges,
+  input, signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
@@ -15,17 +15,17 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDetailsSimilarComponent implements OnChanges {
-  @Input() app: AvailableApp;
+  readonly app = input.required< AvailableApp>();
 
-  protected similarAppsLoading$ = new BehaviorSubject<boolean>(false);
-  protected similarApps: AvailableApp[] = [];
+  protected isLoading = signal(false);
+  protected similarApps = signal<AvailableApp[]>([]);
+  protected loadingError = signal<unknown>(null);
 
   private readonly maxSimilarApps = 6;
 
   constructor(
     protected router: Router,
     private appService: ApplicationsService,
-    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnChanges(): void {
@@ -33,21 +33,21 @@ export class AppDetailsSimilarComponent implements OnChanges {
   }
 
   private loadSimilarApps(): void {
-    this.similarAppsLoading$.next(true);
-    this.appService.getAppSimilarApps(this.app).pipe(untilDestroyed(this)).subscribe({
+    this.isLoading.set(true);
+    this.appService.getSimilarApps(this.app()).pipe(untilDestroyed(this)).subscribe({
       next: (apps) => {
-        this.similarApps = apps.slice(0, this.maxSimilarApps);
-        this.similarAppsLoading$.next(false);
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
+        this.similarApps.set(apps.slice(0, this.maxSimilarApps));
       },
-      error: () => {
-        this.similarAppsLoading$.next(false);
-        this.cdr.markForCheck();
+      error: (error) => {
+        this.isLoading.set(false);
+        console.error(error);
+        this.loadingError.set(error);
       },
     });
   }
 
-  trackByAppId(id: number, app: AvailableApp): string {
+  trackByAppId(_: number, app: AvailableApp): string {
     return `${app.catalog}-${app.train}-${app.name}`;
   }
 }

@@ -23,7 +23,6 @@ import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
-import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue,
   ChartFormValues,
@@ -31,7 +30,8 @@ import {
   AppCreate,
   ChartSchema,
   ChartSchemaNode,
-} from 'app/interfaces/chart-release.interface';
+} from 'app/interfaces/app.interface';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   AddListItemEvent,
   DeleteListItemEvent,
@@ -54,14 +54,13 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-chart-wizard',
-  templateUrl: './chart-wizard.component.html',
-  styleUrls: ['./chart-wizard.component.scss'],
+  selector: 'ix-app-wizard',
+  templateUrl: './app-wizard.component.html',
+  styleUrls: ['./app-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartWizardComponent implements OnInit, OnDestroy {
+export class AppWizardComponent implements OnInit, OnDestroy {
   appId: string;
-  catalog: string;
   train: string;
   config: Record<string, ChartFormValue>;
   catalogApp: CatalogApp;
@@ -264,19 +263,18 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.router.navigate(['/apps/installed', this.catalog, this.train, this.appId]);
+    this.router.navigate(['/apps/installed', this.train, this.appId]);
   }
 
   private listenForRouteChanges(): void {
     this.activatedRoute.parent.params
       .pipe(
-        filter((params: AppDetailsRouteParams) => !!params.appId && !!params.catalog && !!params.train),
+        filter((params: AppDetailsRouteParams) => !!params.appId && !!params.train),
         untilDestroyed(this),
       )
-      .subscribe(({ train, catalog, appId }) => {
+      .subscribe(({ train, appId }) => {
         this.appId = appId;
         this.train = train;
-        this.catalog = catalog;
         this.isLoading = false;
         this.cdr.markForCheck();
 
@@ -298,7 +296,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (releases) => {
-          this.setChartForEdit(releases[0]);
+          this.setAppForEdit(releases[0]);
           this.afterAppLoaded();
         },
         error: (error: WebSocketError) => this.afterAppLoadError(error),
@@ -325,7 +323,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.form.controls.release_name.setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z]([a-z0-9-]*[a-z0-9])?$'),
-        this.translate.instant(this.helptext.chartWizard.nameGroup.nameValidationRules),
+        this.translate.instant(this.helptext.appWizard.nameGroup.nameValidationRules),
       ),
     );
     this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
@@ -340,14 +338,14 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptextApps.chartForm.release_name.placeholder,
+          title: helptextApps.appForm.release_name.placeholder,
           required: true,
-          tooltip: helptextApps.chartForm.release_name.tooltip,
+          tooltip: helptextApps.appForm.release_name.tooltip,
         },
         {
           controlName: 'version',
           type: DynamicFormSchemaType.Select,
-          title: helptextApps.chartWizard.nameGroup.version,
+          title: helptextApps.appWizard.nameGroup.version,
           required: true,
           options: of(versionKeys.map((version) => ({ value: version, label: version }))),
           hidden: hideVersion,
@@ -392,15 +390,15 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setChartForEdit(chart: App): void {
+  private setAppForEdit(app: App): void {
     this.rootDynamicSection = [];
     this.isNew = false;
-    this.config = chart.config;
-    this.config.release_name = chart.id;
+    this.config = app.config;
+    this.config.release_name = app.id;
 
-    this._pageTitle$.next(chart.title || chart.name);
+    this._pageTitle$.next(app.title || app.name);
 
-    this.form.addControl('release_name', new FormControl(chart.name, [Validators.required]));
+    this.form.addControl('release_name', new FormControl(app.name, [Validators.required]));
 
     this.rootDynamicSection.push({
       name: 'Application name',
@@ -410,14 +408,14 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptextApps.chartForm.release_name.placeholder,
+          title: helptextApps.appForm.release_name.placeholder,
           required: true,
           editable: false,
         },
       ],
     });
 
-    this.buildDynamicForm(chart.chart_schema.schema);
+    this.buildDynamicForm(app.chart_schema.schema);
   }
 
   private afterAppLoaded(): void {
@@ -461,8 +459,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     } catch (error: unknown) {
       console.error(error);
       this.dialogService.error({
-        title: helptextApps.chartForm.parseError.title,
-        message: helptextApps.chartForm.parseError.message,
+        title: helptextApps.appForm.parseError.title,
+        message: helptextApps.appForm.parseError.message,
       });
     }
   }
@@ -494,7 +492,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (pool) => {
         if (!pool) {
-          this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+          this.router.navigate(['/apps/available', this.train, this.appId]);
         }
       },
     });

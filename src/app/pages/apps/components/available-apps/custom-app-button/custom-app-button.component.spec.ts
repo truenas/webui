@@ -6,7 +6,7 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
+import { chartsTrain, ixChartApp } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
@@ -46,7 +46,7 @@ describe('CustomAppButtonComponent', () => {
     jest.spyOn(router, 'navigate').mockImplementation();
 
     expect(router.navigate).toHaveBeenCalledWith([
-      '/apps', 'available', officialCatalog, chartsTrain, ixChartApp, 'install',
+      '/apps', 'available', chartsTrain, ixChartApp, 'install',
     ]);
   });
 

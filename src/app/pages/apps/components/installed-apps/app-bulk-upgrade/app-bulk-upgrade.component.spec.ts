@@ -11,7 +11,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -32,7 +32,7 @@ const fakeAppOne = {
   dataset: 'tank/ix-applications/releases/test-pihole',
   state: 'ACTIVE',
   history: {},
-  update_available: true,
+  upgrade_available: true,
   human_version: '2022.10_1.0.7',
   human_latest_version: '2022.10_1.0.8',
   pod_status: { desired: 1, available: 1 },
@@ -54,7 +54,7 @@ const fakeAppTwo = {
   dataset: 'tank/ix-applications/releases/test-nextcloud',
   state: 'ACTIVE',
   history: {},
-  update_available: true,
+  upgrade_available: true,
   human_version: '25_1.6.33',
   human_latest_version: '25_1.6.34',
   pod_status: { desired: 2, available: 2 },

@@ -1,7 +1,7 @@
+import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { App } from 'app/interfaces/chart-release.interface';
 
-export interface ChartUpgradeDialogConfig {
+export interface AppUpgradeDialogConfig {
   appInfo: App;
   upgradeSummary: AppUpgradeSummary;
 }

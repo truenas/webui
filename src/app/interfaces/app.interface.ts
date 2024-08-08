@@ -1,4 +1,4 @@
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
@@ -100,7 +100,6 @@ export interface App {
   dataset: string;
   used_ports: UsedPort[];
   pod_status: PodStatus;
-  update_available: boolean;
   state: CatalogAppState;
   upgrade_available: boolean;
   human_version: string;
@@ -159,7 +158,7 @@ export interface AppUpgrade {
   values?: Record<string, ChartFormValue>;
 }
 
-export type ChartReleaseQueryParams = QueryParams<App, {
+export type AppQueryParams = QueryParams<App, {
   extra?: {
     retrieve_config?: boolean;
     retrieve_resources?: boolean;
@@ -259,4 +258,22 @@ export interface AppMetadata {
     description: string;
     hostPath: string;
   }[];
+}
+
+export type AppStartQueryParams = [
+  name: string,
+];
+export type AppDeleteParams = [
+  string,
+  {
+    remove_images?: boolean;
+    remove_ix_volumes?: boolean;
+  },
+];
+
+export interface ChartRollbackParams {
+  force_rollback?: boolean;
+  recreate_resources?: boolean;
+  rollback_snapshot?: boolean;
+  app_version: string;
 }

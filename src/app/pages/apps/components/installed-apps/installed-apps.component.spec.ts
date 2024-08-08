@@ -9,9 +9,9 @@ import { MockDeclaration, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -69,7 +69,6 @@ describe('InstalledAppsComponent', () => {
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([]),
-        catalogs$: of([]),
       }),
       provideMockStore({
         selectors: [
@@ -119,7 +118,7 @@ describe('InstalledAppsComponent', () => {
   it('shows details', () => {
     spectator.click(spectator.query('ix-app-row'));
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([
-      '/apps/installed', 'test-catalog', 'test-catalog-train', 'ix-test-app',
+      '/apps/installed', 'test-catalog-train', 'ix-test-app',
     ]);
   });
 
