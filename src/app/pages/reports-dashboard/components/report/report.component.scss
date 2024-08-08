@@ -6,14 +6,58 @@
   margin: 0;
 }
 
-.legend {
-  display: table;
+.toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-top: 8px;
+
+  .title {
+    display: flex;
+    flex-grow: 1;
+  }
+}
+
+.card-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 5px;
+}
+
+.card {
+  margin: 0 0 5px;
+}
+
+.card-content {
+  display: flex;
+
+  .chart-wrapper-outer {
+    flex-grow: 1;
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    width: 420px;
+
+    .legend-timestamp {
+      align-items: center;
+      display: flex;
+      height: 32px;
+
+      > h4 {
+        display: flex;
+        gap: 8px;
+      }
+    }
+  }
 }
 
 .legend-group-wrapper {
+  flex-grow: 1;
   overflow-x: hidden;
   overflow-y: auto;
-  padding-bottom: 48px;
 }
 
 table.legend-table {
@@ -300,7 +344,6 @@ span.disk-detail-subtitle {
 }
 
 div.line-chart-tools-wrapper {
-  margin-right: -24px;
   text-align: right;
 
   @media (max-width: $breakpoint-tablet) {
@@ -536,8 +579,14 @@ p.value {
   .legend-wrapper,
   .chart-wrapper {
     margin: 0;
-    padding: 8px 32px;
+    padding: 8px 26px;
   }
+}
+
+.total-line {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .report .legend-wrapper.timestamps {

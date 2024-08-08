@@ -12,8 +12,8 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -39,8 +39,8 @@ describe('AppInfoCardComponent', () => {
         name: 'ix-test-app',
       },
     } as Record<string, unknown>,
-    update_available: true,
-    chart_metadata: {
+    upgrade_available: true,
+    metadata: {
       name: 'ix-test-app',
       icon: '',
       sources: [
@@ -51,9 +51,9 @@ describe('AppInfoCardComponent', () => {
     },
     catalog: 'TRUENAS',
     catalog_train: 'charts',
-  } as ChartRelease;
+  } as App;
 
-  const upgradeSummary = {} as UpgradeSummary;
+  const upgradeSummary = {} as AppUpgradeSummary;
 
   const mockDialogRef = {
     componentInstance: {
@@ -99,8 +99,8 @@ describe('AppInfoCardComponent', () => {
       mockProvider(RedirectService),
       mockAuth(),
       mockWebSocket([
-        mockJob('chart.release.upgrade'),
-        mockJob('chart.release.delete'),
+        mockJob('app.upgrade'),
+        mockJob('app.delete'),
       ]),
     ],
   });
@@ -178,7 +178,7 @@ describe('AppInfoCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/apps', 'installed', app.catalog, app.catalog_train, app.id, 'edit']);
+    expect(router.navigate).toHaveBeenCalledWith(['/apps', 'installed', app.catalog_train, app.id, 'edit']);
   });
 
   it('opens delete app dialog when Delete button is pressed', async () => {
@@ -191,8 +191,8 @@ describe('AppInfoCardComponent', () => {
       message: 'Delete test-user-app-name?',
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'chart.release.delete',
-      [app.name, { delete_unused_images: true }],
+      'app.delete',
+      [app.name, { remove_images: true }],
     );
   });
 

@@ -28,8 +28,8 @@ import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue,
   ChartFormValues,
-  ChartRelease,
-  ChartReleaseCreate,
+  App,
+  AppCreate,
   ChartSchema,
   ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
@@ -46,7 +46,6 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -62,7 +61,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ChartWizardComponent implements OnInit, OnDestroy {
   appId: string;
-  catalog: string;
   train: string;
   config: Record<string, ChartFormValue>;
   catalogApp: CatalogApp;
@@ -74,7 +72,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   subscription = new Subscription();
   chartSchema: ChartSchema['schema'];
 
-  forbiddenAppNames$ = this.appService.getAllChartReleases().pipe(map((apps) => apps.map((app) => app.name)));
+  forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
   form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
@@ -124,7 +122,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.getDockerHubRateLimitInfo();
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+    // this.getDockerHubRateLimitInfo();
     this.listenForRouteChanges();
     this.handleSearchControl();
   }
@@ -154,8 +153,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.isNew = true;
     this.isLoading = true;
     this.appService
-      .getCatalogItem(this.appId, this.catalog, this.train)
-      // .getCatalogItem('plex', 'TESTLANG', 'charts')
+      .getCatalogAppDetails(this.appId, this.train)
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (app) => {
@@ -226,24 +224,23 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   saveData(data: ChartFormValues): void {
-    let job$: Observable<Job<ChartRelease>>;
+    let job$: Observable<Job<App>>;
 
     if (this.isNew) {
       const version = data.version;
       delete data.version;
-      job$ = this.ws.job('chart.release.create', [
+      job$ = this.ws.job('app.create', [
         {
-          catalog: this.catalog,
-          item: this.catalogApp.name,
-          release_name: data.release_name,
+          values: data,
+          catalog_app: data.release_name,
+          app_name: this.catalogApp.name,
           train: this.train,
           version,
-          values: data,
-        } as ChartReleaseCreate,
+        } as AppCreate,
       ]);
     } else {
       delete data.release_name;
-      job$ = this.ws.job('chart.release.update', [
+      job$ = this.ws.job('app.update', [
         this.config.release_name as string,
         { values: data },
       ]);
@@ -262,19 +259,18 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   onSuccess(): void {
     this.dialogService.closeAllDialogs();
-    this.router.navigate(['/apps/installed', this.catalog, this.train, this.appId]);
+    this.router.navigate(['/apps/installed', this.train, this.appId]);
   }
 
   private listenForRouteChanges(): void {
     this.activatedRoute.parent.params
       .pipe(
-        filter((params: AppDetailsRouteParams) => !!params.appId && !!params.catalog && !!params.train),
+        filter((params: AppDetailsRouteParams) => !!params.appId && !!params.train),
         untilDestroyed(this),
       )
-      .subscribe(({ train, catalog, appId }) => {
+      .subscribe(({ train, appId }) => {
         this.appId = appId;
         this.train = train;
-        this.catalog = catalog;
         this.isLoading = false;
         this.cdr.markForCheck();
 
@@ -292,7 +288,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.isNew = false;
     this.isLoading = true;
     this.appService
-      .getChartRelease(this.appId)
+      .getApp(this.appId)
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (releases) => {
@@ -390,7 +386,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setChartForEdit(chart: ChartRelease): void {
+  private setChartForEdit(chart: App): void {
     this.rootDynamicSection = [];
     this.isNew = false;
     this.config = chart.config;
@@ -492,7 +488,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (pool) => {
         if (!pool) {
-          this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+          this.router.navigate(['/apps/available', this.train, this.appId]);
         }
       },
     });
@@ -525,13 +521,14 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getDockerHubRateLimitInfo(): void {
-    this.ws.call('container.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
-      if (info.remaining_pull_limit < 5) {
-        this.matDialog.open(DockerHubRateInfoDialogComponent, {
-          data: info,
-        });
-      }
-    });
-  }
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+  // private getDockerHubRateLimitInfo(): void {
+  //   this.ws.call('container.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
+  //     if (info.remaining_pull_limit < 5) {
+  //       this.matDialog.open(DockerHubRateInfoDialogComponent, {
+  //         data: info,
+  //       });
+  //     }
+  //   });
+  // }
 }

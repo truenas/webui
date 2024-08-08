@@ -44,6 +44,10 @@
   @media (max-width: $breakpoint-md) {
     margin-top: 10px;
     min-height: 45px;
+
+    > * {
+      position: unset;
+    }
   }
 }
 

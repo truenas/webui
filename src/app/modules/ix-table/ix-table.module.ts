@@ -99,6 +99,7 @@ const components = [
     ScheduleToCrontabPipe,
     CdkPortalOutlet,
     FlexModule,
+    FormatDateTimePipe,
   ],
   declarations: [
     ...components,

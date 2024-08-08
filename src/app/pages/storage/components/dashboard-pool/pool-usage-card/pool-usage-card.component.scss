@@ -44,8 +44,13 @@
   }
 
   .left {
+    align-items: flex-end;
     flex: 1 1 40%;
-    justify-content: flex-end;
+    flex-direction: column;
+
+    > div {
+      text-align: center;
+    }
 
     .gauge {
       margin-left: unset;

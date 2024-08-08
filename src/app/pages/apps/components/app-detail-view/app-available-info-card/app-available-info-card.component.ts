@@ -31,11 +31,11 @@ export class AppAvailableInfoCardComponent implements OnChanges {
       return;
     }
     this.loadingSources = true;
-    this.applicationService.getCatalogItem(this.app.name, this.app.catalog, this.app.train)
+    this.applicationService.getCatalogAppDetails(this.app.name, this.app.train)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (catalogItem) => {
-          this.sources = [...(catalogItem?.versions[this.app.latest_version]?.chart_metadata?.sources || [])];
+          this.sources = [...(catalogItem?.versions[this.app.latest_version]?.metadata?.sources || [])];
           this.cdr.markForCheck();
         },
         complete: () => {

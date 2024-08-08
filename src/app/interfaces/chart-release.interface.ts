@@ -1,4 +1,4 @@
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/chart-release-status.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
@@ -46,25 +46,62 @@ export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
   version?: string;
 }
 
-export interface ChartRelease {
+export interface AppHostPort {
+  host_port: string;
+  host_ip: string;
+}
+
+export interface AppUsedPort {
+  container_port: string;
+  protocol: string;
+  host_ports?: AppHostPort[];
+}
+
+export enum AppContainerState {
+  Running = 'running',
+  Starting = 'starting',
+  Exited = 'exited',
+}
+
+export interface AppContainerDetails {
+  service_name: string;
+  image: string;
+  state: AppContainerState;
+  port_config: AppUsedPort[];
+  volume_mounts: unknown[];
+}
+
+export interface AppContainerVolumes {
+  source: string;
+  destination: string;
+  mode: string;
+  type: 'bind' | 'volume';
+}
+
+export interface AppActiveWorkloads {
+  containers: number;
+  user_ports: AppUsedPort[];
+  container_details: AppContainerDetails[];
+  volumes: AppContainerVolumes[];
+}
+
+export interface App {
   name: string;
   title: string;
   info: ChartInfo;
   config: Record<string, ChartFormValue>;
   hooks: unknown[];
-  version: number;
   namespace: string;
-  chart_metadata: ChartMetadata;
   app_metadata: AppMetadata;
   id: string;
   catalog: string;
   catalog_train: string;
   path: string;
   dataset: string;
-  status: ChartReleaseStatus;
   used_ports: UsedPort[];
   pod_status: PodStatus;
-  update_available: boolean;
+  state: CatalogAppState;
+  upgrade_available: boolean;
   human_version: string;
   human_latest_version: string;
   container_images_update_available: boolean;
@@ -72,6 +109,9 @@ export interface ChartRelease {
   chart_schema: ChartSchema;
   history: Record<string, ChartReleaseVersion>;
   resources?: ChartResources;
+  version: number;
+  metadata: ChartMetadata;
+  active_workloads: AppActiveWorkloads;
 }
 
 export interface ChartStatisticsUpdate {
@@ -91,7 +131,7 @@ export interface ChartReleaseStats {
 export interface ChartReleaseVersion {
   catalog: string;
   catalog_train: string;
-  chart_metadata: ChartMetadata;
+  metadata: ChartMetadata;
   config: Record<string, ChartFormValue>;
   human_version: string;
   id: string;
@@ -101,26 +141,26 @@ export interface ChartReleaseVersion {
   version: number;
 }
 
-export interface ChartReleaseCreate {
+export interface AppCreate {
   values: Record<string, ChartFormValue>;
-  catalog: string;
-  item: string;
-  release_name: string;
+  app_name: string;
+  catalog_app: string;
   train: string;
   version: string;
 }
 
-export interface ChartReleaseUpdate {
+export interface AppUpdate {
   values: Record<string, ChartFormValue>;
 }
 
-export interface ChartReleaseUpgrade {
-  item_version?: string;
+export interface AppUpgrade {
+  app_version?: string;
   values?: Record<string, ChartFormValue>;
 }
 
-export type ChartReleaseQueryParams = QueryParams<ChartRelease, {
+export type ChartReleaseQueryParams = QueryParams<App, {
   extra?: {
+    retrieve_config?: boolean;
     retrieve_resources?: boolean;
     include_chart_schema?: boolean;
     history?: boolean;
@@ -128,11 +168,9 @@ export type ChartReleaseQueryParams = QueryParams<ChartRelease, {
   };
 }>;
 
-export type ChartReleaseUpgradeParams = [
+export type AppUpgradeParams = [
   name: string,
-  params?: {
-    item_version: string;
-  },
+  params?: AppUpgrade,
 ];
 
 export interface ChartContainerImage {
@@ -186,7 +224,7 @@ export interface ChartSchemaNode {
 export interface ChartSchema {
   app_readme: string;
   changelog: string;
-  chart_metadata: ChartMetadata;
+  metadata: ChartMetadata;
   detailed_readme: string;
   human_version: string;
   location: string;

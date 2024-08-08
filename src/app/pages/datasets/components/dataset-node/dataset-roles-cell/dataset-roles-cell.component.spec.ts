@@ -33,12 +33,12 @@ describe('DatasetRolesCellComponent', () => {
     expect(spectator.query(MatTooltip).message).toBe('This dataset is used by the system');
   });
 
-  it('shows "Applications" icon and tooltip when dataset has name `ix-applications`', async () => {
-    await setupTest({ name: 'root/ix-applications' } as DatasetDetails, false);
+  it('shows "Applications" icon and tooltip when dataset has name `ix-apps`', async () => {
+    await setupTest({ name: 'root/ix-apps' } as DatasetDetails, false);
 
     expect(await ixIcon.getName()).toBe('apps');
     expect(spectator.query(MatTooltip).message).toBe(
-      'This dataset is used to store Kubernetes config and other container related data',
+      'This dataset is used to store apps config and other container related data',
     );
   });
 

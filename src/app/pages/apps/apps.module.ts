@@ -48,11 +48,8 @@ import {
   AppDetailsSimilarComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
+import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
-import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
-import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
-import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
-import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
@@ -60,10 +57,7 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
-import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
-import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
-import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
@@ -79,7 +73,6 @@ import { CategoryViewComponent } from './components/available-apps/category-view
 import { CustomAppButtonComponent } from './components/available-apps/custom-app-button/custom-app-button.component';
 import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
-import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
 import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
@@ -99,14 +92,14 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppRowComponent,
     AppDetailsPanelComponent,
     AppContainersCardComponent,
-    AppHistoryCardComponent,
     AppResourcesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
-    PodLogsComponent,
-    PodShellComponent,
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
+    // PodLogsComponent,
+    // PodShellComponent,
     PodSelectDialogComponent,
-    PodSelectLogsDialogComponent,
+    // PodSelectLogsDialogComponent,
     AppUpgradeDialogComponent,
     AppDetailsHeaderComponent,
     AppBulkUpgradeComponent,
@@ -120,10 +113,12 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CategoryViewComponent,
     CustomAppButtonComponent,
     DockerStatusComponent,
-    DockerImagesListComponent,
-    DockerImageUpdateDialogComponent,
-    DockerImageDeleteDialogComponent,
-    PullImageFormComponent,
+    CatalogSettingsComponent,
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+    // DockerImagesListComponent,
+    // DockerImageUpdateDialogComponent,
+    // DockerImageDeleteDialogComponent,
+    // PullImageFormComponent,
   ],
   imports: [
     CommonModule,

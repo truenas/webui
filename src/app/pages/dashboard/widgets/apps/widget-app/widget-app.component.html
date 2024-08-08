@@ -44,7 +44,7 @@
 
     <div [class]="['container', size()]">
       <div class="app-header-row">
-        <ix-app-card-logo [url]="(application() | async)?.value?.chart_metadata?.icon"></ix-app-card-logo>
+        <ix-app-card-logo [url]="(application() | async)?.value?.metadata?.icon"></ix-app-card-logo>
 
         <div class="app-info">
           <div class="app-header">
@@ -52,7 +52,7 @@
               {{ app.name }}
             </h3>
             <div *ixWithLoadingState="application() as app" class="version">
-              v{{ app.chart_metadata?.appVersion }}
+              v{{ app.metadata?.appVersion }}
             </div>
           </div>
           <div class="app-status">
@@ -67,118 +67,6 @@
               [app]="app"
               [showIcon]="true"
             ></ix-app-update-cell>
-          </div>
-        </div>
-      </div>
-
-      <div class="app-stats">
-        <div class="app-stats-row">
-          <div class="slot square">
-            <div class="cpu-usage">
-              <h3 *ixWithLoadingState="stats() as stats">
-                <span>{{ stats.cpu.toFixed(0) }}</span>
-                <small>%</small>
-              </h3>
-              <div><strong>{{ 'CPU Usage' | translate }}</strong></div>
-            </div>
-          </div>
-          <div class="slot rectangle">
-            <div class="chart-info">
-              <h4>{{ 'Network I/O' | translate }}</h4>
-              <div class="in-out">
-                <div class="in-out-row">
-                  <span>{{ 'In' | translate }}:</span>
-                  <span *ixWithLoadingState="stats() as stats">
-                    {{ stats.network.incoming | ixNetworkSpeed }}
-                  </span>
-                </div>
-                <div class="in-out-row">
-                  <span>{{ 'Out' | translate }}:</span>
-                  <span *ixWithLoadingState="stats() as stats">
-                    {{ stats.network.outgoing | ixNetworkSpeed }}
-                  </span>
-                </div>
-              </div>
-              <small>{{ '1m Average' | translate }}</small>
-            </div>
-            <div class="chart-graph">
-              @if ((stats() | async).isLoading) {
-                <ngx-skeleton-loader
-                  class="skeleton"
-                  [theme]="{
-                    width: '292px',
-                    height: '92px',
-                    background: 'var(--alt-bg2)',
-                    opacity: 0.25,
-                    margin: 0,
-                  }"
-                ></ngx-skeleton-loader>
-              } @else {
-                <ix-network-chart
-                  [showLegend]="false"
-                  [data]="networkChartData()"
-                  [aspectRatio]="3"
-                ></ix-network-chart>
-              }
-            </div>
-          </div>
-        </div>
-        <div class="app-stats-row">
-          <div class="slot square">
-            <div class="memory-usage">
-              <h3>
-                <ng-container *ixWithLoadingState="stats() as stats">
-                  <ng-container *appLet="splitMemory(stats.memory | ixFileSize) as memory">
-                    <span>{{ memory[0].toFixed(0) }}</span>
-                    <small>{{ memory[1] }}</small>
-                  </ng-container>
-                </ng-container>
-              </h3>
-              <div>
-                <strong>{{ 'Memory Usage' | translate }}</strong>
-              </div>
-            </div>
-          </div>
-          <div class="slot rectangle">
-            <div class="chart-info">
-              <!-- TODO: Replace network data with disk data when it is available -->
-              <h4>{{ 'Disk I/O' | translate }}</h4>
-              <div class="in-out">
-                <div class="in-out-row">
-                  <span>{{ 'In' | translate }}:</span>
-                  <span *ixWithLoadingState="stats() as stats">
-                    {{ stats.network.incoming | ixNetworkSpeed }}
-                  </span>
-                </div>
-                <div class="in-out-row">
-                  <span>{{ 'Out' | translate }}:</span>
-                  <span *ixWithLoadingState="stats() as stats">
-                    {{ stats.network.outgoing | ixNetworkSpeed }}
-                  </span>
-                </div>
-              </div>
-              <small>{{ '1m Average' | translate }}</small>
-            </div>
-            <div class="chart-graph">
-              @if ((stats() | async).isLoading) {
-                <ngx-skeleton-loader
-                  class="skeleton"
-                  [theme]="{
-                    width: '292px',
-                    height: '92px',
-                    background: 'var(--alt-bg2)',
-                    opacity: 0.25,
-                    margin: 0,
-                  }"
-                ></ngx-skeleton-loader>
-              } @else {
-                <ix-network-chart
-                  [showLegend]="false"
-                  [data]="networkChartData()"
-                  [aspectRatio]="3"
-                ></ix-network-chart>
-              }
-            </div>
           </div>
         </div>
       </div>

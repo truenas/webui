@@ -1,60 +1,17 @@
-import { JobState } from 'app/enums/job-state.enum';
 import { AppMaintainer } from 'app/interfaces/available-app.interface';
 import {
   AppMetadata, ChartFormValue, ChartSchemaGroup, ChartSchemaNode,
 } from 'app/interfaces/chart-release.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface Catalog {
-  branch: string;
-  builtin: boolean;
-  healthy: boolean;
   id: string;
   label: string;
-
-  /**
-   * E.g. "/mnt/pool/ix-applications/catalogs/github_com_truenas_charts_git_master"
-   */
   location: string;
   preferred_trains: string[];
-
-  /**
-   * E.g. https://github.com/truenas/charts.git
-   */
-  repository: string;
-  trains: Record<string, CatalogTrain>;
-  error: boolean;
-  cached: boolean;
-  caching_job: {
-    id: number;
-    abortable: boolean;
-    method: string;
-    progress: {
-      percent: number;
-      description: string;
-    };
-    state: JobState;
-  };
 }
-
-export type CatalogQueryParams = QueryParams<Catalog, {
-  extra: {
-    item_details?: boolean;
-    cache?: boolean;
-    include_chart_schema?: boolean;
-  };
-}>;
 
 export interface CatalogUpdate {
   preferred_trains: string[];
-}
-
-export interface CatalogCreate {
-  label: string;
-  repository: string;
-  branch: string;
-  preferred_trains: string[];
-  force: boolean;
 }
 
 export type CatalogTrain = Record<string, CatalogApp>;
@@ -94,7 +51,7 @@ export interface CatalogApp {
 export interface CatalogAppVersion {
   app_readme: string;
   changelog: string;
-  chart_metadata: ChartMetadata;
+  metadata: ChartMetadata;
   detailed_readme: string;
   healthy: boolean;
   healthy_error: string;
@@ -143,14 +100,6 @@ export interface ChartMetadataDependency {
 }
 
 export type CatalogItems = Record<string, CatalogTrain>;
-
-export interface CatalogItemsQueryParams {
-  cache?: boolean;
-  cache_only?: boolean;
-  retrieve_all_trains?: boolean;
-  retrieve_versions?: boolean;
-  trains?: string[];
-}
 
 export interface GetItemDetailsParams {
   cache?: boolean;

@@ -146,9 +146,10 @@
         >
           {{ 'Status' | translate }}
         </div>
-        <div>{{ 'CPU' | translate }}</div>
-        <div>{{ 'RAM' | translate }}</div>
-        <div>{{ 'Network' | translate }}</div>
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130471 -->
+        <!-- <div>{{ 'CPU' | translate }}</div> -->
+        <!-- <div>{{ 'RAM' | translate }}</div> -->
+        <!-- <div>{{ 'Network' | translate }}</div> -->
         <div
           class="app-update-header"
           [matColumnDef]="sortableField.Updates"
@@ -185,7 +186,6 @@
               [class.selected]="selectedApp.id === app.id"
               [selected]="selection.isSelected(app.id)"
               [status]="getAppStatus(app.name)"
-              [stats]="getAppStats(app.name) | async"
               [job]="appJobs.get(app.name)"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"

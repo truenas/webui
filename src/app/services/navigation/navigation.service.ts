@@ -121,8 +121,8 @@ export class NavigationService {
       state: 'system',
       sub: [
         { name: T('Update'), state: 'update' },
-        { name: T('General'), state: 'general' },
-        { name: T('Advanced'), state: 'advanced' },
+        { name: T('General Settings'), state: 'general' },
+        { name: T('Advanced Settings'), state: 'advanced' },
         { name: T('Boot'), state: 'boot' },
         { name: T('Failover'), state: 'failover', isVisible$: this.hasFailover$ },
         { name: T('Services'), state: 'services' },
