@@ -1,3 +1,5 @@
+@import 'scss-imports/cssvars';
+
 :host {
   display: flex;
   flex-wrap: wrap;
@@ -85,5 +87,9 @@
 }
 
 .enclosure {
-  min-width: 250px;
+  min-width: 300px;
+
+  @media (max-width: $breakpoint-xs) {
+    min-width: 75vw;
+  }
 }
