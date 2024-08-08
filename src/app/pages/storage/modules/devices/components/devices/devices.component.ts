@@ -47,7 +47,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   selectedNode$ = this.devicesStore.selectedNode$;
   selectedParentNode$ = this.devicesStore.selectedParentNode$;
   selectedTopologyCategory$ = this.devicesStore.selectedTopologyCategory$;
-  disksWithSmartSupport$ = this.devicesStore.diskWithSmartSupport$;
+  disksWithSmartTestSupport$ = this.devicesStore.disksWithSmartTestSupport$;
 
   diskDictionary: Record<string, Disk> = {};
   dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
@@ -97,7 +97,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.devicesStore.loadDisksWithSmartSupport();
+    this.devicesStore.loadDisksWithSmartTestSupport();
     this.poolId = Number(this.route.snapshot.paramMap.get('poolId'));
     this.devicesStore.loadNodes(this.poolId);
     this.listenForRouteChanges();

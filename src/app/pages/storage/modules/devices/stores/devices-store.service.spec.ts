@@ -63,7 +63,7 @@ describe('DevicesStore', () => {
           diskDictionary: {},
           poolId: 4,
           selectedNodeGuid: null,
-          disksWithSmartSupport: [],
+          disksWithSmartTestSupport: [],
         },
         b: {
           isLoading: false,
@@ -89,14 +89,14 @@ describe('DevicesStore', () => {
           },
           poolId: 4,
           selectedNodeGuid: null,
-          disksWithSmartSupport: [],
+          disksWithSmartTestSupport: [],
         },
       });
     });
   });
 
-  describe('loadDisksWithSmartSupport', () => {
-    it('loads disks with SMART support and sets disksWithSmartSupport in state', () => {
+  describe('loadDisksWithSmartTestSupport', () => {
+    it('loads disks with SMART support and sets disksWithSmartTestSupport in state', () => {
       testScheduler.run(({ cold, expectObservable }) => {
         const mockWebSocket = spectator.inject(WebSocketService);
         jest.spyOn(mockWebSocket, 'call').mockImplementation((method) => {
@@ -121,15 +121,15 @@ describe('DevicesStore', () => {
           throw new Error(`Unexpected method: ${method}`);
         });
 
-        spectator.service.loadDisksWithSmartSupport();
+        spectator.service.loadDisksWithSmartTestSupport();
 
         expect(mockWebSocket.call).toHaveBeenCalledWith('smart.test.disk_choices');
         expectObservable(spectator.service.state$).toBe('ab', {
           a: expect.objectContaining({
-            disksWithSmartSupport: [],
+            disksWithSmartTestSupport: [],
           }),
           b: expect.objectContaining({
-            disksWithSmartSupport: ['sda', 'sdb', 'sdd', 'sdc', 'sde', 'sdf', 'sdg', 'sdh', 'sdi', 'sdj', 'sdk'],
+            disksWithSmartTestSupport: ['sda', 'sdb', 'sdd', 'sdc', 'sde', 'sdf', 'sdg', 'sdh', 'sdi', 'sdj', 'sdk'],
           }),
         });
       });

@@ -181,7 +181,7 @@ describe('SmartInfoCardComponent', () => {
     });
   });
 
-  it('checks if disk do not supports SMART', () => {
+  it('does not show Run Manual Test when disks does not support SMART tests', () => {
     spectator.setInput('hasSmartTestSupport', false);
 
     const runTestButton = spectator.query(byText('Run Manual Test'));
