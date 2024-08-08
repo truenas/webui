@@ -28,7 +28,7 @@
 
   @if (!(isLoading$ | async)) {
     @if (!(isFilterOrSearch$ | async)) {
-      @for (appSection of (appsFilterStore.appsByCategories$ | async); track trackByAppSectionTitle($index, appSection)) {
+      @for (appSection of (appsFilterStore.appsByCategories$ | async); track appSection.title) {
         <ng-container
           [ngTemplateOutlet]="apps"
           [ngTemplateOutletContext]="{ $implicit: appSection }"
@@ -38,7 +38,7 @@
 
     @if (isFilterOrSearch$ | async) {
       <div>
-        @for (appSection of (appsFilterStore.searchedApps$ | async); track trackByAppSectionTitle($index, appSection)) {
+        @for (appSection of (appsFilterStore.searchedApps$ | async); track appSection.title) {
           <ng-container
             [ngTemplateOutlet]="apps"
             [ngTemplateOutletContext]="{ $implicit: appSection }"
@@ -58,8 +58,8 @@
           @for (app of apps; track trackByAppId($index, app)) {
             <ix-app-card
               [app]="app"
-              [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
-              (keyup.enter)="router.navigate(['/apps', 'available', app.catalog, app.train, app.name])"
+              [routerLink]="['/apps', 'available', app.train, app.name]"
+              (keyup.enter)="router.navigate(['/apps', 'available', app.train, app.name])"
             ></ix-app-card>
           }
         </div>

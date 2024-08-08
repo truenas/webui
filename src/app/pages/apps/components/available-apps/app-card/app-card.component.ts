@@ -4,7 +4,6 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
-import { officialCatalog } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
@@ -18,8 +17,6 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 export class AppCardComponent {
   @Input() app: AvailableApp;
 
-  readonly officialCatalog = officialCatalog;
-
   get description(): string {
     const description = this.app.description || '';
     return description.length > 150 ? `${description.substring(0, 150)}...` : description;
@@ -32,8 +29,9 @@ export class AppCardComponent {
 
   navigateToAllInstalledPage(): void {
     this.installedAppsStore.installedApps$.pipe(
-      map((apps) => apps.filter((app) => (app.chart_metadata.name === this.app.name
-        && app.catalog === this.app.catalog && app.catalog_train === this.app.train))),
+      map((apps) => {
+        return apps.filter((app) => (app.metadata.name === this.app.name && app.catalog_train === this.app.train));
+      }),
       untilDestroyed(this),
     ).subscribe((apps) => {
       if (apps.length) {

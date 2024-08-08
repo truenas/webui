@@ -7,7 +7,7 @@ import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-a
 
 const fakeAppInfo = {
   name: 'elastic-search',
-  chart_metadata: {
+  metadata: {
     icon: 'https://images.contentstack.io/v3/assets/bltefdd0b53724fa2ce/blt280217a63b82a734/6202d3378b1f312528798412/elastic-logo.svg',
   },
   id: 'elastic-search',
@@ -24,7 +24,6 @@ const fakeUpgradeSummary = {
       human_version: '8.7.0_1.0.2',
     },
   ],
-  item_update_available: true,
   image_update_available: false,
   latest_version: '1.0.2',
   upgrade_version: '1.0.2',

@@ -10,7 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -40,11 +40,11 @@ describe('AvailableAppsHeaderComponent', () => {
     providers: [
       mockAuth(),
       mockWebSocket([
-        mockCall('chart.release.query', [{}, {}, {}] as ChartRelease[]),
+        mockCall('app.query', [{}, {}, {}] as App[]),
         mockJob('catalog.sync'),
       ]),
       mockProvider(InstalledAppsStore, {
-        installedApps$: of([{}, {}, {}] as ChartRelease[]),
+        installedApps$: of([{}, {}, {}] as App[]),
       }),
       mockProvider(AppsFilterStore, {
         isFilterApplied$: of(false),

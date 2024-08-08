@@ -1,11 +1,11 @@
-export enum ChartReleaseStatus {
+export enum CatalogAppState {
   Active = 'ACTIVE',
   Deploying = 'DEPLOYING',
   Stopped = 'STOPPED',
 }
 
-export const chartStatusIcons = new Map<ChartReleaseStatus, string>([
-  [ChartReleaseStatus.Active, 'mdi-check-circle'],
-  [ChartReleaseStatus.Deploying, 'mdi-progress-wrench'],
-  [ChartReleaseStatus.Stopped, 'mdi-stop-circle'],
+export const appStateIcons = new Map<CatalogAppState, string>([
+  [CatalogAppState.Active, 'mdi-check-circle'],
+  [CatalogAppState.Deploying, 'mdi-progress-wrench'],
+  [CatalogAppState.Stopped, 'mdi-stop-circle'],
 ]);

@@ -11,7 +11,7 @@ import {
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { availableAppsElements } from 'app/pages/apps/components/available-apps/available-apps.elements';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
-import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
 @UntilDestroy()
 @Component({
@@ -58,12 +58,8 @@ export class AvailableAppsComponent implements OnInit {
     });
   }
 
-  trackByAppId(id: number, app: AvailableApp): string {
-    return `${app.catalog}-${app.train}-${app.name}`;
-  }
-
-  trackByAppSectionTitle(_: number, appSection: AppsByCategory): string {
-    return appSection.title;
+  trackByAppId(_: number, app: AvailableApp): string {
+    return `${app.train}-${app.name}`;
   }
 
   applyCategoryFilter(category: string): void {

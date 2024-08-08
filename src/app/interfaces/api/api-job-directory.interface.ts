@@ -6,14 +6,16 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import {
   ChartRollbackParams,
-  ChartScaleQueryParams,
+  AppStartQueryParams,
   ChartScaleResult,
+  AppDeleteParams,
 } from 'app/interfaces/chart-release-event.interface';
 import {
-  ChartRelease,
-  ChartReleaseCreate,
-  ChartReleaseUpdate,
-  ChartReleaseUpgrade,
+  App,
+  AppCreate,
+  AppUpdate,
+  AppUpgrade,
+  AppUpgradeParams,
 } from 'app/interfaces/chart-release.interface';
 import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
@@ -78,13 +80,21 @@ export interface ApiJobDirectory {
   'certificate.delete': { params: [id: number, force?: boolean]; response: boolean };
   'certificate.update': { params: [id: number, update: CertificateUpdate]; response: Certificate };
 
+  // App
+  'app.create': { params: [AppCreate]; response: App };
+  'app.update': { params: [string, AppUpdate]; response: App };
+  'app.start': { params: AppStartQueryParams; response: void };
+  'app.stop': { params: AppStartQueryParams; response: void };
+  'app.delete': { params: AppDeleteParams; response: boolean };
+  'app.upgrade': { params: AppUpgradeParams; response: App };
+
   // Chart Release
-  'chart.release.create': { params: [ChartReleaseCreate]; response: ChartRelease };
+  'chart.release.create': { params: [AppCreate]; response: App };
   'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
-  'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: ChartRelease };
-  'chart.release.scale': { params: ChartScaleQueryParams; response: ChartScaleResult };
-  'chart.release.update': { params: [name: string, update: ChartReleaseUpdate]; response: ChartRelease };
-  'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
+  'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
+  'chart.release.scale': { params: AppStartQueryParams; response: ChartScaleResult };
+  'chart.release.update': { params: [name: string, update: AppUpdate]; response: App };
+  'chart.release.upgrade': { params: [name: string, upgrade: AppUpgrade]; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
