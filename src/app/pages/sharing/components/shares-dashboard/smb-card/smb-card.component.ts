@@ -209,8 +209,9 @@ export class SmbCardComponent implements OnInit {
 
   setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 0, // index column
+      active: 0,
       direction: SortDirection.Asc,
+      propertyName: 'name',
     });
   }
 }
