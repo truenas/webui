@@ -1,25 +1,25 @@
-import { UsedPort } from 'app/interfaces/app.interface';
+import { AppUsedPort } from 'app/interfaces/app.interface';
 import { getPorts } from 'app/pages/apps/utils/get-ports';
 
 describe('getPorts', () => {
   const ports = [
     {
-      port: 22,
+      container_port: '22',
       protocol: 'TCP',
     },
     {
-      port: 80,
+      container_port: '80',
       protocol: 'TCP',
     },
     {
-      port: 443,
+      container_port: '443',
       protocol: 'TCP',
     },
     {
-      port: 65535,
+      container_port: '65535',
       protocol: 'UDP',
     },
-  ] as UsedPort[];
+  ] as AppUsedPort[];
 
   it('returns a formatted string of used ports', () => {
     const result = getPorts(ports);

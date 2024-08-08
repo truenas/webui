@@ -12,24 +12,7 @@ describe('AppDetailsPanelComponent', () => {
 
   const app = {
     id: 'ix-test-app',
-    info: { notes: 'text' },
-    app_metadata: {
-      capabilities: Array.from({ length: 1 }).map((value, index) => ({
-        name: `X${index}`,
-        description: `This is being used to do X${index} thing`,
-      })),
-      hostMounts: Array.from({ length: 2 }).map((value, index) => ({
-        hostPath: `/dev/proc${index}`,
-        description: 'Required by netdata for xyz',
-      })),
-      runAsContext: Array.from({ length: 3 }).map((value, index) => ({
-        uid: index,
-        gid: index,
-        userName: `ix-test-${index}`,
-        groupName: `ix-test-${index}`,
-        description: 'Why this needs to be done',
-      })),
-    },
+    metadata: {},
   } as App;
 
   const createComponent = createComponentFactory({
@@ -67,6 +50,6 @@ describe('AppDetailsPanelComponent', () => {
 
     const appMetadataCard = spectator.query(AppMetadataCardComponent);
     expect(appMetadataCard).toBeTruthy();
-    expect(appMetadataCard.appMetadata).toStrictEqual(app.app_metadata);
+    expect(appMetadataCard.appMetadata).toStrictEqual(app.metadata);
   });
 });

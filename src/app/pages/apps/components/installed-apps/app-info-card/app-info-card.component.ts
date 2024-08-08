@@ -68,7 +68,7 @@ export class AppInfoCardComponent {
   ) {}
 
   get hasUpdates(): boolean {
-    return this.app?.upgrade_available || this.app?.container_images_update_available;
+    return this.app?.upgrade_available;
   }
 
   get ixChartApp(): boolean {
@@ -115,7 +115,7 @@ export class AppInfoCardComponent {
   }
 
   editButtonPressed(): void {
-    this.router.navigate(['/apps', 'installed', this.app.catalog_train, this.app.id, 'edit']);
+    this.router.navigate(['/apps', 'installed', this.app.metadata.train, this.app.id, 'edit']);
   }
 
   deleteButtonPressed(): void {

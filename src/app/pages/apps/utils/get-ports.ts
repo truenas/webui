@@ -1,7 +1,7 @@
-import { UsedPort } from 'app/interfaces/app.interface';
+import { AppUsedPort } from 'app/interfaces/app.interface';
 
-export function getPorts(ports: UsedPort[]): string {
+export function getPorts(ports: AppUsedPort[]): string {
   return ports.map((item) => {
-    return `${item.port}\\${item.protocol}`;
+    return `${item.container_port}\\${item.protocol}`;
   }).join(', ');
 }

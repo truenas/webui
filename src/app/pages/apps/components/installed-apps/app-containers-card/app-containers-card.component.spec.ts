@@ -23,29 +23,29 @@ describe.skip('AppContainersCardComponent', () => {
     id: 'ix-test-app',
     name: 'ix-test-app',
     upgrade_available: true,
-    state: CatalogAppState.Active,
-    used_ports: [{
-      port: 22, protocol: 'TCP',
-    }, {
-      port: 44, protocol: 'TCP',
-    }, {
-      port: 66, protocol: 'UDP',
-    }],
-    resources: {
-      container_images: {
-        'docker.io/ix-test-app': {
-          id: 'sha256:test',
-          update_available: false,
-        },
-        'docker.io/ix-test-dependency-app': {
-          id: 'sha256:test',
-          update_available: true,
-        },
-      } as Record<string, ChartContainerImage>,
-      deployments: [{}, {}],
-      pods: [{}],
-      statefulsets: [{}],
-    },
+    state: CatalogAppState.Running,
+    // used_ports: [{
+    //   port: 22, protocol: 'TCP',
+    // }, {
+    //   port: 44, protocol: 'TCP',
+    // }, {
+    //   port: 66, protocol: 'UDP',
+    // }],
+    // resources: {
+    //   container_images: {
+    //     'docker.io/ix-test-app': {
+    //       id: 'sha256:test',
+    //       update_available: false,
+    //     },
+    //     'docker.io/ix-test-dependency-app': {
+    //       id: 'sha256:test',
+    //       update_available: true,
+    //     },
+    //   } as Record<string, ChartContainerImage>,
+    //   deployments: [{}, {}],
+    //   pods: [{}],
+    //   statefulsets: [{}],
+    // },
   } as App;
 
   const createComponent = createComponentFactory({

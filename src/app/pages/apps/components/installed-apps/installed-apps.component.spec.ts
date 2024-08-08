@@ -35,10 +35,9 @@ describe('InstalledAppsComponent', () => {
     name: 'test-app',
     metadata: {
       name: 'rude-cardinal',
+      train: 'test-catalog-train',
     },
-    catalog: 'test-catalog',
-    catalog_train: 'test-catalog-train',
-    state: CatalogAppState.Active,
+    state: CatalogAppState.Running,
   } as App;
 
   const createComponent = createComponentFactory({

@@ -392,7 +392,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     this.config = app.config;
     this.config.release_name = app.id;
 
-    this._pageTitle$.next(app.title || app.name);
+    this._pageTitle$.next(app.metadata.title || app.name);
 
     this.form.addControl('release_name', new FormControl(app.name, [Validators.required]));
 
@@ -411,7 +411,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       ],
     });
 
-    this.buildDynamicForm(app.chart_schema.schema);
+    this.buildDynamicForm(app.version_details.schema);
   }
 
   private afterAppLoaded(): void {

@@ -6,23 +6,23 @@ import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-ap
 describe('AppMetadataCardComponent', () => {
   let spectator: Spectator<AppMetadataCardComponent>;
 
-  const appMetadata: AppMetadata = {
+  const appMetadata = {
     capabilities: Array.from({ length: 2 }).map((value, index) => ({
       name: `X${index}`,
       description: `This is being used to do X${index} thing`,
     })),
-    hostMounts: Array.from({ length: 3 }).map((value, index) => ({
+    host_mounts: Array.from({ length: 3 }).map((value, index) => ({
       hostPath: `/dev/proc${index}`,
       description: 'Required by netdata for xyz',
     })),
-    runAsContext: Array.from({ length: 4 }).map((value, index) => ({
+    run_as_context: Array.from({ length: 4 }).map((value, index) => ({
       uid: index,
       gid: index,
-      userName: `ix-test-${index}`,
-      groupName: `ix-test-${index}`,
+      user_name: `ix-test-${index}`,
+      group_name: `ix-test-${index}`,
       description: 'Why this needs to be done',
     })),
-  };
+  } as AppMetadata;
 
   const createComponent = createComponentFactory({
     component: AppMetadataCardComponent,

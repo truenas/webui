@@ -15,7 +15,7 @@ describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
   const app = {
     name: 'app_name',
-    state: CatalogAppState.Active,
+    state: CatalogAppState.Running,
     metadata: { icon: 'https://image/' },
   } as App;
 
@@ -63,6 +63,7 @@ describe('AppRowComponent', () => {
   });
 
   // TODO: https://ixsystems.atlassian.net/browse/NAS-130471
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   it.skip('shows app usages statistics', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('50%');
     expect(spectator.query('.cell-ram')).toHaveText('19.07 MiB');

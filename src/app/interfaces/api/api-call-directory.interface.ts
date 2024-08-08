@@ -311,10 +311,14 @@ export interface ApiCallDirectory {
   'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
 
   // App
+  'app.query': { params: AppQueryParams; response: App[] };
+  'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.categories': { params: void; response: string[] };
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
+  'app.rollback_versions': { params: [app_name: string]; response: string[] };
+  'app.used_ports': { params: void; response: number[] };
 
   // Audit
   'audit.config': { params: void; response: AuditConfig };
@@ -372,10 +376,6 @@ export interface ApiCallDirectory {
     params: [number, Partial<CertificateAuthorityUpdate>];
     response: CertificateAuthority;
   };
-
-  // Apps
-  'app.query': { params: AppQueryParams; response: App[] };
-  'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
 
   // Chart
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };

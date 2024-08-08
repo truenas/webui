@@ -1,6 +1,7 @@
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
+import { AppMaintainer } from 'app/interfaces/available-app.interface';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -80,38 +81,32 @@ export interface AppContainerVolumes {
 
 export interface AppActiveWorkloads {
   containers: number;
-  user_ports: AppUsedPort[];
+  used_ports: AppUsedPort[];
   container_details: AppContainerDetails[];
   volumes: AppContainerVolumes[];
+  images: string[];
 }
 
 export interface App {
   name: string;
-  title: string;
-  info: ChartInfo;
-  config: Record<string, ChartFormValue>;
-  hooks: unknown[];
-  namespace: string;
-  app_metadata: AppMetadata;
   id: string;
-  catalog: string;
-  catalog_train: string;
-  path: string;
-  dataset: string;
-  used_ports: UsedPort[];
-  pod_status: PodStatus;
+  active_workloads: AppActiveWorkloads;
   state: CatalogAppState;
   upgrade_available: boolean;
   human_version: string;
-  human_latest_version: string;
-  container_images_update_available: boolean;
-  portals: Record<string, string[]>;
-  chart_schema: ChartSchema;
-  history: Record<string, ChartReleaseVersion>;
-  resources?: ChartResources;
-  version: number;
-  metadata: ChartMetadata;
-  active_workloads: AppActiveWorkloads;
+  metadata: AppMetadata;
+  notes: string;
+  portals: Record<string, string>;
+  version: string;
+  migrated: boolean;
+  /**
+   * Present with `retrieve_config` query param.
+   */
+  config?: Record<string, ChartFormValue>;
+  /**
+   * Presents with `include_app_schema` query param.
+   */
+  version_details?: ChartSchema;
 }
 
 export interface ChartStatisticsUpdate {
@@ -160,11 +155,20 @@ export interface AppUpgrade {
 
 export type AppQueryParams = QueryParams<App, {
   extra?: {
+    /**
+     * host_ip is a string which can be provided to override portal IP address if it is a wildcard.
+     */
+    host_ip?: string;
+
+    /**
+     * include_app_schema is a boolean which can be set to include app schema in the response.
+     */
+    include_app_schema?: boolean;
+
+    /**
+     * is a boolean which can be set to retrieve app configuration used to install/manage app.
+     */
     retrieve_config?: boolean;
-    retrieve_resources?: boolean;
-    include_chart_schema?: boolean;
-    history?: boolean;
-    stats?: boolean;
   };
 }>;
 
@@ -222,9 +226,9 @@ export interface ChartSchemaNode {
 }
 
 export interface ChartSchema {
-  app_readme: string;
+  app_metadata: ChartMetadata;
+  readme: string;
   changelog: string;
-  metadata: ChartMetadata;
   detailed_readme: string;
   human_version: string;
   location: string;
@@ -232,7 +236,7 @@ export interface ChartSchema {
   schema: {
     groups: ChartSchemaGroup[];
     questions: ChartSchemaNode[];
-    portals: Record<string, {
+    portals?: Record<string, {
       host: string[];
       ports: string[];
       protocols: string[];
@@ -242,22 +246,44 @@ export interface ChartSchema {
   values: Record<string, ChartFormValue>;
 }
 
+interface HostMount {
+  description: string;
+  hostPath: string;
+}
+
+interface Capability {
+  name: string;
+  description: string;
+}
+
+interface AppRunAsContext {
+  description: string;
+  gid: number;
+  group_name: string;
+  uid: number;
+  user_name: string;
+}
+
 export interface AppMetadata {
-  runAsContext?: {
-    description: string;
-    gid?: number;
-    groupName?: string;
-    userName?: string;
-    uid?: number;
-  }[];
-  capabilities?: {
-    description: string;
-    name: string;
-  }[];
-  hostMounts?: {
-    description: string;
-    hostPath: string;
-  }[];
+  app_version: string;
+  capabilities: Capability[];
+  categories: string[];
+  description: string;
+  home: string;
+  host_mounts: HostMount[];
+  icon: string;
+  keywords: string[];
+  last_update: string;
+  lib_version: string;
+  lib_version_hash: string;
+  maintainers: AppMaintainer[];
+  name: string;
+  run_as_context: AppRunAsContext[];
+  screenshots: string[];
+  sources: string[];
+  title: string;
+  train: string;
+  version: string;
 }
 
 export type AppStartQueryParams = [

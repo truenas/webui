@@ -53,7 +53,7 @@ export class AppBulkUpgradeComponent {
     private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) private apps: App[],
   ) {
-    this.apps = this.apps.filter((app) => app.upgrade_available || app.container_images_update_available);
+    this.apps = this.apps.filter((app) => app.upgrade_available);
 
     this.setInitialValues();
     this.detectFormChanges();
@@ -132,7 +132,7 @@ export class AppBulkUpgradeComponent {
   private setInitialValues(): void {
     this.apps.forEach((app) => {
       this.bulkItems.set(app.name, { state: BulkListItemState.Initial, item: app });
-      const [, latestVersion] = app.human_latest_version.split('_');
+      const [, latestVersion] = app.metadata.app_version.split('_');
       this.form.addControl(app.name, this.formBuilder.control<string>(latestVersion));
     });
   }

@@ -103,15 +103,14 @@ export class AppContainersCardComponent implements OnChanges {
   }
 
   getPorts(app: App): string {
-    return getPorts(app.used_ports);
+    return getPorts(app.active_workloads.used_ports);
   }
 
   private shellDialogSubmit(formValue: PodDialogFormValue): void {
     this.router.navigate([
       '/apps',
       'installed',
-      this.app.catalog,
-      this.app.catalog_train,
+      this.app.metadata.train,
       this.app.name,
       'shell',
       formValue.pods,
@@ -124,8 +123,7 @@ export class AppContainersCardComponent implements OnChanges {
     this.router.navigate([
       '/apps',
       'installed',
-      this.app.catalog,
-      this.app.catalog_train,
+      this.app.metadata.train,
       this.app.name,
       'logs',
       formValue.pods,
