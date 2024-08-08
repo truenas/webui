@@ -80,7 +80,7 @@ import {
   CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
-import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
+import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
@@ -419,7 +419,6 @@ export interface ApiCallDirectory {
   'app.image.delete': { params: DeleteContainerImageParams; response: boolean };
   'app.image.dockerhub_rate_limit': { params: void; response: DockerHubRateLimit };
   'app.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
-  'container.update': { params: [ContainerConfigUpdate]; response: ContainerConfig };
 
   // Core
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
