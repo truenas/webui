@@ -20,13 +20,12 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter,
 } from 'rxjs';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -100,11 +99,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get appsUpdateAvailable(): number {
     return this.dataSource
-      .filter((app) => app.upgrade_available || app.container_images_update_available).length;
+      .filter((app) => app.upgrade_available).length;
   }
 
   get hasUpdates(): boolean {
-    return this.dataSource.some((app) => app.upgrade_available || app.container_images_update_available);
+    return this.dataSource.some((app) => app.upgrade_available);
   }
 
   get checkedAppsNames(): string[] {
@@ -113,7 +112,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get isBulkStartDisabled(): boolean {
     return this.dataSource.every((app) => [
-      CatalogAppState.Active,
+      CatalogAppState.Running,
       CatalogAppState.Deploying,
     ].includes(app.state));
   }
@@ -125,12 +124,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   get isBulkUpgradeDisabled(): boolean {
     return !this.checkedAppsNames
       .map((name) => this.dataSource.find((app) => app.name === name))
-      .some((app) => app.upgrade_available || app.container_images_update_available);
+      .some((app) => app.upgrade_available);
   }
 
   get startedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === CatalogAppState.Active && this.selection.isSelected(app.id),
+      (app) => app.state === CatalogAppState.Running && this.selection.isSelected(app.id),
     );
   }
 
@@ -211,9 +210,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   viewDetails(app: App): void {
     this.selectAppForDetails(app.id);
 
-    this.router.navigate([
-      '/apps/installed', app.catalog_train, app.id,
-    ]);
+    this.router.navigate(['/apps/installed', app.metadata.train, app.id]);
 
     if (this.isMobileView) {
       this.showMobileDetails = true;
@@ -356,7 +353,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onBulkUpgrade(updateAll = false): void {
     const apps = this.dataSource.filter((app) => (
-      updateAll ? app.upgrade_available || app.container_images_update_available : this.selection.isSelected(app.id)
+      updateAll ? app.upgrade_available : this.selection.isSelected(app.id)
     ));
     this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
       .afterClosed()
@@ -370,14 +367,14 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     const checkedNames = this.checkedAppsNames;
     const name = checkedNames.join(', ');
     this.dialogService.confirm({
-      title: helptextApps.charts.delete_dialog.title,
+      title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.dialogService.jobDialog(
           this.ws.job('core.bulk', ['app.delete', checkedNames.map((item) => [item])]),
-          { title: helptextApps.charts.delete_dialog.job },
+          { title: helptextApps.apps.delete_dialog.job },
         )
           .afterClosed()
           .pipe(this.errorHandler.catchError(), untilDestroyed(this))
@@ -409,10 +406,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return getAppStatus(app, job);
   }
 
-  sortChanged(sort: Sort, charts?: App[]): void {
+  sortChanged(sort: Sort, apps?: App[]): void {
     this.sortingInfo = sort;
 
-    this.dataSource = (charts || this.dataSource).sort((a, b) => {
+    this.dataSource = (apps || this.dataSource).sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
       switch (sort.active as SortableField) {
@@ -422,8 +419,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           return doSortCompare(this.getAppStatus(a.name), this.getAppStatus(b.name), isAsc);
         case SortableField.Updates:
           return doSortCompare(
-            (a.upgrade_available || a.container_images_update_available) ? 1 : 0,
-            (b.upgrade_available || b.container_images_update_available) ? 1 : 0,
+            a.upgrade_available ? 1 : 0,
+            b.upgrade_available ? 1 : 0,
             isAsc,
           );
         default:
@@ -437,9 +434,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const app = appId && this.dataSource.find((chart) => chart.id === appId);
-    if (app) {
-      this.selectedApp = app;
+    const selectedApp = appId && this.dataSource.find((app) => app.id === appId);
+    if (selectedApp) {
+      this.selectedApp = selectedApp;
       this.cdr.markForCheck();
       return;
     }
@@ -449,8 +446,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   private selectFirstApp(): void {
     const [firstApp] = this.dataSource;
-    if (firstApp.catalog_train && firstApp.id) {
-      this.location.replaceState(['/apps', 'installed', firstApp.catalog_train, firstApp.id].join('/'));
+    if (firstApp.metadata.train && firstApp.id) {
+      this.location.replaceState(['/apps', 'installed', firstApp.metadata.train, firstApp.id].join('/'));
     } else {
       this.location.replaceState(['/apps', 'installed'].join('/'));
     }

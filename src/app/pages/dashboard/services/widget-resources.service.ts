@@ -7,8 +7,7 @@ import {
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -145,13 +144,13 @@ export class WidgetResourcesService {
   }
 
   // TODO: Fix when stats API is ready
-  getAppStats(appName: string): Observable<ChartReleaseStats> {
+  getAppStats(appName: string): Observable<unknown> {
     console.error(`getAppStats(${appName}) not implemented yet`);
     return of();
   }
 
   // TODO: Fix when stats API is ready
-  getAppStatusUpdates(appName: string): Observable<Job<void, AppStartQueryParams>> {
+  getAppStatusUpdates(appName: string): Observable<Job> {
     console.error(`getAppStatusUpdates(${appName}) not implemented yet`);
     return of();
   }

@@ -42,7 +42,7 @@
           <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
             @if (!ixChartApp) {
-              {{ app?.metadata?.appVersion | orNotAvailable }}
+              {{ app?.metadata?.app_version | orNotAvailable }}
             } @else if (app.human_version) {
               <!-- Show docker image tag as version for custom apps -->
               {{ app.human_version?.split(':')?.[1]?.split('_')?.[0] }}
@@ -93,7 +93,7 @@
         <div class="details-item">
           <div class="label">{{ 'Train' | translate }}:</div>
           <div class="value">
-            {{ app?.catalog_train | orNotAvailable }}
+            {{ app?.metadata?.train | orNotAvailable }}
           </div>
         </div>
         @if (app?.portals) {
@@ -147,7 +147,8 @@
       </div>
 
       <ng-container *ixRequiresRoles="requiredRoles">
-        @if (app.history && !isEmpty(app.history)) {
+        <!-- TODO: Fix App Rollback condition -->
+        @if (false) {
           <button
             mat-button
             [ixTest]="[app.name, 'rollback']"

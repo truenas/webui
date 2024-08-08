@@ -22,6 +22,7 @@ export class DiskDetailsPanelComponent {
   @Input() poolId: number;
   @Input() topologyCategory: VdevType;
   @Input() hasTopLevelRaidz: boolean;
+  @Input() disksWithSmartTestSupport: string[];
 
   @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
 
@@ -43,6 +44,10 @@ export class DiskDetailsPanelComponent {
     }
 
     return false;
+  }
+
+  get hasSmartTestSupport(): boolean {
+    return this.disksWithSmartTestSupport.includes(this.disk.devname);
   }
 
   onCloseMobileDetails(): void {

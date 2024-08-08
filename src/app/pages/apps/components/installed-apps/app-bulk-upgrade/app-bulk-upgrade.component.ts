@@ -16,8 +16,8 @@ import {
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
+import { App, AppUpgradeParams } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { App, AppUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -53,7 +53,7 @@ export class AppBulkUpgradeComponent {
     private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) private apps: App[],
   ) {
-    this.apps = this.apps.filter((app) => app.upgrade_available || app.container_images_update_available);
+    this.apps = this.apps.filter((app) => app.upgrade_available);
 
     this.setInitialValues();
     this.detectFormChanges();
@@ -132,7 +132,7 @@ export class AppBulkUpgradeComponent {
   private setInitialValues(): void {
     this.apps.forEach((app) => {
       this.bulkItems.set(app.name, { state: BulkListItemState.Initial, item: app });
-      const [, latestVersion] = app.human_latest_version.split('_');
+      const [, latestVersion] = app.metadata.app_version.split('_');
       this.form.addControl(app.name, this.formBuilder.control<string>(latestVersion));
     });
   }

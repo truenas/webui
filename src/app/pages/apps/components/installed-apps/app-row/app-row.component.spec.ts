@@ -2,8 +2,8 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
-import { App } from 'app/interfaces/chart-release.interface';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { App } from 'app/interfaces/app.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -15,7 +15,7 @@ describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
   const app = {
     name: 'app_name',
-    state: CatalogAppState.Active,
+    state: CatalogAppState.Running,
     metadata: { icon: 'https://image/' },
   } as App;
 
@@ -63,6 +63,7 @@ describe('AppRowComponent', () => {
   });
 
   // TODO: https://ixsystems.atlassian.net/browse/NAS-130471
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   it.skip('shows app usages statistics', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('50%');
     expect(spectator.query('.cell-ram')).toHaveText('19.07 MiB');

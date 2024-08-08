@@ -4,7 +4,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Inject,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -13,7 +12,6 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
-import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
@@ -48,7 +46,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     private layoutService: LayoutService,
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
