@@ -22,6 +22,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DockerImageDeleteDialogComponent {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly forceCheckboxTooltip = 'When set will force delete the image regardless of the state of\
+   containers and should be used cautiously.';
 
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],

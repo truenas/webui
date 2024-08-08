@@ -9,10 +9,10 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-input
-          formControlName="from_image"
+          formControlName="image"
           [label]="'Image Name' | translate"
           [required]="true"
-          [tooltip]="tooltips.from_image | translate"
+          [tooltip]="tooltips.image | translate"
         ></ix-input>
 
         <ix-input

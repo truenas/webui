@@ -14,7 +14,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
-import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -38,7 +37,7 @@ describe('DockerImagesListComponent', () => {
     providers: [
       mockAuth(),
       mockWebSocket([
-        mockCall('container.image.query', fakeDockerImagesDataSource),
+        mockCall('app.image.query', fakeDockerImagesDataSource),
         mockCall('app.image.delete'),
       ]),
       mockProvider(DialogService, {
@@ -71,17 +70,8 @@ describe('DockerImagesListComponent', () => {
       ['sha256:test2', 'truenas/middleware:0.1.2', '5.82 MiB', 'Yes', ''],
     ];
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('container.image.query');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.image.query');
     expect(await table.getCellTexts()).toEqual(expectedRows);
-  });
-
-  it('opens update dialog when "Update" button is pressed', async () => {
-    const updateButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'update' }), 'sha256:test1');
-    await updateButton.click();
-
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerImageUpdateDialogComponent, {
-      data: [fakeDockerImagesDataSource[0]],
-    });
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
