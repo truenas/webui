@@ -6,7 +6,6 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -48,6 +47,7 @@ import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -105,11 +105,14 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     return Boolean(this.catalogApp?.app_metadata && this.form?.controls['show_metadata']?.value);
   }
 
+  get hasRequiredRoles(): Observable<boolean> {
+    return this.authService.hasRole(this.requiredRoles);
+  }
+
   constructor(
     private formBuilder: FormBuilder,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
-    private matDialog: MatDialog,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -120,6 +123,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     private errorHandler: ErrorHandlerService,
     private dockerStore: DockerStore,
     private ws: WebSocketService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
