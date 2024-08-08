@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component,
+  input, computed,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { formatRelative } from 'date-fns';
 import { Observable } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 @UntilDestroy()
 @Component({
@@ -14,36 +14,11 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
   styleUrls: ['./app-available-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppAvailableInfoCardComponent implements OnChanges {
-  @Input() isLoading$: Observable<boolean>;
-  @Input() app: AvailableApp;
-  sources: string[] = [];
-  loadingSources = true;
-  relativeDate = '';
+export class AppAvailableInfoCardComponent {
+  readonly isLoading$ = input.required<Observable<boolean>>();
+  readonly app = input<AvailableApp>();
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private applicationService: ApplicationsService,
-  ) { }
-
-  ngOnChanges(): void {
-    if (!this.app) {
-      return;
-    }
-    this.loadingSources = true;
-    this.applicationService.getCatalogAppDetails(this.app.name, this.app.train)
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (catalogItem) => {
-          this.sources = [...(catalogItem?.versions[this.app.latest_version]?.metadata?.sources || [])];
-          this.cdr.markForCheck();
-        },
-        complete: () => {
-          this.loadingSources = false;
-          this.cdr.markForCheck();
-        },
-      });
-    this.relativeDate = formatRelative(new Date(this.app.last_update.$date), new Date());
-    this.cdr.markForCheck();
-  }
+  readonly relativeDate = computed(() => {
+    return formatRelative(new Date(this.app().last_update.$date), new Date());
+  });
 }
