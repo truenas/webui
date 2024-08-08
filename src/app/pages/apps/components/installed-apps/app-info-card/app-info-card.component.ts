@@ -80,7 +80,7 @@ export class AppInfoCardComponent {
   }
 
   portalLink(app: App, name = 'web_portal'): void {
-    this.redirect.openWindow(app.portals[name][0]);
+    this.redirect.openWindow(app.portals[name]);
   }
 
   updateButtonPressed(): void {

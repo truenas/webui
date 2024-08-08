@@ -45,6 +45,10 @@ describe('AppInfoCardComponent', () => {
       app_version: '3.2.1',
       train: 'stable',
     },
+    portals: {
+      'Web UI': 'http://localhost:8000/ui',
+      'Admin Panel': 'http://localhost:8000/admin',
+    } as Record<string, string>,
   } as App;
 
   const upgradeSummary = {} as AppUpgradeSummary;
@@ -188,6 +192,18 @@ describe('AppInfoCardComponent', () => {
       'app.delete',
       [app.name, { remove_images: true }],
     );
+  });
+
+  it('shows portal buttons and opens a URL when one of the button is clicked', async () => {
+    const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
+
+    expect(buttons).toHaveLength(2);
+    expect(await buttons[0].getText()).toBe('Admin Panel');
+    expect(await buttons[1].getText()).toBe('Web UI');
+
+    await buttons[1].click();
+
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith(app.portals['Web UI']);
   });
 
   // TODO:

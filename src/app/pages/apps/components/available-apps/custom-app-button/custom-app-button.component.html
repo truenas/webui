@@ -1,16 +1,19 @@
-<div
-  [matTooltip]="'Setup Pool To Create Custom App' | translate"
-  [matTooltipDisabled]="!(customAppDisabled$ | async)"
->
-  <a
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    color="primary"
-    ixTest="custom-app"
-    [disabled]="customAppDisabled$ | async"
-    [ixUiSearch]="searchableElements.elements.customApp"
-    (click)="navigateToCustomAppCreation()"
+<!-- TODO: https://ixsystems.atlassian.net/browse/NAS-129579 -->
+@if (false) {
+  <div
+    [matTooltip]="'Setup Pool To Create Custom App' | translate"
+    [matTooltipDisabled]="!(customAppDisabled$ | async)"
   >
-    {{ 'Custom App' | translate }}
-  </a>
-</div>
+    <a
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="primary"
+      ixTest="custom-app"
+      [disabled]="customAppDisabled$ | async"
+      [ixUiSearch]="searchableElements.elements.customApp"
+      (click)="navigateToCustomAppCreation()"
+    >
+      {{ 'Custom App' | translate }}
+    </a>
+  </div>
+}
