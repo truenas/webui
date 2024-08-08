@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { AppMetadata } from 'app/interfaces/chart-release.interface';
+import { AppMetadata } from 'app/interfaces/app.interface';
 
 @Component({
   selector: 'ix-app-metadata-card',

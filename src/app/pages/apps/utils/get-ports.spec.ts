@@ -1,4 +1,4 @@
-import { AppUsedPort } from 'app/interfaces/chart-release.interface';
+import { AppUsedPort } from 'app/interfaces/app.interface';
 import { getPorts } from 'app/pages/apps/utils/get-ports';
 
 describe('getPorts', () => {

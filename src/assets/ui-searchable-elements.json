@@ -4656,13 +4656,15 @@
       "Localization Settings"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "general"
     ],
     "routerLink": null,
-    "anchor": "localization-card",
+    "anchor": "localization-settings",
     "triggerAnchor": null,
     "section": "ui"
   },

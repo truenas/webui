@@ -1,4 +1,4 @@
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { AppMaintainer } from 'app/interfaces/available-app.interface';
@@ -172,20 +172,6 @@ export type AppQueryParams = QueryParams<App, {
   };
 }>;
 
-/**
- * @deprecated
- * See `AppQueryParams` instead.
- */
-export type ChartReleaseQueryParams = QueryParams<App, {
-  extra?: {
-    retrieve_config?: boolean;
-    retrieve_resources?: boolean;
-    include_chart_schema?: boolean;
-    history?: boolean;
-    stats?: boolean;
-  };
-}>;
-
 export type AppUpgradeParams = [
   name: string,
   params?: AppUpgrade,
@@ -298,4 +284,22 @@ export interface AppMetadata {
   title: string;
   train: string;
   version: string;
+}
+
+export type AppStartQueryParams = [
+  name: string,
+];
+export type AppDeleteParams = [
+  string,
+  {
+    remove_images?: boolean;
+    remove_ix_volumes?: boolean;
+  },
+];
+
+export interface ChartRollbackParams {
+  force_rollback?: boolean;
+  recreate_resources?: boolean;
+  rollback_snapshot?: boolean;
+  app_version: string;
 }

@@ -7,8 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { ChartRollbackParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, ChartRollbackParams } from 'app/interfaces/app.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -29,7 +28,7 @@ export class AppRollbackModalComponent {
 
   versionOptions$: Observable<Option[]>;
 
-  readonly helptext = helptextApps.charts.rollback_dialog.version.tooltip;
+  readonly helptext = helptextApps.apps.rollback_dialog.version.tooltip;
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
@@ -38,7 +37,7 @@ export class AppRollbackModalComponent {
     private dialogService: DialogService,
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) private chartRelease: App,
+    @Inject(MAT_DIALOG_DATA) private app: App,
   ) {
     this.setVersionOptions();
   }
@@ -47,8 +46,8 @@ export class AppRollbackModalComponent {
     const rollbackParams = this.form.value as Required<ChartRollbackParams>;
 
     this.dialogService.jobDialog(
-      this.ws.job('chart.release.rollback', [this.chartRelease.name, rollbackParams]),
-      { title: helptextApps.charts.rollback_dialog.job },
+      this.ws.job('chart.release.rollback', [this.app.name, rollbackParams]),
+      { title: helptextApps.apps.rollback_dialog.job },
     )
       .afterClosed()
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
