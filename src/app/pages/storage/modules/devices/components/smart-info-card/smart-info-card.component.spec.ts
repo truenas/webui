@@ -105,6 +105,8 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('shows a dialog to run a manual SMART test when Run Manual Test is pressed', async () => {
+    spectator.setInput('hasSmartTestSupport', true);
+
     const runTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Run Manual Test' }));
     await runTestButton.click();
 
@@ -179,5 +181,10 @@ describe('SmartInfoCardComponent', () => {
     });
   });
 
-  // TODO: handle cases when SMART is not supported
+  it('does not show Run Manual Test when disks does not support SMART tests', () => {
+    spectator.setInput('hasSmartTestSupport', false);
+
+    const runTestButton = spectator.query(byText('Run Manual Test'));
+    expect(runTestButton).not.toExist();
+  });
 });
