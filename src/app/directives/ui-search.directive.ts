@@ -2,6 +2,7 @@ import {
   Directive, Input, ElementRef, Renderer2, OnInit,
   OnDestroy,
 } from '@angular/core';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -30,6 +31,8 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     }
     return hierarchyItem;
   }
+
+  private highlightTimeout: Timeout = null;
 
   constructor(
     private renderer: Renderer2,
@@ -76,27 +79,28 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   }
 
   private highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
-    if (!anchorRef) return;
+    if (shouldClick && anchorRef) setTimeout(() => anchorRef.click(), searchDelayConst);
+
+    if (!anchorRef || shouldClick) return;
 
     this.renderer.addClass(anchorRef, 'search-element-highlighted');
 
-    if (shouldClick) setTimeout(() => anchorRef.click(), searchDelayConst);
+    const removeHighlightStyling = (): void => {
+      this.renderer.removeClass(anchorRef, 'search-element-highlighted');
+      ['click', 'keydown'].forEach((event) => document.removeEventListener(event, removeHighlightStyling));
+    };
 
     setTimeout(() => {
       anchorRef.focus();
       anchorRef.scrollIntoView();
       document.querySelector<HTMLElement>('.rightside-content-hold').scrollBy(0, -20);
+      ['click', 'keydown'].forEach((event) => document.addEventListener(event, removeHighlightStyling, { once: true }));
     }, searchDelayConst);
 
-    const handleEvent = (): void => {
-      this.renderer.removeClass(anchorRef, 'search-element-highlighted');
-      document.removeEventListener('click', handleEvent);
-      document.removeEventListener('keydown', handleEvent);
-    };
+    if (this.highlightTimeout) {
+      clearTimeout(this.highlightTimeout);
+    }
 
-    setTimeout(() => {
-      document.addEventListener('click', handleEvent, { once: true });
-      document.addEventListener('keydown', handleEvent, { once: true });
-    }, 0);
+    this.highlightTimeout = setTimeout(() => removeHighlightStyling(), 4000);
   }
 }
