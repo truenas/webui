@@ -8,7 +8,7 @@ import { Gallery, GalleryItem, ImageItem } from 'ng-gallery';
 import {
   map, filter, BehaviorSubject, tap, switchMap,
 } from 'rxjs';
-import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.constants';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -24,12 +24,10 @@ export class AppDetailViewComponent implements OnInit {
   app: AvailableApp;
 
   appId: string;
-  catalog: string;
   train: string;
 
   isLoading$ = new BehaviorSubject<boolean>(true);
   readonly imagePlaceholder = appImagePlaceholder;
-  readonly officialCatalog = officialCatalog;
 
   items: GalleryItem[];
 
@@ -55,16 +53,15 @@ export class AppDetailViewComponent implements OnInit {
     this.activatedRoute.params
       .pipe(
         filter((params) => {
-          return !!(params.appId as string) && !!(params.catalog as string) && !!(params.train as string);
+          return !!(params.appId as string) && !!(params.train as string);
         }),
         tap(() => {
           this.isLoading$.next(true);
         }),
         untilDestroyed(this),
       )
-      .subscribe(({ appId, catalog, train }: AppDetailsRouteParams) => {
+      .subscribe(({ appId, train }: AppDetailsRouteParams) => {
         this.appId = appId;
-        this.catalog = catalog;
         this.train = train;
         this.loadAppInfo();
       });
@@ -77,7 +74,7 @@ export class AppDetailViewComponent implements OnInit {
       switchMap(() => {
         return this.applicationsStore.availableApps$.pipe(
           map((apps: AvailableApp[]) => apps.find(
-            (app) => app.name === this.appId && app.catalog === this.catalog && this.train === app.train,
+            (app) => app.name === this.appId && this.train === app.train,
           )),
         );
       }),

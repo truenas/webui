@@ -7,16 +7,15 @@ import {
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface InstalledAppsState {
-  installedApps: ChartRelease[];
+  installedApps: App[];
   isLoading: boolean;
 }
 
@@ -37,7 +36,6 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     private appsStore: AppsStore,
     private dockerStore: DockerStore,
     private errorHandler: ErrorHandlerService,
-    private appsStats: AppsStatisticsService,
   ) {
     super(initialState);
     this.initialize();
@@ -91,6 +89,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       return;
     }
 
+    // TODO: Messy. Refactor.
     this.installedAppsSubscription = this.appsService.getInstalledAppsUpdates().pipe(
       tap(() => this.patchState((state) => ({ ...state, isLoading: true }))),
       tap((apiEvent: ApiEvent) => {
@@ -119,32 +118,32 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       }),
       switchMap((apiEvent: ApiEvent) => combineLatest([
         of(apiEvent),
-        this.appsService.getChartRelease(apiEvent.id as string),
+        this.appsService.getApp(apiEvent.id as string),
       ])),
-      tap(([apiEvent, chartReleases]) => {
-        if (!chartReleases?.length) {
+      tap(([apiEvent, apps]) => {
+        if (!apps?.length) {
           return;
         }
         this.patchState((state: InstalledAppsState): InstalledAppsState => {
           if (apiEvent.msg === IncomingApiMessageType.Added) {
             return {
               ...state,
-              installedApps: [...state.installedApps, { ...chartReleases[0] }],
+              installedApps: [...state.installedApps, { ...apps[0] }],
             };
           }
           return {
             ...state,
             installedApps: state.installedApps.map((installedApp) => {
               if (installedApp.name === apiEvent.id) {
-                return { ...installedApp, ...chartReleases[0] };
+                return { ...installedApp, ...apps[0] };
               }
               return installedApp;
             }),
           };
         });
 
-        const updateApps = (apps: AvailableApp[]): AvailableApp[] => apps.map((app) => {
-          return app.name === chartReleases[0].id ? { ...app, installed: true } : app;
+        const updateApps = (appsToUpdate: AvailableApp[]): AvailableApp[] => appsToUpdate.map((app) => {
+          return app.name === apps[0].id ? { ...app, installed: true } : app;
         });
 
         this.appsStore.patchState((state) => {
@@ -168,21 +167,26 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       ),
       switchMap(() => this.dockerStore.isDockerStarted$),
       filter((isDockerStarted) => isDockerStarted !== null),
+      tap((isDockerStarted) => {
+        if (isDockerStarted) {
+          this.subscribeToInstalledAppsUpdates();
+        }
+      }),
       switchMap((isDockerStarted) => {
-        return isDockerStarted ? this.appsService.getAllChartReleases().pipe(
-          tap((installedApps: ChartRelease[]) => {
+        if (!isDockerStarted) {
+          return of([]);
+        }
+
+        return this.appsService.getAllApps().pipe(
+          tap((installedApps: App[]) => {
             this.patchState((state: InstalledAppsState): InstalledAppsState => {
               return {
                 ...state,
                 installedApps: [...installedApps],
               };
             });
-            if (isDockerStarted) {
-              this.subscribeToInstalledAppsUpdates();
-              this.appsStats.subscribeToUpdates();
-            }
           }),
-        ) : of([]);
+        );
       }),
     );
   }

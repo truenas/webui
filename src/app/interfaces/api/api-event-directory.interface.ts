@@ -1,7 +1,7 @@
 import { DockerStatusResponse } from 'app/enums/docker-config.interface';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { ChartRelease, ChartStatisticsUpdate } from 'app/interfaces/chart-release.interface';
+import { App, ChartStatisticsUpdate } from 'app/interfaces/app.interface';
 import { PullContainerImageResponse, PullContainerImageParams, ContainerImage } from 'app/interfaces/container-image.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -20,7 +20,8 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export interface ApiEventDirectory {
   'alert.list': { response: Alert };
-  'chart.release.query': { response: ChartRelease };
+  'chart.release.query': { response: App };
+  'app.query': { response: App };
   'chart.release.statistics': { response: ChartStatisticsUpdate[] };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };

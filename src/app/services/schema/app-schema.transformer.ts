@@ -2,7 +2,7 @@ import { of } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { CommonSchemaBase, CommonSchemaTransform, TransformNodeFunction } from 'app/interfaces/app-schema.interface';
-import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import {
   DynamicFormSchemaCheckbox,
   DynamicFormSchemaCron,

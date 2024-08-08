@@ -19,7 +19,7 @@ import {
 } from 'app/interfaces/app-schema.interface';
 import {
   ChartFormValue, ChartSchema, ChartSchemaNode, ChartSchemaNodeConf,
-} from 'app/interfaces/chart-release.interface';
+} from 'app/interfaces/app.interface';
 import {
   DeleteListItemEvent, DynamicFormSchemaDict, DynamicFormSchemaNode, DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';

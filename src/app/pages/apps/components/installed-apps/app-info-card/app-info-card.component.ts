@@ -10,9 +10,9 @@ import { filter, map, take } from 'rxjs';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
-import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
+import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
+import { App } from 'app/interfaces/app.interface';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -32,7 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppInfoCardComponent {
-  @Input() app: ChartRelease;
+  @Input() app: App;
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
   @Input() status: AppStatus;
@@ -68,18 +68,18 @@ export class AppInfoCardComponent {
   ) {}
 
   get hasUpdates(): boolean {
-    return this.app?.update_available || this.app?.container_images_update_available;
+    return this.app?.upgrade_available || this.app?.container_images_update_available;
   }
 
   get ixChartApp(): boolean {
-    return this.app.chart_metadata.name === ixChartApp;
+    return this.app.metadata.name === ixChartApp;
   }
 
   portalName(name = 'web_portal'): string {
     return startCase(name);
   }
 
-  portalLink(app: ChartRelease, name = 'web_portal'): void {
+  portalLink(app: App, name = 'web_portal'): void {
     this.redirect.openWindow(app.portals[name][0]);
   }
 
@@ -90,7 +90,7 @@ export class AppInfoCardComponent {
       this.loader.withLoader(),
       this.errorHandler.catchError(),
       untilDestroyed(this),
-    ).subscribe((summary: UpgradeSummary) => {
+    ).subscribe((summary: AppUpgradeSummary) => {
       this.matDialog.open(AppUpgradeDialogComponent, {
         width: '50vw',
         minWidth: '500px',
@@ -98,14 +98,14 @@ export class AppInfoCardComponent {
         data: {
           appInfo: this.app,
           upgradeSummary: summary,
-        } as ChartUpgradeDialogConfig,
+        } as AppUpgradeDialogConfig,
       })
         .afterClosed()
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe((version: string) => {
           this.dialogService.jobDialog(
-            this.ws.job('chart.release.upgrade', [name, { item_version: version }]),
-            { title: helptextApps.charts.upgrade_dialog.job },
+            this.ws.job('app.upgrade', [name, { app_version: version }]),
+            { title: helptextApps.apps.upgrade_dialog.job },
           )
             .afterClosed()
             .pipe(this.errorHandler.catchError(), untilDestroyed(this))
@@ -115,14 +115,14 @@ export class AppInfoCardComponent {
   }
 
   editButtonPressed(): void {
-    this.router.navigate(['/apps', 'installed', this.app.catalog, this.app.catalog_train, this.app.id, 'edit']);
+    this.router.navigate(['/apps', 'installed', this.app.catalog_train, this.app.id, 'edit']);
   }
 
   deleteButtonPressed(): void {
     const name = this.app.name;
 
     this.dialogService.confirm({
-      title: helptextApps.charts.delete_dialog.title,
+      title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -131,8 +131,8 @@ export class AppInfoCardComponent {
 
   executeDelete(name: string): void {
     this.dialogService.jobDialog(
-      this.ws.job('chart.release.delete', [name, { delete_unused_images: true }]),
-      { title: helptextApps.charts.delete_dialog.job },
+      this.ws.job('app.delete', [name, { remove_images: true }]),
+      { title: helptextApps.apps.delete_dialog.job },
     )
       .afterClosed()
       .pipe(

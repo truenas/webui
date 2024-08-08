@@ -1,7 +1,7 @@
-import { AppMaintainer } from 'app/interfaces/available-app.interface';
 import {
   AppMetadata, ChartFormValue, ChartSchemaGroup, ChartSchemaNode,
-} from 'app/interfaces/chart-release.interface';
+} from 'app/interfaces/app.interface';
+import { AppMaintainer } from 'app/interfaces/available-app.interface';
 
 export interface Catalog {
   id: string;
@@ -51,7 +51,7 @@ export interface CatalogApp {
 export interface CatalogAppVersion {
   app_readme: string;
   changelog: string;
-  chart_metadata: ChartMetadata;
+  metadata: ChartMetadata;
   detailed_readme: string;
   healthy: boolean;
   healthy_error: string;
