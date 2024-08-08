@@ -20,18 +20,13 @@ describe('AppUpdateCellComponent', () => {
   }
 
   it('checks status for running app', () => {
-    setupTest({ upgrade_available: false } as unknown as App);
+    setupTest({ upgrade_available: false } as App);
 
     expect(spectator.query('span')).toHaveText('Up to date');
   });
 
   it('checks text when app has update', () => {
-    setupTest({ upgrade_available: true } as unknown as App);
-
-    expect(spectator.query('span')).toHaveText('Update available');
-  });
-  it('checks text when container images has update', () => {
-    setupTest({ container_images_update_available: true } as unknown as App);
+    setupTest({ upgrade_available: true } as App);
 
     expect(spectator.query('span')).toHaveText('Update available');
   });

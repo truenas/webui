@@ -63,7 +63,7 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   }
 
   openWebPortal(app: App): void {
-    this.redirect.openWindow(app.portals['web_portal'][0]);
+    this.redirect.openWindow(app.portals['web_portal']);
   }
 
   splitMemory(normalizedValue: string): [number, string] {

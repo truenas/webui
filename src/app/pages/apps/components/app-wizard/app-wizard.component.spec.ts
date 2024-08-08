@@ -241,6 +241,7 @@ describe('AppWizardComponent', () => {
       release_name: 'app_name',
       timezone: 'America/Los_Angeles',
     } as Record<string, ChartFormValue>,
+    metadata: {},
     version_details: {
       schema: {
         groups: [

@@ -34,17 +34,15 @@ describe('WidgetAppComponent', () => {
     id: 'testapp',
     name: 'TestApp',
     portals: {
-      web_portal: ['http://test.com'],
-    } as Record<string, string[]>,
+      web_portal: 'http://test.com',
+    } as Record<string, string>,
     state: CatalogAppState.Running,
     upgrade_available: true,
-    container_images_update_available: false,
     metadata: {
       icon: 'http://localhost/test-app.png',
-      appVersion: '1.0',
+      app_version: '1.0',
+      train: 'charts',
     },
-    catalog: 'truenas',
-    catalog_train: 'charts',
   } as App;
 
   const createComponent = createComponentFactory({
