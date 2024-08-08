@@ -1002,6 +1002,7 @@
   "Snapshot Task Manager": "",
   "Snapshot Time": "",
   "Snapshot Time {time}": "",
+  "Snapshot deleted": "",
   "Some of the disks are attached to the exported pools\n  mentioned in this list. Checking a pool name means you want to\n  allow reallocation of the disks attached to that pool.": "",
   "Sort": "",
   "Source Path": "",

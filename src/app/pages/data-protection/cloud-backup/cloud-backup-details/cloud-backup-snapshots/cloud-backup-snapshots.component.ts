@@ -5,9 +5,13 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  catchError, EMPTY, filter, map, switchMap,
+  catchError,
+  EMPTY,
+  filter, finalize, map, switchMap,
 } from 'rxjs';
+import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -17,6 +21,8 @@ import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cel
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -73,6 +79,8 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     private ws: WebSocketService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
+    private loader: AppLoaderService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -122,14 +130,19 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       .pipe(
         filter(Boolean),
         switchMap(() => this.ws.job('cloud_backup.delete_snapshot', [this.backup.id, row.id])),
-        catchError((error: unknown) => {
+        tapOnce(() => this.loader.open()),
+        catchError((error) => {
           this.dialog.error(this.errorHandler.parseError(error));
           return EMPTY;
         }),
+        finalize(() => this.loader.close()),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.getCloudBackupSnapshots();
+      .subscribe((job) => {
+        if (job.state === JobState.Success) {
+          this.snackbar.success(this.translate.instant('Snapshot deleted'));
+          this.getCloudBackupSnapshots();
+        }
       });
   }
 }
