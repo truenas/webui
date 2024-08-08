@@ -38,7 +38,7 @@ export class PodLogsComponent implements OnInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
 
   fontSize = 14;
-  chartReleaseName: string;
+  appName: string;
   podName: string;
   containerName: string;
   protected tailLines = 500;
@@ -64,7 +64,7 @@ export class PodLogsComponent implements OnInit {
     combineLatest([this.aroute.params, this.aroute.parent.params]).pipe(
       untilDestroyed(this),
     ).subscribe(([params, parentParams]) => {
-      this.chartReleaseName = parentParams.appId as string;
+      this.appName = parentParams.appId as string;
       this.podName = params.podName as string;
       this.containerName = params.command as string;
       this.tailLines = params.tail_lines as number;
@@ -82,7 +82,7 @@ export class PodLogsComponent implements OnInit {
       this.podLogsChangedListener.unsubscribe();
     }
 
-    this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
+    this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.appName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
     this.podLogSubscriptionId = UUID.UUID();
     this.podLogsChangedListener = this.ws.subscribeToLogs(this.podLogSubName).pipe(
       map((apiEvent) => apiEvent.fields),
@@ -133,7 +133,7 @@ export class PodLogsComponent implements OnInit {
       minWidth: '650px',
       maxWidth: '850px',
       data: {
-        appName: this.chartReleaseName,
+        appName: this.appName,
         title: 'Choose log',
         customSubmit: (logsFormValueDialog: LogsDialogFormValue) => {
           if (isDownload) {
@@ -147,20 +147,20 @@ export class PodLogsComponent implements OnInit {
   }
 
   downloadLogs(formValue: LogsDialogFormValue): void {
-    const chartReleaseName = formValue.apps;
+    const appName = formValue.apps;
     const podName = formValue.pods;
     const containerName = formValue.containers;
     const tailLines = formValue.tail_lines;
 
     this.dialogService.closeAllDialogs();
 
-    const fileName = `${chartReleaseName}_${podName}_${containerName}.log`;
+    const fileName = `${appName}_${podName}_${containerName}.log`;
     const mimetype = 'application/octet-stream';
     this.ws.call(
       'core.download',
       [
         'chart.release.pod_logs',
-        [chartReleaseName, { pod_name: podName, container_name: containerName, tail_lines: tailLines }],
+        [appName, { pod_name: podName, container_name: containerName, tail_lines: tailLines }],
         fileName,
       ],
     ).pipe(
@@ -185,7 +185,7 @@ export class PodLogsComponent implements OnInit {
   }
 
   onChooseLogs(formValue: LogsDialogFormValue): void {
-    this.chartReleaseName = formValue.apps;
+    this.appName = formValue.apps;
     this.podName = formValue.pods;
     this.containerName = formValue.containers;
     this.tailLines = formValue.tail_lines;

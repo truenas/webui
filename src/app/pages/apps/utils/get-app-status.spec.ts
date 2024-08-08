@@ -1,8 +1,7 @@
 /* eslint-disable */
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ChartScaleResult, AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
 

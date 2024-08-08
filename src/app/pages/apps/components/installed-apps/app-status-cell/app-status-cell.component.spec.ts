@@ -1,9 +1,8 @@
 /* eslint-disable */
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { AppStartQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
@@ -21,7 +20,7 @@ describe.skip('AppStatusCellComponent', () => {
 
   function setupTest(
     app: App,
-    job?: Job<ChartScaleResult, AppStartQueryParams>,
+    job?: Job<unknown, AppStartQueryParams>,
   ): void {
     spectator = createHost(`
       <ix-app-status-cell [app]="app" [job]="job"></ix-app-status-cell>

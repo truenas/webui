@@ -1,4 +1,4 @@
-import { UsedPort } from 'app/interfaces/chart-release.interface';
+import { UsedPort } from 'app/interfaces/app.interface';
 
 export function getPorts(ports: UsedPort[]): string {
   return ports.map((item) => {

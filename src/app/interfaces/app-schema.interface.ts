@@ -1,6 +1,6 @@
 import { FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { ChartFormValue, ChartSchemaNode, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
+import { ChartFormValue, ChartSchemaNode, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
 import { AddListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { CustomUntypedFormGroup } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';

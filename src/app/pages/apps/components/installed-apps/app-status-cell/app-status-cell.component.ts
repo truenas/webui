@@ -6,8 +6,7 @@ import {
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';

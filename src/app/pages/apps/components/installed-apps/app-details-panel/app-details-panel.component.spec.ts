@@ -1,7 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { AppContainersCardComponent } from 'app/pages/apps/components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';

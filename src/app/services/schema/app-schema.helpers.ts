@@ -1,4 +1,4 @@
-import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { ChartSchemaNode } from 'app/interfaces/app.interface';
 
 export function findAppSchemaNode(object: unknown, pathToField: string): ChartSchemaNode | undefined {
   const pathToFieldKeys = pathToField.split('.');

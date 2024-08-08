@@ -2,21 +2,14 @@ import { DockerConfig, DockerConfigUpdate } from 'app/enums/docker-config.interf
 import { SetAcl } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
-import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
-import {
-  ChartRollbackParams,
-  AppStartQueryParams,
-  ChartScaleResult,
-  AppDeleteParams,
-} from 'app/interfaces/chart-release-event.interface';
 import {
   App,
-  AppCreate,
+  AppCreate, AppDeleteParams, AppStartQueryParams,
   AppUpdate,
-  AppUpgrade,
-  AppUpgradeParams,
-} from 'app/interfaces/chart-release.interface';
+  AppUpgradeParams, ChartRollbackParams,
+} from 'app/interfaces/app.interface';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
+import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
@@ -89,12 +82,7 @@ export interface ApiJobDirectory {
   'app.upgrade': { params: AppUpgradeParams; response: App };
 
   // Chart Release
-  'chart.release.create': { params: [AppCreate]; response: App };
-  'chart.release.delete': { params: [string, { delete_unused_images: boolean }]; response: boolean };
   'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
-  'chart.release.scale': { params: AppStartQueryParams; response: ChartScaleResult };
-  'chart.release.update': { params: [name: string, update: AppUpdate]; response: App };
-  'chart.release.upgrade': { params: [name: string, upgrade: AppUpgrade]; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };

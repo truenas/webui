@@ -4,10 +4,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { ChartScaleResult, AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -77,7 +76,7 @@ describe('WidgetAppComponent', () => {
       mockProvider(ApplicationsService, {
         restartApplication: jest.fn(() => of(true)),
         getInstalledAppsStatusUpdates: jest.fn(() => {
-          return of() as Observable<ApiEvent<Job<ChartScaleResult, AppStartQueryParams>>>;
+          return of() as Observable<ApiEvent<Job<unknown, AppStartQueryParams>>>;
         }),
       }),
       mockProvider(DialogService, {

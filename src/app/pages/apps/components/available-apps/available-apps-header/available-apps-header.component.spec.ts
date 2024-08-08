@@ -8,9 +8,9 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { App } from 'app/interfaces/app.interface';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { App } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -125,8 +125,8 @@ describe('AvailableAppsHeaderComponent', () => {
     });
   });
 
-  it('refreshes charts when Refresh Charts is pressed', () => {
-    spectator.click(spectator.query(byText('Refresh Charts')));
+  it('refreshes app when Refresh Catalog is pressed', () => {
+    spectator.click(spectator.query(byText('Refresh Catalog')));
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('catalog.sync');

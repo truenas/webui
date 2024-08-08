@@ -11,7 +11,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
