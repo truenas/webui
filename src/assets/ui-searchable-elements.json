@@ -396,7 +396,9 @@
       "Apps"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "available"
@@ -416,7 +418,9 @@
     "requiredRoles": [
       "APPS_WRITE"
     ],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "available"
@@ -434,7 +438,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "installed",
@@ -454,7 +460,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "installed",
@@ -474,7 +482,9 @@
       "Apps"
     ],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "APPS"
+    ],
     "anchorRouterLink": [
       "/apps",
       "installed"

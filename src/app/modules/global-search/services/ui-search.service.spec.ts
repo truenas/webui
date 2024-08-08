@@ -30,6 +30,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
             hasVms$: of(true),
+            hasApps$: of(true),
           }),
         ],
       });
@@ -71,6 +72,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
             hasVms$: of(true),
+            hasApps$: of(true),
           }),
         ],
       });
@@ -102,6 +104,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
             hasVms$: of(true),
+            hasApps$: of(true),
           }),
         ],
       });

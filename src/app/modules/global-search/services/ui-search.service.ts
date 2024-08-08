@@ -46,14 +46,16 @@ export class UiSearchProvider implements GlobalSearchProvider {
           this.navService.hasFailover$,
           this.navService.hasEnclosure$,
           this.navService.hasVms$,
+          this.navService.hasApps$,
         ]).pipe(
           first(),
-          filter(([hasRole, hasFailover, hasEnclosure, hasVms]) => {
+          filter(([hasRole, hasFailover, hasEnclosure, hasVms, hasApps]) => {
             switch (true) {
               case !hasRole:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Failover) && !hasFailover:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Enclosure) && !hasEnclosure:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Vms) && !hasVms:
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Apps) && !hasApps:
                 return false;
               default:
                 return true;
