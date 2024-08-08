@@ -27,9 +27,6 @@ import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-da
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
-import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
-import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
   WidgetGroupControlsComponent,
@@ -45,11 +42,6 @@ import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.constant';
-import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-card-info/app-card-info.component';
-import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/common/app-controls/app-controls.component';
-import { AppCpuInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-cpu-info/app-cpu-info.component';
-import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-memory-info/app-memory-info.component';
-import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-network-info/app-network-info.component';
 import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
 import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-empty/backup-task-empty.component';
 import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
@@ -87,11 +79,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     DisksWithZfsErrorsComponent,
     PoolStatusComponent,
     LastScanErrorsComponent,
-    AppCardInfoComponent,
-    AppMemoryInfoComponent,
-    AppCpuInfoComponent,
-    AppNetworkInfoComponent,
-    AppControlsComponent,
     ...widgetComponents,
   ],
   providers: [
@@ -132,9 +119,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     ImgFallbackModule,
     InterfaceStatusIconComponent,
     UptimePipe,
-    AppCardLogoComponent,
-    AppStatusCellComponent,
-    AppUpdateCellComponent,
     FormatDateTimePipe,
     FileSizePipe,
     CopyButtonComponent,

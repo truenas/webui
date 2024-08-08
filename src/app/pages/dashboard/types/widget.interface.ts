@@ -6,11 +6,6 @@
  * Provide migration if possible.
  */
 export enum WidgetType {
-  App = 'app',
-  AppInfo = 'app-info',
-  AppMemory = 'app-memory',
-  AppCpu = 'app-cpu',
-  AppNetwork = 'app-network',
   Ipv4Address = 'ipv4-address',
   Ipv6Address = 'ipv6-address',
   Help = 'help',
