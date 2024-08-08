@@ -263,6 +263,7 @@
   "Additional hosts to be appended to <i>/etc/hosts</i>. Separate entries by pressing <code>Enter</code>. Hosts defined here are  still accessible by name even when DNS is not available. See  <a href=\"https://man7.org/linux/man-pages/man5/hosts.5.html\" target=\"_blank\">hosts(5)</a>  for additional information.": "",
   "Additional options for <a href=\"https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5\" target=\"_blank\">nslcd.conf</a>.": "",
   "Addresses": "",
+  "Adds the force flag that will ensures deletion regardless of any blockers": "",
   "Adjust Resilver Priority": "",
   "Adjust Scrub Priority": "",
   "Adjust Scrub/Resilver Priority": "",

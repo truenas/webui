@@ -249,6 +249,7 @@
   "Additional options for <a href=\"https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5\" target=\"_blank\">nslcd.conf</a>.": "",
   "Address": "",
   "Addresses": "",
+  "Adds the force flag that will ensures deletion regardless of any blockers": "",
   "Adjust Resilver Priority": "",
   "Adjust Scrub Priority": "",
   "Adjust Scrub/Resilver Priority": "",

@@ -25,6 +25,7 @@ export class DockerImageDeleteDialogComponent {
 
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
+    force: [false],
   });
   isJobCompleted = false;
   bulkItems = new Map<string, BulkListItem<ContainerImage>>();
@@ -51,13 +52,15 @@ export class DockerImageDeleteDialogComponent {
   }
 
   onSubmit(): void {
-    const deleteParams = this.images.map((image) => [image.id]);
+    const deleteParams: DeleteContainerImageParams[] = this.images.map((image) => {
+      return [image.id, { force: this.form.value.force }];
+    });
 
     this.images.forEach((image) => {
       this.bulkItems.set(image.id, { state: BulkListItemState.Running, item: image });
     });
 
-    this.ws.job('core.bulk', ['container.image.delete', deleteParams]).pipe(
+    this.ws.job('core.bulk', ['app.image.delete', deleteParams]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], DeleteContainerImageParams[]>) => !!job.result),
       untilDestroyed(this),
     ).subscribe((response) => {

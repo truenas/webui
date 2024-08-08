@@ -39,7 +39,7 @@ describe('DockerImagesListComponent', () => {
       mockAuth(),
       mockWebSocket([
         mockCall('container.image.query', fakeDockerImagesDataSource),
-        mockCall('container.image.delete'),
+        mockCall('app.image.delete'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

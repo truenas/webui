@@ -416,7 +416,7 @@ export interface ApiCallDirectory {
 
   // Container
   'container.config': { params: void; response: ContainerConfig };
-  'container.image.delete': { params: DeleteContainerImageParams; response: void };
+  'app.image.delete': { params: DeleteContainerImageParams; response: void };
   'container.image.dockerhub_rate_limit': { params: void; response: DockerHubRateLimit };
   'container.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
   'container.update': { params: [ContainerConfigUpdate]; response: ContainerConfig };

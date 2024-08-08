@@ -39,6 +39,11 @@
           [label]="'Confirm' | translate"
           [required]="true"
         ></ix-checkbox>
+        <ix-checkbox
+          formControlName="force"
+          [label]="'Force' | translate"
+          [tooltip]="'Adds the force flag that will ensures deletion regardless of any blockers' | translate"
+        ></ix-checkbox>
       }
     </div>
 
