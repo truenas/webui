@@ -63,6 +63,9 @@ class google_Drive:
     name_Sort = '//div[contains(text(),"Name") and @role="button"]'
     music_Folder = '//div[@data-tooltip="Google Drive Folder: music"]'
     move_To_Trash = '//div[text()="Move to trash?"]'
+    pdf_file = '//div[@aria-label="Explaining_BSD.pdf PDF"]'
+    image_file = '//div[@aria-label="Gloomy_Forest_wallpaper_ForWallpapercom.jpg Image"]'
+    mp3_file = '//div[@aria-label="Mr_Smith_Pequeñas_Guitarras.mp3 Audio"]'
 
 
 class input:

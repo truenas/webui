@@ -97,13 +97,12 @@ def open_a_new_tab_navigate_to_backblaze_url_click_sign_in(driver, backblaze_url
     driver.get(backblaze_url)
     time.sleep(1)
     assert wait_on_element(driver, 7, '//img[@alt="Backblaze Logo"]')
-    assert wait_on_element(driver, 5, '//a[text()="Sign In"]', 'clickable')
 
 
 @then('enter the <user_name> click Next and enter the <password> click Next')
-def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, user_name, password):
+def enter_the_user_name_click_next_and_enter_the_password_click_next(driver, user_name, password):
     """enter the <user_name> click Next and enter the <password> click Next."""
-    assert wait_on_element(driver, 5, '//h3[text()="Welcome Back"]')
+    assert wait_on_element(driver, 5, '//h1[text()="Welcome Back"]')
     time.sleep(1)
     assert wait_on_element(driver, 5, '//input[@name="email-field"]', 'inputable')
     driver.find_element_by_xpath('//input[@name="email-field"]').send_keys(user_name)
@@ -121,7 +120,7 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
 
 
 @then(parsers.parse('click on Browser Files, click on {bucket} bucket'))
-def click_on_Browser_Files_click_on_bucket_then_click_on_the_test_folder(driver, bucket):
+def click_on_browser_files_click_on_bucket_then_click_on_the_test_folder(driver, bucket):
     """click on Browser Files, click on {bucket}, then click on the bucket."""
     global my_bucket
     my_bucket = bucket
