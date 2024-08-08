@@ -289,14 +289,13 @@ describe('ChartWizardComponent', () => {
         mockJob('app.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
         mockCall('app.query', [existingChartEdit]),
-        // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-        // mockCall('container.image.dockerhub_rate_limit', {
-        //   total_pull_limit: 13,
-        //   total_time_limit_in_secs: 21600,
-        //   remaining_pull_limit: 3,
-        //   remaining_time_limit_in_secs: 21600,
-        //   error: null,
-        // }),
+        mockCall('app.image.dockerhub_rate_limit', {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        }),
       ]),
       mockProvider(DockerStore, {
         selectedPool$: of('pool set'),
