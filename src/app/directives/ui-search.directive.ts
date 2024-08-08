@@ -2,6 +2,7 @@ import {
   Directive, Input, ElementRef, Renderer2, OnInit,
   OnDestroy,
 } from '@angular/core';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -31,7 +32,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     return hierarchyItem;
   }
 
-  private removeHighlightTimeout: number | null = null;
+  private highlightTimeout: Timeout = null;
 
   constructor(
     private renderer: Renderer2,
@@ -96,10 +97,10 @@ export class UiSearchDirective implements OnInit, OnDestroy {
       ['click', 'keydown'].forEach((event) => document.addEventListener(event, removeHighlightStyling, { once: true }));
     }, searchDelayConst);
 
-    if (this.removeHighlightTimeout) {
-      clearTimeout(this.removeHighlightTimeout);
+    if (this.highlightTimeout) {
+      clearTimeout(this.highlightTimeout);
     }
 
-    this.removeHighlightTimeout = setTimeout(() => removeHighlightStyling(), 4000) as unknown as number;
+    this.highlightTimeout = setTimeout(() => removeHighlightStyling(), 4000);
   }
 }
