@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { subHours, subMinutes } from 'date-fns';
 import {
-  EMPTY,
   Observable, Subject, combineLatestWith, debounceTime,
-  forkJoin, map, repeat, shareReplay, switchMap, take, timer,
+  forkJoin, map, of, repeat, shareReplay, switchMap, take, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -145,28 +144,16 @@ export class WidgetResourcesService {
     );
   }
 
+  // TODO: Fix when stats API is ready
   getAppStats(appName: string): Observable<ChartReleaseStats> {
     console.error(`getAppStats(${appName}) not implemented yet`);
-    // TODO: Fix when stats API is ready
-    return EMPTY;
-    // return this.appStatsUpdates$.pipe(
-    //   filter((stats) => Boolean(appName && stats[appName])),
-    //   map((stats) => stats[appName]),
-    //   shareReplay({ bufferSize: 1, refCount: true }),
-    // );
+    return of();
   }
 
+  // TODO: Fix when stats API is ready
   getAppStatusUpdates(appName: string): Observable<Job<void, AppStartQueryParams>> {
     console.error(`getAppStatusUpdates(${appName}) not implemented yet`);
-    // TODO: Fix when stats API is ready
-    return EMPTY;
-    // return this.ws.subscribe('core.get_jobs').pipe(
-    //   filter((event: ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>) => {
-    //     return event.fields.method === 'chart.release.scale';
-    //   }),
-    //   filter((event) => event?.fields?.arguments[0] === appName),
-    //   map((event) => event.fields),
-    // );
+    return of();
   }
 
   constructor(
