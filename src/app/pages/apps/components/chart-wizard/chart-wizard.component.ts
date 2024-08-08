@@ -392,7 +392,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.config = chart.config;
     this.config.release_name = chart.id;
 
-    this._pageTitle$.next(chart.title || chart.name);
+    this._pageTitle$.next(chart.metadata.title || chart.name);
 
     this.form.addControl('release_name', new FormControl(chart.name, [Validators.required]));
 
@@ -411,7 +411,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
       ],
     });
 
-    this.buildDynamicForm(chart.chart_schema.schema);
+    this.buildDynamicForm(chart.version_details.schema);
   }
 
   private afterAppLoaded(): void {

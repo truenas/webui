@@ -77,13 +77,15 @@ export class ApplicationsService {
   }
 
   getAllApps(): Observable<App[]> {
-    const secondOption = { extra: { retrieve_config: true, stats: true } };
-    return this.ws.call('app.query', [[], secondOption]);
+    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]);
   }
 
   getApp(name: string): Observable<App[]> {
     return this.ws.call('app.query', [[['name', '=', name]], {
-      extra: { include_chart_schema: true, history: true },
+      extra: {
+        include_app_schema: true,
+        retrieve_config: true,
+      },
     }]);
   }
 

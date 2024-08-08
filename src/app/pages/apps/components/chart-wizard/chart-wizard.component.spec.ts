@@ -241,7 +241,7 @@ describe('ChartWizardComponent', () => {
       release_name: 'app_name',
       timezone: 'America/Los_Angeles',
     } as Record<string, ChartFormValue>,
-    chart_schema: {
+    version_details: {
       schema: {
         groups: [
           { name: 'Machinaris Configuration' },

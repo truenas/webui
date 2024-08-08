@@ -58,6 +58,7 @@ import {
   App,
   ChartReleaseQueryParams,
   AppUpgradeParams,
+  AppQueryParams,
 } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import {
@@ -314,10 +315,14 @@ export interface ApiCallDirectory {
   'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
 
   // App
+  'app.query': { params: AppQueryParams; response: App[] };
+  'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.categories': { params: void; response: string[] };
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
+  'app.rollback_versions': { params: [app_name: string]; response: string[] };
+  'app.used_ports': { params: void; response: number[] };
 
   // Audit
   'audit.config': { params: void; response: AuditConfig };
@@ -375,10 +380,6 @@ export interface ApiCallDirectory {
     params: [number, Partial<CertificateAuthorityUpdate>];
     response: CertificateAuthority;
   };
-
-  // Apps
-  'app.query': { params: ChartReleaseQueryParams; response: App[] };
-  'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
 
   // Chart
   'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };

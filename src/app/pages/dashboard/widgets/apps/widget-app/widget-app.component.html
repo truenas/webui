@@ -35,7 +35,7 @@
           matTooltipPosition="above"
           [attr.aria-label]="'Check App Details' | translate"
           [matTooltip]="'Check App Details' | translate"
-          [routerLink]="['/apps', 'installed', app.catalog, app.catalog_train, app.id]"
+          [routerLink]="['/apps', 'installed', app.metadata.train, app.id]"
         >
           <ix-icon name="mdi-cog"></ix-icon>
         </button>
@@ -52,7 +52,7 @@
               {{ app.name }}
             </h3>
             <div *ixWithLoadingState="application() as app" class="version">
-              v{{ app.metadata?.appVersion }}
+              v{{ app.metadata?.app_version }}
             </div>
           </div>
           <div class="app-status">

@@ -1,5 +1,5 @@
 export enum CatalogAppState {
-  Active = 'ACTIVE',
+  Active = 'RUNNING',
   Deploying = 'DEPLOYING',
   Stopped = 'STOPPED',
 }

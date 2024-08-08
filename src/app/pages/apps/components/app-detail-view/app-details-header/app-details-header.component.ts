@@ -50,7 +50,7 @@ export class AppDetailsHeaderComponent {
       map((apps) => {
         return apps.filter((app) => {
           return app.metadata.name === this.app.name
-            && app.catalog_train === this.app.train;
+            && app.metadata.train === this.app.train;
         });
       }),
       untilDestroyed(this),
