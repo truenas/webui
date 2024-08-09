@@ -1,73 +1,25 @@
 <mat-card class="card">
-  <mat-card-content *ixWithLoadingState="application()" class="card-content">
+  <mat-card-content *ixWithLoadingState="app() as application" class="card-content">
     <div class="header">
       <h3>{{ 'App' | translate }}</h3>
-
-      <div *ixWithLoadingState="application() as app" class="controls">
-        @if (app?.portals) {
-          <button
-            mat-icon-button
-            ixTest="apps-web-portal"
-            matTooltipPosition="above"
-            [attr.aria-label]="'Web Portal' | translate"
-            [matTooltip]="'Web Portal' | translate"
-            (click)="openWebPortal(app)"
-          >
-            <ix-icon name="mdi-web"></ix-icon>
-          </button>
-        }
-
-        <button
-          mat-icon-button
-          ixTest="apps-restart"
-          matTooltipPosition="above"
-          [attr.aria-label]="'Restart App' | translate"
-          [matTooltip]="'Restart App' | translate"
-          [disabled]="appRestarting()"
-          (click)="onRestartApp(app)"
-        >
-          <ix-icon name="mdi-restart"></ix-icon>
-        </button>
-
-        <button
-          mat-icon-button
-          ixTest="apps-details"
-          matTooltipPosition="above"
-          [attr.aria-label]="'Check App Details' | translate"
-          [matTooltip]="'Check App Details' | translate"
-          [routerLink]="['/apps', 'installed', app.metadata.train, app.id]"
-        >
-          <ix-icon name="mdi-cog"></ix-icon>
-        </button>
-      </div>
+      <ix-app-controls [app]="app() | async"></ix-app-controls>
     </div>
 
     <div [class]="['container', size()]">
       <div class="app-header-row">
-        <ix-app-card-logo [url]="(application() | async)?.value?.metadata?.icon"></ix-app-card-logo>
+        <ix-app-card-logo [url]="application?.metadata?.icon"></ix-app-card-logo>
+        <ix-app-card-info [app]="app() | async" [job]="job() | async"></ix-app-card-info>
+      </div>
 
-        <div class="app-info">
-          <div class="app-header">
-            <h3 *ixWithLoadingState="application() as app" class="name">
-              {{ app.name }}
-            </h3>
-            <div *ixWithLoadingState="application() as app" class="version">
-              v{{ app.metadata?.app_version }}
-            </div>
-          </div>
-          <div class="app-status">
-            <ix-app-status-cell
-              *ixWithLoadingState="application() as app"
-              [app]="app"
-              [job]="appJob()"
-              [showIcon]="true"
-            ></ix-app-status-cell>
-            <ix-app-update-cell
-              *ixWithLoadingState="application() as app"
-              [app]="app"
-              [showIcon]="true"
-            ></ix-app-update-cell>
-          </div>
+      <div class="app-stats">
+        <div class="app-stats-row">
+          <ix-app-cpu-info class="slot square" [stats]="stats() | async"></ix-app-cpu-info>
+          <ix-app-network-info class="slot rectangle" [stats]="stats() | async"></ix-app-network-info>
+        </div>
+        <div class="app-stats-row">
+          <ix-app-memory-info class="slot square" [stats]="stats() | async"></ix-app-memory-info>
+          <!-- TODO: Replace ix-app-network-info with ix-app-disk-info when it is available -->
+          <ix-app-network-info class="slot rectangle" [stats]="stats() | async"></ix-app-network-info>
         </div>
       </div>
     </div>

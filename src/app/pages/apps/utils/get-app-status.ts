@@ -10,7 +10,7 @@ export function getAppStatus(app: App, _?: Job<void, AppStartQueryParams>): AppS
 
   switch (app.state) {
     case CatalogAppState.Running:
-      status = AppStatus.Started;
+      status = AppStatus.Running;
       break;
     case CatalogAppState.Deploying:
       status = AppStatus.Deploying;

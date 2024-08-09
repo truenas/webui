@@ -191,6 +191,7 @@ describe('AppInfoCardComponent', () => {
   });
 
   // TODO:
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   it.skip('opens rollback app dialog when Roll Back button is pressed', async () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Roll Back' }));
     await rollbackButton.click();
