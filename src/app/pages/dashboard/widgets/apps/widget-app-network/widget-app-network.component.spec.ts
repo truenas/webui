@@ -2,10 +2,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -28,18 +27,12 @@ describe('WidgetAppNetworkComponent', () => {
   const app = {
     id: 'testapp',
     name: 'TestApp',
-    portals: {
-      web_portal: ['http://test.com'],
-    } as Record<string, string[]>,
-    status: CatalogAppState.Active,
-    update_available: true,
-    container_images_update_available: false,
+    status: CatalogAppState.Running,
     metadata: {
       icon: 'http://localhost/test-app.png',
       app_version: '1.0',
+      train: 'charts',
     },
-    catalog: 'truenas',
-    catalog_train: 'charts',
   } as unknown as App;
 
   const createComponent = createComponentFactory({

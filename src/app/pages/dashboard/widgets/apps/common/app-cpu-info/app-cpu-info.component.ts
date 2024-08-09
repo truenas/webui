@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { ChartReleaseStats } from 'app/interfaces/app.interface';
 
 @Component({
   selector: 'ix-app-cpu-info',

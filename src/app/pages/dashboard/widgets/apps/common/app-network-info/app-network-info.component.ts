@@ -7,7 +7,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { ChartReleaseStats } from 'app/interfaces/app.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({

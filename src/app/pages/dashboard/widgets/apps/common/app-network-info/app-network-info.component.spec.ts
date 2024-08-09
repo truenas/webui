@@ -1,7 +1,7 @@
 import { Spectator, mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { ChartReleaseStats } from 'app/interfaces/app.interface';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
 import { ThemeService } from 'app/services/theme/theme.service';

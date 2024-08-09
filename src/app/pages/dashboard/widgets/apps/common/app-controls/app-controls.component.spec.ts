@@ -3,11 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, Observable } from 'rxjs';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -25,14 +24,13 @@ describe('AppControlsComponent', () => {
     portals: {
       'Web UI': 'http://test.com',
     } as Record<string, string>,
-    status: CatalogAppState.Active,
+    status: CatalogAppState.Running,
     upgrade_available: true,
-    container_images_update_available: false,
     metadata: {
       icon: 'http://localhost/test-app.png',
       app_version: '1.0',
+      train: 'stable',
     },
-    catalog_train: 'stable',
   } as unknown as App;
 
   const createComponent = createComponentFactory({
