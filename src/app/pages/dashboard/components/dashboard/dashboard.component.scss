@@ -1,6 +1,40 @@
 @import 'scss-imports/cssvars';
 @import '../../dashboard-variables';
 
+:host ::ng-deep {
+  ix-breadcrumb {
+    display: none;
+  }
+
+  ix-page-header {
+    @media(max-width: 767px) {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.edit-mode-buttons {
+  background: var(--bg1);
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 12px;
+  position: fixed;
+  right: 19px;
+  top: 64px;
+  z-index: 2;
+
+  @media(max-width: 767px) {
+    justify-content: flex-end;
+    margin-bottom: 8px;
+    margin-left: auto;
+    position: sticky;
+    right: 0;
+    top: -17px;
+    width: max-content;
+  }
+}
+
 .groups {
   display: grid;
   gap: $widget-gap;
@@ -45,9 +79,8 @@
 }
 
 .add-button {
-  margin-right: 10px;
+  margin-right: 5px;
 }
-
 
 :host ::ng-deep {
   .cdk-drag-placeholder {

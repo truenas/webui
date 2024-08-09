@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
-import { officialCatalog } from 'app/constants/catalog.constants';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -23,7 +22,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppSettingsButtonComponent {
-  readonly officialCatalog = officialCatalog;
   readonly searchableElements = appSettingsButtonElements;
 
   constructor(

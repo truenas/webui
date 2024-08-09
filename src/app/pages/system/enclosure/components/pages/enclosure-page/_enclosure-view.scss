@@ -27,8 +27,11 @@
   max-width: 200px;
   min-height: 100%;
   min-width: 105px;
+  overflow: auto;
+  position: relative;
 
   > * {
+    max-height: 100%;
     position: absolute;
   }
 
@@ -40,12 +43,17 @@
 .left-column {
   @media (max-width: $breakpoint-md) {
     margin-top: 10px;
+
+    > * {
+      position: unset;
+    }
   }
 }
 
 .right-column {
   @media (max-width: $breakpoint-md) {
     margin-bottom: 10px;
+    min-height: 100px;
   }
 }
 

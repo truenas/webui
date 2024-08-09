@@ -6,12 +6,11 @@ import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
-import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
-import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
+// import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { getPorts } from 'app/pages/apps/utils/get-ports';
 
@@ -23,11 +22,12 @@ import { getPorts } from 'app/pages/apps/utils/get-ports';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppContainersCardComponent implements OnChanges {
-  @Input() app: ChartRelease;
+  @Input() app: App;
   isLoading = false;
-  readonly chartReleaseStatus = ChartReleaseStatus;
+  readonly chartReleaseStatus = CatalogAppState;
 
-  containerImages: Record<string, ChartContainerImage>;
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+  // containerImages: Record<string, ChartContainerImage>;
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
@@ -38,55 +38,60 @@ export class AppContainersCardComponent implements OnChanges {
     private router: Router,
     private translate: TranslateService,
   ) {
-    this.containerImages = this.app?.resources?.container_images;
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+    // this.containerImages = this.app?.resources?.container_images;
   }
 
   ngOnChanges(): void {
     this.getResources();
   }
 
-  shellButtonPressed(containerImageKey: string): void {
-    this.matDialog.open(PodSelectDialogComponent, {
-      minWidth: '650px',
-      maxWidth: '850px',
-      data: {
-        containerImageKey,
-        app: this.app,
-        appName: this.app.name,
-        title: this.translate.instant('Choose pod'),
-        type: PodSelectDialogType.Shell,
-        customSubmit: (values: PodDialogFormValue) => this.shellDialogSubmit(values),
-      },
-    });
-  }
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
+  // shellButtonPressed(containerImageKey: string): void {
+  // this.matDialog.open(PodSelectDialogComponent, {
+  //   minWidth: '650px',
+  //   maxWidth: '850px',
+  //   data: {
+  //     containerImageKey,
+  //     app: this.app,
+  //     appName: this.app.name,
+  //     title: this.translate.instant('Choose pod'),
+  //     type: PodSelectDialogType.Shell,
+  //     customSubmit: (values: PodDialogFormValue) => this.shellDialogSubmit(values),
+  //   },
+  // });
+  // }
 
-  viewLogsButtonPressed(containerImageKey: string): void {
-    this.matDialog.open(PodSelectDialogComponent, {
-      minWidth: '650px',
-      maxWidth: '850px',
-      data: {
-        containerImageKey,
-        app: this.app,
-        appName: this.app.name,
-        title: this.translate.instant('Choose pod'),
-        type: PodSelectDialogType.Logs,
-        customSubmit: (formValueDialog: PodDialogFormValue) => {
-          this.logDialogSubmit(formValueDialog);
-        },
-      },
-    });
-  }
+  // viewLogsButtonPressed(containerImageKey: string): void {
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
+
+  // this.matDialog.open(PodSelectDialogComponent, {
+  //   minWidth: '650px',
+  //   maxWidth: '850px',
+  //   data: {
+  //     containerImageKey,
+  //     app: this.app,
+  //     appName: this.app.name,
+  //     title: this.translate.instant('Choose pod'),
+  //     type: PodSelectDialogType.Logs,
+  //     customSubmit: (formValueDialog: PodDialogFormValue) => {
+  //       this.logDialogSubmit(formValueDialog);
+  //     },
+  //   },
+  // });
+  // }
 
   private getResources(): void {
     this.isLoading = true;
-    this.appService.getChartReleaseWithResources(this.app.name).pipe(
+    this.appService.getApp(this.app.name).pipe(
       map((apps) => apps[0]),
       untilDestroyed(this),
     ).subscribe({
       next: (app) => {
         this.app = app;
         this.isLoading = false;
-        this.containerImages = this.app?.resources?.container_images;
+        // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+        // this.containerImages = this.app?.resources?.container_images;
         this.cdr.markForCheck();
       },
       error: () => {
@@ -97,16 +102,15 @@ export class AppContainersCardComponent implements OnChanges {
     });
   }
 
-  getPorts(app: ChartRelease): string {
-    return getPorts(app.used_ports);
+  getPorts(app: App): string {
+    return getPorts(app.active_workloads.used_ports);
   }
 
   private shellDialogSubmit(formValue: PodDialogFormValue): void {
     this.router.navigate([
       '/apps',
       'installed',
-      this.app.catalog,
-      this.app.catalog_train,
+      this.app.metadata.train,
       this.app.name,
       'shell',
       formValue.pods,
@@ -119,8 +123,7 @@ export class AppContainersCardComponent implements OnChanges {
     this.router.navigate([
       '/apps',
       'installed',
-      this.app.catalog,
-      this.app.catalog_train,
+      this.app.metadata.train,
       this.app.name,
       'logs',
       formValue.pods,

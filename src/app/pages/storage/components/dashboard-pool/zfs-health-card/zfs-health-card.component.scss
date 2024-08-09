@@ -24,6 +24,11 @@
   }
 }
 
+.card-content {
+  display: flex;
+  flex-direction: column;
+}
+
 .controls {
   column-gap: 8px;
   display: flex;

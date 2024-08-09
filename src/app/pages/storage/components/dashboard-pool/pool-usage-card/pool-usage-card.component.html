@@ -16,23 +16,25 @@
 
   <mat-card-content class="card-content">
     <div class="left">
-      <ix-gauge-chart
-        class="gauge"
-        [colorFill]="usedPercentage === 0 ? chartBlankColor : isLowCapacity ? chartLowCapacityColor : chartFillColor"
-        [colorBlank]="chartBlankColor"
-        [width]="150"
-        [height]="150"
-        [label]="usedPercentage / 100 | percent: '1.0-1'"
-        [value]="usedPercentage > 100 ? 100 : usedPercentage"
-        [style]="isLowCapacity ? 'color: var(--red);' : ''"
-      ></ix-gauge-chart>
-      @if (isLowCapacity) {
-        <div fxLayout="row" class="warning-container">
-          <span>
-            <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }}
-          </span>
-        </div>
-      }
+      <div>
+        <ix-gauge-chart
+          class="gauge"
+          [colorFill]="usedPercentage === 0 ? chartBlankColor : isLowCapacity ? chartLowCapacityColor : chartFillColor"
+          [colorBlank]="chartBlankColor"
+          [width]="150"
+          [height]="150"
+          [label]="usedPercentage / 100 | percent: '1.0-1'"
+          [value]="usedPercentage > 100 ? 100 : usedPercentage"
+          [style]="isLowCapacity ? 'color: var(--red);' : ''"
+        ></ix-gauge-chart>
+        @if (isLowCapacity) {
+          <div class="warning-container">
+            <span>
+              <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }}
+            </span>
+          </div>
+        }
+      </div>
     </div>
 
     <div class="right">

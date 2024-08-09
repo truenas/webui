@@ -1,23 +1,22 @@
-<ng-container>
-  <h2>{{ 'Similar Apps' | translate }}</h2>
+<h2>{{ 'Similar Apps' | translate }}</h2>
 
-  @if (similarAppsLoading$ | async) {
-    <div fxLayout="row wrap" fxLayoutGap="16px">
-      <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
-      <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
-    </div>
-  } @else if (similarApps.length) {
-    <div class="similar-apps">
-      @for (app of similarApps; track trackByAppId($index, app)) {
-        <ix-app-card
-          [app]="app"
-          [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
-          (keyup.enter)="router.navigate(['/apps', 'available', app.catalog, app.train, app.name])"
-        ></ix-app-card>
-      }
-    </div>
-  } @else {
-    <h4 class="no-similar">{{ 'No similar apps found.' | translate }}</h4>
-  }
-
-</ng-container>
+@if (isLoading()) {
+  <div fxLayout="row wrap" fxLayoutGap="16px">
+    <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
+    <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
+  </div>
+} @else if (loadingError()) {
+  <h4 class="no-similar">{{ 'Error when loading similar apps.' | translate }}</h4>
+} @else if (similarApps().length) {
+  <div class="similar-apps">
+    @for (app of similarApps(); track trackByAppId($index, app)) {
+      <ix-app-card
+        [app]="app"
+        [routerLink]="['/apps', 'available', app.train, app.name]"
+        (keyup.enter)="router.navigate(['/apps', 'available', app.train, app.name])"
+      ></ix-app-card>
+    }
+  </div>
+} @else {
+  <h4 class="no-similar">{{ 'No similar apps found.' | translate }}</h4>
+}

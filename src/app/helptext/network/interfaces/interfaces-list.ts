@@ -22,6 +22,10 @@ export const helptextInterfaces = {
   rollback_changes_title: T('Revert Network Interface Changes'),
   rollback_changes_warning: T('Revert interface changes? All changes that are being tested will be lost.'),
   changes_rolled_back: T('Interface changes reverted.'),
+  network_reconnection_issue: T('Network Reconnection Issue'),
+  network_reconnection_issue_text: T('We encountered an issue while applying the new network changes. \
+ Unfortunately, we were unable to reconnect to the system after the changes were implemented. \
+ As a result, we have restored the previous network configuration to ensure continued connectivity.'),
 
   services_restarted: {
     title: T('Attention'),

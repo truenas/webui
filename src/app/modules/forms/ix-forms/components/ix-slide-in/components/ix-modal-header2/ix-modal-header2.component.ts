@@ -22,7 +22,8 @@ export class IxModalHeader2Component implements AfterViewInit {
   @Input() loading: boolean;
   @Input() disableClose = false;
   @Input() requiredRoles: Role[] = [];
-  componentsSize = signal(1);
+
+  protected componentsSize = signal(1);
 
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);

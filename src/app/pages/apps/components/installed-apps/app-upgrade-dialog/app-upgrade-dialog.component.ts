@@ -8,15 +8,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
-import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
+import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
+import { ChartContainerImage } from 'app/interfaces/app.interface';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available' | 'upgrade_human_version'> & { fetched?: boolean };
+type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_available' | 'upgrade_human_version'> & { fetched?: boolean };
 
 @UntilDestroy()
 @Component({
@@ -26,7 +26,7 @@ type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppUpgradeDialogComponent {
-  dialogConfig: ChartUpgradeDialogConfig;
+  dialogConfig: AppUpgradeDialogConfig;
   imagePlaceholder = appImagePlaceholder;
   helptext = helptextApps;
   versionOptions = new Map<string, Version>();
@@ -41,7 +41,7 @@ export class AppUpgradeDialogComponent {
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
-    @Inject(MAT_DIALOG_DATA) public data: ChartUpgradeDialogConfig,
+    @Inject(MAT_DIALOG_DATA) public data: AppUpgradeDialogConfig,
   ) {
     this.dialogConfig = data;
 
@@ -57,8 +57,8 @@ export class AppUpgradeDialogComponent {
             latest_version: availableVersion.version,
             latest_human_version: availableVersion.human_version,
             changelog: null,
-            container_images_to_update: null,
-            item_update_available: null,
+            // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+            // container_images_to_update: null,
             available_versions_for_upgrade: null,
           });
         }
@@ -69,10 +69,11 @@ export class AppUpgradeDialogComponent {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
   }
 
-  hasUpdateImages(): boolean {
-    return this.selectedVersion?.container_images_to_update
-      && Object.keys(this.selectedVersion.container_images_to_update).length > 0;
-  }
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+  // hasUpdateImages(): boolean {
+  //   return this.selectedVersion?.container_images_to_update
+  //     && Object.keys(this.selectedVersion.container_images_to_update).length > 0;
+  // }
 
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
@@ -85,10 +86,10 @@ export class AppUpgradeDialogComponent {
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           untilDestroyed(this),
-        ).subscribe((summary: UpgradeSummary) => {
+        ).subscribe((summary: AppUpgradeSummary) => {
           this.selectedVersion.changelog = summary.changelog;
-          this.selectedVersion.container_images_to_update = summary.container_images_to_update;
-          this.selectedVersion.item_update_available = summary.item_update_available;
+          // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
+          // this.selectedVersion.container_images_to_update = summary.container_images_to_update;
           this.selectedVersion.fetched = true;
         });
     }

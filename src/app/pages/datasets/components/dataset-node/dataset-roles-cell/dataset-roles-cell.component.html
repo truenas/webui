@@ -1,53 +1,53 @@
-@if (isSystemDataset) {
+@if (isSystemDataset()) {
   <ix-icon
     name="ix:logo_truenas_scale_mark"
     [matTooltip]="'This dataset is used by the system' | translate"
   ></ix-icon>
 }
 
-@if (dataset.apps?.length || isApplications) {
-  @if (isApplications) {
+@if (dataset().apps?.length || isApps()) {
+  @if (isApps()) {
     <ix-icon
       name="apps"
-      [matTooltip]="'This dataset is used to store Kubernetes config and other container related data' | translate"
+      [matTooltip]="'This dataset is used to store apps config and other container related data' | translate"
     ></ix-icon>
   } @else {
     <ix-icon
       name="apps"
-      [matTooltip]="'This dataset is used by: {apps}' | translate: { apps: appsNames }"
+      [matTooltip]="'This dataset is used by: {apps}' | translate: { apps: appNames() }"
     ></ix-icon>
   }
 }
 
-@if (dataset.vms?.length) {
+@if (dataset().vms?.length) {
   <ix-icon
     name="computer"
-    [matTooltip]="'This dataset is used by: {vms}' | translate: { vms: vmsNames }"
+    [matTooltip]="'This dataset is used by: {vms}' | translate: { vms: vmNames() }"
   ></ix-icon>
 }
 
-@if (hasShares) {
+@if (hasShares()) {
   <ix-icon
     name="share"
     [matTooltip]="'This dataset has children with shares' | translate"
   ></ix-icon>
 }
 
-@if (dataset.smb_shares?.length) {
+@if (dataset().smb_shares?.length) {
   <ix-icon
     name="ix:smb_share"
     [matTooltip]="'Dataset is shared via SMB' | translate"
   ></ix-icon>
 }
 
-@if (dataset.nfs_shares?.length) {
+@if (dataset().nfs_shares?.length) {
   <ix-icon
     name="ix:nfs_share"
     [matTooltip]="'Dataset is shared via NFS' | translate"
   ></ix-icon>
 }
 
-@if (dataset.iscsi_shares?.length) {
+@if (dataset().iscsi_shares?.length) {
   <ix-icon
     name="ix:iscsi_share"
     [matTooltip]="'Dataset is shared via iSCSI' | translate"

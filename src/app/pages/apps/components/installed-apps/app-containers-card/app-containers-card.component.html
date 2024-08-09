@@ -13,17 +13,17 @@
       <div class="details-item">
         <div class="label">{{ 'Pods' | translate }}:</div>
         <div class="value">
-          @if (app?.resources?.pods) {
-            {{ app.resources.pods.length }}
-          } @else {
+          @if (true) {
+            <!-- TODO: Fix app resource pods -->
             {{ 'N/A' | translate }}
+            <!-- {{ app.resources.pods.length }} -->
           }
         </div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'Used Ports' | translate }}:</div>
         <div class="value">
-          @if (app?.used_ports) {
+          @if (app?.active_workloads?.used_ports?.length) {
             {{ getPorts(app) }}
           } @else {
             {{ 'N/A' | translate }}
@@ -31,11 +31,11 @@
         </div>
       </div>
       <div class="details-item">
-        <div class="label">{{ 'Deployments' | translate }}:</div>
+        <div class="lael">{{ 'Deployments' | translate }}:</div>
         <div class="value">
-          @if (app?.resources?.deployments) {
-            {{ app.resources.deployments.length }}
-          } @else {
+          @if (true) {
+            <!-- TODO: Fix app resource deployments -->
+            <!-- {{ app.resources.deployments.length }} -->
             {{ 'N/A' | translate }}
           }
         </div>
@@ -43,15 +43,16 @@
       <div class="details-item">
         <div class="label">{{ 'Stateful Sets' | translate }}:</div>
         <div class="value">
-          @if (app?.resources?.statefulsets) {
-            {{ app.resources.statefulsets.length }}
-          } @else {
+          @if (true) {
+            <!-- TODO: Fix app resource statefulsets -->
+            <!-- {{ app.resources.statefulsets.length }} -->
             {{ 'N/A' | translate }}
           }
         </div>
       </div>
     </div>
-    <div class="containers">
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130379 -->
+    <!-- <div class="containers">
       <h4>{{ 'Containers' | translate }}</h4>
       <div class="container-list">
         @if (!isLoading || containerImages) {
@@ -102,7 +103,7 @@
           <ngx-skeleton-loader></ngx-skeleton-loader>
         }
       </div>
-    </div>
+    </div> -->
   </mat-card-content>
 </mat-card>
 

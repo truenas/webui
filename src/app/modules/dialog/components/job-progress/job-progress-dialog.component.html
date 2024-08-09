@@ -9,11 +9,7 @@
 
   @if (isJobRunning) {
     <div>
-      <div
-        fxLayout="row"
-        fxLayoutAlign="space-between baseline"
-        fxLayoutGap="8px"
-      >
+      <div class="description-line">
         <span>{{ job.description ? job.description : job.method }}</span>
         @if (!hideProgressValue) {
           <small>
