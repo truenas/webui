@@ -1,21 +1,15 @@
 <ix-modal-header
   [title]="'Edit Catalog' | translate"
-  [loading]="isFormLoading"
+  [loading]="isFormLoading()"
 ></ix-modal-header>
 
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        <ix-input
-          formControlName="label"
-          [label]="'Catalog Name' | translate"
-          [required]="true"
-          [tooltip]="tooltips.label | translate"
-        ></ix-input>
-
         <ix-chips
           formControlName="preferred_trains"
+          [required]="true"
           [label]="'Preferred Trains' | translate"
           [tooltip]="tooltips.preferred_trains | translate"
         ></ix-chips>
@@ -27,7 +21,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isFormLoading()"
         >
           {{ 'Save' | translate }}
         </button>
