@@ -97,10 +97,10 @@
     </div>
 
     <div class="item-search">
-      @if (!showMobileDetails) {
+      @if (!showMobileDetails()) {
         <ix-fake-progress-bar
           class="loader-bar"
-          [loading]="isLoading"
+          [loading]="isLoading()"
         ></ix-fake-progress-bar>
       }
 
@@ -179,7 +179,7 @@
     >
       <div class="app-inner">
         <div class="apps-rows">
-          @for (app of filteredApps; track trackAppBy($index, app)) {
+          @for (app of filteredApps; track app.name) {
             <ix-app-row
               tabindex="0"
               [app]="app"
@@ -196,7 +196,7 @@
             ></ix-app-row>
           }
 
-          @if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading)) {
+          @if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {
             <div class="no-apps">
               <ix-empty [conf]="entityEmptyConf"></ix-empty>
             </div>
@@ -210,7 +210,7 @@
     <div
       ixDetailsHeight="rightside-content-hold"
       class="details-container"
-      [class.details-container-mobile]="showMobileDetails"
+      [class.details-container-mobile]="showMobileDetails()"
     >
       <ix-app-details-panel
         [app]="selectedApp"

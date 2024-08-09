@@ -23,7 +23,7 @@ import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 

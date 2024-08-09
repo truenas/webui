@@ -7,8 +7,9 @@ import {
   OnInit,
   ChangeDetectorRef,
   AfterViewInit,
-  Inject,
+  Inject, signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import {
@@ -37,7 +38,7 @@ import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-app
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -64,12 +65,14 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
 export class InstalledAppsComponent implements OnInit, AfterViewInit {
   protected readonly searchableElements = installedAppsElements;
 
+  readonly isLoading = toSignal(this.installedAppsStore.isLoading$, { requireSync: true });
+
+  readonly isMobileView = signal(false);
+  readonly showMobileDetails = signal(false);
+
   dataSource: App[] = [];
   selectedApp: App;
-  isLoading = false;
   filterString = '';
-  showMobileDetails = false;
-  isMobileView = false;
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
   sortingInfo: Sort = {
@@ -176,12 +179,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadChartReleases();
     this.listenForStatusUpdates();
-    this.installedAppsStore.isLoading$.pipe(untilDestroyed(this)).subscribe({
-      next: (isLoading) => {
-        this.isLoading = isLoading;
-        this.cdr.markForCheck();
-      },
-    });
   }
 
   ngAfterViewInit(): void {
@@ -190,21 +187,17 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((state: BreakpointState) => {
         if (state.matches) {
-          this.isMobileView = true;
+          this.isMobileView.set(true);
         } else {
+          this.isMobileView.set(false);
           this.closeMobileDetails();
-          this.isMobileView = false;
         }
         this.cdr.markForCheck();
       });
   }
 
-  trackAppBy(index: number, item: App): string {
-    return item.name;
-  }
-
   closeMobileDetails(): void {
-    this.showMobileDetails = false;
+    this.showMobileDetails.set(false);
   }
 
   viewDetails(app: App): void {
@@ -212,8 +205,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
     this.router.navigate(['/apps/installed', app.metadata.train, app.id]);
 
-    if (this.isMobileView) {
-      this.showMobileDetails = true;
+    if (this.isMobileView()) {
+      this.showMobileDetails.set(true);
 
       setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
