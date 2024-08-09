@@ -21,7 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DockerImageDeleteDialogComponent {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.AppsWrite];
   protected readonly forceCheckboxTooltip = 'When set will force delete the image regardless of the state of\
    containers and should be used cautiously.';
 
