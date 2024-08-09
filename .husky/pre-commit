@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 yarn strict-null-checks
 yarn lint-staged
 yarn extract

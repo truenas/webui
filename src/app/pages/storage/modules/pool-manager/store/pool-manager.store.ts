@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { ComponentStore } from '@ngrx/component-store';
+import { tapResponse } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import {
