@@ -174,7 +174,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.loadChartReleases();
+    this.loadInstalledApps();
     this.listenForStatusUpdates();
     this.installedAppsStore.isLoading$.pipe(untilDestroyed(this)).subscribe({
       next: (isLoading) => {
@@ -266,7 +266,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.entityEmptyConf.type = type;
   }
 
-  loadChartReleases(): void {
+  loadInstalledApps(): void {
     this.cdr.markForCheck();
 
     combineLatest([

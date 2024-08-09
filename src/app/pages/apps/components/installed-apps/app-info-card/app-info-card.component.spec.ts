@@ -80,7 +80,7 @@ describe('AppInfoCardComponent', () => {
     ],
     providers: [
       mockProvider(ApplicationsService, {
-        getChartUpgradeSummary: jest.fn(() => of(upgradeSummary)),
+        getAppUpgradeSummary: jest.fn(() => of(upgradeSummary)),
       }),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([]),

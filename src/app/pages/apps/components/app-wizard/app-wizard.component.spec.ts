@@ -232,7 +232,7 @@ describe('AppWizardComponent', () => {
     latest_version: '1.2.1',
   } as CatalogApp;
 
-  const existingChartEdit = {
+  const existingAppEdit = {
     name: 'app-name',
     id: 'app_name',
     config: {
@@ -281,14 +281,14 @@ describe('AppWizardComponent', () => {
       }),
       mockProvider(ApplicationsService, {
         getCatalogAppDetails: jest.fn(() => of(existingCatalogApp)),
-        getApp: jest.fn(() => of([existingChartEdit])),
-        getAllApps: jest.fn(() => of([existingChartEdit])),
+        getApp: jest.fn(() => of([existingAppEdit])),
+        getAllApps: jest.fn(() => of([existingAppEdit])),
       }),
       mockWebSocket([
         mockJob('app.create'),
         mockJob('app.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
-        mockCall('app.query', [existingChartEdit]),
+        mockCall('app.query', [existingAppEdit]),
         // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
         // mockCall('container.image.dockerhub_rate_limit', {
         //   total_pull_limit: 13,
@@ -317,7 +317,7 @@ describe('AppWizardComponent', () => {
             provide: ActivatedRoute,
             useValue: {
               parent: {
-                params: of({ appId: 'app_name', catalog: 'TRUENAS', train: 'charts' }),
+                params: of({ appId: 'app_name', catalog: 'TRUENAS', train: 'stable' }),
               },
               routeConfig: { path: 'edit' },
             },
@@ -336,7 +336,7 @@ describe('AppWizardComponent', () => {
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'charts', 'app_name']);
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'stable', 'app_name']);
     });
 
     it('shows values for an existing data when form is opened for edit', () => {
@@ -374,7 +374,7 @@ describe('AppWizardComponent', () => {
             provide: ActivatedRoute,
             useValue: {
               parent: {
-                params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'charts' }),
+                params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'stable' }),
               },
               routeConfig: { path: 'install' },
             },
@@ -393,7 +393,7 @@ describe('AppWizardComponent', () => {
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'charts', 'ipfs']);
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'stable', 'ipfs']);
     });
 
     it('checks validation error when app name already in use', async () => {
@@ -450,7 +450,7 @@ describe('AppWizardComponent', () => {
           catalog: 'TRUENAS',
           item: 'ipfs',
           release_name: 'appname',
-          train: 'charts',
+          train: 'stable',
           values: {
             release_name: 'appname',
             service: {
