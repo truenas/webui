@@ -3,11 +3,12 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, map, switchMap, throttleTime,
+  Observable, filter, map, switchMap, throttleTime,
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -25,8 +26,11 @@ export class AppResourcesCardComponent implements OnInit {
   pool: string;
 
   availableSpace$ = this.dockerStore.selectedPool$.pipe(
+    filter((pool) => {
+      return !!pool;
+    }),
     switchMap((pool) => {
-      return this.ws.call('pool.dataset.get_instance', [`${pool}/ix-applications`]);
+      return this.ws.call('pool.dataset.get_instance', [`${pool}/${ixAppsDataset}`]);
     }),
     map((dataset) => dataset.available.rawvalue),
   ).pipe(
