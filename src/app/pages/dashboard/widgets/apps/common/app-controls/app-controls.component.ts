@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -47,12 +47,12 @@ export class AppControlsComponent {
 
   openWebPortal(app: App): void {
     const webPortal = Object.values(app.portals);
-    if (webPortal?.[0]) {
+    if (webPortal?.length) {
       this.redirect.openWindow(webPortal[0]);
     }
   }
 
   openAppDetails(app: App): void {
-    this.router.navigate(['/apps', 'installed', app.catalog_train, app.id]);
+    this.router.navigate(['/apps', 'installed', app.metadata.train, app.id]);
   }
 }

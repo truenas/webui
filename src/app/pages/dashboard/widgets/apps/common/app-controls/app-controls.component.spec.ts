@@ -91,6 +91,6 @@ describe('AppControlsComponent', () => {
     const appButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-cog' }));
     await appButton.click();
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'installed', app.catalog_train, app.id]);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'installed', app.metadata.train, app.id]);
   });
 });
