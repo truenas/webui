@@ -298,8 +298,6 @@ export type AppDeleteParams = [
 ];
 
 export interface ChartRollbackParams {
-  force_rollback?: boolean;
-  recreate_resources?: boolean;
   rollback_snapshot?: boolean;
   app_version: string;
 }

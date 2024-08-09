@@ -46,7 +46,7 @@ export class AppRollbackModalComponent {
     const rollbackParams = this.form.value as Required<ChartRollbackParams>;
 
     this.dialogService.jobDialog(
-      this.ws.job('chart.release.rollback', [this.app.name, rollbackParams]),
+      this.ws.job('app.rollback', [this.app.name, rollbackParams]),
       { title: helptextApps.apps.rollback_dialog.job },
     )
       .afterClosed()
