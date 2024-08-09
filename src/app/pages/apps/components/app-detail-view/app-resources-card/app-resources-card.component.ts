@@ -8,6 +8,7 @@ import {
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -26,9 +27,7 @@ export class AppResourcesCardComponent implements OnInit {
 
   availableSpace$ = this.dockerStore.selectedPool$.pipe(
     filter((pool) => !!pool),
-    switchMap((pool) => {
-      return this.ws.call('pool.dataset.get_instance', [`${pool}/ix-applications`]);
-    }),
+    switchMap((pool) => this.ws.call('pool.dataset.get_instance', [`${pool}/${ixAppsDataset}`])),
     map((dataset) => dataset.available.rawvalue),
   ).pipe(
     toLoadingState(),

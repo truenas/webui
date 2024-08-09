@@ -2,8 +2,9 @@ import { Inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
+import { tapResponse } from '@ngrx/operators';
 import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, EMPTY, forkJoin, Observable, of, Subscription, from,

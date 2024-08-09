@@ -19,7 +19,7 @@ describe('AppRowComponent', () => {
     metadata: { icon: 'https://image/' },
   } as App;
 
-  const status = AppStatus.Started;
+  const status = AppStatus.Running;
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,

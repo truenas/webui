@@ -1,12 +1,14 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { switchMap } from 'rxjs';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog, CatalogUpdate } from 'app/interfaces/catalog.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -16,15 +18,13 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogSettingsComponent implements OnInit {
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
 
-  form = this.fb.group({
-    label: ['', Validators.required],
+  protected form = this.fb.group({
     preferred_trains: [[] as string[], Validators.required],
   });
 
   readonly tooltips = {
-    label: helptextApps.catalogForm.name.tooltip,
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
   };
 
@@ -32,12 +32,11 @@ export class CatalogSettingsComponent implements OnInit {
     private ws: WebSocketService,
     private slideInRef: IxSlideInRef<CatalogSettingsComponent>,
     private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
+    private appsStore: AppsStore,
   ) {}
 
   ngOnInit(): void {
-    this.form.controls.label.disable();
     this.setupForm();
   }
 
@@ -47,7 +46,6 @@ export class CatalogSettingsComponent implements OnInit {
     ).subscribe({
       next: (config: Catalog) => {
         this.form.patchValue({
-          label: config.label,
           preferred_trains: config.preferred_trains,
         });
       },
@@ -57,19 +55,20 @@ export class CatalogSettingsComponent implements OnInit {
   onSubmit(): void {
     const { preferred_trains: preferredTrains } = this.form.value;
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.ws.call('catalog.update', [{ preferred_trains: preferredTrains } as CatalogUpdate])
-      .pipe(untilDestroyed(this))
+      .pipe(
+        switchMap(() => this.appsStore.loadCatalog()),
+        untilDestroyed(this),
+      )
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.slideInRef.close(true);
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.errorHandler.handleWsFormError(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

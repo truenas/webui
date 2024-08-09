@@ -27,9 +27,6 @@ import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-da
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
-import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
-import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
   WidgetGroupControlsComponent,
@@ -122,9 +119,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     ImgFallbackModule,
     InterfaceStatusIconComponent,
     UptimePipe,
-    AppCardLogoComponent,
-    AppStatusCellComponent,
-    AppUpdateCellComponent,
     FormatDateTimePipe,
     FileSizePipe,
     CopyButtonComponent,

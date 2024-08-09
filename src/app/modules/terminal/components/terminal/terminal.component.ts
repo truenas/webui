@@ -6,10 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { FitAddon } from '@xterm/addon-fit';
+import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
 import { filter, take, tap } from 'rxjs/operators';
-import { Terminal } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
@@ -136,7 +136,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     const font = new FontFaceObserver(this.fontName);
 
     font.load().then(() => {
-      this.xterm.setOption('fontFamily', this.fontName);
+      this.xterm.options.fontFamily = this.fontName;
       this.drawTerminal();
     }, (error) => {
       this.drawTerminal();
@@ -163,7 +163,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   resizeTerm(): boolean {
-    this.xterm.setOption('fontSize', this.fontSize);
+    this.xterm.options.fontSize = this.fontSize;
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
     if (size) {
