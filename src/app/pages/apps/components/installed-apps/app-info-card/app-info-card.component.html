@@ -60,7 +60,7 @@
           <div class="label">{{ 'Source' | translate }}:</div>
           <div class="value">
             <div>
-              @for (source of app?.metadata?.sources; track source) {
+              @for (source of app?.metadata?.sources; track source; let last = $last) {
                 <a
                   class="source-link"
                   target="_blank"
@@ -68,6 +68,9 @@
                   [title]="source"
                   [ixTest]="[app.name, 'source']"
                 >{{ source | cleanLink }}</a>
+                @if (!last) {
+                  <span>, </span>
+                }
               } @empty {
                 {{ 'N/A' | translate }}
               }

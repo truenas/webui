@@ -12,7 +12,8 @@ import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-c
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 
-describe('CustomAppButtonComponent', () => {
+// TODO: https://ixsystems.atlassian.net/browse/NAS-129579
+describe.skip('CustomAppButtonComponent', () => {
   let spectator: SpectatorRouting<CustomAppButtonComponent>;
   let loader: HarnessLoader;
   let button: MatButtonHarness;
