@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { startCase, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
@@ -73,10 +73,6 @@ export class AppInfoCardComponent {
 
   get ixChartApp(): boolean {
     return this.app.metadata.name === ixChartApp;
-  }
-
-  portalName(name = 'web_portal'): string {
-    return startCase(name);
   }
 
   portalLink(app: App, name = 'web_portal'): void {

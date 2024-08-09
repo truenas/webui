@@ -1,0 +1,74 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+  margin: 0;
+
+  .details-item .label {
+    align-self: flex-start;
+  }
+
+  .details-item .value {
+    display: inline-flex;
+    flex-direction: column;
+    white-space: normal;
+  }
+}
+
+.with-tooltip {
+  cursor: help;
+  text-decoration: underline;
+  text-decoration-color: var(--alt-fg1);
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
+.separator {
+  font-weight: 600;
+  margin: 0 4px;
+}
+
+.containers {
+  margin-top: 16px;
+
+  h4 {
+    margin-bottom: 8px;
+  }
+}
+
+.container-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  max-height: 200px;
+  min-height: 40px;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.containers-count {
+  background-color: var(--alt-bg1);
+  border-radius: 3px;
+  margin-left: 2px;
+  padding: 0 5px;
+}
+
+.container {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+
+  .service-name {
+    font-weight: 500;
+  }
+
+  .container-state {
+    flex: 1;
+  }
+
+  .container-action {
+    align-items: center;
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: flex-end;
+  }
+}

@@ -1,0 +1,99 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Workloads' | translate }}
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="details-item">
+      <div class="label">{{ 'Ports' | translate }}:</div>
+      <div class="value">
+        @for (port of hostPorts(); track port.hostPort) {
+          <div>
+            <span
+              class="with-tooltip"
+              [matTooltip]="'Host' | translate"
+            >{{ port.protocol }}://{{ port.hostIp }}:{{ port.hostPort }}</span>
+
+            <span class="separator">:</span>
+
+            <span
+              class="with-tooltip"
+              [matTooltip]="'Container' | translate"
+            >{{ port.containerPort }}</span>
+          </div>
+        } @empty {
+          {{ 'N/A' | translate }}
+        }
+      </div>
+    </div>
+
+    <div class="containers">
+      <h4>
+        {{ 'Containers' | translate }}
+
+        @if (app().active_workloads.container_details.length > 0) {
+          <span class="containers-count">
+            {{ app().active_workloads.containers | number }}
+          </span>
+        }
+      </h4>
+      <div class="container-list">
+        @for (container of app().active_workloads.container_details; track container.id) {
+          <div class="container">
+            <div class="service-name">{{ container.service_name }}</div>
+            <div>&ndash;</div>
+            <div class="container-state">
+              {{ container.state | mapValue: appContainerStateLabels | translate  }}
+            </div>
+            @if (app().state === CatalogAppState.Running || app().state === CatalogAppState.Deploying) {
+              <div class="container-action">
+                <button
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'Volume Mounts' | translate"
+                  [ixTest]="[container.service_name, 'volume-mounts']"
+                  [matTooltip]="'Volume Mounts' | translate"
+                  (click)="volumeButtonPressed(container)"
+                >
+                  <ix-icon name="mdi-folder-outline"></ix-icon>
+                </button>
+
+                <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130392 -->
+                @if (false) {
+                  <button
+                    *ixRequiresRoles="requiredRoles"
+                    mat-icon-button
+                    matTooltipPosition="above"
+                    [attr.aria-label]="'Shell' | translate"
+                    [ixTest]="[container.service_name, 'shell']"
+                    [matTooltip]="'Shell' | translate"
+                    (click)="shellButtonPressed(container.service_name)"
+                  >
+                    <ix-icon name="mdi-console"></ix-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    matTooltipPosition="above"
+                    [attr.aria-label]="'View Logs' | translate"
+                    [ixTest]="[container.service_name, 'view_logs']"
+                    [matTooltip]="'View Logs' | translate"
+                    (click)="viewLogsButtonPressed(container.service_name)"
+                  >
+                    <ix-icon name="mdi-text-box"></ix-icon>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        } @empty {
+          {{ 'No containers are available.' | translate }}
+        }
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+
+
+

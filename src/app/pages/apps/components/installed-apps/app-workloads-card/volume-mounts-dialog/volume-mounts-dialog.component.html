@@ -1,0 +1,41 @@
+<h1 mat-dialog-title>
+  <span class="title">
+    {{ '{service} Volume Mounts' | translate: { service: containerDetails.service_name } }}
+  </span>
+
+  <button
+    class="close"
+    mat-icon-button
+    mat-dialog-close="close"
+    ixTest="close"
+    [aria-label]="'Close' | translate"
+  >
+    <ix-icon name="close"></ix-icon>
+  </button>
+</h1>
+
+<div mat-dialog-content>
+  <div class="table-container">
+    <table ixTest="volume-mounts">
+      <tr [ixTest]="['volume-mounts', 'header']">
+        <th>{{ 'Type' | translate }}</th>
+        <th>{{ 'Source' | translate }}</th>
+        <th>{{ 'Destination' | translate }}</th>
+        <th>{{ 'Mode' | translate }}</th>
+      </tr>
+
+      @for (mount of containerDetails.volume_mounts; track mount.destination) {
+        <tr [ixTest]="['volume-mounts', mount.destination]">
+          <td>{{ mount.type }}</td>
+          <td class="path">{{ mount.source }}</td>
+          <td class="path">{{ mount.destination }}</td>
+          <td>{{ mount.mode }}</td>
+        </tr>
+      } @empty {
+        <tr ixTest="no-volume-mounts">
+          <td colspan="4">{{ 'No volume mounts' | translate }}</td>
+        </tr>
+      }
+    </table>
+  </div>
+</div>
