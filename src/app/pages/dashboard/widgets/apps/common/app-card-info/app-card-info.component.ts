@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
