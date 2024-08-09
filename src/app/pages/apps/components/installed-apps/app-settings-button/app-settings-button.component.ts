@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -23,6 +24,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class AppSettingsButtonComponent {
   readonly searchableElements = appSettingsButtonElements;
+  protected readonly manageCatalogRequiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
   constructor(
     private ixSlideInService: IxSlideInService,
