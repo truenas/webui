@@ -65,6 +65,7 @@ export enum AppContainerState {
 }
 
 export interface AppContainerDetails {
+  id: string;
   service_name: string;
   image: string;
   state: AppContainerState;

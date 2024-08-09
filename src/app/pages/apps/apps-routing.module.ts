@@ -7,6 +7,7 @@ import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps
 import { CategoryViewComponent } from 'app/pages/apps/components/available-apps/category-view/category-view.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 // import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
+import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { appNameResolver } from 'app/pages/apps/resolvers/app-name.resolver';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
@@ -58,11 +59,11 @@ const routes: Routes = [
               //   component: PodShellComponent,
               //   data: { title: T('Pod Shell') },
               // },
-              // {
-              //   path: 'logs/:podName/:command/:tail_lines',
-              //   component: PodLogsComponent,
-              //   data: { title: T('Pod Logs') },
-              // },
+              {
+                path: 'logs/:containerId',
+                component: PodLogsComponent,
+                data: { title: T('Pod Logs') },
+              },
             ],
           },
         ],

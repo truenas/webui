@@ -51,43 +51,43 @@
         </div>
       </div>
     </div>
-    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130379 -->
-    <!-- <div class="containers">
+    <div class="containers">
       <h4>{{ 'Containers' | translate }}</h4>
       <div class="container-list">
-        @if (!isLoading || containerImages) {
-          @if (containerImages) {
-            @for (containerImage of containerImages | keyvalue; track containerImage) {
+        @if (!isLoading || containerDetailsList) {
+          @if (containerDetailsList) {
+            @for (containerDetails of containerDetailsList; track containerDetails) {
               <div class="container-item">
-                <div class="container-name">{{ containerImage.key }}</div>
+                <div class="container-name">{{ containerDetails.image }}</div>
                 <div class="information">
                   <div class="container-status">
-                    @if (containerImage?.value?.update_available) {
+                    @if (app?.upgrade_available) {
                       {{ 'Update available' | translate }}
                     } @else {
                       {{ 'Up to date' | translate }}
                     }
                   </div>
-                  @if (app.status === chartReleaseStatus.Active || app.status === chartReleaseStatus.Deploying) {
+                  @if (app.state === chartReleaseStatus.Running || app.state === chartReleaseStatus.Deploying) {
                     <div class="container-action">
-                      <button
+                      <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130379 -->
+                      <!-- <button
                         *ixRequiresRoles="requiredRoles"
                         mat-icon-button
                         matTooltipPosition="above"
                         [attr.aria-label]="'Shell' | translate"
-                        [ixTest]="[containerImage.key, 'shell']"
+                        [ixTest]="[containerDetails.image, 'shell']"
                         [matTooltip]="'Shell' | translate"
-                        (click)="shellButtonPressed(containerImage.key)"
+                        (click)="shellButtonPressed(containerDetails)"
                       >
                         <ix-icon name="mdi-console"></ix-icon>
-                      </button>
+                      </button> -->
                       <button
                         mat-icon-button
                         matTooltipPosition="above"
                         [attr.aria-label]="'View Logs' | translate"
-                        [ixTest]="[containerImage.key, 'view_logs']"
+                        [ixTest]="[containerDetails.image, 'view_logs']"
                         [matTooltip]="'View Logs' | translate"
-                        (click)="viewLogsButtonPressed(containerImage.key)"
+                        (click)="viewLogsButtonPressed(containerDetails)"
                       >
                         <ix-icon name="mdi-text-box"></ix-icon>
                       </button>
@@ -103,7 +103,7 @@
           <ngx-skeleton-loader></ngx-skeleton-loader>
         }
       </div>
-    </div> -->
+    </div>
   </mat-card-content>
 </mat-card>
 

@@ -7,7 +7,7 @@
     (valueChange)="onFontSizeChanged($event)"
   ></ix-toolbar-slider>
 
-  <button mat-button ixTest="reconnect" (click)="onReconnect()">
+  <button mat-button ixTest="reconnect" (click)="reconnect()">
     {{ 'Reconnect' | translate }}
   </button>
 
@@ -20,10 +20,8 @@
   <div class="meta-data">
     <label>{{ 'Application Name' | translate }}:</label>
     <span class="name">{{ appName }}</span>
-    <label>{{ 'Pod Name' | translate }}:</label>
-    <span class="name">{{ podName }}</span>
-    <label>{{ 'Container Name' | translate }}:</label>
-    <span class="name">{{ containerName }}</span>
+    <label>{{ 'Container ID' | translate }}:</label>
+    <span class="name">{{ containerId }}</span>
   </div>
   <div
     #logContainer
