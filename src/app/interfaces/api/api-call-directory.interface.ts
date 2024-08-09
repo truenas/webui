@@ -27,6 +27,11 @@ import {
 } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
+import {
+  App,
+  AppQueryParams,
+  AppUpgradeParams,
+} from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
@@ -51,14 +56,6 @@ import {
   CertificateProfiles,
   ExtendedKeyUsageChoices,
 } from 'app/interfaces/certificate.interface';
-import {
-  ChartReleaseEvent,
-} from 'app/interfaces/chart-release-event.interface';
-import {
-  App,
-  ChartReleaseQueryParams,
-  AppUpgradeParams,
-} from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import {
   CloudBackup,
@@ -314,10 +311,14 @@ export interface ApiCallDirectory {
   'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
 
   // App
+  'app.query': { params: AppQueryParams; response: App[] };
+  'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.categories': { params: void; response: string[] };
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
-  'app.similar': { params: [app_name: string, catalog: string, train: string]; response: AvailableApp[] };
+  'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
+  'app.rollback_versions': { params: [app_name: string]; response: string[] };
+  'app.used_ports': { params: void; response: number[] };
 
   // Audit
   'audit.config': { params: void; response: AuditConfig };
@@ -376,17 +377,9 @@ export interface ApiCallDirectory {
     response: CertificateAuthority;
   };
 
-  // Apps
-  'app.query': { params: ChartReleaseQueryParams; response: App[] };
-  'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
-
   // Chart
-  'chart.release.events': { params: [name: string]; response: ChartReleaseEvent[] };
-  'chart.release.get_chart_releases_using_chart_release_images': { params: [name: string]; response: Choices };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
-  'chart.release.query': { params: ChartReleaseQueryParams; response: App[] };
-  'chart.release.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
 
   // CloudBackup
   'cloud_backup.abort': { params: [id: number]; response: void };
@@ -450,6 +443,7 @@ export interface ApiCallDirectory {
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
+  'disk.get_instance': { params: [id: string, params?: { extra: { supports_smart: boolean } }]; response: Disk };
 
   // Enclosure
   'enclosure2.query': { params: void; response: Enclosure[] };

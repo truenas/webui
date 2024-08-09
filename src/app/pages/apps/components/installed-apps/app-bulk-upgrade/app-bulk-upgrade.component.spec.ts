@@ -11,7 +11,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -20,49 +20,32 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { WebSocketService } from 'app/services/ws.service';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 
 const fakeAppOne = {
   name: 'test-app-one',
-  version: 1,
-  namespace: 'ix-test-app-one',
+  version: '1',
   id: 'test-app-one',
-  catalog: 'TRUENAS',
-  catalog_train: 'charts',
-  path: '/mnt/tank/ix-applications/releases/test-pihole',
-  dataset: 'tank/ix-applications/releases/test-pihole',
-  state: 'ACTIVE',
-  history: {},
-  update_available: true,
+  state: CatalogAppState.Running,
+  upgrade_available: true,
   human_version: '2022.10_1.0.7',
-  human_latest_version: '2022.10_1.0.8',
-  pod_status: { desired: 1, available: 1 },
-  used_ports: [],
   metadata: {
     icon: 'path-to-icon',
+    train: 'charts',
   },
-  container_images_update_available: false,
 } as App;
 
 const fakeAppTwo = {
   name: 'test-app-two',
-  version: 1,
-  namespace: 'ix-test-app-one',
+  version: '1',
   id: 'test-app-two',
-  catalog: 'TRUENAS',
-  catalog_train: 'charts',
-  path: '/mnt/tank/ix-applications/releases/test-nextcloud',
-  dataset: 'tank/ix-applications/releases/test-nextcloud',
-  state: 'ACTIVE',
-  history: {},
-  update_available: true,
+  state: CatalogAppState.Running,
+  upgrade_available: true,
   human_version: '25_1.6.33',
-  human_latest_version: '25_1.6.34',
-  pod_status: { desired: 2, available: 2 },
-  used_ports: [],
   metadata: {
     icon: 'path-to-icon',
+    train: 'charts'
   },
-  container_images_update_available: true,
 } as App;
 
 const fakeUpgradeSummary: AppUpgradeSummary = {

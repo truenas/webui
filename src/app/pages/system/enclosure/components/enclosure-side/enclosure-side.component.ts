@@ -40,7 +40,6 @@ export class EnclosureSideComponent {
   });
 
   protected svgUrl = computed(() => {
-    const baseUrl = supportedEnclosures?.[this.enclosure().model]?.[this.shownSide()];
-    return `${baseUrl}?uniqueIdentifier=${Date.now()}`;
+    return supportedEnclosures?.[this.enclosure().model]?.[this.shownSide()];
   });
 }

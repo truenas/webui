@@ -11,7 +11,7 @@ import {
   map,
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -63,7 +63,7 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   }
 
   openWebPortal(app: App): void {
-    this.redirect.openWindow(app.portals['web_portal'][0]);
+    this.redirect.openWindow(app.portals['web_portal']);
   }
 
   splitMemory(normalizedValue: string): [number, string] {

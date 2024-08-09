@@ -11,7 +11,11 @@
     >
       {{ 'Configure' | translate }}
     </button>
-  } @else {
+  }
+</ix-page-header>
+
+@if (isEditing()) {
+  <div class="edit-mode-buttons">
     <button
       mat-button
       class="add-button"
@@ -38,8 +42,8 @@
     >
       {{ 'Cancel' | translate }}
     </button>
-  }
-</ix-page-header>
+  </div>
+}
 
 @if (isLoadingFirstTime()) {
   <ngx-skeleton-loader

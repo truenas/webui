@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy,
-  Component, EventEmitter, Input, Output,
+  Component, computed, input, output,
 } from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
@@ -16,34 +15,32 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppRowComponent {
-  @Input() app: App;
-  @Input() status: AppStatus;
-  @Input() selected: boolean;
-  @Input() job?: Job<void, AppStartQueryParams>;
-  @Output() startApp = new EventEmitter<void>();
-  @Output() stopApp = new EventEmitter<void>();
-  @Output() clickStatus = new EventEmitter<void>();
-  @Output() selectionChange = new EventEmitter<void>();
+  readonly app = input.required<App>();
+  readonly status = input.required<AppStatus>();
+  readonly selected = input.required<boolean>();
+  readonly job = input<Job<void, AppStartQueryParams>>();
 
-  readonly imagePlaceholder = appImagePlaceholder;
+  readonly startApp = output();
+  readonly stopApp = output();
+  readonly clickStatus = output();
+  readonly selectionChange = output();
 
+  protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  get hasUpdates(): boolean {
-    return this.app.update_available || this.app.container_images_update_available;
-  }
+  readonly hasUpdates = computed(() => {
+    return this.app().upgrade_available;
+  });
 
-  get isAppStopped(): boolean {
-    return this.status === AppStatus.Stopped;
-  }
+  readonly isAppStopped = computed(() => this.status() === AppStatus.Started);
 
-  get inProgress(): boolean {
-    return [AppStatus.Deploying].includes(this.status) || this.isStartingOrStopping;
-  }
+  readonly inProgress = computed(() => {
+    return [AppStatus.Deploying].includes(this.status()) || this.isStartingOrStopping();
+  });
 
-  get isStartingOrStopping(): boolean {
-    return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
-  }
+  readonly isStartingOrStopping = computed(() => {
+    return [AppStatus.Starting, AppStatus.Stopping].includes(this.status());
+  });
 
   toggleAppChecked(): void {
     this.selectionChange.emit();

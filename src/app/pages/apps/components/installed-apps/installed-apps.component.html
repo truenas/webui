@@ -146,9 +146,10 @@
         >
           {{ 'Status' | translate }}
         </div>
-        <div>{{ 'CPU' | translate }}</div>
-        <div>{{ 'RAM' | translate }}</div>
-        <div>{{ 'Network' | translate }}</div>
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130471 -->
+        <!-- <div>{{ 'CPU' | translate }}</div> -->
+        <!-- <div>{{ 'RAM' | translate }}</div> -->
+        <!-- <div>{{ 'Network' | translate }}</div> -->
         <div
           class="app-update-header"
           [matColumnDef]="sortableField.Updates"

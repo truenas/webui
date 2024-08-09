@@ -1,5 +1,5 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 
@@ -20,18 +20,13 @@ describe('AppUpdateCellComponent', () => {
   }
 
   it('checks status for running app', () => {
-    setupTest({ update_available: false } as unknown as App);
+    setupTest({ upgrade_available: false } as App);
 
     expect(spectator.query('span')).toHaveText('Up to date');
   });
 
   it('checks text when app has update', () => {
-    setupTest({ update_available: true } as unknown as App);
-
-    expect(spectator.query('span')).toHaveText('Update available');
-  });
-  it('checks text when container images has update', () => {
-    setupTest({ container_images_update_available: true } as unknown as App);
+    setupTest({ upgrade_available: true } as App);
 
     expect(spectator.query('span')).toHaveText('Update available');
   });

@@ -8,9 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
+import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
+import { ChartContainerImage } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
-import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -26,7 +26,7 @@ type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_availab
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppUpgradeDialogComponent {
-  dialogConfig: ChartUpgradeDialogConfig;
+  dialogConfig: AppUpgradeDialogConfig;
   imagePlaceholder = appImagePlaceholder;
   helptext = helptextApps;
   versionOptions = new Map<string, Version>();
@@ -41,7 +41,7 @@ export class AppUpgradeDialogComponent {
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
-    @Inject(MAT_DIALOG_DATA) public data: ChartUpgradeDialogConfig,
+    @Inject(MAT_DIALOG_DATA) public data: AppUpgradeDialogConfig,
   ) {
     this.dialogConfig = data;
 

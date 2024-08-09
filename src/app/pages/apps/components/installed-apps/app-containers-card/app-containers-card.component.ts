@@ -6,9 +6,9 @@ import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 // import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -103,15 +103,14 @@ export class AppContainersCardComponent implements OnChanges {
   }
 
   getPorts(app: App): string {
-    return getPorts(app.used_ports);
+    return getPorts(app.active_workloads.used_ports);
   }
 
   private shellDialogSubmit(formValue: PodDialogFormValue): void {
     this.router.navigate([
       '/apps',
       'installed',
-      this.app.catalog,
-      this.app.catalog_train,
+      this.app.metadata.train,
       this.app.name,
       'shell',
       formValue.pods,
@@ -124,8 +123,7 @@ export class AppContainersCardComponent implements OnChanges {
     this.router.navigate([
       '/apps',
       'installed',
-      this.app.catalog,
-      this.app.catalog_train,
+      this.app.metadata.train,
       this.app.name,
       'logs',
       formValue.pods,

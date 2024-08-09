@@ -1,5 +1,5 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { AppMetadata } from 'app/interfaces/chart-release.interface';
+import { AppMetadata } from 'app/interfaces/app.interface';
 
 export interface AvailableApp {
   healthy: boolean;

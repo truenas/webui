@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponents } from 'ng-mocks';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -7,7 +8,6 @@ import {
   DatasetEncryptionCellComponent,
 } from 'app/pages/datasets/components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
-import { datasetToken, isSystemDatasetToken } from 'app/pages/datasets/components/dataset-node/dataset-node.tokens';
 import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 
 describe('DatasetNodeComponent', () => {
@@ -30,13 +30,11 @@ describe('DatasetNodeComponent', () => {
       FileSizePipe,
     ],
     declarations: [
-      DatasetIconComponent,
-      DatasetEncryptionCellComponent,
-      DatasetRolesCellComponent,
-    ],
-    providers: [
-      { provide: datasetToken, useValue: dataset },
-      { provide: isSystemDatasetToken, useValue: false },
+      MockComponents(
+        DatasetIconComponent,
+        DatasetEncryptionCellComponent,
+        DatasetRolesCellComponent,
+      ),
     ],
   });
 
@@ -63,14 +61,11 @@ describe('DatasetNodeComponent', () => {
   });
 
   it('shows a dataset roles cell', () => {
-    spectator.setInput('dataset', {
-      ...dataset,
-      name: 'root',
-    });
+    spectator.setInput('dataset', dataset);
 
     const cell = spectator.query(DatasetRolesCellComponent);
     expect(cell).toBeTruthy();
-    expect(cell.isRoot).toBeTruthy();
+    expect(cell.dataset).toBe(dataset);
     expect(cell.isSystemDataset).toBeFalsy();
   });
 });

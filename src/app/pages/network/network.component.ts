@@ -1,6 +1,8 @@
 import {
   Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  ViewChild,
 } from '@angular/core';
+import { NgModel } from '@angular/forms';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
@@ -41,11 +43,14 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 export class NetworkComponent implements OnInit {
   protected readonly searchableElements = networkElements;
 
+  @ViewChild('checkinTimeoutField', { static: false }) checkinTimeoutField: NgModel;
+
   isHaEnabled = false;
   hasPendingChanges = false;
   checkinWaiting = false;
   checkinTimeout = 60;
-  checkinTimeoutPattern = /\d+/;
+  checkinTimeoutMinValue = 10;
+  checkinTimeoutPattern = '^[0-9]+$';
   checkinRemaining: number = null;
   private uniqueIps: string[] = [];
   private affectedServices: string[] = [];
@@ -53,6 +58,10 @@ export class NetworkComponent implements OnInit {
 
   private navigation: Navigation;
   helptext = helptextInterfaces;
+
+  get isCheckinTimeoutFieldInvalid(): boolean {
+    return this.checkinTimeoutField?.invalid;
+  }
 
   constructor(
     private ws: WebSocketService,

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -30,8 +30,9 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartInfoCardComponent implements OnChanges {
-  @Input() topologyDisk: TopologyDisk;
-  @Input() disk: Disk;
+  topologyDisk = input<TopologyDisk>();
+  disk = input<Disk>();
+  hasSmartTestSupport = input(false);
 
   readonly requiredRoles = [Role.FullAdmin];
 
@@ -58,10 +59,11 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   onManualTest(): void {
+    const disk = this.disk();
     const testDialog = this.matDialog.open(ManualTestDialogComponent, {
       data: {
-        selectedDisks: [this.disk],
-        diskIdsWithSmart: [this.disk.identifier],
+        selectedDisks: [disk],
+        diskIdsWithSmart: [disk.identifier],
       } as ManualTestDialogParams,
     });
     testDialog
@@ -73,7 +75,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadTestResults(): void {
-    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyDisk.disk]]]).pipe(
+    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyDisk().disk]]]).pipe(
       map((testResults) => {
         const results = testResults[0]?.tests ?? [];
         return results.filter((result) => result.status !== SmartTestResultStatus.Running);
@@ -99,7 +101,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadSmartTasks(): void {
-    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyDisk.disk]).pipe(
+    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyDisk().disk]).pipe(
       map((tasks) => tasks.length),
       toLoadingState(),
     );
