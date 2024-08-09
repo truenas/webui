@@ -5,6 +5,7 @@
   "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "",
   "Machine Time: {machineTime} \n Browser Time: {browserTime}": "",
   "Network Reconnection Issue": "",
+  "No containers are available.": "",
   "Pool Usage": "",
   "Support License": "",
   "This dataset is used to store apps config and other container related data": "",

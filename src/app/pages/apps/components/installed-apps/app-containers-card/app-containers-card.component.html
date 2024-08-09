@@ -51,8 +51,7 @@
         </div>
       </div>
     </div>
-    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130379 -->
-    <!-- <div class="containers">
+    <div class="containers">
       <h4>{{ 'Containers' | translate }}</h4>
       <div class="container-list">
         @if (!isLoading || containerImages) {
@@ -60,15 +59,9 @@
             @for (containerImage of containerImages | keyvalue; track containerImage) {
               <div class="container-item">
                 <div class="container-name">{{ containerImage.key }}</div>
-                <div class="information">
-                  <div class="container-status">
-                    @if (containerImage?.value?.update_available) {
-                      {{ 'Update available' | translate }}
-                    } @else {
-                      {{ 'Up to date' | translate }}
-                    }
-                  </div>
-                  @if (app.status === chartReleaseStatus.Active || app.status === chartReleaseStatus.Deploying) {
+                <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130392 -->
+                <!-- <div class="information">
+                  @if (app.state === chartReleaseStatus.Active || app.state === chartReleaseStatus.Deploying) {
                     <div class="container-action">
                       <button
                         *ixRequiresRoles="requiredRoles"
@@ -93,7 +86,7 @@
                       </button>
                     </div>
                   }
-                </div>
+                </div> -->
               </div>
             }
           } @else {
@@ -103,7 +96,7 @@
           <ngx-skeleton-loader></ngx-skeleton-loader>
         }
       </div>
-    </div> -->
+    </div>
   </mat-card-content>
 </mat-card>
 

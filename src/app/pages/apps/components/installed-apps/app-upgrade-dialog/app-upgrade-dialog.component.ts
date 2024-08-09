@@ -57,8 +57,6 @@ export class AppUpgradeDialogComponent {
             latest_version: availableVersion.version,
             latest_human_version: availableVersion.human_version,
             changelog: null,
-            // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-            // container_images_to_update: null,
             available_versions_for_upgrade: null,
           });
         }
@@ -68,12 +66,6 @@ export class AppUpgradeDialogComponent {
     this.selectedVersionKey = Array.from(this.versionOptions.keys())[0];
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
   }
-
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-  // hasUpdateImages(): boolean {
-  //   return this.selectedVersion?.container_images_to_update
-  //     && Object.keys(this.selectedVersion.container_images_to_update).length > 0;
-  // }
 
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
@@ -88,8 +80,6 @@ export class AppUpgradeDialogComponent {
           untilDestroyed(this),
         ).subscribe((summary: AppUpgradeSummary) => {
           this.selectedVersion.changelog = summary.changelog;
-          // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-          // this.selectedVersion.container_images_to_update = summary.container_images_to_update;
           this.selectedVersion.fetched = true;
         });
     }
