@@ -23,7 +23,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
-import { NgxWebstorageModule } from 'ngx-webstorage';
+import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
 import { rootRouterConfig } from 'app/app.routing';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
@@ -92,7 +92,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     NgxPopperjsModule.forRoot({ appendTo: 'body', hideOnScroll: true }),
     MatSnackBarModule,
     CommonDirectivesModule,
-    NgxWebstorageModule.forRoot(),
     StoreModule.forRoot(rootReducers, {
       runtimeChecks: {
         strictStateImmutability: true,
@@ -137,6 +136,9 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     IxSlideInService,
     IxChainedSlideInService,
     UploadService,
+    provideNgxWebstorage(
+      withLocalStorage(),
+    ),
     {
       provide: ErrorHandler,
       useClass: ErrorHandlerService,
