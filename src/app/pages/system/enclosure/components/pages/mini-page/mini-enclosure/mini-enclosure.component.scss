@@ -11,6 +11,14 @@
   padding-top: 20px;
   position: relative;
 
+  @media (max-width: $breakpoint-xs) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 15px;
+    padding-top: 0;
+  }
+
   .slot-number {
     background-color: var(--primary);
     border-radius: 50%;
@@ -22,32 +30,50 @@
   }
 
   .slot {
-    margin-bottom: 16px;
     white-space: nowrap;
+
+    @media (min-width: $breakpoint-xs) {
+      margin-bottom: 16px;
+    }
   }
 
   &.mini-3e {
-    padding-top: 55px;
+    @media (min-width: $breakpoint-xs) {
+      padding-top: 55px;
+    }
   }
 
   &.mini-3x {
-    padding-top: 28px;
+    @media (min-width: $breakpoint-xs) {
+      padding-top: 28px;
 
-    .slot:nth-last-child(2) {
-      margin-bottom: 1px;
+      .slot:nth-last-child(2) {
+        margin-bottom: 5px;
+      }
     }
   }
 
   &.mini-3xl {
-    padding-top: 50px;
+    @media (min-width: $breakpoint-xs) {
+      padding-top: 50px;
 
-    .slot:nth-child(4) {
-      margin-bottom: 44px;
+
+      .slot:nth-child(4) {
+        margin-bottom: 44px;
+      }
+
+      .slot:last-child {
+        position: absolute;
+        top: 5px;
+      }
     }
 
-    .slot:last-child {
-      position: absolute;
-      top: 5px;
+    @media (max-width: $breakpoint-xs) {
+      order: 0;
+
+      .slot:last-child {
+        order: -1;
+      }
     }
   }
 }
@@ -56,32 +82,55 @@
   padding-top: 20px;
   position: relative;
 
+  @media (max-width: $breakpoint-xs) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 15px;
+  }
+
   .slot {
-    margin-bottom: 11.5px;
+    @media (min-width: $breakpoint-xs) {
+      margin-bottom: 11.5px;
+    }
   }
 
   &.mini-3e {
-    padding-top: 55px;
+    @media (min-width: $breakpoint-xs) {
+      padding-top: 55px;
+    }
   }
 
   &.mini-3x {
-    padding-top: 28px;
+    @media (min-width: $breakpoint-xs) {
+      padding-top: 28px;
 
-    .slot:nth-last-child(2) {
-      margin-bottom: -2px;
+      .slot:nth-last-child(2) {
+        margin-bottom: 0;
+      }
     }
   }
 
   &.mini-3xl {
-    padding-top: 50px;
+    @media (min-width: $breakpoint-xs) {
+      padding-top: 50px;
 
-    .slot:nth-child(4) {
-      margin-bottom: 38px;
+      .slot:nth-child(4) {
+        margin-bottom: 38px;
+      }
+
+      .slot:last-child {
+        position: absolute;
+        top: 5px;
+      }
     }
 
-    .slot:last-child {
-      position: absolute;
-      top: 5px;
+    @media (max-width: $breakpoint-xs) {
+      order: 0;
+
+      .slot:last-child {
+        order: -1;
+      }
     }
   }
 }
