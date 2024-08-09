@@ -32,7 +32,7 @@ export class AppRowComponent {
     return this.app().upgrade_available;
   });
 
-  readonly isAppStopped = computed(() => this.status() === AppStatus.Running);
+  readonly isAppStopped = computed(() => this.status() === AppStatus.Stopped);
 
   readonly inProgress = computed(() => {
     return [AppStatus.Deploying].includes(this.status()) || this.isStartingOrStopping();

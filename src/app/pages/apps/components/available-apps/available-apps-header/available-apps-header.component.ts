@@ -120,7 +120,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     });
   }
 
-  refreshCharts(): void {
+  refreshCatalog(): void {
     this.dialogService.jobDialog(
       this.ws.job('catalog.sync'),
       {

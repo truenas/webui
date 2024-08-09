@@ -110,8 +110,11 @@ describe('InstalledAppsComponent', () => {
     spectator = createComponent();
   });
 
-  it('loads chart releases', () => {
-    expect(spectator.component.dataSource).toEqual([app]);
+  it('shows a list of installed apps', () => {
+    const rows = spectator.queryAll(AppRowComponent);
+
+    expect(rows).toHaveLength(1);
+    expect(rows[0].app).toEqual(app);
   });
 
   it('shows details', () => {

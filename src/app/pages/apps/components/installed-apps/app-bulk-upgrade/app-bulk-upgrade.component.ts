@@ -87,7 +87,7 @@ export class AppBulkUpgradeComponent {
   getUpgradeSummary(name: string, version?: string): void {
     this.loadingMap.set(name, true);
     this.appService
-      .getChartUpgradeSummary(name, version)
+      .getAppUpgradeSummary(name, version)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (summary) => {

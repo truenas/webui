@@ -41,7 +41,7 @@
         <div class="details-item">
           <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
-            @if (!ixChartApp) {
+            @if (!isCustomApp) {
               {{ app?.metadata?.app_version | orNotAvailable }}
             } @else if (app.human_version) {
               <!-- Show docker image tag as version for custom apps -->
