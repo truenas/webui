@@ -306,6 +306,7 @@
   "Delete Alert Service <b>\"{name}\"</b>?": "",
   "Delete All Selected": "",
   "Delete Cloud Backup <b>\"{name}\"</b>?": "",
+  "Delete Snapshot": "",
   "Delete all TrueNAS configurations that depend on the exported pool. Impacted configurations       may include services (listed above if applicable), applications, shares, and scheduled data protection tasks.": "",
   "Delete dataset {name}": "",
   "Delete group": "",

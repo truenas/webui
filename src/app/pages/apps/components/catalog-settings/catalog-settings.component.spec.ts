@@ -11,6 +11,7 @@ import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('CatalogEditFormComponent', () => {
@@ -30,6 +31,7 @@ describe('CatalogEditFormComponent', () => {
           preferred_trains: ['test'],
         } as Catalog),
       ]),
+      mockProvider(AppsStore),
       mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
@@ -41,17 +43,16 @@ describe('CatalogEditFormComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows catalog name and preferred trains when catalog is open for editing', async () => {
+  it('shows preferred trains when catalog is open for editing', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
     expect(values).toEqual({
-      'Catalog Name': 'TrueNAS',
       'Preferred Trains': ['test'],
     });
   });
 
-  it('saves catalog updates when form is saved', async () => {
+  it('saves catalog updates and reloads catalog apps when form is saved', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Preferred Trains': ['stable', 'incubator'],
@@ -63,5 +64,6 @@ describe('CatalogEditFormComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('catalog.update', [
       { preferred_trains: ['stable', 'incubator'] },
     ]);
+    expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
   });
 });

@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Injectable, Type } from '@angular/core';
+import { Injectable, Injector, Type } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
@@ -40,7 +40,10 @@ export class IxSlideInService {
     this.slideInComponent = slideComponent;
   }
 
-  open<T, D>(component: Type<T>, params?: { wide?: boolean; data?: D }): IxSlideInRef<T, D> {
+  open<T, D>(
+    component: Type<T>,
+    params?: { wide?: boolean; data?: D; injector?: Injector },
+  ): IxSlideInRef<T, D> {
     this.slideInRefMap.forEach((ref) => ref.close());
 
     const slideInRef = this.slideInComponent.openSlideIn<T, D>(component, params);
