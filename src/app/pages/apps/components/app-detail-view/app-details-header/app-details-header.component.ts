@@ -28,6 +28,7 @@ export class AppDetailsHeaderComponent {
   @Input() app: AvailableApp;
   @Input() isLoading$: Observable<boolean>;
   protected requiredRoles = [Role.AppsWrite];
+  protected readonly dockerUpdateRequiredRoles = [Role.DockerWrite];
 
   constructor(
     protected dockerStore: DockerStore,
