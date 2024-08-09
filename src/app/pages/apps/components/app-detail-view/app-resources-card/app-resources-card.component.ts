@@ -26,12 +26,8 @@ export class AppResourcesCardComponent implements OnInit {
   pool: string;
 
   availableSpace$ = this.dockerStore.selectedPool$.pipe(
-    filter((pool) => {
-      return !!pool;
-    }),
-    switchMap((pool) => {
-      return this.ws.call('pool.dataset.get_instance', [`${pool}/${ixAppsDataset}`]);
-    }),
+    filter((pool) => !!pool),
+    switchMap((pool) => this.ws.call('pool.dataset.get_instance', [`${pool}/${ixAppsDataset}`])),
     map((dataset) => dataset.available.rawvalue),
   ).pipe(
     toLoadingState(),
