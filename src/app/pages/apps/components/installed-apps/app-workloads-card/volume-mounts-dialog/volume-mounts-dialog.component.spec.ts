@@ -1,5 +1,7 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   VolumeMountsDialogComponent,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
@@ -8,6 +10,11 @@ describe('VolumeMountsDialogComponent', () => {
   let spectator: Spectator<VolumeMountsDialogComponent>;
   const createComponent = createComponentFactory({
     component: VolumeMountsDialogComponent,
+    imports: [
+      MockComponent(
+        FormActionsComponent,
+      ),
+    ],
     providers: [
       {
         provide: MAT_DIALOG_DATA,

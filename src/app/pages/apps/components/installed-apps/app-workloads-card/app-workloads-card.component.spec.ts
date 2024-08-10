@@ -120,7 +120,6 @@ describe('AppContainersCardComponent', () => {
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(VolumeMountsDialogComponent, {
       data: app.active_workloads.container_details[0],
-      width: '70vw',
     });
   });
 
