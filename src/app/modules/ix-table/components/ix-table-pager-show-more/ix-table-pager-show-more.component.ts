@@ -1,6 +1,10 @@
 import {
-  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, OnInit,
+  AfterContentChecked,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef, Component, HostBinding, input, OnInit,
+  signal,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 
@@ -12,48 +16,63 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChecked {
-  @Input() dataProvider!: DataProvider<T>;
-  @Input() pageSize = 5;
+  dataProvider = input.required<DataProvider<T>>();
+  pageSize = input(5);
+  routerLink = input<string[]>([]);
 
-  currentPage = 1;
-  totalItems = 0;
-  expanded = false;
+  currentPage = signal(1);
+  totalItems = signal(0);
+  expanded = signal(false);
 
   @HostBinding('class.collapsible') get collapsible(): boolean {
-    return this.totalItems > this.pageSize;
+    return this.totalItems() > this.pageSize();
+  }
+
+  @HostBinding('class.clickable') get clickable(): boolean {
+    return Boolean(this.routerLink().length);
   }
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.dataProvider.setPagination({
-      pageNumber: this.currentPage,
-      pageSize: this.pageSize,
+    this.dataProvider().setPagination({
+      pageNumber: this.currentPage(),
+      pageSize: this.pageSize(),
     });
   }
 
   ngAfterContentChecked(): void {
-    this.totalItems = this.dataProvider.totalRows;
+    this.totalItems.set(this.dataProvider().totalRows);
     this.cdr.markForCheck();
   }
 
   showMore(): void {
-    this.expanded = true;
-    this.dataProvider.setPagination({
-      pageNumber: this.currentPage,
-      pageSize: this.totalItems,
+    this.handleRouterLink();
+
+    this.expanded.set(true);
+    this.dataProvider().setPagination({
+      pageNumber: this.currentPage(),
+      pageSize: this.totalItems(),
     });
     this.cdr.markForCheck();
   }
 
   showLess(): void {
-    this.expanded = false;
-    this.dataProvider.setPagination({
-      pageNumber: this.currentPage,
-      pageSize: this.pageSize,
+    this.expanded.set(false);
+    this.dataProvider().setPagination({
+      pageNumber: this.currentPage(),
+      pageSize: this.pageSize(),
     });
     this.cdr.markForCheck();
+  }
+
+  private handleRouterLink(): void {
+    const hasLink = this.routerLink();
+    if (hasLink) {
+      this.router.navigate(hasLink);
+    }
   }
 }

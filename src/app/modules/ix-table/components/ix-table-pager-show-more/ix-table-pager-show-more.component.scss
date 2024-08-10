@@ -12,3 +12,7 @@ button {
   justify-content: center;
   padding: 8px;
 }
+
+:host.clickable {
+  cursor: pointer;
+}
