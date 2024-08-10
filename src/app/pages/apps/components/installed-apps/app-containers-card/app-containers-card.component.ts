@@ -10,9 +10,9 @@ import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { App, ChartContainerImage } from 'app/interfaces/app.interface';
 // import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
+import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { getPorts } from 'app/pages/apps/utils/get-ports';
-import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 
 @UntilDestroy()
 @Component({
@@ -37,7 +37,7 @@ export class AppContainersCardComponent implements OnChanges {
     private router: Router,
     private translate: TranslateService,
   ) {
-    
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
     // this.containerImages = this.app?.resources?.container_images;
   }
 
