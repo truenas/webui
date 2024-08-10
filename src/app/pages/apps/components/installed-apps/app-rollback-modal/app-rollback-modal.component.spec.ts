@@ -34,7 +34,7 @@ describe('AppRollbackModalComponent', () => {
       },
       mockAuth(),
       mockWebSocket([
-        mockJob('chart.release.rollback'),
+        mockJob('app.rollback'),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -70,7 +70,7 @@ describe('AppRollbackModalComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'chart.release.rollback',
+      'app.rollback',
       ['my-app', { app_version: '0.9.8', rollback_snapshot: true }],
     );
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);

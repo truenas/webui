@@ -459,7 +459,9 @@
       "Choose Pool"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "DOCKER_WRITE"
+    ],
     "visibleTokens": [
       "APPS"
     ],
