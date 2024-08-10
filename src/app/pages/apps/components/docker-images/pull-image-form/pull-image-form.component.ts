@@ -57,7 +57,7 @@ export class PullImageFormComponent {
     };
 
     if (values.tag) {
-      params.image += ':v' + values.tag;
+      params.image += ':' + values.tag;
     }
     if (values.username || values.password) {
       params.auth_config = {
