@@ -1,0 +1,37 @@
+<ng-container *ixWithLoadingState="app() as app">
+  @if ((app.portals | keyvalue).length > 0) {
+    <button
+      mat-icon-button
+      ixTest="apps-web-portal"
+      matTooltipPosition="above"
+      [attr.aria-label]="'Web Portal' | translate"
+      [matTooltip]="'Web Portal' | translate"
+      (click)="openWebPortal(app)"
+    >
+      <ix-icon name="mdi-web"></ix-icon>
+    </button>
+  }
+
+  <button
+    mat-icon-button
+    ixTest="apps-restart"
+    matTooltipPosition="above"
+    [attr.aria-label]="'Restart App' | translate"
+    [matTooltip]="'Restart App' | translate"
+    [disabled]="isRestarting()"
+    (click)="onRestartApp(app)"
+  >
+    <ix-icon name="mdi-restart"></ix-icon>
+  </button>
+
+  <button
+    mat-icon-button
+    ixTest="apps-details"
+    matTooltipPosition="above"
+    [attr.aria-label]="'Check App Details' | translate"
+    [matTooltip]="'Check App Details' | translate"
+    (click)="openAppDetails(app)"
+  >
+    <ix-icon name="mdi-cog"></ix-icon>
+  </button>
+</ng-container>

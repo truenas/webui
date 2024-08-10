@@ -22,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class PodShellComponent implements TerminalConfiguration {
   reconnectShell$ = new Subject<void>();
 
-  protected chartReleaseName: string;
+  protected appName: string;
   protected podName: string;
   protected command: string;
   protected containerName: string;
@@ -31,7 +31,7 @@ export class PodShellComponent implements TerminalConfiguration {
   get connectionData(): TerminalConnectionData {
     return {
       podInfo: {
-        chartReleaseName: this.chartReleaseName,
+        chartReleaseName: this.appName,
         podName: this.podName,
         containerName: this.containerName,
         command: this.command,
@@ -53,11 +53,11 @@ export class PodShellComponent implements TerminalConfiguration {
       combineLatest([this.aroute.params, this.aroute.parent.params]).pipe(
         untilDestroyed(this),
       ).subscribe(([params, parentParams]) => {
-        this.chartReleaseName = parentParams.appId as string;
+        this.appName = parentParams.appId as string;
         this.podName = params.podName as string;
         this.command = params.command as string;
 
-        this.ws.call('chart.release.pod_console_choices', [this.chartReleaseName]).pipe(untilDestroyed(this))
+        this.ws.call('chart.release.pod_console_choices', [this.appName]).pipe(untilDestroyed(this))
           .subscribe({
             next: (consoleChoices) => {
               this.podDetails = { ...consoleChoices };

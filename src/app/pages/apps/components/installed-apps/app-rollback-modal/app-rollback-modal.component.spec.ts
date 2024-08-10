@@ -50,7 +50,7 @@ describe('AppRollbackModalComponent', () => {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  it.skip('shows a list of previous versions from chart release to roll back to', async () => {
+  it.skip('shows a list of previous versions for an installed app to roll back to', async () => {
     const versionSelect = await loader.getHarness(IxSelectHarness);
     const options = await versionSelect.getOptionLabels();
 
@@ -58,7 +58,7 @@ describe('AppRollbackModalComponent', () => {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  it.skip('rolls back chart when form is submitted', async () => {
+  it.skip('rolls back app when form is submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Version: '0.9.8',

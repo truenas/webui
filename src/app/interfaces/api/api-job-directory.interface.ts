@@ -85,6 +85,7 @@ export interface ApiJobDirectory {
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
   'cloud_backup.restore': { params: CloudBackupRestoreParams; response: CloudBackupSnapshot[] };
+  'cloud_backup.delete_snapshot': { params: [taskId: number, snapshotId: string]; response: void };
 
   // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };

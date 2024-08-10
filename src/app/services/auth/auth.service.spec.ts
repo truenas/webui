@@ -2,9 +2,9 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import {
   LocalStorageService,
   LocalStorageStrategy,
-  NgxWebstorageModule,
+  provideNgxWebstorage,
   STORAGE_STRATEGIES,
-  StorageStrategyStub,
+  StorageStrategyStub, withLocalStorage,
 } from 'ngx-webstorage';
 import * as rxjs from 'rxjs';
 import { firstValueFrom, of } from 'rxjs';
@@ -45,9 +45,6 @@ describe('AuthService', () => {
   let testScheduler: TestScheduler;
   const createService = createServiceFactory({
     service: AuthService,
-    imports: [
-      NgxWebstorageModule.forRoot(),
-    ],
     providers: [
       mockAuth(),
       mockProvider(LocalStorageService),
@@ -64,6 +61,9 @@ describe('AuthService', () => {
         useFactory: () => new StorageStrategyStub(LocalStorageStrategy.strategyName),
         multi: true,
       },
+      provideNgxWebstorage(
+        withLocalStorage(),
+      ),
     ],
   });
 

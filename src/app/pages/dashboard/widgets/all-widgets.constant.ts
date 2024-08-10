@@ -1,5 +1,4 @@
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
-import { appWidget } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app.definition';
 import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
 import { cpuTemperatureBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temperature-bar/widget-cpu-temperature-bar.definition';
@@ -34,8 +33,6 @@ import { systemImageWidget } from 'app/pages/dashboard/widgets/system/widget-sys
 import { systemUptimeWidget } from 'app/pages/dashboard/widgets/system/widget-system-uptime/widget-system-uptime.definition';
 
 export const widgetComponents = [
-  appWidget.component,
-  appWidget.settingsComponent,
   ipv4AddressWidget.component,
   ipv4AddressWidget.settingsComponent,
   helpWidget.component,
@@ -68,7 +65,6 @@ export const widgetComponents = [
 ];
 
 export const widgetRegistry = {
-  [WidgetType.App]: appWidget,
   [WidgetType.Pool]: poolWidget,
   [WidgetType.PoolUsageGauge]: poolUsageGaugeWidget,
   [WidgetType.PoolStatus]: poolStatusWidget,

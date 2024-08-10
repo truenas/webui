@@ -143,6 +143,7 @@ export class NfsListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<NfsShare>(shares$);
+    this.setDefaultSort();
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
       this.onListFiltered(this.filterString);
@@ -151,7 +152,7 @@ export class NfsListComponent implements OnInit {
 
   setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 1,
+      active: 0,
       direction: SortDirection.Asc,
       propertyName: 'path',
     });

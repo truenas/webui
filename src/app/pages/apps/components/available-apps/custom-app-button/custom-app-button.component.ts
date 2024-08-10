@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
-import { chartsTrain, ixChartApp } from 'app/constants/catalog.constants';
+import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { customAppButtonElements } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.elements';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
@@ -28,6 +28,6 @@ export class CustomAppButtonComponent {
   ) { }
 
   navigateToCustomAppCreation(): void {
-    this.router.navigate(['/apps', 'available', chartsTrain, ixChartApp, 'install']);
+    this.router.navigate(['/apps', 'available', customAppTrain, customApp, 'install']);
   }
 }

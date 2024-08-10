@@ -1,7 +1,5 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
@@ -9,32 +7,31 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
-import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
-import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
+import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-card-info/app-card-info.component';
+import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/common/app-controls/app-controls.component';
+import { AppCpuInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-cpu-info/app-cpu-info.component';
+import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-memory-info/app-memory-info.component';
+import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-network-info/app-network-info.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { WidgetAppComponent } from './widget-app.component';
 
 describe('WidgetAppComponent', () => {
   let spectator: Spectator<WidgetAppComponent>;
-  let loader: HarnessLoader;
 
   const app = {
     id: 'testapp',
     name: 'TestApp',
     portals: {
-      web_portal: 'http://test.com',
+      'Web UI': 'http://test.com',
     } as Record<string, string>,
     state: CatalogAppState.Running,
     upgrade_available: true,
@@ -54,19 +51,22 @@ describe('WidgetAppComponent', () => {
       NgxSkeletonLoaderModule,
     ],
     declarations: [
-      MockComponent(AppStatusCellComponent),
-      MockComponent(AppUpdateCellComponent),
-      MockComponent(AppCardLogoComponent),
-      MockComponent(NetworkChartComponent),
+      MockComponents(
+        AppCardInfoComponent,
+        AppCardLogoComponent,
+        AppControlsComponent,
+        AppCpuInfoComponent,
+        AppMemoryInfoComponent,
+        AppNetworkInfoComponent,
+      ),
     ],
     providers: [
       mockProvider(ErrorHandlerService),
       mockProvider(WidgetResourcesService, {
         serverTime$: of(new Date()),
         getApp: () => of(app),
-      }),
-      mockProvider(ThemeService, {
-        currentTheme: () => ({ blue: '#0000FF', orange: '#FFA500' }),
+        getAppStats: () => of(),
+        getAppStatusUpdates: () => of(),
       }),
       mockProvider(RedirectService, {
         openWindow: jest.fn(),
@@ -95,37 +95,14 @@ describe('WidgetAppComponent', () => {
         settings: { appName: app.name },
       },
     });
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('checks status rows', () => {
-    expect(spectator.query('.app-header .name')).toHaveText('TestApp');
-    expect(spectator.query(AppStatusCellComponent)).toBeTruthy();
-    expect(spectator.query(AppUpdateCellComponent)).toBeTruthy();
-  });
-
-  it('should split memory correctly', () => {
-    const result = spectator.component.splitMemory('512 MiB');
-    expect(result).toEqual([512, 'MiB']);
-  });
-
-  it('checks open web portal', async () => {
-    const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
-
-    const portalButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-web' }));
-    await portalButton.click();
-
-    expect(redirectSpy).toHaveBeenCalledWith('http://test.com');
-  });
-
-  it('checks restart app', async () => {
-    const restartSpy = jest.spyOn(spectator.inject(ApplicationsService), 'restartApplication');
-    const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
-
-    const restartButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-restart' }));
-    await restartButton.click();
-
-    expect(snackbarSpy).toHaveBeenCalledWith('App is restarting');
-    expect(restartSpy).toHaveBeenCalledWith(app);
+  it('checks components', () => {
+    expect(spectator.query(AppControlsComponent)).toBeTruthy();
+    expect(spectator.query(AppCardLogoComponent)).toBeTruthy();
+    expect(spectator.query(AppCardInfoComponent)).toBeTruthy();
+    expect(spectator.query(AppCpuInfoComponent)).toBeTruthy();
+    expect(spectator.query(AppMemoryInfoComponent)).toBeTruthy();
+    expect(spectator.query(AppNetworkInfoComponent)).toBeTruthy();
   });
 });

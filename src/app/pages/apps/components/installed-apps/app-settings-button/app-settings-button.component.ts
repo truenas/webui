@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, ViewContainerRef,
+  ChangeDetectionStrategy, Component, Injector, ViewContainerRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -35,6 +35,7 @@ export class AppSettingsButtonComponent {
     private snackbar: SnackbarService,
     protected dockerStore: DockerStore,
     private viewContainerRef: ViewContainerRef,
+    private injector: Injector,
   ) { }
 
   onChoosePool(): void {
@@ -57,6 +58,6 @@ export class AppSettingsButtonComponent {
   }
 
   manageCatalog(): void {
-    this.ixSlideInService.open(CatalogSettingsComponent);
+    this.ixSlideInService.open(CatalogSettingsComponent, { injector: this.injector });
   }
 }

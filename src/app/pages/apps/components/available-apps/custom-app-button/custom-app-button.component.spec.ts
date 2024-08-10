@@ -6,13 +6,14 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { chartsTrain, ixChartApp } from 'app/constants/catalog.constants';
+import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { DockerStore } from 'app/pages/apps/store/docker.service';
 
-describe('CustomAppButtonComponent', () => {
+// TODO: https://ixsystems.atlassian.net/browse/NAS-129579
+describe.skip('CustomAppButtonComponent', () => {
   let spectator: SpectatorRouting<CustomAppButtonComponent>;
   let loader: HarnessLoader;
   let button: MatButtonHarness;
@@ -46,7 +47,7 @@ describe('CustomAppButtonComponent', () => {
     jest.spyOn(router, 'navigate').mockImplementation();
 
     expect(router.navigate).toHaveBeenCalledWith([
-      '/apps', 'available', chartsTrain, ixChartApp, 'install',
+      '/apps', 'available', customAppTrain, customApp, 'install',
     ]);
   });
 

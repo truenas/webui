@@ -7,7 +7,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { startCase, isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
-import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
+import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
@@ -71,8 +71,8 @@ export class AppInfoCardComponent {
     return this.app?.upgrade_available;
   }
 
-  get ixChartApp(): boolean {
-    return this.app.metadata.name === ixChartApp;
+  get isCustomApp(): boolean {
+    return this.app.metadata.name === customApp;
   }
 
   portalName(name = 'web_portal'): string {
@@ -80,13 +80,13 @@ export class AppInfoCardComponent {
   }
 
   portalLink(app: App, name = 'web_portal'): void {
-    this.redirect.openWindow(app.portals[name][0]);
+    this.redirect.openWindow(app.portals[name]);
   }
 
   updateButtonPressed(): void {
     const name = this.app.name;
 
-    this.appService.getChartUpgradeSummary(name).pipe(
+    this.appService.getAppUpgradeSummary(name).pipe(
       this.loader.withLoader(),
       this.errorHandler.catchError(),
       untilDestroyed(this),

@@ -62,6 +62,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
     if (this.job?.state && !state) {
       state = {
         state: this.job.state,
+        error: this.job.error,
       } as RowState['state'];
     }
 

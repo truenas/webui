@@ -31,7 +31,7 @@ const fakeAppOne = {
   human_version: '2022.10_1.0.7',
   metadata: {
     icon: 'path-to-icon',
-    train: 'charts',
+    train: 'stable',
   },
 } as App;
 
@@ -44,7 +44,7 @@ const fakeAppTwo = {
   human_version: '25_1.6.33',
   metadata: {
     icon: 'path-to-icon',
-    train: 'charts'
+    train: 'stable'
   },
 } as App;
 

@@ -4,9 +4,9 @@ import {
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { Compartment } from '@codemirror/state';
 import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorViewConfig, placeholder } from '@codemirror/view';
+import { EditorView, EditorViewConfig, placeholder } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { EditorView, basicSetup } from 'codemirror';
+import { basicSetup } from 'codemirror';
 import {
   BehaviorSubject, Observable, combineLatest, filter, take, tap,
 } from 'rxjs';

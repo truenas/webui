@@ -78,7 +78,7 @@ export class AppUpgradeDialogComponent {
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
     if (!this.selectedVersion.fetched) {
-      this.appService.getChartUpgradeSummary(
+      this.appService.getAppUpgradeSummary(
         this.dialogConfig.appInfo.name,
         this.selectedVersionKey,
       )

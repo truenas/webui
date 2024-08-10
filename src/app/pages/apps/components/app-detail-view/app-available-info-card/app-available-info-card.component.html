@@ -2,26 +2,29 @@
 
 <div class="app-list-item">
   <span class="label">{{ 'Version' | translate }}:</span>
-  @if (isLoading$ | async) {
+  @if (isLoading$() | async) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
-    {{ app?.latest_app_version | orNotAvailable }}
+    {{ app()?.latest_app_version | orNotAvailable }}
   }
 </div>
 <div class="app-list-item sources">
   <span class="label">{{ 'Source' | translate }}:</span>
-  @if ((isLoading$ | async) || loadingSources) {
+  @if (isLoading$() | async) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
     <div>
-      @for (source of sources; track source) {
+      @for (source of app().sources; track source; let last = $last) {
         <a
           class="source-link"
           target="_blank"
           [href]="source"
           [title]="source"
-          [ixTest]="[app.name, 'source']"
+          [ixTest]="[app().name, 'source']"
         >{{ source | cleanLink }}</a>
+        @if (!last) {
+          <span>, </span>
+        }
       } @empty {
         {{ 'N/A' | translate }}
       }
@@ -30,14 +33,13 @@
 </div>
 <div class="app-list-item">
   <span class="label">{{ 'Last App Update' }}:</span>
-  @if (isLoading$ | async) {
+  @if (isLoading$() | async) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
-    @if (app?.last_update) {
-      {{ relativeDate }}
+    @if (app()?.last_update) {
+      {{ relativeDate() }}
     } @else {
       {{ 'N/A' | translate }}
     }
   }
 </div>
-
