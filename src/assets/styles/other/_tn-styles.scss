@@ -348,6 +348,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-mdc-dialog-container {
     border-radius: var(--mdc-dialog-container-shape);
+    max-width: 700px;
 
     :not(.mat-mdc-dialog-content) {
       > form {
