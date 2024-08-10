@@ -10,7 +10,7 @@
 
 <mat-menu #menu="matMenu" overlapTrigger="false">
   <button
-    *ixRequiredRoles="updateDockerRoles"
+    *ixRequiresRoles="updateDockerRoles"
     mat-menu-item
     ixTest="choose-pool"
     [ixUiSearch]="searchableElements.elements.choosePool"
@@ -21,7 +21,7 @@
 
   @if (!!(dockerStore.selectedPool$ | async)) {
     <button
-      *ixRequiredRoles="updateDockerRoles"
+      *ixRequiresRoles="updateDockerRoles"
       mat-menu-item
       ixTest="unset-pool"
       (click)="onUnsetPool()"
@@ -34,7 +34,7 @@
     {{ 'Manage Container Images' | translate }}
   </button> -->
   <button
-    *ixRequiredRoles="manageCatalogRequiredRoles"
+    *ixRequiresRoles="manageCatalogRequiredRoles"
     mat-menu-item
     ixTest="update-preferred-trains"
     (click)="manageCatalog()"

@@ -429,7 +429,9 @@
       "Choose Pool"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "DOCKER_WRITE"
+    ],
     "anchorRouterLink": [
       "/apps",
       "installed",
