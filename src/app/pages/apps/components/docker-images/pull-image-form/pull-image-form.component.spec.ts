@@ -67,7 +67,7 @@ describe('PullImageFormComponent', () => {
         username: 'john',
         password: '12345678',
       },
-      image: 'private/redis:vstable',
+      image: 'private/redis:stable',
     }]);
   });
 });
