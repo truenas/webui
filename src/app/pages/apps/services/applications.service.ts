@@ -5,24 +5,23 @@ import {
   Observable, OperatorFunction, filter, map, pipe,
   switchMap,
 } from 'rxjs';
-import { ixChartApp } from 'app/constants/catalog.constants';
+import { customApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { App, AppStartQueryParams, AppUpgradeParams } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App, AppUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
-const ignoredAppsList = [ixChartApp];
+const ignoredAppsList = [customApp];
 
 export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableApp[]> {
   return pipe(
@@ -38,7 +37,7 @@ export class ApplicationsService {
     return this.ws.call('pool.query');
   }
 
-  getChartReleaseNames(): Observable<{ name: string }[]> {
+  getInstalledAppNames(): Observable<{ name: string }[]> {
     return this.ws.call('app.query', [[], { select: ['name'] }]);
   }
 
@@ -72,13 +71,15 @@ export class ApplicationsService {
   }
 
   getAllApps(): Observable<App[]> {
-    const secondOption = { extra: { retrieve_config: true, stats: true } };
-    return this.ws.call('app.query', [[], secondOption]);
+    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]);
   }
 
   getApp(name: string): Observable<App[]> {
     return this.ws.call('app.query', [[['name', '=', name]], {
-      extra: { include_chart_schema: true, history: true },
+      extra: {
+        include_app_schema: true,
+        retrieve_config: true,
+      },
     }]);
   }
 
@@ -94,7 +95,7 @@ export class ApplicationsService {
     );
   }
 
-  getChartUpgradeSummary(name: string, version?: string): Observable<AppUpgradeSummary> {
+  getAppUpgradeSummary(name: string, version?: string): Observable<AppUpgradeSummary> {
     const payload: AppUpgradeParams = [name];
     if (version) {
       payload.push({ app_version: version });
@@ -112,7 +113,7 @@ export class ApplicationsService {
 
   restartApplication(app: App): Observable<Job<void>> {
     switch (app.state) {
-      case CatalogAppState.Active:
+      case CatalogAppState.Running:
         return this.stopApplication(app.name).pipe(
           filter((job) => job.state === JobState.Success),
           switchMap(() => this.startApplication(app.name)),

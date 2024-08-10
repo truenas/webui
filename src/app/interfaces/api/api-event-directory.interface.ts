@@ -1,7 +1,7 @@
 import { DockerStatusResponse } from 'app/enums/docker-config.interface';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { App, ChartStatisticsUpdate } from 'app/interfaces/chart-release.interface';
+import { App, ChartStatisticsUpdate } from 'app/interfaces/app.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { Disk } from 'app/interfaces/disk.interface';

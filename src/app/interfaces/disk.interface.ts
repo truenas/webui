@@ -64,6 +64,12 @@ export interface ExtraDiskQueryOptions {
      * Will join pool name for each disk.
      */
     pools?: boolean;
+
+    /**
+     * Can be used for single disk query only.
+     * Prefer to use `smart.test.disk_choices` for multiple disks
+     */
+    supports_smart?: boolean;
   };
 }
 

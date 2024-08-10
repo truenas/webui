@@ -3,13 +3,14 @@ import { Store } from '@ngrx/store';
 import { subHours, subMinutes } from 'date-fns';
 import {
   Observable, Subject, combineLatestWith, debounceTime,
-  forkJoin, map, repeat, shareReplay, switchMap, take, timer,
+  forkJoin, map, of, repeat, shareReplay, switchMap, take, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
@@ -57,9 +58,7 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly installedApps$ = this.ws.call('app.query', [[]]).pipe(
-    toLoadingState(),
-  );
+  readonly installedApps$ = this.ws.call('app.query').pipe(toLoadingState());
 
   readonly pools$ = this.ws.callAndSubscribe('pool.query');
 
@@ -133,12 +132,7 @@ export class WidgetResourcesService {
   }
 
   getApp(appName: string): Observable<App> {
-    return this.ws.call(
-      'app.query',
-      [
-        [['name', '=', appName]],
-      ],
-    ).pipe(
+    return this.ws.call('app.query', [[['name', '=', appName]]]).pipe(
       map((apps) => {
         if (apps.length === 0) {
           throw new Error(`App «${appName}» not found. Configure widget to choose another app.`);
@@ -147,6 +141,18 @@ export class WidgetResourcesService {
       }),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
+  }
+
+  // TODO: Fix when stats API is ready
+  getAppStats(appName: string): Observable<unknown> {
+    console.error(`getAppStats(${appName}) not implemented yet`);
+    return of();
+  }
+
+  // TODO: Fix when stats API is ready
+  getAppStatusUpdates(appName: string): Observable<Job> {
+    console.error(`getAppStatusUpdates(${appName}) not implemented yet`);
+    return of();
   }
 
   constructor(

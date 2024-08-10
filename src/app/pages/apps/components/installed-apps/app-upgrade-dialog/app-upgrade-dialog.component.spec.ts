@@ -57,6 +57,6 @@ describe('AppUpgradeDialogComponent', () => {
   });
 
   it('shows title as application name', () => {
-    expect(spectator.query('.chart-name').textContent).toBe('elastic-search');
+    expect(spectator.query('.app-name').textContent).toBe('elastic-search');
   });
 });

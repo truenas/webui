@@ -59,16 +59,16 @@ export class PodSelectLogsDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.appService.getChartReleaseNames().pipe(
+    this.appService.getInstalledAppNames().pipe(
       catchError((error) => {
         this.loader.close();
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       untilDestroyed(this),
-    ).subscribe((charts) => {
-      charts.forEach((chart) => {
-        this.apps.push(chart.name);
+    ).subscribe((apps) => {
+      apps.forEach((app) => {
+        this.apps.push(app.name);
       });
       this.fillForm();
     });

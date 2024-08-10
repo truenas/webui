@@ -7,8 +7,8 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
-import { WidgetAppSettingsComponent } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app-settings/widget-app-settings.component';
 import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app.definition';
+import { WidgetAppSettingsComponent } from 'app/pages/dashboard/widgets/apps/widget-app-settings/widget-app-settings.component';
 
 describe('WidgetAppSettingsComponent', () => {
   let spectator: Spectator<WidgetAppSettingsComponent>;

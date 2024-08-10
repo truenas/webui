@@ -1,0 +1,14 @@
+<mat-card class="card">
+  <mat-card-content *ixWithLoadingState="app() as application" class="card-content">
+    <div class="header">
+      <h3>{{ appName() }}</h3>
+      <ix-app-controls [app]="app() | async"></ix-app-controls>
+    </div>
+
+    <div [class]="['container', size()]">
+      <ix-app-cpu-info [stats]="stats() | async"></ix-app-cpu-info>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+

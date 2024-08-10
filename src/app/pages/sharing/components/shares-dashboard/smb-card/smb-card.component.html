@@ -50,15 +50,9 @@
     ></tbody>
   </ix-table>
 
-  @if (smbShares.length > 4) {
-    <a
-      class="view-all"
-      [ixTest]="['smb-share', 'view-all']"
-      [routerLink]="['/sharing', 'smb']"
-    >
-      <span>
-        {{ 'View All' | translate }}
-      </span>
-    </a>
-  }
+  <ix-table-pager-show-more
+    [pageSize]="4"
+    [dataProvider]="dataProvider"
+    [routerLink]="['/sharing', 'smb']"
+  ></ix-table-pager-show-more>
 </mat-card>

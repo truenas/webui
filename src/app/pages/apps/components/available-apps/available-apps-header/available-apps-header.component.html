@@ -51,7 +51,7 @@
 <div class="header-numbers">
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
-    <a class="header-link" ixTest="refresh-charts">
+    <a class="header-link" ixTest="refresh-apps">
       @if (areLoaded$ | async) {
         <a
           ixTest="available-apps"
@@ -64,11 +64,11 @@
       }
       <a
         *ixRequiresRoles="requiredRoles"
-        ixTest="refresh-charts"
-        class="refresh-charts"
-        (click)="refreshCharts()"
+        ixTest="refresh-apps"
+        class="refresh-apps"
+        (click)="refreshCatalog()"
       >
-        {{ 'Refresh Charts' | translate }}
+        {{ 'Refresh Catalog' | translate }}
       </a>
     </a>
   </div>

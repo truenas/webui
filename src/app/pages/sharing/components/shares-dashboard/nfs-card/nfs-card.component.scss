@@ -11,13 +11,6 @@ mat-card {
   }
 }
 
-.view-all {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  padding: 5px;
-}
-
 :host ::ng-deep {
   .tight-actions {
     width: 80px;

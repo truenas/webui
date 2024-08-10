@@ -6,12 +6,13 @@ import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { App, ChartContainerImage } from 'app/interfaces/chart-release.interface';
+import { App, ChartContainerImage } from 'app/interfaces/app.interface';
 // import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { getPorts } from 'app/pages/apps/utils/get-ports';
+import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +37,8 @@ export class AppContainersCardComponent implements OnChanges {
     private router: Router,
     private translate: TranslateService,
   ) {
-    this.containerImages = this.app?.resources?.container_images;
+    
+    // this.containerImages = this.app?.resources?.container_images;
   }
 
   ngOnChanges(): void {
@@ -87,7 +89,7 @@ export class AppContainersCardComponent implements OnChanges {
       next: (app) => {
         this.app = app;
         this.isLoading = false;
-        this.containerImages = this.app?.resources?.container_images;
+        // this.containerImages = this.app?.resources?.container_images;
         this.cdr.markForCheck();
       },
       error: () => {
@@ -99,36 +101,32 @@ export class AppContainersCardComponent implements OnChanges {
   }
 
   getPorts(app: App): string {
-    return getPorts(app.used_ports);
+    return getPorts(app.active_workloads.used_ports);
   }
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-  // private shellDialogSubmit(formValue: PodDialogFormValue): void {
-  //   this.router.navigate([
-  //     '/apps',
-  //     'installed',
-  //     this.app.catalog,
-  //     this.app.catalog_train,
-  //     this.app.name,
-  //     'shell',
-  //     formValue.pods,
-  //     formValue.command,
-  //   ]);
-  // }
+  private shellDialogSubmit(formValue: PodDialogFormValue): void {
+    this.router.navigate([
+      '/apps',
+      'installed',
+      this.app.metadata.train,
+      this.app.name,
+      'shell',
+      formValue.pods,
+      formValue.command,
+    ]);
+  }
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-  // private logDialogSubmit(formValue: PodDialogFormValue): void {
-  //   const tailLines = (formValue.tail_lines).toString();
-  //   this.router.navigate([
-  //     '/apps',
-  //     'installed',
-  //     this.app.catalog,
-  //     this.app.catalog_train,
-  //     this.app.name,
-  //     'logs',
-  //     formValue.pods,
-  //     formValue.containers,
-  //     tailLines,
-  //   ]);
-  // }
+  private logDialogSubmit(formValue: PodDialogFormValue): void {
+    const tailLines = (formValue.tail_lines).toString();
+    this.router.navigate([
+      '/apps',
+      'installed',
+      this.app.metadata.train,
+      this.app.name,
+      'logs',
+      formValue.pods,
+      formValue.containers,
+      tailLines,
+    ]);
+  }
 }

@@ -4,8 +4,7 @@ import {
 } from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
-import { AppStartQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
@@ -30,10 +29,10 @@ export class AppRowComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   readonly hasUpdates = computed(() => {
-    return this.app().upgrade_available || this.app().container_images_update_available;
+    return this.app().upgrade_available;
   });
 
-  readonly isAppStopped = computed(() => this.status() === AppStatus.Started);
+  readonly isAppStopped = computed(() => this.status() === AppStatus.Stopped);
 
   readonly inProgress = computed(() => {
     return [AppStatus.Deploying].includes(this.status()) || this.isStartingOrStopping();

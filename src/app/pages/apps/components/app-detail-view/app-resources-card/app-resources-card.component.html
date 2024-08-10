@@ -32,10 +32,12 @@
     }
   }
 </div>
-<div class="app-list-item">
-  <span class="label">{{ 'Available Space' | translate }}:</span>
-  <span *ixWithLoadingState="availableSpace$ as availableSpace">
-    {{ +availableSpace | ixFileSize }}
-  </span>
-</div>
 
+@if (dockerStore.selectedPool$| async) {
+  <div class="app-list-item">
+    <span class="label">{{ 'Available Space' | translate }}:</span>
+    <span *ixWithLoadingState="availableSpace$ as availableSpace">
+      {{ +availableSpace | ixFileSize }}
+    </span>
+  </div>
+}

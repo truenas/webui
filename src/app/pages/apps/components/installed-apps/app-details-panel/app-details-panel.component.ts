@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, EventEmitter, input, Output,
 } from '@angular/core';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 @Component({

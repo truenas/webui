@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
-import { ixChartApp } from 'app/constants/catalog.constants';
+import { customApp } from 'app/constants/catalog.constants';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -28,7 +28,7 @@ describe('ApplicationsService', () => {
   const appsResponse = [
     { name: 'app1' },
     { name: 'app2' },
-    { name: ixChartApp },
+    { name: customApp },
   ] as AvailableApp[];
 
   const createService = createServiceFactory({
@@ -58,7 +58,7 @@ describe('ApplicationsService', () => {
     it('loads available apps', async () => {
       const apps = await firstValueFrom(spectator.service.getAvailableApps(filters));
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.available', appsRequestPayload);
-      expect(apps).toEqual(appsResponse.filter((app) => app.name !== ixChartApp));
+      expect(apps).toEqual(appsResponse.filter((app) => app.name !== customApp));
     });
   });
 
@@ -66,17 +66,17 @@ describe('ApplicationsService', () => {
     it('loads latest apps', async () => {
       const apps = await firstValueFrom(spectator.service.getLatestApps(filters));
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.latest', appsRequestPayload);
-      expect(apps).toEqual(appsResponse.filter((app) => app.name !== ixChartApp));
+      expect(apps).toEqual(appsResponse.filter((app) => app.name !== customApp));
     });
   });
 
-  describe('getChartUpgradeSummary', () => {
+  describe('getAppUpgradeSummary', () => {
     it('loads summary without version', async () => {
-      await firstValueFrom(spectator.service.getChartUpgradeSummary('test'));
+      await firstValueFrom(spectator.service.getAppUpgradeSummary('test'));
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.upgrade_summary', ['test']);
     });
     it('loads summary with version', async () => {
-      await firstValueFrom(spectator.service.getChartUpgradeSummary('test', '2.0'));
+      await firstValueFrom(spectator.service.getAppUpgradeSummary('test', '2.0'));
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.upgrade_summary', [
         'test', { app_version: '2.0' },
       ]);

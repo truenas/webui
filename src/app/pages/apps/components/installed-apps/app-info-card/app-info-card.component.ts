@@ -7,12 +7,12 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { startCase, isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
-import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
+import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
+import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
+import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { App } from 'app/interfaces/chart-release.interface';
-import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -68,11 +68,11 @@ export class AppInfoCardComponent {
   ) {}
 
   get hasUpdates(): boolean {
-    return this.app?.upgrade_available || this.app?.container_images_update_available;
+    return this.app?.upgrade_available;
   }
 
-  get ixChartApp(): boolean {
-    return this.app.metadata.name === ixChartApp;
+  get isCustomApp(): boolean {
+    return this.app.metadata.name === customApp;
   }
 
   portalName(name = 'web_portal'): string {
@@ -80,13 +80,13 @@ export class AppInfoCardComponent {
   }
 
   portalLink(app: App, name = 'web_portal'): void {
-    this.redirect.openWindow(app.portals[name][0]);
+    this.redirect.openWindow(app.portals[name]);
   }
 
   updateButtonPressed(): void {
     const name = this.app.name;
 
-    this.appService.getChartUpgradeSummary(name).pipe(
+    this.appService.getAppUpgradeSummary(name).pipe(
       this.loader.withLoader(),
       this.errorHandler.catchError(),
       untilDestroyed(this),
@@ -98,14 +98,14 @@ export class AppInfoCardComponent {
         data: {
           appInfo: this.app,
           upgradeSummary: summary,
-        } as ChartUpgradeDialogConfig,
+        } as AppUpgradeDialogConfig,
       })
         .afterClosed()
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe((version: string) => {
           this.dialogService.jobDialog(
             this.ws.job('app.upgrade', [name, { app_version: version }]),
-            { title: helptextApps.charts.upgrade_dialog.job },
+            { title: helptextApps.apps.upgrade_dialog.job },
           )
             .afterClosed()
             .pipe(this.errorHandler.catchError(), untilDestroyed(this))
@@ -115,14 +115,14 @@ export class AppInfoCardComponent {
   }
 
   editButtonPressed(): void {
-    this.router.navigate(['/apps', 'installed', this.app.catalog_train, this.app.id, 'edit']);
+    this.router.navigate(['/apps', 'installed', this.app.metadata.train, this.app.id, 'edit']);
   }
 
   deleteButtonPressed(): void {
     const name = this.app.name;
 
     this.dialogService.confirm({
-      title: helptextApps.charts.delete_dialog.title,
+      title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -132,7 +132,7 @@ export class AppInfoCardComponent {
   executeDelete(name: string): void {
     this.dialogService.jobDialog(
       this.ws.job('app.delete', [name, { remove_images: true }]),
-      { title: helptextApps.charts.delete_dialog.job },
+      { title: helptextApps.apps.delete_dialog.job },
     )
       .afterClosed()
       .pipe(

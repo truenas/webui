@@ -9,9 +9,9 @@ import { MockDeclaration, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CatalogAppState } from 'app/enums/chart-release-status.enum';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { App } from 'app/interfaces/chart-release.interface';
+import { App } from 'app/interfaces/app.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -35,10 +35,9 @@ describe('InstalledAppsComponent', () => {
     name: 'test-app',
     metadata: {
       name: 'rude-cardinal',
+      train: 'test-catalog-train',
     },
-    catalog: 'test-catalog',
-    catalog_train: 'test-catalog-train',
-    state: CatalogAppState.Active,
+    state: CatalogAppState.Running,
   } as App;
 
   const createComponent = createComponentFactory({
@@ -111,8 +110,11 @@ describe('InstalledAppsComponent', () => {
     spectator = createComponent();
   });
 
-  it('loads chart releases', () => {
-    expect(spectator.component.dataSource).toEqual([app]);
+  it('shows a list of installed apps', () => {
+    const rows = spectator.queryAll(AppRowComponent);
+
+    expect(rows).toHaveLength(1);
+    expect(rows[0].app).toEqual(app);
   });
 
   it('shows details', () => {

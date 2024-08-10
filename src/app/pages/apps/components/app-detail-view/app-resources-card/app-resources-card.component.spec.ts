@@ -52,6 +52,10 @@ describe('AppResourcesCardComponent', () => {
     expect(spectator.queryAll('.app-list-item')[0]).toHaveText('CPU Usage:0% Avg. Usage');
     expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Memory Usage: N/A');
     expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Pool: pool');
+  });
+
+  it('loads and reports available space on apps dataset', () => {
+    expect(websocket.call).toHaveBeenCalledWith('pool.dataset.get_instance', ['pool/ix-apps']);
     expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Available Space: 2.44 KiB');
   });
 });

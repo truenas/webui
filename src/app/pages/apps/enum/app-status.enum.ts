@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum AppStatus {
-  Started = 'STARTED',
+  Running = 'RUNNING',
   Starting = 'STARTING',
   Deploying = 'DEPLOYING',
   Stopped = 'STOPPED',
@@ -9,7 +9,7 @@ export enum AppStatus {
 }
 
 export const appStatusIcons = new Map<AppStatus, string>([
-  [AppStatus.Started, 'mdi-check-circle'],
+  [AppStatus.Running, 'mdi-check-circle'],
   [AppStatus.Starting, 'mdi-progress-wrench'],
   [AppStatus.Deploying, 'mdi-progress-wrench'],
   [AppStatus.Stopping, 'mdi-progress-wrench'],
@@ -17,7 +17,7 @@ export const appStatusIcons = new Map<AppStatus, string>([
 ]);
 
 export const appStatusLabels = new Map<AppStatus, string>([
-  [AppStatus.Started, T('Running')],
+  [AppStatus.Running, T('Running')],
   [AppStatus.Starting, T('Starting')],
   [AppStatus.Deploying, T('Deploying')],
   [AppStatus.Stopped, T('Stopped')],

@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs';
+import { debounceTime, take } from 'rxjs';
 import {
   NetdataDialogComponent,
 } from 'app/pages/reports-dashboard/components/reports-global-controls/netdata-dialog/netdata-dialog.component';
@@ -80,7 +80,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
     if (this.activeTab?.value !== ReportType.Disk) {
       return;
     }
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((values) => {
+    this.form.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((values) => {
       this.diskOptionsChanged.emit({
         devices: values.devices,
         metrics: values.metrics,
