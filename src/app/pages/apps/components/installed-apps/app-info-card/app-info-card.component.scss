@@ -44,6 +44,10 @@
 
   .portals {
     margin-top: 7px;
+
+    .portal-button {
+      text-transform: capitalize;
+    }
   }
 }
 

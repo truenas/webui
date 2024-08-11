@@ -2,10 +2,10 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { App } from 'app/interfaces/app.interface';
-import { AppContainersCardComponent } from 'app/pages/apps/components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
+import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 
 describe('AppDetailsPanelComponent', () => {
   let spectator: Spectator<AppDetailsPanelComponent>;
@@ -20,7 +20,7 @@ describe('AppDetailsPanelComponent', () => {
     declarations: [
       MockComponents(
         AppInfoCardComponent,
-        AppContainersCardComponent,
+        AppWorkloadsCardComponent,
         AppMetadataCardComponent,
       ),
     ],
@@ -44,7 +44,7 @@ describe('AppDetailsPanelComponent', () => {
     expect(appInfoCard).toBeTruthy();
     expect(appInfoCard.app).toBe(app);
 
-    const appContainersCard = spectator.query(AppContainersCardComponent);
+    const appContainersCard = spectator.query(AppWorkloadsCardComponent);
     expect(appContainersCard).toBeTruthy();
     expect(appContainersCard.app).toStrictEqual(app);
 

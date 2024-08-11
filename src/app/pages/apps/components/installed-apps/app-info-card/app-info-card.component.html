@@ -79,13 +79,14 @@
         </div>
         @if (app?.portals) {
           <div class="portals">
-            @for (portal of app.portals | keyvalue; track portal) {
+            @for (portal of app.portals | keyvalue; track portal.key) {
               <button
                 mat-button
+                class="portal-button"
                 [ixTest]="['portal', app.name, portal.key]"
                 (click)="portalLink(app, portal.key)"
               >
-                {{ portalName(portal.key) }}
+                {{ portal.key }}
               </button>
             }
           </div>
