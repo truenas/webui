@@ -41,40 +41,6 @@
 
 
   <mat-accordion>
-    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130379 -->
-    <!-- <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{ 'Images ( to be updated )' | translate }}
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <div class="expansion-content">
-        @if (hasUpdateImages()) {
-          <div>
-            @for (containerImage of selectedVersion.container_images_to_update | keyvalue: containerImagesOrder; track containerImage; let i = $index) {
-              <div
-                class="detail-row"
-                [ngClass]="{ 'row-dark': i % 2 === 0 }"
-              >
-                <div fxLayout="row" fxLayoutAlign="start center">
-                  <span fxFlex="10" class="text-center">{{ i + 1 }}</span>
-                  <span>{{ containerImage.key }}</span>
-                </div>
-              </div>
-            }
-          </div>
-        } @else {
-          <div
-            fxLayout="row"
-            fxLayoutAlign="start start"
-            class="detail-row row-dark"
-          >
-            {{ 'There are no images requiring upgrade' | translate }}
-          </div>
-        }
-      </div>
-    </mat-expansion-panel> -->
-
     @if (selectedVersion?.available_versions_for_upgrade?.length) {
       <mat-expansion-panel>
         <mat-expansion-panel-header>

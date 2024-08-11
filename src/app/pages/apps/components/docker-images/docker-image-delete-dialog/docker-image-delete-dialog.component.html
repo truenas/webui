@@ -39,6 +39,11 @@
           [label]="'Confirm' | translate"
           [required]="true"
         ></ix-checkbox>
+        <ix-checkbox
+          formControlName="force"
+          [label]="'Force' | translate"
+          [tooltip]="forceCheckboxTooltip | translate"
+        ></ix-checkbox>
       }
     </div>
 

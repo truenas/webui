@@ -65,7 +65,7 @@ describe('DockerImageDeleteDialogComponent', () => {
       }),
       mockWebSocket([
         mockJob('core.bulk'),
-        mockCall('container.image.delete'),
+        mockCall('app.image.delete'),
       ]),
     ],
   });
@@ -77,10 +77,10 @@ describe('DockerImageDeleteDialogComponent', () => {
 
   it('deletes selected docker images when form is submitted', async () => {
     const jobArguments = [
-      'container.image.delete',
+      'app.image.delete',
       [
-        ['sha256:test1'],
-        ['sha256:test2'],
+        ['sha256:test1', { force: false }],
+        ['sha256:test2', { force: false }],
       ],
     ];
     spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
@@ -104,10 +104,10 @@ describe('DockerImageDeleteDialogComponent', () => {
 
   it('checks force delete of docker images when form is submitted', async () => {
     const jobArguments = [
-      'container.image.delete',
+      'app.image.delete',
       [
-        ['sha256:test1'],
-        ['sha256:test2'],
+        ['sha256:test1', { force: true }],
+        ['sha256:test2', { force: true }],
       ],
     ];
     spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
@@ -115,6 +115,7 @@ describe('DockerImageDeleteDialogComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Confirm: true,
+      Force: true,
     });
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
@@ -129,10 +130,10 @@ describe('DockerImageDeleteDialogComponent', () => {
 
   it('checks deleting failures of docker images when form is submitted', async () => {
     const jobArguments: CoreBulkQuery = [
-      'container.image.delete',
+      'app.image.delete',
       [
-        ['sha256:test1'],
-        ['sha256:test2'],
+        ['sha256:test1', { force: false }],
+        ['sha256:test2', { force: false }],
       ],
     ];
     spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));

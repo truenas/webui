@@ -46,11 +46,6 @@ export class ApplicationsService {
   //   return this.ws.call('container.config');
   // }
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-  // updateContainerConfig(enableImageUpdates: boolean): Observable<ContainerConfig> {
-  //   return this.ws.call('container.update', [{ enable_image_updates: enableImageUpdates }]);
-  // }
-
   getInterfaces(): Observable<NetworkInterface[]> {
     return this.ws.call('interface.query');
   }

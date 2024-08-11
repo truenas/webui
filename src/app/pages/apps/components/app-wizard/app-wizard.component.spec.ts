@@ -289,14 +289,13 @@ describe('AppWizardComponent', () => {
         mockJob('app.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
         mockCall('app.query', [existingAppEdit]),
-        // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-        // mockCall('container.image.dockerhub_rate_limit', {
-        //   total_pull_limit: 13,
-        //   total_time_limit_in_secs: 21600,
-        //   remaining_pull_limit: 3,
-        //   remaining_time_limit_in_secs: 21600,
-        //   error: null,
-        // }),
+        mockCall('app.image.dockerhub_rate_limit', {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        }),
       ]),
       mockProvider(DockerStore, {
         selectedPool$: of('pool set'),
@@ -482,18 +481,16 @@ describe('AppWizardComponent', () => {
       });
     });
 
-    // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-    // Add a test that shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5
-    // it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
-    //   expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
-    //     data: {
-    //       total_pull_limit: 13,
-    //       total_time_limit_in_secs: 21600,
-    //       remaining_pull_limit: 3,
-    //       remaining_time_limit_in_secs: 21600,
-    //       error: null,
-    //     },
-    //   });
-    // });
+    it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
+        data: {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        },
+      });
+    });
   });
 });

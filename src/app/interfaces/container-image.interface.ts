@@ -1,31 +1,39 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface PullContainerImageParams {
-  authentication?: {
+  auth_config?: {
     username: string;
     password: string;
   };
-  from_image: string;
-  tag?: string;
+  image: string;
 }
 
 export type DeleteContainerImageParams = [
   id: string,
+  forceSetting?: { force: boolean },
 ];
 
 export interface PullContainerImageResponse {
   status: string;
 }
 
+export interface ParsedRepoTag {
+  image: string;
+  tag: string;
+  registry: string;
+  complete_tag: string;
+}
+
 export interface ContainerImage {
-  created: ApiTimestamp;
-  dangling: boolean;
   id: string;
-  labels: Record<string, string>;
-  repo_digests: string[];
   repo_tags: string[];
+  repo_digests: string[];
   size: number;
-  system_image: boolean;
-  update_available: boolean;
+  dangling: boolean;
+  created: ApiTimestamp;
+  author: string;
+  comment: string;
+  parsed_repo_tags: ParsedRepoTag[];
+
   state?: string;
 }
