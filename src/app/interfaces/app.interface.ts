@@ -258,7 +258,4 @@ export type AppDeleteParams = [
   },
 ];
 
-export interface ChartRollbackParams {
-  rollback_snapshot?: boolean;
-  app_version: string;
-}
+export type AppRollbackParams = [app_name: string, { app_version: string; rollback_snapshot: boolean }];
