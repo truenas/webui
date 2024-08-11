@@ -6,6 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -45,6 +46,7 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -123,11 +125,11 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     private dockerStore: DockerStore,
     private ws: WebSocketService,
     private authService: AuthService,
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
-    // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-    // this.getDockerHubRateLimitInfo();
+    this.getDockerHubRateLimitInfo();
     this.listenForRouteChanges();
     this.handleSearchControl();
   }
@@ -525,14 +527,13 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-  // private getDockerHubRateLimitInfo(): void {
-  //   this.ws.call('container.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
-  //     if (info.remaining_pull_limit < 5) {
-  //       this.matDialog.open(DockerHubRateInfoDialogComponent, {
-  //         data: info,
-  //       });
-  //     }
-  //   });
-  // }
+  private getDockerHubRateLimitInfo(): void {
+    this.ws.call('app.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
+      if (info.remaining_pull_limit < 5) {
+        this.matDialog.open(DockerHubRateInfoDialogComponent, {
+          data: info,
+        });
+      }
+    });
+  }
 }

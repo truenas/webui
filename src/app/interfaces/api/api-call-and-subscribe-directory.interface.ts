@@ -12,7 +12,7 @@ export interface ApiCallAndSubscribeEventDirectory {
   'user.query': { response: User };
   'pool.query': { response: Pool };
   'group.query': { response: Group };
-  'container.image.query': { response: ContainerImage };
+  'app.image.query': { response: ContainerImage };
 }
 
 export type ApiCallAndSubscribeMethod = keyof ApiCallAndSubscribeEventDirectory;

@@ -5,6 +5,7 @@ import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wiz
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
 import { CategoryViewComponent } from 'app/pages/apps/components/available-apps/category-view/category-view.component';
+import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 // import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
@@ -68,12 +69,11 @@ const routes: Routes = [
           },
         ],
       },
-      // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-      // {
-      //   path: 'manage-container-images',
-      //   component: DockerImagesListComponent,
-      //   data: { title: T('Manage Container Images') },
-      // },
+      {
+        path: 'manage-container-images',
+        component: DockerImagesListComponent,
+        data: { title: T('Manage Container Images') },
+      },
       {
         path: 'available',
         component: AppRouterOutletComponent,

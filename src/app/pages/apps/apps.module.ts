@@ -50,6 +50,9 @@ import {
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
+import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
+import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
+import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
@@ -58,9 +61,7 @@ import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-ro
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
-import {
-  VolumeMountsDialogComponent,
-} from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
+import { VolumeMountsDialogComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
@@ -107,7 +108,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppDetailsHeaderComponent,
     AppBulkUpgradeComponent,
     AppRollbackModalComponent,
-    DockerHubRateInfoDialogComponent,
     SelectPoolDialogComponent,
     AppDetailsSimilarComponent,
     AppSettingsButtonComponent,
@@ -117,11 +117,10 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CustomAppButtonComponent,
     DockerStatusComponent,
     CatalogSettingsComponent,
-    // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-    // DockerImagesListComponent,
-    // DockerImageUpdateDialogComponent,
-    // DockerImageDeleteDialogComponent,
-    // PullImageFormComponent,
+    DockerImagesListComponent,
+    DockerImageDeleteDialogComponent,
+    PullImageFormComponent,
+    DockerHubRateInfoDialogComponent,
     VolumeMountsDialogComponent,
   ],
   imports: [

@@ -25,14 +25,14 @@ export class PullImageFormComponent {
   isFormLoading = false;
 
   form = this.fb.group({
-    from_image: ['', Validators.required],
+    image: ['', Validators.required],
     tag: [latestVersion],
     username: [''],
     password: [''],
   });
 
   readonly tooltips = {
-    from_image: helptextApps.pullImageForm.imageName.tooltip,
+    image: helptextApps.pullImageForm.imageName.tooltip,
     tag: helptextApps.pullImageForm.imageTags.tooltip,
     username: helptextApps.pullImageForm.username.tooltip,
     password: helptextApps.pullImageForm.password.tooltip,
@@ -53,14 +53,14 @@ export class PullImageFormComponent {
     const values = this.form.value;
 
     const params: PullContainerImageParams = {
-      from_image: values.from_image,
+      image: values.image,
     };
 
     if (values.tag) {
-      params.tag = values.tag;
+      params.image += ':' + values.tag;
     }
     if (values.username || values.password) {
-      params.authentication = {
+      params.auth_config = {
         username: values.username,
         password: values.password,
       };
@@ -68,7 +68,7 @@ export class PullImageFormComponent {
 
     this.isFormLoading = true;
     this.dialogService.jobDialog(
-      this.ws.job('container.image.pull', [params]),
+      this.ws.job('app.image.pull', [params]),
       { title: this.translate.instant('Pulling...') },
     )
       .afterClosed()

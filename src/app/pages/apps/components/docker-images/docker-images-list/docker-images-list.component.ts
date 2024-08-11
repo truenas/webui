@@ -5,7 +5,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
@@ -14,11 +13,10 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
-import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
+import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,8 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DockerImagesListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-  // protected readonly searchableElements = dockerImagesListElements;
+  protected readonly searchableElements = dockerImagesListElements;
 
   dataProvider: AsyncDataProvider<ContainerImage>;
   containerImages: ContainerImage[] = [];
@@ -59,19 +56,8 @@ export class DockerImagesListComponent implements OnInit {
           : this.translate.instant('Unknown');
       },
     }),
-    yesNoColumn({
-      title: this.translate.instant('Update available'),
-      propertyName: 'update_available',
-    }),
     actionsColumn({
       actions: [
-        {
-          iconName: 'update',
-          tooltip: this.translate.instant('Update'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.doUpdate([row]),
-          hidden: (row) => of(!row.update_available),
-        },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
@@ -98,7 +84,7 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const containerImages$ = this.ws.call('container.image.query').pipe(
+    const containerImages$ = this.ws.call('app.image.query').pipe(
       tap((images) => this.containerImages = images),
     );
     this.dataProvider = new AsyncDataProvider(containerImages$);
@@ -117,13 +103,6 @@ export class DockerImagesListComponent implements OnInit {
 
   doDelete(images: ContainerImage[]): void {
     this.matDialog.open(DockerImageDeleteDialogComponent, { data: images })
-      .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.refresh());
-  }
-
-  doUpdate(images: ContainerImage[]): void {
-    this.matDialog.open(DockerImageUpdateDialogComponent, { data: images })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.refresh());

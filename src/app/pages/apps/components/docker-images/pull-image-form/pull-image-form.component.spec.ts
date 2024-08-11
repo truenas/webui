@@ -28,7 +28,7 @@ describe('PullImageFormComponent', () => {
     ],
     providers: [
       mockWebSocket([
-        mockJob('container.image.pull'),
+        mockJob('app.image.pull'),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(IxSlideInRef),
@@ -62,13 +62,12 @@ describe('PullImageFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(ws.job).toHaveBeenCalledWith('container.image.pull', [{
-      authentication: {
+    expect(ws.job).toHaveBeenCalledWith('app.image.pull', [{
+      auth_config: {
         username: 'john',
         password: '12345678',
       },
-      from_image: 'private/redis',
-      tag: 'stable',
+      image: 'private/redis:stable',
     }]);
   });
 });

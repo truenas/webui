@@ -59,15 +59,6 @@ export class AppBulkUpgradeComponent {
     this.detectFormChanges();
   }
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-  // hasUpdatesForImages(name: string): boolean {
-  //   const summary = this.upgradeSummaryMap.get(name);
-  //   if (!summary) {
-  //     return false;
-  //   }
-  //   return summary.image_update_available && Object.keys(summary.container_images_to_update).length > 0;
-  // }
-
   hasErrors(name: string): boolean {
     const item = this.bulkItems.get(name);
     if (!item) {

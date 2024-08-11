@@ -92,7 +92,7 @@ export interface ApiJobDirectory {
   'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };
 
   // Container
-  'container.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
+  'app.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
 
   // Config
   'config.reset': { params: [ConfigResetParams]; response: void };
