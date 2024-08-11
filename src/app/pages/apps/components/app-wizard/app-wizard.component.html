@@ -1,5 +1,5 @@
 <ix-page-header [pageTitle]="pageTitle$ | async">
-  @if (requiredRoles?.length && !(hasRequiredRoles | async)) {
+  @if (!(hasRequiredRoles | async)) {
     <ix-readonly-badge></ix-readonly-badge>
   }
 </ix-page-header>
