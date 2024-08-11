@@ -71,23 +71,15 @@ export class AppWorkloadsCardComponent {
   // });
   }
 
-  viewLogsButtonPressed(_: string): void {
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-
-  // this.matDialog.open(PodSelectDialogComponent, {
-  //   minWidth: '650px',
-  //   maxWidth: '850px',
-  //   data: {
-  //     containerImageKey,
-  //     app: this.app,
-  //     appName: this.app.name,
-  //     title: this.translate.instant('Choose pod'),
-  //     type: PodSelectDialogType.Logs,
-  //     customSubmit: (formValueDialog: PodDialogFormValue) => {
-  //       this.logDialogSubmit(formValueDialog);
-  //     },
-  //   },
-  // });
+  viewLogsButtonPressed(containerDetails: AppContainerDetails): void {
+    this.router.navigate([
+      '/apps',
+      'installed',
+      this.app().metadata.train,
+      this.app().name,
+      'logs',
+      containerDetails.id,
+    ]);
   }
 
   private shellDialogSubmit(formValue: PodDialogFormValue): void {

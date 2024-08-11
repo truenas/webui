@@ -72,17 +72,18 @@
                   >
                     <ix-icon name="mdi-console"></ix-icon>
                   </button>
-                  <button
-                    mat-icon-button
-                    matTooltipPosition="above"
-                    [attr.aria-label]="'View Logs' | translate"
-                    [ixTest]="[container.service_name, 'view_logs']"
-                    [matTooltip]="'View Logs' | translate"
-                    (click)="viewLogsButtonPressed(container.service_name)"
-                  >
-                    <ix-icon name="mdi-text-box"></ix-icon>
-                  </button>
                 }
+
+                <button
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'View Logs' | translate"
+                  [ixTest]="[container.service_name, 'view_logs']"
+                  [matTooltip]="'View Logs' | translate"
+                  (click)="viewLogsButtonPressed(container)"
+                >
+                  <ix-icon name="mdi-text-box"></ix-icon>
+                </button>
               </div>
             }
           </div>

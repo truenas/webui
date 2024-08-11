@@ -111,7 +111,7 @@ describe('AppContainersCardComponent', () => {
 
     expect(containers[0].querySelector('.service-name')).toHaveText('netdata');
     expect(containers[0].querySelector('.container-state')).toHaveText('Running');
-    expect(containers[0].querySelectorAll('.container-action button')).toHaveLength(1);
+    expect(containers[0].querySelectorAll('.container-action button')).toHaveLength(2);
   });
 
   it('opens volume mounts dialog when Volume Mounts button is pressed', async () => {
