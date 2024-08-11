@@ -61,6 +61,7 @@ import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-ro
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
+import { VolumeMountsDialogComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
@@ -120,6 +121,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     DockerImageDeleteDialogComponent,
     PullImageFormComponent,
     DockerHubRateInfoDialogComponent,
+    VolumeMountsDialogComponent,
   ],
   imports: [
     CommonModule,
