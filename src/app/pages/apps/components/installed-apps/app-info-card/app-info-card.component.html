@@ -7,18 +7,18 @@
       <button
         id="edit-app"
         mat-button
-        [ixTest]="[app?.name, 'edit']"
+        [ixTest]="[app()?.name, 'edit']"
         (click)="editButtonPressed()"
       >
         {{ 'Edit' | translate }}
       </button>
 
-      @if (hasUpdates) {
+      @if (hasUpdates()) {
         <button
           *ixRequiresRoles="requiredRoles"
           id="update-app"
           mat-button
-          [ixTest]="[app?.name, 'update']"
+          [ixTest]="[app()?.name, 'update']"
           (click)="updateButtonPressed()"
         >
           {{ 'Update' | translate }}
@@ -29,23 +29,23 @@
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="8px">
       <div class="app-logo">
-        <img [src]="app?.metadata?.icon" [src-fallback]="imagePlaceholder" />
+        <img [src]="app()?.metadata?.icon" [src-fallback]="imagePlaceholder" />
       </div>
       <div class="details-list">
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
           <div class="value">
-            {{ app?.name | orNotAvailable }}
+            {{ app()?.name | orNotAvailable }}
           </div>
         </div>
         <div class="details-item">
           <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
-            @if (!isCustomApp) {
-              {{ app?.metadata?.app_version | orNotAvailable }}
-            } @else if (app.human_version) {
+            @if (!isCustomApp()) {
+              {{ app()?.metadata?.app_version | orNotAvailable }}
+            } @else if (app().human_version) {
               <!-- Show docker image tag as version for custom apps -->
-              {{ app.human_version?.split(':')?.[1]?.split('_')?.[0] }}
+              {{ app().human_version?.split(':')?.[1]?.split('_')?.[0] }}
             }
           </div>
         </div>
@@ -53,13 +53,13 @@
           <div class="label">{{ 'Source' | translate }}:</div>
           <div class="value">
             <div>
-              @for (source of app?.metadata?.sources; track source; let last = $last) {
+              @for (source of app()?.metadata?.sources; track source; let last = $last) {
                 <a
                   class="source-link"
                   target="_blank"
                   [href]="source"
                   [title]="source"
-                  [ixTest]="[app.name, 'source']"
+                  [ixTest]="[app().name, 'source']"
                 >{{ source | cleanLink }}</a>
                 @if (!last) {
                   <span>, </span>
@@ -74,17 +74,17 @@
         <div class="details-item">
           <div class="label">{{ 'Train' | translate }}:</div>
           <div class="value">
-            {{ app?.metadata?.train | orNotAvailable }}
+            {{ app()?.metadata?.train | orNotAvailable }}
           </div>
         </div>
-        @if (app?.portals) {
+        @if (app()?.portals) {
           <div class="portals">
-            @for (portal of app.portals | keyvalue; track portal.key) {
+            @for (portal of app().portals | keyvalue; track portal.key) {
               <button
                 mat-button
                 class="portal-button"
-                [ixTest]="['portal', app.name, portal.key]"
-                (click)="portalLink(app, portal.key)"
+                [ixTest]="['portal', app().name, portal.key]"
+                (click)="portalLink(app(), portal.key)"
               >
                 {{ portal.key }}
               </button>
@@ -95,7 +95,7 @@
     </div>
   </mat-card-content>
 
-  @if (app) {
+  @if (app()) {
     <mat-card-actions>
       <div class="cell cell-action cell-status-actions">
         <ng-container *ixRequiresRoles="requiredRoles">
@@ -103,7 +103,7 @@
             <button
               mat-button
               matTooltipPosition="above"
-              [ixTest]="[app.name, 'start']"
+              [ixTest]="[app().name, 'start']"
               [matTooltip]="'Start' | translate"
               [disabled]="inProgress"
               (click)="startApp.emit(); $event.stopPropagation()"
@@ -117,7 +117,7 @@
             <button
               mat-button
               matTooltipPosition="above"
-              [ixTest]="[app.name, 'stop']"
+              [ixTest]="[app().name, 'stop']"
               [matTooltip]="'Stop' | translate"
               [disabled]="isStartingOrStopping"
               (click)="stopApp.emit(); $event.stopPropagation()"
@@ -129,11 +129,10 @@
       </div>
 
       <ng-container *ixRequiresRoles="requiredRoles">
-        <!-- TODO: Fix App Rollback condition -->
-        @if (false) {
+        @if (isRollbackPossible()) {
           <button
             mat-button
-            [ixTest]="[app.name, 'rollback']"
+            [ixTest]="[app().name, 'rollback']"
             (click)="rollbackApp()"
           >
             {{ 'Roll Back' | translate }}
@@ -145,7 +144,7 @@
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
-          [ixTest]="[app.name, 'delete']"
+          [ixTest]="[app().name, 'delete']"
           (click)="deleteButtonPressed()"
         >
           {{ 'Delete' | translate }}

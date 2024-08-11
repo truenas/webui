@@ -1,12 +1,16 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, computed, effect, EventEmitter, input, Input, InputSignal, Output,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isEmpty } from 'lodash';
-import { filter, map, take } from 'rxjs';
+import {
+  filter, map, take, tap,
+} from 'rxjs';
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -32,13 +36,24 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppInfoCardComponent {
-  @Input() app: App;
+  app: InputSignal<App> = input<App>();
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
   @Input() status: AppStatus;
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly isEmpty = isEmpty;
+
+  protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
+
+  protected rollbackSetEffect = effect(() => {
+    this.isRollbackPossible.set(false);
+    const app = this.app();
+    this.ws.call('app.rollback_versions', [app.name]).pipe(
+      tap((versions) => this.isRollbackPossible.set(versions.length > 0)),
+      untilDestroyed(this),
+    ).subscribe();
+  }, { allowSignalWrites: true });
 
   get inProgress(): boolean {
     return [AppStatus.Deploying].includes(this.status) || this.isStartingOrStopping;
@@ -67,13 +82,15 @@ export class AppInfoCardComponent {
     private installedAppsStore: InstalledAppsStore,
   ) {}
 
-  get hasUpdates(): boolean {
-    return this.app?.upgrade_available;
-  }
+  protected hasUpdates = computed(() => {
+    const app = this.app();
+    return app?.upgrade_available;
+  });
 
-  get isCustomApp(): boolean {
-    return this.app.metadata.name === customApp;
-  }
+  protected isCustomApp = computed(() => {
+    const app = this.app();
+    return app?.metadata?.name === customApp;
+  });
 
   portalLink(app: App, name = 'web_portal'): void {
     this.redirect.openWindow(app.portals[name]);
@@ -92,7 +109,7 @@ export class AppInfoCardComponent {
         minWidth: '500px',
         maxWidth: '750px',
         data: {
-          appInfo: this.app,
+          appInfo: this.app(),
           upgradeSummary: summary,
         } as AppUpgradeDialogConfig,
       })
@@ -111,7 +128,8 @@ export class AppInfoCardComponent {
   }
 
   editButtonPressed(): void {
-    this.router.navigate(['/apps', 'installed', this.app.metadata.train, this.app.id, 'edit']);
+    const app = this.app();
+    this.router.navigate(['/apps', 'installed', app.metadata.train, app.id, 'edit']);
   }
 
   deleteButtonPressed(): void {
