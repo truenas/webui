@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
@@ -10,10 +9,6 @@ import { combineLatest, map, Subscription } from 'rxjs';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import {
-  LogsDialogFormValue,
-  PodSelectLogsDialogComponent,
-} from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
@@ -39,9 +34,7 @@ export class PodLogsComponent implements OnInit {
 
   fontSize = 14;
   appName: string;
-  podName: string;
-  containerName: string;
-  protected tailLines = 500;
+  containerId: string;
   podLogSubscriptionId: string = null;
   podLogSubName = '';
   isLoadingPodLogs = false;
@@ -65,9 +58,7 @@ export class PodLogsComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(([params, parentParams]) => {
       this.appName = parentParams.appId as string;
-      this.podName = params.podName as string;
-      this.containerName = params.command as string;
-      this.tailLines = params.tail_lines as number;
+      this.containerId = params.containerId as string;
 
       this.reconnect();
     });
@@ -82,7 +73,7 @@ export class PodLogsComponent implements OnInit {
       this.podLogsChangedListener.unsubscribe();
     }
 
-    this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.appName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
+    this.podLogSubName = `app.container_log_follow:{"app_name": "${this.appName}", "container_id": "${this.containerId}"}`;
     this.podLogSubscriptionId = UUID.UUID();
     this.podLogsChangedListener = this.ws.subscribeToLogs(this.podLogSubName).pipe(
       map((apiEvent) => apiEvent.fields),
@@ -121,76 +112,44 @@ export class PodLogsComponent implements OnInit {
   }
 
   onDownloadLogs(): void {
-    this.showChooseLogsDialog(true);
+    // TODO: download logs
   }
 
-  onReconnect(): void {
-    this.showChooseLogsDialog(false);
-  }
+  // downloadLogs(formValue: LogsDialogFormValue): void {
+  //   const appName = formValue.apps;
+  //   const podName = formValue.pods;
+  //   const containerName = formValue.containers;
+  //   const tailLines = formValue.tail_lines;
 
-  showChooseLogsDialog(isDownload: boolean): void {
-    this.matDialog.open(PodSelectLogsDialogComponent, {
-      minWidth: '650px',
-      maxWidth: '850px',
-      data: {
-        appName: this.appName,
-        title: 'Choose log',
-        customSubmit: (logsFormValueDialog: LogsDialogFormValue) => {
-          if (isDownload) {
-            this.downloadLogs(logsFormValueDialog);
-            return;
-          }
-          this.onChooseLogs(logsFormValueDialog);
-        },
-      },
-    });
-  }
+  //   this.dialogService.closeAllDialogs();
 
-  downloadLogs(formValue: LogsDialogFormValue): void {
-    const appName = formValue.apps;
-    const podName = formValue.pods;
-    const containerName = formValue.containers;
-    const tailLines = formValue.tail_lines;
-
-    this.dialogService.closeAllDialogs();
-
-    const fileName = `${appName}_${podName}_${containerName}.log`;
-    const mimetype = 'application/octet-stream';
-    this.ws.call(
-      'core.download',
-      [
-        'chart.release.pod_logs',
-        [appName, { pod_name: podName, container_name: containerName, tail_lines: tailLines }],
-        fileName,
-      ],
-    ).pipe(
-      this.loader.withLoader(),
-      this.errorHandler.catchError(),
-      untilDestroyed(this),
-    ).subscribe((download) => {
-      const [, url] = download;
-      this.download.streamDownloadFile(url, fileName, mimetype)
-        .pipe(untilDestroyed(this))
-        .subscribe({
-          next: (file: Blob) => {
-            if (download !== null) {
-              this.download.downloadBlob(file, fileName);
-            }
-          },
-          error: (error: HttpErrorResponse) => {
-            this.dialogService.error(this.errorHandler.parseHttpError(error));
-          },
-        });
-    });
-  }
-
-  onChooseLogs(formValue: LogsDialogFormValue): void {
-    this.appName = formValue.apps;
-    this.podName = formValue.pods;
-    this.containerName = formValue.containers;
-    this.tailLines = formValue.tail_lines;
-
-    this.reconnect();
-    this.dialogService.closeAllDialogs();
-  }
+  //   const fileName = `${appName}_${podName}_${containerName}.log`;
+  //   const mimetype = 'application/octet-stream';
+  //   this.ws.call(
+  //     'core.download',
+  //     [
+  //       'chart.release.pod_logs',
+  //       [appName, { pod_name: podName, container_name: containerName, tail_lines: tailLines }],
+  //       fileName,
+  //     ],
+  //   ).pipe(
+  //     this.loader.withLoader(),
+  //     this.errorHandler.catchError(),
+  //     untilDestroyed(this),
+  //   ).subscribe((download) => {
+  //     const [, url] = download;
+  //     this.download.streamDownloadFile(url, fileName, mimetype)
+  //       .pipe(untilDestroyed(this))
+  //       .subscribe({
+  //         next: (file: Blob) => {
+  //           if (download !== null) {
+  //             this.download.downloadBlob(file, fileName);
+  //           }
+  //         },
+  //         error: (error: HttpErrorResponse) => {
+  //           this.dialogService.error(this.errorHandler.parseHttpError(error));
+  //         },
+  //       });
+  //   });
+  // }
 }
