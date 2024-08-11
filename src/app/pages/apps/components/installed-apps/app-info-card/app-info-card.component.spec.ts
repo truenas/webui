@@ -133,19 +133,9 @@ describe('AppInfoCardComponent', () => {
         label: 'App Version:',
         value: '3.2.1',
       },
-      // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
-      {
-        label: 'Last Updated:',
-        value: 'N/A',
-      },
       {
         label: 'Source:',
         value: 'github.com/ix-test-app/ix-test-app',
-      },
-      // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
-      {
-        label: 'Developer:',
-        value: 'N/A',
       },
       {
         label: 'Train:',

@@ -49,13 +49,6 @@
             }
           </div>
         </div>
-        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        <div class="details-item">
-          <div class="label">{{ 'Last Updated' | translate }}:</div>
-          <div class="value">
-            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
-          </div>
-        </div>
         <div class="details-item sources">
           <div class="label">{{ 'Source' | translate }}:</div>
           <div class="value">
@@ -77,22 +70,7 @@
             </div>
         </div>
         </div>
-        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        <div class="details-item">
-          <div class="label">{{ 'Developer' | translate }}:</div>
-          <div class="value">
-            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
-          </div>
-        </div>
-        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        @if (false) {
-          <div class="details-item">
-            <div class="label">{{ 'Commits in the last 60 days' | translate }}:</div>
-            <div class="value">
-              <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
-            </div>
-          </div>
-        }
+
         <div class="details-item">
           <div class="label">{{ 'Train' | translate }}:</div>
           <div class="value">
