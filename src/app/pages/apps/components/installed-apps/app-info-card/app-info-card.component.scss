@@ -44,17 +44,16 @@
 
   .portals {
     margin-top: 7px;
+
+    .portal-button {
+      text-transform: capitalize;
+    }
   }
 }
 
 .source-link {
   white-space: normal;
   word-break: break-word;
-
-  &:not(:last-child)::after {
-    color: var(--fg1);
-    content: ', ';
-  }
 }
 
 .cell-status-actions {

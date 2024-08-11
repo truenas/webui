@@ -6,7 +6,6 @@
  * Provide migration if possible.
  */
 export enum WidgetType {
-  App = 'app',
   Ipv4Address = 'ipv4-address',
   Ipv6Address = 'ipv6-address',
   Help = 'help',

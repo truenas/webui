@@ -5,7 +5,7 @@ import {
   Observable, OperatorFunction, filter, map, pipe,
   switchMap,
 } from 'rxjs';
-import { ixChartApp } from 'app/constants/catalog.constants';
+import { customApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -21,7 +21,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
-const ignoredAppsList = [ixChartApp];
+const ignoredAppsList = [customApp];
 
 export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableApp[]> {
   return pipe(
@@ -37,7 +37,7 @@ export class ApplicationsService {
     return this.ws.call('pool.query');
   }
 
-  getChartReleaseNames(): Observable<{ name: string }[]> {
+  getInstalledAppNames(): Observable<{ name: string }[]> {
     return this.ws.call('app.query', [[], { select: ['name'] }]);
   }
 
@@ -100,7 +100,7 @@ export class ApplicationsService {
     );
   }
 
-  getChartUpgradeSummary(name: string, version?: string): Observable<AppUpgradeSummary> {
+  getAppUpgradeSummary(name: string, version?: string): Observable<AppUpgradeSummary> {
     const payload: AppUpgradeParams = [name];
     if (version) {
       payload.push({ app_version: version });

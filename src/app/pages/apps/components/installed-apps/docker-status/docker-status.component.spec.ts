@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 
 describe('DockerStatusComponent', () => {
   let spectator: Spectator<DockerStatusComponent>;

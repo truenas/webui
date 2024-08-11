@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { Role } from 'app/enums/role.enum';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
+import { GlobalSearchVisibleToken } from 'app/modules/global-search/enums/global-search-visible-token.enum';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { parseUiSearchElements } from './parse-ui-search-elements';
 
@@ -25,6 +26,7 @@ describe('Create UI Searchable Element Item', () => {
             hierarchy: ['Add'],
             synonyms: ['New Group'],
             anchor: 'add-group',
+            visibleTokens: [GlobalSearchVisibleToken.Failover],
           },
         },
         manualRenderElements: {
@@ -43,6 +45,7 @@ describe('Create UI Searchable Element Item', () => {
         hierarchy: ['Credentials', 'Groups', 'Non-Static'],
         synonyms: ['Manual Element'],
         requiredRoles: [],
+        visibleTokens: [],
         anchorRouterLink: ['/credentials', 'groups'],
         routerLink: null,
         anchor: 'non-static',
@@ -53,6 +56,7 @@ describe('Create UI Searchable Element Item', () => {
         hierarchy: ['Credentials', 'Groups', 'Add'],
         synonyms: ['New Group'],
         requiredRoles: [Role.SystemAuditWrite],
+        visibleTokens: [GlobalSearchVisibleToken.Failover],
         anchorRouterLink: ['/credentials', 'groups'],
         routerLink: ['/groups', 'add'],
         anchor: 'add-group',

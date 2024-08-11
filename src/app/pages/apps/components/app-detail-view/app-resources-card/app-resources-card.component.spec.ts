@@ -5,7 +5,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('AppResourcesCardComponent', () => {
@@ -52,6 +52,10 @@ describe('AppResourcesCardComponent', () => {
     expect(spectator.queryAll('.app-list-item')[0]).toHaveText('CPU Usage:0% Avg. Usage');
     expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Memory Usage: N/A');
     expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Pool: pool');
+  });
+
+  it('loads and reports available space on apps dataset', () => {
+    expect(websocket.call).toHaveBeenCalledWith('pool.dataset.get_instance', ['pool/ix-apps']);
     expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Available Space: 2.44 KiB');
   });
 });

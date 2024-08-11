@@ -45,6 +45,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     private slideInService: IxSlideInService,
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
+    private defaultInjector: Injector,
   ) {
     this.element = this.el.nativeElement as HTMLElement;
   }
@@ -81,7 +82,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
 
   openSlideIn<T, D>(
     componentType: Type<T>,
-    params?: { wide?: boolean; data?: D },
+    params?: { wide?: boolean; data?: D; injector?: Injector },
   ): IxSlideInRef<T, D> {
     if (this.isSlideInOpen) {
       console.error('SlideIn is already open');
@@ -100,12 +101,17 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
 
     this.cdr.markForCheck();
 
-    return this.createSlideInRef<T, D>(componentType, params?.data);
+    return this.createSlideInRef<T, D>(
+      componentType,
+      params?.data,
+      params?.injector || this.defaultInjector,
+    );
   }
 
   private createSlideInRef<T, D>(
     componentType: Type<T>,
     data?: D,
+    parentInjector?: Injector,
   ): IxSlideInRef<T, D> {
     const slideInRef = new IxSlideInRef<T, D>();
     const injector = Injector.create({
@@ -113,6 +119,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
         { provide: SLIDE_IN_DATA, useValue: data },
         { provide: IxSlideInRef, useValue: slideInRef },
       ],
+      parent: parentInjector,
     });
     slideInRef.componentRef = this.slideInBody.createComponent<T>(componentType, { injector });
     slideInRef.id = UUID.UUID();

@@ -7,7 +7,7 @@
   justify-content: space-between;
   padding: 0 10px 25px;
 
-  @media (max-width: $breakpoint-md) {
+  @media (max-width: $breakpoint-sm) {
     flex-direction: column-reverse;
   }
 }
@@ -46,7 +46,6 @@
         display: grid;
       }
 
-      .catalogs,
       .sort {
         width: 30%;
 

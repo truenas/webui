@@ -7,11 +7,6 @@ export const helptextSharingNfs = {
  Consider creating a dataset instead.',
   ),
 
-  // NFSListComponent
-  column_path: T('Path'),
-  column_comment: T('Description'),
-  column_enabled: T('Enabled'),
-
   // NFSFormComponent
   tooltip_path: T('Full path to the pool, dataset or directory to share. \
   The path must reside within a pool. Mandatory.'),

@@ -28,7 +28,7 @@ describe('PodSelectLogsDialogComponent', () => {
     providers: [
       mockProvider(MatDialogRef),
       mockProvider(ApplicationsService, {
-        getChartReleaseNames: () => of([{ name: 'chartRelease1' }, { name: 'chartRelease2' }, { name: 'chartRelease3' }]),
+        getInstalledAppNames: () => of([{ name: 'chartRelease1' }, { name: 'chartRelease2' }, { name: 'chartRelease3' }]),
       }),
       mockWebSocket([
         mockCall('chart.release.pod_logs_choices', {

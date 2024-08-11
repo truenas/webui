@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
@@ -5,40 +6,6 @@ import { AppMaintainer } from 'app/interfaces/available-app.interface';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-
-export interface UsedPort {
-  port: number;
-  protocol: string;
-}
-
-export interface PodStatus {
-  available: number;
-  desired: number;
-}
-
-export interface ChartInfo {
-  deleted: string;
-  description: string;
-  first_deployed: string;
-  last_deployed: string;
-  notes: string;
-  status: string;
-}
-
-export interface ChartResources {
-  storage_class: Record<string, string>;
-  persistent_volumes: unknown[];
-  host_path_volumes: unknown[];
-  container_images: Record<string, ChartContainerImage>;
-  truenas_certificates: number[];
-  truenas_certificate_authorities: number[];
-  cronjobs: unknown[];
-  deployments: unknown[];
-  jobs: unknown[];
-  persistent_volume_claims: unknown[];
-  pods: unknown[];
-  statefulsets: unknown[];
-}
 
 export type ChartFormValue = string | number | boolean | Record<string, unknown> | ChartFormValue[];
 
@@ -64,13 +31,19 @@ export enum AppContainerState {
   Exited = 'exited',
 }
 
+export const appContainerStateLabels = new Map<AppContainerState, string>([
+  [AppContainerState.Running, T('Running')],
+  [AppContainerState.Starting, T('Starting')],
+  [AppContainerState.Exited, T('Exited')],
+]);
+
 export interface AppContainerDetails {
   id: string;
-  service_name: string;
   image: string;
+  service_name: string;
   state: AppContainerState;
   port_config: AppUsedPort[];
-  volume_mounts: unknown[];
+  volume_mounts: AppContainerVolumes[];
 }
 
 export interface AppContainerVolumes {
@@ -122,19 +95,6 @@ export interface ChartReleaseStats {
     incoming: number;
     outgoing: number;
   };
-}
-
-export interface ChartReleaseVersion {
-  catalog: string;
-  catalog_train: string;
-  metadata: ChartMetadata;
-  config: Record<string, ChartFormValue>;
-  human_version: string;
-  id: string;
-  info: ChartInfo;
-  name: string;
-  namespace: string;
-  version: number;
 }
 
 export interface AppCreate {
@@ -299,8 +259,6 @@ export type AppDeleteParams = [
 ];
 
 export interface ChartRollbackParams {
-  force_rollback?: boolean;
-  recreate_resources?: boolean;
   rollback_snapshot?: boolean;
   app_version: string;
 }
