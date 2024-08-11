@@ -7,13 +7,16 @@
     (valueChange)="onFontSizeChanged($event)"
   ></ix-toolbar-slider>
 
-  <button mat-button ixTest="reconnect" (click)="reconnect()">
-    {{ 'Reconnect' | translate }}
-  </button>
+  @if (false) {
+    <button mat-button ixTest="reconnect" (click)="reconnect()">
+      {{ 'Reconnect' | translate }}
+    </button>
 
-  <button mat-button color="primary" ixTest="download-logs" (click)="onDownloadLogs()">
-    {{ 'Download Logs' | translate }}
-  </button>
+
+    <button mat-button color="primary" ixTest="download-logs" (click)="onDownloadLogs()">
+      {{ 'Download Logs' | translate }}
+    </button>
+  }
 </ix-page-header>
 
 <div class="pod-logs-wrapper">
