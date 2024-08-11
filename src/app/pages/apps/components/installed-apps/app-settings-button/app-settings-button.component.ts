@@ -5,13 +5,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -23,6 +24,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class AppSettingsButtonComponent {
   readonly searchableElements = appSettingsButtonElements;
+  protected readonly manageCatalogRequiredRoles = [Role.AppsWrite, Role.CatalogWrite];
+  protected readonly updateDockerRoles = [Role.DockerWrite];
 
   constructor(
     private ixSlideInService: IxSlideInService,

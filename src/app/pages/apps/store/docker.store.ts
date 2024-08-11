@@ -57,11 +57,8 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   initialize = this.effect((trigger$: Observable<void>) => {
     return trigger$.pipe(
       tap(() => {
-        this.patchState((state) => {
-          return {
-            ...state,
-            isLoading: true,
-          };
+        this.patchState({
+          isLoading: true,
         });
       }),
       switchMap(() => forkJoin([
@@ -70,16 +67,13 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       ])),
       tap(
         ([dockerConfig, dockerStatus]: [DockerConfig, DockerStatusResponse]) => {
-          this.patchState((state) => {
-            return {
-              ...state,
-              pool: dockerConfig.pool,
-              statusData: {
-                status: dockerStatus.status,
-                description: dockerStatus.description,
-              },
-              isLoading: false,
-            };
+          this.patchState({
+            pool: dockerConfig.pool,
+            statusData: {
+              status: dockerStatus.status,
+              description: dockerStatus.description,
+            },
+            isLoading: false,
           });
         },
       ),
@@ -103,19 +97,12 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       .pipe(
         tap((job) => {
           if (job.state === JobState.Success) {
-            this.setState((state) => {
-              return {
-                ...state,
-                pool: poolName,
-              };
+            this.patchState({
+              pool: poolName,
             });
-          }
-          if ([JobState.Failed, JobState.Aborted, JobState.Error].includes(job.state)) {
-            this.setState((state) => {
-              return {
-                ...state,
-                pool: null,
-              };
+          } else if ([JobState.Failed, JobState.Aborted, JobState.Error].includes(job.state)) {
+            this.patchState({
+              pool: null,
             });
           }
         }),
@@ -131,14 +118,11 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   dockerStatusEventUpdates(): Observable<ApiEvent<DockerStatusResponse>> {
     return this.ws.subscribe('docker.state').pipe(
       tap((dockerState) => {
-        this.patchState((state) => {
-          return {
-            ...state,
-            statusData: {
-              status: dockerState.fields.status,
-              description: dockerState.fields.description,
-            },
-          };
+        this.patchState({
+          statusData: {
+            status: dockerState.fields.status,
+            description: dockerState.fields.description,
+          },
         });
       }),
     );

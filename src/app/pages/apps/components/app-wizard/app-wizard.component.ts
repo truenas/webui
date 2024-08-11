@@ -48,7 +48,8 @@ import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -105,11 +106,14 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     return Boolean(this.catalogApp?.app_metadata && this.form?.controls['show_metadata']?.value);
   }
 
+  get hasRequiredRoles(): Observable<boolean> {
+    return this.authService.hasRole(this.requiredRoles);
+  }
+
   constructor(
     private formBuilder: FormBuilder,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
-    private matDialog: MatDialog,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -120,6 +124,8 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     private errorHandler: ErrorHandlerService,
     private dockerStore: DockerStore,
     private ws: WebSocketService,
+    private authService: AuthService,
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {

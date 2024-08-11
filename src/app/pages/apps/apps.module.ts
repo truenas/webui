@@ -60,6 +60,7 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
+import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
@@ -74,7 +75,6 @@ import { AvailableAppsHeaderComponent } from './components/available-apps/availa
 import { AvailableAppsComponent } from './components/available-apps/available-apps.component';
 import { CategoryViewComponent } from './components/available-apps/category-view/category-view.component';
 import { CustomAppButtonComponent } from './components/available-apps/custom-app-button/custom-app-button.component';
-import { AppContainersCardComponent } from './components/installed-apps/app-containers-card/app-containers-card.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
@@ -94,7 +94,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppInfoCardComponent,
     AppRowComponent,
     AppDetailsPanelComponent,
-    AppContainersCardComponent,
+    AppWorkloadsCardComponent,
     AppResourcesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,

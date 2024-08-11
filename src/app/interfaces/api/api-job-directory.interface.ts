@@ -80,9 +80,7 @@ export interface ApiJobDirectory {
   'app.stop': { params: AppStartQueryParams; response: void };
   'app.delete': { params: AppDeleteParams; response: boolean };
   'app.upgrade': { params: AppUpgradeParams; response: App };
-
-  // Chart Release
-  'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
+  'app.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };

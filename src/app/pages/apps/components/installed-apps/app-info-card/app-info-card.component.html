@@ -12,18 +12,18 @@
       >
         {{ 'Edit' | translate }}
       </button>
-      <ng-container *ixRequiresRoles="requiredRoles">
-        @if (hasUpdates) {
-          <button
-            id="update-app"
-            mat-button
-            [ixTest]="[app?.name, 'update']"
-            (click)="updateButtonPressed()"
-          >
-            {{ 'Update' | translate }}
-          </button>
-        }
-      </ng-container>
+
+      @if (hasUpdates) {
+        <button
+          *ixRequiresRoles="requiredRoles"
+          id="update-app"
+          mat-button
+          [ixTest]="[app?.name, 'update']"
+          (click)="updateButtonPressed()"
+        >
+          {{ 'Update' | translate }}
+        </button>
+      }
     </div>
   </mat-card-header>
   <mat-card-content>
@@ -49,13 +49,6 @@
             }
           </div>
         </div>
-        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        <div class="details-item">
-          <div class="label">{{ 'Last Updated' | translate }}:</div>
-          <div class="value">
-            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
-          </div>
-        </div>
         <div class="details-item sources">
           <div class="label">{{ 'Source' | translate }}:</div>
           <div class="value">
@@ -77,22 +70,7 @@
             </div>
         </div>
         </div>
-        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        <div class="details-item">
-          <div class="label">{{ 'Developer' | translate }}:</div>
-          <div class="value">
-            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
-          </div>
-        </div>
-        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
-        @if (false) {
-          <div class="details-item">
-            <div class="label">{{ 'Commits in the last 60 days' | translate }}:</div>
-            <div class="value">
-              <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
-            </div>
-          </div>
-        }
+
         <div class="details-item">
           <div class="label">{{ 'Train' | translate }}:</div>
           <div class="value">
@@ -101,13 +79,14 @@
         </div>
         @if (app?.portals) {
           <div class="portals">
-            @for (portal of app.portals | keyvalue; track portal) {
+            @for (portal of app.portals | keyvalue; track portal.key) {
               <button
                 mat-button
+                class="portal-button"
                 [ixTest]="['portal', app.name, portal.key]"
                 (click)="portalLink(app, portal.key)"
               >
-                {{ portalName(portal.key) }}
+                {{ portal.key }}
               </button>
             }
           </div>

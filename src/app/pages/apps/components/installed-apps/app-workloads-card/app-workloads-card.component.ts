@@ -1,52 +1,62 @@
 import {
-  ChangeDetectionStrategy, Component, Input, ChangeDetectorRef, OnChanges,
+  ChangeDetectionStrategy, Component, input, computed,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { App, ChartContainerImage } from 'app/interfaces/app.interface';
-// import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
+import { App, AppContainerDetails, appContainerStateLabels } from 'app/interfaces/app.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
-import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { getPorts } from 'app/pages/apps/utils/get-ports';
+import {
+  VolumeMountsDialogComponent,
+} from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-app-containers-card',
-  templateUrl: './app-containers-card.component.html',
-  styleUrls: ['./app-containers-card.component.scss'],
+  templateUrl: './app-workloads-card.component.html',
+  styleUrls: ['./app-workloads-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppContainersCardComponent implements OnChanges {
-  @Input() app: App;
-  isLoading = false;
-  readonly chartReleaseStatus = CatalogAppState;
+export class AppWorkloadsCardComponent {
+  readonly app = input.required<App>();
 
-  containerImages: Record<string, ChartContainerImage>;
+  readonly CatalogAppState = CatalogAppState;
 
   protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly appContainerStateLabels = appContainerStateLabels;
 
   constructor(
-    private appService: ApplicationsService,
-    private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private router: Router,
-    private translate: TranslateService,
-  ) {
-    // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-    // this.containerImages = this.app?.resources?.container_images;
-  }
+  ) {}
 
-  ngOnChanges(): void {
-    this.getResources();
+  protected readonly hostPorts = computed(() => {
+    const hostPorts: { hostIp: string; hostPort: string; containerPort: string; protocol: string }[] = [];
+
+    this.app().active_workloads.used_ports.forEach((port) => {
+      port.host_ports.forEach((hostPort) => {
+        hostPorts.push({
+          hostIp: hostPort.host_ip,
+          hostPort: hostPort.host_port,
+          containerPort: port.container_port,
+          protocol: port.protocol,
+        });
+      });
+    });
+
+    return hostPorts;
+  });
+
+  volumeButtonPressed(containerDetails: AppContainerDetails): void {
+    this.matDialog.open(VolumeMountsDialogComponent, {
+      data: containerDetails,
+    });
   }
 
   // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-  // shellButtonPressed(containerImageKey: string): void {
+  shellButtonPressed(_: string): void {
   // this.matDialog.open(PodSelectDialogComponent, {
   //   minWidth: '650px',
   //   maxWidth: '850px',
@@ -59,9 +69,9 @@ export class AppContainersCardComponent implements OnChanges {
   //     customSubmit: (values: PodDialogFormValue) => this.shellDialogSubmit(values),
   //   },
   // });
-  // }
+  }
 
-  // viewLogsButtonPressed(containerImageKey: string): void {
+  viewLogsButtonPressed(_: string): void {
   // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
 
   // this.matDialog.open(PodSelectDialogComponent, {
@@ -78,38 +88,14 @@ export class AppContainersCardComponent implements OnChanges {
   //     },
   //   },
   // });
-  // }
-
-  private getResources(): void {
-    this.isLoading = true;
-    this.appService.getApp(this.app.name).pipe(
-      map((apps) => apps[0]),
-      untilDestroyed(this),
-    ).subscribe({
-      next: (app) => {
-        this.app = app;
-        this.isLoading = false;
-        // this.containerImages = this.app?.resources?.container_images;
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.app = undefined;
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  getPorts(app: App): string {
-    return getPorts(app.active_workloads.used_ports);
   }
 
   private shellDialogSubmit(formValue: PodDialogFormValue): void {
     this.router.navigate([
       '/apps',
       'installed',
-      this.app.metadata.train,
-      this.app.name,
+      this.app().metadata.train,
+      this.app().name,
       'shell',
       formValue.pods,
       formValue.command,
@@ -121,8 +107,8 @@ export class AppContainersCardComponent implements OnChanges {
     this.router.navigate([
       '/apps',
       'installed',
-      this.app.metadata.train,
-      this.app.name,
+      this.app().metadata.train,
+      this.app().name,
       'logs',
       formValue.pods,
       formValue.containers,

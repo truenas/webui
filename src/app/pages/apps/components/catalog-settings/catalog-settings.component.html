@@ -1,6 +1,7 @@
 <ix-modal-header
   [title]="'Edit Catalog' | translate"
   [loading]="isFormLoading()"
+  [requiredRoles]="requiredRoles"
 ></ix-modal-header>
 
 <mat-card>
@@ -17,6 +18,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

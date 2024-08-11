@@ -5,10 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('AppSettingsButtonComponent', () => {
@@ -20,6 +21,7 @@ describe('AppSettingsButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: AppSettingsButtonComponent,
     providers: [
+      mockAuth(),
       mockProvider(MatDialog),
       mockProvider(IxSlideInService),
       mockProvider(DialogService, {

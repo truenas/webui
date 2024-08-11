@@ -5,7 +5,7 @@ import { map } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { customAppButtonElements } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.elements';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 
 @UntilDestroy()
 @Component({
