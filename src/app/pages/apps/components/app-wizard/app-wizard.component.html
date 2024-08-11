@@ -24,9 +24,7 @@
         ></ix-dynamic-wizard>
 
         @if (showAppMetadata) {
-          <ix-app-metadata-card
-            [appMetadata]="catalogApp.app_metadata"
-          ></ix-app-metadata-card>
+          <ix-app-metadata-card [appMetadata]="catalogApp.app_metadata"></ix-app-metadata-card>
         }
         <div class="actions">
           <button

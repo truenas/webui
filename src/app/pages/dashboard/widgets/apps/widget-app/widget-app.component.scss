@@ -39,13 +39,6 @@
     flex-direction: column;
     height: 100%;
   }
-
-  .controls {
-    align-items: center;
-    color: var(--fg2);
-    display: flex;
-    flex-direction: row;
-  }
 }
 
 .container {
@@ -83,41 +76,6 @@ ix-app-card-logo {
   max-width: 30%;
   padding: 0;
   place-content: center center;
-}
-
-.app-info {
-  background: var(--bg1);
-  display: inline-flex;
-  flex: 1 1 70%;
-  flex-direction: column;
-  max-width: 70%;
-
-  .app-header {
-    align-items: baseline;
-    border-bottom: 1px solid var(--lines);
-    display: flex;
-    justify-content: space-between;
-    min-height: 48px;
-    padding: 8px;
-  }
-
-  .app-status {
-    display: flex;
-    flex-direction: column;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 8px 12px;
-
-    ix-app-update-cell {
-      gap: 8px;
-    }
-
-    ::ng-deep ix-with-loading-state-loader {
-      height: 24px;
-      margin-bottom: 4px;
-      margin-top: 4px;
-    }
-  }
 }
 
 .app-header-row {
@@ -167,58 +125,5 @@ ix-app-card-logo {
     flex: 1 1 80%;
     max-width: 80%;
     place-content: center center;
-  }
-}
-
-.chart-info {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  height: 100%;
-  justify-content: space-around;
-  padding: 6px 0 6px 8px;
-  width: 100%;
-
-  h4,
-  small {
-    color: var(--fg2);
-  }
-
-  small {
-    font-weight: 500;
-    opacity: 0.75;
-  }
-
-  .in-out {
-    font-size: 12px;
-  }
-
-  .in-out-row {
-    align-items: center;
-    display: flex;
-    gap: 4px;
-    white-space: nowrap;
-  }
-}
-
-.ix-icon {
-  &.mdi-check-circle {
-    color: var(--green);
-  }
-
-  &.mdi-progress-wrench,
-  &.mdi-alert-circle {
-    color: var(--yellow);
-  }
-
-  &.mdi-stop-circle {
-    color: var(--red);
-  }
-}
-
-.chart-graph {
-  .skeleton {
-    display: flex;
-    padding: 4px;
   }
 }

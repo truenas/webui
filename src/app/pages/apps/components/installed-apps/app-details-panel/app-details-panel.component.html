@@ -28,12 +28,10 @@
         (stopApp)="stopApp.emit()"
       ></ix-app-info-card>
       <ix-app-containers-card [app]="app()"></ix-app-containers-card>
-      @if (app()?.app_metadata) {
-        <ix-app-metadata-card
-          [appMetadata]="app().app_metadata"
-          [maxHeight]="180"
-        ></ix-app-metadata-card>
-      }
+      <ix-app-metadata-card
+        [appMetadata]="app().metadata"
+        [maxHeight]="180"
+      ></ix-app-metadata-card>
     </div>
   </div>
 }

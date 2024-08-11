@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  width: 100%;
+
+  .title {
+    text-transform: capitalize;
+  }
+}
+
+.close {
+  margin-left: auto;
+}
+
+.table-container {
+  max-width: 100%;
+  overflow: auto;
+
+  table {
+    width: 100%;
+  }
+
+  th,
+  td {
+    text-align: left;
+    vertical-align: top;
+  }
+}
+
+.path {
+  word-break: break-all;
+  word-wrap: break-word;
+}

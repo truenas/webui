@@ -50,15 +50,9 @@
     ></tbody>
   </ix-table>
 
-  @if (nfsShares.length > 4) {
-    <a
-      class="view-all"
-      [ixTest]="['nfs-share', 'view-all']"
-      [routerLink]="['/sharing', 'nfs']"
-    >
-      <span>
-        {{ 'View All' | translate }}
-      </span>
-    </a>
-  }
+  <ix-table-pager-show-more
+    [pageSize]="4"
+    [dataProvider]="dataProvider"
+    [routerLink]="['/sharing', 'nfs']"
+  ></ix-table-pager-show-more>
 </mat-card>

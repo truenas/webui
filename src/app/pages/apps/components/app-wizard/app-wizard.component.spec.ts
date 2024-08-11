@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -11,8 +10,8 @@ import { MockComponent, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
+import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -24,7 +23,7 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -233,7 +232,7 @@ describe('AppWizardComponent', () => {
     latest_version: '1.2.1',
   } as CatalogApp;
 
-  const existingChartEdit = {
+  const existingAppEdit = {
     name: 'app-name',
     id: 'app_name',
     config: {
@@ -241,7 +240,8 @@ describe('AppWizardComponent', () => {
       release_name: 'app_name',
       timezone: 'America/Los_Angeles',
     } as Record<string, ChartFormValue>,
-    chart_schema: {
+    metadata: {},
+    version_details: {
       schema: {
         groups: [
           { name: 'Machinaris Configuration' },
@@ -281,14 +281,14 @@ describe('AppWizardComponent', () => {
       }),
       mockProvider(ApplicationsService, {
         getCatalogAppDetails: jest.fn(() => of(existingCatalogApp)),
-        getApp: jest.fn(() => of([existingChartEdit])),
-        getAllApps: jest.fn(() => of([existingChartEdit])),
+        getApp: jest.fn(() => of([existingAppEdit])),
+        getAllApps: jest.fn(() => of([existingAppEdit])),
       }),
       mockWebSocket([
         mockJob('app.create'),
         mockJob('app.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
-        mockCall('app.query', [existingChartEdit]),
+        mockCall('app.query', [existingAppEdit]),
         // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
         // mockCall('container.image.dockerhub_rate_limit', {
         //   total_pull_limit: 13,
@@ -317,7 +317,7 @@ describe('AppWizardComponent', () => {
             provide: ActivatedRoute,
             useValue: {
               parent: {
-                params: of({ appId: 'app_name', catalog: 'TRUENAS', train: 'charts' }),
+                params: of({ appId: 'app_name', catalog: 'TRUENAS', train: 'stable' }),
               },
               routeConfig: { path: 'edit' },
             },
@@ -336,7 +336,7 @@ describe('AppWizardComponent', () => {
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'charts', 'app_name']);
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'stable', 'app_name']);
     });
 
     it('shows values for an existing data when form is opened for edit', () => {
@@ -374,7 +374,7 @@ describe('AppWizardComponent', () => {
             provide: ActivatedRoute,
             useValue: {
               parent: {
-                params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'charts' }),
+                params: of({ appId: 'ipfs', catalog: 'TRUENAS', train: 'stable' }),
               },
               routeConfig: { path: 'install' },
             },
@@ -393,7 +393,7 @@ describe('AppWizardComponent', () => {
       Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
       spectator.component.ngOnInit();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'charts', 'ipfs']);
+      expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'stable', 'ipfs']);
     });
 
     it('checks validation error when app name already in use', async () => {
@@ -450,7 +450,7 @@ describe('AppWizardComponent', () => {
           catalog: 'TRUENAS',
           item: 'ipfs',
           release_name: 'appname',
-          train: 'charts',
+          train: 'stable',
           values: {
             release_name: 'appname',
             service: {

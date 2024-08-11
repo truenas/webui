@@ -18,7 +18,7 @@ import {
   distinctUntilChanged,
   filter, map, take, tap,
 } from 'rxjs/operators';
-import { ixChartApp } from 'app/constants/catalog.constants';
+import { customApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -46,7 +46,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -87,7 +87,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   pageTitle$ = this._pageTitle$.asObservable().pipe(
     filter(Boolean),
     map((name) => {
-      if (name === ixChartApp) {
+      if (name === customApp) {
         return `${this.titlePrefix} ${this.translate.instant('Custom App')}`;
       }
       return `${this.titlePrefix} ${name}`;
@@ -161,7 +161,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (app) => {
-          this.setChartForCreation({
+          this.setAppForCreation({
             ...app,
             schema: app.versions[app.latest_version].schema,
           });
@@ -303,12 +303,12 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       });
   }
 
-  private setChartForCreation(catalogApp: CatalogApp): void {
+  private setAppForCreation(catalogApp: CatalogApp): void {
     this.rootDynamicSection = [];
     this.catalogApp = catalogApp;
     this._pageTitle$.next(this.catalogApp.title || this.catalogApp.name);
     let hideVersion = false;
-    if (this.catalogApp.name === ixChartApp) {
+    if (this.catalogApp.name === customApp) {
       hideVersion = true;
     }
     const versionKeys: string[] = [];
@@ -373,7 +373,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       });
     }
 
-    if (this.catalogApp.name !== ixChartApp) {
+    if (this.catalogApp.name !== customApp) {
       this.form.patchValue({ release_name: this.catalogApp.name });
       this.forbiddenAppNames$.pipe(
         map((forbiddenNames) => {
@@ -396,7 +396,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     this.config = app.config;
     this.config.release_name = app.id;
 
-    this._pageTitle$.next(app.title || app.name);
+    this._pageTitle$.next(app.metadata.title || app.name);
 
     this.form.addControl('release_name', new FormControl(app.name, [Validators.required]));
 
@@ -415,7 +415,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       ],
     });
 
-    this.buildDynamicForm(app.chart_schema.schema);
+    this.buildDynamicForm(app.version_details.schema);
   }
 
   private afterAppLoaded(): void {

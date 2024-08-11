@@ -67,6 +67,7 @@ function createUiSearchElement(
     const child = parent?.elements?.[childKey] || parent?.manualRenderElements?.[childKey] || {};
 
     const hierarchy = [...parent?.hierarchy || [], ...child?.hierarchy || []];
+    const visibleTokens = [...parent?.visibleTokens || [], ...child?.visibleTokens || []];
 
     const synonyms = [...new Set([
       ...(parent?.synonyms || []),
@@ -93,6 +94,7 @@ function createUiSearchElement(
       hierarchy,
       synonyms,
       requiredRoles,
+      visibleTokens,
       anchorRouterLink,
       routerLink,
       anchor: child.anchor || parent.anchor || generateIdFromHierarchy(child.hierarchy || parent.hierarchy || []),

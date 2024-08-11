@@ -31,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
-  protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
   form = this.fb.group({
     sort: [null as AppsFiltersSort],
@@ -120,7 +120,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     });
   }
 
-  refreshCharts(): void {
+  refreshCatalog(): void {
     this.dialogService.jobDialog(
       this.ws.job('catalog.sync'),
       {

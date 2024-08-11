@@ -80,13 +80,12 @@ export interface ApiJobDirectory {
   'app.stop': { params: AppStartQueryParams; response: void };
   'app.delete': { params: AppDeleteParams; response: boolean };
   'app.upgrade': { params: AppUpgradeParams; response: App };
-
-  // Chart Release
-  'chart.release.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
+  'app.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
   'cloud_backup.restore': { params: CloudBackupRestoreParams; response: CloudBackupSnapshot[] };
+  'cloud_backup.delete_snapshot': { params: [taskId: number, snapshotId: string]; response: void };
 
   // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };

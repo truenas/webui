@@ -1,5 +1,4 @@
-import * as inquirer from 'inquirer';
-import type { QuestionCollection } from 'inquirer';
+import { confirm, select, input } from '@inquirer/prompts';
 import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import {
   MockStorageScenario,
@@ -8,19 +7,9 @@ import {
 // eslint-disable-next-line no-restricted-imports
 import { getCurrentConfig, updateEnvironment } from '../utils/save-environment';
 
-interface Answers {
-  controllerModel: string;
-  expansionModels: string;
-  scenario: MockStorageScenario;
-}
-
 export async function mockEnclosureCommand(): Promise<void> {
   console.info(currentMockConfig());
-  const { enable }: { enable: boolean } = await inquirer.prompt({
-    name: 'enable',
-    type: 'confirm',
-    message: 'Enable enclosure mocking?',
-  });
+  const enable = await confirm({ message: 'Enable enclosure mocking?' });
 
   if (!enable) {
     updateEnvironment({
@@ -31,59 +20,47 @@ export async function mockEnclosureCommand(): Promise<void> {
     return;
   }
 
-  const answers = await inquirer.prompt<Answers>(getMockQuestions());
+  const controllerModel = await select({
+    message: 'Select a controller model',
+    choices: enclosureMocks
+      .filter((mock) => mock.controller)
+      .map((mock) => ({
+        name: mock.model,
+        value: mock.model,
+      })),
+  });
 
-  const expansionModels = answers.expansionModels
-    ? answers.expansionModels.split(',').map((model) => model.trim())
+  const allShelves = enclosureMocks
+    .filter((mock) => !mock.controller)
+    .map((mock) => mock.model);
+
+  const expansionModelsAnswer = await input({
+    message: `What expansion shelves would you like to use?
+Enter zero or more answers separated with a comma.
+Available options: ${allShelves.join(', ')}:\n`,
+    default: '',
+  });
+  const expansionModels = expansionModelsAnswer
+    ? expansionModelsAnswer.split(',').map((model) => model.trim())
     : [];
+
+  const scenario = await select({
+    message: 'Select mocking scenario',
+    choices: Array.from(mockStorageScenarioLabels).map(([key, name]) => ({
+      name,
+      value: key,
+    })),
+    default: MockStorageScenario.FillSomeSlots,
+  });
 
   updateEnvironment({
     mockConfig: {
+      controllerModel,
       expansionModels,
+      scenario,
       enabled: true,
-      controllerModel: answers.controllerModel,
-      scenario: answers.scenario,
     },
   });
-}
-
-// MockEnclosureConfig
-function getMockQuestions(): QuestionCollection {
-  return [
-    {
-      name: 'controllerModel',
-      message: 'Select a controller model',
-      type: 'list',
-      choices: enclosureMocks
-        .filter((mock) => mock.controller)
-        .map((mock) => mock.model),
-    },
-    {
-      name: 'expansionModels',
-      message: () => {
-        const shelves = enclosureMocks
-          .filter((mock) => !mock.controller)
-          .map((mock) => mock.model);
-        return `What expansion shelves would you like to use?
-Enter zero or more answers separated with a comma.
-Available options: ${shelves.join(', ')}:\n`;
-      },
-      type: 'input',
-      default: '',
-    },
-    {
-      name: 'scenario',
-      message: 'Select mocking scenario',
-      type: 'list',
-      choices: () => {
-        return Array.from(mockStorageScenarioLabels).map(([key, name]) => ({
-          name,
-          value: key,
-        }));
-      },
-      default: MockStorageScenario.FillSomeSlots,
-    },
-  ];
 }
 
 export function currentMockConfig(): string {

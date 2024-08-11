@@ -9,8 +9,8 @@ export function getAppStatus(app: App, _?: Job<void, AppStartQueryParams>): AppS
   let status: AppStatus;
 
   switch (app.state) {
-    case CatalogAppState.Active:
-      status = AppStatus.Started;
+    case CatalogAppState.Running:
+      status = AppStatus.Running;
       break;
     case CatalogAppState.Deploying:
       status = AppStatus.Deploying;

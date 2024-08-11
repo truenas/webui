@@ -1,11 +1,10 @@
 import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { BehaviorSubject, of } from 'rxjs';
+import { createComponentFactory } from '@ngneat/spectator/jest';
+import { BehaviorSubject } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
-import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 describe('AppAvailableInfoCardComponent', () => {
   let spectator: Spectator<AppAvailableInfoCardComponent>;
@@ -18,6 +17,10 @@ describe('AppAvailableInfoCardComponent', () => {
     last_update: { $date: 1684134487000 },
     latest_version: '1.0.9',
     latest_app_version: '2023.5.3',
+    sources: [
+      'https://github.com/home-assistant/home-assistant',
+      'https://github.com/truenas/charts/tree/master/library/ix-dev/charts/home-assistant',
+    ],
     maintainers: [
       {
         name: 'truenas',
@@ -32,23 +35,6 @@ describe('AppAvailableInfoCardComponent', () => {
     imports: [
       CleanLinkPipe,
       OrNotAvailablePipe,
-    ],
-    providers: [
-      mockProvider(ApplicationsService, {
-        getCatalogAppDetails: jest.fn(() => of({
-          ...fakeApp,
-          versions: {
-            '1.0.9': {
-              metadata: {
-                sources: [
-                  'https://github.com/home-assistant/home-assistant',
-                  'https://github.com/truenas/charts/tree/master/library/ix-dev/charts/home-assistant',
-                ],
-              },
-            },
-          },
-        })),
-      }),
     ],
   });
 
@@ -70,9 +56,8 @@ describe('AppAvailableInfoCardComponent', () => {
     expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Source:github.com/home-assistant/home-assistant');
     expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Last App Update: 05/15/2023');
 
-    expect(spectator.component.sources).toStrictEqual([
-      'https://github.com/home-assistant/home-assistant',
-      'https://github.com/truenas/charts/tree/master/library/ix-dev/charts/home-assistant',
-    ]);
+    const sources = spectator.query('.sources');
+    expect(sources).toHaveText('Source:github.com/home-assistant/home-assistant');
+    expect(sources).toHaveText('github.com/truenas/charts/tree/master/library/ix-dev/charts/home-assistant');
   });
 });

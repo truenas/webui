@@ -67,6 +67,12 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   readonly initialize = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
+      switchMap(() => this.loadCatalog()),
+    );
+  });
+
+  loadCatalog(): Observable<unknown> {
+    return of(null).pipe(
       tap(() => {
         this.patchState({
           ...initialState,
@@ -93,7 +99,7 @@ export class AppsStore extends ComponentStore<AppsState> {
         return EMPTY;
       }),
     );
-  });
+  }
 
   private loadLatestApps(): Observable<unknown> {
     return this.appsService.getLatestApps().pipe(

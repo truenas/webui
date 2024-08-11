@@ -27,7 +27,7 @@ import {
   AppResourcesCardComponent,
 } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AuthService } from 'app/services/auth/auth.service';
 

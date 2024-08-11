@@ -20,49 +20,32 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { WebSocketService } from 'app/services/ws.service';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 
 const fakeAppOne = {
   name: 'test-app-one',
-  version: 1,
-  namespace: 'ix-test-app-one',
+  version: '1',
   id: 'test-app-one',
-  catalog: 'TRUENAS',
-  catalog_train: 'charts',
-  path: '/mnt/tank/ix-applications/releases/test-pihole',
-  dataset: 'tank/ix-applications/releases/test-pihole',
-  state: 'ACTIVE',
-  history: {},
+  state: CatalogAppState.Running,
   upgrade_available: true,
   human_version: '2022.10_1.0.7',
-  human_latest_version: '2022.10_1.0.8',
-  pod_status: { desired: 1, available: 1 },
-  used_ports: [],
   metadata: {
     icon: 'path-to-icon',
+    train: 'stable',
   },
-  container_images_update_available: false,
 } as App;
 
 const fakeAppTwo = {
   name: 'test-app-two',
-  version: 1,
-  namespace: 'ix-test-app-one',
+  version: '1',
   id: 'test-app-two',
-  catalog: 'TRUENAS',
-  catalog_train: 'charts',
-  path: '/mnt/tank/ix-applications/releases/test-nextcloud',
-  dataset: 'tank/ix-applications/releases/test-nextcloud',
-  state: 'ACTIVE',
-  history: {},
+  state: CatalogAppState.Running,
   upgrade_available: true,
   human_version: '25_1.6.33',
-  human_latest_version: '25_1.6.34',
-  pod_status: { desired: 2, available: 2 },
-  used_ports: [],
   metadata: {
     icon: 'path-to-icon',
+    train: 'stable'
   },
-  container_images_update_available: true,
 } as App;
 
 const fakeUpgradeSummary: AppUpgradeSummary = {

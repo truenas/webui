@@ -28,7 +28,7 @@ describe.skip('AppStatusCellComponent', () => {
   }
 
   it('checks status for running app', () => {
-    setupTest({ status: CatalogAppState.Active } as unknown as App);
+    setupTest({ status: CatalogAppState.Running } as unknown as App);
 
     expect(spectator.query('span')).toHaveText('Running');
   });
@@ -59,7 +59,7 @@ describe.skip('AppStatusCellComponent', () => {
 
   it('checks status for stopping app', () => {
     setupTest(
-      { status: CatalogAppState.Active } as unknown as App,
+      { status: CatalogAppState.Running } as unknown as App,
       // {
       //   arguments: ['fake-name', { replica_count: 0 }] as AppStartQueryParams,
       //   state: JobState.Running,

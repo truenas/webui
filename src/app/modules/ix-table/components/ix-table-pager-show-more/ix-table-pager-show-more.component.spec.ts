@@ -32,7 +32,7 @@ describe('IxTablePagerShowMoreComponent', () => {
     spectator = createComponent({
       props: { dataProvider, pageSize: 2 },
     });
-    spectator.component.dataProvider.setRows(testTableData);
+    spectator.component.dataProvider().setRows(testTableData);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.fixture.detectChanges();
   });

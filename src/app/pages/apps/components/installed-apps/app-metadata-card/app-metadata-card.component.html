@@ -2,18 +2,14 @@
   <mat-card-header>
     <h3 mat-card-title>
       <span>{{ 'Application Metadata' | translate }}</span>
-      <ix-icon
-        name="mdi-information"
-        [matTooltip]="'This information is provided by the catalog maintainer.' | translate"
-      ></ix-icon>
     </h3>
   </mat-card-header>
   <mat-card-content>
-    @if (appMetadata()?.hostMounts) {
+    @if (appMetadata()?.host_mounts?.length) {
       <ix-app-section-expand-collapse id="hostMounts" [maxHeight]="maxHeight()">
         <h4 class="card-subtitle">{{ 'Host Mounts' | translate }}</h4>
         <div class="details-list">
-          @for (item of appMetadata().hostMounts; track item) {
+          @for (item of appMetadata().host_mounts; track item) {
             <div class="details-item">
               <div class="label">{{ item.hostPath }}</div>
               <div class="value">{{ item.description }}</div>
@@ -23,7 +19,7 @@
       </ix-app-section-expand-collapse>
     }
 
-    @if (appMetadata()?.capabilities) {
+    @if (appMetadata()?.capabilities?.length) {
       <ix-app-section-expand-collapse id="capabilities" [maxHeight]="maxHeight()">
         <h4 class="card-subtitle">{{ 'Capabilities' | translate }}</h4>
         <div class="details-list">
@@ -37,11 +33,11 @@
       </ix-app-section-expand-collapse>
     }
 
-    @if (appMetadata()?.runAsContext) {
+    @if (appMetadata()?.run_as_context?.length) {
       <ix-app-section-expand-collapse id="runAsContext" [maxHeight]="maxHeight()">
         <h4 class="card-subtitle">{{ 'Run As Context' | translate }}</h4>
         <div class="details-list">
-          @for (item of appMetadata().runAsContext; track item) {
+          @for (item of appMetadata().run_as_context; track item) {
             <div class="details-entry">
               <div class="details-item">
                 <div class="label">{{ 'UID' | translate }}:</div>
@@ -53,11 +49,11 @@
               </div>
               <div class="details-item">
                 <div class="label">{{ 'Username' | translate }}:</div>
-                <div class="value">{{ item.userName }}</div>
+                <div class="value">{{ item.user_name }}</div>
               </div>
               <div class="details-item">
                 <div class="label">{{ 'Groupname' | translate }}:</div>
-                <div class="value">{{ item.groupName }}</div>
+                <div class="value">{{ item.group_name }}</div>
               </div>
               <div class="details-item">
                 <div class="label">{{ 'Description' | translate }}:</div>

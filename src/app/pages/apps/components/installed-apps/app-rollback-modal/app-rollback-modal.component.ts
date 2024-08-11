@@ -46,7 +46,7 @@ export class AppRollbackModalComponent {
     const rollbackParams = this.form.value as Required<ChartRollbackParams>;
 
     this.dialogService.jobDialog(
-      this.ws.job('chart.release.rollback', [this.app.name, rollbackParams]),
+      this.ws.job('app.rollback', [this.app.name, rollbackParams]),
       { title: helptextApps.apps.rollback_dialog.job },
     )
       .afterClosed()
@@ -55,7 +55,8 @@ export class AppRollbackModalComponent {
   }
 
   private setVersionOptions(): void {
-    const options = Object.keys(this.app.history).map((version) => ({
+    // TODO: Fix App Rollback
+    const options = Object.keys({}).map((version) => ({
       label: version,
       value: version,
     }));
@@ -68,7 +69,8 @@ export class AppRollbackModalComponent {
 
   private selectFirstVersion(): void {
     this.form.patchValue({
-      app_version: Object.keys(this.app.history)[0],
+      // TODO: Fix App Rollback
+      app_version: Object.keys({})[0],
     });
   }
 }

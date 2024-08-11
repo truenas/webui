@@ -11,7 +11,7 @@ import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { DockerStore } from 'app/pages/apps/store/docker.service';
+import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface InstalledAppsState {
@@ -44,18 +44,15 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   readonly initialize = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       tap(() => {
-        this.patchState({
+        this.setState({
           ...initialState,
           isLoading: true,
         });
       }),
       switchMap(() => this.loadInstalledApps()),
       tap(() => {
-        this.patchState((state: InstalledAppsState): InstalledAppsState => {
-          return {
-            ...state,
-            isLoading: false,
-          };
+        this.patchState({
+          isLoading: false,
         });
       }),
       catchError((error: unknown) => {
@@ -67,11 +64,8 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
 
   private handleError(error: unknown): void {
     this.errorHandler.showErrorModal(error);
-    this.patchState((state: InstalledAppsState): InstalledAppsState => {
-      return {
-        ...state,
-        isLoading: false,
-      };
+    this.patchState({
+      isLoading: false,
     });
   }
 
@@ -91,7 +85,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
 
     // TODO: Messy. Refactor.
     this.installedAppsSubscription = this.appsService.getInstalledAppsUpdates().pipe(
-      tap(() => this.patchState((state) => ({ ...state, isLoading: true }))),
+      tap(() => this.patchState({ isLoading: true })),
       tap((apiEvent: ApiEvent) => {
         if (apiEvent.msg === IncomingApiMessageType.Removed) {
           this.patchState((state: InstalledAppsState): InstalledAppsState => {
@@ -112,7 +106,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       }),
       filter((apiEvent) => {
         if (apiEvent.msg === IncomingApiMessageType.Removed) {
-          this.patchState((state) => ({ ...state, isLoading: false }));
+          this.patchState({ isLoading: false });
         }
         return apiEvent.msg !== IncomingApiMessageType.Removed;
       }),
@@ -155,18 +149,21 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
           };
         });
       }),
-      tap(() => this.patchState((state) => ({ ...state, isLoading: false }))),
+      tap(() => this.patchState({ isLoading: false })),
       untilDestroyed(this),
     ).subscribe();
   }
 
   private loadInstalledApps(): Observable<unknown> {
-    return this.dockerStore.isLoading$.pipe(
+    return combineLatest([
+      this.dockerStore.isLoading$,
+      this.dockerStore.isDockerStarted$,
+    ]).pipe(
       filter(
-        (loading) => !loading,
+        ([loading, isDockerStarted]) => {
+          return !loading && isDockerStarted !== null;
+        },
       ),
-      switchMap(() => this.dockerStore.isDockerStarted$),
-      filter((isDockerStarted) => isDockerStarted !== null),
       tap((isDockerStarted) => {
         if (isDockerStarted) {
           this.subscribeToInstalledAppsUpdates();
@@ -179,11 +176,8 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
 
         return this.appsService.getAllApps().pipe(
           tap((installedApps: App[]) => {
-            this.patchState((state: InstalledAppsState): InstalledAppsState => {
-              return {
-                ...state,
-                installedApps: [...installedApps],
-              };
+            this.patchState({
+              installedApps: [...installedApps],
             });
           }),
         );

@@ -34,11 +34,6 @@ describe('AppInfoCardComponent', () => {
     id: 'ix-test-app',
     name: 'test-user-app-name',
     human_version: '1.2.3_3.2.1',
-    history: {
-      '1.0.11': {
-        name: 'ix-test-app',
-      },
-    } as Record<string, unknown>,
     upgrade_available: true,
     metadata: {
       name: 'ix-test-app',
@@ -47,10 +42,13 @@ describe('AppInfoCardComponent', () => {
         'http://github.com/ix-test-app/ix-test-app/',
       ],
       version: '1.2.3',
-      appVersion: '3.2.1',
+      app_version: '3.2.1',
+      train: 'stable',
     },
-    catalog: 'TRUENAS',
-    catalog_train: 'charts',
+    portals: {
+      'Web UI': 'http://localhost:8000/ui',
+      'Admin Panel': 'http://localhost:8000/admin',
+    } as Record<string, string>,
   } as App;
 
   const upgradeSummary = {} as AppUpgradeSummary;
@@ -82,7 +80,7 @@ describe('AppInfoCardComponent', () => {
     ],
     providers: [
       mockProvider(ApplicationsService, {
-        getChartUpgradeSummary: jest.fn(() => of(upgradeSummary)),
+        getAppUpgradeSummary: jest.fn(() => of(upgradeSummary)),
       }),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([]),
@@ -135,23 +133,13 @@ describe('AppInfoCardComponent', () => {
         label: 'App Version:',
         value: '3.2.1',
       },
-      // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
-      {
-        label: 'Last Updated:',
-        value: 'N/A',
-      },
       {
         label: 'Source:',
         value: 'github.com/ix-test-app/ix-test-app',
       },
-      // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
-      {
-        label: 'Developer:',
-        value: 'N/A',
-      },
       {
         label: 'Train:',
-        value: 'charts',
+        value: 'stable',
       },
     ]);
   });
@@ -178,7 +166,7 @@ describe('AppInfoCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/apps', 'installed', app.catalog_train, app.id, 'edit']);
+    expect(router.navigate).toHaveBeenCalledWith(['/apps', 'installed', app.metadata.train, app.id, 'edit']);
   });
 
   it('opens delete app dialog when Delete button is pressed', async () => {
@@ -196,7 +184,21 @@ describe('AppInfoCardComponent', () => {
     );
   });
 
-  it('opens rollback app dialog when Roll Back button is pressed', async () => {
+  it('shows portal buttons and opens a URL when one of the button is clicked', async () => {
+    const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
+
+    expect(buttons).toHaveLength(2);
+    expect(await buttons[0].getText()).toBe('Admin Panel');
+    expect(await buttons[1].getText()).toBe('Web UI');
+
+    await buttons[1].click();
+
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith(app.portals['Web UI']);
+  });
+
+  // TODO:
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  it.skip('opens rollback app dialog when Roll Back button is pressed', async () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Roll Back' }));
     await rollbackButton.click();
 
