@@ -19,6 +19,7 @@ export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChe
   dataProvider = input.required<DataProvider<T>>();
   pageSize = input(5);
   routerLink = input<string[]>([]);
+  ixTestOverride = input<string[]>([]);
 
   currentPage = signal(1);
   totalItems = signal(0);

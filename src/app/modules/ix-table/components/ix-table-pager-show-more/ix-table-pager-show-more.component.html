@@ -1,14 +1,14 @@
 @if (collapsible && !expanded()) {
   <button
     mat-stroked-button
-    ixTest="show-more"
+    [ixTest]="ixTestOverride()"
     (click)="showMore()"
   >{{ 'View All' | translate }}</button>
 }
 @if (collapsible && expanded()) {
   <button
     mat-stroked-button
-    ixTest="show-less"
+    [ixTest]="ixTestOverride()"
     (click)="showLess()"
   >{{ 'Collapse' | translate }}</button>
 }
