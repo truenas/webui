@@ -7,7 +7,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { App, AppContainerDetails, appContainerStateLabels } from 'app/interfaces/app.interface';
-import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import {
   VolumeMountsDialogComponent,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
@@ -82,29 +81,16 @@ export class AppWorkloadsCardComponent {
     ]);
   }
 
-  private shellDialogSubmit(formValue: PodDialogFormValue): void {
-    this.router.navigate([
-      '/apps',
-      'installed',
-      this.app().metadata.train,
-      this.app().name,
-      'shell',
-      formValue.pods,
-      formValue.command,
-    ]);
-  }
-
-  private logDialogSubmit(formValue: PodDialogFormValue): void {
-    const tailLines = (formValue.tail_lines).toString();
-    this.router.navigate([
-      '/apps',
-      'installed',
-      this.app().metadata.train,
-      this.app().name,
-      'logs',
-      formValue.pods,
-      formValue.containers,
-      tailLines,
-    ]);
-  }
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
+  // private shellDialogSubmit(formValue: PodDialogFormValue): void {
+  //   this.router.navigate([
+  //     '/apps',
+  //     'installed',
+  //     this.app().metadata.train,
+  //     this.app().name,
+  //     'shell',
+  //     formValue.pods,
+  //     formValue.command,
+  //   ]);
+  // }
 }

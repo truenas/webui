@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>{{ 'Set Tail Lines' | translate }}</h1>
+
+<form class="ix-form-container" [formGroup]="form">
+  <ix-input
+    formControlName="tail_lines"
+    type="number"
+    [label]="'Tail Lines' | translate"
+    [required]="true"
+  ></ix-input>
+
+  <div mat-dialog-actions align="end">
+    <button
+      mat-button
+      type="button"
+      matDialogClose
+      ixTest="cancel"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="choose"
+      [disabled]="form.invalid"
+      [matDialogClose]="this.form.value.tail_lines"
+    >
+      {{ 'Reconnect' | translate }}
+    </button>
+  </div>
+</form>
