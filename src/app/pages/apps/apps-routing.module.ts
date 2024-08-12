@@ -6,8 +6,8 @@ import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
 import { CategoryViewComponent } from 'app/pages/apps/components/available-apps/category-view/category-view.component';
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
+import { ContainerShellComponent } from 'app/pages/apps/components/installed-apps/container-shell/container-shell.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
-// import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { appNameResolver } from 'app/pages/apps/resolvers/app-name.resolver';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -54,12 +54,11 @@ const routes: Routes = [
                 component: AppWizardComponent,
                 data: { breadcrumb: null },
               },
-              // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-              // {
-              //   path: 'shell/:podName/:command',
-              //   component: PodShellComponent,
-              //   data: { title: T('Pod Shell') },
-              // },
+              {
+                path: 'shell/:containerId/:command',
+                component: ContainerShellComponent,
+                data: { title: T('Pod Shell') },
+              },
               {
                 path: 'logs/:containerId',
                 component: PodLogsComponent,
