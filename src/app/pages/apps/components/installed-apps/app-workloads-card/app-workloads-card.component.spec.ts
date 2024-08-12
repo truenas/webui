@@ -8,12 +8,14 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { App, AppContainerState } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import {
   VolumeMountsDialogComponent,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
+import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 
 describe('AppContainersCardComponent', () => {
   let spectator: Spectator<AppWorkloadsCardComponent>;
@@ -111,7 +113,7 @@ describe('AppContainersCardComponent', () => {
 
     expect(containers[0].querySelector('.service-name')).toHaveText('netdata');
     expect(containers[0].querySelector('.container-state')).toHaveText('Running');
-    expect(containers[0].querySelectorAll('.container-action button')).toHaveLength(2);
+    expect(containers[0].querySelectorAll('.container-action button')).toHaveLength(3);
   });
 
   it('opens volume mounts dialog when Volume Mounts button is pressed', async () => {
@@ -123,15 +125,25 @@ describe('AppContainersCardComponent', () => {
     });
   });
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-  it.skip('opens shell app dialog when Shell button is pressed', async () => {
+  it('opens shell app dialog when Shell button is pressed', async () => {
     const shellButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Shell"]' }));
     await shellButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(1);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      ShellDetailsDialogComponent,
+      {
+        minWidth: '650px',
+        maxWidth: '850px',
+        data: {
+          appName: app.name,
+          title: 'Choose Shell Details',
+          type: PodSelectDialogType.Shell,
+          customSubmit: expect.any(Function),
+        },
+      },
+    );
   });
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
   it.skip('opens view logs dialog when View Logs button is pressed', async () => {
     const showLogsButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="View Logs"]' }));
     await showLogsButton.click();
