@@ -190,7 +190,7 @@ export class AppInfoCardComponent {
       tap((summary) => this.hasUpdates.set(summary.available_versions_for_upgrade.length > 0)),
       catchError((error: WebSocketError) => {
         this.hasUpdates.set(false);
-        return error.reason.includes('No upgrade available') ? EMPTY : of(error);
+        return error?.reason?.includes('No upgrade available') ? EMPTY : of(error);
       }),
       untilDestroyed(this),
     ).subscribe();
