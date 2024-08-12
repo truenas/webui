@@ -3728,7 +3728,7 @@
   "Select the group to control the dataset. Groups created manually or imported from a directory service appear in the drop-down menu.": "",
   "Select the interfaces to use in the aggregation.<br>  Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.<br>The order is important because the FAILOVER lagg protocol will mark the first interface as the \"primary\" interface.": "",
   "Select the interfaces to use in the aggregation.<br> Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.": "",
-  "Select the level of severity.": "",
+  "Select the level of severity. Alert notifications send for all warnings  matching and above the selected level. For example, a warning level set to Critical  triggers notifications for Critical, Alert, and Emergency level warnings.": "",
   "Select the location of the principal in the  keytab created in <b>Directory Services > Kerberos Keytabs</b>.": "",
   "Select the minimum priority level to send to the remote syslog server.  The system only sends logs matching this level or higher.": "",
   "Select the physical interface to associate with the VM.": "",

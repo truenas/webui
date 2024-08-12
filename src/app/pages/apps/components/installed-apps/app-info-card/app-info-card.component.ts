@@ -122,6 +122,11 @@ export class AppInfoCardComponent {
     this.router.navigate(['/apps', 'installed', app.metadata.train, app.id, 'edit']);
   }
 
+  navigateToAppDetails(): void {
+    const app = this.app();
+    this.router.navigate(['/apps', 'installed', app.metadata.train, app.id]);
+  }
+
   deleteButtonPressed(): void {
     const name = this.app().name;
 
