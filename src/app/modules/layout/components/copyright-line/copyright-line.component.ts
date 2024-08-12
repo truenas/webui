@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs';
-import { productTypeLabels } from 'app/enums/product-type.enum';
+import { map, startWith } from 'rxjs';
+import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { AppState } from 'app/store';
 import { selectBuildYear, selectProductType } from 'app/store/system-info/system-info.selectors';
 
