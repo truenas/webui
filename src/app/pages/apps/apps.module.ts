@@ -62,9 +62,10 @@ import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import { VolumeMountsDialogComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
+import { ContainerShellComponent } from 'app/pages/apps/components/installed-apps/container-shell/container-shell.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
-import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
@@ -100,10 +101,9 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppResourcesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
-    // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-    // PodShellComponent,
+    ContainerShellComponent,
     PodLogsComponent,
-    PodSelectDialogComponent,
+    ShellDetailsDialogComponent,
     AppUpgradeDialogComponent,
     AppDetailsHeaderComponent,
     AppBulkUpgradeComponent,

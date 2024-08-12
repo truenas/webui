@@ -67,9 +67,8 @@ export class ShellService {
       this.ws$.next(JSON.stringify({
         token,
         options: {
-          chart_release_name: connectionData.podInfo.chartReleaseName,
-          pod_name: connectionData.podInfo.podName,
-          container_name: connectionData.podInfo.containerName,
+          app_name: connectionData.podInfo.chartReleaseName,
+          container_id: connectionData.podInfo.containerId,
           command: connectionData.podInfo.command,
         },
       }));
