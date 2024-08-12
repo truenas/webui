@@ -41,8 +41,9 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     this.interfaces(),
     (interfaces) => getNetworkInterface(interfaces, this.interfaceId()),
   ));
-  protected interfaceUsage = toSignal(toObservable(this.interfaceId).pipe(
-    filter(Boolean),
+  protected interfaceUsage = toSignal(toObservable(this.interface).pipe(
+    filter((state) => Boolean(!state.isLoading && state.value)),
+    map((state) => state.value.name),
     switchMap((interfaceId) => this.resources.realtimeUpdates$.pipe(
       throttleTime(1000),
       map((update) => update.fields.interfaces[interfaceId]),
@@ -78,8 +79,9 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     return this.interface().isLoading || !this.initialNetworkStats() || !this.interfaceUsage() || !this.networkStats();
   });
 
-  protected initialNetworkStats = toSignal(toObservable(this.interfaceId).pipe(
-    filter(Boolean),
+  protected initialNetworkStats = toSignal(toObservable(this.interface).pipe(
+    filter((state) => Boolean(!state.isLoading && state.value)),
+    map((state) => state.value.name),
     switchMap((interfaceId) => this.resources.networkInterfaceLastHourStats(interfaceId)),
     filter((response) => !!response.length),
     map((response) => {
