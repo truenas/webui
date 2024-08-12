@@ -28,9 +28,8 @@ describe('AuditComponent', () => {
     {
       audit_id: '1',
       timestamp: {
-        $date: 1712932440770,
+        $date: 1723453417000,
       },
-      message_timestamp: 1712932440,
       address: '10.220.2.21',
       username: 'Administrator',
       service: AuditService.Smb,
@@ -44,7 +43,6 @@ describe('AuditComponent', () => {
       timestamp: {
         $date: 1712932952481,
       },
-      message_timestamp: 1712932952,
       address: '10.220.2.21',
       username: 'bob',
       service: AuditService.Smb,
@@ -121,7 +119,7 @@ describe('AuditComponent', () => {
     await spectator.fixture.whenRenderingDone();
     expect(await table.getCellTexts()).toEqual([
       ['Service', 'User', 'Timestamp', 'Event', 'Event Data'],
-      ['SMB', 'Administrator', '2024-04-12 07:34:00', 'Authentication', 'Account: Administrator'],
+      ['SMB', 'Administrator', '2024-08-12 02:03:37', 'Authentication', 'Account: Administrator'],
       ['SMB', 'bob', '2024-04-12 07:42:32', 'Create', 'File: test.txt'],
     ]);
   });
