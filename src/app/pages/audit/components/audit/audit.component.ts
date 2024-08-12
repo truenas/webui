@@ -81,8 +81,7 @@ export class AuditComponent implements OnInit, OnDestroy {
     }),
     dateColumn({
       title: this.translate.instant('Timestamp'),
-      propertyName: 'message_timestamp',
-      getValue: (row) => row.message_timestamp * 1000,
+      propertyName: 'timestamp',
     }),
     textColumn({
       title: this.translate.instant('Event'),
