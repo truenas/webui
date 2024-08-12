@@ -1,5 +1,5 @@
 <ix-modal-header
-  [title]="'Edit Catalog' | translate"
+  [title]="'Train Settings' | translate"
   [loading]="isFormLoading()"
   [requiredRoles]="requiredRoles"
 ></ix-modal-header>
@@ -8,12 +8,13 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        <ix-chips
+        <ix-checkbox-list
           formControlName="preferred_trains"
-          [required]="true"
           [label]="'Preferred Trains' | translate"
           [tooltip]="tooltips.preferred_trains | translate"
-        ></ix-chips>
+          [options]="allTrains$"
+          [inlineFields]="true"
+        ></ix-checkbox-list>
       </ix-fieldset>
 
       <ix-form-actions>
