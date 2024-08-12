@@ -1,18 +1,21 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, computed, effect, EventEmitter, input, Input, InputSignal, Output,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isEmpty } from 'lodash';
-import { filter, map, take } from 'rxjs';
+import {
+  filter, map, switchMap, take, tap,
+} from 'rxjs';
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { App } from 'app/interfaces/app.interface';
-import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -32,13 +35,22 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppInfoCardComponent {
-  @Input() app: App;
+  app: InputSignal<App> = input<App>();
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
   @Input() status: AppStatus;
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly isEmpty = isEmpty;
+
+  protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
+
+  protected rollbackUpdateButtonSetEffect = effect(() => {
+    const app = this.app();
+    this.hasUpdates.set(app?.upgrade_available);
+    this.isRollbackPossible.set(false);
+    this.updateRollbackSetup(app.name);
+  }, { allowSignalWrites: true });
 
   get inProgress(): boolean {
     return [AppStatus.Deploying].includes(this.status) || this.isStartingOrStopping;
@@ -67,55 +79,51 @@ export class AppInfoCardComponent {
     private installedAppsStore: InstalledAppsStore,
   ) {}
 
-  get hasUpdates(): boolean {
-    return this.app?.upgrade_available;
-  }
+  protected hasUpdates = signal(false);
 
-  get isCustomApp(): boolean {
-    return this.app.metadata.name === customApp;
-  }
+  protected isCustomApp = computed(() => {
+    const app = this.app();
+    return app?.metadata?.name === customApp;
+  });
 
   portalLink(app: App, name = 'web_portal'): void {
     this.redirect.openWindow(app.portals[name]);
   }
 
   updateButtonPressed(): void {
-    const name = this.app.name;
-
+    const name = this.app().name;
     this.appService.getAppUpgradeSummary(name).pipe(
       this.loader.withLoader(),
+      switchMap(
+        (summary) => this.matDialog.open(AppUpgradeDialogComponent, {
+          width: '50vw',
+          minWidth: '500px',
+          maxWidth: '750px',
+          data: {
+            appInfo: this.app(),
+            upgradeSummary: summary,
+          } as AppUpgradeDialogConfig,
+        }).afterClosed(),
+      ),
+      filter(Boolean),
+      switchMap(
+        (version: string) => this.dialogService.jobDialog(
+          this.ws.job('app.upgrade', [name, { app_version: version }]),
+          { title: helptextApps.apps.upgrade_dialog.job },
+        ).afterClosed(),
+      ),
       this.errorHandler.catchError(),
       untilDestroyed(this),
-    ).subscribe((summary: AppUpgradeSummary) => {
-      this.matDialog.open(AppUpgradeDialogComponent, {
-        width: '50vw',
-        minWidth: '500px',
-        maxWidth: '750px',
-        data: {
-          appInfo: this.app,
-          upgradeSummary: summary,
-        } as AppUpgradeDialogConfig,
-      })
-        .afterClosed()
-        .pipe(filter(Boolean), untilDestroyed(this))
-        .subscribe((version: string) => {
-          this.dialogService.jobDialog(
-            this.ws.job('app.upgrade', [name, { app_version: version }]),
-            { title: helptextApps.apps.upgrade_dialog.job },
-          )
-            .afterClosed()
-            .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-            .subscribe();
-        });
-    });
+    ).subscribe();
   }
 
   editButtonPressed(): void {
-    this.router.navigate(['/apps', 'installed', this.app.metadata.train, this.app.id, 'edit']);
+    const app = this.app();
+    this.router.navigate(['/apps', 'installed', app.metadata.train, app.id, 'edit']);
   }
 
   deleteButtonPressed(): void {
-    const name = this.app.name;
+    const name = this.app().name;
 
     this.dialogService.confirm({
       title: helptextApps.apps.delete_dialog.title,
@@ -149,6 +157,15 @@ export class AppInfoCardComponent {
   }
 
   rollbackApp(): void {
-    this.matDialog.open(AppRollbackModalComponent, { data: this.app });
+    this.matDialog.open(AppRollbackModalComponent, { data: this.app() }).afterClosed().pipe(
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  private updateRollbackSetup(appName: string): void {
+    this.ws.call('app.rollback_versions', [appName]).pipe(
+      tap((versions) => this.isRollbackPossible.set(versions.length > 0)),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

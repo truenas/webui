@@ -11,7 +11,7 @@ import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockJob, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -99,6 +99,7 @@ describe('AppInfoCardComponent', () => {
       mockWebSocket([
         mockJob('app.upgrade'),
         mockJob('app.delete'),
+        mockCall('app.rollback_versions', ['1.2.1']),
       ]),
     ],
   });
@@ -113,6 +114,7 @@ describe('AppInfoCardComponent', () => {
   });
 
   it('shows header', () => {
+    spectator.detectChanges();
     expect(spectator.query('mat-card-header h3')).toHaveText('Application Info');
     expect(spectator.query('mat-card-header button#edit-app')).toHaveText('Edit');
     expect(spectator.query('mat-card-header button#update-app')).toHaveText('Update');

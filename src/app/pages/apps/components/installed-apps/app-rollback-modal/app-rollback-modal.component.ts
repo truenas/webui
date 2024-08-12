@@ -4,10 +4,10 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { App, ChartRollbackParams } from 'app/interfaces/app.interface';
+import { App, AppRollbackParams } from 'app/interfaces/app.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -43,10 +43,10 @@ export class AppRollbackModalComponent {
   }
 
   onRollback(): void {
-    const rollbackParams = this.form.value as Required<ChartRollbackParams>;
+    const rollbackParams = [this.app.name, this.form.value] as Required<AppRollbackParams>;
 
     this.dialogService.jobDialog(
-      this.ws.job('app.rollback', [this.app.name, rollbackParams]),
+      this.ws.job('app.rollback', rollbackParams),
       { title: helptextApps.apps.rollback_dialog.job },
     )
       .afterClosed()
@@ -55,22 +55,24 @@ export class AppRollbackModalComponent {
   }
 
   private setVersionOptions(): void {
-    // TODO: Fix App Rollback
-    const options = Object.keys({}).map((version) => ({
-      label: version,
-      value: version,
-    }));
-
-    this.versionOptions$ = of(options);
-    if (options.length) {
-      this.selectFirstVersion();
-    }
+    this.ws.call('app.rollback_versions', [this.app.name]).pipe(
+      tap((versions) => {
+        const options = versions.map((version) => ({
+          label: version,
+          value: version,
+        }));
+        this.versionOptions$ = of(options);
+        if (options.length) {
+          this.selectFirstVersion(options[0]);
+        }
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
-  private selectFirstVersion(): void {
+  private selectFirstVersion(firstOption: Option): void {
     this.form.patchValue({
-      // TODO: Fix App Rollback
-      app_version: Object.keys({})[0],
+      app_version: firstOption.value.toString(),
     });
   }
 }

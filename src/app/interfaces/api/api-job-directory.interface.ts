@@ -4,9 +4,9 @@ import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/acti
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import {
   App,
-  AppCreate, AppDeleteParams, AppStartQueryParams,
+  AppCreate, AppDeleteParams, AppRollbackParams, AppStartQueryParams,
   AppUpdate,
-  AppUpgradeParams, ChartRollbackParams,
+  AppUpgradeParams,
 } from 'app/interfaces/app.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
@@ -80,7 +80,7 @@ export interface ApiJobDirectory {
   'app.stop': { params: AppStartQueryParams; response: void };
   'app.delete': { params: AppDeleteParams; response: boolean };
   'app.upgrade': { params: AppUpgradeParams; response: App };
-  'app.rollback': { params: [name: string, params: ChartRollbackParams]; response: App };
+  'app.rollback': { params: AppRollbackParams; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
