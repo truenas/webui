@@ -23,6 +23,7 @@
   "Pod Logs": "",
   "Pool Usage": "",
   "Refresh Catalog": "",
+  "Specifies level of authentication and cryptographic protection. SYS or none should be used if no KDC is available. If a KDC is available, e.g. Active Directory, KRB5 is recommended. If desired KRB5I (integrity protection) and/or KRB5P (privacy protection) may be included with KRB5.": "",
   "Support License": "",
   "This dataset is used to store apps config and other container related data": "",
   "Train Settings": "",
