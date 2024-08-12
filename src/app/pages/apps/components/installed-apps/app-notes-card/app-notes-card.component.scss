@@ -1,0 +1,39 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+  margin: 0;
+}
+
+.notes {
+  h4 {
+    margin-bottom: 8px;
+  }
+}
+
+.notes-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 12px;
+  word-wrap: break-word;
+
+  markdown ::ng-deep {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--fg2);
+      font-weight: 500;
+      margin: 0;
+    }
+
+    h1 { font-size: 19px; }
+    h2 { font-size: 17px; }
+    h3 { font-size: 15px; }
+    h4 { font-size: 14px; }
+    h5 { font-size: 13px; }
+    h6 { font-size: 12px; }
+  }
+}
