@@ -16,7 +16,10 @@ import { selectBuildYear, selectProductType } from 'app/store/system-info/system
 })
 export class CopyrightLineComponent {
   readonly withIxLogo = input(false);
-  readonly product = toSignal(this.store$.select(selectProductType).pipe(map((type) => productTypeLabels.get(type))));
+  readonly product = toSignal(this.store$.select(selectProductType).pipe(
+    startWith(ProductType.Scale),
+    map((type) => productTypeLabels.get(type)),
+  ));
   readonly copyrightYear = toSignal(this.store$.select(selectBuildYear));
 
   constructor(
