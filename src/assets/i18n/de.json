@@ -2034,6 +2034,7 @@
   "Normal VDEV type, used for primary storage operations. ZFS pools always have at least one DATA VDEV.": "",
   "Not Shared": "",
   "Not enough free space. Maximum available: {space}": "",
+  "Notes": "",
   "Notes about this disk.": "",
   "Notes about this extent.": "",
   "Notifications": "",

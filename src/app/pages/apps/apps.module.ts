@@ -56,6 +56,7 @@ import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
+import { AppNotesCardComponent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
@@ -98,6 +99,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppDetailsPanelComponent,
     AppWorkloadsCardComponent,
     AppResourcesCardComponent,
+    AppNotesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
     // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
