@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import {
   FormBuilder, FormControl, FormGroup, Validators,
@@ -10,9 +10,7 @@ import { Observable } from 'rxjs';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { ShellDetailsDialogData } from 'app/interfaces/shell-details-dialog.interface';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -42,10 +40,7 @@ export class ShellDetailsDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: ShellDetailsDialogData,
     public dialogRef: MatDialogRef<ShellDetailsDialogComponent>,
     public appService: ApplicationsService,
-    private loader: AppLoaderService,
-    private ws: WebSocketService,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
   ) {
     this.selectedAppName = data.appName;
     this.dialogType = data.type;
