@@ -68,10 +68,8 @@ export class AppWorkloadsCardComponent {
       minWidth: '650px',
       maxWidth: '850px',
       data: {
-        containerImageKey: '',
-        app: this.app,
-        appName: this.app.name,
-        title: this.translate.instant('Choose pod'),
+        appName: this.app().name,
+        title: this.translate.instant('Choose Shell Details'),
         type: PodSelectDialogType.Shell,
         customSubmit: (values: ShellDetailsDialogFormValue) => this.shellDialogSubmit(values, containerId),
       },
