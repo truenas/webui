@@ -9,16 +9,13 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isEmpty } from 'lodash';
 import {
-  catchError,
-  EMPTY,
-  filter, map, of, switchMap, take, tap,
+  filter, map, switchMap, take, tap,
 } from 'rxjs';
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { App } from 'app/interfaces/app.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -48,9 +45,11 @@ export class AppInfoCardComponent {
 
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
 
-  protected rollbackSetEffect = effect(() => {
+  protected rollbackUpdateButtonSetEffect = effect(() => {
+    const app = this.app();
+    this.hasUpdates.set(app?.upgrade_available);
     this.isRollbackPossible.set(false);
-    this.updateRollbackSetup();
+    this.updateRollbackSetup(app.name);
   }, { allowSignalWrites: true });
 
   get inProgress(): boolean {
@@ -81,11 +80,6 @@ export class AppInfoCardComponent {
   ) {}
 
   protected hasUpdates = signal(false);
-
-  private updatesSetupEffect = effect(() => {
-    const app = this.app();
-    this.hasUpdates.set(app?.upgrade_available);
-  }, { allowSignalWrites: true });
 
   protected isCustomApp = computed(() => {
     const app = this.app();
@@ -118,10 +112,6 @@ export class AppInfoCardComponent {
           { title: helptextApps.apps.upgrade_dialog.job },
         ).afterClosed(),
       ),
-      tap(() => {
-        this.updateUpgradeSetup();
-        this.updateRollbackSetup();
-      }),
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe();
@@ -168,30 +158,13 @@ export class AppInfoCardComponent {
 
   rollbackApp(): void {
     this.matDialog.open(AppRollbackModalComponent, { data: this.app() }).afterClosed().pipe(
-      tap(() => {
-        this.updateRollbackSetup();
-        this.updateUpgradeSetup();
-      }),
       untilDestroyed(this),
     ).subscribe();
   }
 
-  private updateRollbackSetup(): void {
-    const app = this.app();
-    this.ws.call('app.rollback_versions', [app.name]).pipe(
+  private updateRollbackSetup(appName: string): void {
+    this.ws.call('app.rollback_versions', [appName]).pipe(
       tap((versions) => this.isRollbackPossible.set(versions.length > 0)),
-      untilDestroyed(this),
-    ).subscribe();
-  }
-
-  private updateUpgradeSetup(): void {
-    const app = this.app();
-    this.appService.getAppUpgradeSummary(app.name).pipe(
-      tap((summary) => this.hasUpdates.set(summary.available_versions_for_upgrade.length > 0)),
-      catchError((error: WebSocketError) => {
-        this.hasUpdates.set(false);
-        return error?.reason?.includes('No upgrade available') ? EMPTY : of(error);
-      }),
       untilDestroyed(this),
     ).subscribe();
   }
