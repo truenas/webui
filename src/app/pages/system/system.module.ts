@@ -129,7 +129,6 @@ import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
-import { OldEnclosureModule } from 'app/pages/system/old-view-enclosure/old-enclosure.module';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { TrainCardComponent } from 'app/pages/system/update/components/train-card/train-card.component';
 import { TrainInfoCardComponent } from 'app/pages/system/update/components/train-info-card/train-info-card.component';
@@ -147,7 +146,6 @@ import { routing } from './system.routing';
     AppLoaderModule,
     CommonDirectivesModule,
     CommonModule,
-    OldEnclosureModule,
     EntityModule,
     FlexLayoutModule,
     FormsModule,
