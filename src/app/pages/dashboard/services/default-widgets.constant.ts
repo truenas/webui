@@ -1,7 +1,7 @@
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { Widget, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 
-export const demoWidgets: WidgetGroup[] = [
+export const defaultWidgets: WidgetGroup[] = [
   {
     layout: WidgetGroupLayout.Full,
     slots: [
