@@ -6,9 +6,7 @@ import {
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
-import { Option } from 'app/interfaces/option.interface';
 import { ShellDetailsDialogData } from 'app/interfaces/shell-details-dialog.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
@@ -31,8 +29,6 @@ export class ShellDetailsDialogComponent {
     command?: FormControl<string>;
     tail_lines?: FormControl<number>;
   }>;
-  pods$: Observable<Option[]>;
-  containers$: Observable<Option[]>;
   title: string;
   hasPool = true;
 

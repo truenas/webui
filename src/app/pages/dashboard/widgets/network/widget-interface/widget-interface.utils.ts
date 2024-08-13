@@ -1,7 +1,37 @@
 import { NetworkInterfaceType, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { DashboardNetworkInterface, DashboardNetworkInterfaceAlias } from 'app/pages/dashboard-old/components/dashboard/dashboard.component';
+import {
+  NetworkInterface,
+  NetworkInterfaceAlias,
+  NetworkInterfaceState,
+} from 'app/interfaces/network-interface.interface';
 
+/**
+ * @deprecated Do not use.
+ */
+export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
+  interface?: string;
+}
+
+/**
+ * @deprecated Do not use.
+ */
+export type DashboardNetworkInterface = NetworkInterface & {
+  state: DashboardNicState;
+};
+
+/**
+ * @deprecated Do not use.
+ */
+export interface DashboardNicState extends NetworkInterfaceState {
+  vlans: (NetworkInterfaceState & { interface?: string })[];
+  lagg_ports: string[];
+  aliases: DashboardNetworkInterfaceAlias[];
+}
+
+/**
+ * @deprecated Do not use.
+ * TODO: Rewrite to have widgets pick what they need instead of doing global processing.
+ */
 export function processNetworkInterfaces(interfaces: NetworkInterface[]): DashboardNetworkInterface[] {
   const dashboardNetworkInterfaces = [...interfaces] as DashboardNetworkInterface[];
   const removeNics: Record<string, number | string> = {};

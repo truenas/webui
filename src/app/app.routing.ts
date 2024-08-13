@@ -42,11 +42,6 @@ export const rootRouterConfig: Routes = [
         data: { title: T('Dashboard'), breadcrumb: T('Dashboard') },
       },
       {
-        path: 'dashboard-old',
-        loadChildren: () => import('app/pages/dashboard-old/dashboard-old.module').then((module) => module.DashboardOldModule),
-        data: { title: T('Dashboard'), breadcrumb: T('Dashboard') },
-      },
-      {
         path: 'credentials',
         loadChildren: () => import('./pages/account/account.module').then((module) => module.AccountModule),
         data: { title: T('Credentials'), breadcrumb: T('Credentials') },
