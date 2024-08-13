@@ -121,7 +121,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     switch (name) {
       case WidgetName.Help: return WidgetType.Help;
       case WidgetName.Memory: return WidgetType.Memory;
-      case WidgetName.Interface: return WidgetType.Ipv4Address;
+      case WidgetName.Interface: return WidgetType.Interface;
       case WidgetName.SystemInformation: return WidgetType.SystemInfoActive;
       case WidgetName.SystemInformationStandby: return WidgetType.SystemInfoPassive;
       case WidgetName.Network: return WidgetType.Interface;
@@ -139,6 +139,12 @@ export class DashboardStore extends ComponentStore<DashboardState> {
 
       if (widget.name === WidgetName.Interface) {
         return { interface: value };
+      }
+
+      if (widget.name === WidgetName.Pool) {
+        // Old widget identifier format 'name,Pool:<poolName>'
+        const [, poolId] = value.split(':');
+        return { poolId };
       }
 
       return { [key]: value };

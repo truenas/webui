@@ -26,7 +26,7 @@ describe('WidgetPoolUsageGaugeComponent', () => {
         props: {
           size: SlotSize.Quarter,
           settings: {
-            poolId: 1,
+            poolId: '1',
           },
         },
         providers: [
@@ -56,7 +56,7 @@ describe('WidgetPoolUsageGaugeComponent', () => {
         props: {
           size: SlotSize.Quarter,
           settings: {
-            poolId: 1,
+            poolId: '1',
           },
         },
         providers: [

@@ -22,8 +22,9 @@ export class WidgetPoolComponent implements WidgetComponent {
   protected poolId = computed(() => this.settings()?.poolId || '');
 
   protected pool = toSignal(toObservable(this.poolId).pipe(
+    tap((poolId) => console.info(poolId)),
     filter(Boolean),
-    switchMap((poolId) => this.resources.getPoolById(+poolId)),
+    switchMap((poolId) => this.resources.getPoolById(poolId)),
     tap((pool) => {
       this.poolExists = !!pool;
       this.cdr.markForCheck();

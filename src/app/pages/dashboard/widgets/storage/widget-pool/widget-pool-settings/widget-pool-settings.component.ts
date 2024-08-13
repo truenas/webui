@@ -22,7 +22,7 @@ import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-p
 })
 export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<WidgetPoolSettings>, OnInit {
   form = this.fb.group({
-    poolId: [null as number, [Validators.required]],
+    poolId: [null as string, [Validators.required]],
   });
 
   protected poolOptions$ = this.resources.pools$.pipe(idNameArrayToOptions());
@@ -37,7 +37,7 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
     effect(() => {
       const firstOption = this.firstOption();
       if (!this.widgetSettingsRef.getSettings()?.poolId && firstOption) {
-        this.form.controls.poolId.setValue(firstOption);
+        this.form.controls.poolId.setValue(firstOption.toString());
       }
     });
   }
