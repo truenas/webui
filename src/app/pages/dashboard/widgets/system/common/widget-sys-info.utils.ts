@@ -29,18 +29,6 @@ export function getProductImageSrc(
   return 'assets/images' + (imgName.startsWith('/') ? imgName : ('/' + imgName));
 }
 
-/**
- * @deprecated We should look at webui.enclosure.dashboard instead
- * TODO: Update.
- */
-export function isRackmount(systemProduct: string): boolean {
-  if (systemProduct.includes('MINI')) {
-    return !!Object.values(miniSeries)?.find((mini) => mini.images.includes(systemProduct))?.isRackmount;
-  }
-
-  return !!serverSeries.find((name) => systemProduct === name);
-}
-
 export function getProductEnclosure(systemProduct: string): ProductEnclosure {
   if (!systemProduct) {
     return null;
