@@ -30,13 +30,6 @@ export class NavigationService {
       state: 'dashboard',
     },
     {
-      name: T('Dashboard (old)'),
-      type: MenuItemType.Link,
-      tooltip: T('Dashboard'),
-      icon: 'dashboard',
-      state: 'dashboard-old',
-    },
-    {
       name: T('Storage'),
       type: MenuItemType.Link,
       tooltip: T('Storage'),
@@ -134,7 +127,6 @@ export class NavigationService {
         { name: T('Alert Settings'), state: 'alert-settings' },
         { name: T('Audit'), state: 'audit' },
         { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
-        { name: T('Enclosure (old)'), state: 'oldviewenclosure', isVisible$: this.hasEnclosure$ },
       ],
     },
   ];
