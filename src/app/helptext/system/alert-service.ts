@@ -8,7 +8,9 @@ export const helptextAlertService = {
   type_tooltip: T('Choose an alert service to display options for that\
  service.'),
 
-  level_tooltip: T('Select the level of severity.'),
+  level_tooltip: T('Select the level of severity. Alert notifications send for all warnings matching \
+ and above the selected level. For example, a warning level set to Critical triggers notifications \
+ for Critical, Alert, and Emergency level warnings.'),
 
   AWSSNS_region_tooltip: T('Enter the <a\
  href="https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html"\
