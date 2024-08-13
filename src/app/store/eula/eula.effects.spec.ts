@@ -1,15 +1,17 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of, ReplaySubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { EulaEffects } from 'app/store/eula/eula.effects';
+import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('EulaEffects', () => {
   let spectator: SpectatorService<EulaEffects>;
@@ -26,8 +28,11 @@ describe('EulaEffects', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SystemGeneralService, {
-        isEnterprise: true,
+      provideMockStore({
+        selectors: [{
+          selector: selectProductType,
+          value: ProductType.ScaleEnterprise,
+        }],
       }),
       mockAuth(),
     ],
