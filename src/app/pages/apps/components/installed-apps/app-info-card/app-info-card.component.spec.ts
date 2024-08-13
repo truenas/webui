@@ -113,11 +113,11 @@ describe('AppInfoCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows header', () => {
+  it('shows app name as a link', () => {
     spectator.detectChanges();
-    expect(spectator.query('mat-card-header h3')).toHaveText('Application Info');
-    expect(spectator.query('mat-card-header button#edit-app')).toHaveText('Edit');
-    expect(spectator.query('mat-card-header button#update-app')).toHaveText('Update');
+    const appNameLink = spectator.query('.details-list a.value');
+    expect(appNameLink).toHaveText('test-user-app-name');
+    expect(appNameLink).toHaveAttribute('href', '/apps/available/stable/ix-test-app');
   });
 
   it('shows details', () => {
@@ -144,6 +144,13 @@ describe('AppInfoCardComponent', () => {
         value: 'stable',
       },
     ]);
+  });
+
+  it('shows header', () => {
+    spectator.detectChanges();
+    expect(spectator.query('mat-card-header h3')).toHaveText('Application Info');
+    expect(spectator.query('mat-card-header button#edit-app')).toHaveText('Edit');
+    expect(spectator.query('mat-card-header button#update-app')).toHaveText('Update');
   });
 
   it('opens upgrade app dialog when Update button is pressed', async () => {

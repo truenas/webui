@@ -28,15 +28,15 @@
   </mat-card-header>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="8px">
-      <div class="app-logo">
+      <a class="app-logo" [ixTest]="[app().name, 'image-details']" [routerLink]="appDetailsRouterUrl">
         <img [src]="app()?.metadata?.icon" [src-fallback]="imagePlaceholder" />
-      </div>
+      </a>
       <div class="details-list">
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
-          <div class="value">
+          <a class="value" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl">
             {{ app()?.name | orNotAvailable }}
-          </div>
+          </a>
         </div>
         <div class="details-item">
           <div class="label">{{ 'App Version' | translate }}:</div>
