@@ -28,13 +28,13 @@
   </mat-card-header>
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="8px">
-      <a class="app-logo" [ixTest]="[app().name, 'image-details']" (click)="navigateToAppDetails()">
+      <a class="app-logo" [ixTest]="[app().name, 'image-details']" [routerLink]="appDetailsRouterUrl">
         <img [src]="app()?.metadata?.icon" [src-fallback]="imagePlaceholder" />
       </a>
       <div class="details-list">
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
-          <a class="value" [ixTest]="[app().name, 'name-details']" (click)="navigateToAppDetails()">
+          <a class="value" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl">
             {{ app()?.name | orNotAvailable }}
           </a>
         </div>

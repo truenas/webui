@@ -64,6 +64,11 @@ export class AppInfoCardComponent {
     return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
   }
 
+  get appDetailsRouterUrl(): string[] {
+    const app = this.app();
+    return ['/apps', 'available', app.metadata.train, app.id];
+  }
+
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
@@ -120,11 +125,6 @@ export class AppInfoCardComponent {
   editButtonPressed(): void {
     const app = this.app();
     this.router.navigate(['/apps', 'installed', app.metadata.train, app.id, 'edit']);
-  }
-
-  navigateToAppDetails(): void {
-    const app = this.app();
-    this.router.navigate(['/apps', 'installed', app.metadata.train, app.id]);
   }
 
   deleteButtonPressed(): void {
