@@ -3,22 +3,11 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onPodSelect()">
   @if (hasPool) {
     <div mat-dialog-content>
-      <ix-select
-        formControlName="pods"
-        [label]="'Pods' | translate"
-        [required]="true"
-        [options]="pods$"
-      ></ix-select>
-      <ix-select
-        formControlName="containers"
-        [label]="'Containers' | translate"
-        [required]="true"
-        [options]="containers$"
-      ></ix-select>
       @if (dialogType === podSelectDialogType.Shell) {
         <ix-input
           formControlName="command"
           [label]="'Commands' | translate"
+          [required]="true"
         ></ix-input>
       }
       @if (dialogType === podSelectDialogType.Logs) {

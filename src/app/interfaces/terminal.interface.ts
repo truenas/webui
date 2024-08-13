@@ -11,8 +11,7 @@ export interface TerminalConnectionData {
   vmId?: number;
   podInfo?: {
     chartReleaseName: string;
-    podName: string;
-    containerName: string;
+    containerId: string;
     command: string;
   };
 }

@@ -80,11 +80,11 @@ export class OauthButtonComponent implements OnDestroy {
     }
   }
 
-  onLoginWithJira(): void {
+  private onLoginWithJira(): void {
     this.doCommonOauthLoginLogic(this.jiraAuthFn);
   }
 
-  onLogInWithJiraSuccess(message: OauthJiraMessage): void {
+  private onLogInWithJiraSuccess(message: OauthJiraMessage): void {
     const token = message.data as string;
     if (typeof token !== 'string') {
       return;
@@ -93,17 +93,14 @@ export class OauthButtonComponent implements OnDestroy {
     this.cdr.markForCheck();
   }
 
-  onLoginWithGmail(): void {
+  private onLoginWithGmail(): void {
     this.doCommonOauthLoginLogic(this.gmailAuthFn);
   }
 
-  onLogInWithGmailSuccess(message: OauthMessage<GmailOauthConfig>): void {
+  private onLogInWithGmailSuccess(message: OauthMessage<GmailOauthConfig>): void {
     if (message.data.oauth_portal) {
       if (message.data.error) {
-        this.dialogService.error({
-          title: this.translate.instant('Error'),
-          message: message.data.error,
-        });
+        this.handleProviderError(message.data.error);
       } else {
         this.loggedIn.emit(message.data.result);
         this.cdr.markForCheck();
@@ -111,12 +108,12 @@ export class OauthButtonComponent implements OnDestroy {
     }
   }
 
-  onLogInWithProvider(): void {
+  private onLogInWithProvider(): void {
     const authFn = (message: OauthMessage<OauthProviderData>): void => this.onLoggedInWithProviderSuccess(message);
     this.doCommonOauthLoginLogic(authFn);
   }
 
-  onLoggedInWithProviderSuccess = (message: OauthMessage<OauthProviderData>): void => {
+  private onLoggedInWithProviderSuccess = (message: OauthMessage<OauthProviderData>): void => {
     if (message.origin !== 'https://www.truenas.com') {
       return;
     }
@@ -125,17 +122,14 @@ export class OauthButtonComponent implements OnDestroy {
     }
 
     if (message.data.error) {
-      this.dialogService.error({
-        title: this.translate.instant('Error'),
-        message: message.data.error,
-      });
+      this.handleProviderError(message.data.error);
       return;
     }
 
     this.loggedIn.emit(message.data.result);
   };
 
-  doCommonOauthLoginLogic(
+  private doCommonOauthLoginLogic(
     authFn: (
       message: OauthMessage<GmailOauthConfig> | OauthMessage<OauthProviderData> | OauthJiraMessage
     ) => void,
@@ -147,5 +141,16 @@ export class OauthButtonComponent implements OnDestroy {
       'width=640,height=480',
     );
     this.window.addEventListener('message', authFn, false);
+  }
+
+  private handleProviderError(error: string): void {
+    this.dialogService.closeAllDialogs();
+
+    this.dialogService.error({
+      title: this.translate.instant('Error'),
+      message: error.includes('Missing code parameter in response')
+        ? this.translate.instant('Login was canceled. Please try again if you want to connect your account.')
+        : this.translate.instant(error),
+    });
   }
 }
