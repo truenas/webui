@@ -4498,7 +4498,7 @@
     ],
     "anchorRouterLink": [
       "/system",
-      "oldviewenclosure",
+      "viewenclosure",
       "jbof"
     ],
     "routerLink": null,
@@ -5253,27 +5253,6 @@
     ],
     "routerLink": null,
     "anchor": "file-ticket",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "View Enclosure"
-    ],
-    "synonyms": [
-      "Enclosure"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "ENCLOSURE"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "oldviewenclosure"
-    ],
-    "routerLink": null,
-    "anchor": "system-view-enclosure",
     "triggerAnchor": null,
     "section": "ui"
   },

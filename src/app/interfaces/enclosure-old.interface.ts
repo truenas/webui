@@ -75,12 +75,3 @@ export interface EnclosureOldPool {
   vdev_type: string;
   vdev_disks: EnclosureVdevDisk[];
 }
-
-/**
- * @deprecated
- */
-export interface SelectedEnclosureSlot {
-  slotNumber: number;
-  slotDetails: EnclosureOldSlot;
-  enclosureId: string;
-}

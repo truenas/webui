@@ -1,8 +1,8 @@
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { Role } from 'app/enums/role.enum';
+import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { DashConfigItem } from 'app/pages/dashboard-old/components/widget-controller/widget-controller.component';
 
 export interface DsUncachedUser {
   pw_dir: string;

@@ -100,8 +100,6 @@ export interface ChartMetadataDependency {
   enabled: boolean;
 }
 
-export type CatalogItems = Record<string, CatalogTrain>;
-
 export interface GetItemDetailsParams {
   cache?: boolean;
   catalog?: string;
