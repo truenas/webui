@@ -1,7 +1,6 @@
 import { Codename } from 'app/enums/codename.enum';
 import {
   getProductEnclosure, getProductImageSrc, getServerProduct, getSystemVersion,
-  isRackmount,
 } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 
 describe('getSystemVersion', () => {
@@ -52,12 +51,5 @@ describe('getProductEnclosure', () => {
   it('should return the correct product enclosure for provided product', () => {
     expect(getProductEnclosure('TRUENAS-M40-HA')).toBe('rackmount');
     expect(getProductEnclosure('FREENAS-MINI-XL')).toBe('tower');
-  });
-});
-
-describe('isRackmount', () => {
-  it('should return the correct image path for provided product', () => {
-    expect(isRackmount('FREENAS-MINI-XL')).toBeFalsy();
-    expect(isRackmount('TRUENAS-MINI-R')).toBeTruthy();
   });
 });
