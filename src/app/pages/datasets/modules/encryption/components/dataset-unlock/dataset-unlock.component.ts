@@ -28,7 +28,6 @@ interface DatasetFormGroup {
   passphrase?: FormControl<string>;
   name: FormControl<string>;
   is_passphrase: FormControl<boolean>;
-  file?: FormControl<File[]>;
 }
 
 @UntilDestroy()
@@ -149,17 +148,9 @@ export class DatasetUnlockComponent implements OnInit {
           this.form.controls.datasets.push(this.formBuilder.group({
             name: [''],
             key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
-            file: [null as File[]],
             is_passphrase: [false],
           }) as FormGroup<DatasetFormGroup>);
         }
-
-        (this.form.controls.datasets.controls[i].controls.file as FormControl)?.valueChanges.pipe(
-          switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
-          untilDestroyed(this),
-        ).subscribe((key) => {
-          (this.form.controls.datasets.controls[i].controls.key as FormControl).setValue(key);
-        });
       }
       this.form.controls.datasets.disable();
       (this.form.controls.datasets.controls[i].controls.name as FormControl).setValue(result.name);
@@ -202,13 +193,11 @@ export class DatasetUnlockComponent implements OnInit {
 
     if (!values.use_file) {
       values.datasets.forEach((dataset) => {
-        if (values.unlock_children || dataset.name === this.pk) {
-          if (dataset.is_passphrase && dataset.passphrase) {
-            datasets.push({ name: dataset.name, passphrase: dataset.passphrase });
-          }
-          if (!dataset.is_passphrase && dataset.key) {
-            datasets.push({ name: dataset.name, key: dataset.key });
-          }
+        if (dataset.is_passphrase && dataset.passphrase) {
+          datasets.push({ name: dataset.name, passphrase: dataset.passphrase });
+        }
+        if (!dataset.is_passphrase && dataset.key) {
+          datasets.push({ name: dataset.name, key: dataset.key });
         }
       });
     }
