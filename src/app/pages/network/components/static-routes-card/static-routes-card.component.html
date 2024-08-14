@@ -32,6 +32,10 @@
         [isLoading]="dataProvider.isLoading$ | async"
       ></tbody>
     </ix-table>
-    <ix-table-pager-show-more [pageSize]="4" [dataProvider]="dataProvider"></ix-table-pager-show-more>
+    <ix-table-pager-show-more
+      [pageSize]="4"
+      [dataProvider]="dataProvider"
+      [ixTestOverride]="['static-routes']"
+    ></ix-table-pager-show-more>
   </mat-card-content>
 </mat-card>
