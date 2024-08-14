@@ -11,8 +11,6 @@ import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-se
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
-import { JbofListComponent as OldJbofListComponent } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.component';
-import { ViewEnclosureComponent } from 'app/pages/system/old-view-enclosure/components/view-enclosure/view-enclosure.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
@@ -50,21 +48,6 @@ const routes: Routes = [
         icon: 'settings',
       },
       loadChildren: () => import('./enclosure/enclosure.module').then((module) => module.EnclosureModule),
-    }, {
-      path: 'oldviewenclosure',
-      data: { title: T('View Enclosure'), breadcrumb: T('View Enclosure'), icon: 'settings' },
-      children: [
-        {
-          path: '',
-          component: ViewEnclosureComponent,
-          data: { title: T('View Enclosure'), breadcrumb: null },
-        },
-        {
-          path: 'jbof',
-          component: OldJbofListComponent,
-          data: { title: T('NVMe-oF Expansion Shelves'), breadcrumb: null },
-        },
-      ],
     }, {
       path: 'boot',
       data: { title: T('Boot'), breadcrumb: T('Boot'), icon: 'replay' },

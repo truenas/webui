@@ -38,7 +38,11 @@ describe('PoolUsageCardComponent', () => {
       mockWindow({
         sessionStorage: {
           getItem: () => 'ix-dark',
-          setItem: () => {},
+          setItem: () => jest.fn(),
+        },
+        localStorage: {
+          getItem: jest.fn(),
+          setItem: jest.fn(),
         },
       }),
     ],

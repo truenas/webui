@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
+import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { Preferences, TableDisplayedColumns } from 'app/interfaces/preferences.interface';
-import { DashConfigItem } from 'app/pages/dashboard-old/components/widget-controller/widget-controller.component';
 
 export const preferencesLoaded = createAction('[Preferences API] Loaded', props<{ preferences: Preferences }>());
 export const noPreferencesFound = createAction('[Preferences API] No Preferences Found');
