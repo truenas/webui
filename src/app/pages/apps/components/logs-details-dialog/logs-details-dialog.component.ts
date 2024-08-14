@@ -6,11 +6,11 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-set-tail-lines-dialog',
-  templateUrl: './set-tail-lines-dialog.component.html',
+  selector: 'ix-logs-details-dialog',
+  templateUrl: './logs-details-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SetTailLinesDialogComponent {
+export class LogsDetailsDialogComponent {
   form = this.fb.group({
     tail_lines: [500, [Validators.required]],
   });

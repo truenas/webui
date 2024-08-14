@@ -6,14 +6,14 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SetTailLinesDialogComponent } from 'app/pages/apps/components/set-tail-lines-dialog/set-tail-lines-dialog.component';
+import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 
-describe('SetTailLinesDialogComponent', () => {
+describe('LogsDetailsDialogComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let spectator: Spectator<SetTailLinesDialogComponent>;
+  let spectator: Spectator<LogsDetailsDialogComponent>;
   const createComponent = createComponentFactory({
-    component: SetTailLinesDialogComponent,
+    component: LogsDetailsDialogComponent,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
@@ -39,6 +39,8 @@ describe('SetTailLinesDialogComponent', () => {
 
     const connectButton = await loader.getHarness(MatButtonHarness.with({ text: 'Connect' }));
     await connectButton.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(600);
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      tail_lines: 600,
+    });
   });
 });

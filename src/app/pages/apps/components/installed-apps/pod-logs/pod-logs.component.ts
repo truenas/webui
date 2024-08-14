@@ -10,7 +10,7 @@ import {
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { SetTailLinesDialogComponent } from 'app/pages/apps/components/set-tail-lines-dialog/set-tail-lines-dialog.component';
+import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
@@ -68,20 +68,20 @@ export class PodLogsComponent implements OnInit {
 
   // subscribe pod log for selected app, pod and container.
   reconnect(): void {
-    this.podLogs = [];
-    this.isLoadingPodLogs = true;
-
     if (this.podLogsChangedListener && !this.podLogsChangedListener.closed) {
       this.podLogsChangedListener.unsubscribe();
     }
 
-    this.podLogsChangedListener = this.matDialog.open(SetTailLinesDialogComponent, { width: '400px' }).afterClosed().pipe(
-      tap((tailLines: number) => {
+    this.podLogsChangedListener = this.matDialog.open(LogsDetailsDialogComponent, { width: '400px' }).afterClosed().pipe(
+      tap((details: LogsDetailsDialogComponent['form']['value']) => {
         this.podLogSubName = `app.container_log_follow: ${JSON.stringify({
           app_name: this.appName,
           container_id: this.containerId,
-          tail_lines: tailLines || this.defaultTailLines,
+          tail_lines: details.tail_lines || this.defaultTailLines,
         })}`;
+
+        this.podLogs = [];
+        this.isLoadingPodLogs = true;
       }),
       switchMap(() => this.ws.subscribeToLogs(this.podLogSubName)),
       map((apiEvent) => apiEvent.fields),

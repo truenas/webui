@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>{{ 'Set Tail Lines' | translate }}</h1>
+<h1 mat-dialog-title>{{ 'Logs Details' | translate }}</h1>
 
 <form class="ix-form-container" [formGroup]="form">
   <ix-input
@@ -23,7 +23,7 @@
       color="primary"
       ixTest="choose"
       [disabled]="form.invalid"
-      [matDialogClose]="this.form.value.tail_lines"
+      [matDialogClose]="this.form.value"
     >
       {{ 'Connect' | translate }}
     </button>

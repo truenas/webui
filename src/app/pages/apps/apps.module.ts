@@ -65,8 +65,8 @@ import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-a
 import { VolumeMountsDialogComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
 import { ContainerShellComponent } from 'app/pages/apps/components/installed-apps/container-shell/container-shell.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
+import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
-import { SetTailLinesDialogComponent } from 'app/pages/apps/components/set-tail-lines-dialog/set-tail-lines-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
@@ -106,7 +106,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppAvailableInfoCardComponent,
     ContainerShellComponent,
     PodLogsComponent,
-    SetTailLinesDialogComponent,
+    LogsDetailsDialogComponent,
     ShellDetailsDialogComponent,
     AppUpgradeDialogComponent,
     AppDetailsHeaderComponent,
