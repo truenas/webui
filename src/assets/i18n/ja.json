@@ -3560,6 +3560,7 @@
   "Spares": "",
   "Sparse": "",
   "Special Allocation class, used to create Fusion pools. Optional VDEV type which is used to speed up metadata and small block IO.": "",
+  "Specifies level of authentication and cryptographic protection. SYS or none should be used if no KDC is available. If a KDC is available, e.g. Active Directory, KRB5 is recommended. If desired KRB5I (integrity protection) and/or KRB5P (privacy protection) may be included with KRB5.": "",
   "Specifies the auxiliary directory service ID provider.": "",
   "Specify a size and value such as <i>10 GiB</i>.": "",
   "Specify custom": "",
