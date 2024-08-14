@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, computed,
+  input,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,12 +16,12 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppCardComponent {
-  @Input() app: AvailableApp;
+  readonly app = input.required<AvailableApp>();
 
-  get description(): string {
-    const description = this.app.description || '';
+  protected readonly description = computed(() => {
+    const description = this.app().description || '';
     return description.length > 150 ? `${description.substring(0, 150)}...` : description;
-  }
+  });
 
   constructor(
     private router: Router,
@@ -30,7 +31,7 @@ export class AppCardComponent {
   navigateToAllInstalledPage(): void {
     this.installedAppsStore.installedApps$.pipe(
       map((apps) => {
-        return apps.filter((app) => (app.metadata.name === this.app.name && app.metadata.train === this.app.train));
+        return apps.filter((app) => (app.metadata.name === this.app().name && app.metadata.train === this.app().train));
       }),
       untilDestroyed(this),
     ).subscribe((apps) => {

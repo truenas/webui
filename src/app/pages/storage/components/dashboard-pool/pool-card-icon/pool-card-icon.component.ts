@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 
@@ -10,8 +12,8 @@ import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolCardIconComponent {
-  @Input() type: PoolCardIconType;
-  @Input() tooltip: string;
+  readonly type = input.required<PoolCardIconType>();
+  readonly tooltip = input<string>();
 
   readonly poolCardIconType = PoolCardIconType;
 }

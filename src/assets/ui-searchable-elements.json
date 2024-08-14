@@ -1385,7 +1385,7 @@
     ],
     "routerLink": [
       "/datasets/snapshots",
-      "dataset.id"
+      "dataset().id"
     ],
     "anchor": "manage-snapshots",
     "triggerAnchor": null,
@@ -1407,7 +1407,7 @@
     ],
     "routerLink": [
       "/data-protection/snapshot",
-      "dataset.id"
+      "dataset().id"
     ],
     "anchor": "manage-snapshots-tasks",
     "triggerAnchor": null,
@@ -1429,7 +1429,7 @@
     ],
     "routerLink": [
       "/data-protection/replication",
-      "dataset.id"
+      "dataset().id"
     ],
     "anchor": "manage-replication-tasks",
     "triggerAnchor": null,
@@ -1451,7 +1451,7 @@
     ],
     "routerLink": [
       "/data-protection/rsync",
-      "dataset.id"
+      "dataset().id"
     ],
     "anchor": "manage-rsync-tasks",
     "triggerAnchor": null,

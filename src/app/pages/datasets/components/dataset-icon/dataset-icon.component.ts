@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -12,24 +12,20 @@ import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetIconComponent {
-  @Input() dataset: DatasetDetails;
+  readonly dataset = input.required<DatasetDetails>();
 
-  get isRoot(): boolean {
-    return isRootDataset(this.dataset);
-  }
+  protected isRoot = computed(() => isRootDataset(this.dataset()));
 
-  get isZvol(): boolean {
-    return this.dataset.type === DatasetType.Volume;
-  }
+  protected isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
-  get name(): string {
-    if (this.isRoot) {
+  protected iconName = computed(() => {
+    if (this.isRoot()) {
       return 'ix:dataset_root';
     }
-    if (this.isZvol) {
+    if (this.isZvol()) {
       return 'mdi-database';
     }
 
     return 'ix:dataset';
-  }
+  });
 }

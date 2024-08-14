@@ -1,10 +1,10 @@
-@for (date of scheduleExamples | slice: 0:maxExamples; track $index) {
+@for (date of scheduleExamples() | slice: 0:maxExamples; track $index) {
   <div class="schedule-example">
     <ix-date [date]="date"></ix-date>
   </div>
 }
 
-@if (scheduleExamples.length > maxExamples) {
+@if (scheduleExamples().length > maxExamples) {
   <div class="only-first-results-message">
     {{ 'Only first {number} examples are shown.' | translate: { number: maxExamples } }}
   </div>

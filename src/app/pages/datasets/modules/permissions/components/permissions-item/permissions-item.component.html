@@ -1,5 +1,5 @@
 <div class="icon">
-  @switch (item.type) {
+  @switch (item().type) {
     @case (PermissionsItem.Group) {
       <ix-icon name="people"></ix-icon>
     }
@@ -11,5 +11,5 @@
     }
   }
 </div>
-<div class="name">{{ item.name }}</div>
-<div class="permissions">{{ item.description }}</div>
+<div class="name">{{ item().name }}</div>
+<div class="permissions">{{ item().description }}</div>

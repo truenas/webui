@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -17,12 +19,10 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataProtectionCardComponent {
+  readonly dataset = input.required<DatasetDetails>();
+
   protected readonly requiredRoles = [Role.SnapshotWrite];
   protected readonly searchableElements = dataProtectionCardElements;
-
-  @Input() dataset: DatasetDetails;
-
-  readonly console = console;
 
   constructor(
     private slideInService: IxSlideInService,
@@ -31,7 +31,7 @@ export class DataProtectionCardComponent {
   ) {}
 
   addSnapshot(): void {
-    const slideInRef = this.slideInService.open(SnapshotAddFormComponent, { data: this.dataset.id });
+    const slideInRef = this.slideInService.open(SnapshotAddFormComponent, { data: this.dataset().id });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
     });

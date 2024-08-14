@@ -1,37 +1,37 @@
-@switch (type) {
+@switch (type()) {
   @case (poolCardIconType.Safe) {
     <ix-icon
       name="check_circle"
       class="pool-icon icon-online"
-      [matTooltip]="tooltip | translate"
+      [matTooltip]="tooltip() | translate"
     ></ix-icon>
   }
   @case (poolCardIconType.Warn) {
     <ix-icon
       name="error"
       class="pool-icon icon-warning"
-      [matTooltip]="tooltip | translate"
+      [matTooltip]="tooltip() | translate"
     ></ix-icon>
   }
   @case (poolCardIconType.Faulted) {
     <ix-icon
       name="help"
       class="pool-icon icon-faulted"
-      [matTooltip]="tooltip | translate"
+      [matTooltip]="tooltip() | translate"
     ></ix-icon>
   }
   @case (poolCardIconType.Error) {
     <ix-icon
       name="cancel"
       class="pool-icon icon-error"
-      [matTooltip]="tooltip | translate"
+      [matTooltip]="tooltip() | translate"
     ></ix-icon>
   }
   @default {
     <ix-icon
       name="cancel"
       class="pool-icon icon-error"
-      [matTooltip]="tooltip | translate"
+      [matTooltip]="tooltip() | translate"
     ></ix-icon>
   }
 }

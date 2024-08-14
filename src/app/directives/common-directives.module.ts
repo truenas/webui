@@ -18,10 +18,6 @@ import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicat
 import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { StepActivationDirective } from 'app/directives/step-activation.directive';
-import {
-  TextLimiterTooltipComponent,
-} from 'app/directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
-import { TextLimiterDirective } from 'app/directives/text-limiter/text-limiter.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -43,8 +39,6 @@ const components = [
   NewFeatureIndicatorDirective,
   UiSearchDirective,
   IxDetailsHeightDirective,
-  TextLimiterDirective,
-  TextLimiterTooltipComponent,
 ];
 
 @NgModule({

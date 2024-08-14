@@ -1,4 +1,6 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import {
+  Component, ChangeDetectionStrategy, input, computed,
+} from '@angular/core';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,12 +18,11 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobNameComponent {
-  @Input({ required: true }) job: Job;
-  protected readonly JobState = JobState;
+  readonly job = input.required<Job>();
 
-  get isRunning(): boolean {
-    return this.job.state === JobState.Running;
-  }
+  protected isRunning = computed(() => this.job().state === JobState.Running);
+
+  protected readonly JobState = JobState;
 
   constructor(
     private dialogService: DialogService,
@@ -29,7 +30,8 @@ export class JobNameComponent {
     private store$: Store<AppState>,
   ) {}
 
-  onAborted(job: Job): void {
+  onAborted(): void {
+    const job = this.job();
     this.dialogService
       .confirm({
         title: this.translate.instant('Abort'),

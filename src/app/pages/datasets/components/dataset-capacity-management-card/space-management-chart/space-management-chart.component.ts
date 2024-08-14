@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -17,12 +17,11 @@ import { ThemeService } from 'app/services/theme/theme.service';
   styleUrls: ['./space-management-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpaceManagementChartComponent implements OnChanges {
-  @Input() dataset: DatasetDetails;
+export class SpaceManagementChartComponent {
+  readonly dataset = input.required<DatasetDetails>();
 
   swatchColors: SwatchColors;
   filteredData: DiskSpace[];
-  chartData: ChartDataset[] = [{ data: [] }];
   chartOptions: ChartOptions<'doughnut'> = {
     plugins: {
       tooltip: {
@@ -39,34 +38,27 @@ export class SpaceManagementChartComponent implements OnChanges {
     },
   };
 
-  get isZvol(): boolean {
-    return this.dataset.type === DatasetType.Volume;
-  }
+  readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
+
+  protected readonly chartDatasets = computed(() => {
+    const data: DiskSpace[] = [];
+    if (this.isZvol()) {
+      data.push(
+        { usedbydataset: this.dataset().usedbydataset.parsed },
+      );
+    } else {
+      data.push(
+        { usedbydataset: this.dataset().usedbydataset.parsed },
+        { usedbychildren: this.dataset().usedbychildren.parsed },
+      );
+    }
+
+    return this.makeDatasets(data);
+  });
 
   constructor(
     private themeService: ThemeService,
   ) {}
-
-  ngOnChanges(): void {
-    if (this.dataset?.type) {
-      this.updateChartData();
-    }
-  }
-
-  private updateChartData(): void {
-    const data: DiskSpace[] = [];
-    if (this.isZvol) {
-      data.push(
-        { usedbydataset: this.dataset.usedbydataset.parsed },
-      );
-    } else {
-      data.push(
-        { usedbydataset: this.dataset.usedbydataset.parsed },
-        { usedbychildren: this.dataset.usedbychildren.parsed },
-      );
-    }
-    this.chartData = this.makeDatasets(data);
-  }
 
   private makeDatasets(data: DiskSpace[]): ChartDataset[] {
     const datasets: ChartDataset[] = [];
