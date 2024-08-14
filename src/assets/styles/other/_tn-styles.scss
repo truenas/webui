@@ -835,6 +835,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .sidebar-panel.mat-sidenav .sidebar-list-item {
     border-bottom: 1px solid var(--lines);
     border-left: 6px solid rgba(0, 0, 0, 0);
+    border-radius: 0;
     padding: 0;
   }
 
