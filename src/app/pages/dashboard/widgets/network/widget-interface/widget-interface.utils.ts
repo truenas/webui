@@ -102,7 +102,7 @@ export function getNetworkInterface(
   interfaceId: string,
 ): DashboardNetworkInterface {
   if (!interfaceId) {
-    throw new Error('No network interface is selected. Edit widget settings to select one.');
+    return interfaces[0];
   }
 
   const networkInterface = interfaces?.find((nics) => nics.name === interfaceId);

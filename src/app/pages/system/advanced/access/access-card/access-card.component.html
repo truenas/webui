@@ -66,5 +66,9 @@
       [isLoading]="dataProvider.isLoading$ | async"
     ></tbody>
   </ix-table>
-  <ix-table-pager-show-more [pageSize]="5" [dataProvider]="dataProvider"></ix-table-pager-show-more>
+  <ix-table-pager-show-more
+    [pageSize]="5"
+    [dataProvider]="dataProvider"
+    [ixTestOverride]="['access']"
+  ></ix-table-pager-show-more>
 </mat-card>
