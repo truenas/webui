@@ -27,7 +27,7 @@ describe('EulaEffects', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SystemGeneralService, {
-        isEnterprise: true,
+        isEnterprise$: of(true),
       }),
       mockAuth(),
     ],

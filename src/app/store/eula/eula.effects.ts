@@ -18,7 +18,7 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 export class EulaEffects {
   checkEula$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
-    filter(() => this.systemGeneralService.isEnterprise),
+    filterAsync(() => this.sysGenService.isEnterprise$.pipe(filter(Boolean))),
     filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
     mergeMap(() => {
       return this.ws.call('truenas.is_eula_accepted').pipe(
@@ -51,7 +51,7 @@ export class EulaEffects {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private systemGeneralService: SystemGeneralService,
+    private sysGenService: SystemGeneralService,
     private authService: AuthService,
   ) { }
 }
