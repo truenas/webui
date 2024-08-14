@@ -6,7 +6,6 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
-import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -25,7 +24,9 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
     poolId: [null as string, [Validators.required]],
   });
 
-  protected poolOptions$ = this.resources.pools$.pipe(idNameArrayToOptions());
+  protected poolOptions$ = this.resources.pools$.pipe(
+    map((pools) => pools.map((pool) => ({ label: pool.name, value: pool.id.toString() }))),
+  );
   private firstOption = toSignal(this.poolOptions$.pipe(map((opts) => opts[0]?.value)));
 
   private readonly formFieldNames = ['poolId'];
@@ -37,7 +38,7 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
     effect(() => {
       const firstOption = this.firstOption();
       if (!this.widgetSettingsRef.getSettings()?.poolId && firstOption) {
-        this.form.controls.poolId.setValue(firstOption.toString());
+        this.form.controls.poolId.setValue(firstOption);
       }
     });
   }
