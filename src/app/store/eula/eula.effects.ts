@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import {
@@ -10,15 +11,16 @@ import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Injectable()
 export class EulaEffects {
   checkEula$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
-    filter(() => this.systemGeneralService.isEnterprise),
+    filterAsync(() => this.store$.select(selectIsEnterprise).pipe(filter(Boolean))),
     filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
     mergeMap(() => {
       return this.ws.call('truenas.is_eula_accepted').pipe(
@@ -51,7 +53,7 @@ export class EulaEffects {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
     private authService: AuthService,
   ) { }
 }
