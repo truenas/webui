@@ -24,7 +24,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class AppSettingsButtonComponent {
   readonly searchableElements = appSettingsButtonElements;
-  protected readonly manageCatalogRequiredRoles = [Role.AppsWrite, Role.CatalogWrite];
   protected readonly updateDockerRoles = [Role.DockerWrite];
 
   constructor(

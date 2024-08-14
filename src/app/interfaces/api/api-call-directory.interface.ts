@@ -354,6 +354,7 @@ export interface ApiCallDirectory {
 
   // Catalog
   'catalog.get_app_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
+  'catalog.trains': { params: void; response: string[] };
   'catalog.update': { params: [CatalogUpdate]; response: Catalog };
   'catalog.config': { params: void; response: Catalog };
 

@@ -2,6 +2,7 @@
 @import 'scss-imports/variables';
 
 .app-logo {
+  cursor: pointer;
   flex: 0 0 auto;
   height: 80px;
   margin-bottom: auto;
@@ -30,6 +31,10 @@
   }
 
   .details-item {
+    a.value {
+      margin-left: 0;
+    }
+
     &.sources {
       .label {
         align-self: flex-start;

@@ -1,0 +1,52 @@
+<h1 mat-dialog-title>{{ hasPool ? title : 'No Pools Found' | translate }}</h1>
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onPodSelect()">
+  @if (hasPool) {
+    <div mat-dialog-content>
+      @if (dialogType === podSelectDialogType.Shell) {
+        <ix-input
+          formControlName="command"
+          [label]="'Commands' | translate"
+          [required]="true"
+        ></ix-input>
+      }
+      @if (dialogType === podSelectDialogType.Logs) {
+        <ix-input
+          formControlName="tail_lines"
+          type="number"
+          [label]="'Tail Lines' | translate"
+          [required]="true"
+        ></ix-input>
+      }
+    </div>
+  }
+
+  @if (!hasPool) {
+    <div mat-dialog-content>
+      {{ 'At least one pool must be available to use apps' | translate }}
+    </div>
+  }
+
+  <div mat-dialog-actions align="end">
+    @if (hasPool) {
+      <button
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="choose-pool"
+        [disabled]="form.invalid"
+      >
+        {{ 'Choose' | translate }}
+      </button>
+    }
+    <button
+      mat-button
+      type="button"
+      color="secondary"
+      ixTest="cancel"
+      (click)="dialogRef.close()"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+  </div>
+</form>

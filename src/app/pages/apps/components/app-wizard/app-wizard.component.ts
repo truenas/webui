@@ -238,8 +238,8 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       job$ = this.ws.job('app.create', [
         {
           values: data,
-          catalog_app: data.release_name,
-          app_name: this.catalogApp.name,
+          catalog_app: this.catalogApp.name,
+          app_name: data.release_name,
           train: this.train,
           version,
         } as AppCreate,

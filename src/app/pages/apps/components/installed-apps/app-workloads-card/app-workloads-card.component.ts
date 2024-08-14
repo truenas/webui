@@ -4,12 +4,18 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { Role } from 'app/enums/role.enum';
-import { App, AppContainerDetails, appContainerStateLabels } from 'app/interfaces/app.interface';
+import {
+  App, AppContainerDetails, AppContainerState, appContainerStateLabels,
+} from 'app/interfaces/app.interface';
+import { ShellDetailsDialogFormValue } from 'app/interfaces/shell-details-dialog.interface';
 import {
   VolumeMountsDialogComponent,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
+import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -22,6 +28,7 @@ export class AppWorkloadsCardComponent {
   readonly app = input.required<App>();
 
   readonly CatalogAppState = CatalogAppState;
+  readonly AppContainerState = AppContainerState;
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly appContainerStateLabels = appContainerStateLabels;
@@ -29,6 +36,7 @@ export class AppWorkloadsCardComponent {
   constructor(
     private matDialog: MatDialog,
     private router: Router,
+    private translate: TranslateService,
   ) {}
 
   protected readonly hostPorts = computed(() => {
@@ -55,19 +63,17 @@ export class AppWorkloadsCardComponent {
   }
 
   // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-  shellButtonPressed(_: string): void {
-  // this.matDialog.open(PodSelectDialogComponent, {
-  //   minWidth: '650px',
-  //   maxWidth: '850px',
-  //   data: {
-  //     containerImageKey,
-  //     app: this.app,
-  //     appName: this.app.name,
-  //     title: this.translate.instant('Choose pod'),
-  //     type: PodSelectDialogType.Shell,
-  //     customSubmit: (values: PodDialogFormValue) => this.shellDialogSubmit(values),
-  //   },
-  // });
+  shellButtonPressed(containerId: string): void {
+    this.matDialog.open(ShellDetailsDialogComponent, {
+      minWidth: '650px',
+      maxWidth: '850px',
+      data: {
+        appName: this.app().name,
+        title: this.translate.instant('Choose Shell Details'),
+        type: PodSelectDialogType.Shell,
+        customSubmit: (values: ShellDetailsDialogFormValue) => this.shellDialogSubmit(values, containerId),
+      },
+    });
   }
 
   viewLogsButtonPressed(containerDetails: AppContainerDetails): void {
@@ -81,16 +87,15 @@ export class AppWorkloadsCardComponent {
     ]);
   }
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
-  // private shellDialogSubmit(formValue: PodDialogFormValue): void {
-  //   this.router.navigate([
-  //     '/apps',
-  //     'installed',
-  //     this.app().metadata.train,
-  //     this.app().name,
-  //     'shell',
-  //     formValue.pods,
-  //     formValue.command,
-  //   ]);
-  // }
+  private shellDialogSubmit(formValue: ShellDetailsDialogFormValue, containerId: string): void {
+    this.router.navigate([
+      '/apps',
+      'installed',
+      this.app().metadata.train,
+      this.app().name,
+      'shell',
+      containerId,
+      formValue.command,
+    ]);
+  }
 }

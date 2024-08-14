@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog, CatalogUpdate } from 'app/interfaces/catalog.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -25,6 +26,10 @@ export class CatalogSettingsComponent implements OnInit {
   protected form = this.fb.group({
     preferred_trains: [[] as string[], Validators.required],
   });
+
+  protected allTrains$ = this.ws.call('catalog.trains').pipe(
+    singleArrayToOptions(),
+  );
 
   readonly tooltips = {
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,

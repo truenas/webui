@@ -4,7 +4,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const jbofListElements = {
   hierarchy: [T('System'), T('View Enclosure'), T('NVMe-oF Expansion Shelves')],
-  anchorRouterLink: ['/system', 'oldviewenclosure', 'jbof'],
+  anchorRouterLink: ['/system', 'viewenclosure', 'jbof'],
   elements: {
     jbof: {},
   },

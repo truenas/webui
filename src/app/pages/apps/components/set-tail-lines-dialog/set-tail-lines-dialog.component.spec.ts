@@ -37,8 +37,8 @@ describe('SetTailLinesDialogComponent', () => {
       'Tail Lines': '600',
     });
 
-    const reconnectButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reconnect' }));
-    await reconnectButton.click();
+    const connectButton = await loader.getHarness(MatButtonHarness.with({ text: 'Connect' }));
+    await connectButton.click();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(600);
   });
 });
