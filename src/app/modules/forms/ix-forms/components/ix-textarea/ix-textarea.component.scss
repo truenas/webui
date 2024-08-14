@@ -22,6 +22,13 @@
   font-size: 12px;
   position: relative;
 
+  textarea {
+    max-height: 250px;
+    min-height: 14px;
+    overflow-y: auto;
+    resize: vertical;
+  }
+
   &:focus-within {
     border-color: var(--primary);
   }
