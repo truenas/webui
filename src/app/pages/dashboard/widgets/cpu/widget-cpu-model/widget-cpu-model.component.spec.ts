@@ -6,7 +6,7 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
-import { WidgetCpuModelComponent } from 'app/pages/dashboard/widgets/system/widget-cpu-model/widget-cpu-model.component';
+import { WidgetCpuModelComponent } from 'app/pages/dashboard/widgets/cpu/widget-cpu-model/widget-cpu-model.component';
 
 describe('WidgetCpuModelComponent', () => {
   let spectator: Spectator<WidgetCpuModelComponent>;
