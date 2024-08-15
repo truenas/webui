@@ -49,12 +49,7 @@
                         <ix-icon [name]="poolInfo.usedSpace.icon"></ix-icon>
                       </span>
                       <span class="label">{{ poolInfo.usedSpace.label }}:</span>
-                      <span
-                        class="value"
-                        textLimiter
-                        [threshold]="25"
-                        [content]="poolInfo.usedSpace.value"
-                      ></span>
+                      <span class="value">{{ poolInfo.usedSpace.value }}</span>
                     </li>
                     <li>
                       <span [class]="['icon', poolInfo.disksWithError.level]">

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 
 @Component({
   selector: 'ix-fieldset',
@@ -7,8 +9,8 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxFieldsetComponent {
-  @Input() disable: boolean;
-  @Input() title: string;
-  @Input() divider: boolean;
-  @Input() tooltip: string;
+  readonly disable = input<boolean>();
+  readonly title = input<string>();
+  readonly divider = input<boolean>();
+  readonly tooltip = input<string>();
 }

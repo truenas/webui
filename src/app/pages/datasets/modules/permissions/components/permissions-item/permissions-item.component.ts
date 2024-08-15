@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import {
   PermissionItem,
   PermissionsItemType,
@@ -11,7 +13,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PermissionsItemComponent {
-  @Input() item: PermissionItem;
+  readonly item = input.required<PermissionItem>();
 
   readonly PermissionsItem = PermissionsItemType;
 }

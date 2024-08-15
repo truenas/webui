@@ -1,9 +1,9 @@
 <h2>{{ 'Similar Apps' | translate }}</h2>
 
 @if (isLoading()) {
-  <div fxLayout="row wrap" fxLayoutGap="16px">
-    <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
-    <ngx-skeleton-loader class="similar-app-loader" fxFlex></ngx-skeleton-loader>
+  <div class="similar-app-loaders">
+    <ngx-skeleton-loader class="similar-app-loader"></ngx-skeleton-loader>
+    <ngx-skeleton-loader class="similar-app-loader"></ngx-skeleton-loader>
   </div>
 } @else if (loadingError()) {
   <h4 class="no-similar">{{ 'Error when loading similar apps.' | translate }}</h4>

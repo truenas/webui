@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, computed,
+  input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -13,10 +14,8 @@ import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetNodeComponent {
-  @Input() dataset: DatasetDetails;
-  @Input() isSystemDataset: boolean;
+  readonly dataset = input.required<DatasetDetails>();
+  readonly isSystemDataset = input<boolean>();
 
-  get label(): string {
-    return getDatasetLabel(this.dataset);
-  }
+  protected readonly label = computed(() => getDatasetLabel(this.dataset()));
 }

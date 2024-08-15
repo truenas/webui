@@ -23,8 +23,6 @@
     "./src/app/modules/lists/bulk-list-item/bulk-list-item.component.ts",
     "./src/app/modules/lists/bulk-list-item/bulk-list-item.interface.ts",
     "./src/app/modules/buttons/copy-button/copy-button.component.ts",
-    "./src/app/directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component.ts",
-    "./src/app/directives/text-limiter/text-limiter.directive.ts",
     "./src/app/modules/pipes/clean-link/clean-link.pipe.spec.ts",
     "./src/app/modules/pipes/clean-link/clean-link.pipe.ts",
     "./src/app/modules/pipes/schedule-to-crontab/schedule-to-crontab.pipe.spec.ts",

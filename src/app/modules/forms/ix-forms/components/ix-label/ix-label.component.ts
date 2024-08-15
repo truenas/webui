@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component,
+  input,
 } from '@angular/core';
 
 @Component({
@@ -9,7 +10,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxLabelComponent {
-  @Input() label: string;
-  @Input() required = false;
-  @Input() tooltip: string;
+  readonly label = input<string>();
+  readonly required = input(false);
+  readonly tooltip = input<string>();
 }

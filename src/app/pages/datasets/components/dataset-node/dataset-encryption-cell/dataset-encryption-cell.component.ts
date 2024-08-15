@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
@@ -11,9 +11,7 @@ import { isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetEncryptionCellComponent {
-  @Input() dataset: DatasetDetails;
+  readonly dataset = input.required<DatasetDetails>();
 
-  get isEncryptionRoot(): boolean {
-    return isEncryptionRoot(this.dataset);
-  }
+  readonly isEncryptionRoot = computed(() => isEncryptionRoot(this.dataset()));
 }

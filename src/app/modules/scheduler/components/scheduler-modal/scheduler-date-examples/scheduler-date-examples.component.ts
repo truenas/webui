@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { LocaleService } from 'app/services/locale.service';
@@ -10,23 +10,21 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./scheduler-date-examples.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SchedulerDateExamplesComponent implements OnChanges {
-  @Input() cronPreview: CronSchedulePreview;
-  @Input() startDate: Date;
+export class SchedulerDateExamplesComponent {
+  readonly cronPreview = input.required<CronSchedulePreview>();
+  readonly startDate = input.required<Date>();
 
   constructor(
     private localeService: LocaleService,
   ) { }
 
-  scheduleExamples: Date[] = [];
+  protected readonly maxExamples = 25;
 
-  readonly maxExamples = 25;
-
-  ngOnChanges(): void {
-    this.scheduleExamples = this.cronPreview.listNextRunsInMonth(
-      this.startDate,
+  protected readonly scheduleExamples = computed(() => {
+    return this.cronPreview().listNextRunsInMonth(
+      this.startDate(),
       this.maxExamples + 1,
       this.localeService.timezone,
     );
-  }
+  });
 }

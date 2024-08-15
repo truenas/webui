@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 
@@ -9,7 +11,7 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransferModeExplanationComponent {
-  @Input() mode: TransferMode;
+  readonly mode = input.required< TransferMode>();
 
   readonly TransferMode = TransferMode;
 

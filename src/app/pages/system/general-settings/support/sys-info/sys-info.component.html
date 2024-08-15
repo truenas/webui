@@ -1,33 +1,33 @@
-@if (hasLicense && licenseInfo) {
+@if (hasLicense() && licenseInfo()) {
   <div
     class="sys-license-wrapper"
   >
     <div class="sys-info-row">
       <span class="label">{{ 'Customer Name' | translate }}:</span>
-      <span class="value">{{ licenseInfo.customer_name }}</span>
+      <span class="value">{{ licenseInfo().customer_name }}</span>
     </div>
     <div class="sys-info-row">
       <span class="label">{{ 'Features' | translate }}:</span>
-      <span class="value">{{ licenseInfo.features.join(', ') }}</span>
+      <span class="value">{{ licenseInfo().features.join(', ') }}</span>
     </div>
     <div class="sys-info-row">
       <span class="label">{{ 'Contract Type' | translate }}:</span>
-      <span class="value">{{ licenseInfo.contract_type }}</span>
+      <span class="value">{{ licenseInfo().contract_type }}</span>
     </div>
     <div class="sys-info-row">
       <span class="label">{{ 'Expiration Date' | translate }}:</span>
-      <span class="value">{{ licenseInfo.expiration_date }}
-        @if (licenseInfo.daysLeftinContract > 0) {
+      <span class="value">{{ licenseInfo().expiration_date }}
+        @if (licenseInfo().daysLeftinContract > 0) {
           <span>
-            ({{ 'expires in {n, plural, one {# day} other {# days} }' | translate: { n: licenseInfo.daysLeftinContract } }})
+            ({{ 'expires in {n, plural, one {# day} other {# days} }' | translate: { n: licenseInfo().daysLeftinContract } }})
           </span>
         }
-        @if (licenseInfo.daysLeftinContract === 0) {
+        @if (licenseInfo().daysLeftinContract === 0) {
           <span>
             ( {{ 'EXPIRES TODAY' | translate }} )
           </span>
         }
-        @if (licenseInfo.daysLeftinContract < 0) {
+        @if (licenseInfo().daysLeftinContract < 0) {
           <span>
             ( {{ 'EXPIRED' | translate }} )
           </span>
@@ -36,34 +36,34 @@
     </div>
     <div class="sys-info-row">
       <span class="label">{{ 'Model' | translate }}:</span>
-      <span class="value">{{ systemInfo.model }}</span>
+      <span class="value">{{ systemInfo().model }}</span>
     </div>
-    @if (systemInfo.system_serial) {
+    @if (systemInfo().system_serial) {
       <div class="sys-info-row">
         <span class="label">{{ 'System Serial' | translate }}:</span>
-        <span class="value">{{ systemInfo.system_serial }}</span>
+        <span class="value">{{ systemInfo().system_serial }}</span>
       </div>
     }
-    @if (licenseInfo?.system_serial || licenseInfo?.system_serial_ha) {
+    @if (licenseInfo()?.system_serial || licenseInfo()?.system_serial_ha) {
       <div class="sys-info-row">
         <span class="label">{{ 'Licensed Serials' | translate }}:</span>
         <span class="value">
-          @if (licenseInfo?.system_serial) {
-            <span>{{ licenseInfo.system_serial }}</span>
+          @if (licenseInfo()?.system_serial) {
+            <span>{{ licenseInfo().system_serial }}</span>
           }
-          @if (licenseInfo?.system_serial && licenseInfo?.system_serial_ha) {
+          @if (licenseInfo()?.system_serial && licenseInfo()?.system_serial_ha) {
             <span> / </span>
           }
-          @if (licenseInfo?.system_serial_ha) {
-            <span>{{ licenseInfo.system_serial_ha }}</span>
+          @if (licenseInfo()?.system_serial_ha) {
+            <span>{{ licenseInfo().system_serial_ha }}</span>
           }
         </span>
       </div>
     }
-    @if (licenseInfo.add_hardware) {
+    @if (licenseInfo().add_hardware) {
       <div class="sys-info-row">
         <span class="label">{{ 'Additional Hardware' | translate }}:</span>
-        <span class="value">{{ licenseInfo.add_hardware }}</span>
+        <span class="value">{{ licenseInfo().add_hardware }}</span>
       </div>
     }
   </div>
@@ -71,28 +71,28 @@
   <div class="sys-info-wrapper">
     <div class="sys-info-row">
       <span class="label">{{ 'OS Version' | translate }}:</span>
-      <span class="value">{{ systemInfo.version }}</span>
+      <span class="value">{{ systemInfo().version }}</span>
     </div>
     <div class="sys-info-row">
       <span class="label">{{ 'Product' | translate }}:</span>
-      <span class="value">{{ systemInfo.system_product }}</span>
+      <span class="value">{{ systemInfo().system_product }}</span>
     </div>
-    @if (systemInfo.model) {
+    @if (systemInfo().model) {
       <div class="sys-info-row">
         <span class="label">{{ 'Model' | translate }}:</span>
-        <span class="value">{{ systemInfo.model }}</span>
+        <span class="value">{{ systemInfo().model }}</span>
       </div>
     }
-    @if (systemInfo.memory) {
+    @if (systemInfo().memory) {
       <div class="sys-info-row">
         <span class="label">{{ 'Memory' | translate }}:</span>
-        <span class="value">{{ systemInfo.memory }}</span>
+        <span class="value">{{ systemInfo().memory }}</span>
       </div>
     }
-    @if (systemInfo.system_serial) {
+    @if (systemInfo().system_serial) {
       <div class="fn-sys-info-row">
         <span class="label">{{ 'System Serial' | translate }}:</span>
-        <span class="value">{{ systemInfo.system_serial }}</span>
+        <span class="value">{{ systemInfo().system_serial }}</span>
       </div>
     }
   </div>

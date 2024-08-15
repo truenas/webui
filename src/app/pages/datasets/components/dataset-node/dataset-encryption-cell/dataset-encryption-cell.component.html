@@ -1,15 +1,15 @@
-@if (!dataset.encrypted) {
+@if (!dataset().encrypted) {
   <div class="encryption-description">
     {{ 'Unencrypted' | translate }}
   </div>
 } @else {
-  @if (dataset.locked) {
+  @if (dataset().locked) {
     <ix-icon
-      [name]="'mdi-lock' + (isEncryptionRoot ? '' : '-outline')"
+      [name]="'mdi-lock' + (isEncryptionRoot() ? '' : '-outline')"
     ></ix-icon>
     <div class="encryption-description">
       <div>{{ 'Locked' | translate }}</div>
-      @if (!isEncryptionRoot) {
+      @if (!isEncryptionRoot()) {
         <div class="by-ancestor">
           {{ 'by ancestor' | translate }}
         </div>
@@ -17,11 +17,11 @@
     </div>
   } @else {
     <ix-icon
-      [name]="'mdi-lock-open-variant' + (isEncryptionRoot ? '' : '-outline')"
+      [name]="'mdi-lock-open-variant' + (isEncryptionRoot() ? '' : '-outline')"
     ></ix-icon>
     <div class="encryption-description">
       <div>{{ 'Unlocked' | translate }}</div>
-      @if (!isEncryptionRoot) {
+      @if (!isEncryptionRoot()) {
         <div class="by-ancestor">
           {{ 'by ancestor' | translate }}
         </div>

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatIconButton } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -45,6 +46,7 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     SearchInput1Component,
     MapValuePipe,
     CopyButtonComponent,
+    MatIconButton,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent, JobNameComponent],
 })
