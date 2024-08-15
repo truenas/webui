@@ -160,11 +160,13 @@ describe('WidgetInterfaceComponent', () => {
       });
     }));
 
-    it('shows a message to configure widget', () => {
+    it('checks first entry selection when settings are null', () => {
       spectator.setInput('settings', null);
-      expect(spectator.query('.icon')).toExist();
-      expect(spectator.query('h3 div')).toHaveText('Widget is not configured.');
-      expect(spectator.query('h3 small')).toHaveText('Edit widget to choose network interface.');
+
+      expect(spectator.query('.info-header-title')).toHaveText('ens1');
+      expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
     });
   });
 

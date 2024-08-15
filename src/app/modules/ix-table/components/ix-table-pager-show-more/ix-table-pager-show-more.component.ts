@@ -19,6 +19,7 @@ export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChe
   dataProvider = input.required<DataProvider<T>>();
   pageSize = input(5);
   routerLink = input<string[]>([]);
+  ixTestOverride = input.required<string[]>();
 
   currentPage = signal(1);
   totalItems = signal(0);
@@ -36,6 +37,10 @@ export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChe
     private cdr: ChangeDetectorRef,
     private router: Router,
   ) {}
+
+  dataTest(key: string): string[] {
+    return [...this.ixTestOverride(), key];
+  }
 
   ngOnInit(): void {
     this.dataProvider().setPagination({
