@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -24,6 +25,7 @@ describe('AppContainersCardComponent', () => {
   const app = {
     id: 'ix-test-app',
     name: 'ix-test-app',
+    metadata: { train: 'ix-test-train' },
     upgrade_available: true,
     state: CatalogAppState.Running,
     active_workloads:
@@ -77,6 +79,7 @@ describe('AppContainersCardComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(() => of(true)),
       }),
+      mockProvider(Router),
       mockAuth(),
     ],
   });
@@ -144,10 +147,12 @@ describe('AppContainersCardComponent', () => {
     );
   });
 
-  it.skip('opens view logs dialog when View Logs button is pressed', async () => {
+  it('redirects to logs page when View Logs button is pressed', async () => {
     const showLogsButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="View Logs"]' }));
     await showLogsButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(1);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
+      ['/apps', 'installed', 'ix-test-train', 'ix-test-app', 'logs', '1'],
+    );
   });
 });

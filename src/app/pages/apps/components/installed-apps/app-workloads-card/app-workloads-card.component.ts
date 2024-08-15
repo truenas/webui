@@ -98,18 +98,4 @@ export class AppWorkloadsCardComponent {
       formValue.command,
     ]);
   }
-
-  private logDialogSubmit(formValue: ShellDetailsDialogFormValue): void {
-    const tailLines = (formValue.tail_lines).toString();
-    this.router.navigate([
-      '/apps',
-      'installed',
-      this.app().metadata.train,
-      this.app().name,
-      'logs',
-      // formValue.pods,
-      // formValue.containers,
-      tailLines,
-    ]);
-  }
 }
