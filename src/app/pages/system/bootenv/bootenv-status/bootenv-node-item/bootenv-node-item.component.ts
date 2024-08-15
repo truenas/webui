@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, Input, Output, EventEmitter,
+  ChangeDetectionStrategy, Component,
+  input, output, computed,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -18,37 +19,36 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootenvNodeItemComponent {
-  @Input() node: DeviceNestedDataNode;
-  @Input() poolInstance: PoolInstance;
-  @Input() oneDisk: boolean;
-  @Output() invokeAction = new EventEmitter<BootPoolActionEvent>();
+  readonly node = input.required<DeviceNestedDataNode>();
+  readonly poolInstance = input.required<PoolInstance>();
+  readonly oneDisk = input<boolean>();
+
+  readonly invokeAction = output<BootPoolActionEvent>();
 
   readonly requiredRoles = [Role.FullAdmin];
 
-  get ownName(): string {
-    if (!this.topologyItem) {
+  protected readonly topologyItem = computed(() => this.node() as TopologyItem);
+
+  protected readonly ownName = computed(() => {
+    if (!this.topologyItem()) {
       return '';
     }
-    if (this.topologyItem.name) {
-      return this.topologyItem.name;
+    if (this.topologyItem().name) {
+      return this.topologyItem().name;
     }
-    return this.topologyItem.path;
-  }
+    return this.topologyItem().path;
+  });
 
-  get topologyItem(): TopologyItem {
-    return this.node as TopologyItem;
-  }
+  protected readonly isMirror = computed(() => {
+    return Boolean(this.topologyItem().type === TopologyItemType.Mirror && this.topologyItem().path);
+  });
 
-  get isMirror(): boolean {
-    return Boolean(this.topologyItem.type === TopologyItemType.Mirror && this.topologyItem.path);
-  }
+  protected readonly isDisk = computed(() => {
+    return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
+  });
 
-  get isDisk(): boolean {
-    return Boolean(this.topologyItem.type === TopologyItemType.Disk && this.topologyItem.path);
-  }
-
-  get statusColor(): string {
-    switch (this.topologyItem.status as (PoolStatus | TopologyItemStatus)) {
+  protected readonly statusColor = computed(() => {
+    switch (this.topologyItem().status as (PoolStatus | TopologyItemStatus)) {
       case PoolStatus.Faulted:
         return 'var(--red)';
       case PoolStatus.Offline:
@@ -56,37 +56,37 @@ export class BootenvNodeItemComponent {
       default:
         return '';
     }
-  }
+  });
 
-  get errors(): string {
+  protected readonly errors = computed(() => {
     let errors = 0;
-    if (this.topologyItem.stats) {
-      const stats = this.topologyItem.stats;
+    const stats = this.topologyItem().stats;
+    if (stats) {
       errors = (stats?.checksum_errors || 0) + (stats?.read_errors || 0) + (stats?.write_errors || 0);
     }
     return this.translate.instant('{n, plural, =0 {No Errors} one {# Error} other {# Errors}}', { n: errors });
-  }
+  });
 
   constructor(private translate: TranslateService) {}
 
   detach(): void {
     this.invokeAction.emit({
       action: BootPoolActionType.Detach,
-      node: this.topologyItem,
+      node: this.topologyItem(),
     });
   }
 
   attach(): void {
     this.invokeAction.emit({
       action: BootPoolActionType.Attach,
-      node: this.topologyItem,
+      node: this.topologyItem(),
     });
   }
 
   replace(): void {
     this.invokeAction.emit({
       action: BootPoolActionType.Replace,
-      node: this.topologyItem,
+      node: this.topologyItem(),
     });
   }
 }

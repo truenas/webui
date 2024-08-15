@@ -14,11 +14,11 @@
   <mat-card-content>
     <div class="details-item">
       <div class="label">{{ 'Total Snapshots' | translate }}:</div>
-      <div class="total-snapshots value">{{ dataset.snapshot_count }}</div>
+      <div class="total-snapshots value">{{ dataset().snapshot_count }}</div>
       <a
         class="action"
         ixTest="manage-snapshots"
-        [routerLink]="['/datasets/snapshots', dataset.id]"
+        [routerLink]="['/datasets/snapshots', dataset().id]"
         [ixUiSearch]="searchableElements.elements.manageSnapshots"
       >
         {{ 'Manage Snapshots' | translate }}
@@ -26,11 +26,11 @@
     </div>
     <div class="details-item">
       <div class="label">{{ 'Snapshot Tasks' | translate }}:</div>
-      <div class="snapshot-tasks value">{{ dataset.snapshot_tasks_count }}</div>
+      <div class="snapshot-tasks value">{{ dataset().snapshot_tasks_count }}</div>
       <a
         class="action"
         ixTest="manage-snapshot-tasks"
-        [routerLink]="['/data-protection/snapshot', dataset.id]"
+        [routerLink]="['/data-protection/snapshot', dataset().id]"
         [ixUiSearch]="searchableElements.elements.manageSnapshotTasks"
       >
         {{ 'Manage Snapshot Tasks' | translate }}
@@ -39,12 +39,12 @@
     <div class="details-item">
       <div class="label">{{ 'Replication Tasks' | translate }}:</div>
       <div class="replication-tasks value">
-        {{ dataset.replication_tasks_count }}
+        {{ dataset().replication_tasks_count }}
       </div>
       <a
         class="action"
         ixTest="manage-replication-tasks"
-        [routerLink]="['/data-protection/replication', dataset.id]"
+        [routerLink]="['/data-protection/replication', dataset().id]"
         [ixUiSearch]="searchableElements.elements.manageReplicationTasks"
       >
         {{ 'Manage Replication Tasks' | translate }}
@@ -53,23 +53,23 @@
     <div class="details-item">
       <div class="label">{{ 'Cloud Sync Tasks' | translate }}:</div>
       <div class="cloudsync-tasks value">
-        {{ dataset.cloudsync_tasks_count }}
+        {{ dataset().cloudsync_tasks_count }}
       </div>
       <a
         class="action"
         ixTest="manage-cloudsync-tasks"
-        [routerLink]="['/data-protection/cloudsync', dataset.id]"
+        [routerLink]="['/data-protection/cloudsync', dataset().id]"
       >
         {{ 'Manage Cloud Sync Tasks' | translate }}
       </a>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Rsync Tasks' | translate }}:</div>
-      <div class="rsync-tasks value">{{ dataset.rsync_tasks_count }}</div>
+      <div class="rsync-tasks value">{{ dataset().rsync_tasks_count }}</div>
       <a
         class="action"
         ixTest="manage-rsync-tasks"
-        [routerLink]="['/data-protection/rsync', dataset.id]"
+        [routerLink]="['/data-protection/rsync', dataset().id]"
         [ixUiSearch]="searchableElements.elements.manageRsyncTasks"
       >
         {{ 'Manage Rsync Tasks' | translate }}

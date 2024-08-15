@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { subHours, subMinutes } from 'date-fns';
 import {
-  Observable, Subject, combineLatestWith, debounceTime,
+  Observable, Subject, catchError, combineLatestWith, debounceTime,
   forkJoin, map, of, repeat, shareReplay, switchMap, take, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -60,7 +60,9 @@ export class WidgetResourcesService {
 
   readonly installedApps$ = this.ws.call('app.query').pipe(toLoadingState());
 
-  readonly pools$ = this.ws.callAndSubscribe('pool.query');
+  readonly pools$ = this.ws.callAndSubscribe('pool.query').pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   readonly volumesData$ = this.pools$.pipe(
     switchMap(() => this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])),
@@ -69,6 +71,7 @@ export class WidgetResourcesService {
 
   readonly updateAvailable$ = this.ws.call('update.check_available').pipe(
     map((update) => update.status === SystemUpdateStatus.Available),
+    catchError(() => of(false)),
     shareReplay({ refCount: false, bufferSize: 1 }),
   );
 
@@ -110,9 +113,9 @@ export class WidgetResourcesService {
     );
   }
 
-  getPoolById(poolId: number): Observable<Pool> {
-    return this.ws.call('pool.query', [[['id', '=', +poolId]]]).pipe(
-      map((pools) => pools[0]),
+  getPoolById(poolId: string): Observable<Pool> {
+    return this.pools$.pipe(
+      map((pools) => pools.find((pool) => pool.id === +poolId || pool.name === poolId)),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }

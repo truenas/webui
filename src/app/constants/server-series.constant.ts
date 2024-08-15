@@ -3,7 +3,6 @@ import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 interface MiniSeries {
   pathImg: string;
   images: string[];
-  isRackmount: boolean;
 }
 
 export const mSeries = [
@@ -70,7 +69,6 @@ export const miniSeries: Record<string, MiniSeries> = {
       'TRUENAS-MINI-3.0-E',
       'TRUENAS-MINI-3.0-E+',
     ],
-    isRackmount: false,
   },
   miniX: {
     pathImg: 'freenas_mini_x_cropped.png',
@@ -80,7 +78,6 @@ export const miniSeries: Record<string, MiniSeries> = {
       'TRUENAS-MINI-3.0-X',
       'TRUENAS-MINI-3.0-X+',
     ],
-    isRackmount: false,
   },
   miniXL: {
     pathImg: 'freenas_mini_xl_cropped.png',
@@ -89,13 +86,11 @@ export const miniSeries: Record<string, MiniSeries> = {
       'FREENAS-MINI-3.0-XL+',
       'TRUENAS-MINI-3.0-XL+',
     ],
-    isRackmount: false,
   },
   miniR: {
     pathImg: 'servers/MINI-R.png',
     images: [
       'TRUENAS-MINI-R',
     ],
-    isRackmount: true,
   },
 };

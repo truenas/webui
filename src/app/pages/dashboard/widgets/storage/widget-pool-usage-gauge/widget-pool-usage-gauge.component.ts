@@ -25,7 +25,7 @@ export class WidgetPoolUsageGaugeComponent implements WidgetComponent {
 
   protected pool = toSignal(toObservable(this.poolId).pipe(
     filter(Boolean),
-    switchMap((poolId) => this.resources.getPoolById(+poolId)),
+    switchMap((poolId) => this.resources.getPoolById(poolId)),
     tap((pool) => {
       this.poolExists = !!pool;
       this.cdr.markForCheck();

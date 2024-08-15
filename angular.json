@@ -39,9 +39,7 @@
               "src/assets/styles/index.scss"
             ],
             "scripts": [
-              "node_modules/marked/marked.min.js",
-              "node_modules/pixi.js/dist/pixi.min.js",
-              "node_modules/pixi-filters/dist/pixi-filters.js"
+              "node_modules/marked/marked.min.js"
             ],
             "extractLicenses": false,
             "sourceMap": true,

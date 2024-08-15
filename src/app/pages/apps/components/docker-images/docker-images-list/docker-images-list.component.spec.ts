@@ -65,9 +65,9 @@ describe('DockerImagesListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Image ID', 'Tags', 'Image Size', ''],
-      ['sha256:test1', 'truenas/webui:3.1', '725.07 KiB', ''],
-      ['sha256:test2', 'truenas/middleware:0.1.2', '5.82 MiB', ''],
+      ['', 'Image ID', 'Tags', 'Image Size', ''],
+      ['', 'sha256:test1', 'truenas/webui:3.1', '725.07 KiB', ''],
+      ['', 'sha256:test2', 'truenas/middleware:0.1.2', '5.82 MiB', ''],
     ];
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.image.query');

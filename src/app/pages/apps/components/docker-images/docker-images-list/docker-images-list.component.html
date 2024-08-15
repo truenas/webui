@@ -12,6 +12,25 @@
   </button>
 </ix-page-header>
 
+@if (selectedImages.length) {
+  <div class="batch-actions-toolbar">
+    <div class="title">
+      <strong>{{ 'Batch Operations' | translate }}</strong>
+    </div>
+    <div class="actions">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="delete"
+        (click)="doDelete(selectedImages)"
+      >
+        <ix-icon name="delete"></ix-icon>
+        {{ 'Delete' | translate }}
+      </button>
+    </div>
+  </div>
+}
+
 <ix-table
   class="table"
   [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"

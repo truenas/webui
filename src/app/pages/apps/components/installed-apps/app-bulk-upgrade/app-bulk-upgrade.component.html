@@ -50,11 +50,7 @@
                 <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
               </mat-expansion-panel-header>
               <div class="details-expansion-content">
-                <div
-                  fxLayout="row"
-                  fxLayoutAlign="start start"
-                  class="detail-row row-dark"
-                >
+                <div class="detail-row row-dark">
                   @if (summary?.changelog) {
                     <div [innerHTML]="summary.changelog"></div>
                   } @else {

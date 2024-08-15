@@ -44,7 +44,6 @@ export class ThemeService {
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
-      filter((theme) => theme !== this.activeTheme),
       untilDestroyed(this),
     ).subscribe((theme: string) => {
       this.window.sessionStorage.setItem('theme', theme);

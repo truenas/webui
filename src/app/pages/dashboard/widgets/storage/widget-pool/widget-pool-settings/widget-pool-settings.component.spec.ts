@@ -42,7 +42,6 @@ describe('WidgetPoolSettingsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    jest.restoreAllMocks();
   });
 
   it('checks pre-select first option when no settings', async () => {

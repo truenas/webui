@@ -1,34 +1,34 @@
 <div class="tree-node-grid">
   <div class="cell cell-name">
-    <span class="name">{{ ownName }}</span>
+    <span class="name">{{ ownName() }}</span>
   </div>
-  <div class="cell cell-status" [style.background-color]="statusColor">
-    <span>{{ topologyItem.status }}</span>
-    @if (!isDisk && !isMirror && poolInstance?.status_detail) {
+  <div class="cell cell-status" [style.background-color]="statusColor()">
+    <span>{{ topologyItem().status }}</span>
+    @if (!isDisk() && !isMirror() && poolInstance()?.status_detail) {
       <ix-icon
         name="mdi-information-outline"
-        [matTooltip]="poolInstance.status_detail"
+        [matTooltip]="poolInstance().status_detail"
       ></ix-icon>
     }
   </div>
   <div class="cell">
-    <span>{{ topologyItem?.stats?.read_errors || 0 }}</span>
+    <span>{{ topologyItem()?.stats?.read_errors || 0 }}</span>
   </div>
   <div class="cell">
-    <span>{{ topologyItem?.stats?.write_errors || 0 }}</span>
+    <span>{{ topologyItem()?.stats?.write_errors || 0 }}</span>
   </div>
   <div class="cell">
-    <span>{{ topologyItem?.stats?.checksum_errors || 0 }}</span>
+    <span>{{ topologyItem()?.stats?.checksum_errors || 0 }}</span>
   </div>
   <div class="cell">
-    <span>{{ errors }}</span>
+    <span>{{ errors() }}</span>
   </div>
   <div class="cell cell-actions">
-    @if (isDisk || isMirror) {
+    @if (isDisk() || isMirror()) {
       <button
         mat-icon-button
         aria-label="Actions"
-        [ixTest]="[ownName, 'actions']"
+        [ixTest]="[ownName(), 'actions']"
         [matMenuTriggerFor]="menu"
       >
         <ix-icon name="more_vert"></ix-icon>
@@ -40,7 +40,7 @@
         <span>{{ 'Replace' | translate }}</span>
       </button>
       <ng-container *ixRequiresRoles="requiredRoles">
-        @if (isDisk && oneDisk) {
+        @if (isDisk() && oneDisk()) {
           <button mat-menu-item ixTest="attach" (click)="attach()">
             <ix-icon name="mdi-attachment-plus"></ix-icon>
             <span>{{ 'Attach' | translate }}</span>
@@ -48,7 +48,7 @@
         }
       </ng-container>
       <ng-container *ixRequiresRoles="requiredRoles">
-        @if (isMirror) {
+        @if (isMirror()) {
           <button mat-menu-item ixTest="detach" (click)="detach()">
             <ix-icon name="mdi-attachment-minus"></ix-icon>
             <span>{{ 'Detach' | translate }}</span>

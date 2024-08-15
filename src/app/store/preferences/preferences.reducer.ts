@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
+import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { DashConfigItem } from 'app/pages/dashboard-old/components/widget-controller/widget-controller.component';
 import { defaultTheme } from 'app/services/theme/theme.constants';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';

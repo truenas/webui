@@ -11,16 +11,16 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { JbosFormComponent } from 'app/pages/system/old-view-enclosure/components/jbof-form/jbof-form.component';
+import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('JbofFormComponent', () => {
-  let spectator: Spectator<JbosFormComponent>;
+  let spectator: Spectator<JbofFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
   const createComponent = createComponentFactory({
-    component: JbosFormComponent,
+    component: JbofFormComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,

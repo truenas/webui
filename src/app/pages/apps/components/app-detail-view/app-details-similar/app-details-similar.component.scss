@@ -19,7 +19,15 @@ h2 {
   }
 }
 
+.similar-app-loaders {
+  display: flex;
+  flex-flow: wrap;
+  gap: 16px;
+}
+
 .similar-app-loader {
+  flex: 1;
+
   ::ng-deep span {
     height: 100px;
   }

@@ -1,4 +1,4 @@
-<div class="app" fxFlex="200px">
+<div class="app">
   @if (app?.installed) {
     <a
       class="installed-badge"
@@ -40,7 +40,7 @@
   }
 </div>
 
-<div class="app-info" fxFlex="240px">
+<div class="app-info">
   <div class="app-list-item">
     <span class="label">{{ 'App Version' | translate }}:</span>
     @if (isLoading$ | async) {

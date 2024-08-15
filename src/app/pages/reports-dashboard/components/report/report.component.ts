@@ -27,7 +27,6 @@ import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
 import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
@@ -49,7 +48,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   styleUrls: ['./report.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportComponent extends WidgetComponent implements OnInit, OnChanges {
+export class ReportComponent implements OnInit, OnChanges {
   @Input() localControls?: boolean = true;
   @Input() dateFormat?: DateTime;
   @Input() report: Report;
@@ -138,7 +137,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
   ) {
-    super();
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };

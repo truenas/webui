@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 
@@ -8,7 +10,7 @@ import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/s
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SysInfoComponent {
-  @Input() hasLicense: boolean;
-  @Input() licenseInfo: LicenseInfoInSupport;
-  @Input() systemInfo: SystemInfoInSupport;
+  readonly hasLicense = input<boolean>();
+  readonly licenseInfo = input<LicenseInfoInSupport>();
+  readonly systemInfo = input<SystemInfoInSupport>();
 }
