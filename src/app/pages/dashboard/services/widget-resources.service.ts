@@ -52,6 +52,13 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  readonly cpuModel$ = this.store$.pipe(
+    waitForSystemInfo,
+    map((systemInfo) => systemInfo.model),
+    toLoadingState(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
   readonly networkInterfaces$ = this.ws.call('interface.query').pipe(
     map((interfaces) => processNetworkInterfaces(interfaces)),
     toLoadingState(),

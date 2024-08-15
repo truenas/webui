@@ -16,6 +16,7 @@ import { poolLastScanErrorsWidget } from 'app/pages/dashboard/widgets/storage/wi
 import { poolStatusWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-status/widget-pool-status.definition';
 import { poolUsageGaugeWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-usage-gauge/widget-pool-usage-gauge.definition';
 import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.definition';
+import { cpuModelWidget } from 'app/pages/dashboard/widgets/system/widget-cpu-model/widget-cpu-model.definition';
 import { hostnameActiveWidget } from 'app/pages/dashboard/widgets/system/widget-hostname-active/widget-hostname-active.definition';
 import {
   hostnamePassiveWidget,
@@ -62,6 +63,7 @@ export const widgetComponents = [
   hostnamePassiveWidget.component,
   serialActiveWidget.component,
   serialPassiveWidget.component,
+  cpuModelWidget.component,
 ];
 
 export const widgetRegistry = {
@@ -92,4 +94,5 @@ export const widgetRegistry = {
   [WidgetType.HostnamePassive]: hostnamePassiveWidget,
   [WidgetType.SerialActive]: serialActiveWidget,
   [WidgetType.SerialPassive]: serialPassiveWidget,
+  [WidgetType.CpuModelWidget]: cpuModelWidget,
 };
