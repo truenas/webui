@@ -49,14 +49,25 @@
 }
 
 .group-container.editing {
-  outline: 1px dashed var(--alt-fg1);
+  background: radial-gradient(circle at center, #445e74, #222f3a);
+  border-radius: 10px;
+  box-shadow: 0 0 3px 0 var(--primary);
 
   .group {
+    opacity: 0.65;
     transform: scale(0.85) translate(0, 10px);
   }
 
   .controls {
     opacity: 1;
+  }
+}
+
+:host ::ng-deep {
+  .group-container.editing {
+    .slot {
+      border-radius: 10px;
+    }
   }
 }
 

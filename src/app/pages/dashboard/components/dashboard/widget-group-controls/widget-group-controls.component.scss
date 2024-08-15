@@ -13,6 +13,10 @@
   transition: opacity $animation-duration;
   width: 100%;
 
+  ix-icon {
+    color: var(--primary);
+  }
+
   .mobile-reorder-buttons {
     align-self: flex-start;
     display: flex;
@@ -34,6 +38,10 @@
     position: absolute;
     top: 0;
     width: 60px;
+
+    ix-icon {
+      font-size: 50px;
+    }
 
     @media #{$media-gt-xs} {
       display: block;
