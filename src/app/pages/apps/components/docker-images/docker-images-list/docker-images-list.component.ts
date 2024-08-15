@@ -1,17 +1,17 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -20,6 +20,11 @@ import { dockerImagesListElements } from 'app/pages/apps/components/docker-image
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+
+// TODO: Exclude AnythingUi when NAS-127632 is done
+export interface ContainerImageUi extends ContainerImage {
+  selected: boolean;
+}
 
 @UntilDestroy()
 @Component({
@@ -33,11 +38,24 @@ export class DockerImagesListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = dockerImagesListElements;
 
-  dataProvider: AsyncDataProvider<ContainerImage>;
-  containerImages: ContainerImage[] = [];
-  selection = new SelectionModel<ContainerImage>(true, []);
+  dataProvider: AsyncDataProvider<ContainerImageUi>;
+  containerImages: ContainerImageUi[] = [];
   filterString = '';
-  columns = createTable<ContainerImage>([
+  columns = createTable<ContainerImageUi>([
+    checkboxColumn({
+      propertyName: 'selected',
+      onRowCheck: (row, checked) => {
+        this.containerImages.find((image) => row.id === image.id).selected = checked;
+        this.dataProvider.setRows([]);
+        this.onListFiltered(this.filterString);
+      },
+      onColumnCheck: (checked) => {
+        this.containerImages.forEach((image) => image.selected = checked);
+        this.dataProvider.setRows([]);
+        this.onListFiltered(this.filterString);
+      },
+      cssClass: 'checkboxs-column',
+    }),
     textColumn({
       title: this.translate.instant('Image ID'),
       propertyName: 'id',
@@ -71,6 +89,10 @@ export class DockerImagesListComponent implements OnInit {
     ariaLabels: (row) => [row.id, this.translate.instant('Docker Image')],
   });
 
+  get selectedImages(): ContainerImageUi[] {
+    return this.containerImages.filter((image) => image.selected);
+  }
+
   constructor(
     public emptyService: EmptyService,
     public formatter: IxFormatterService,
@@ -85,6 +107,7 @@ export class DockerImagesListComponent implements OnInit {
 
   ngOnInit(): void {
     const containerImages$ = this.ws.call('app.image.query').pipe(
+      map((images) => images.map((image) => ({ ...image, selected: false }))),
       tap((images) => this.containerImages = images),
     );
     this.dataProvider = new AsyncDataProvider(containerImages$);
@@ -101,8 +124,8 @@ export class DockerImagesListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
-  doDelete(images: ContainerImage[]): void {
-    this.matDialog.open(DockerImageDeleteDialogComponent, { data: images })
+  doDelete(images: ContainerImageUi[]): void {
+    this.matDialog.open(DockerImageDeleteDialogComponent, { data: this.prepareImages(images) })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.refresh());
@@ -120,5 +143,12 @@ export class DockerImagesListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
+  }
+
+  private prepareImages(images: ContainerImageUi[]): ContainerImage[] {
+    return images.map((image) => {
+      delete image.selected;
+      return image as ContainerImage;
+    });
   }
 }
