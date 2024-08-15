@@ -65,9 +65,9 @@ describe('SchedulerComponent', () => {
 
     const label = spectator.query(IxLabelComponent);
     expect(label).toExist();
-    expect(label.label).toBe('Apply To Groups');
-    expect(label.required).toBe(true);
-    expect(label.tooltip).toBe('Enter the location of the system.');
+    expect(label.label()).toBe('Apply To Groups');
+    expect(label.required()).toBe(true);
+    expect(label.tooltip()).toBe('Enter the location of the system.');
   });
 
   it('shows a list of presets and a custom option', async () => {

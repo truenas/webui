@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatCalendar } from '@angular/material/datepicker';
 import { MatCalendarHarness } from '@angular/material/datepicker/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { format } from 'date-fns';
+import { parse } from 'date-fns';
 import { MockComponent } from 'ng-mocks';
 import {
   SchedulerDateExamplesComponent,
@@ -76,7 +76,7 @@ describe('SchedulerPreviewColumnComponent', () => {
   it('passes cron and time constraints to SchedulerDateExamplesComponent to show date examples', () => {
     const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
 
-    expect(format(examplesComponent.startDate, 'yyyy-MM-dd HH:mm:ss')).toBe('2022-02-22 09:28:00');
+    expect(examplesComponent.startDate).toEqual(parse('2022-02-22 09:28:00', 'yyyy-MM-dd HH:mm:ss', new Date()));
   });
 
   it('shows calendar for next month with dates highlighted when next arrow is pressed', async () => {
@@ -95,7 +95,7 @@ describe('SchedulerPreviewColumnComponent', () => {
     await calendar.next();
 
     const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
-    expect(format(examplesComponent.startDate, 'yyyy-MM-dd HH:mm:ss')).toBe('2022-03-01 00:00:00');
+    expect(examplesComponent.startDate).toEqual(parse('2022-03-01 00:00:00', 'yyyy-MM-dd HH:mm:ss', new Date()));
   });
 
   it('does not show any dates when user goes in the past', async () => {

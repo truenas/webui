@@ -21,7 +21,7 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
 export class BootenvNodeItemComponent {
   readonly node = input.required<DeviceNestedDataNode>();
   readonly poolInstance = input.required<PoolInstance>();
-  readonly oneDisk = input.required<boolean>();
+  readonly oneDisk = input<boolean>();
 
   readonly invokeAction = output<BootPoolActionEvent>();
 

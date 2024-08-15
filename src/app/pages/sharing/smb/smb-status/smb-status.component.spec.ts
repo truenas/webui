@@ -24,10 +24,6 @@ describe('SmbStatusComponent', () => {
     spectator = createComponent();
   });
 
-  it('should have correct initial activeTab', () => {
-    expect(spectator.component.activeTab).toBe('sessions');
-  });
-
   it('should have correct navLinks', () => {
     const expectedNavLinks = [
       {
