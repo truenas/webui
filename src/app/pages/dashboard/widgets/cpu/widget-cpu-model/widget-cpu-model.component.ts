@@ -4,7 +4,7 @@ import {
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { cpuModelWidget } from 'app/pages/dashboard/widgets/system/widget-cpu-model/widget-cpu-model.definition';
+import { cpuModelWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-model/widget-cpu-model.definition';
 
 @Component({
   selector: 'ix-widget-cpu-model',

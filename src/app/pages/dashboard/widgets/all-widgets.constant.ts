@@ -1,6 +1,7 @@
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
+import { cpuModelWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-model/widget-cpu-model.definition';
 import { cpuTemperatureBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temperature-bar/widget-cpu-temperature-bar.definition';
 import { cpuUsageBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-bar/widget-cpu-usage-bar.definition';
 import { cpuUsageGaugeWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-gauge/widget-cpu-usage-gauge.definition';
@@ -16,7 +17,6 @@ import { poolLastScanErrorsWidget } from 'app/pages/dashboard/widgets/storage/wi
 import { poolStatusWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-status/widget-pool-status.definition';
 import { poolUsageGaugeWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-usage-gauge/widget-pool-usage-gauge.definition';
 import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.definition';
-import { cpuModelWidget } from 'app/pages/dashboard/widgets/system/widget-cpu-model/widget-cpu-model.definition';
 import { hostnameActiveWidget } from 'app/pages/dashboard/widgets/system/widget-hostname-active/widget-hostname-active.definition';
 import {
   hostnamePassiveWidget,
