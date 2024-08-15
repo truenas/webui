@@ -8,7 +8,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { trackById } from 'app/helpers/track-by.utils';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -38,8 +37,6 @@ export class JobsPanelComponent {
   waitingJobsCount$ = this.store$.select(selectWaitingJobsCount);
   failedJobsCount$ = this.store$.select(selectFailedJobsCount);
   availableJobs$ = this.store$.select(selectJobsPanelSlice);
-
-  readonly trackByJobId = trackById;
 
   constructor(
     private router: Router,
