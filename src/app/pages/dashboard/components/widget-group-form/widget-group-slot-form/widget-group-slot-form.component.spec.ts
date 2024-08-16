@@ -72,18 +72,18 @@ describe('WidgetGroupSlotComponent', () => {
 
   it('emits updated value when value changed', async () => {
     const categorySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Widget Category' }));
-    await categorySelect.setValue(`${widgetCategoryLabels.get(WidgetCategory.Cpu)} (5 widgets)`);
+    await categorySelect.setValue(`${widgetCategoryLabels.get(WidgetCategory.Cpu)} (6 widgets)`);
 
     spectator.detectChanges();
 
     const widgetTypeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Widget Type' }));
-    expect(await widgetTypeSelect.getValue()).toBe('CPU Recent Usage');
+    expect(await widgetTypeSelect.getValue()).toBe('CPU Model');
 
     expect(spectator.component.slot()).toEqual({
       slotPosition: SlotPosition.First,
       slotSize: SlotSize.Half,
       settings: undefined,
-      type: WidgetType.CpuUsageRecent,
+      type: WidgetType.CpuModelWidget,
     });
   });
 });
