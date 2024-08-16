@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, input, OnDestroy, OnInit, TrackByFunction, ViewChild,
+  Component, ElementRef, input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
@@ -21,8 +21,6 @@ export class IxChainedSlideInComponent implements OnInit, OnDestroy {
   @ViewChild('componentWrapper') container: HTMLElement;
   protected components: ChainedComponentSerialized[];
   private element: HTMLElement;
-
-  readonly trackByComponentId: TrackByFunction<ChainedComponentSerialized> = (_, componentRef) => componentRef.id;
 
   constructor(
     private el: ElementRef,

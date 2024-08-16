@@ -28,7 +28,9 @@
         (stopApp)="stopApp.emit()"
       ></ix-app-info-card>
       <ix-app-containers-card [app]="app()"></ix-app-containers-card>
-      <ix-app-notes-card *ngIf="app()?.notes" [app]="app()"></ix-app-notes-card>
+      @if (app()?.notes) {
+        <ix-app-notes-card [app]="app()"></ix-app-notes-card>
+      }
       <ix-app-metadata-card
         [appMetadata]="app().metadata"
         [maxHeight]="180"

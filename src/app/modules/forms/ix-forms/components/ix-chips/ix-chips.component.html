@@ -15,17 +15,20 @@
     [required]="required"
     [attr.aria-label]="label"
   >
-    <mat-chip-row
-      *ngFor="let chipLabel of labels"
-      class="chip"
-      [disabled]="false"
-      [removable]="!isDisabled"
-      [attr.aria-label]="chipLabel"
-      (removed)="onRemove(chipLabel)"
-    >
-      {{ chipLabel }}
-      <ix-icon *ngIf="!isDisabled" name="cancel" matChipRemove></ix-icon>
-    </mat-chip-row>
+    @for (chipLabel of labels; track trackByIdentity(chipLabel)) {
+      <mat-chip-row
+        class="chip"
+        [disabled]="false"
+        [removable]="!isDisabled"
+        [attr.aria-label]="chipLabel"
+        (removed)="onRemove(chipLabel)"
+      >
+        {{ chipLabel }}
+        @if (!isDisabled) {
+          <ix-icon name="cancel" matChipRemove></ix-icon>
+        }
+      </mat-chip-row>
+    }
 
     <input
       #chipInput
@@ -41,15 +44,16 @@
   </mat-chip-grid>
 
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAdd($event.option.value)">
-    <ng-container *ngIf="suggestions$">
-      <mat-option
-        *ngFor="let suggestion of suggestions$ | async"
-        [value]="suggestion"
-        [ixTest]="[controlDirective.name, suggestion]"
-      >
-        {{ suggestion }}
-      </mat-option>
-    </ng-container>
+    @if (suggestions$) {
+      @for (suggestion of suggestions$ | async; track trackByIdentity(suggestion)) {
+        <mat-option
+          [value]="suggestion"
+          [ixTest]="[controlDirective.name, suggestion]"
+        >
+          {{ suggestion }}
+        </mat-option>
+      }
+    }
   </mat-autocomplete>
 </div>
 

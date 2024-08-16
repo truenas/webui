@@ -14,20 +14,21 @@
       <div class="list-title">{{ title1 }}</div>
     }
     <mat-list [attr.aria-label]="title1">
-      <mat-list-item
-        *ngFor="let item of availableItems.totalItems"
-        cdkDrag
-        class="draggable"
-        [class.chosen]="availableItems.isSelected(item)"
-        (cdkDragStarted)="onDragStart($event)"
-        (mousedown)="availableItems.mouseDown(item, $event)"
-        (mouseup)="availableItems.mouseUp(item, $event)"
-      >
-        <ng-container
-          [ngTemplateOutlet]="templateItem"
-          [ngTemplateOutletContext]="{ $implicit: item }"
-        ></ng-container>
-      </mat-list-item>
+      @for (item of availableItems.totalItems; track trackIdentity(item)) {
+        <mat-list-item
+          cdkDrag
+          class="draggable"
+          [class.chosen]="availableItems.isSelected(item)"
+          (cdkDragStarted)="onDragStart($event)"
+          (mousedown)="availableItems.mouseDown(item, $event)"
+          (mouseup)="availableItems.mouseUp(item, $event)"
+        >
+          <ng-container
+            [ngTemplateOutlet]="templateItem"
+            [ngTemplateOutletContext]="{ $implicit: item }"
+          ></ng-container>
+        </mat-list-item>
+      }
     </mat-list>
   </div>
 
@@ -81,21 +82,22 @@
       <div class="list-title">{{ title2 }}</div>
     }
     <mat-list [attr.aria-label]="title2">
-      <mat-list-item
-        *ngFor="let item of selectedItems.totalItems"
-        cdkDrag
-        class="draggable"
-        [class.chosen]="selectedItems.isSelected(item)"
-        (cdkDragStarted)="onDragStart($event)"
-        (mousedown)="selectedItems.mouseDown(item, $event)"
-        (mouseup)="selectedItems.mouseUp(item, $event)"
-      >
-        <ng-container
-          [ngTemplateOutlet]="templateItem"
-          [ngTemplateOutletContext]="{ $implicit: item }"
+      @for (item of selectedItems.totalItems; track trackIdentity(item)) {
+        <mat-list-item
+          cdkDrag
+          class="draggable"
+          [class.chosen]="selectedItems.isSelected(item)"
+          (cdkDragStarted)="onDragStart($event)"
+          (mousedown)="selectedItems.mouseDown(item, $event)"
+          (mouseup)="selectedItems.mouseUp(item, $event)"
         >
-        </ng-container>
-      </mat-list-item>
+          <ng-container
+            [ngTemplateOutlet]="templateItem"
+            [ngTemplateOutletContext]="{ $implicit: item }"
+          >
+          </ng-container>
+        </mat-list-item>
+      }
     </mat-list>
   </div>
 </div>

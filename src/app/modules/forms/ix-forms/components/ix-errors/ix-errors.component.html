@@ -1,8 +1,10 @@
 @if (control.touched || control.dirty) {
   <div class="form-error">
-    <mat-error *ngFor="let message of messages">
-      <span [innerHTML]="message | translate"></span>
-    </mat-error>
+    @for (message of messages; track trackMessage(message)) {
+      <mat-error>
+        <span [innerHTML]="message | translate"></span>
+      </mat-error>
+    }
     @if (control.errors && control.errors[ixManualValidateError]) {
       <mat-error class="manual-error">
         <span class="manual-message" [innerHTML]="control.errors && control.errors[ixManualValidateError]?.message"></span>
