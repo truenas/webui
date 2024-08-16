@@ -1,4 +1,4 @@
-@for (row of dataProvider.currentPage$ | async; track row) {
+@for (row of dataProvider.currentPage$ | async; track trackByIdentity(row)) {
   <tr
     class="row"
     tabindex="0"
@@ -10,7 +10,7 @@
     (click)="onToggle(row)"
     (keydown.enter)="onToggle(row)"
   >
-    @for (column of displayedColumns; track column; let idx = $index) {
+    @for (column of displayedColumns; track trackByIdentity(column); let idx = $index) {
       <td [ngClass]="column.cssClass || ''">
         @if (getTemplateByColumnIndex(idx); as template) {
           <ng-container

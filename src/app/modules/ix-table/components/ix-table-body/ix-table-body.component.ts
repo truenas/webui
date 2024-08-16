@@ -80,4 +80,9 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
     return this.detailsRowIdentifier
       && (this.dataProvider?.expandedRow?.[this.detailsRowIdentifier] === row?.[this.detailsRowIdentifier]);
   }
+
+  // TODO: Come up with a proper identifier
+  protected trackByIdentity<X>(item: X): X {
+    return item;
+  }
 }

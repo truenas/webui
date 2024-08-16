@@ -15,7 +15,7 @@
     [required]="required"
     [attr.aria-label]="label"
   >
-    @for (chipLabel of labels; track chipLabel) {
+    @for (chipLabel of labels; track trackByIdentity(chipLabel)) {
       <mat-chip-row
         class="chip"
         [disabled]="false"
@@ -45,7 +45,7 @@
 
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAdd($event.option.value)">
     @if (suggestions$) {
-      @for (suggestion of suggestions$ | async; track suggestion) {
+      @for (suggestion of suggestions$ | async; track trackByIdentity(suggestion)) {
         <mat-option
           [value]="suggestion"
           [ixTest]="[controlDirective.name, suggestion]"

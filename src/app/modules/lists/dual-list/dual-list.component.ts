@@ -109,4 +109,9 @@ export class DualListboxComponent<T extends { id: string | number }> implements 
       item.classList.add('cdk-drag-placeholder');
     });
   }
+
+  // TODO: Come up with a way to track ids
+  protected trackIdentity(item: T): T {
+    return item;
+  }
 }

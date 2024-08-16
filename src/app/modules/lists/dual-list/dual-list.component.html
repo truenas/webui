@@ -14,7 +14,7 @@
       <div class="list-title">{{ title1 }}</div>
     }
     <mat-list [attr.aria-label]="title1">
-      @for (item of availableItems.totalItems; track item) {
+      @for (item of availableItems.totalItems; track trackIdentity(item)) {
         <mat-list-item
           cdkDrag
           class="draggable"
@@ -82,7 +82,7 @@
       <div class="list-title">{{ title2 }}</div>
     }
     <mat-list [attr.aria-label]="title2">
-      @for (item of selectedItems.totalItems; track item) {
+      @for (item of selectedItems.totalItems; track trackIdentity(item)) {
         <mat-list-item
           cdkDrag
           class="draggable"

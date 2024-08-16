@@ -1,6 +1,6 @@
 @if (control.touched || control.dirty) {
   <div class="form-error">
-    @for (message of messages; track message) {
+    @for (message of messages; track trackMessage(message)) {
       <mat-error>
         <span [innerHTML]="message | translate"></span>
       </mat-error>
