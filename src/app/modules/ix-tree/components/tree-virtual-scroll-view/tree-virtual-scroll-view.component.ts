@@ -6,14 +6,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   HostBinding,
   Input,
   IterableDiffers,
   OnChanges,
   OnDestroy,
-  OnInit,
-  Output,
+  OnInit, output,
   TrackByFunction,
   ViewChild,
 } from '@angular/core';
@@ -50,8 +48,8 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   @Input() ixMaxBufferPx = defaultSize * 8;
   @Input() override trackBy!: TrackByFunction<T>;
 
-  @Output() viewportScrolled = new EventEmitter<number>();
-  @Output() viewportResized = new EventEmitter<ResizedEvent>();
+  readonly viewportScrolled = output<number>();
+  readonly viewportResized = output<ResizedEvent>();
 
   nodes$ = new BehaviorSubject<TreeVirtualNodeData<T>[]>([]);
   innerTrackBy: TrackByFunction<TreeVirtualNodeData<T>> = (index: number) => index;

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, Input, output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -27,7 +27,8 @@ export const maxFileSizeBytes = 5 * MiB;
 export class FileReviewComponent {
   @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
   @Input() isLoading: boolean;
-  @Output() isLoadingChange = new EventEmitter<boolean>();
+
+  readonly isLoadingChange = output<boolean>();
 
   protected form = this.formBuilder.group({
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],

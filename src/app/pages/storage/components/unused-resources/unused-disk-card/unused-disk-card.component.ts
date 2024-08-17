@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, Input, output,
 } from '@angular/core';
 import { Role } from 'app/enums/role.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -15,7 +15,8 @@ export class UnusedDiskCardComponent {
   @Input() pools: Pool[];
   @Input() title: string;
   @Input() disks: DetailsDisk[];
-  @Output() addToStorage = new EventEmitter<void>();
+
+  readonly addToStorage = output();
 
   readonly requiredRoles = [Role.FullAdmin];
 

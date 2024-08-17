@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, Component, OnInit, output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -22,7 +22,7 @@ export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['fi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManualSelectionDiskFiltersComponent implements OnInit {
-  @Output() filtersUpdated = new EventEmitter<ManualDiskSelectionFilters>();
+  readonly filtersUpdated = output<ManualDiskSelectionFilters>();
 
   protected filterForm = this.formBuilder.group({
     search: [''],

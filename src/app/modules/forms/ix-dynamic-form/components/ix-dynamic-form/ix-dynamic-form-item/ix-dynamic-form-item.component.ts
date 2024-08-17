@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, output,
 } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -26,8 +26,8 @@ export class IxDynamicFormItemComponent implements OnInit {
   @Input() dynamicSchema: DynamicFormSchemaNode;
   @Input() isEditMode: boolean;
 
-  @Output() addListItem = new EventEmitter<AddListItemEvent>();
-  @Output() deleteListItem = new EventEmitter<DeleteListItemEvent>();
+  readonly addListItem = output<AddListItemEvent>();
+  readonly deleteListItem = output<DeleteListItemEvent>();
 
   readonly DynamicFormSchemaType = DynamicFormSchemaType;
 

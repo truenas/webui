@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { Validators, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -48,7 +48,8 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
 })
 export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   @Input() credentialId: number;
-  @Output() save = new EventEmitter<void>();
+
+  readonly save = output();
 
   form = this.formBuilder.group({
     description: ['' as string, Validators.required],

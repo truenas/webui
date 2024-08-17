@@ -1,5 +1,5 @@
 import {
-  AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output,
+  AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, output,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -43,10 +43,10 @@ export interface JobProgressDialogConfig<Result> {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
-  @Output() jobSuccess = new EventEmitter<Job<T>>();
-  @Output() jobFailure = new EventEmitter<unknown>();
-  @Output() jobAborted = new EventEmitter<Job<T>>();
-  @Output() jobProgress = new EventEmitter<JobProgress>();
+  readonly jobSuccess = output<Job<T>>();
+  readonly jobFailure = output<unknown>();
+  readonly jobAborted = output<Job<T>>();
+  readonly jobProgress = output<JobProgress>();
 
   protected job = {} as Job<T>;
 

@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, Component, OnInit, output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -44,7 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateSigningRequestsListComponent implements OnInit {
-  @Output() certificateCreated = new EventEmitter<void>();
+  protected certificateCreated = output();
 
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = csrListElements;

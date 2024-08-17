@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, Component, OnInit, output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -44,7 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateListComponent implements OnInit {
-  @Output() certificateDeleted = new EventEmitter<void>();
+  readonly certificateDeleted = output();
 
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = certificateListElements;

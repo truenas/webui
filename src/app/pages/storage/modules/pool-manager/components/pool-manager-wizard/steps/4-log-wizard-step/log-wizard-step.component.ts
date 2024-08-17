@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
@@ -17,7 +17,8 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 export class LogWizardStepComponent implements OnInit {
   @Input() isStepActive: boolean;
   @Input() stepWarning: string | null;
-  @Output() goToLastStep = new EventEmitter<void>();
+
+  readonly goToLastStep = output();
 
   canChangeLayout = true;
 

@@ -1,5 +1,5 @@
 import {
-  Component, Output, EventEmitter, ChangeDetectionStrategy, input,
+  Component, ChangeDetectionStrategy, input, output,
 } from '@angular/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
@@ -16,8 +16,8 @@ export class JobItemComponent {
   readonly job = input.required<Job>();
   readonly clickable = input(false);
 
-  @Output() aborted = new EventEmitter();
-  @Output() opened = new EventEmitter();
+  readonly aborted = output();
+  readonly opened = output();
 
   readonly JobState = JobState;
   readonly credentialTypeLabels = credentialTypeLabels;

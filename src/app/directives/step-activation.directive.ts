@@ -1,5 +1,6 @@
 import {
-  Directive, EventEmitter, OnInit, Output,
+  Directive, OnInit,
+  output,
 } from '@angular/core';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -15,7 +16,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   selector: '[ixStepActivation]',
 })
 export class StepActivationDirective implements OnInit {
-  @Output() activate = new EventEmitter<void>();
+  readonly activate = output();
 
   constructor(
     private step: MatStep,

@@ -3,9 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  Input, output,
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
@@ -28,7 +26,7 @@ export class IxListComponent implements AfterViewInit {
   @Input() itemsSchema: ChartSchemaNode[];
   @Input() isEditMode: boolean;
 
-  @Output() add = new EventEmitter<ChartSchemaNode[]>();
+  readonly add = output<ChartSchemaNode[]>();
 
   isDisabled = false;
 
