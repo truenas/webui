@@ -3544,7 +3544,7 @@
   "Offline": "Hors ligne",
   "Offline Disk": "Disque hors ligne",
   "Offline disk {name}?": "Disque {name} hors ligne ?",
-  "On": "Sur",
+  "On": "Activé",
   "On a Different System": "Sur un système différent",
   "On this System": "Sur ce système",
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "Une fois qu'un boîtier est sélectionné, toutes les autres étapes de création VDEV limiteront les options de sélection de disque aux disques du boîtier sélectionné. Si la sélection du boîtier est modifiée, toutes les sélections de disques seront réinitialisées.",
