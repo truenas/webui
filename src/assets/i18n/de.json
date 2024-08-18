@@ -1713,6 +1713,7 @@
   "Login error. Please try again.": "",
   "Login was canceled. Please try again if you want to connect your account.": "",
   "Logoff": "",
+  "Logs Details": "",
   "Losing the ability to unlock the pool can result in losing all data on the disks with no chance of recovery. Always back up the encryption key file or passphrase for an encrypted pool! The key file for an encrypted pool is secured in the system database and can be exported at any time from the pool options": "",
   "Loss of Functionality": "",
   "Low Bandwidth (4)": "",
