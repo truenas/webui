@@ -10,7 +10,7 @@ import { GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-c
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { CpuParams } from 'app/pages/dashboard/widgets/cpu/interfaces/cpu-params.interface';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -75,7 +75,7 @@ export class WidgetCpuComponent {
   });
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private resources: WidgetResourcesService,
     private translate: TranslateService,
   ) {}

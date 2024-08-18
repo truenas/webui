@@ -7,7 +7,7 @@ import { filter } from 'rxjs/operators';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { checkinIndicatorPressed } from 'app/store/network-interfaces/network-interfaces.actions';
 import {
   selectHasPendingNetworkChanges,
@@ -28,7 +28,7 @@ export class CheckinIndicatorComponent implements OnInit {
   private isWaitingForCheckin = false;
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private dialogService: DialogService,
     private translate: TranslateService,
     private router: Router,

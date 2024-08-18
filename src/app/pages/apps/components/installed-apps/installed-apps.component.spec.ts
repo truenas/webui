@@ -9,7 +9,7 @@ import { MockDeclaration, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -37,7 +37,7 @@ describe('InstalledAppsComponent', () => {
       name: 'rude-cardinal',
       train: 'test-catalog-train',
     },
-    state: CatalogAppState.Running,
+    state: AppState.Running,
   } as App;
 
   const createComponent = createComponentFactory({

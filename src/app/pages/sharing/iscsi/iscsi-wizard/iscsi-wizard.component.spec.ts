@@ -31,7 +31,7 @@ import { InitiatorWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wiza
 import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/portal-wizard-step/portal-wizard-step.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -39,7 +39,7 @@ describe('IscsiWizardComponent', () => {
   let spectator: Spectator<IscsiWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let store$: Store<AppState>;
+  let store$: Store<AppsState>;
 
   const createComponent = createComponentFactory({
     component: IscsiWizardComponent,

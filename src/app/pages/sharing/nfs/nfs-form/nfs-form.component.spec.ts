@@ -31,7 +31,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -56,8 +56,8 @@ describe('NfsFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let websocket: WebSocketService;
-  let mockStore$: MockStore<AppState>;
-  let store$: Store<AppState>;
+  let mockStore$: MockStore<AppsState>;
+  let store$: Store<AppsState>;
 
   const createComponent = createComponentFactory({
     component: NfsFormComponent,

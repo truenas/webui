@@ -9,7 +9,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectHasEnclosureSupport, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -132,7 +132,7 @@ export class NavigationService {
   ];
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
   ) {

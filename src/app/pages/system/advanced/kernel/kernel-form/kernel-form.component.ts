@@ -12,7 +12,7 @@ import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ch
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy()
@@ -43,7 +43,7 @@ export class KernelFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private chainedRef: ChainedRef<boolean>,
   ) {
     if (chainedRef.getData()) {

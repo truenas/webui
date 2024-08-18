@@ -13,7 +13,7 @@ import { SessionExpiringDialogComponent } from 'app/modules/dialog/components/se
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AuthService } from 'app/services/auth/auth.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
@@ -32,7 +32,7 @@ export class TokenLifetimeService {
     private authService: AuthService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private appStore$: Store<AppState>,
+    private appStore$: Store<AppsState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.resumeBound = this.resume.bind(this);

@@ -34,7 +34,7 @@ import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/s
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -69,7 +69,7 @@ export class SupportCardComponent implements OnInit {
     private dialog: DialogService,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

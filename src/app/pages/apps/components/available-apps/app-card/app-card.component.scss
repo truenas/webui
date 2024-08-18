@@ -7,11 +7,14 @@
   padding: 20px 25px 15px 10px;
   position: relative;
   transition: 50ms background-color;
+}
 
-  &:hover,
-  &:focus {
-    background-color: var(--contrast-lighter);
-  }
+:host-context(a:focus) :host {
+  outline: var(--primary) auto 1px;
+}
+
+:host-context(a:hover) :host {
+  background-color: var(--contrast-lighter);
 }
 
 .left-column {

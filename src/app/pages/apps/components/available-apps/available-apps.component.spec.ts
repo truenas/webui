@@ -86,11 +86,7 @@ describe('Finding app', () => {
   });
 
   it('redirect to details app when app card is pressed', () => {
-    spectator.click('ix-app-card');
-
-    // TODO: Figure out a way to test href without relying on Angular's internals.
-    const href = spectator.query('ix-app-card').getAttribute('ng-reflect-router-link').replace(/,/g, '/');
-    const appPath = '/apps/available/community/webdav';
-    expect(appPath.startsWith(href)).toBeTruthy();
+    const href = spectator.query('.apps a').getAttribute('href');
+    expect(href).toBe('/apps/available/community/webdav');
   });
 });

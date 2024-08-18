@@ -9,7 +9,7 @@ import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
 import { jobsElements } from 'app/modules/layout/components/topbar/jobs-indicator/jobs-indicator.elements';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
@@ -27,7 +27,7 @@ export class JobsIndicatorComponent implements OnInit {
 
   constructor(
     private matDialog: MatDialog,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
   ) { }
 
   ngOnInit(): void {

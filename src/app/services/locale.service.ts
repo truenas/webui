@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { combineLatest } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -19,7 +19,7 @@ export class LocaleService {
   timeFormat = 'HH:mm:ss';
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private translate: TranslateService,
   ) {
     combineLatest([

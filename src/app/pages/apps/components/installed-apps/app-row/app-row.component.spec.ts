@@ -4,26 +4,23 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
-import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
+import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
-import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
   let loader: HarnessLoader;
   const app = {
     name: 'app_name',
-    state: CatalogAppState.Running,
+    state: AppState.Running,
     metadata: { icon: 'https://image/' },
   } as App;
-
-  const status = AppStatus.Running;
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,
@@ -33,7 +30,7 @@ describe('AppRowComponent', () => {
       NetworkSpeedPipe,
     ],
     declarations: [
-      MockComponents(AppStatusCellComponent, AppUpdateCellComponent),
+      MockComponents(AppStateCellComponent, AppUpdateCellComponent),
     ],
     providers: [
       mockAuth(),
@@ -44,7 +41,6 @@ describe('AppRowComponent', () => {
     spectator = createComponent({
       props: {
         app,
-        status,
         selected: false,
       },
     });
@@ -57,8 +53,8 @@ describe('AppRowComponent', () => {
     expect(spectator.query('.app-name')).toHaveText('app_name');
   });
 
-  it('shows app status', () => {
-    const statusCell = spectator.query(AppStatusCellComponent);
+  it('shows app state', () => {
+    const statusCell = spectator.query(AppStateCellComponent);
     expect(statusCell).toBeTruthy();
   });
 
@@ -76,8 +72,11 @@ describe('AppRowComponent', () => {
   });
 
   describe('actions', () => {
-    it('shows Stop button when app status is not Stopped', async () => {
-      spectator.setInput('status', AppStatus.Running);
+    it('shows Stop button when app state is not Stopped', async () => {
+      spectator.setInput('app', {
+        ...app,
+        state: AppState.Running,
+      });
 
       const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop' }));
       const startIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-play' }));
@@ -86,8 +85,11 @@ describe('AppRowComponent', () => {
       expect(startIcon).not.toExist();
     });
 
-    it('shows Start button when app status is Stopped', async () => {
-      spectator.setInput('status', AppStatus.Stopped);
+    it('shows Start button when app state is Stopped', async () => {
+      spectator.setInput('app', {
+        ...app,
+        state: AppState.Stopped,
+      });
 
       const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop' }));
       const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play' }));

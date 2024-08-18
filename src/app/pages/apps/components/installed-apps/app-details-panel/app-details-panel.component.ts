@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, Component, EventEmitter, input, Output,
 } from '@angular/core';
 import { App } from 'app/interfaces/app.interface';
-import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 @Component({
   selector: 'ix-app-details-panel',
@@ -12,7 +11,6 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 })
 export class AppDetailsPanelComponent {
   readonly app = input<App>();
-  readonly status = input<AppStatus>();
 
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();

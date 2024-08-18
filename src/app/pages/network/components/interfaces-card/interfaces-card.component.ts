@@ -35,7 +35,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -107,7 +107,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   constructor(
     private interfacesStore$: InterfacesStore,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

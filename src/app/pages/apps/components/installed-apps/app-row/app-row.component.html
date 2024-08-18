@@ -17,11 +17,11 @@
   </div>
 </div>
 <div class="cell cell-status">
-  <ix-app-status-cell
+  <ix-app-state-cell
     [app]="app()"
     [job]="job()"
     (click)="statusPressed(); $event.stopPropagation()"
-  ></ix-app-status-cell>
+  ></ix-app-state-cell>
 </div>
 <div class="cell cell-update">
   <ix-app-update-cell [app]="app()" [showIcon]="true"></ix-app-update-cell>

@@ -8,7 +8,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { App, AppContainerState } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -27,7 +27,7 @@ describe('AppContainersCardComponent', () => {
     name: 'ix-test-app',
     metadata: { train: 'ix-test-train' },
     upgrade_available: true,
-    state: CatalogAppState.Running,
+    state: AppState.Running,
     active_workloads:
       {
         containers: 1,
