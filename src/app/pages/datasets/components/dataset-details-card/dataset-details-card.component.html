@@ -1,9 +1,10 @@
 <mat-card class="card">
   <mat-card-header>
-    <h3 *ngIf="isFilesystem" mat-card-title>
-      {{ 'Dataset Details' | translate }}
+    <h3 mat-card-title>
+      {{ isFilesystem ? ('Dataset Details' | translate) : ('Zvol Details' | translate) }}
     </h3>
-    <ng-container *ngIf="isFilesystem">
+
+    @if (isFilesystem) {
       <button
         *ixRequiresRoles="[Role.DatasetWrite]"
         mat-button
@@ -12,10 +13,7 @@
       >
         {{ 'Edit' | translate }}
       </button>
-    </ng-container>
-
-    <h3 *ngIf="isZvol" mat-card-title>{{ 'Zvol Details' | translate }}</h3>
-    <ng-container *ngIf="isZvol">
+    } @else {
       <button
         *ixRequiresRoles="[Role.DatasetWrite]"
         mat-button
@@ -24,7 +22,7 @@
       >
         {{ 'Edit Zvol' | translate }}
       </button>
-    </ng-container>
+    }
   </mat-card-header>
   <mat-card-content>
     <div class="details-item">

@@ -12,53 +12,63 @@
 </ix-page-header>
 
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-  <a
-    *ngFor="let link of navLinks"
-    #rla="routerLinkActive"
-    mat-tab-link
-    routerLinkActive
-    [ixTest]="link.label"
-    [routerLink]="link.path"
-    [active]="rla.isActive"
-  >
-    {{ link.label | translate }}
-  </a>
+  @for (link of navLinks; track link.label) {
+    <a
+      #rla="routerLinkActive"
+      mat-tab-link
+      routerLinkActive
+      [ixTest]="link.label"
+      [routerLink]="link.path"
+      [active]="rla.isActive"
+    >
+      {{ link.label | translate }}
+    </a>
+  }
 </nav>
-<router-outlet mat-tab-nav-panel [ngSwitch]="activeTab">
+<router-outlet mat-tab-nav-panel>
   <mat-tab-nav-panel #tabPanel>
-    <ix-target-global-configuration
-      *ngSwitchCase="'configuration'"
-      [ixUiSearch]="searchableElements.elements.configuration"
-    ></ix-target-global-configuration>
+    @switch (activeTab) {
+      @case ('configuration') {
+        <ix-target-global-configuration
+          [ixUiSearch]="searchableElements.elements.configuration"
+        ></ix-target-global-configuration>
+      }
 
-    <ix-iscsi-portal-list
-      *ngSwitchCase="'portals'"
-      [ixUiSearch]="searchableElements.elements.portals"
-    ></ix-iscsi-portal-list>
+      @case ('portals') {
+        <ix-iscsi-portal-list
+          [ixUiSearch]="searchableElements.elements.portals"
+        ></ix-iscsi-portal-list>
+      }
 
-    <ix-iscsi-initiator-list
-      *ngSwitchCase="'initiator'"
-      [ixUiSearch]="searchableElements.elements.initiator"
-    ></ix-iscsi-initiator-list>
+      @case ('initiator') {
+        <ix-iscsi-initiator-list
+          [ixUiSearch]="searchableElements.elements.initiator"
+        ></ix-iscsi-initiator-list>
+      }
 
-    <ix-iscsi-authorizedaccess-list
-      *ngSwitchCase="'auth'"
-      [ixUiSearch]="searchableElements.elements.auth"
-    ></ix-iscsi-authorizedaccess-list>
+      @case ('auth') {
+        <ix-iscsi-authorizedaccess-list
+          [ixUiSearch]="searchableElements.elements.auth"
+        ></ix-iscsi-authorizedaccess-list>
+      }
 
-    <ix-iscsi-target-list
-      *ngSwitchCase="'target'"
-      [ixUiSearch]="searchableElements.elements.target"
-    ></ix-iscsi-target-list>
+      @case ('target') {
+        <ix-iscsi-target-list
+          [ixUiSearch]="searchableElements.elements.target"
+        ></ix-iscsi-target-list>
+      }
 
-    <ix-iscsi-extent-list
-      *ngSwitchCase="'extent'"
-      [ixUiSearch]="searchableElements.elements.extent"
-    ></ix-iscsi-extent-list>
+      @case ('extent') {
+        <ix-iscsi-extent-list
+          [ixUiSearch]="searchableElements.elements.extent"
+        ></ix-iscsi-extent-list>
+      }
 
-    <ix-iscsi-associated-target-list
-      *ngSwitchCase="'associatedtarget'"
-      [ixUiSearch]="searchableElements.elements.associatedTarget"
-    ></ix-iscsi-associated-target-list>
+      @case ('associatedtarget') {
+        <ix-iscsi-associated-target-list
+          [ixUiSearch]="searchableElements.elements.associatedTarget"
+        ></ix-iscsi-associated-target-list>
+      }
+    }
   </mat-tab-nav-panel>
 </router-outlet>

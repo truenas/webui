@@ -355,9 +355,9 @@ module.exports = {
           "attribute": "ixTest",
           "addElements": ["a", "mat-row", "mat-slider", "table"]
         }],
+        "@angular-eslint/template/prefer-control-flow": ['error'],
 
         // TODO: To be enabled later
-        '@angular-eslint/template/use-track-by-function': ['off'],
         '@angular-eslint/template/no-negated-async': ['off'],
       }
     }

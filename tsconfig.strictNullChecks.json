@@ -178,7 +178,6 @@
     "./src/app/helpers/storage.helper.ts",
     "./src/app/helpers/string-to-title-case.ts",
     "./src/app/helpers/time.helpers.ts",
-    "./src/app/helpers/track-by.utils.ts",
     "./src/app/helpers/translate.helper.ts",
     "./src/app/helpers/websocket.helper.ts",
     "./src/app/helpers/window.helper.ts",
