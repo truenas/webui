@@ -3614,7 +3614,7 @@
   "Passphrase": "Mot de passe",
   "Passphrase and confirmation should match.": "Le mot de passe et la confirmation doivent correspondre",
   "Passphrase value must match Confirm Passphrase": "La valeur de la passphrase doit correspondre à : Confirmer la passphrase",
-  "Passthrough": "Passerelle",
+  "Passthrough": "",
   "Password": "Mot de passe",
   "Password Disabled": "Mot de passe désactivé",
   "Password Login Groups": "Groupes de connexion par mot de passe",
