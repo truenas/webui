@@ -134,8 +134,8 @@ export class EmailFormComponent implements OnInit {
     });
   }
 
-  onLoggedIn(credentials: GmailOauthConfig): void {
-    this.oauthCredentials = credentials;
+  onLoggedIn(credentials: unknown): void {
+    this.oauthCredentials = credentials as GmailOauthConfig;
   }
 
   onSubmit(): void {

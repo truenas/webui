@@ -354,7 +354,7 @@ describe('IxDynamicFormItemComponent', () => {
       spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
-      spectator.query(IxListComponent).add.emit();
+      spectator.query(IxListComponent).add.emit([]);
 
       expect(spectator.component.addListItem.emit).toHaveBeenCalledWith({
         array: dynamicForm.controls.list,

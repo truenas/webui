@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, EventEmitter, input, Output,
+  Component, input, output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -16,8 +16,8 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 export class NavigationComponent {
   readonly isSidenavCollapsed = input(false);
 
-  @Output() menuToggled = new EventEmitter<[string, SubMenuItem[]]>();
-  @Output() menuClosed = new EventEmitter<void>();
+  readonly menuToggled = output<[string, SubMenuItem[]]>();
+  readonly menuClosed = output();
 
   menuItems = this.navService.menuItems;
   isHighlighted: string;

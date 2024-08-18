@@ -2,11 +2,9 @@ import { CdkDragEnter, CdkDropListGroup, moveItemInArray } from '@angular/cdk/dr
 import { DOCUMENT } from '@angular/common';
 import {
   Directive,
-  EventEmitter,
   Inject, Injector,
   Input,
-  OnInit,
-  Output,
+  OnInit, output,
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -30,7 +28,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
    */
   @Input() deprecatedSupportForOldDashboard = false;
 
-  @Output() ixDropGridModelChange = new EventEmitter<T[]>();
+  readonly ixDropGridModelChange = output<T[]>();
 
   placeholder: IxDropGridPlaceholderComponent;
   target: IxDropGridItemDirective;
@@ -139,7 +137,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
 
       moveItemInArray(newModel, this.sourceIndex, this.targetIndex);
 
-      this.ixDropGridModelChange.next(newModel);
+      this.ixDropGridModelChange.emit(newModel);
     }
   }
 

@@ -7,9 +7,7 @@ import {
   ContentChildren,
   Input,
   QueryList,
-  TemplateRef,
-  Output,
-  EventEmitter,
+  TemplateRef, output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
@@ -30,7 +28,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() isLoading = false;
   @Input() detailsRowIdentifier: keyof T = 'id' as keyof T;
 
-  @Output() expanded = new EventEmitter<T>();
+  readonly expanded = output<T>();
 
   @ContentChildren(IxTableCellDirective) customCells!: QueryList<IxTableCellDirective<T>>;
 

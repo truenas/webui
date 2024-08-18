@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, effect, EventEmitter, input, Input, InputSignal, Output,
+  ChangeDetectionStrategy, Component, computed, effect, input, Input, InputSignal, output,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -36,9 +36,10 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AppInfoCardComponent {
   app: InputSignal<App> = input<App>();
-  @Output() startApp = new EventEmitter<void>();
-  @Output() stopApp = new EventEmitter<void>();
   @Input() status: AppStatus;
+
+  readonly startApp = output();
+  readonly stopApp = output();
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly isEmpty = isEmpty;

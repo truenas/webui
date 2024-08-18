@@ -2,9 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  OnInit,
-  Output,
+  OnInit, output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -30,14 +28,15 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudSyncProviderComponent implements OnInit {
-  @Output() save = new EventEmitter<CloudSyncCredential>();
+  readonly save = output<CloudSyncCredential>();
+  readonly loading = output<boolean>();
 
   protected form = this.formBuilder.group({
     exist_credential: [null as number | typeof newOption],
   });
 
   protected isLoading: boolean;
-  @Output() loading = new EventEmitter<boolean>();
+
   private credentials: CloudSyncCredential[] = [];
   private existingCredential: CloudSyncCredential;
 
@@ -78,11 +77,7 @@ export class CloudSyncProviderComponent implements OnInit {
   }
 
   subToLoading(): void {
-    this.loading.pipe(untilDestroyed(this)).subscribe({
-      next: (isLoading) => {
-        this.isLoading = isLoading;
-      },
-    });
+    this.loading.subscribe((isLoading) => this.isLoading = isLoading);
   }
 
   onSubmit(): void {

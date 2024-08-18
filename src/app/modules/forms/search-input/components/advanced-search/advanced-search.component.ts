@@ -3,10 +3,8 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
-  OnInit,
-  Output,
+  OnInit, output,
   ViewChild,
 } from '@angular/core';
 import {
@@ -38,9 +36,9 @@ export class AdvancedSearchComponent<T> implements OnInit {
   @Input() properties: SearchProperty<T>[] = [];
   @Input() placeholder: string;
 
-  @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
-  @Output() switchToBasic = new EventEmitter<void>();
-  @Output() runSearch = new EventEmitter<void>();
+  readonly paramsChange = output<QueryFilters<T>>();
+  readonly switchToBasic = output();
+  readonly runSearch = output();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 

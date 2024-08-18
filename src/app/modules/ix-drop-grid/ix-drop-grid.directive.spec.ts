@@ -426,11 +426,11 @@ describe('IxDropGridDirective', () => {
         spectator.directive.sourceIndex = sourceIndex;
         spectator.directive.targetIndex = targetIndex;
         spectator.directive.ixDropGridModel = input;
-        jest.spyOn(spectator.directive.ixDropGridModelChange, 'next');
+        jest.spyOn(spectator.directive.ixDropGridModelChange, 'emit');
         spectator.directive.onItemDropped();
         tick(animationTimeoutMs);
 
-        expect(spectator.directive.ixDropGridModelChange.next).toHaveBeenCalledWith(expectedOutput);
+        expect(spectator.directive.ixDropGridModelChange.emit).toHaveBeenCalledWith(expectedOutput);
       }));
     });
   });

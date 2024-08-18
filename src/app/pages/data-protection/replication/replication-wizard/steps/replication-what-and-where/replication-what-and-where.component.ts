@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -46,7 +46,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [ReplicationService, DatePipe, KeychainCredentialService],
 })
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
-  @Output() customRetentionVisibleChange = new EventEmitter<boolean>();
+  readonly customRetentionVisibleChange = output<boolean>();
 
   sourceNodeProvider: TreeNodeProvider;
   targetNodeProvider: TreeNodeProvider;

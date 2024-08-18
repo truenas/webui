@@ -33,6 +33,7 @@ import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -185,6 +186,7 @@ import { routing } from './system.routing';
     MapValuePipe,
     BulkListItemComponent,
     YesNoPipe,
+    CastPipe,
   ],
   declarations: [
     AdvancedSettingsComponent,
