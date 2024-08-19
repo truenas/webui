@@ -28,6 +28,7 @@ interface DatasetFormGroup {
   passphrase?: FormControl<string>;
   name: FormControl<string>;
   is_passphrase: FormControl<boolean>;
+  file?: FormControl<File[]>;
 }
 
 @UntilDestroy()
@@ -148,9 +149,20 @@ export class DatasetUnlockComponent implements OnInit {
           this.form.controls.datasets.push(this.formBuilder.group({
             name: [''],
             key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
+            file: [null as File[]],
             is_passphrase: [false],
           }) as FormGroup<DatasetFormGroup>);
         }
+
+        (this.form.controls.datasets.controls[i].controls.file as FormControl)?.valueChanges.pipe(
+          switchMap((files: File[]) => (!files?.length ? of('{}') : from(files[0].text()))),
+          untilDestroyed(this),
+        ).subscribe((textFromFile) => {
+          const key = (JSON.parse(textFromFile) as Record<string, string>)[result.name];
+          if (key) {
+            this.form.controls.datasets.controls[i].controls.key.setValue(key);
+          }
+        });
       }
       this.form.controls.datasets.disable();
       (this.form.controls.datasets.controls[i].controls.name as FormControl).setValue(result.name);
