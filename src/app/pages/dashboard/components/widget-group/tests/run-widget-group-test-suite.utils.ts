@@ -159,7 +159,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
 
       const errorComponent = spectator.query(WidgetErrorComponent, { parentSelector: '.slot:nth-child(1)' });
       expect(errorComponent).toExist();
-      expect(errorComponent.message).toBe('system-info-active widget does not support quarter size.');
+      expect(errorComponent.message).toBe('System Information – Active widget does not support quarter size.');
     });
   });
 }
