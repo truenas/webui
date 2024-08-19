@@ -48,6 +48,7 @@ $scrollbar-offset: 20px;
     color: var(--fg2);
     display: flex;
     flex: 1;
+    max-height: calc(-200px + 100vh);
     min-width: inherit;
     overflow: hidden;
     padding: 0;
