@@ -123,6 +123,11 @@
     margin-right: 15px;
     max-width: 90%;
     text-align: left;
+
+    @media (max-width: $breakpoint-xs) {
+      font-size: 12px;
+      margin-left: 15px;
+    }
   }
 }
 

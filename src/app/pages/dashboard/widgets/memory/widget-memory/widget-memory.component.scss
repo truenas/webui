@@ -55,6 +55,10 @@
     flex-direction: column;
     justify-content: center;
 
+    @media(max-width: $breakpoint-xs) {
+      flex: 1;
+    }
+
     .total-memory {
       color: var(--fg1);
       font-family: var(--font-family-body);
@@ -107,6 +111,10 @@
     padding-right: 35px;
     position: relative;
 
+    @media(max-width: $breakpoint-xs) {
+      display: none;
+    }
+
     .skeleton {
       display: block;
       flex-grow: 1;
@@ -132,6 +140,10 @@
     margin-bottom: 1px;
     margin-right: 5px;
     width: 12px;
+
+    @media(max-width: $breakpoint-xs) {
+      display: none;
+    }
   }
 }
 
@@ -143,9 +155,21 @@
   .stats {
     flex: 0 0 60%;
 
+    @media(max-width: $breakpoint-xs) {
+      flex: 1;
+
+      .stats-item {
+        justify-content: center;
+      }
+    }
+
     .legend {
       margin-bottom: 0;
       row-gap: 0;
+
+      .legend-swatch {
+        display: none;
+      }
 
       ngx-skeleton-loader::ng-deep > span {
         height: 15px;
@@ -176,17 +200,17 @@
     flex: 0 0 58%;
 
     @media(max-width: $breakpoint-xs) {
-      flex: 0 0 68%;
+      flex: 1;
+
+      .stats-item {
+        justify-content: center;
+      }
     }
 
     .label,
     .stats-item {
       font-size: 12px;
       margin-right: 4px;
-
-      @media(max-width: $breakpoint-xs) {
-        font-size: 10px;
-      }
     }
 
     .legend {
@@ -198,9 +222,12 @@
       }
     }
 
-    .total-memory,
+    .total-memory {
+      font-size: 30px;
+    }
+
     .memory-used-caption {
-      display: none;
+      margin-bottom: 12px;
     }
   }
 
