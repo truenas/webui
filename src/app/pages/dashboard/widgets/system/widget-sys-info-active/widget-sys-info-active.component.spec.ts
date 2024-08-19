@@ -83,6 +83,7 @@ describe('WidgetSysInfoActiveComponent', () => {
       }),
       mockProvider(LocaleService, {
         getDateAndTime: () => ['2024-03-15', '10:34:11'],
+        getDateFromString: (date: string) => new Date(date),
       }),
       provideMockStore({
         selectors: [
