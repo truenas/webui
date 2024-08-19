@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 .card {
   box-sizing: border-box;
   display: flex;
@@ -144,6 +146,10 @@
   padding: 0 8px;
   place-content: stretch flex-start;
 
+  @media (max-width: $breakpoint-xs) {
+    padding: 0;
+  }
+
   .divider {
     background-color: var(--lines);
     margin: 5px 0;
@@ -169,12 +175,20 @@
   min-width: 0;
   place-content: center flex-start;
   width: 100%;
+
+  @media (max-width: $breakpoint-xs) {
+    gap: 4px;
+  }
 }
 
 .info-column {
   &.primary {
     flex: 1;
     padding-right: 16px;
+
+    @media (max-width: $breakpoint-xs) {
+      padding-right: 6px;
+    }
   }
 
   &.secondary {
@@ -218,6 +232,10 @@
   user-select: none;
   user-select: none;
   width: 20px;
+
+  @media (max-width: $breakpoint-xs) {
+    display: none;
+  }
 
   .ix-icon {
     font-size: 16px;
