@@ -7,7 +7,6 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -28,7 +27,6 @@ import { ShutdownComponent } from './shutdown/shutdown.component';
     MatMenuModule,
     MatSlideToggleModule,
     MatGridListModule,
-    FlexLayoutModule,
     TranslateModule,
     RouterModule.forChild(othersRoutes),
   ],

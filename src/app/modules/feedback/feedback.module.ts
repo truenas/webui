@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
@@ -35,7 +34,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TestIdModule,
     TranslateModule,
     OauthButtonModule,
-    FlexModule,
     NgxSkeletonLoaderModule,
     CastPipe,
   ],

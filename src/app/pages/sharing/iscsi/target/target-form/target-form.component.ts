@@ -43,7 +43,6 @@ export class TargetFormComponent implements OnInit {
   }
 
   readonly helptext = helptextSharingIscsi;
-  readonly modes$ = of(this.helptext.target_form_enum_mode);
   readonly portals$ = this.iscsiService.listPortals().pipe(
     map((portals) => {
       const opts: Option[] = [];

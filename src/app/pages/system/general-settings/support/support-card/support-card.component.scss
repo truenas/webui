@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 .mat-mdc-card-content {
   color: var(--fg2);
 }
@@ -7,15 +9,33 @@
   background-repeat: no-repeat;
   background-size: contain;
   max-height: 168px;
-  max-width: 80%;
+  max-width: 40%;
+  min-height: 170px;
   overflow: hidden;
+  width: 100%;
 }
 
 .links-wrapper {
   margin-bottom: 1rem;
+  margin-top: 1rem;
 
   .links {
     margin-bottom: 5px;
+  }
+}
+
+.container {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  place-content: center space-evenly;
+
+  @media(max-width: $breakpoint-xs) {
+    flex-direction: column;
+
+    .product-image {
+      max-width: 70%;
+    }
   }
 }
 

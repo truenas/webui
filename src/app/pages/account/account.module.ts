@@ -5,7 +5,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -25,7 +24,6 @@ import { UsersModule } from './users/users.module';
     MatListModule,
     MatProgressSpinnerModule,
     IxFormsModule,
-    FlexLayoutModule,
     UsersModule,
     GroupsModule,
   ],

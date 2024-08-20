@@ -8,7 +8,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
@@ -39,7 +38,6 @@ import { SigninComponent } from './signin/signin.component';
     MatButtonModule,
     MatSnackBarModule,
     IxIconModule,
-    FlexLayoutModule,
     TranslateModule,
     RouterModule.forChild(sessionsRoutes),
     IxFormsModule,

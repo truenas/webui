@@ -11,7 +11,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -151,7 +150,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CommonModule,
     EntityModule,
     LayoutModule,
-    FlexLayoutModule,
     IxDynamicFormModule,
     IxIconModule,
     IxTableModule,
