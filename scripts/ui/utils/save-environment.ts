@@ -48,7 +48,7 @@ export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void
       values: valuesToWrite.mockConfig.expansionModels,
     }))
     .replace('_MOCK_SCENARIO_', printEnum({
-      enumName: 'MockStorageScenario',
+      enumName: 'MockEnclosureScenario',
       enum: MockEnclosureScenario,
       value: valuesToWrite.mockConfig.scenario,
     }));
