@@ -22,12 +22,6 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
 export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGridItemDirective> implements OnInit {
   @Input() ixDropGridModel: T[];
 
-  /**
-   * TODO: To be removed after old dashboard is removed.
-   * @deprecated
-   */
-  @Input() deprecatedSupportForOldDashboard = false;
-
   readonly ixDropGridModelChange = output<T[]>();
 
   placeholder: IxDropGridPlaceholderComponent;
@@ -86,9 +80,6 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
       this.source = drag.dropContainer as IxDropGridItemDirective;
 
       phElement.style.width = `${dropElement.clientWidth}px`;
-      if (this.deprecatedSupportForOldDashboard) {
-        phElement.style.width = `${dropElement.clientWidth / 2}px`;
-      }
       phElement.style.height = `${dropElement.clientHeight}px`;
 
       sourceElement.parentElement.removeChild(sourceElement);
