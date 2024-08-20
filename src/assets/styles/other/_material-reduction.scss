@@ -398,6 +398,7 @@ body .mdc-card__actions,
       -webkit-box-orient: vertical;
       display: inline-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       max-width: 75%;
       overflow: hidden;
       text-overflow: ellipsis;
