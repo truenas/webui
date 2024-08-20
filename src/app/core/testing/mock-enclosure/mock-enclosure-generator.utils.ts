@@ -12,7 +12,7 @@ import { ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 
-export class MockStorageGenerator {
+export class MockEnclosureGenerator {
   private enclosures: DashboardEnclosure[];
 
   constructor(
