@@ -134,6 +134,10 @@
 .open-source {
   font-size: 0.75rem;
   text-align: center;
+
+  @media (max-width: $breakpoint-xs) {
+    display: none;
+  }
 }
 
 %half-and-quarter-size {

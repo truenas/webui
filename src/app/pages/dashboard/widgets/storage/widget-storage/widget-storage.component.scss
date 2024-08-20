@@ -18,7 +18,7 @@
   }
 
   .container {
-    padding: 12px;
+    padding: 4px 16px 16px;
   }
 }
 
@@ -50,9 +50,13 @@
     max-width: 100%;
     min-height: 100%;
     min-width: 100%;
-    padding-left: 16px;
+    padding: 0 0 0 12px;
     place-content: stretch flex-start;
     width: 100%;
+
+    @media (max-width: $breakpoint-xs) {
+      padding: 0 8px;
+    }
 
     .tile-header {
       align-items: center;
@@ -107,9 +111,14 @@
         white-space: nowrap;
 
         .label {
-          margin-right: 6px;
+          margin-right: 2px;
+        }
+
+        .label,
+        .value {
           overflow: hidden;
           text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
     }
