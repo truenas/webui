@@ -3,7 +3,6 @@
  * Before editing or removing a WidgetType,
  * consider users who may already have this widget type in their user attributes.
  *
- * Please, do not forget to add labels in widget-type-labels for new widget types.
  * Provide migration if possible.
  */
 export enum WidgetType {
