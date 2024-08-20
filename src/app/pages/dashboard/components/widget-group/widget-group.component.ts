@@ -14,7 +14,6 @@ import { Observable, of } from 'rxjs';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
 import { WidgetVisibilityDepsType } from 'app/pages/dashboard/types/widget-component.interface';
 import { layoutToSlotSizes, WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
-import { widgetTypeLabels } from 'app/pages/dashboard/types/widget-type-labels';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
 
 type OutletParams = {
@@ -74,7 +73,7 @@ export class WidgetGroupComponent {
         component: WidgetErrorComponent,
         inputs: {
           message: this.translate.instant('{type} widget is not supported.', {
-            type: widgetTypeLabels.has(widget.type) ? widgetTypeLabels.get(widget.type) : widget.type,
+            type: definition?.name || widget.type,
           }),
         },
         isVisible$,
@@ -96,7 +95,7 @@ export class WidgetGroupComponent {
         component: WidgetErrorComponent,
         inputs: {
           message: this.translate.instant('{type} widget does not support {size} size.', {
-            type: widgetTypeLabels.has(widget.type) ? widgetTypeLabels.get(widget.type) : widget.type,
+            type: definition?.name || widget.type,
             size: slotSize,
           }),
         },
