@@ -87,14 +87,8 @@
           order: 1;
         }
 
-        .content-right mat-list mat-list-item:nth-child(3) {
-          display: none;
-        }
-
-        .product-image {
-          display: none;
-        }
-
+        .content-right mat-list mat-list-item:nth-child(3),
+        .product-image,
         .product-logo-container {
           display: none;
         }
