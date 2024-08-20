@@ -3288,7 +3288,7 @@ msgid "Choose a preferred theme."
 msgstr "Choisissez un thème préféré."
 
 msgid "Choose a preset"
-msgstr ""
+msgstr "Choisir un préréglage"
 
 msgid "Choose a privacy protocol."
 msgstr "Choisissez un protocole de confidentialité."
@@ -17873,7 +17873,7 @@ msgid "Workgroup"
 msgstr "Groupe de travail"
 
 msgid "Would you like to add a Service Principal Name (SPN) now?"
-msgstr ""
+msgstr "Souhaitez-vous ajouter un nom principal de service (SPN) maintenant ?"
 
 msgid "Write"
 msgstr "Écrire"
@@ -17930,16 +17930,16 @@ msgid "Yes, decrypt the disks"
 msgstr "Oui, déchiffrer les disques"
 
 msgid "You are replicating the following encrypted datasets: "
-msgstr ""
+msgstr "Vous répliquez les datasets chiffrés suivants: "
 
 msgid "You can clear reporting database and start data collection immediately."
-msgstr ""
+msgstr "Vous pouvez effacer la base de données de rapports et démarrer la collecte de données immédiatement."
 
 msgid "You have left the domain."
 msgstr "Vous avez quitté le domaine."
 
 msgid "You have successfully added credentials."
-msgstr ""
+msgstr "Vous avez ajouté avec succès les informations d'identification."
 
 msgid "ZFS"
 msgstr "ZFS"
