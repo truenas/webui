@@ -71,8 +71,8 @@ export class NavigationService {
       icon: 'vpn_key',
       state: 'credentials',
       sub: [
-        { name: T('Local Users'), state: 'users' },
-        { name: T('Local Groups'), state: 'groups' },
+        { name: T('Users'), state: 'users' },
+        { name: T('Groups'), state: 'groups' },
         { name: T('Directory Services'), state: 'directory-services' },
         { name: T('Backup Credentials'), state: 'backup-credentials' },
         { name: T('Certificates'), state: 'certificates' },
