@@ -172,7 +172,7 @@
   "Dataset is shared via SMB as {shares}": "Le dataset est partagé via SMB en tant que {shares}",
   "Dataset is shared via iSCSI": "Le dataset est partagé via iSCSI",
   "Dataset rolled back to snapshot {name}.": "",
-  "Dataset {name} was created.": "Le dataset {name a été créé}.",
+  "Dataset {name} was created.": "Le dataset {name} a été créé.",
   "Datasets": "",
   "Default Route": "",
   "Default – follow upstream / TrueNAS default": "",
