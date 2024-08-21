@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -53,7 +52,6 @@ describe('TargetFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      FlexLayoutModule,
     ],
     providers: [
       mockProvider(IxSlideInService),
@@ -187,7 +185,6 @@ describe('TargetFormComponent', () => {
       await form.fillForm({
         'Target Name': 'name_new',
         'Target Alias': 'alias_new',
-        'Target Mode': 'iSCSI',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

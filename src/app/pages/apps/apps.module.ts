@@ -12,7 +12,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatColumnDef } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
@@ -146,7 +145,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     ImgFallbackModule,
     NgxSkeletonLoaderModule,
     IxIconModule,
-    FlexLayoutModule,
     LazyLoadImageModule,
     TestIdModule,
     AppLoaderModule,

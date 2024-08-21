@@ -6,33 +6,15 @@
     <h3>{{ 'Support' | translate }}</h3>
   </mat-toolbar-row>
 
-  <div class="mat-mdc-card-content">
-    <div
-      class="container"
-      fxLayoutGap="16px"
-      fxLayout.lt-lg="row wrap"
-      fxLayoutAlign="space-evenly center"
-      [fxLayout.xs]="isWiderImage() ? 'column' : 'row wrap'"
-      [fxLayout.gt-md]="isWiderImage() ? 'column' : 'row wrap'"
-    >
+  <mat-card-content>
+    <div class="container">
       <div
         class="product-image"
-        [fxFlex.gt-md]="isWiderImage() ? 'calc(200px - 32px)' : '40%'"
-        [fxFlex.gt-xs]="isWiderImage() ? 'calc(40% - 32px)' : '40%'"
-        [fxFlex.xs]="isWiderImage() ? 'calc(200px - 32px)' : '40%'"
         [style.background-image]="'url(' + productImageSrc() + ')'"
-      >
-        <img class="invisible" [src]="productImageSrc()" />
-      </div>
+      ></div>
 
       @if (systemInfo) {
         <div
-          fxLayout="column"
-          fxLayoutAlign="start stretch"
-          fxLayoutGap="16px"
-          fxFlex.gt-xs="calc(60% - 32px)"
-          [fxFlex.gt-md]="isWiderImage() ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
-          [fxFlex.xs]="isWiderImage() ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
           [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
         >
           <ix-sys-info
@@ -63,10 +45,7 @@
           }
 
           <!-- ACTION BUTTONS -->
-          <div
-            class="actions button-group"
-            [class.btn-fixed]="!isWiderImage()"
-          >
+          <div class="actions button-group">
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button
@@ -78,7 +57,7 @@
               {{ licenseButtonText | translate }}
             </button>
 
-            @if (hasLicense && !isWiderImage()) {
+            @if (hasLicense) {
               <button
                 mat-button
                 color="default"
@@ -135,5 +114,5 @@
         </div>
       }
     </div>
-  </div>
+  </mat-card-content>
 </mat-card>

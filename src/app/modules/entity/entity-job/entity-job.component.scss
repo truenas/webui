@@ -59,3 +59,9 @@ mat-dialog-content.entity-job-dialog {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+.percentage-row {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}

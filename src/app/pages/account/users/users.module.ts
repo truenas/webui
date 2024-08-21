@@ -17,7 +17,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -46,7 +45,6 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     EffectsModule.forFeature([UserEffects]),
     EntityModule,
     IxFormsModule,
-    FlexLayoutModule,
     MatButtonModule,
     IxIconModule,
     MatListModule,

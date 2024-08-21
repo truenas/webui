@@ -11,7 +11,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -100,7 +99,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
   imports: [
     CommonModule,
     CommonDirectivesModule,
-    FlexLayoutModule,
     RouterModule.forChild(dataProtectionRoutes),
     EntityModule,
     ReactiveFormsModule,

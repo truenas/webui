@@ -15,7 +15,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -79,7 +78,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     MatTabsModule,
     MatCardModule,
     IxIconModule,
-    FlexLayoutModule,
     MatListModule,
     MatDialogModule,
     MatMenuModule,

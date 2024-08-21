@@ -1,6 +1,7 @@
 import {
   Directive, ElementRef, Inject, OnChanges, OnDestroy, OnInit,
 } from '@angular/core';
+// eslint-disable-next-line no-restricted-imports
 import { MediaObserver } from '@ngbracket/ngx-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
