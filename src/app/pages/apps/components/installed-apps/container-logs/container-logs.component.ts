@@ -16,7 +16,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-interface PodLogEvent {
+interface ContainerLogEvent {
   data: string;
   timestamp: string;
   msg?: string;
@@ -25,24 +25,24 @@ interface PodLogEvent {
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-pod-logs',
-  templateUrl: './pod-logs.component.html',
-  styleUrls: ['./pod-logs.component.scss'],
+  selector: 'ix-container-logs',
+  templateUrl: './container-logs.component.html',
+  styleUrls: ['./container-logs.component.scss'],
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PodLogsComponent implements OnInit {
+export class ContainerLogsComponent implements OnInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
 
   fontSize = 14;
   appName: string;
   containerId: string;
-  podLogSubName = '';
-  isLoadingPodLogs = false;
+  subscriptionMethod = '';
+  isLoading = false;
   defaultTailLines = 500;
 
-  private podLogsChangedListener: Subscription;
-  podLogs: PodLogEvent[] = [];
+  private logsChangedListener: Subscription;
+  logs: ContainerLogEvent[] = [];
 
   constructor(
     private ws: WebSocketService,
@@ -68,37 +68,37 @@ export class PodLogsComponent implements OnInit {
 
   // subscribe pod log for selected app, pod and container.
   reconnect(): void {
-    if (this.podLogsChangedListener && !this.podLogsChangedListener.closed) {
-      this.podLogsChangedListener.unsubscribe();
+    if (this.logsChangedListener && !this.logsChangedListener.closed) {
+      this.logsChangedListener.unsubscribe();
     }
 
-    this.podLogsChangedListener = this.matDialog.open(LogsDetailsDialogComponent, { width: '400px' }).afterClosed().pipe(
+    this.logsChangedListener = this.matDialog.open(LogsDetailsDialogComponent, { width: '400px' }).afterClosed().pipe(
       tap((details: LogsDetailsDialogComponent['form']['value']) => {
-        this.podLogSubName = `app.container_log_follow: ${JSON.stringify({
+        this.subscriptionMethod = `app.container_log_follow: ${JSON.stringify({
           app_name: this.appName,
           container_id: this.containerId,
           tail_lines: details.tail_lines || this.defaultTailLines,
         })}`;
 
-        this.podLogs = [];
-        this.isLoadingPodLogs = true;
+        this.logs = [];
+        this.isLoading = true;
       }),
-      switchMap(() => this.ws.subscribeToLogs(this.podLogSubName)),
+      switchMap(() => this.ws.subscribeToLogs(this.subscriptionMethod)),
       map((apiEvent) => apiEvent.fields),
       untilDestroyed(this),
     ).subscribe({
-      next: (podLog: PodLogEvent) => {
-        this.isLoadingPodLogs = false;
+      next: (log: ContainerLogEvent) => {
+        this.isLoading = false;
 
-        if (podLog && podLog.msg !== 'nosub') {
-          this.podLogs.push(podLog);
+        if (log && log.msg !== 'nosub') {
+          this.logs.push(log);
           this.scrollToBottom();
         }
 
         this.cdr.markForCheck();
       },
       error: (error: WebSocketError) => {
-        this.isLoadingPodLogs = false;
+        this.isLoading = false;
         if (error.reason) {
           this.dialogService.error(this.errorHandler.parseError(error));
         }

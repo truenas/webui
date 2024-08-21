@@ -9,7 +9,6 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
-import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { App, AppContainerState } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
@@ -17,6 +16,7 @@ import {
   VolumeMountsDialogComponent,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
+import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 
 describe('AppContainersCardComponent', () => {
   let spectator: Spectator<AppWorkloadsCardComponent>;
@@ -140,7 +140,7 @@ describe('AppContainersCardComponent', () => {
         data: {
           appName: app.name,
           title: 'Choose Shell Details',
-          type: PodSelectDialogType.Shell,
+          type: ShellDetailsType.Shell,
           customSubmit: expect.any(Function),
         },
       },

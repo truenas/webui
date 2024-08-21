@@ -48,11 +48,11 @@ const appVersion121 = {
           enum: [
             {
               value: 'RollingUpdate',
-              description: 'Create new pods and then kill old ones',
+              description: 'Create new containers and then kill old ones',
             },
             {
               value: 'Recreate',
-              description: 'Kill existing pods before creating new ones',
+              description: 'Kill existing containers before creating new ones',
             },
           ],
           show_if: [
@@ -413,7 +413,7 @@ describe('AppWizardComponent', () => {
         'Gateway Port to use for IPFS (local)': '9880',
         'Provide access to node network namespace for the workload': false,
         'Swarm Port to use for IPFS (Public)': '9401',
-        'Update Strategy': 'Create new pods and then kill old ones',
+        'Update Strategy': 'Create new containers and then kill old ones',
       });
     });
 
@@ -425,7 +425,7 @@ describe('AppWizardComponent', () => {
         'API Port to use for IPFS (local)': '9599',
         'Gateway Port to use for IPFS (local)': '9822',
         'Provide access to node network namespace for the workload': true,
-        'Update Strategy': 'Kill existing pods before creating new ones',
+        'Update Strategy': 'Kill existing containers before creating new ones',
       });
 
       const values = await form.getValues();
@@ -436,7 +436,7 @@ describe('AppWizardComponent', () => {
         'API Port to use for IPFS (local)': '9599',
         'Gateway Port to use for IPFS (local)': '9822',
         'Swarm Port to use for IPFS (Public)': '9401',
-        'Update Strategy': 'Kill existing pods before creating new ones',
+        'Update Strategy': 'Kill existing containers before creating new ones',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));

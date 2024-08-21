@@ -63,8 +63,8 @@ import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import { VolumeMountsDialogComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
+import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { ContainerShellComponent } from 'app/pages/apps/components/installed-apps/container-shell/container-shell.component';
-import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
@@ -105,7 +105,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
     ContainerShellComponent,
-    PodLogsComponent,
+    ContainerLogsComponent,
     LogsDetailsDialogComponent,
     ShellDetailsDialogComponent,
     AppUpgradeDialogComponent,

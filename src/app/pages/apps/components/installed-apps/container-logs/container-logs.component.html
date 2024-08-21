@@ -18,7 +18,7 @@
   }
 </ix-page-header>
 
-<div class="pod-logs-wrapper">
+<div class="logs-wrapper">
   <div class="meta-data">
     <label>{{ 'Application Name' | translate }}:</label>
     <span class="name">{{ appName }}</span>
@@ -27,17 +27,17 @@
   </div>
   <div
     #logContainer
-    class="pod-logs"
-    [ngStyle]="{ 'font-size': fontSize + 'px' }"
+    class="logs"
+    [style.font-size]="fontSize + 'px'"
   >
-    @if (isLoadingPodLogs) {
+    @if (isLoading) {
       <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
-    } @else if (!podLogs.length) {
+    } @else if (!logs.length) {
       <div class="log-row">
         <span  class="no-logs">{{ 'No logs yet' | translate }}</span>
       </div>
     } @else {
-      @for (podLog of podLogs; track podLog) {
+      @for (podLog of logs; track podLog) {
         <div class="log-row">
           <span class="timestamp">{{ podLog.timestamp }}</span>
           <span class="log-data">{{ podLog.data }}</span>
