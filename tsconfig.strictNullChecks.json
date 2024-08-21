@@ -106,7 +106,7 @@
     "./src/app/enums/nfs-protocol.enum.ts",
     "./src/app/enums/nfs-security-provider.enum.ts",
     "./src/app/enums/on-off.enum.ts",
-    "./src/app/enums/pod-select-dialog.enum.ts",
+    "./src/app/pages/apps/enum/shell-details-type.enum.ts",
     "./src/app/enums/pool-card-icon-type.enum.ts",
     "./src/app/enums/pool-scan-function.enum.ts",
     "./src/app/enums/pool-scan-state.enum.ts",
