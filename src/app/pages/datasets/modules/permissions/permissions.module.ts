@@ -41,6 +41,9 @@ import {
   ViewTrivialPermissionsComponent,
 } from 'app/pages/datasets/modules/permissions/components/view-trivial-permissions/view-trivial-permissions.component';
 import {
+  AclEditorSaveControlsComponent,
+} from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/acl-editor-save-controls/acl-editor-save-controls.component';
+import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
 import {
@@ -88,6 +91,7 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     PermissionsCardComponent,
     StripAclModalComponent,
     SaveAsPresetModalComponent,
+    AclEditorSaveControlsComponent,
   ],
   exports: [
     PermissionsCardComponent,

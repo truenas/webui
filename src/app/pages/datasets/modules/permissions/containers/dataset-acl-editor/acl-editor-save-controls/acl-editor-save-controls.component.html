@@ -1,0 +1,36 @@
+<div class="checkboxes" [formGroup]="saveParameters">
+  <ix-checkbox
+    formControlName="recursive"
+    class="recursive-checkbox"
+    [label]="helptext.dataset_acl_recursive_placeholder | translate"
+    [tooltip]="helptext.dataset_acl_recursive_tooltip | translate"
+  ></ix-checkbox>
+
+  @if (saveParameters.get('recursive').value) {
+    <ix-checkbox
+      formControlName="traverse"
+      [label]="helptext.dataset_acl_traverse_placeholder | translate"
+      [tooltip]="helptext.dataset_acl_traverse_tooltip | translate"
+    ></ix-checkbox>
+  }
+
+  @if (hasValidateAclCheckbox()) {
+    <ix-checkbox
+      formControlName="validate_effective_acl"
+      [label]="helptext.dataset_acl_validate_placeholder | translate"
+      [tooltip]="helptext.dataset_acl_validate_tooltip | translate"
+    ></ix-checkbox>
+  }
+</div>
+
+<button
+  *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
+  mat-button
+  color="primary"
+  class="save-button"
+  ixTest="save-acl"
+  [disabled]="!canBeSaved()"
+  (click)="onSavePressed()"
+>
+  {{ 'Save Access Control List' | translate }}
+</button>
