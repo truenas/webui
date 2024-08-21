@@ -185,7 +185,6 @@ describe('TargetFormComponent', () => {
       await form.fillForm({
         'Target Name': 'name_new',
         'Target Alias': 'alias_new',
-        'Target Mode': 'iSCSI',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
