@@ -90,15 +90,14 @@
         type="number"
         [label]="'Snapshot Lifetime' | translate"
         [tooltip]="helptext.lifetime_value_tooltip | translate"
+        [required]="true"
       ></ix-input>
-      @if (form.value.retention_policy === RetentionPolicy.Custom) {
-        <ix-select
-          formControlName="lifetime_unit"
-          [label]="'Unit' | translate"
-          [options]="lifetimeUnits$"
-          [required]="true"
-        ></ix-select>
-      }
+      <ix-select
+        formControlName="lifetime_unit"
+        [label]="'Unit' | translate"
+        [options]="lifetimeUnits$"
+        [required]="true"
+      ></ix-select>
     </div>
   }
 </ix-fieldset>
