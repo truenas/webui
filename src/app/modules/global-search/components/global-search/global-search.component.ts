@@ -173,7 +173,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  private extractVersion(version: string): string {
+  private extractVersion(version: string): string | undefined {
     return version.match(/(\d+\.\d+)\.\d+-/)?.[1];
   }
 
