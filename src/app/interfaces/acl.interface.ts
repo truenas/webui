@@ -113,6 +113,7 @@ export interface SetAclOptions {
   recursive?: boolean;
   traverse?: boolean;
   canonicalize?: boolean;
+  validate_effective_acl?: boolean;
 }
 
 export interface SetAcl {

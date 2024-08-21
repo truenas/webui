@@ -39,6 +39,9 @@ import {
   StripAclModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
 import {
+  AclEditorSaveControlsComponent,
+} from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/acl-editor-save-controls/acl-editor-save-controls.component';
+import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -89,6 +92,7 @@ describe('DatasetAclEditorComponent', () => {
     declarations: [
       MockComponent(EditPosixAceComponent),
       MockComponent(EditNfsAceComponent),
+      MockComponent(AclEditorSaveControlsComponent),
       AclEditorListComponent,
       PermissionsItemComponent,
     ],
@@ -197,29 +201,8 @@ describe('DatasetAclEditorComponent', () => {
   });
 
   describe('saving', () => {
-    let store: DatasetAclEditorStore;
-
-    beforeEach(() => {
-      store = spectator.inject(DatasetAclEditorStore);
-      jest.spyOn(store, 'saveAcl').mockImplementation();
-    });
-
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
-    it('saves acl items when Save Access Control List is pressed', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
-      await saveButton.click();
-
-      expect(store.saveAcl).toHaveBeenCalledWith({
-        recursive: false,
-        traverse: false,
-        applyGroup: false,
-        applyOwner: false,
-        owner: 'john',
-        ownerGroup: 'johns',
-      });
+    it('renders save controls', () => {
+      expect(spectator.query(AclEditorSaveControlsComponent)).toExist();
     });
   });
 });
