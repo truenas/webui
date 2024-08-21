@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 ::ng-deep {
   ix-tree-virtual-scroll-view {
     background: var(--bg2);
@@ -5,7 +7,7 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100%;
     min-width: fit-content;
     position: relative;
 
@@ -26,6 +28,10 @@
       left: 25px;
       position: fixed;
       z-index: 2;
+
+      @media (max-width: $breakpoint-xs) {
+        bottom: 60px;
+      }
 
       &.mat-mdc-icon-button {
         background-color: var(--alt-bg1);
