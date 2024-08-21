@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, Input, output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -15,7 +15,8 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 export class DedupWizardStepComponent {
   @Input() isStepActive: boolean;
   @Input() stepWarning: string | null;
-  @Output() goToLastStep = new EventEmitter<void>();
+
+  readonly goToLastStep = output();
 
   canChangeLayout = true;
 

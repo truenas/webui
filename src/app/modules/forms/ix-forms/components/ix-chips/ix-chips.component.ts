@@ -150,6 +150,11 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     this.onAdd(this.chipInput.nativeElement.value);
   }
 
+  // TODO: Workaround for https://github.com/angular/angular/issues/56471
+  protected trackByIdentity(item: string): string {
+    return item;
+  }
+
   private setOptions(): void {
     if (!this.resolveValue) {
       this.resolvedOptions = null;

@@ -58,7 +58,7 @@ describe('WidgetPoolComponent', () => {
     spectator = createComponent({
       props: {
         settings: {
-          poolId: 1,
+          poolId: '1',
         },
         size: SlotSize.Full,
       },

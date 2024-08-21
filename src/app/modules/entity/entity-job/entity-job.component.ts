@@ -2,7 +2,9 @@ import {
   HttpClient, HttpErrorResponse, HttpEvent, HttpEventType,
 } from '@angular/common/http';
 import {
-  OnInit, Component, EventEmitter, Output, Inject, AfterViewChecked,
+  // eslint-disable-next-line no-restricted-imports
+  OnInit, Component, Inject, AfterViewChecked, Output,
+  EventEmitter,
 } from '@angular/core';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

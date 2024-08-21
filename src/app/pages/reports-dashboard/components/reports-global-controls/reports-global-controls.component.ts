@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, EventEmitter, OnInit, Output,
+  Component, OnInit, output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,6 +27,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsGlobalControlsComponent implements OnInit {
+  readonly diskOptionsChanged = output<{ devices: string[]; metrics: string[] }>();
+
   form = this.fb.group({
     autoRefresh: [false],
     devices: [[] as string[]],
@@ -36,7 +38,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
   allTabs: ReportTab[];
   diskDevices$ = this.reportsService.getDiskDevices();
   diskMetrics$ = this.reportsService.getDiskMetrics();
-  @Output() diskOptionsChanged = new EventEmitter<{ devices: string[]; metrics: string[] }>();
 
   readonly ReportType = ReportType;
   readonly searchableElements = reportingGlobalControlsElements;

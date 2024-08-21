@@ -1,15 +1,15 @@
 <fieldset>
-  @if (title) {
+  @if (title()) {
     <div class="title-container">
       <legend class="title">
-        {{ title | translate }}
+        {{ title() | translate }}
       </legend>
 
-      @if (tooltip) {
+      @if (tooltip()) {
         <ix-tooltip
           class="tooltip"
-          [header]="title | translate"
-          [message]="tooltip | translate"
+          [header]="title() | translate"
+          [message]="tooltip() | translate"
         ></ix-tooltip>
       }
     </div>
@@ -17,7 +17,7 @@
 
   <ng-content></ng-content>
 
-  @if (divider) {
+  @if (divider()) {
     <mat-divider class="divider" inset></mat-divider>
   }
 </fieldset>

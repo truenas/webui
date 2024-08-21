@@ -27,7 +27,7 @@
     </div>
   </mat-card-header>
   <mat-card-content>
-    <div fxLayout="row" fxLayoutGap="8px">
+    <div class="info-container">
       <a class="app-logo" [ixTest]="[app().name, 'image-details']" [routerLink]="appDetailsRouterUrl">
         <img [src]="app()?.metadata?.icon" [src-fallback]="imagePlaceholder" />
       </a>

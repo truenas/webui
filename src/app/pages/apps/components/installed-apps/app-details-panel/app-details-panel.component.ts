@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, input, Output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { App } from 'app/interfaces/app.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
@@ -14,9 +14,9 @@ export class AppDetailsPanelComponent {
   readonly app = input<App>();
   readonly status = input<AppStatus>();
 
-  @Output() startApp = new EventEmitter<void>();
-  @Output() stopApp = new EventEmitter<void>();
-  @Output() closeMobileDetails = new EventEmitter<void>();
+  readonly startApp = output();
+  readonly stopApp = output();
+  readonly closeMobileDetails = output();
 
   onCloseMobileDetails(): void {
     this.closeMobileDetails.emit();

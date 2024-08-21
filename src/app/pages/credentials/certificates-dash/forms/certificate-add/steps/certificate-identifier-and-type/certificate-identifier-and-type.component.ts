@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,7 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryProvider {
-  @Output() profileSelected = new EventEmitter<CertificateProfile>();
+  readonly profileSelected = output<CertificateProfile>();
 
   form = this.formBuilder.group({
     name: ['', [

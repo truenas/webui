@@ -52,6 +52,13 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  readonly cpuModel$ = this.store$.pipe(
+    waitForSystemInfo,
+    map((systemInfo) => systemInfo.model),
+    toLoadingState(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
   readonly networkInterfaces$ = this.ws.call('interface.query').pipe(
     map((interfaces) => processNetworkInterfaces(interfaces)),
     toLoadingState(),
@@ -60,7 +67,9 @@ export class WidgetResourcesService {
 
   readonly installedApps$ = this.ws.call('app.query').pipe(toLoadingState());
 
-  readonly pools$ = this.ws.callAndSubscribe('pool.query');
+  readonly pools$ = this.ws.callAndSubscribe('pool.query').pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   readonly volumesData$ = this.pools$.pipe(
     switchMap(() => this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])),
@@ -111,9 +120,9 @@ export class WidgetResourcesService {
     );
   }
 
-  getPoolById(poolId: number): Observable<Pool> {
-    return this.ws.call('pool.query', [[['id', '=', +poolId]]]).pipe(
-      map((pools) => pools[0]),
+  getPoolById(poolId: string): Observable<Pool> {
+    return this.pools$.pipe(
+      map((pools) => pools.find((pool) => pool.id === +poolId || pool.name === poolId)),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }

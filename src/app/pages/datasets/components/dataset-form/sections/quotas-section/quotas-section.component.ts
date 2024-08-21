@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output,
+  ChangeDetectionStrategy, Component, Input, OnInit, output,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,7 +24,7 @@ const critical = 95;
 export class QuotasSectionComponent implements OnInit {
   @Input() parent: Dataset;
 
-  @Output() formValidityChange = new EventEmitter<boolean>();
+  readonly formValidityChange = output<boolean>();
 
   readonly form = this.formBuilder.group({
     refquota: [null as number, this.validators.withMessage(

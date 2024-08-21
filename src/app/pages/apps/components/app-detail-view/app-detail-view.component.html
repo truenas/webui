@@ -5,7 +5,7 @@
 
 <div class="flex-container">
   <div class="app-wrapper">
-    <section fxLayout="row">
+    <section>
       <ix-app-details-header
         [app]="app"
         [isLoading$]="isLoading$"
@@ -15,12 +15,12 @@
     @if ((isLoading$ | async) || app?.screenshots?.length) {
       <section>
         <h2>{{ 'Screenshots' | translate }}</h2>
-        <div fxLayout="row nowrap" fxLayoutGap="16px">
+        <div>
           @if (isLoading$ | async) {
             <div class="screenshots-loader">
-              <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
-              <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
-              <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+              <ngx-skeleton-loader class="screenshot-loader"></ngx-skeleton-loader>
+              <ngx-skeleton-loader class="screenshot-loader"></ngx-skeleton-loader>
+              <ngx-skeleton-loader class="screenshot-loader"></ngx-skeleton-loader>
             </div>
           } @else {
             <div class="screenshots" gallerize>
@@ -52,7 +52,7 @@
 </div>
 
 <ng-template #appDetailCards>
-  <div fxFlex fxLayoutAlign="end" class="cards-wrapper">
+  <div class="cards-wrapper">
     <section class="app-info-cards">
       <ix-app-resources-card
         class="app-info-card"

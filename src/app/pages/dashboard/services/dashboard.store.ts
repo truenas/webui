@@ -6,7 +6,7 @@ import {
   Observable, catchError, filter, finalize, map, of, switchMap, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
-import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
+import { defaultWidgets } from 'app/pages/dashboard/services/default-widgets.constant';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -59,7 +59,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
       tap(() => this.toggleLoadingState(true)),
       switchMap(() => {
         if (this.state().groups === null) {
-          // Skip refresh user if first time dashboard loading
+          // Skip refresh user if loading dashboard for first time
           return of(null);
         }
         return this.authService.refreshUser();
@@ -69,11 +69,10 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         map((user) => user.attributes.dashState),
       )),
       tap((dashState) => {
-        // TODO: Convert demoWidgets into default template
         this.setState({
           isLoading: false,
           globalError: '',
-          groups: this.getDashboardGroups(dashState || demoWidgets),
+          groups: this.getDashboardGroups(dashState || defaultWidgets),
         });
       }),
       catchError((error) => {
@@ -122,7 +121,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     switch (name) {
       case WidgetName.Help: return WidgetType.Help;
       case WidgetName.Memory: return WidgetType.Memory;
-      case WidgetName.Interface: return WidgetType.Ipv4Address;
+      case WidgetName.Interface: return WidgetType.Interface;
       case WidgetName.SystemInformation: return WidgetType.SystemInfoActive;
       case WidgetName.SystemInformationStandby: return WidgetType.SystemInfoPassive;
       case WidgetName.Network: return WidgetType.Interface;
@@ -140,6 +139,12 @@ export class DashboardStore extends ComponentStore<DashboardState> {
 
       if (widget.name === WidgetName.Interface) {
         return { interface: value };
+      }
+
+      if (widget.name === WidgetName.Pool) {
+        // Old widget identifier format 'name,Pool:<poolName>'
+        const [, poolId] = value.split(':');
+        return { poolId };
       }
 
       return { [key]: value };

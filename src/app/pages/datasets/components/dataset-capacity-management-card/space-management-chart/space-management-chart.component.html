@@ -3,7 +3,7 @@
     #canvas
     baseChart
     chartType="doughnut"
-    [datasets]="chartData"
+    [datasets]="chartDatasets()"
     [options]="chartOptions"
     [width]="100"
     [height]="100"
@@ -14,11 +14,11 @@
   <h3 class="chart-header">
     <span class="chart-title">{{ 'Total Allocation' | translate }}:</span>
     <span>
-      {{ dataset.used.parsed | ixFileSize }}
+      {{ dataset().used.parsed | ixFileSize }}
     </span>
   </h3>
   <div class="legend-wrapper">
-    @if (dataset.usedbydataset.parsed) {
+    @if (dataset().usedbydataset.parsed) {
       <div class="legend-list-item">
         <span class="legend-label">
           <span
@@ -28,16 +28,16 @@
           {{ 'Data Written' | translate }}
         </span>
         <span class="legend-value">
-          {{ dataset.usedbydataset.parsed | ixFileSize }}
-          @if (dataset.usedbydataset.parsed) {
-            ({{ dataset.usedbydataset.parsed / dataset.used.parsed | percent }})
+          {{ dataset().usedbydataset.parsed | ixFileSize }}
+          @if (dataset().usedbydataset.parsed) {
+            ({{ dataset().usedbydataset.parsed / dataset().used.parsed | percent }})
           }
         </span>
       </div>
     }
 
-    @if (!isZvol) {
-      @if (dataset.usedbychildren.parsed) {
+    @if (!isZvol()) {
+      @if (dataset().usedbychildren.parsed) {
         <div class="legend-list-item">
           <span class="legend-label">
             <span
@@ -47,10 +47,9 @@
             {{ 'Children' | translate }}
           </span>
           <span class="legend-value">
-            {{dataset.usedbychildren.parsed| ixFileSize
-            }}
-            @if (dataset.usedbychildren.parsed) {
-              ({{ dataset.usedbychildren.parsed / dataset.used.parsed | percent }})
+            {{dataset().usedbychildren.parsed | ixFileSize }}
+            @if (dataset().usedbychildren.parsed) {
+              ({{ dataset().usedbychildren.parsed / dataset().used.parsed | percent }})
             }
           </span>
         </div>

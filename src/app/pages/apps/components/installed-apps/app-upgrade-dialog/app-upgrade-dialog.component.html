@@ -1,20 +1,16 @@
 <div mat-dialog-content>
-  <div class="logo-container" fxLayout="row" fxLayoutAlign="start center">
+  <div class="logo-container">
     <div class="logo">
       <img [src]="dialogConfig.appInfo.metadata.icon" [src-fallback]="imagePlaceholder" />
     </div>
-    <div fxLayout="row" fxLayoutAlign="start center">
+    <div class="name-container">
       <strong class="app-name">{{ dialogConfig.appInfo.name }}</strong>
       <span class="version"> {{ dialogConfig.appInfo.human_version }}</span>
     </div>
   </div>
 
   @if (selectedVersion?.available_versions_for_upgrade?.length) {
-    <div
-      class="resource"
-      fxLayout="row"
-      fxLayoutAlign="start center"
-    >
+    <div class="resource">
       <span>{{ 'Version to be upgraded to' | translate }}:</span>
       <mat-form-field class="form-element">
         <mat-select
@@ -49,11 +45,7 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="expansion-content">
-          <div
-            fxLayout="row"
-            fxLayoutAlign="start start"
-            class="detail-row row-dark"
-          >
+          <div class="detail-row row-dark">
             <div
               [innerHTML]="selectedVersion.changelog || ('No Changelog' | translate)"
             ></div>

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -31,7 +31,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   @Input() existing: Dataset;
   @Input() parent: Dataset;
 
-  @Output() formValidityChange = new EventEmitter<boolean>();
+  readonly formValidityChange = output<boolean>();
 
   datasetPresetOptions$ = of(mapToOptions(datasetPresetLabels, this.translate));
 

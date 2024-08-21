@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, Input, output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -21,7 +21,7 @@ export interface OauthProviderData {
 export class OauthProviderComponent {
   @Input() oauthUrl: string;
 
-  @Output() authenticated = new EventEmitter<Record<string, unknown>>();
+  readonly authenticated = output<Record<string, unknown>>();
 
   form = this.formBuilder.group({
     client_id: [''],
@@ -37,8 +37,8 @@ export class OauthProviderComponent {
 
   constructor(private formBuilder: FormBuilder) { }
 
-  onLoggedIn(result: OauthProviderData): void {
-    this.form.patchValue(result);
-    this.authenticated.emit(result);
+  onLoggedIn(result: unknown): void {
+    this.form.patchValue(result as OauthProviderData);
+    this.authenticated.emit(result as OauthProviderData);
   }
 }

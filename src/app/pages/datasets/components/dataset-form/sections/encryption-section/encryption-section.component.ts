@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -24,7 +24,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   @Input() parent: Dataset;
   @Input() advancedMode: boolean;
 
-  @Output() formValidityChange = new EventEmitter<boolean>();
+  readonly formValidityChange = output<boolean>();
 
   get inheritEncryptionLabel(): string {
     return this.parent.encrypted

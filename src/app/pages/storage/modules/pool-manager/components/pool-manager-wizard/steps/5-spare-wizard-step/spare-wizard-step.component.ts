@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, Input, output,
 } from '@angular/core';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
@@ -13,7 +13,8 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 export class SpareWizardStepComponent {
   @Input() isStepActive: boolean;
   @Input() stepWarning: string | null;
-  @Output() goToLastStep = new EventEmitter<void>();
+
+  readonly goToLastStep = output();
 
   protected readonly VdevType = VdevType;
   readonly helptext = helptextManager;

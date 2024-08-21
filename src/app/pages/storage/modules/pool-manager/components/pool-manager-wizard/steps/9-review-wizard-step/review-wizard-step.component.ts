@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
+  ChangeDetectorRef, Component, Input, OnInit, output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -32,7 +32,8 @@ import {
 export class ReviewWizardStepComponent implements OnInit {
   @Input() isStepActive: boolean;
   @Input() isAddingVdevs: boolean;
-  @Output() createPool = new EventEmitter<void>();
+
+  readonly createPool = output();
 
   state: PoolManagerState;
   nonEmptyTopologyCategories: [VdevType, PoolManagerTopologyCategory][] = [];

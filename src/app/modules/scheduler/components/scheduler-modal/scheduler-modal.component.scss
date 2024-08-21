@@ -12,6 +12,10 @@
   margin-top: 19px;
   width: 100%;
 
+  form {
+    padding: 0 14px 24px 20px;
+  }
+
   .no-spaces-hint {
     font-size: 85%;
     margin-bottom: 8px;
@@ -45,12 +49,15 @@
   }
 
   .weekdays {
-    display: grid;
-    grid-column-gap: 3px;
-    grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: 1fr;
+    column-gap: 3px;
+    display: flex;
+    flex-wrap: wrap;
     margin-bottom: 6px;
     margin-top: 12px;
+
+    .weekend {
+      margin-right: 4px;
+    }
   }
 
   .form-actions {

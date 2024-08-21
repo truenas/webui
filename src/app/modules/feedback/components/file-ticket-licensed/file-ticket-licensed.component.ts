@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, EventEmitter, Inject, Input, Output,
+  Component, Inject, Input, output,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -37,7 +37,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export class FileTicketLicensedComponent {
   @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
   @Input() isLoading: boolean;
-  @Output() isLoadingChange = new EventEmitter<boolean>();
+
+  readonly isLoadingChange = output<boolean>();
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],

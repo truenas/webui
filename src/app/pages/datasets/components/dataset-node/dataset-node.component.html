@@ -2,28 +2,28 @@
   <div class="tree-node-grid">
     <div class="cell cell-name">
       <div class="icon-container">
-        <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
+        <ix-dataset-icon [dataset]="dataset()"></ix-dataset-icon>
       </div>
-      <span class="name" [matTooltip]="label">
-        {{ label }}
+      <span class="name" [matTooltip]="label()">
+        {{ label() }}
       </span>
     </div>
     <div class="cell cell-used">
       <div class="cell-used-content">
-        <span>{{ dataset.used.parsed | ixFileSize }}</span>
+        <span>{{ dataset().used.parsed | ixFileSize }}</span>
         /
-        <span>{{ dataset.available.parsed | ixFileSize }}</span>
+        <span>{{ dataset().available.parsed | ixFileSize }}</span>
       </div>
     </div>
     <div class="cell cell-encryption">
       <ix-dataset-encryption-cell
-        [dataset]="dataset"
+        [dataset]="dataset()"
       ></ix-dataset-encryption-cell>
     </div>
     <div class="cell cell-roles">
       <ix-dataset-roles-cell
-        [dataset]="dataset"
-        [isSystemDataset]="isSystemDataset"
+        [dataset]="dataset()"
+        [isSystemDataset]="isSystemDataset()"
       ></ix-dataset-roles-cell>
     </div>
   </div>

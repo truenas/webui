@@ -150,16 +150,16 @@ module.exports = {
         "no-restricted-syntax": ["error",
           // TODO: Partially implemented. ForOfStatement is allowed for now.
           {
-            "selector": "ForInStatement",
-            "message": "for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array."
+            selector: "ForInStatement",
+            message: "for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array."
           },
           {
-            "selector": "LabeledStatement",
-            "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+            selector: "LabeledStatement",
+            message: "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
           },
           {
-            "selector": "WithStatement",
-            "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+            selector: "WithStatement",
+            message: "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
           },
           {
             selector: 'MemberExpression[property.name="get"][object.name="form"], MemberExpression[property.name="get"] > MemberExpression[property.name="form"]',
@@ -273,15 +273,23 @@ module.exports = {
         "@angular-eslint/contextual-decorator": ["error"],
         "@angular-eslint/contextual-lifecycle": ["error"],
         "no-restricted-imports": ["error", {
-          "paths": [{
-            "name": "@ngneat/spectator",
-            "importNames": ["createComponentFactory", "createHostFactory", "createRoutingFactory", "mockProvider"],
-            "message": "Use imports from @ngneat/spectator/jest instead."
-          }, {
-            "name": "@angular/material/icon",
-            "importNames": ["MatIconModule"],
-            "message": "Use IxIconModule instead."
-          }],
+          "paths": [
+            {
+              "name": "@ngneat/spectator",
+              "importNames": ["createComponentFactory", "createHostFactory", "createRoutingFactory", "mockProvider"],
+              "message": "Use imports from @ngneat/spectator/jest instead."
+            },
+            {
+              "name": "@angular/material/icon",
+              "importNames": ["MatIconModule"],
+              "message": "Use IxIconModule instead."
+            },
+            {
+              "name": "@angular/core",
+              "importNames": ["Output"],
+              "message": "Use signal output() instead."
+            }
+          ],
           "patterns": [{
             "group": [ "../**"],
             "message": "Use alias 'app' to replace part '../' of the path."
@@ -355,9 +363,9 @@ module.exports = {
           "attribute": "ixTest",
           "addElements": ["a", "mat-row", "mat-slider", "table"]
         }],
+        "@angular-eslint/template/prefer-control-flow": ['error'],
 
         // TODO: To be enabled later
-        '@angular-eslint/template/use-track-by-function': ['off'],
         '@angular-eslint/template/no-negated-async': ['off'],
       }
     }

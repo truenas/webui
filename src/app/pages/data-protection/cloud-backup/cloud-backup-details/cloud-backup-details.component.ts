@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, Input, output,
 } from '@angular/core';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 
@@ -11,7 +11,8 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 })
 export class CloudBackupDetailsComponent {
   @Input() backup: CloudBackup;
-  @Output() closeMobileDetails = new EventEmitter<void>();
+
+  readonly closeMobileDetails = output();
 
   onCloseMobileDetails(): void {
     this.closeMobileDetails.emit();

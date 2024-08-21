@@ -1,16 +1,16 @@
-@if (label) {
+@if (label()) {
   <label class="label">
-    <span [innerHTML]="label"></span>
-    @if (required) {
+    <span [innerHTML]="label()"></span>
+    @if (required()) {
       <span class="required">*</span>
     }
   </label>
 }
 
-@if (tooltip) {
+@if (tooltip()) {
   <ix-tooltip
     class="tooltip"
-    [header]="label"
-    [message]="tooltip"
+    [header]="label()"
+    [message]="tooltip()"
   ></ix-tooltip>
 }

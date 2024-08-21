@@ -28,11 +28,13 @@
                   {{ helptext.checkin_text_2 | translate }}
                 </p>
 
-                <mat-error *ngIf="!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern">
-                  <span>
-                    {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
-                  </span>
-                </mat-error>
+                @if (!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern) {
+                  <mat-error>
+                    <span>
+                      {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
+                    </span>
+                  </mat-error>
+                }
               </div>
             } @else {
               <div>

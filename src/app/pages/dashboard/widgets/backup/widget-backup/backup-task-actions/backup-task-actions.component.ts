@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Output, input,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Role } from 'app/enums/role.enum';
@@ -14,9 +14,9 @@ import { Role } from 'app/enums/role.enum';
 export class BackupTaskActionsComponent {
   allCount = input<number>();
 
-  @Output() taskAdded = new EventEmitter();
-  @Output() addReplicationTask = new EventEmitter();
-  @Output() addCloudSyncTask = new EventEmitter();
+  readonly taskAdded = output();
+  readonly addReplicationTask = output();
+  readonly addCloudSyncTask = output();
 
   readonly Role = Role;
 }

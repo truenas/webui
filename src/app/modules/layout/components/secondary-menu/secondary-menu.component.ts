@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, Output, EventEmitter,
+  ChangeDetectionStrategy, Component, Input, output,
 } from '@angular/core';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 
@@ -12,5 +12,5 @@ export class SecondaryMenuComponent {
   @Input() menuName: string;
   @Input() subMenuItems: SubMenuItem[];
 
-  @Output() toggleMenu = new EventEmitter<void>();
+  readonly toggleMenu = output();
 }

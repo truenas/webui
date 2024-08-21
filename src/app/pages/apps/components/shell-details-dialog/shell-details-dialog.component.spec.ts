@@ -13,7 +13,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 
 // TODO:
-describe.skip('PodSelectDialogComponent', () => {
+describe.skip('ShellDetailsDialogComponent', () => {
   let spectator: Spectator<ShellDetailsDialogComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;

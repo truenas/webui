@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnDestroy, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnDestroy, output,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -23,7 +23,7 @@ export class OauthButtonComponent implements OnDestroy {
   @Input() oauthUrl: string;
   @Input() testId: string;
 
-  @Output() loggedIn = new EventEmitter();
+  readonly loggedIn = output<unknown>();
 
   private readonly jiraAuthFn = (message: OauthJiraMessage): void => this.onLogInWithJiraSuccess(message);
   private readonly gmailAuthFn = (message: OauthMessage<GmailOauthConfig>): void => {

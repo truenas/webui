@@ -147,4 +147,9 @@ export class IxErrorsComponent implements OnChanges {
     this.control.updateValueAndValidity();
     this.cdr.markForCheck();
   }
+
+  // TODO: Workaround for https://github.com/angular/angular/issues/56471
+  protected trackMessage(message: string): string {
+    return message;
+  }
 }

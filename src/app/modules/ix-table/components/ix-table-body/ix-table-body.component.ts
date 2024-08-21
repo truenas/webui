@@ -7,9 +7,7 @@ import {
   ContentChildren,
   Input,
   QueryList,
-  TemplateRef,
-  Output,
-  EventEmitter,
+  TemplateRef, output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
@@ -30,7 +28,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() isLoading = false;
   @Input() detailsRowIdentifier: keyof T = 'id' as keyof T;
 
-  @Output() expanded = new EventEmitter<T>();
+  readonly expanded = output<T>();
 
   @ContentChildren(IxTableCellDirective) customCells!: QueryList<IxTableCellDirective<T>>;
 
@@ -79,5 +77,10 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   isExpanded(row: T): boolean {
     return this.detailsRowIdentifier
       && (this.dataProvider?.expandedRow?.[this.detailsRowIdentifier] === row?.[this.detailsRowIdentifier]);
+  }
+
+  // TODO: Come up with a proper identifier
+  protected trackByIdentity<X>(item: X): X {
+    return item;
   }
 }

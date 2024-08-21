@@ -1,6 +1,7 @@
 @import 'scss-imports/cssvars';
 
 :host {
+  display: flex;
   gap: 24px;
 }
 
@@ -13,6 +14,8 @@
 .app {
   display: flex;
   flex-direction: column;
+  min-width: 200px;
+  width: 200px;
 
   .installed-badge {
     background-color: var(--contrast-darkest);
@@ -31,6 +34,11 @@
 }
 
 .app-info {
+  display: flex;
+  flex-direction: column;
+  max-width: 240px;
+  min-width: 240px;
+
   @media(max-width: $breakpoint-md) {
     padding: 0;
   }
@@ -66,7 +74,7 @@ $app-image-size: 144px;
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  margin: 0.25rem 0;
+  margin: 0.1rem 0;
   word-wrap: break-word;
 
   a,

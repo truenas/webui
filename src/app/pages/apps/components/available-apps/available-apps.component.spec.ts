@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputHarness } from '@angular/material/input/testing';
 import {
-  Spectator, createComponentFactory, mockProvider,
+  Spectator, mockProvider, createRoutingFactory,
 } from '@ngneat/spectator/jest';
 import { MockDeclaration, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -39,7 +39,7 @@ describe('Finding app', () => {
   let loader: HarnessLoader;
   let searchInput: MatInputHarness;
 
-  const createComponent = createComponentFactory({
+  const createComponent = createRoutingFactory({
     component: AvailableAppsComponent,
     imports: [
       IxFormsModule,
@@ -50,7 +50,7 @@ describe('Finding app', () => {
     declarations: [
       AvailableAppsHeaderComponent,
       AppCardComponent,
-      AppCardLogoComponent,
+      MockDeclaration(AppCardLogoComponent),
       MockDeclaration(CustomAppButtonComponent),
     ],
     providers: [

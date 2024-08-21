@@ -1,37 +1,44 @@
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-  <a
-    *ngFor="let link of navLinks"
-    #rla="routerLinkActive"
-    mat-tab-link
-    routerLinkActive
-    [ixTest]="link.label"
-    [routerLink]="link.path"
-    [active]="rla.isActive"
-  >
-    {{ link.label | translate }}
-  </a>
+  @for (link of navLinks; track link.label) {
+    <a
+      #rla="routerLinkActive"
+      mat-tab-link
+      routerLinkActive
+      [ixTest]="link.label"
+      [routerLink]="link.path"
+      [active]="rla.isActive"
+    >
+      {{ link.label | translate }}
+    </a>
+  }
 </nav>
 
-<router-outlet mat-tab-nav-panel [ngSwitch]="activeTab">
+<router-outlet mat-tab-nav-panel>
   <mat-tab-nav-panel #tabPanel>
-    <ix-smb-session-list
-      *ngSwitchCase="'sessions'"
-      [ixUiSearch]="searchableElements.elements.sessions"
-    ></ix-smb-session-list>
+    @switch (activeTab()) {
+      @case ('sessions') {
+        <ix-smb-session-list
+          [ixUiSearch]="searchableElements.elements.sessions"
+        ></ix-smb-session-list>
+      }
 
-    <ix-smb-lock-list
-      *ngSwitchCase="'locks'"
-      [ixUiSearch]="searchableElements.elements.locks"
-    ></ix-smb-lock-list>
+      @case ('locks') {
+        <ix-smb-lock-list
+          [ixUiSearch]="searchableElements.elements.locks"
+        ></ix-smb-lock-list>
+      }
 
-    <ix-smb-share-list
-      *ngSwitchCase="'shares'"
-      [ixUiSearch]="searchableElements.elements.shares"
-    ></ix-smb-share-list>
+      @case ('shares') {
+        <ix-smb-share-list
+          [ixUiSearch]="searchableElements.elements.shares"
+        ></ix-smb-share-list>
+      }
 
-    <ix-smb-notification-list
-      *ngSwitchCase="'notifications'"
-      [ixUiSearch]="searchableElements.elements.notifications"
-    ></ix-smb-notification-list>
+      @case ('notifications') {
+        <ix-smb-notification-list
+          [ixUiSearch]="searchableElements.elements.notifications"
+        ></ix-smb-notification-list>
+      }
+    }
   </mat-tab-nav-panel>
 </router-outlet>

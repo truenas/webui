@@ -1,10 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Input,
-  OnChanges,
-  Output,
+  OnChanges, output,
   ViewChild,
 } from '@angular/core';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -27,8 +25,8 @@ export class SearchInputComponent<T> implements OnChanges {
   @Input() query: SearchQuery<T>;
   @Input() advancedSearchPlaceholder?: string;
 
-  @Output() queryChange = new EventEmitter<SearchQuery<T>>();
-  @Output() runSearch = new EventEmitter<void>();
+  readonly queryChange = output<SearchQuery<T>>();
+  readonly runSearch = output();
 
   @ViewChild('advancedSearch', { static: false }) advancedSearch: AdvancedSearchComponent<T>;
 

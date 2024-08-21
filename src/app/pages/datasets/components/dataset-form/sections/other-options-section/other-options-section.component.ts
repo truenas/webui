@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
-  OnInit,
-  Output,
+  OnInit, output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -69,8 +67,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   @Input() datasetPreset: DatasetPreset;
   @Input() advancedMode: boolean;
 
-  @Output() advancedModeChange = new EventEmitter<void>();
-  @Output() formValidityChange = new EventEmitter<boolean>();
+  readonly advancedModeChange = output();
+  readonly formValidityChange = output<boolean>();
 
   hasDeduplication = false;
   hasDedupWarning = false;

@@ -2,13 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
   HostListener, Input,
-  Output,
   ViewChild,
   OnInit,
   OnChanges,
-  HostBinding,
+  HostBinding, output,
 } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -40,7 +38,8 @@ export class SearchInput1Component implements OnInit, OnChanges {
   @Input() disabled = false;
   @Input() value = '';
   @Input() maxLength = 524288;
-  @Output() search = new EventEmitter<string>();
+
+  readonly search = output<string>();
 
   @ViewChild('ixSearchInput') input: ElementRef<HTMLInputElement>;
 

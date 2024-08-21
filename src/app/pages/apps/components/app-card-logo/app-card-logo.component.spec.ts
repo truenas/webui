@@ -1,6 +1,7 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { LazyLoadImageDirective, LazyLoadImageModule } from 'ng-lazyload-image';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
+import { LayoutService } from 'app/services/layout.service';
 
 describe('AppCardLogoComponent', () => {
   let spectator: Spectator<AppCardLogoComponent>;
@@ -8,6 +9,11 @@ describe('AppCardLogoComponent', () => {
   const createComponent = createComponentFactory({
     component: AppCardLogoComponent,
     imports: [LazyLoadImageModule],
+    providers: [
+      mockProvider(LayoutService, {
+        getContentContainer: jest.fn(() => document.createElement('div')),
+      }),
+    ],
   });
 
   beforeEach(() => {

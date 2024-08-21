@@ -40,7 +40,15 @@
 }
 
 .logo-container {
+  align-items: center;
+  display: flex;
   height: 100px;
+  place-content: center flex-start;
+
+  .name-container {
+    align-items: baseline;
+    display: flex;
+  }
 }
 
 .logo {
@@ -59,6 +67,8 @@
 }
 
 .resource {
+  align-items: center;
+  display: flex;
   padding: 5px 0;
   white-space: nowrap;
   width: 100%;
