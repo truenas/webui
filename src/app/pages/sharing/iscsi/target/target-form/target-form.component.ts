@@ -46,14 +46,11 @@ export class TargetFormComponent implements OnInit {
   readonly modes$ = of(this.helptext.target_form_enum_mode);
   readonly portals$ = this.iscsiService.listPortals().pipe(
     map((portals) => {
-      const opts: Option[] = [];
-      portals.forEach((portal) => {
-        let label = String(portal.tag);
-        if (portal.comment) {
-          label += ' (' + portal.comment + ')';
-        }
-        opts.push({ label, value: portal.id });
+      const opts: Option[] = portals.map((portal) => {
+        const label = portal.comment ? `${portal.id} (${portal.comment})` : String(portal.id);
+        return { label, value: portal.id };
       });
+
       return opts;
     }),
   );
