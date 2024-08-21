@@ -6,15 +6,15 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
+import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('PodLogsComponent', () => {
-  let spectator: Spectator<PodLogsComponent>;
+describe('ContainerLogsComponent', () => {
+  let spectator: Spectator<ContainerLogsComponent>;
 
   const createComponent = createComponentFactory({
-    component: PodLogsComponent,
+    component: ContainerLogsComponent,
     imports: [
       MockModule(PageHeaderModule),
     ],
