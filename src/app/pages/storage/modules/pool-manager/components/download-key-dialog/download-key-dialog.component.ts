@@ -45,26 +45,32 @@ export class DownloadKeyDialogComponent {
 
   downloadKey(): void {
     this.ws.call('core.download', ['pool.dataset.export_keys', [this.data.name], this.filename]).pipe(
-      this.loader.withLoader(),
+      tap(() => this.loader.open()),
       switchMap(([, url]) => {
         return this.download.streamDownloadFile(url, this.filename, 'application/json').pipe(
           tap((file) => {
             this.download.downloadBlob(file, this.filename);
-            this.wasDownloaded = true;
-            this.cdr.markForCheck();
+            this.allowDoneButtonToBeClicked();
           }),
           catchError((error: HttpErrorResponse) => {
             this.dialog.error(this.errorHandler.parseHttpError(error));
+            this.allowDoneButtonToBeClicked();
             return EMPTY;
           }),
         );
       }),
       untilDestroyed(this),
     ).subscribe({
-      error: (error: unknown) => {
+      error: (error) => {
         this.loader.close();
         this.dialog.error(this.errorHandler.parseError(error));
       },
+      complete: () => this.loader.close(),
     });
+  }
+
+  private allowDoneButtonToBeClicked(): void {
+    this.wasDownloaded = true;
+    this.cdr.markForCheck();
   }
 }
