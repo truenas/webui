@@ -7,7 +7,7 @@ $scrollbar-offset: 20px;
     display: flex;
     flex-direction: row;
     gap: 16px;
-    max-height: calc(-200px + 100vh);
+    max-height: calc(100vh - 200px);
     width: 100%;
 
     &::ng-deep table tbody tr {
@@ -48,7 +48,7 @@ $scrollbar-offset: 20px;
     color: var(--fg2);
     display: flex;
     flex: 1;
-    max-height: calc(-200px + 100vh);
+    max-height: calc(100vh - 200px);
     min-width: inherit;
     overflow: hidden;
     padding: 0;
