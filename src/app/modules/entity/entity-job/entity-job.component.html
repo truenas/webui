@@ -9,11 +9,7 @@
 
   @if (job?.state === JobState.Running) {
     <div>
-      <div
-        fxLayout="row"
-        fxLayoutAlign="space-between baseline"
-        fxLayoutGap="8px"
-      >
+      <div class="percentage-row">
         <span>{{ job.description ? job.description : job.method }}</span>
         @if (!hideProgressValue) {
           <small>
@@ -32,11 +28,8 @@
 
   @if (showHttpProgress) {
     <div>
-      <div
-        fxLayout="row-reverse"
-        fxLayoutAlign="space-between baseline"
-        fxLayoutGap="8px"
-      >
+      <div class="percentage-row">
+        <span> </span>
         <small>{{ uploadPercentage || 0 | number: '1.2-2' }}%</small>
       </div>
       <mat-progress-bar

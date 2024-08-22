@@ -10,7 +10,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -58,7 +57,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxIconModule,
     MatMenuModule,
     MatCardModule,
-    FlexLayoutModule,
     CommonDirectivesModule,
     LayoutModule,
     MatButtonToggleModule,

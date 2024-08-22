@@ -4,7 +4,6 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -46,7 +45,6 @@ describe('IscsiWizardComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      FlexLayoutModule,
       MatStepperModule,
     ],
     declarations: [

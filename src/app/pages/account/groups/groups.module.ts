@@ -15,7 +15,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -49,7 +48,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     EffectsModule.forFeature([GroupEffects]),
     EntityModule,
     IxFormsModule,
-    FlexLayoutModule,
     MatButtonModule,
     IxIconModule,
     MatListModule,

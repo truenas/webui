@@ -1,7 +1,6 @@
 <div
   class="ix-slidein-title-bar"
-  fxLayout="row"
-  [fxLayoutAlign]="componentsSize() > 1 ? 'left center' : 'space-between center'"
+  [class.has-many-components]="componentsSize() > 1"
 >
   @if (componentsSize() > 1 && !disableClose) {
     <button
