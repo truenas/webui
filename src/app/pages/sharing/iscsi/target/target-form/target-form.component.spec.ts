@@ -230,8 +230,8 @@ describe('TargetFormComponent', () => {
       expect(websocket.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
 
       expect(portal).toEqual([
-        { label: '11 (comment_1)', value: 1 },
-        { label: '22 (comment_2)', value: 2 },
+        { label: '1 (comment_1)', value: 1 },
+        { label: '2 (comment_2)', value: 2 },
       ]);
 
       expect(initiator).toEqual([
