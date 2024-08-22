@@ -48,12 +48,29 @@
     @extend %quarter-size;
   }
 
+  &.full,
+  &.half {
+    @media(max-width: $breakpoint-xs) {
+      .stats {
+        flex: 0 0 60%;
+      }
+
+      .chart {
+        flex: 0 0 40%;
+      }
+    }
+  }
+
   .stats {
     align-items: center;
     display: flex;
     flex: 0 0 45%;
     flex-direction: column;
     justify-content: center;
+
+    @media(max-width: $breakpoint-xs) {
+      flex: 1;
+    }
 
     .total-memory {
       color: var(--fg1);
@@ -107,6 +124,11 @@
     padding-right: 35px;
     position: relative;
 
+    @media(max-width: $breakpoint-xs) {
+      flex: 0 0 50%;
+      padding: 0 16px 0 0;
+    }
+
     .skeleton {
       display: block;
       flex-grow: 1;
@@ -143,6 +165,12 @@
   .stats {
     flex: 0 0 60%;
 
+    @media(max-width: $breakpoint-xs) {
+      .stats-item {
+        justify-content: center;
+      }
+    }
+
     .legend {
       margin-bottom: 0;
       row-gap: 0;
@@ -176,17 +204,17 @@
     flex: 0 0 58%;
 
     @media(max-width: $breakpoint-xs) {
-      flex: 0 0 68%;
+      flex: 1;
+
+      .stats-item {
+        justify-content: center;
+      }
     }
 
     .label,
     .stats-item {
       font-size: 12px;
       margin-right: 4px;
-
-      @media(max-width: $breakpoint-xs) {
-        font-size: 10px;
-      }
     }
 
     .legend {
@@ -198,9 +226,12 @@
       }
     }
 
-    .total-memory,
+    .total-memory {
+      font-size: 30px;
+    }
+
     .memory-used-caption {
-      display: none;
+      margin-bottom: 12px;
     }
   }
 
@@ -210,6 +241,13 @@
 
     @media(max-width: $breakpoint-xs) {
       flex: 0 0 25%;
+    }
+  }
+
+  .chart,
+  .legend-swatch {
+    @media (max-width: $breakpoint-xs) {
+      display: none;
     }
   }
 }
