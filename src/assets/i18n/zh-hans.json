@@ -3597,7 +3597,7 @@
   "Please specify name to be used to lookup catalog.": "请指定用于查找目录的名称。",
   "Please specify the name of the image to pull. Format for the name is \"registry/repo/image\"": "请指定要拉取的镜像的名称。名称格式为 \"registry/repo/image\"",
   "Please specify trains from which UI should retrieve available applications for the catalog.": "请指定 UI 应从中检索目录可用应用程序的分支。",
-  "Please wait": "请稍后",
+  "Please wait": "请稍候",
   "Pods": "Pods",
   "Pool": "池",
   "Pool Available Space Threshold (%)": "池可用空间阈值 (%)",
