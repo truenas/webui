@@ -240,11 +240,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.dialogService.info(
-          this.translate.instant('Task Stopped'),
-          this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
-          true,
-        );
+        this.snackbar.success(this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }));
         this.updateRowStateAndJob(row, JobState.Aborted, null);
         this.cdr.markForCheck();
       });

@@ -20,6 +20,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ExportDisconnectModalComponent } from './export-disconnect-modal.component';
 
@@ -83,6 +84,7 @@ describe('ExportDisconnectModalComponent', () => {
         }),
         mockProvider(MatDialogRef),
         mockAuth(),
+        mockProvider(SnackbarService),
       ],
       componentProviders: [
         { provide: MAT_DIALOG_DATA, useFactory: () => data.pool },
@@ -196,6 +198,7 @@ describe('ExportDisconnectModalComponent', () => {
         const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export/Disconnect' }));
         await submitButton.click();
 
+        expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool "fakePool" has been exported/disconnected successfully.');
         expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.export', [
           fakeData.pool.id,
           {

@@ -9,6 +9,7 @@ import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface RowState {
@@ -32,6 +33,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
   translate: TranslateService = inject(TranslateService);
   dialogService: DialogService = inject(DialogService);
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
+  snackbar: SnackbarService = inject(SnackbarService);
 
   getWarnings?: (row: T) => unknown[];
   getJob?: (row: T) => Job;
@@ -88,11 +90,11 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
           this.errorHandler.showErrorModal(error);
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+          this.snackbar.success(this.translate.instant('Task Aborted'));
           dialogRef.close();
-          this.dialogService.info(this.translate.instant('Task Aborted'), '');
         });
       } else if (state.state === JobState.Hold) {
-        this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
+        this.snackbar.success(this.translate.instant('Task is on hold'));
       } else if (state.warnings?.length > 0) {
         let list = '';
         state.warnings.forEach((warning: string) => {

@@ -6,12 +6,12 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -47,6 +47,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
     private translate: TranslateService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
   ) {}
 
@@ -81,26 +82,21 @@ export class BootPoolAttachDialogComponent implements OnInit {
     this.dialogService.jobDialog(
       this.ws.job('boot.attach', [dev, { expand }]),
       { title: this.translate.instant('Attaching Disk to Boot Pool') },
-    ).afterClosed().pipe(
-      switchMap(() => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        return this.dialogService.info(
-          helptextSystemBootenv.attach_dialog.title,
-          `<i>${dev}</i> ${helptextSystemBootenv.attach_dialog.message}`,
-          true,
-        );
-      }),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.dialogRef.close(true);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
-      },
-    });
+    )
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.snackbar.success(this.translate.instant(`Device «${dev}» was successfully attached.`));
+          this.dialogRef.close(true);
+        },
+        error: (error: unknown) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
+      });
   }
 }

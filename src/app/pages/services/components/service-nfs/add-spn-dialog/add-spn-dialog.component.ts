@@ -6,8 +6,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,7 +33,7 @@ export class AddSpnDialogComponent {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<CloudSyncRestoreDialogComponent>,
-    private dialogService: DialogService,
+    private snackbar: SnackbarService,
     private loader: AppLoaderService,
   ) { }
 
@@ -50,11 +50,8 @@ export class AddSpnDialogComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Credentials have been successfully added.'));
         this.dialogRef.close();
-        this.dialogService.info(
-          this.translate.instant('Success'),
-          this.translate.instant('You have successfully added credentials.'),
-        );
       });
   }
 }

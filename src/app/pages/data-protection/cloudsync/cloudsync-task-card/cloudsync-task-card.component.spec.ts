@@ -22,6 +22,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   CloudSyncRestoreDialogComponent,
@@ -144,6 +145,7 @@ describe('CloudSyncTaskCardComponent', () => {
         getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'Every hour, every day'),
       }),
+      mockProvider(SnackbarService),
     ],
   });
 
