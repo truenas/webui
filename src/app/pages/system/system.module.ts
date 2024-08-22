@@ -15,7 +15,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
@@ -148,7 +147,6 @@ import { routing } from './system.routing';
     CommonDirectivesModule,
     CommonModule,
     EntityModule,
-    FlexLayoutModule,
     FormsModule,
     IxFormsModule,
     TreeModule,

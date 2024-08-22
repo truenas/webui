@@ -1,9 +1,26 @@
+@import 'scss-imports/variables';
+
 :host {
   display: block;
 }
 
+.checkbox-list {
+  display: flex;
+  flex-direction: column;
+
+  &.inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
 .checkbox {
   box-sizing: border-box;
+  flex: 1 1 100%;
   margin: 0;
   padding: 4px 4px 4px 0;
+
+  @media(max-width: $breakpoint-md) {
+    flex-basis: 100% !important;
+  }
 }

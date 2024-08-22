@@ -205,7 +205,7 @@ describe('ErrorHandlerService', () => {
         ...httpError,
         status: 500,
         statusText: 'Bad Request',
-        error: 'Odd error',
+        message: 'Odd error',
       });
       expect(errorReport).toEqual({ message: 'Server error: Odd error', title: 'Error (500)' });
     });

@@ -6,8 +6,8 @@ import {
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { ShellDetailsDialogData } from 'app/interfaces/shell-details-dialog.interface';
+import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 @UntilDestroy()
@@ -20,8 +20,8 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 export class ShellDetailsDialogComponent {
   private tailLines = 500;
   selectedAppName: string;
-  dialogType: PodSelectDialogType;
-  podSelectDialogType = PodSelectDialogType;
+  dialogType: ShellDetailsType;
+  podSelectDialogType = ShellDetailsType;
   podList: string[] = [];
   podDetails: Record<string, string[]> = {};
 
@@ -42,12 +42,12 @@ export class ShellDetailsDialogComponent {
     this.dialogType = data.type;
     this.title = data.title;
     switch (this.dialogType) {
-      case PodSelectDialogType.Shell:
+      case ShellDetailsType.Shell:
         this.form = this.formBuilder.group({
           command: ['/bin/sh', Validators.required],
         }) as ShellDetailsDialogComponent['form'];
         break;
-      case PodSelectDialogType.Logs:
+      case ShellDetailsType.Logs:
         this.form = this.formBuilder.group({
           tail_lines: [this.tailLines, Validators.required],
         }) as ShellDetailsDialogComponent['form'];

@@ -288,6 +288,10 @@ module.exports = {
               "name": "@angular/core",
               "importNames": ["Output"],
               "message": "Use signal output() instead."
+            },
+            {
+              "name": "@ngbracket/ngx-layout",
+              "message": "Do not use this package. Use native CSS instead."
             }
           ],
           "patterns": [{

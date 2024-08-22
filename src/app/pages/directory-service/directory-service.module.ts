@@ -7,7 +7,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -40,7 +39,6 @@ import { LdapComponent } from './components/ldap/ldap.component';
     CommonModule,
     EntityModule,
     ReactiveFormsModule,
-    FlexLayoutModule,
     routing,
     MatListModule,
     PageHeaderModule,

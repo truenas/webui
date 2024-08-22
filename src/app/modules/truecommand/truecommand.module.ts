@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -31,7 +30,6 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FlexLayoutModule,
     CommonDirectivesModule,
     TranslateModule,
     IxIconModule,

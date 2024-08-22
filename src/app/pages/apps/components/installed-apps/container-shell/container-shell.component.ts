@@ -5,11 +5,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   combineLatest, Observable, Subject, Subscriber,
 } from 'rxjs';
-import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { ShellDetailsDialogFormValue } from 'app/interfaces/shell-details-dialog.interface';
 import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/terminal.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
+import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 
 @UntilDestroy()
 @Component({
@@ -59,8 +59,8 @@ export class ContainerShellComponent implements TerminalConfiguration {
       maxWidth: '850px',
       data: {
         appName: this.appName,
-        type: PodSelectDialogType.Shell,
-        title: 'Choose pod',
+        type: ShellDetailsType.Shell,
+        title: 'Choose container',
         customSubmit: (dialogFormValue: ShellDetailsDialogFormValue) => {
           this.onChooseShell(dialogFormValue, this.containerId);
         },
