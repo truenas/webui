@@ -233,8 +233,8 @@ export class ErrorHandlerService implements ErrorHandler {
         return {
           title: this.translate?.instant('Error ({code})', { code: error.status })
             || `Error (${error.status})`,
-          message: this.translate?.instant('Server error: {error}', { error: error.error })
-            || `Server error: ${error.error}`,
+          message: this.translate?.instant('Server error: {error}', { error: error.message || error.error })
+            || `Server error: ${error.message || error.error}`,
         };
       }
       default: {
