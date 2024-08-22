@@ -5,6 +5,7 @@ import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.inte
 import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
+import { cpuUsageGaugeWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-gauge/widget-cpu-usage-gauge.definition';
 
 @Component({
   selector: 'ix-widget-cpu-usage-gauge',
@@ -14,4 +15,5 @@ import {
 })
 export class WidgetCpuUsageGaugeComponent implements WidgetComponent {
   size = input.required<SlotSize>();
+  protected readonly name = cpuUsageGaugeWidget.name;
 }

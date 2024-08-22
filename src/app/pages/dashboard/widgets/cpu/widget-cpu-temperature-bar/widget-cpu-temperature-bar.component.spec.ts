@@ -22,7 +22,7 @@ describe('WidgetCpuTemperatureBarComponent', () => {
   });
 
   it('shows title', () => {
-    expect(spectator.query('h3')).toHaveText('CPU Temperature per Core Bar Graph');
+    expect(spectator.query('h3')).toHaveText('CPU Temperature Per Core');
   });
 
   it('shows cpu core bar without usage', () => {
