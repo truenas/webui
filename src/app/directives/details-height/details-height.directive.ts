@@ -84,7 +84,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     }
 
     if (parentElement.scrollTop < this.scrollBreakingPoint) {
-      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${parentElement.scrollTop}px)`;
+      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset + 18}px + ${parentElement.scrollTop}px)`;
     } else {
       this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${this.scrollBreakingPoint}px)`;
     }
