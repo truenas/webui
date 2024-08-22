@@ -24,11 +24,11 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
   settings = input.required<WidgetInterfaceIpSettings>();
 
   protected interfaceType = computed(() => {
-    return this.widgetName().includes('v6') ? NetworkInterfaceAliasType.Inet6 : NetworkInterfaceAliasType.Inet;
+    return this.settings()?.widgetName?.includes('v6') ? NetworkInterfaceAliasType.Inet6 : NetworkInterfaceAliasType.Inet;
   });
 
   protected widgetName = computed(() => {
-    return this.settings()?.widgetName || '';
+    return this.translate.instant('{nic} Address', { nic: this.settings()?.interface }) || '';
   });
 
   protected ips = computed(() => {
