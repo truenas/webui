@@ -92,7 +92,14 @@
   mat-card-content .header h3,
   .slot .wrapper h3 {
     @media(max-width: 767px) {
+      -webkit-box-orient: vertical;
+      display: inline-box;
       font-size: 20px;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      overflow: hidden;
+      white-space: normal;
+      word-break: break-word;
     }
   }
 
