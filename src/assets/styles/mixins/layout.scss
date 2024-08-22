@@ -78,12 +78,8 @@ $scrollbar-offset: 20px;
     background-color: var(--bg2);
     padding: 16px;
     position: sticky;
-    top: -16px;
+    top: -16.5px;
     z-index: 2;
-
-    @media(max-width: $breakpoint-xs) {
-      top: -1px;
-    }
   }
 
   .close-details-container-mobile {
@@ -198,7 +194,7 @@ $scrollbar-offset: 20px;
   .sticky-header {
     overflow: hidden;
     position: sticky;
-    top: 52px;
+    top: 51px;
     z-index: 1;
   }
 
