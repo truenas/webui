@@ -12,7 +12,7 @@ export function topologyToDisks(topology: PoolManagerTopology): DetailsDisk[] {
 }
 
 export function topologyCategoryToDisks(topologyCategory: PoolManagerTopologyCategory): DetailsDisk[] {
-  return topologyCategory.vdevs.flat();
+  return topologyCategory.vdevs ? topologyCategory.vdevs.flat() : [];
 }
 
 export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopology {

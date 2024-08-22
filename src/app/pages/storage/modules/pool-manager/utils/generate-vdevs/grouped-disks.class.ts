@@ -14,14 +14,19 @@ export class GroupedDisks {
     this.diskMap = getDiskTypeSizeMap(disks);
   }
 
-  findSuitableDisks(category: PoolManagerTopologyCategory): DetailsDisk[] {
+  findSuitableDisks(category: PoolManagerTopologyCategory, usedDisks: DetailsDisk[]): DetailsDisk[] {
     if (category.treatDiskSizeAsMinimum) {
       const matchingDisks: DetailsDisk[] = [];
       [DiskType.Hdd, DiskType.Ssd].forEach((type) => {
         const disksByType = this.diskMap[type];
         for (const diskSize of Object.keys(disksByType)) {
           if (category.diskSize <= Number(diskSize)) {
-            matchingDisks.push(...disksByType[diskSize]);
+            disksByType[diskSize].forEach((diskByType) => {
+              const isUsedDisk = !!usedDisks.find((usedDisk) => diskByType.name && usedDisk.name === diskByType.name);
+              if (!isUsedDisk) {
+                matchingDisks.push(diskByType);
+              }
+            });
           }
         }
       });

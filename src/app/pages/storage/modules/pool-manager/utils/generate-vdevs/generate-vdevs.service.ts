@@ -16,7 +16,7 @@ export type GeneratedVdevs = {
   [type in VdevType]: DetailsDisk[][];
 };
 
-export type TypeAndCategory = [VdevType, PoolManagerTopologyCategory];
+export type TypeAndCategory = [VdevType, PoolManagerTopologyCategory, DetailsDisk[] ];
 
 @Injectable()
 export class GenerateVdevsService {
@@ -44,7 +44,7 @@ export class GenerateVdevsService {
 
   private placeDisksInCategories(categories: TypeAndCategory[], maximizeDispersal: boolean): GeneratedVdevs {
     const generatedVdevs = {} as GeneratedVdevs;
-    categories.forEach(([type, category]) => {
+    categories.forEach(([type, category, usedDisks]) => {
       if (!this.isCategorySet(category)) {
         generatedVdevs[type] = [];
         return;
@@ -52,7 +52,7 @@ export class GenerateVdevsService {
 
       const vdevs: DetailsDisk[][] = [];
       for (let i = 0; i < category.vdevsNumber; i++) {
-        vdevs.push(this.pickDisks(category, maximizeDispersal));
+        vdevs.push(this.pickDisks(category, usedDisks, maximizeDispersal));
       }
 
       generatedVdevs[type] = vdevs;
@@ -91,10 +91,17 @@ export class GenerateVdevsService {
     });
   }
 
+  private getUsedDisks(type: VdevType, topology: PoolManagerTopology): DetailsDisk[] {
+    return Object.entries(topology).reduce((acc, [topologyType, category]) => {
+      if (topologyType as VdevType === type) return acc;
+      return topologyCategoryToDisks(category);
+    }, [] as DetailsDisk[]);
+  }
+
   private excludeManualCategories(topology: PoolManagerTopology): TypeAndCategory[] {
     return Object.entries(topology)
       .filter(([, category]) => !category.hasCustomDiskSelection)
-      .map(([type, category]) => [type as VdevType, category]);
+      .map(([type, category]) => [type as VdevType, category, this.getUsedDisks(type as VdevType, topology)]);
   }
 
   private isCategorySet(category: PoolManagerTopologyCategory): boolean {
@@ -107,10 +114,11 @@ export class GenerateVdevsService {
 
   private pickDisks(
     category: PoolManagerTopologyCategory,
+    usedDisks: DetailsDisk[],
     maximizeDispersal: boolean,
   ): DetailsDisk[] {
     const disksNeeded = category.width;
-    const suitableDisks = this.groupedDisks.findSuitableDisks(category);
+    const suitableDisks = this.groupedDisks.findSuitableDisks(category, usedDisks);
 
     if (suitableDisks.length < disksNeeded) {
       return [];

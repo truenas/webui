@@ -40,7 +40,7 @@ describe('GroupedDisks', () => {
         diskType: DiskType.Hdd,
         diskSize: 4 * GiB,
         treatDiskSizeAsMinimum: false,
-      } as PoolManagerTopologyCategory);
+      } as PoolManagerTopologyCategory, []);
       expect(disks).toHaveLength(2);
       expect(disks[0].devname).toBe('sdb');
       expect(disks[1].devname).toBe('sdd');
@@ -51,7 +51,7 @@ describe('GroupedDisks', () => {
         diskType: DiskType.Hdd,
         diskSize: 4 * GiB,
         treatDiskSizeAsMinimum: true,
-      } as PoolManagerTopologyCategory);
+      } as PoolManagerTopologyCategory, []);
       expect(disks).toHaveLength(3);
       expect(disks[0].devname).toBe('sdb');
       expect(disks[1].devname).toBe('sdd');
@@ -69,7 +69,7 @@ describe('GroupedDisks', () => {
         diskType: DiskType.Hdd,
         diskSize: 4 * GiB,
         treatDiskSizeAsMinimum: false,
-      } as PoolManagerTopologyCategory);
+      } as PoolManagerTopologyCategory, []);
       expect(disks).toHaveLength(1);
       expect(disks[0].devname).toBe('sdd');
     });
