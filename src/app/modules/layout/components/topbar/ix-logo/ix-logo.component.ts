@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+// eslint-disable-next-line no-restricted-imports
 import { MediaObserver } from '@ngbracket/ngx-layout';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';

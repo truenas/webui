@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-imports
 import { MediaObserver } from '@ngbracket/ngx-layout';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';

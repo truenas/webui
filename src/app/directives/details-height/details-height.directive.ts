@@ -1,6 +1,7 @@
 import {
   Directive, ElementRef, Inject, OnChanges, OnDestroy, OnInit,
 } from '@angular/core';
+// eslint-disable-next-line no-restricted-imports
 import { MediaObserver } from '@ngbracket/ngx-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -83,7 +84,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     }
 
     if (parentElement.scrollTop < this.scrollBreakingPoint) {
-      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${parentElement.scrollTop}px)`;
+      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset + 18}px + ${parentElement.scrollTop}px)`;
     } else {
       this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${this.scrollBreakingPoint}px)`;
     }

@@ -20,7 +20,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TreeModule } from '@bugsplat/angular-tree-component';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
@@ -102,7 +101,6 @@ const components = [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    FlexLayoutModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,

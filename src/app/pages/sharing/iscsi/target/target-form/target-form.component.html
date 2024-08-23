@@ -21,14 +21,6 @@
               [placeholder]="helptext.target_form_placeholder_alias | translate"
             ></ix-input>
 
-            <ix-select
-              [formControlName]="'mode'"
-              [label]="helptext.target_form_placeholder_mode | translate"
-              [options]="modes$"
-              [tooltip]="helptext.target_form_tooltip_mode | translate"
-              [fxHide]="true"
-            ></ix-select>
-
             <ix-list
               formArrayName="auth_networks"
               [empty]="form.controls.auth_networks.length === 0"

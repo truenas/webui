@@ -32,10 +32,6 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  get containerLayout(): string {
-    return this.inlineFields ? 'row wrap' : 'column';
-  }
-
   get fieldFlex(): string {
     if (!this.inlineFields) {
       return '100%';

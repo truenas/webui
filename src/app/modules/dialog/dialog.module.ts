@@ -6,7 +6,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -44,7 +43,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TranslateModule,
     TestIdModule,
     MatButtonModule,
-    FlexModule,
     IxIconModule,
     CommonModule,
     MatProgressBarModule,

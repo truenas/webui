@@ -2,7 +2,7 @@
   <!-- Main side navigation -->
   <mat-sidenav
     class="sidebar-panel not-alerts"
-    [fxFlex]="sidenavWidth"
+    [style.flex-basis]="sidenavWidth"
     [opened]="isSidenavOpen"
     [mode]="sidenavMode"
     [disableClose]="sidenavMode !== 'over'"
@@ -62,7 +62,7 @@
 
   <mat-sidenav-content
     class="fn-maincontent"
-    [fxFlex]="'calc(100% - ' + sidenavWidth + ')'"
+    [style.flex-basis]="'calc(100% - ' + sidenavWidth + ')'"
     [style.margin-left]="sidenavWidth"
   >
     <ix-topbar></ix-topbar>

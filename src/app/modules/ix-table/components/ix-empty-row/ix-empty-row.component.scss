@@ -1,12 +1,18 @@
 :host {
+  display: flex;
   padding: 15px;
-  place-content: center;;
+  place-content: center;
 }
 
 .empty-page {
+  align-items: center;
   color: var(--fg2);
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
   margin: auto 24px;
   max-width: 300px;
+  place-content: center;
 
   .icon-div {
     text-align: center;
