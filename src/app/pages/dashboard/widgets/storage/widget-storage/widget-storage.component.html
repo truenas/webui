@@ -18,8 +18,8 @@
       @if (!isLoading()) {
         <mat-grid-list
           [cols]="isTwoTilesInRow ? 2 : 1"
-          [gutterSize]="isThreeTilesInColumn ? '7px' : '16px'"
-          [rowHeight]="poolsInfo().length ? (isThreeTilesInColumn ? '100px' : '150px') : '300px'"
+          [gutterSize]="isThreeTilesInColumn ? '7px' : '12px'"
+          [rowHeight]="poolsInfo().length ? (isThreeTilesInColumn ? '100px' : '153px') : '300px'"
         >
           @for (poolInfo of poolsInfo().slice(0, 6); track poolInfo) {
             <mat-grid-tile class="grid-tile">

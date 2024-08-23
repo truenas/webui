@@ -18,7 +18,7 @@
   }
 
   .container {
-    padding: 12px;
+    padding: 4px 16px 16px;
   }
 }
 
@@ -28,6 +28,20 @@
 
   h3 {
     font-size: 24px;
+  }
+}
+
+mat-grid-list[cols='2'] {
+  ul li:nth-child(2) {
+    .value {
+      font-size: 11px;
+    }
+
+    @media (max-width: $breakpoint-xs) {
+      .label {
+        display: none;
+      }
+    }
   }
 }
 
@@ -50,9 +64,13 @@
     max-width: 100%;
     min-height: 100%;
     min-width: 100%;
-    padding-left: 16px;
+    padding: 0 0 0 12px;
     place-content: stretch flex-start;
     width: 100%;
+
+    @media (max-width: $breakpoint-xs) {
+      padding: 0 8px;
+    }
 
     .tile-header {
       align-items: center;
@@ -88,6 +106,10 @@
         height: 75%;
         margin-right: 12px;
         width: 1px;
+
+        @media (max-width: $breakpoint-xs) {
+          margin: 0 2px;
+        }
       }
 
       ul {
@@ -95,7 +117,10 @@
         display: flex;
         flex: 1 1 100%;
         flex-direction: column;
-        max-width: 100%;
+
+        @media (max-width: $breakpoint-xs) {
+          max-width: 100% !important;
+        }
       }
 
       li {
@@ -107,9 +132,14 @@
         white-space: nowrap;
 
         .label {
-          margin-right: 6px;
+          margin-right: 2px;
+        }
+
+        .label,
+        .value {
           overflow: hidden;
           text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
     }
