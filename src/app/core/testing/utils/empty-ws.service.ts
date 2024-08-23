@@ -1,4 +1,4 @@
-import { getMissingInjectionErrorFactory, getMissingInjectionErrorObservable } from 'test-utils/missing-injection-factories';
+import { getMissingInjectionErrorFactory, getMissingInjectionErrorObservable } from 'app/core/testing/utils/missing-injection-factories';
 import { WebSocketService } from 'app/services/ws.service';
 
 export class EmptyWebsocketService {

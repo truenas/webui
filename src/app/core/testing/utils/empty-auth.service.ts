@@ -1,4 +1,4 @@
-import { getMissingInjectionErrorFactory, getMissingInjectionErrorObservable } from 'test-utils/missing-injection-factories';
+import { getMissingInjectionErrorFactory, getMissingInjectionErrorObservable } from 'app/core/testing/utils/missing-injection-factories';
 import { AuthService } from 'app/services/auth/auth.service';
 
 export class EmptyAuthService {
