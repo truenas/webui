@@ -77,6 +77,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
           this.store$.select(selectJob(this.job.id)) as Observable<Job<ApiJobResponse<ApiJobMethod>>>,
           {
             title: this.translate.instant('Task is running'),
+            canMinimize: true,
           },
         ).afterClosed().pipe(
           catchError((error) => {
