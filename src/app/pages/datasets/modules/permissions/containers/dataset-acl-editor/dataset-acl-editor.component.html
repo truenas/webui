@@ -70,35 +70,10 @@
 
           <div class="controls-container">
             <div class="controls">
-              <div class="checkboxes" [formGroup]="saveParameters">
-                <ix-checkbox
-                  formControlName="recursive"
-                  class="recursive-checkbox"
-                  [label]="helptext.dataset_acl_recursive_placeholder | translate"
-                  [tooltip]="helptext.dataset_acl_recursive_tooltip | translate"
-                ></ix-checkbox>
-
-                @if (saveParameters.get('recursive').value) {
-                  <ix-checkbox
-                    formControlName="traverse"
-                    [label]="helptext.dataset_acl_traverse_placeholder | translate"
-                    [tooltip]="helptext.dataset_acl_traverse_tooltip | translate"
-                  ></ix-checkbox>
-                }
-              </div>
-              <div class="control-buttons">
-                <button
-                  *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
-                  mat-button
-                  color="primary"
-                  class="action"
-                  ixTest="save-acl"
-                  [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
-                  (click)="onSavePressed()"
-                >
-                  {{ 'Save Access Control List' | translate }}
-                </button>
-              </div>
+              <ix-acl-editor-save-controls
+                [canBeSaved]="acesWithError.length === 0 && acl.acl.length && ownerFormGroup.valid"
+                [ownerValues]="ownerFormGroup.getRawValue()"
+              ></ix-acl-editor-save-controls>
               <div class="control-buttons">
                 @if (acl.trivial) {
                   <a
@@ -123,7 +98,7 @@
                 }
               </div>
 
-              <h4 class="presets-label">Presets</h4>
+              <h4 class="presets-label">{{ 'Presets' | translate }}</h4>
               <div class="control-buttons">
                 <button
                   mat-button
