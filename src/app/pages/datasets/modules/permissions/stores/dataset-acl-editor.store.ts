@@ -354,6 +354,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           options: {
             recursive: options.recursive,
             traverse: options.traverse,
+            validate_effective_acl: options.validateEffectiveAcl,
           },
           uid: userWhoToIds.has(options.owner) && options.applyOwner ? userWhoToIds.get(options.owner) : null,
           gid: groupWhoToIds.has(options.ownerGroup) && options.applyGroup
