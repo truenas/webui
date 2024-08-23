@@ -1,14 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { catchError, EMPTY, Observable } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
+import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface RowState {
@@ -32,6 +35,8 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
   translate: TranslateService = inject(TranslateService);
   dialogService: DialogService = inject(DialogService);
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
+
+  private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
 
   getWarnings?: (row: T) => unknown[];
   getJob?: (row: T) => Job;
@@ -68,29 +73,18 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
 
     if (this.job && state) {
       if (this.job.state === JobState.Running) {
-        const dialogRef = this.matDialog.open(EntityJobComponent, {
-          data: {
+        this.dialogService.jobDialog(
+          this.store$.select(selectJob(this.job.id)) as Observable<Job<ApiJobResponse<ApiJobMethod>>>,
+          {
             title: this.translate.instant('Task is running'),
           },
-        });
-
-        dialogRef.componentInstance.jobId = this.job.id;
-        dialogRef.componentInstance.job = this.job;
-        if (this.job.logs_path) {
-          dialogRef.componentInstance.enableRealtimeLogs(true);
-        }
-        dialogRef.componentInstance.wsshow();
-        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          dialogRef.close();
-        });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-          dialogRef.close();
-          this.errorHandler.showErrorModal(error);
-        });
-        dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
-          dialogRef.close();
-          this.dialogService.info(this.translate.instant('Task Aborted'), '');
-        });
+        ).afterClosed().pipe(
+          catchError((error) => {
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+          untilDestroyed(this),
+        ).subscribe();
       } else if (state.state === JobState.Hold) {
         this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
       } else if (state.warnings?.length > 0) {
