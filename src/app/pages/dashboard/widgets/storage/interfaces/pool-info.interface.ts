@@ -11,6 +11,7 @@ export enum StatusLevel {
   Safe = 'safe',
   Warn = 'warn',
   Error = 'error',
+  Neutral = 'neutral',
 }
 
 export enum StatusIcon {
@@ -19,6 +20,7 @@ export enum StatusIcon {
   MdiAlert = 'mdi-alert',
   MdiCloseCircle = 'mdi-close-circle',
   ArrowCircleRight = 'arrow_circle_right',
+  Neutral = 'mdi-minus-circle',
 }
 
 export interface PoolInfo {
