@@ -19,7 +19,7 @@ describe('AppUpdateCellComponent', () => {
     `, { hostProps: { app } });
   }
 
-  it('checks status for running app', () => {
+  it('shows up to date when app does not have upgrade available', () => {
     setupTest({ upgrade_available: false } as App);
 
     expect(spectator.query('span')).toHaveText('Up to date');

@@ -30,7 +30,7 @@ import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -48,7 +48,7 @@ export class FeedbackService {
   constructor(
     private httpClient: HttpClient,
     private ws: WebSocketService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private systemGeneralService: SystemGeneralService,
     private sentryService: SentryService,
     private fileUpload: UploadService,

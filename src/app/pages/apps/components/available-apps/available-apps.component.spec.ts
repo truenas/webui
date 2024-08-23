@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputHarness } from '@angular/material/input/testing';
 import {
-  Spectator, mockProvider, createRoutingFactory,
+  Spectator, mockProvider, createComponentFactory,
 } from '@ngneat/spectator/jest';
 import { MockDeclaration, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -39,7 +39,7 @@ describe('Finding app', () => {
   let loader: HarnessLoader;
   let searchInput: MatInputHarness;
 
-  const createComponent = createRoutingFactory({
+  const createComponent = createComponentFactory({
     component: AvailableAppsComponent,
     imports: [
       IxFormsModule,
@@ -86,11 +86,7 @@ describe('Finding app', () => {
   });
 
   it('redirect to details app when app card is pressed', () => {
-    spectator.click('ix-app-card');
-
-    // TODO: Figure out a way to test href without relying on Angular's internals.
-    const href = spectator.query('ix-app-card').getAttribute('ng-reflect-router-link').replace(/,/g, '/');
-    const appPath = '/apps/available/community/webdav';
-    expect(appPath.startsWith(href)).toBeTruthy();
+    const href = spectator.query('.apps a').getAttribute('href');
+    expect(href).toBe('/apps/available/community/webdav');
   });
 });

@@ -59,6 +59,7 @@ import { AppNotesCardComponent } from 'app/pages/apps/components/installed-apps/
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
+import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import { VolumeMountsDialogComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
@@ -81,7 +82,6 @@ import { CategoryViewComponent } from './components/available-apps/category-view
 import { CustomAppButtonComponent } from './components/available-apps/custom-app-button/custom-app-button.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
-import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { DockerStatusComponent } from './components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
@@ -165,7 +165,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatColumnDef,
     MatSortHeader,
     AppCardLogoComponent,
-    AppStatusCellComponent,
+    AppStateCellComponent,
     AppUpdateCellComponent,
     ToolbarSliderComponent,
     FormatDateTimePipe,

@@ -22,7 +22,7 @@ import { SidenavService } from 'app/services/sidenav.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { TokenLifetimeService } from 'app/services/token-lifetime.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -79,7 +79,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private themeService: ThemeService,
     private sysGeneralService: SystemGeneralService,
     private sidenavService: SidenavService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private languageService: LanguageService,
     private tokenLifetimeService: TokenLifetimeService,
     private sentryService: SentryService,

@@ -48,7 +48,6 @@
             </div>
             @if (app().state === CatalogAppState.Running || app().state === CatalogAppState.Deploying) {
               <div class="container-action">
-                <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130392 -->
                 @if (container.state === AppContainerState.Running) {
                   <button
                     *ixRequiresRoles="requiredRoles"
@@ -72,7 +71,7 @@
                 >
                   <ix-icon name="mdi-folder-outline"></ix-icon>
                 </button>
-                
+
 
                 <button
                   mat-icon-button
@@ -85,7 +84,7 @@
                   <ix-icon name="mdi-text-box"></ix-icon>
                 </button>
 
-                
+
               </div>
             }
           </div>

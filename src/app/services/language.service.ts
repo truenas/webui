@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -372,7 +372,7 @@ export class LanguageService {
   constructor(
     protected translate: TranslateService,
     protected ws: WebSocketService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     @Inject(WINDOW) private window: Window,
   ) {
   }

@@ -23,7 +23,7 @@ import { groupListElements } from 'app/pages/account/groups/group-list/group-lis
 import { groupPageEntered, groupRemoved } from 'app/pages/account/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/account/groups/store/group.selectors';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -103,7 +103,7 @@ export class GroupListComponent implements OnInit {
     private emptyService: EmptyService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private translate: TranslateService,
   ) { }
 

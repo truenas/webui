@@ -26,7 +26,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -91,7 +91,7 @@ export class IpmiFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private dialogService: DialogService,
     private slideInRef: IxSlideInRef<IpmiFormComponent>,
     @Inject(SLIDE_IN_DATA) private ipmiId: number,

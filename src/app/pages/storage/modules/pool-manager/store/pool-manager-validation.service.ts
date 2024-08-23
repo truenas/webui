@@ -27,14 +27,14 @@ import {
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 @Injectable()
 export class PoolManagerValidationService {
   constructor(
     protected store: PoolManagerStore,
-    protected systemStore$: Store<AppState>,
+    protected systemStore$: Store<AppsState>,
     protected translate: TranslateService,
     private addVdevsStore: AddVdevsStore,
   ) {}

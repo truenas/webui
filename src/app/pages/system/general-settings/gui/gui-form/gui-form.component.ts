@@ -27,7 +27,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -78,7 +78,7 @@ export class GuiFormComponent {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.loadCurrentValues();

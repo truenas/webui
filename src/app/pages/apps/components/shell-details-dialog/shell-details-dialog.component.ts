@@ -13,7 +13,6 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 @UntilDestroy()
 @Component({
   selector: 'ix-shell-details-dialog',
-  styleUrls: ['./shell-details-dialog.component.scss'],
   templateUrl: './shell-details-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

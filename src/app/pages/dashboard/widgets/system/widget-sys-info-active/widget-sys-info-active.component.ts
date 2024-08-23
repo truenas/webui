@@ -10,7 +10,7 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LocaleService } from 'app/services/locale.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware,
@@ -57,7 +57,7 @@ export class WidgetSysInfoActiveComponent {
 
   constructor(
     private resources: WidgetResourcesService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private localeService: LocaleService,
   ) {
     this.resources.refreshSystemInfo();

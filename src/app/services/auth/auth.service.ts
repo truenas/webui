@@ -31,7 +31,7 @@ import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 @Injectable({
@@ -85,7 +85,7 @@ export class AuthService {
 
   constructor(
     private wsManager: WebSocketConnectionService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
   ) {

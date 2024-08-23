@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -33,7 +33,7 @@ describe('WidgetAppComponent', () => {
     portals: {
       'Web UI': 'http://test.com',
     } as Record<string, string>,
-    state: CatalogAppState.Running,
+    state: AppState.Running,
     upgrade_available: true,
     metadata: {
       icon: 'http://localhost/test-app.png',

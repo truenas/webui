@@ -11,7 +11,7 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { CpuParams } from 'app/pages/dashboard/widgets/cpu/interfaces/cpu-params.interface';
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -77,7 +77,7 @@ export class WidgetCpuComponent {
   });
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private resources: WidgetResourcesService,
     private translate: TranslateService,
   ) {}

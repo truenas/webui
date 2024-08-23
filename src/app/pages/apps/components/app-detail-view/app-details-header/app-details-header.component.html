@@ -69,7 +69,6 @@
       {{ app?.train | orNotAvailable }}
     }
   </div>
-  <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
   <div class="app-list-item">
     <span class="label">{{ 'Homepage' | translate }}:</span>
     @if (isLoading$ | async) {
@@ -86,18 +85,6 @@
         {{ 'N/A' | translate }}
       }
     }
-    <ng-template #homepage>
-      @if (app?.home) {
-        <a
-          ixTest="homepage"
-          target="_blank"
-          [href]="app.home"
-          [title]="app.home"
-        >{{ app.home | cleanLink }}</a>
-      } @else {
-        {{ 'N/A' | translate }}
-      }
-    </ng-template>
   </div>
 </div>
 

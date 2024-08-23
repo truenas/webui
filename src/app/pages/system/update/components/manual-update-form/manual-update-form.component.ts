@@ -27,7 +27,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -69,7 +69,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private translate: TranslateService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private cdr: ChangeDetectorRef,
   ) {
     this.authService.authToken$.pipe(

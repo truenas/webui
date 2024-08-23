@@ -39,7 +39,7 @@ import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -132,7 +132,7 @@ export class ReportComponent implements OnInit, OnChanges {
 
   constructor(
     public translate: TranslateService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private formatDateTimePipe: FormatDateTimePipe,
     private themeService: ThemeService,
     private reportsService: ReportsService,
