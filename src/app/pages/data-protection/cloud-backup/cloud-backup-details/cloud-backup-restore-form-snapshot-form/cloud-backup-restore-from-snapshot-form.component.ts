@@ -115,13 +115,13 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     if (!options.exclude?.length) delete options.exclude;
     if (!options.include?.length) delete options.include;
 
-    const params = [
+    const params: CloudBackupRestoreParams = [
       this.data.backup.id,
       this.data.snapshot.id,
-      this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : '/',
+      this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.form.controls.target.value,
       this.form.controls.target.value,
       options,
-    ] as CloudBackupRestoreParams;
+    ];
 
     this.ws.job('cloud_backup.restore', params)
       .pipe(untilDestroyed(this))
