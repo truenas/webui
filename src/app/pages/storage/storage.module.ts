@@ -17,7 +17,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule, FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -68,12 +67,10 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatProgressSpinnerModule,
     MatToolbarModule,
     BaseChartDirective,
-    FlexLayoutModule,
     ReactiveFormsModule,
     LayoutModule,
     MatFormFieldModule,
     MatOptionModule,
-    FlexModule,
     MatCheckboxModule,
     MatSelectModule,
     MatMenuModule,

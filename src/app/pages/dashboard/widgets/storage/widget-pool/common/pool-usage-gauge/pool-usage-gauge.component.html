@@ -2,13 +2,34 @@
   <div class="left">
     <h3 class="pool-name">
       @if (!isPoolLoading()) {
-        {{ pool().name }}
+        <span class="name">
+          {{ pool().name }}
+        </span>
+
+        @if (!isDatasetLoading()) {
+          <span class="stats">
+            {{ usedPercentage() / 100 | percent: '1.0-1' }}
+            {{ 'Used' | translate }}
+          </span>
+        }
       } @else {
         <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
       }
     </h3>
     <div class="divider"></div>
     <div class="lines">
+      @if (!isDatasetLoading()) {
+        <div class="line pool-usage">
+          <span class="label">{{ 'Pool Usage' | translate }}:</span>
+          @if (!isDisksLoading()) {
+            <span class="value">
+              {{ usedPercentage() / 100 | percent: '1.0-1' }}
+            </span>
+          } @else {
+            <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+          }
+        </div>
+      }
       <div class="line">
         <span class="label">{{ 'Data Topology' | translate }}:</span>
         @if (!isDisksLoading()) {

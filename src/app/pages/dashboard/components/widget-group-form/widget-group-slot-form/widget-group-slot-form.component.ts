@@ -106,7 +106,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
       return a.label.localeCompare(b.label);
     });
     if (!this.form.controls.type.value || !Array.from(uniqTypes).includes(this.form.controls.type.value)) {
-      const firstSupported = typeOptions.find((option) => !option.disabled).value;
+      const firstSupported = typeOptions.find((option) => !option.disabled)?.value;
       this.form.controls.type.setValue(firstSupported);
     }
     return of(typeOptions);

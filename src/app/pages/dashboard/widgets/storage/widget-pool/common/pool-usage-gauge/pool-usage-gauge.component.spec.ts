@@ -115,6 +115,7 @@ describe('PoolUsageGaugeComponent', () => {
       });
     });
     expect(lines).toEqual([
+      { label: 'Pool Usage:', value: '80.2%' },
       { label: 'Data Topology:', value: '2 x DISK | 1 wide | 5 GiB' },
       { label: 'Usable Capacity:', value: '2.63 GiB' },
       { label: 'Last Scrub Date:', value: '2024-06-09 10:00:20' },

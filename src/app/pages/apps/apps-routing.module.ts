@@ -6,9 +6,9 @@ import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
 import { CategoryViewComponent } from 'app/pages/apps/components/available-apps/category-view/category-view.component';
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
+import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { ContainerShellComponent } from 'app/pages/apps/components/installed-apps/container-shell/container-shell.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
-import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { appNameResolver } from 'app/pages/apps/resolvers/app-name.resolver';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
@@ -57,12 +57,12 @@ const routes: Routes = [
               {
                 path: 'shell/:containerId/:command',
                 component: ContainerShellComponent,
-                data: { title: T('Pod Shell') },
+                data: { title: T('Container Shell') },
               },
               {
                 path: 'logs/:containerId',
-                component: PodLogsComponent,
-                data: { title: T('Pod Logs') },
+                component: ContainerLogsComponent,
+                data: { title: T('Container Logs') },
               },
             ],
           },

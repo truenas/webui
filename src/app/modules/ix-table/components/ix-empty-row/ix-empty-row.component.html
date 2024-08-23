@@ -1,28 +1,14 @@
 <ng-template [cdkPortalOutlet]="templatePortal"></ng-template>
 <ng-template #templatePortalContent>
   <div
-    fxLayout="column"
-    fxLayoutAlign="center center"
-    fxFlex
     [class]="'empty-page ' + conf.type"
     [class.large]="conf?.large"
     [class.compact]="conf?.compact"
   >
     @if (isLoading()) {
-      <div
-        fxLayout="column"
-        fxLayoutAlign="center center"
-        fxFlex
-      >
-        <mat-spinner [diameter]="40"></mat-spinner>
-      </div>
+      <mat-spinner [diameter]="40"></mat-spinner>
     } @else {
-      <div
-        fxLayout="column"
-        fxLayoutAlign="center center"
-        fxFlex
-        class="icon-div"
-      >
+      <div class="icon-div">
         <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
       </div>
       <div>

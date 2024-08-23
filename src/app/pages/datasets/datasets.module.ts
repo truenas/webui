@@ -10,7 +10,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -72,7 +71,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatProgressSpinnerModule,
     PermissionsModule,
     EncryptionModule,
-    FlexLayoutModule,
     ReactiveFormsModule,
     IxFormsModule,
     TreeModule,
