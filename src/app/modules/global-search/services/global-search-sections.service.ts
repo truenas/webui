@@ -31,11 +31,11 @@ export class GlobalSearchSectionsProvider {
     return this.searchProvider.search(searchTerm, this.globalSearchMaximumLimit);
   }
 
-  getHelpSectionResults(searchTerm: string, appVersion: string | undefined): UiSearchableElement[] {
+  getHelpSectionResults(searchTerm: string, appVersion?: string): UiSearchableElement[] {
     const documentationKeywords = new Set(['help', 'documentation', 'docs', 'guide', 'support']);
     const normalizedSearchTerm = searchTerm.toLowerCase();
     const isDocumentationKeyword = documentationKeywords.has(normalizedSearchTerm);
-    const docsHref = appVersion
+    const targetHref = appVersion
       ? `https://www.truenas.com/docs/scale/${appVersion}/search`
       : 'https://www.truenas.com/docs/search';
 
@@ -43,7 +43,7 @@ export class GlobalSearchSectionsProvider {
       return [
         {
           hierarchy: [this.translate.instant('Go to Documentation')],
-          targetHref: docsHref,
+          targetHref,
           section: GlobalSearchSection.Help,
         },
       ];
@@ -52,7 +52,7 @@ export class GlobalSearchSectionsProvider {
     return [
       {
         hierarchy: [this.translate.instant('Search Documentation for «{value}»', { value: searchTerm })],
-        targetHref: `${docsHref}/?query=${searchTerm}`,
+        targetHref: `${targetHref}/?query=${searchTerm}`,
         section: GlobalSearchSection.Help,
       },
     ];
