@@ -50,7 +50,7 @@ describe('Finding app', () => {
     declarations: [
       AvailableAppsHeaderComponent,
       AppCardComponent,
-      AppCardLogoComponent,
+      MockDeclaration(AppCardLogoComponent),
       MockDeclaration(CustomAppButtonComponent),
     ],
     providers: [

@@ -12,7 +12,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatColumnDef } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
@@ -64,8 +63,8 @@ import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import { VolumeMountsDialogComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
+import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { ContainerShellComponent } from 'app/pages/apps/components/installed-apps/container-shell/container-shell.component';
-import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
@@ -105,7 +104,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
     ContainerShellComponent,
-    PodLogsComponent,
+    ContainerLogsComponent,
     LogsDetailsDialogComponent,
     ShellDetailsDialogComponent,
     AppUpgradeDialogComponent,
@@ -146,7 +145,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     ImgFallbackModule,
     NgxSkeletonLoaderModule,
     IxIconModule,
-    FlexLayoutModule,
     LazyLoadImageModule,
     TestIdModule,
     AppLoaderModule,

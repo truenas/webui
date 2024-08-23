@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, EventEmitter, Input, Output,
+  Component, Input, output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -28,7 +28,8 @@ export class FileTicketComponent {
   @Input() type: FeedbackType.Bug | FeedbackType.Suggestion;
   @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
   @Input() isLoading: boolean;
-  @Output() isLoadingChange = new EventEmitter<boolean>();
+
+  readonly isLoadingChange = output<boolean>();
 
   protected form = this.formBuilder.group({
     title: ['', [Validators.maxLength(200)]],
@@ -63,10 +64,10 @@ export class FileTicketComponent {
     this.getSystemFileSizeLimit();
   }
 
-  onSubmit(token: string): void {
+  onSubmit(token: unknown): void {
     this.isLoadingChange.emit(true);
 
-    this.feedbackService.createTicket(token, this.ticketType, this.form.value).pipe(
+    this.feedbackService.createTicket(token as string, this.ticketType, this.form.value).pipe(
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
     ).subscribe({

@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 .card {
   box-sizing: border-box;
   display: flex;
@@ -55,20 +57,6 @@
     }
   }
 
-  &.half {
-    flex-direction: row;
-
-    .nic-info {
-      flex: 1 1 30%;
-      max-width: 30%;
-    }
-
-    .nic-chart {
-      flex: 1 1 70%;
-      max-width: 70%;
-    }
-  }
-
   &.half,
   &.quarter {
     padding: 0;
@@ -82,6 +70,10 @@
       display: flex;
       flex-direction: column-reverse;
       padding: 0 16px 24px;
+
+      @media (max-width: $breakpoint-xs) {
+        padding: 0;
+      }
     }
 
     .in-out {
@@ -110,6 +102,51 @@
       margin-top: 12px;
       opacity: 0.75;
       place-content: center center;
+    }
+  }
+
+  &.half {
+    flex-direction: row;
+
+    @media (max-width: $breakpoint-xs) {
+      display: block;
+
+      .info-header-title {
+        max-width: 55%;
+      }
+
+      .info-list-item.state {
+        display: none;
+      }
+
+      .info-column {
+        position: absolute;
+        right: 0;
+        top: 10px;
+      }
+    }
+
+    .nic-info {
+      flex: 1 1 30%;
+      max-width: 30%;
+
+      @media (max-width: $breakpoint-xs) {
+        flex: 1;
+        max-width: 100%;
+      }
+    }
+
+    .nic-chart {
+      align-items: center;
+      display: flex;
+      flex: 1 1 70%;
+      justify-content: center;
+      max-width: 70%;
+
+      @media (max-width: $breakpoint-xs) {
+        flex: 1;
+        max-width: 100%;
+      }
     }
   }
 
@@ -144,6 +181,10 @@
   padding: 0 8px;
   place-content: stretch flex-start;
 
+  @media (max-width: $breakpoint-xs) {
+    padding: 0;
+  }
+
   .divider {
     background-color: var(--lines);
     margin: 5px 0;
@@ -169,12 +210,20 @@
   min-width: 0;
   place-content: center flex-start;
   width: 100%;
+
+  @media (max-width: $breakpoint-xs) {
+    gap: 4px;
+  }
 }
 
 .info-column {
   &.primary {
     flex: 1;
     padding-right: 16px;
+
+    @media (max-width: $breakpoint-xs) {
+      padding-right: 6px;
+    }
   }
 
   &.secondary {
@@ -218,6 +267,10 @@
   user-select: none;
   user-select: none;
   width: 20px;
+
+  @media (max-width: $breakpoint-xs) {
+    display: none;
+  }
 
   .ix-icon {
     font-size: 16px;

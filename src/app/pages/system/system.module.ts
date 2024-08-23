@@ -15,7 +15,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
@@ -33,6 +32,7 @@ import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -147,7 +147,6 @@ import { routing } from './system.routing';
     CommonDirectivesModule,
     CommonModule,
     EntityModule,
-    FlexLayoutModule,
     FormsModule,
     IxFormsModule,
     TreeModule,
@@ -185,6 +184,7 @@ import { routing } from './system.routing';
     MapValuePipe,
     BulkListItemComponent,
     YesNoPipe,
+    CastPipe,
   ],
   declarations: [
     AdvancedSettingsComponent,

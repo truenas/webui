@@ -6,7 +6,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
@@ -53,7 +52,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
   imports: [
     CommonModule,
     EntityModule,
-    FlexLayoutModule,
     IxFormsModule,
     TreeModule,
     MatButtonModule,

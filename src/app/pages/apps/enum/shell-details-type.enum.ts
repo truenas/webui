@@ -1,4 +1,4 @@
-export enum PodSelectDialogType {
+export enum ShellDetailsType {
   Logs = 'LOGS',
   Shell = 'SHELL',
 }

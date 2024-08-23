@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
+// eslint-disable-next-line no-restricted-imports
 import { MediaObserver } from '@ngbracket/ngx-layout';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';

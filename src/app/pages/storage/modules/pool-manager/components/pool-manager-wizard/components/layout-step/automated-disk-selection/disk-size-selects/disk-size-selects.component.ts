@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output,
+  ChangeDetectionStrategy, Component, Input, OnChanges, output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -29,7 +29,8 @@ export class DiskSizeSelectsComponent implements OnChanges {
   @Input({ required: true }) type: VdevType;
   @Input({ required: true }) inventory: DetailsDisk[];
   @Input() isStepActive = false;
-  @Output() disksSelected = new EventEmitter<DetailsDisk[]>();
+
+  readonly disksSelected = output<DetailsDisk[]>();
 
   protected diskSizeAndTypeOptions$ = of<SelectOption[]>([]);
 

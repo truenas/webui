@@ -2,10 +2,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
-  OnInit,
-  Output,
+  OnInit, output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
@@ -26,7 +24,8 @@ import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils
 export class DataWizardStepComponent implements OnInit {
   @Input() isStepActive: boolean;
   @Input() stepWarning: string | null;
-  @Output() goToLastStep = new EventEmitter<void>();
+
+  readonly goToLastStep = output();
 
   protected readonly VdevType = VdevType;
   protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Data);

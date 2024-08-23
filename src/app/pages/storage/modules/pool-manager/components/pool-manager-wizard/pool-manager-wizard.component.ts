@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -38,7 +38,8 @@ import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.sel
 })
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   protected existingPool: Pool = null;
-  @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
+
+  readonly stepChanged = output<PoolCreationWizardStep>();
 
   @ViewChild('stepper') stepper: MatStepper;
 

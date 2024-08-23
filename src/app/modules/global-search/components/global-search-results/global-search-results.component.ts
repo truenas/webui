@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, OnChanges, Output, TrackByFunction,
+  ChangeDetectionStrategy, Component, Inject, Input, OnChanges, output, TrackByFunction,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -28,7 +28,7 @@ export class GlobalSearchResultsComponent implements OnChanges {
   @Input() isSearchInputFocused = false;
   @Input() results: UiSearchableElement[] = [];
 
-  @Output() recentSearchRemoved = new EventEmitter<void>();
+  readonly recentSearchRemoved = output();
 
   readonly GlobalSearchSection = GlobalSearchSection;
   readonly initialResultsLimit = this.globalSearchSectionsProvider.globalSearchInitialLimit;

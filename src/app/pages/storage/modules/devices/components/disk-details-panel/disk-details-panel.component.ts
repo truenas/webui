@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  Input, output,
 } from '@angular/core';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -24,7 +22,7 @@ export class DiskDetailsPanelComponent {
   @Input() hasTopLevelRaidz: boolean;
   @Input() disksWithSmartTestSupport: string[];
 
-  @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
+  readonly closeMobileDetails = output();
 
   get title(): string {
     if (isTopologyDisk(this.topologyItem)) {

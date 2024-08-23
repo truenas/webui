@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
-  OnInit,
-  Output,
+  OnInit, output,
   signal,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -48,7 +46,8 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 export class InterfacesCardComponent implements OnInit, OnChanges {
   protected readonly searchableElements = interfacesCardElements.elements;
   @Input() isHaEnabled = false;
-  @Output() interfacesUpdated = new EventEmitter<void>();
+
+  readonly interfacesUpdated = output();
 
   readonly requiredRoles = [Role.NetworkInterfaceWrite];
 

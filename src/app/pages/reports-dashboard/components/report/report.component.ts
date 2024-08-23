@@ -10,8 +10,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import { add, isToday, sub } from 'date-fns';
-import { zonedTimeToUtc } from 'date-fns-tz';
+import {
+  add, isToday, sub,
+} from 'date-fns';
 import _ from 'lodash';
 import {
   BehaviorSubject, Subscription, timer,
@@ -36,6 +37,7 @@ import {
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
+import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppsState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -133,9 +135,10 @@ export class ReportComponent implements OnInit, OnChanges {
     private store$: Store<AppsState>,
     private formatDateTimePipe: FormatDateTimePipe,
     private themeService: ThemeService,
-    @Inject(DOCUMENT) private document: Document,
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
+    private localeService: LocaleService,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
@@ -355,7 +358,7 @@ export class ReportComponent implements OnInit, OnChanges {
   }
 
   getDateFromString(timestamp: string): Date {
-    return zonedTimeToUtc(new Date(timestamp), this.timezone);
+    return this.localeService.getDateFromString(timestamp, this.timezone);
   }
 
   // Convert timespan to start/end options

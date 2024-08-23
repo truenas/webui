@@ -14,7 +14,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
@@ -65,7 +64,6 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     IxIconModule,
     ReactiveFormsModule,
     MatButtonModule,
-    FlexModule,
     RouterModule,
     CommonDirectivesModule,
     MatTooltipModule,

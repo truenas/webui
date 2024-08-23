@@ -19,8 +19,20 @@ h1 {
 }
 
 .row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
   padding-bottom: 2px;
   padding-top: 2px;
+
+  > div {
+    display: flex;
+    gap: 5px;
+  }
+
+  a {
+    cursor: pointer;
+  }
 }
 
 div.message-content {

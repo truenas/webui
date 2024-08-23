@@ -4,7 +4,7 @@ import {
   invert, isArray, mergeWith,
 } from 'lodash';
 import { DeepPartial } from 'utility-types';
-import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { environmentTemplate, environmentTs } from './variables';
 
@@ -15,7 +15,7 @@ interface ConfigVariables {
     enabled: boolean;
     controllerModel: string;
     expansionModels: string[];
-    scenario: MockStorageScenario;
+    scenario: MockEnclosureScenario;
   };
 }
 
@@ -26,7 +26,7 @@ const defaults: ConfigVariables = {
     enabled: false,
     controllerModel: EnclosureModel.M40,
     expansionModels: [],
-    scenario: MockStorageScenario.FillSomeSlots,
+    scenario: MockEnclosureScenario.FillSomeSlots,
   },
 };
 
@@ -48,8 +48,8 @@ export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void
       values: valuesToWrite.mockConfig.expansionModels,
     }))
     .replace('_MOCK_SCENARIO_', printEnum({
-      enumName: 'MockStorageScenario',
-      enum: MockStorageScenario,
+      enumName: 'MockEnclosureScenario',
+      enum: MockEnclosureScenario,
       value: valuesToWrite.mockConfig.scenario,
     }));
 

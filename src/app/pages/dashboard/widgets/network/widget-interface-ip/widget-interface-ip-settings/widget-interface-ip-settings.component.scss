@@ -1,3 +1,9 @@
+@import 'scss-imports/cssvars';
+
 .half-width {
   width: 50%;
+
+  @media (max-width: $breakpoint-xs) {
+    width: 100%;
+  }
 }

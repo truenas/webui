@@ -6,7 +6,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
-import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -38,7 +37,6 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     ReactiveFormsModule,
     MatDialogModule,
     CommonDirectivesModule,
-    FlexModule,
     TestIdModule,
     IxIconModule,
   ],

@@ -18,20 +18,6 @@ export const helptextSharingIscsi = {
   target_form_placeholder_alias: T('Target Alias'),
   target_form_tooltip_alias: T('Optional user-friendly name.'),
 
-  target_form_placeholder_mode: T('Target Mode'),
-  target_form_tooltip_mode: T('Define the target as *iSCSI*,\
- *Fibre Channel*, or *Both*.'),
-  target_form_enum_mode: [{
-    label: 'iSCSI',
-    value: 'ISCSI',
-  }, {
-    label: 'Fibre Channel',
-    value: 'FC',
-  }, {
-    label: 'Both',
-    value: 'BOTH',
-  }],
-
   target_form_placeholder_portal: T('Portal Group ID'),
   target_form_tooltip_portal: T(
     'Leave empty or select number of existing portal to use.',
