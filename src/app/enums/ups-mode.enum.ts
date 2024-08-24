@@ -6,4 +6,5 @@ export enum UpsMode {
 export enum UpsShutdownMode {
   LowBattery = 'LOWBATT',
   Battery = 'BATT',
+  Hybrid = 'HYBRID',
 }

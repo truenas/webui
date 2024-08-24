@@ -58,6 +58,7 @@ export const helptextServiceUps = {
   ups_shutdown_options: [
     { label: 'UPS reaches low battery', value: UpsShutdownMode.LowBattery },
     { label: 'UPS goes on battery', value: UpsShutdownMode.Battery },
+    { label: 'Hybrid (Going on battery starts Shutdown Timer, Low battery executes shutdown immediately)', value: UpsShutdownMode.Hybrid },
   ],
 
   ups_shutdowntimer_placeholder: T('Shutdown Timer'),
@@ -65,7 +66,7 @@ export const helptextServiceUps = {
  before initiating shutdown. Shutdown will not occur\
  if power is restored while the timer is counting\
  down. This value only applies when <b>Shutdown\
- mode</b> is set to <i>UPS goes on battery</i>.'),
+ mode</b> is set to <i>UPS goes on battery</i> or <i>Hybrid</i>.'),
 
   ups_shutdowncmd_placeholder: T('Shutdown Command'),
   ups_shutdowncmd_tooltip: T('When battery power is low or the shutdown timer ends,\
