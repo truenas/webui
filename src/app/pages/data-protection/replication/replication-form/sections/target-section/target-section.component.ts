@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
@@ -35,7 +35,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     readonly: [ReadOnlyMode.Require],
     encryption: [false],
     encryption_inherit: [false],
-    encryption_key_format: [EncryptionKeyFormat.Hex],
+    encryption_key_format: [EncryptionKeyFormat.Hex, [Validators.required]],
     encryption_key_generate: [true],
     encryption_key_hex: [''],
     encryption_key_passphrase: [''],
@@ -43,8 +43,8 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     encryption_key_location: [''],
     allow_from_scratch: [false],
     retention_policy: [RetentionPolicy.None],
-    lifetime_value: [null as number],
-    lifetime_unit: [LifetimeUnit.Week],
+    lifetime_value: [null as number, [Validators.required]],
+    lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
   });
 
   retentionPolicies$: Observable<Option[]>;
@@ -95,9 +95,30 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.setRetentionPolicyOptions();
 
-    this.form.controls.retention_policy.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.form.updateValueAndValidity();
-      this.cdr.markForCheck();
+    this.form.controls.lifetime_value.disable();
+    this.form.controls.lifetime_unit.disable();
+
+    this.form.controls.retention_policy.valueChanges.pipe(untilDestroyed(this)).subscribe((retentionPolicy) => {
+      if (retentionPolicy === RetentionPolicy.Custom) {
+        this.form.controls.lifetime_value.enable();
+        this.form.controls.lifetime_unit.enable();
+      } else {
+        this.form.controls.lifetime_value.disable();
+        this.form.controls.lifetime_unit.disable();
+      }
+    });
+
+    this.form.controls.encryption_key_format.disable();
+
+    combineLatest([
+      this.form.controls.encryption.valueChanges,
+      this.form.controls.encryption_inherit.valueChanges,
+    ]).pipe(untilDestroyed(this)).subscribe(([encryption, encryptionInherit]) => {
+      if (encryption && !encryptionInherit) {
+        this.form.controls.encryption_key_format.enable();
+      } else {
+        this.form.controls.encryption_key_format.disable();
+      }
     });
   }
 

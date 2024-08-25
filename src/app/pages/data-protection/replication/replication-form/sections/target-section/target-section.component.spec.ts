@@ -114,10 +114,12 @@ describe('TargetSectionComponent', () => {
   });
 
   describe('encryption', () => {
-    beforeEach(async () => {
-      await form.fillForm({
-        Encryption: true,
-      });
+    beforeEach(() => {
+      spectator.setInput('replication', {
+        encryption: true,
+        encryption_inherit: false,
+        encryption_key_location: truenasDbKeyLocation,
+      } as ReplicationTask);
     });
 
     it('hides encryption fields when Encryption inherit is selected', async () => {
@@ -157,6 +159,7 @@ describe('TargetSectionComponent', () => {
     it('shows Generate Encryption Key when HEX format is used', async () => {
       await form.fillForm({
         'Encryption Key Format': 'HEX',
+        'Generate Encryption Key': true,
       });
 
       expect(await form.getLabels()).toContain('Generate Encryption Key');
