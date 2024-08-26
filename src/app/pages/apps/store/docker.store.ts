@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, Observable, of, switchMap, tap,
+  forkJoin, Observable, switchMap, tap,
 } from 'rxjs';
 import { DockerConfig, DockerStatusResponse } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
@@ -94,8 +94,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   }
 
   private getDockerLacksNvidiaDrivers(): Observable<boolean> {
-    // return this.ws.call('docker.lacks_nvidia_drivers');
-    return of(true);
+    return this.ws.call('docker.lacks_nvidia_drivers');
   }
 
   private getDockerStatus(): Observable<DockerStatusResponse> {
