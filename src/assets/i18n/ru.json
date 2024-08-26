@@ -784,6 +784,7 @@
   "Device removed": "",
   "Device updated": "",
   "Device «{disk}» has been detached.": "",
+  "Device «{name}» was successfully attached.": "",
   "Device/File": "",
   "Directory Inherit": "",
   "Directory Mask": "",

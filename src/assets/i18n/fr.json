@@ -168,6 +168,7 @@
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
   "Descriptor": "",
   "Device «{disk}» has been detached.": "",
+  "Device «{name}» was successfully attached.": "",
   "Directory Mask": "",
   "Directory Permissions": "",
   "Directory Service Read": "",

@@ -74,5 +74,6 @@ describe('BootPoolAttachDialogComponent', () => {
     await saveButton.click();
 
     expect(ws.job).toHaveBeenCalledWith('boot.attach', ['sdb', { expand: true }]);
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device «sdb» was successfully attached.');
   });
 });

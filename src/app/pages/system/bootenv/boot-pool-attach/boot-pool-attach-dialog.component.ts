@@ -89,7 +89,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.snackbar.success(this.translate.instant(`Device «${dev}» was successfully attached.`));
+          this.snackbar.success(this.translate.instant('Device «{name}» was successfully attached.', { name: dev }));
           this.dialogRef.close(true);
         },
         error: (error: unknown) => {

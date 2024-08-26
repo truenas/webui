@@ -918,6 +918,7 @@
   "Device added": "",
   "Device names of each disk being edited.": "",
   "Device «{disk}» has been detached.": "",
+  "Device «{name}» was successfully attached.": "",
   "Digest Algorithm": "",
   "Digital Signature": "",
   "Direct the flow of data to the remote host.": "",

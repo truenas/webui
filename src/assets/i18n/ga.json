@@ -19,6 +19,7 @@
   "Credentials have been successfully added.": "",
   "Delete Snapshot": "",
   "Device «{disk}» has been detached.": "",
+  "Device «{name}» was successfully attached.": "",
   "Docker Write": "",
   "Ensure that ACL permissions are validated for all users and groups. Disabling this may allow configurations that do not provide the intended access.  It is recommended to keep this option enabled.": "",
   "Error when loading similar apps.": "",
