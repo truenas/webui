@@ -63,7 +63,7 @@
     .container-content {
       display: flex;
       flex-direction: column;
-      height: calc(100% - 56px);
+      height: calc(100% + 10px);
       justify-content: space-between;
 
       .banner {
