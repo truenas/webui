@@ -2,12 +2,14 @@ import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
+import { TranslateService } from '@ngx-translate/core';
 import { produce } from 'immer';
 import { chain } from 'lodash';
 import { Observable, switchMap, tap } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
@@ -83,7 +85,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   constructor(
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
+    private dialog: DialogService,
     private theme: ThemeService,
+    private translate: TranslateService,
   ) {
     super(initialState);
   }
@@ -94,6 +98,14 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       switchMap(() => {
         return this.ws.call('webui.enclosure.dashboard').pipe(
           tap((enclosures: DashboardEnclosure[]) => {
+            if (!enclosures.length) {
+              this.dialog.warn(
+                this.translate.instant('Enclosure Unavailable'),
+                this.translate.instant('We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and try again.'),
+              );
+              return;
+            }
+
             this.patchState((state) => {
               return {
                 enclosures,
@@ -102,6 +114,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
             });
           }),
           this.errorHandler.catchError(),
+
           finalize(() => {
             this.patchState({ isLoading: false });
           }),
