@@ -112,7 +112,7 @@
     .title {
       -webkit-box-orient: vertical;
       color: var(--fg1);
-      display: inline-box;
+      display: -webkit-inline-box;
       font-size: 16px;
       -webkit-line-clamp: 2;
       line-clamp: 2;
