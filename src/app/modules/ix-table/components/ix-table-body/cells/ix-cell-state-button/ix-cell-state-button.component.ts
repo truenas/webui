@@ -94,7 +94,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
           dialogRef.close();
         });
       } else if (state.state === JobState.Hold) {
-        this.snackbar.success(this.translate.instant('Task is on hold'));
+        this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
       } else if (state.warnings?.length > 0) {
         let list = '';
         state.warnings.forEach((warning: string) => {
