@@ -230,10 +230,15 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   restore(row: CloudSyncTaskUi): void {
-    const dialog = this.matDialog.open(CloudSyncRestoreDialogComponent, {
-      data: row.id,
-    });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
+    this.matDialog.open(CloudSyncRestoreDialogComponent, { data: row.id })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.snackbar.success(
+          this.translate.instant('Cloud Sync «{name}» has been restored.', { name: row.description }),
+        );
+        this.getCloudSyncTasks();
+      });
   }
 
   openForm(row?: CloudSyncTaskUi): void {
@@ -270,6 +275,9 @@ export class CloudSyncListComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.snackbar.success(
+          this.translate.instant('Cloud Sync «{name}» has been deleted.', { name: row.description }),
+        );
         this.getCloudSyncTasks();
       },
       error: (err) => {

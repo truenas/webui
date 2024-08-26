@@ -272,10 +272,16 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   restore(row: CloudSyncTaskUi): void {
-    const dialog = this.matDialog.open(CloudSyncRestoreDialogComponent, {
-      data: row.id,
-    });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
+    this.matDialog
+      .open(CloudSyncRestoreDialogComponent, { data: row.id })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.snackbar.success(
+          this.translate.instant('Cloud Sync «{name}» has been restored.', { name: row.description }),
+        );
+        this.getCloudSyncTasks();
+      });
   }
 
   private transformCloudSyncTasks(cloudSyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {

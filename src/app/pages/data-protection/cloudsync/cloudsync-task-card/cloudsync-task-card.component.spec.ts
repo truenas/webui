@@ -221,6 +221,7 @@ describe('CloudSyncTaskCardComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialogComponent, {
       data: 3,
     });
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudsync» has been restored.');
   });
 
   it('deletes a CloudSync Task with confirmation when Delete button is pressed', async () => {

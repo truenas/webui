@@ -334,6 +334,8 @@
   "Cloud Sync Task Wizard": "",
   "Cloud Sync Write": "",
   "Cloud Sync to Storj or similar provider": "",
+  "Cloud Sync «{name}» has been deleted.": "",
+  "Cloud Sync «{name}» has been restored.": "",
   "Cloud Sync «{name}» has started.": "",
   "Cloud Sync «{name}» stopped.": "",
   "Cloud credential added.": "",

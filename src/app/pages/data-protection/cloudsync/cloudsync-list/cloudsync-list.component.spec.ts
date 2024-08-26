@@ -6,8 +6,9 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -95,6 +96,8 @@ describe('CloudSyncListComponent', () => {
       mockAuth(),
       mockWebSocket([
         mockCall('cloudsync.query', cloudSyncList),
+        mockCall('cloudsync.delete'),
+        mockJob('cloudsync.sync', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -150,6 +153,7 @@ describe('CloudSyncListComponent', () => {
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
   });
 
   it('shows form to edit an existing CloudSync when Edit button is pressed', async () => {
@@ -181,8 +185,8 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
-
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been deleted.');
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -198,6 +202,7 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been restored.');
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
@@ -213,7 +218,7 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
-
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
   });
 });
