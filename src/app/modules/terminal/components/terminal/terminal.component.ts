@@ -17,7 +17,7 @@ import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ShellService } from 'app/services/shell.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
@@ -64,7 +64,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     private shellService: ShellService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
   ) {}

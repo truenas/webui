@@ -20,7 +20,7 @@ import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validat
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -199,7 +199,7 @@ export class NetworkConfigurationComponent implements OnInit {
     private fb: FormBuilder,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
   ) {}
 
   ngOnInit(): void {

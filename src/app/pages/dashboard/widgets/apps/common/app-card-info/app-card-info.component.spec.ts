@@ -4,7 +4,7 @@ import { MockComponents } from 'ng-mocks';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
+import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppCardInfoComponent } from './app-card-info.component';
 
@@ -12,7 +12,7 @@ describe('AppCardInfoComponent', () => {
   let spectator: Spectator<AppCardInfoComponent>;
   const createComponent = createComponentFactory({
     component: AppCardInfoComponent,
-    declarations: [MockComponents(AppStatusCellComponent, AppUpdateCellComponent)],
+    declarations: [MockComponents(AppStateCellComponent, AppUpdateCellComponent)],
   });
 
   beforeEach(() => {

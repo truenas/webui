@@ -123,12 +123,21 @@
     margin-right: 15px;
     max-width: 90%;
     text-align: left;
+
+    @media (max-width: $breakpoint-xs) {
+      font-size: 12px;
+      margin-left: 15px;
+    }
   }
 }
 
 .open-source {
   font-size: 0.75rem;
   text-align: center;
+
+  @media (max-width: $breakpoint-xs) {
+    display: none;
+  }
 }
 
 %half-and-quarter-size {

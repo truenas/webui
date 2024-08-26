@@ -3,10 +3,10 @@ import {
   Component, computed, input, output,
 } from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
+import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 @Component({
   selector: 'ix-app-row',
@@ -16,7 +16,6 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 })
 export class AppRowComponent {
   readonly app = input.required<App>();
-  readonly status = input.required<AppStatus>();
   readonly selected = input.required<boolean>();
   readonly job = input<Job<void, AppStartQueryParams>>();
 
@@ -32,14 +31,14 @@ export class AppRowComponent {
     return this.app().upgrade_available;
   });
 
-  readonly isAppStopped = computed(() => this.status() === AppStatus.Stopped);
+  readonly isAppStopped = computed(() => this.app().state === AppState.Stopped);
 
   readonly inProgress = computed(() => {
-    return [AppStatus.Deploying].includes(this.status()) || this.isStartingOrStopping();
+    return [AppState.Deploying].includes(this.app().state) || this.isStartingOrStopping();
   });
 
   readonly isStartingOrStopping = computed(() => {
-    return [AppStatus.Starting, AppStatus.Stopping].includes(this.status());
+    return [AppState.Deploying, AppState.Stopping].includes(this.app().state);
   });
 
   toggleAppChecked(): void {

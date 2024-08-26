@@ -1,17 +1,19 @@
 .wrapper {
-  align-items: center;
   background-color: var(--bg2);
   color: var(--fg2);
-  display: flex;
-  flex-direction: column;
   height: 100%;
-  justify-content: center;
   padding-left: 15px;
   padding-right: 15px;
   width: 100%;
 
   .bar {
+    display: flex;
     height: 150px;
+    width: 100%;
+  }
+
+  h3 {
+    padding: 16px 0 0;
     width: 100%;
   }
 }

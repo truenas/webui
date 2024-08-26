@@ -62,8 +62,8 @@
             [value]="option.value"
             [disabled]="option.disabled"
             [ixTest]="[controlDirective.name, option.label]"
-            [matTooltip]="option.hoverTooltip"
-            [attr.aria-label]="option.label"
+            [matTooltip]="option.hoverTooltip | translate"
+            [attr.aria-label]="option.label | translate"
           >
             @if (multiple) {
               <ix-icon

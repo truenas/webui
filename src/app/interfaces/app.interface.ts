@@ -1,5 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { AppMaintainer } from 'app/interfaces/available-app.interface';
@@ -65,7 +65,7 @@ export interface App {
   name: string;
   id: string;
   active_workloads: AppActiveWorkloads;
-  state: CatalogAppState;
+  state: AppState;
   upgrade_available: boolean;
   human_version: string;
   metadata: AppMetadata;

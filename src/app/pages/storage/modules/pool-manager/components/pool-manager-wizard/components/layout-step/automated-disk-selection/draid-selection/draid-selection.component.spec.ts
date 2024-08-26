@@ -51,10 +51,11 @@ describe('DraidSelectionComponent', () => {
           { type: DiskType.Hdd, size: 10 * GiB, name: 'disk2' },
           { type: DiskType.Hdd, size: 10 * GiB, name: 'disk3' },
           { type: DiskType.Hdd, size: 10 * GiB, name: 'disk4' },
-          { type: DiskType.Hdd, size: 20 * GiB, name: 'disk5' },
-          { type: DiskType.Ssd, size: 20 * GiB, name: 'disk6' },
-          { type: DiskType.Ssd, size: 30 * GiB, name: 'disk7' },
+          { type: DiskType.Hdd, size: 10 * GiB, name: 'disk5' },
+          { type: DiskType.Hdd, size: 20 * GiB, name: 'disk6' },
+          { type: DiskType.Ssd, size: 20 * GiB, name: 'disk7' },
           { type: DiskType.Ssd, size: 30 * GiB, name: 'disk8' },
+          { type: DiskType.Ssd, size: 30 * GiB, name: 'disk9' },
         ] as DetailsDisk[],
         isStepActive: true,
       },
@@ -92,7 +93,7 @@ describe('DraidSelectionComponent', () => {
     });
 
     const dataDevices = await form.getControl('Data Devices') as IxSelectHarness;
-    expect(await dataDevices.getOptionLabels()).toEqual(['2', '3']);
+    expect(await dataDevices.getOptionLabels()).toEqual(['2', '3', '4']);
   });
 
   it('updates Spares and Children options when Data Devices are selected', async () => {
@@ -104,11 +105,11 @@ describe('DraidSelectionComponent', () => {
     );
 
     const spares = await form.getControl('Distributed Hot Spares') as IxSelectHarness;
-    expect(await spares.getOptionLabels()).toEqual(['0', '1']);
+    expect(await spares.getOptionLabels()).toEqual(['0', '1', '2']);
     expect(await spares.getValue()).toBe('0');
 
     const children = await form.getControl('Children') as IxSelectHarness;
-    expect(await children.getOptionLabels()).toEqual(['3', '4']);
+    expect(await children.getOptionLabels()).toEqual(['4', '5']);
   });
 
   it('updates Children when Spares are selected', async () => {
@@ -121,7 +122,7 @@ describe('DraidSelectionComponent', () => {
     );
 
     const children = await form.getControl('Children') as IxSelectHarness;
-    expect(await children.getOptionLabels()).toEqual(['4']);
+    expect(await children.getOptionLabels()).toEqual(['5']);
   });
 
   it('defaults Children to optimal number, but only once', async () => {
@@ -133,12 +134,12 @@ describe('DraidSelectionComponent', () => {
     );
 
     const children = await form.getControl('Children') as IxSelectHarness;
-    expect(await children.getValue()).toBe('3');
+    expect(await children.getValue()).toBe('5');
 
     await form.fillForm({
       'Treat Disk Size as Minimum': true,
     });
-    expect(await children.getValue()).toBe('6');
+    expect(await children.getValue()).toBe('9');
   });
 
   it('updates number of vdevs when Children are selected', async () => {
@@ -154,7 +155,7 @@ describe('DraidSelectionComponent', () => {
     expect(await vdevs.getOptionLabels()).toEqual(['1']);
 
     await form.fillForm({
-      Children: '3',
+      Children: '4',
     });
 
     expect(await vdevs.getOptionLabels()).toEqual(['1', '2']);
@@ -167,8 +168,8 @@ describe('DraidSelectionComponent', () => {
         'Treat Disk Size as Minimum': true,
         'Data Devices': '2',
         'Distributed Hot Spares': '1',
-        Children: '4',
-        'Number of VDEVs': '2',
+        Children: '5',
+        'Number of VDEVs': '1',
       },
     );
 
@@ -178,8 +179,8 @@ describe('DraidSelectionComponent', () => {
       {
         draidDataDisks: 2,
         draidSpareDisks: 1,
-        vdevsNumber: 2,
-        width: 4,
+        vdevsNumber: 1,
+        width: 5,
       },
     );
   });
@@ -191,8 +192,8 @@ describe('DraidSelectionComponent', () => {
         'Treat Disk Size as Minimum': true,
         'Data Devices': '2',
         'Distributed Hot Spares': '1',
-        Children: '4',
-        'Number of VDEVs': '2',
+        Children: '5',
+        'Number of VDEVs': '1',
       },
     );
 

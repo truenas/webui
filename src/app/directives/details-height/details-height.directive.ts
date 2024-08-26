@@ -9,7 +9,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { headerHeight, footerHeight } from 'app/modules/layout/components/admin-layout/admin-layout.component.const';
 import { LayoutService } from 'app/services/layout.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 /**
@@ -37,7 +37,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     @Inject(WINDOW) private window: Window,
     private element: ElementRef<HTMLElement>,
     private layoutService: LayoutService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private mediaObserver: MediaObserver,
   ) {}
 
@@ -84,7 +84,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     }
 
     if (parentElement.scrollTop < this.scrollBreakingPoint) {
-      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${parentElement.scrollTop}px)`;
+      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset + 18}px + ${parentElement.scrollTop}px)`;
     } else {
       this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${this.scrollBreakingPoint}px)`;
     }

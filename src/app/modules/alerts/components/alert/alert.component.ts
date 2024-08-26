@@ -13,7 +13,7 @@ import {
   dismissAlertPressed,
   reopenAlertPressed,
 } from 'app/modules/alerts/store/alert.actions';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 enum AlertIcon {
@@ -55,7 +55,7 @@ export class AlertComponent implements OnChanges {
   }
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private translate: TranslateService,
   ) {}
 

@@ -33,7 +33,7 @@ import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -76,7 +76,7 @@ export class UpdateActionsCardComponent implements OnInit {
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private snackbar: SnackbarService,
     protected trainService: TrainService,
     protected updateService: UpdateService,

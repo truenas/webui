@@ -13,7 +13,7 @@ import {
   userPageEntered, usersLoaded, usersNotLoaded, userRemoved,
 } from 'app/pages/account/users/store/user.actions';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -55,7 +55,7 @@ export class UserEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private translate: TranslateService,
   ) {}
 }

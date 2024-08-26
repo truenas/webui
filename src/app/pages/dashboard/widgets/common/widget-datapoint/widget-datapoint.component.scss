@@ -1,3 +1,4 @@
+@import 'scss-imports/cssvars';
 @import '../../../dashboard-variables';
 
 :host {
@@ -32,6 +33,10 @@ mat-card {
       padding: 0 12px;
       text-align: center;
       width: 100%;
+
+      @media (max-width: $breakpoint-xs) {
+        padding: 0 5px;
+      }
 
       > div {
         word-break: break-word;

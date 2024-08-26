@@ -23,7 +23,7 @@ import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/accoun
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { userListElements } from 'app/pages/account/users/user-list/user-list.elements';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -98,7 +98,7 @@ export class UserListComponent implements OnInit {
   constructor(
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private translate: TranslateService,
     private emptyService: EmptyService,
   ) { }

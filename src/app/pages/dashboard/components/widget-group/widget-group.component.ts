@@ -72,7 +72,9 @@ export class WidgetGroupComponent {
       return {
         component: WidgetErrorComponent,
         inputs: {
-          message: this.translate.instant('{type} widget is not supported.', { type: widget.type }),
+          message: this.translate.instant('{type} widget is not supported.', {
+            type: definition?.name || widget.type,
+          }),
         },
         isVisible$,
       };
@@ -87,11 +89,15 @@ export class WidgetGroupComponent {
     }
 
     const supportedSizes = definition.supportedSizes;
+
     if (!supportedSizes.includes(slotSize)) {
       return {
         component: WidgetErrorComponent,
         inputs: {
-          message: this.translate.instant('{type} widget does not support {size} size.', { type: widget.type, size: slotSize }),
+          message: this.translate.instant('{type} widget does not support {size} size.', {
+            type: definition?.name || widget.type,
+            size: slotSize,
+          }),
         },
         isVisible$,
       };

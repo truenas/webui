@@ -7,7 +7,7 @@ import {
 } from 'rxjs';
 import { customApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams, AppUpgradeParams } from 'app/interfaces/app.interface';
@@ -36,15 +36,6 @@ export class ApplicationsService {
   getPoolList(): Observable<Pool[]> {
     return this.ws.call('pool.query');
   }
-
-  getInstalledAppNames(): Observable<{ name: string }[]> {
-    return this.ws.call('app.query', [[], { select: ['name'] }]);
-  }
-
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130379
-  // getContainerConfig(): Observable<ContainerConfig> {
-  //   return this.ws.call('container.config');
-  // }
 
   getInterfaces(): Observable<NetworkInterface[]> {
     return this.ws.call('interface.query');
@@ -113,14 +104,14 @@ export class ApplicationsService {
 
   restartApplication(app: App): Observable<Job<void>> {
     switch (app.state) {
-      case CatalogAppState.Running:
+      case AppState.Running:
         return this.stopApplication(app.name).pipe(
           filter((job) => job.state === JobState.Success),
           switchMap(() => this.startApplication(app.name)),
         );
-      case CatalogAppState.Stopped:
+      case AppState.Stopped:
         return this.startApplication(app.name).pipe();
-      case CatalogAppState.Deploying:
+      case AppState.Deploying:
       default:
         return EMPTY;
     }

@@ -12,7 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -23,7 +23,7 @@ export class TwoFactorGuardService implements CanActivateChild {
     private authService: AuthService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private appLoader: AppLoaderService,
   ) { }
 

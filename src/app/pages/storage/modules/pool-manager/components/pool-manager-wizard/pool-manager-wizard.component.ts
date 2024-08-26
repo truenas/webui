@@ -26,7 +26,7 @@ import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/po
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -63,7 +63,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: PoolManagerStore,
-    private systemStore$: Store<AppState>,
+    private systemStore$: Store<AppsState>,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,

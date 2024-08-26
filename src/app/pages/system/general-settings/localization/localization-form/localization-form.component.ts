@@ -22,7 +22,7 @@ import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
@@ -122,7 +122,7 @@ export class LocalizationFormComponent implements OnInit {
     protected langService: LanguageService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private slideInRef: IxSlideInRef<LocalizationFormComponent>,
     @Inject(WINDOW) private window: Window,
     @Inject(SLIDE_IN_DATA) private localizationSettings: LocalizationSettings,
