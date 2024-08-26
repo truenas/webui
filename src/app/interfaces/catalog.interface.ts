@@ -12,6 +12,7 @@ export interface Catalog {
 
 export interface CatalogUpdate {
   preferred_trains: string[];
+  nvidia?: boolean;
 }
 
 export type CatalogTrain = Record<string, CatalogApp>;

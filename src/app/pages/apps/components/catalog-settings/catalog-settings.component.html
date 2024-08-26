@@ -1,5 +1,5 @@
 <ix-modal-header
-  [title]="'Train Settings' | translate"
+  [title]="'Settings' | translate"
   [loading]="isFormLoading()"
   [requiredRoles]="requiredRoles"
 ></ix-modal-header>
@@ -16,6 +16,16 @@
           [inlineFields]="true"
         ></ix-checkbox-list>
       </ix-fieldset>
+
+      @if (!!(dockerStore.dockerLacksNvidiaDrivers$ | async) || !!installNvidiaDrivers()) {
+        <ix-fieldset>
+          <ix-checkbox
+            formControlName="nvidia"
+            [label]="'Install NDIVIA Drivers' | translate"
+            [tooltip]="tooltips.install_nvidia_driver| translate"
+          ></ix-checkbox>
+        </ix-fieldset>
+      }
 
       <ix-form-actions>
         <button
