@@ -236,6 +236,7 @@ export class AuthService {
     };
 
     const requestTrigger$ = new Observable((subscriber) => {
+      performance.mark(`${method} - ${uuid} - start`);
       this.wsManager.send(payload);
       subscriber.next();
     }).pipe(take(1));
@@ -247,6 +248,10 @@ export class AuthService {
       uuidFilteredResponse$,
     ]).pipe(
       take(1),
+      tap(() => {
+        performance.mark(`${method} - ${uuid} - end`);
+        performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
+      }),
       map(([, response]) => response),
     );
   }
