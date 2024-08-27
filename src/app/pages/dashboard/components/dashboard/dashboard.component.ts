@@ -64,9 +64,8 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    performance.mark('Login End');
-    performance.measure('Login', 'Login Start', 'Login End');
     performance.mark('Dashboard Start');
+    performance.measure('Admin Init', 'Admin Init', 'Dashboard Start');
     this.dashboardStore.entered();
     this.loadGroups();
   }

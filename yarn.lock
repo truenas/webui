@@ -9221,11 +9221,12 @@ ngx-popperjs@^16.0.1:
     "@popperjs/core" "^2.11.8"
     tslib "^2.3.0"
 
-ngx-skeleton-loader@~9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/ngx-skeleton-loader/-/ngx-skeleton-loader-9.0.0.tgz#43f3235130c3b81c7191aa363aba12f4d7cd1b29"
-  integrity sha512-aO4/V6oGdZGNcTjasTg/fwzJJYl/ZmNKgCukOEQdUK3GSFOZtB/3GGULMJuZ939hk3Hzqh1OBiLfIM1SqTfhqg==
+ngx-skeleton-loader@~5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-skeleton-loader/-/ngx-skeleton-loader-5.0.0.tgz#e0042de20b0159d3f97d03a696d68f39ceee383b"
+  integrity sha512-6cz8UAu4WcYnBp/LnU053LCIwjKNZWX8GX1v3bvqQVdDa1ubsEeJm+CZxk5B8W2jP9CcFhvWrBlmmVUyl1Yxug==
   dependencies:
+    perf-marks "^1.13.4"
     tslib "^2.0.0"
 
 ngx-translate-messageformat-compiler@~5.0.1:
@@ -9919,6 +9920,13 @@ path-type@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
+
+perf-marks@^1.13.4:
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/perf-marks/-/perf-marks-1.14.2.tgz#7511c24239b9c2071717993a33ec3057f387b8c7"
+  integrity sha512-N0/bQcuTlETpgox/DsXS1voGjqaoamMoiyhncgeW3rSHy/qw8URVgmPRYfFDQns/+C6yFUHDbeSBGL7ixT6Y4A==
+  dependencies:
+    tslib "^2.1.0"
 
 picocolors@^1.0.0:
   version "1.0.0"

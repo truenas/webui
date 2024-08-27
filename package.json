@@ -176,7 +176,7 @@
     "ngx-img-fallback": "^2.0.0",
     "ngx-markdown": "~16.0.0",
     "ngx-popperjs": "^16.0.1",
-    "ngx-skeleton-loader": "~9.0.0",
+    "ngx-skeleton-loader": "~5.0.0",
     "ngx-translate-messageformat-compiler": "~5.0.1",
     "ngx-webstorage": "~18.0.0",
     "randomcolor": "~0.6.2",

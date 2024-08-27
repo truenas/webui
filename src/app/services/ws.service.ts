@@ -161,6 +161,8 @@ export class WebSocketService {
 
         performance.mark(`${method} - ${uuid} - end`);
         performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
+        performance.clearMarks(`${method} - ${uuid} - start`);
+        performance.clearMarks(`${method} - ${uuid} - end`);
         return of(data);
       }),
 
@@ -188,9 +190,6 @@ export class WebSocketService {
       return;
     }
 
-    if ((error).reason?.includes('Error while fetching update manifest')) {
-      return;
-    }
     console.error('Error: ', error);
   }
 

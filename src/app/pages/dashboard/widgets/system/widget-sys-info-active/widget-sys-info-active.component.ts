@@ -72,7 +72,7 @@ export class WidgetSysInfoActiveComponent {
 
     this.isFirstRender = false;
     performance.mark('Dashboard End');
-    performance.measure('Dashboard', 'Dashboard Start', 'Dashboard End');
+    performance.measure('Dashboard Init', 'Dashboard Start', 'Dashboard End');
     return '';
   }
 }

@@ -147,6 +147,7 @@ export class AuthService {
       return of(LoginResult.NoToken);
     }
 
+    performance.mark('Login Start');
     return this.makeRequest('auth.login_with_token', [this.token]).pipe(
       switchMap((wasLoggedIn) => {
         return this.processLoginResult(wasLoggedIn);
