@@ -396,6 +396,7 @@ body .mdc-card__actions,
 
     > a {
       -webkit-box-orient: vertical;
+      /* stylelint-disable-next-line */
       display: -webkit-inline-box;
       -webkit-line-clamp: 2;
       line-clamp: 2;

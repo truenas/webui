@@ -13,6 +13,7 @@
   .username {
     -webkit-box-orient: vertical;
     cursor: pointer;
+    /* stylelint-disable-next-line */
     display: -webkit-inline-box;
     font-size: 14px;
     -webkit-line-clamp: 2;
