@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { produce } from 'immer';
 import { chain } from 'lodash';
 import { Observable, switchMap, tap } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -97,7 +97,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       tap(() => this.setState(initialState)),
       switchMap(() => {
         return this.ws.call('webui.enclosure.dashboard').pipe(
-          map(() => ([])),
           tap((enclosures: DashboardEnclosure[]) => {
             this.patchState((state) => {
               return {
