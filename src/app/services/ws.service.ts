@@ -161,8 +161,6 @@ export class WebSocketService {
 
         performance.mark(`${method} - ${uuid} - end`);
         performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
-        performance.clearMarks(`${method} - ${uuid} - start`);
-        performance.clearMarks(`${method} - ${uuid} - end`);
         return of(data);
       }),
 
