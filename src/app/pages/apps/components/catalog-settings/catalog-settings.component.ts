@@ -83,7 +83,7 @@ export class CatalogSettingsComponent implements OnInit {
     this.isFormLoading.set(true);
     this.ws.call('catalog.update', [{ preferred_trains: preferredTrains } as CatalogUpdate])
       .pipe(
-        switchMap(() => (nvidia !== null ? this.dockerStore.setNvidiaValue(nvidia) : of(nvidia))),
+        switchMap(() => (nvidia !== null ? this.dockerStore.setDockerNvidia(nvidia) : of(nvidia))),
         switchMap(() => this.appsStore.loadCatalog()),
         untilDestroyed(this),
       )

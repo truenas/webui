@@ -105,7 +105,7 @@ describe('CatalogEditFormComponent', () => {
             mockProvider(DockerStore, {
               nvidiaDriversInstalled$: of(false),
               lacksNvidiaDrivers$: of(true),
-              setNvidiaValue: jest.fn(() => of(null)),
+              setDockerNvidia: jest.fn(() => of(null)),
             }),
           ],
         });
@@ -136,7 +136,7 @@ describe('CatalogEditFormComponent', () => {
           { preferred_trains: ['stable'] },
         ]);
 
-        expect(spectator.inject(DockerStore).setNvidiaValue).toHaveBeenCalled();
+        expect(spectator.inject(DockerStore).setDockerNvidia).toHaveBeenCalled();
         expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
       });
     });

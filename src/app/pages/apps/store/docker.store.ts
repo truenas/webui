@@ -70,7 +70,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       switchMap(() => forkJoin([
         this.getDockerConfig(),
         this.getDockerStatus(),
-        this.getLacksNvidiaDriversValue(),
+        this.getLacksNvidiaDrivers(),
       ])),
       tap(
         ([dockerConfig, dockerStatus, lacksNvidiaDrivers]: [DockerConfig, DockerStatusResponse, boolean]) => {
@@ -93,7 +93,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
     return this.ws.call('docker.config');
   }
 
-  private getLacksNvidiaDriversValue(): Observable<boolean> {
+  private getLacksNvidiaDrivers(): Observable<boolean> {
     return this.ws.call('docker.lacks_nvidia_drivers');
   }
 
@@ -123,7 +123,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       );
   }
 
-  setNvidiaValue(nvidiaDriversInstalled: boolean): Observable<Job<DockerConfig>> {
+  setDockerNvidia(nvidiaDriversInstalled: boolean): Observable<Job<DockerConfig>> {
     return this.dialogService.jobDialog(
       this.ws.job('docker.update', [{ nvidia: nvidiaDriversInstalled }]),
       { title: this.translate.instant('Configuring...') },
