@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -19,10 +19,12 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'ix-catalog-settings',
   templateUrl: './catalog-settings.component.html',
+  styleUrls: ['./catalog-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogSettingsComponent implements OnInit {
-  protected installNvidiaDrivers = toSignal(this.dockerStore.installNvidiaDrivers$);
+  protected nvidiaDriversInstalled = toSignal(this.dockerStore.nvidiaDriversInstalled$);
+  protected lacksNvidiaDrivers = toSignal(this.dockerStore.lacksNvidiaDrivers$);
   protected isFormLoading = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
@@ -34,6 +36,10 @@ export class CatalogSettingsComponent implements OnInit {
   protected allTrains$ = this.ws.call('catalog.trains').pipe(
     singleArrayToOptions(),
   );
+
+  protected showNvidiaCheckbox = computed(() => {
+    return this.nvidiaDriversInstalled() || this.lacksNvidiaDrivers();
+  });
 
   readonly tooltips = {
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
@@ -64,9 +70,9 @@ export class CatalogSettingsComponent implements OnInit {
       },
     });
 
-    if (this.installNvidiaDrivers()) {
+    if (this.nvidiaDriversInstalled()) {
       this.form.patchValue({
-        nvidia: this.installNvidiaDrivers(),
+        nvidia: this.nvidiaDriversInstalled(),
       });
     }
   }
@@ -77,7 +83,7 @@ export class CatalogSettingsComponent implements OnInit {
     this.isFormLoading.set(true);
     this.ws.call('catalog.update', [{ preferred_trains: preferredTrains } as CatalogUpdate])
       .pipe(
-        switchMap(() => (nvidia !== null ? this.dockerStore.setDockerInstallNvidiaDrivers(nvidia) : of(nvidia))),
+        switchMap(() => (nvidia !== null ? this.dockerStore.setNvidiaValue(nvidia) : of(nvidia))),
         switchMap(() => this.appsStore.loadCatalog()),
         untilDestroyed(this),
       )

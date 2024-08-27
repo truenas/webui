@@ -53,8 +53,8 @@ describe('CatalogEditFormComponent', () => {
       spectator = createComponent({
         providers: [
           mockProvider(DockerStore, {
-            installNvidiaDrivers$: of(false),
-            dockerLacksNvidiaDrivers$: of(false),
+            nvidiaDriversInstalled$: of(false),
+            lacksNvidiaDrivers$: of(false),
           }),
         ],
       });
@@ -98,21 +98,21 @@ describe('CatalogEditFormComponent', () => {
   });
 
   describe('has docker lacks nvidia drivers', () => {
-    describe('dockerLacksNvidiaDrivers is true', () => {
+    describe('lacksNvidiaDrivers is true', () => {
       beforeEach(() => {
         spectator = createComponent({
           providers: [
             mockProvider(DockerStore, {
-              installNvidiaDrivers$: of(false),
-              dockerLacksNvidiaDrivers$: of(true),
-              setDockerInstallNvidiaDrivers: jest.fn(() => of(null)),
+              nvidiaDriversInstalled$: of(false),
+              lacksNvidiaDrivers$: of(true),
+              setNvidiaValue: jest.fn(() => of(null)),
             }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('shows Install NDIVIA Drivers checkbox when dockerLacksNvidiaDrivers is true', async () => {
+      it('shows Install NDIVIA Drivers checkbox when lacksNvidiaDrivers is true', async () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
@@ -136,18 +136,18 @@ describe('CatalogEditFormComponent', () => {
           { preferred_trains: ['stable'] },
         ]);
 
-        expect(spectator.inject(DockerStore).setDockerInstallNvidiaDrivers).toHaveBeenCalled();
+        expect(spectator.inject(DockerStore).setNvidiaValue).toHaveBeenCalled();
         expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
       });
     });
 
-    describe('dockerLacksNvidiaDrivers is false and installNvidiaDrivers is true', () => {
+    describe('lacksNvidiaDrivers is false and nvidiaDriversInstalled is true', () => {
       beforeEach(() => {
         spectator = createComponent({
           providers: [
             mockProvider(DockerStore, {
-              installNvidiaDrivers$: of(true),
-              dockerLacksNvidiaDrivers$: of(false),
+              nvidiaDriversInstalled$: of(true),
+              lacksNvidiaDrivers$: of(false),
             }),
           ],
         });
