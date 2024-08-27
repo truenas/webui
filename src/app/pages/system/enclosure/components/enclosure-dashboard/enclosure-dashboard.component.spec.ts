@@ -8,7 +8,6 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import {
   EnclosureDashboardComponent,
@@ -25,11 +24,7 @@ describe('EnclosureDashboardComponent', () => {
     ],
     componentProviders: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: jest.fn(() => ({
-          id: 'enclosure-id',
-          name: 'M50',
-          label: 'Current label',
-        } as DashboardEnclosure)),
+        selectedEnclosure: jest.fn(),
         initiate: jest.fn(),
         listenForDiskUpdates: jest.fn(() => of()),
         selectEnclosure: jest.fn(),
@@ -48,6 +43,15 @@ describe('EnclosureDashboardComponent', () => {
     spectator = createComponent();
   });
 
+  it('shows empty message when no enclosure is available', () => {
+    spectator.inject(EnclosureStore, true).selectedEnclosure.mockReturnValueOnce(undefined);
+
+    spectator.detectChanges();
+
+    const emptyComponent = spectator.query(EmptyComponent);
+    expect(emptyComponent).toExist();
+  });
+
   it('initializes store when component is initialized', () => {
     expect(spectator.inject(EnclosureStore, true).initiate).toHaveBeenCalled();
   });
@@ -56,14 +60,5 @@ describe('EnclosureDashboardComponent', () => {
     spectator.setRouteParam('enclosure', '123');
 
     expect(spectator.inject(EnclosureStore, true).selectEnclosure).toHaveBeenCalledWith('123');
-  });
-
-  it('shows empty message for no selected enclosure selected', () => {
-    spectator.inject(EnclosureStore, true).selectEnclosure.mockReturnValue(undefined);
-
-    spectator.detectChanges();
-
-    const visibleForm = spectator.query(EmptyComponent);
-    expect(visibleForm).toExist();
   });
 });
