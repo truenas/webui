@@ -19,7 +19,6 @@
   @if (!conf.hideCancel) {
     <button
       mat-button
-      class="mat-mdc-button mat-button mat-accent"
       ixTest="cancel"
       (click)="dialogRef.close(false)"
     >
@@ -28,7 +27,7 @@
   }
   <button
     mat-button
-    class="mat-mdc-button mat-button mat-primary"
+    color="primary"
     ixTest="close"
     (click)="dialogRef.close(true)"
   >
