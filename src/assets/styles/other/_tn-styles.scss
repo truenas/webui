@@ -50,10 +50,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(border-left, --primary, $primary, !important);
   }
 
-  .breadcrumb-bar {
-    @include variable(color, --fg1, $fg1, !important);
-  }
-
   .mat-sidenav-container {
     @include variable(background, --bg1, $bg1);
   }
@@ -145,8 +141,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-dialog-container,
   .mat-mdc-dialog-container .mat-mdc-dialog-surface,
   .mat-stepper-horizontal,
-  .mat-stepper-vertical,
-  .dx-treelist-container {
+  .mat-stepper-vertical {
     @include variable(background, --bg2, $bg2);
     @include variable(color, --fg2, $fg2);
   }
@@ -377,15 +372,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     padding: 0 24px 20px;
   }
 
-  .mat-mdc-dialog-title {
-    .warning-icon {
-      color: var(--orange);
-      margin-right: 10px;
-      position: relative;
-      top: 6px;
-    }
-  }
-
   .mat-mdc-dialog-content {
     overflow: hidden;
     padding-bottom: 0;
@@ -400,30 +386,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
     .more-info .ix-icon {
       margin: 0 4px;
-    }
-
-    .info-panel {
-      border: 0;
-      max-height: 100px;
-      overflow: hidden;
-      padding: 0;
-      transition: max-height 0.5s linear;
-
-      &.open {
-        margin-bottom: 24px;
-        max-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
-        padding: 2px;
-      }
-
-      .textarea {
-        background: var(--contrast-darker);
-        border: 1px solid var(--lines);
-        color: var(--fg2);
-        height: 100%;
-        min-height: 100px;
-        overflow: auto;
-        padding: 1rem;
-      }
     }
   }
 
@@ -454,28 +416,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     box-shadow: none;
   }
 
-  // Give vdev and dual-list arrow buttons theme colors
-  .vdev-action-btn,
-  .dual-list-action-btn {
-    @include variable(background, --bg1, $bg1);
-  }
-
-  .vdev-action-btn .arrow,
-  .dual-list-action-btn .arrow {
-    @include variable(color, --primary, $primary);
-    font-size: 36px;
-    height: 36px;
-    width: 36px;
-  }
-
-  ix-dual-listbox .chosen .mat-mdc-list-item-unscoped-content {
-    color: var(--fg2);
-  }
-
-  .vdev-action-btn:disabled {
-    opacity: var(--disabled-opacity);
-  }
-
   // style nav chevrons on datatable pager w/regard to theme
   .mdc-button__label .mat-mdc-paginator-decrement,
   .mdc-button__label .mat-mdc-paginator-increment {
@@ -502,16 +442,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(stroke, --primary, $primary, !important);
   }
 
-  // Theme color for slider (Shell page and elsewhere)
-  .mat-slider {
-    @include variable(color, --accent, $accent, !important);
-  }
-
-  .mat-slider-track-fill,
-  .mat-slider-thumb {
-    @include variable(background-color, --accent, $accent, !important);
-  }
-
   // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
   ix-iscsi .mat-mdc-tab-label-active,
   ix-reports-dashboard .mat-mdc-tab-label-active {
@@ -520,7 +450,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   //...by hiding ink bar, replacing it with a bottom border, above.
-  ix-iscsi .mat-ink-bar,
   ix-reports-dashboard .mat-ink-bar {
     opacity: 0;
   }
@@ -580,11 +509,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .fn-theme-yellow {
     @include variable(background-color, --yellow, $yellow);
     @include variable(color, --yellow-txt, $yellow-txt);
-  }
-
-  .fn-theme-contrast-darker {
-    background-color: var(--contrast-darker);
-    color: var(--fg2);
   }
 
   .fn-theme-contrast-lighter {
@@ -703,12 +627,14 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Bring theme color to small icon buttons
-  .mat-icon-button.mat-primary {
-    @include variable(color, --primary, $primary !important);
-  }
+  .mat-icon-button {
+    &.mat-primary {
+      @include variable(color, --primary, $primary !important);
+    }
 
-  .mat-icon-button.mat-accent {
-    @include variable(color, --accent, $accent !important);
+    .mat-accent {
+      @include variable(color, --accent, $accent !important);
+    }
   }
 
   .mat-mdc-progress-bar-fill::after {
@@ -759,10 +685,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     position: relative;
   }
 
-  .tooltiptext samp {
-    background: rgba(255, 255, 255, 0.25);
-  }
-
   .node-content-wrapper {
     margin-left: 2px;
     padding-left: 3px;
@@ -802,10 +724,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;
-  }
-
-  ix-iscsi .mat-mdc-tab-links {
-    flex-wrap: wrap;
   }
 
   ix-confirm-dialog div.message-content p {
@@ -869,17 +787,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     .mat-mdc-list-item-unscoped-content > a:focus-visible {
       background: var(--hover-bg);
     }
-  }
-
-  .slidein-nav {
-    background-color: var(--contrast-darker);
-    height: calc(100vh - 48px);
-    left: -239px;
-    position: absolute;
-    top: 48px;
-    transition: 200ms;
-    width: 239px;
-    z-index: 4;
   }
 
   .slidein-open {

@@ -4,13 +4,27 @@
 }
 
 .info-panel {
-  max-height: 65vh !important;
+  border: 0;
+  max-height: 65vh;
+  overflow: hidden;
+  padding: 0;
+  transition: max-height 0.5s linear;
 
   span {
     display: block;
     font-family: var(--font-family-monospace);
     unicode-bidi: embed;
     white-space: pre-line;
+  }
+
+  .textarea {
+    background: var(--contrast-darker);
+    border: 1px solid var(--lines);
+    color: var(--fg2);
+    height: 100%;
+    min-height: 100px;
+    overflow: auto;
+    padding: 1rem;
   }
 }
 
