@@ -576,6 +576,7 @@
   "Permissions Editor": "Éditeur d'autorisations",
   "Permissions saved.": "Autorisations enregistrées",
   "Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result\n\nPlease use English for your report.": "Veuillez décrire \n1. Étapes à suivre pour reproduire le résultat \n2. Résultat attendu \n3. Résultat réel Veuillez utiliser l'anglais pour votre rapport.",
+  "Please specify whether to install NVIDIA driver or not.": "Veuillez préciser si vous souhaitez installer le pilote NVIDIA ou non.",
   "Pool Scrub Read": "",
   "Pool Scrub Write": "",
   "Pool Usage": "Utilisation du volume",
