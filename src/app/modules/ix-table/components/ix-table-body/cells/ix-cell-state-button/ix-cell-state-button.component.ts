@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, EMPTY, Observable } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -74,7 +75,10 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
     if (this.job && state) {
       if (this.job.state === JobState.Running) {
         this.dialogService.jobDialog(
-          this.store$.select(selectJob(this.job.id)) as Observable<Job<ApiJobResponse<ApiJobMethod>>>,
+          this.store$.pipe(
+            select(selectJob(this.job.id)),
+            observeJob(),
+          ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>,
           {
             title: this.translate.instant('Task is running'),
             canMinimize: true,
