@@ -43,6 +43,7 @@
   "Validate effective ACL": "",
   "View Logs": "",
   "Volume Mounts": "",
+  "Waiting for standby controller": "",
   "We encountered an issue while applying the new network changes.  Unfortunately, we were unable to reconnect to the system after the changes were implemented.  As a result, we have restored the previous network configuration to ensure continued connectivity.": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{coreCount, plural, one {# core} other {# cores} }": "",

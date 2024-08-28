@@ -1193,6 +1193,7 @@
   "WARNING: These unknown processes will be terminated while exporting the pool.": "",
   "Wait to start VM until SPICE client connects.": "",
   "Waiting for Active TrueNAS controller to come up...": "",
+  "Waiting for standby controller": "",
   "Warning: {n} of {total} boot environments could not be deleted.": "",
   "Warning: {n} of {total} docker images could not be deleted.": "",
   "Warning: {n} of {total} snapshots could not be deleted.": "",
