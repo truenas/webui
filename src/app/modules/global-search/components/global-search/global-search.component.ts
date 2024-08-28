@@ -16,6 +16,7 @@ import {
 } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { extractVersion } from 'app/modules/global-search/helpers/extract-version';
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
@@ -151,7 +152,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
         ...searchResults,
         ...this.globalSearchSectionsProvider.getHelpSectionResults(
           this.searchControl.value,
-          this.extractVersion(this.systemVersion),
+          extractVersion(this.systemVersion),
         ),
       ];
       this.isLoading = false;
@@ -171,10 +172,6 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((systemInfo) => {
         this.systemVersion = systemInfo.version;
       });
-  }
-
-  private extractVersion(version: string): string {
-    return version.match(/(\d+\.\d+)\.\d+-/)?.[1];
   }
 
   private listenForSelectionChanges(): void {

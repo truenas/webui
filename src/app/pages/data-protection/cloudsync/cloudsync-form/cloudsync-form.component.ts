@@ -151,6 +151,7 @@ export class CloudSyncFormComponent implements OnInit {
     { label: 'One Zone-IA', value: 'ONEZONE_IA' },
     { label: 'Intelligent-Tiering', value: 'INTELLIGENT_TIERING' },
     { label: 'Glacier', value: 'GLACIER' },
+    { label: 'Glacier Instant Retrieval', value: 'GLACIER_IR' },
     { label: 'Glacier Deep Archive', value: 'DEEP_ARCHIVE' },
   ]);
 

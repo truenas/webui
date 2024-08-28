@@ -1,5 +1,5 @@
 <ix-modal-header
-  [title]="'Train Settings' | translate"
+  [title]="'Settings' | translate"
   [loading]="isFormLoading()"
   [requiredRoles]="requiredRoles"
 ></ix-modal-header>
@@ -7,7 +7,7 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
+      <ix-fieldset class="trains">
         <ix-checkbox-list
           formControlName="preferred_trains"
           [label]="'Preferred Trains' | translate"
@@ -16,6 +16,16 @@
           [inlineFields]="true"
         ></ix-checkbox-list>
       </ix-fieldset>
+
+      @if (showNvidiaCheckbox()) {
+        <ix-fieldset class="nvidia">
+          <ix-checkbox
+            formControlName="nvidia"
+            [label]="'Install NDIVIA Drivers' | translate"
+            [tooltip]="tooltips.install_nvidia_driver| translate"
+          ></ix-checkbox>
+        </ix-fieldset>
+      }
 
       <ix-form-actions>
         <button
