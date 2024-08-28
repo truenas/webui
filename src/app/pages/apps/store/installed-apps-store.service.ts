@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
@@ -53,6 +53,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         this.handleError(error);
         return EMPTY;
       }),
+      untilDestroyed(this),
     );
   });
 
@@ -85,6 +86,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
           }),
         );
       }),
+      untilDestroyed(this),
     );
   }
 }

@@ -2,7 +2,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -21,11 +21,9 @@ describe('AppResourcesCardComponent', () => {
     ],
     providers: [
       mockWebSocket([
-        mockCall('pool.dataset.get_instance', {
-          available: {
-            rawvalue: '2500',
-          },
-        } as DatasetDetails),
+        mockCall('filesystem.statfs', {
+          avail_bytes: 2500,
+        } as Statfs),
       ]),
       mockProvider(DockerStore, {
         selectedPool$: of('pool'),
@@ -55,7 +53,7 @@ describe('AppResourcesCardComponent', () => {
   });
 
   it('loads and reports available space on apps dataset', () => {
-    expect(websocket.call).toHaveBeenCalledWith('pool.dataset.get_instance', ['pool/ix-apps']);
+    expect(websocket.call).toHaveBeenCalledWith('filesystem.statfs', ['/mnt/.ix-apps']);
     expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Available Space: 2.44 KiB');
   });
 });

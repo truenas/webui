@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, filter, map, switchMap, throttleTime,
 } from 'rxjs';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -27,11 +28,9 @@ export class AppResourcesCardComponent implements OnInit {
 
   availableSpace$ = this.dockerStore.selectedPool$.pipe(
     filter((pool) => !!pool),
-    switchMap((pool) => this.ws.call('pool.dataset.get_instance', [`${pool}/${ixAppsDataset}`])),
-    map((dataset) => dataset.available.rawvalue),
-  ).pipe(
-    toLoadingState(),
-  );
+    switchMap(() => this.ws.call('filesystem.statfs', [`${mntPath}/.${ixAppsDataset}`])),
+    map((statfs) => statfs.avail_bytes),
+  ).pipe(toLoadingState());
 
   constructor(
     private ws: WebSocketService,
