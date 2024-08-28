@@ -79,7 +79,7 @@ describe('TruecommandConnectModalComponent', () => {
         'API Key': '',
         Enable: true,
       },
-      expectedSubmitButtonText: 'CONNECT',
+      expectedSubmitButtonText: 'Connect',
     },
     {
       fakeConfig: {
@@ -92,7 +92,7 @@ describe('TruecommandConnectModalComponent', () => {
         'API Key': '1234567890123456',
         Enable: true,
       },
-      expectedSubmitButtonText: 'SAVE',
+      expectedSubmitButtonText: 'Save',
     },
   ].forEach(({
     fakeConfig, isConnected, expectedFormValue, expectedTitle, expectedSubmitButtonText,
@@ -131,7 +131,7 @@ describe('TruecommandConnectModalComponent', () => {
       enabled: false,
     },
     isConnected: false,
-    expectedSubmitButtonText: 'CONNECT',
+    expectedSubmitButtonText: 'Connect',
   };
   describe(`when '${caseWhenConnectClicked.expectedSubmitButtonText}' is clicked`, () => {
     const {
@@ -171,7 +171,7 @@ describe('TruecommandConnectModalComponent', () => {
       enabled: true,
     },
     isConnected: true,
-    expectedSubmitButtonText: 'SAVE',
+    expectedSubmitButtonText: 'Save',
   };
   describe(`when '${caseWhenSaveClicked.expectedSubmitButtonText}' is clicked`, () => {
     const {

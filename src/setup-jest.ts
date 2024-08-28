@@ -33,9 +33,9 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import {
   Observable,
 } from 'rxjs';
-import { EmptyAuthService } from 'test-utils/empty-auth.service';
-import { EmptyWebsocketService } from 'test-utils/empty-ws.service';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
+import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
+import { EmptyWebsocketService } from 'app/core/testing/utils/empty-ws.service';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxIconTestingModule } from 'app/modules/ix-icon/ix-icon-testing.module';
@@ -174,3 +174,11 @@ Range.prototype.getClientRects = () => ({
 
 // eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window.URL, 'createObjectURL', { value: () => '' });
+
+Object.defineProperty(global, 'performance', {
+  writable: true,
+  value: {
+    mark: () => {},
+    measure: () => {},
+  },
+});

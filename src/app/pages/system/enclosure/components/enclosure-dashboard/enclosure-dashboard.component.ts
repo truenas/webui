@@ -28,7 +28,7 @@ export class EnclosureDashboardComponent {
     type: EmptyType.NoPageData,
     large: true,
     title: this.translate.instant('Enclosure Unavailable'),
-    message: this.translate.instant('We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and try again.'),
+    message: this.translate.instant('We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and reload the page.'),
   };
 
   constructor(

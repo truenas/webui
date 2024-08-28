@@ -36,8 +36,8 @@ export const helptextTopbar = {
   updateDialog: {
     title_connect: T('Connect to TrueCommand Cloud'),
     title_update: T('Update TrueCommand Settings'),
-    connect_btn: T('CONNECT'),
-    save_btn: T('SAVE'),
+    connect_btn: T('Connect'),
+    save_btn: T('Save'),
     api_placeholder: T('API Key'),
     api_tooltip: T('Enter or paste the API key provided from \
 <a href="https://portal.ixsystems.com/portal/login/" target="_blank">iXsystems Account Services</a>. \
