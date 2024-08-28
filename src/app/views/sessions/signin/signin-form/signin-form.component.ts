@@ -8,6 +8,7 @@ import _ from 'lodash';
 import {
   distinctUntilChanged, EMPTY, firstValueFrom, switchMap,
 } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -51,6 +52,17 @@ export class SigninFormComponent implements OnInit {
     if (this.window.location.protocol !== 'https:') {
       this.showSecurityWarning = true;
     }
+
+    this.isLoading$.pipe(
+      filter((isLoading) => !isLoading),
+      take(1),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        performance.mark('Login page ready');
+        performance.measure('Getting to login page', 'index.html', 'Login page ready');
+      },
+    });
   }
 
   ngOnInit(): void {
@@ -70,6 +82,7 @@ export class SigninFormComponent implements OnInit {
     if (await firstValueFrom(this.signinStore.isLoading$)) {
       return;
     }
+    performance.mark('Login Start');
     this.isLastLoginAttemptFailed = false;
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;

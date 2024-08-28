@@ -174,3 +174,11 @@ Range.prototype.getClientRects = () => ({
 
 // eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window.URL, 'createObjectURL', { value: () => '' });
+
+Object.defineProperty(global, 'performance', {
+  writable: true,
+  value: {
+    mark: () => {},
+    measure: () => {},
+  },
+});

@@ -27,9 +27,4 @@ export const helptextSystemBootenv = {
   list_dialog_scrub_action: T('Start Scrub'),
 
   replace_name_placeholder: T('Member Disk'),
-
-  attach_dialog: {
-    title: T('Device Attached'),
-    message: T('was successfully attached.'),
-  },
 };
