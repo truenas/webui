@@ -15,6 +15,7 @@ import { TopologyItem } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
 import { bootEnvStatusElements } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.elements';
@@ -66,6 +67,7 @@ export class BootStatusListComponent implements OnInit {
     private matDialog: MatDialog,
     private loader: AppLoaderService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -117,10 +119,7 @@ export class BootStatusListComponent implements OnInit {
       )
       .subscribe(() => {
         this.router.navigate(['/', 'system', 'boot']);
-        this.dialogService.info(
-          this.translate.instant('Device detached'),
-          this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
-        );
+        this.snackbar.success(this.translate.instant('Device «{disk}» has been detached.', { disk }));
       });
   }
 
