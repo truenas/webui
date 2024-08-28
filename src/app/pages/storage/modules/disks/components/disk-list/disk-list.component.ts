@@ -211,11 +211,14 @@ export class DiskListComponent implements OnInit {
 
   wipe(disk: Disk): void {
     const exportedPool = this.unusedDisks.find((dev) => dev.devname === disk.devname)?.exported_zpool;
-    this.matDialog.open(DiskWipeDialogComponent, {
+    const dialog = this.matDialog.open(DiskWipeDialogComponent, {
       data: {
         diskName: disk.name,
         exportedPool,
       },
+    });
+    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.dataProvider.load();
     });
   }
 
