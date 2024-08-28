@@ -62,7 +62,7 @@ export class ApplicationsService {
   }
 
   getAllApps(): Observable<App[]> {
-    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]);
+    return this.ws.callAndSubscribe('app.query', [[], { extra: { retrieve_config: true } }]);
   }
 
   getApp(name: string): Observable<App[]> {
