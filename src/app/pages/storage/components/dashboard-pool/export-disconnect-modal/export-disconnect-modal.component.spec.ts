@@ -198,7 +198,7 @@ describe('ExportDisconnectModalComponent', () => {
         const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export/Disconnect' }));
         await submitButton.click();
 
-        expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool "fakePool" has been exported/disconnected successfully.');
+        expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been exported/disconnected successfully.');
         expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.export', [
           fakeData.pool.id,
           {
