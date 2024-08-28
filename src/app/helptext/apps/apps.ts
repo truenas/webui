@@ -216,23 +216,21 @@ export const helptextApps = {
     title: T('Add Catalog'),
     editTitle: T('Edit Catalog'),
     name: {
-      placeholder: T('Catalog Name'),
       tooltip: T('Please specify name to be used to lookup catalog.'),
     },
     forceCreate: {
-      placeholder: T('Force Create'),
       tooltip: T('Add catalog to system even if some trains are unhealthy.'),
     },
     repository: {
-      placeholder: T('Repository'),
       tooltip: T('Please specify a valid git repository uri.'),
     },
     preferredTrains: {
-      placeholder: T('Preferred Trains'),
       tooltip: T('Please specify trains from which UI should retrieve available applications for the catalog.'),
     },
+    installNvidiaDriver: {
+      tooltip: T('Please specify whether to install NVIDIA driver or not.'),
+    },
     branch: {
-      placeholder: T('Branch'),
       tooltip: T('Please specify branch of git repository to use for the catalog.'),
     },
   },

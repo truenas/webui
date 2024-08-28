@@ -606,6 +606,7 @@ export interface ApiCallDirectory {
   // Docker
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusResponse };
+  'docker.lacks_nvidia_drivers': { params: void; response: boolean };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };
