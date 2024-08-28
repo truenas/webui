@@ -118,7 +118,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     const params: CloudBackupRestoreParams = [
       this.data.backup.id,
       this.data.snapshot.id,
-      this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.form.controls.target.value,
+      this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.data.backup.path,
       this.form.controls.target.value,
       options,
     ];
