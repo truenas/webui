@@ -64,11 +64,17 @@
  */
 
 import * as fs from 'fs';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { join } from 'path';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { extractComponentFileContent } from './extract-component-file-content';
 import { findComponentFiles } from './find-component-files';
 import { parseUiSearchElements } from './parse-ui-search-elements';
+// TODO: Can be simplified in node 20.11+
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let uiSearchElements: UiSearchableElement[] = [];
 
@@ -76,17 +82,16 @@ export async function extractUiSearchElements(): Promise<void> {
   try {
     const tsFiles = await findComponentFiles('src/**/*.elements.ts') || [];
 
-    tsFiles.forEach((elementsTsFilePath) => {
+    for (const elementsTsFilePath of tsFiles) {
       const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
       const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
 
-      // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require,import/no-dynamic-require
-      const elementConfig = require(join(__dirname, '../../', elementsTsFilePath)) as Record<string, UiSearchableElement>;
+      const elementConfig = await import(join(__dirname, '../../', elementsTsFilePath)) as Record<string, UiSearchableElement>;
       const componentProperties = extractComponentFileContent(tsComponentFilePath);
       const uiSearchHtmlElements = parseUiSearchElements(htmlComponentFilePath, elementConfig, componentProperties);
 
       uiSearchElements = uiSearchElements.concat([...uiSearchHtmlElements]);
-    });
+    }
 
     fs.writeFileSync(
       'src/assets/ui-searchable-elements.json',

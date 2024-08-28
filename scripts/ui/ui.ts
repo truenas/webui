@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import * as figlet from 'figlet';
+import figlet from 'figlet';
 import { mockEnclosureCommand } from './commands/mock-enclosure.command';
 import { remoteCommand } from './commands/remote.command';
 import { resetCommand } from './commands/reset.command';

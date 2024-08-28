@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';

@@ -2,7 +2,7 @@ import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy, Component, ContentChild, Input, OnChanges, OnInit, output, TemplateRef,
 } from '@angular/core';
-import { differenceBy, isEqual } from 'lodash';
+import { differenceBy, isEqual } from 'lodash-es';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ListSelection } from 'app/modules/lists/dual-list/models';
 

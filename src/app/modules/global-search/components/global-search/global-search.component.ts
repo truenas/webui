@@ -8,7 +8,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   tap, debounceTime, filter, switchMap,
   combineLatestWith,

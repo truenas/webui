@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   combineLatest, filter, switchMap, tap,
 } from 'rxjs';

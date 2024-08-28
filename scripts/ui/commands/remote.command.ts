@@ -23,8 +23,8 @@ function saveProxyConfig(file: string, url: string): void {
   fs.writeFileSync(file, result, 'utf8');
 }
 
-function printCurrentRemote(): void {
-  const environment = getCurrentConfig();
+async function printCurrentRemote(): Promise<void> {
+  const environment = await getCurrentConfig();
   const remote = environment.remote === '_REMOTE_' ? 'Not set' : environment.remote;
   const report = `Server URL: ${remote}`;
   console.info(report);

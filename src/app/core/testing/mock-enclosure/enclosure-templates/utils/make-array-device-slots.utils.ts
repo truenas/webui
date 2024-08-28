@@ -1,4 +1,4 @@
-import { keyBy, range } from 'lodash';
+import { keyBy, range } from 'lodash-es';
 import { EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
