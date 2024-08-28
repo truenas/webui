@@ -20,7 +20,6 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SigninComponent implements OnInit {
-  readonly managedByTrueCommand$ = this.signinStore.managedByTrueCommand$;
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly failover$ = this.signinStore.failover$;
   readonly hasFailover$ = this.signinStore.hasFailover$;
