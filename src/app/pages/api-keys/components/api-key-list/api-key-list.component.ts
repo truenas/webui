@@ -151,7 +151,7 @@ export class ApiKeyListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('api_key.delete', [String(apiKey.id)])),
+      switchMap(() => this.ws.call('api_key.delete', [apiKey.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => this.store.apiKeyDeleted(apiKey.id),
