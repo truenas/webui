@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, EMPTY, Observable } from 'rxjs';
@@ -88,7 +88,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
             this.errorHandler.showErrorModal(error);
             return EMPTY;
           }),
-          untilDestroyed(this),
+        // eslint-disable-next-line rxjs-angular/prefer-takeuntil
         ).subscribe();
       } else if (state.state === JobState.Hold) {
         this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
