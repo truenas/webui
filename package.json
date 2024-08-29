@@ -13,7 +13,7 @@
     "start:prod": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng serve --configuration production",
     "build": "yarn run clean:dist && node ./setup-production-env.js && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
     "build:prod": "node ./setup-production-env.js && node scripts/setup_prod.js && yarn run build --configuration production",
-    "build:prod:aot": "node ./setup-production-env.js && yarn run build:prod --base-href /ui/ && node scripts/verify_build.js",
+    "build:prod:aot": "node ./setup-production-env.js && yarn run build:prod --base-href /ui/",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",

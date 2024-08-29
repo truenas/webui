@@ -2,9 +2,9 @@
 import { adviseToSetRemote } from '../utils/advise-to-set-remote';
 import { updateEnvironment, writeToEnvironment } from '../utils/save-environment';
 
-export function resetCommand(): void {
+export async function resetCommand(): Promise<void> {
   writeToEnvironment('');
-  updateEnvironment({});
+  await updateEnvironment({});
   console.info('Reset to default config');
   adviseToSetRemote();
 }

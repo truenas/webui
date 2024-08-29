@@ -22,7 +22,7 @@ const program: Command = new Command()
 program
   .command('check-env')
   .name('check-env')
-  .description('Validate environeent.ts file')
+  .description('Validate environment.ts file')
   .action(() => checkEnvironment());
 
 program
@@ -37,7 +37,7 @@ program
   .alias('me')
   .description('Configure enclosure mocking functionality')
   .action(async () => {
-    checkEnvironment();
+    await checkEnvironment();
     await mockEnclosureCommand();
   });
 
@@ -46,10 +46,10 @@ program
   .description('Set the server WebUI communicates with')
   .option('-i, --ip <ip_address>', 'Sets IP address of your server')
   .option('-f, --force', 'Forces IP Address to be used without preprocessing')
-  .action((options: { ip: string; force?: boolean }) => {
-    checkEnvironment();
+  .action(async (options: { ip: string; force?: boolean }) => {
+    await checkEnvironment();
     if (options.ip) {
-      updateEnvironment({
+      await updateEnvironment({
         mockConfig: {
           enabled: false,
         },
@@ -57,7 +57,7 @@ program
       console.info('Disabling global mock due to remote change.');
     }
 
-    remoteCommand(options.ip, options.force);
+    await remoteCommand(options.ip, options.force);
   });
 
 // Show help message if no arguments are provided

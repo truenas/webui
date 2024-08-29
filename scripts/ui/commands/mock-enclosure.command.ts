@@ -12,7 +12,7 @@ export async function mockEnclosureCommand(): Promise<void> {
   const enable = await confirm({ message: 'Enable enclosure mocking?' });
 
   if (!enable) {
-    updateEnvironment({
+    await updateEnvironment({
       mockConfig: {
         enabled: false,
       },
@@ -53,7 +53,7 @@ Available options: ${allShelves.join(', ')}:\n`,
     default: MockEnclosureScenario.FillSomeSlots,
   });
 
-  updateEnvironment({
+  await updateEnvironment({
     mockConfig: {
       controllerModel,
       expansionModels,
