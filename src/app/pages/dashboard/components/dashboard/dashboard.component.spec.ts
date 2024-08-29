@@ -6,6 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockDirective } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -16,6 +17,7 @@ import {
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
+import { defaultWidgets } from 'app/pages/dashboard/services/default-widgets.constant';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
@@ -40,6 +42,9 @@ describe('DashboardComponent', () => {
       MockDirective(IxDropGridDirective),
     ],
     providers: [
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockProvider(DashboardStore, {
         groups$,
         isLoading$,
@@ -142,6 +147,21 @@ describe('DashboardComponent', () => {
 
       expect(spectator.inject(IxChainedSlideInService).open)
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true);
+    });
+
+    it('resets configuration to defaults when Reset is pressed', async () => {
+      const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
+      await resetButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+        buttonText: 'Reset',
+        cancelText: 'Cancel',
+        hideCheckbox: true,
+        message: 'Are you sure you want to reset your dashboard to the default layout?',
+        title: 'Reset Dashboard',
+      });
+
+      expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith(defaultWidgets);
     });
 
     it('saves new configuration when Save is pressed', async () => {
