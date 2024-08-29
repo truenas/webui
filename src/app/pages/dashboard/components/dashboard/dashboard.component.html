@@ -16,6 +16,18 @@
 
 @if (isEditing()) {
   <div class="edit-mode-buttons">
+    @if (customLayout()) {
+      <button
+        mat-button
+        type="button"
+        ixTest="reset"
+        [disabled]="isLoading()"
+        (click)="onReset()"
+      >
+        {{ 'Reset' | translate }}
+      </button>
+    }
+
     <button
       mat-button
       class="add-button"
