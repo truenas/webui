@@ -23,21 +23,27 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
   size = input.required<SlotSize>();
   settings = input.required<WidgetInterfaceIpSettings>();
 
+  protected interfaceId = computed(() => {
+    if (this.settings()?.interface) {
+      return this.settings().interface;
+    }
+    return mapLoadedValue(this.interfaces(), (nics) => nics[0].name)?.value;
+  });
   protected interfaceType = computed(() => {
     return this.settings()?.widgetName?.includes('v6') ? NetworkInterfaceAliasType.Inet6 : NetworkInterfaceAliasType.Inet;
   });
 
   protected widgetName = computed(() => {
-    return this.translate.instant('{nic} Address', { nic: this.settings()?.interface }) || '';
+    return this.translate.instant('{nic} Address', { nic: this.interfaceId() }) || '';
   });
 
   protected ips = computed(() => {
-    const interfaceId = this.settings()?.interface || '';
+    const interfaceId = this.interfaceId();
 
     return mapLoadedValue(this.interfaces(), (interfaces) => this.getIp4Addresses(interfaces, interfaceId));
   });
 
-  private interfaces = toSignal(this.resources.networkInterfaces$, { initialValue: { isLoading: true } });
+  private interfaces = toSignal(this.resources.networkInterfaces$);
 
   constructor(
     private resources: WidgetResourcesService,
@@ -52,6 +58,7 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
       // TODO: Show as widget error.
       return this.translate.instant('Network interface {interface} not found.', { interface: interfaceId });
     }
+
     let networkInterfaceAlias = networkInterface.aliases;
     if (!networkInterfaceAlias.length && networkInterface?.state?.aliases?.length) {
       networkInterfaceAlias = networkInterface.state.aliases;

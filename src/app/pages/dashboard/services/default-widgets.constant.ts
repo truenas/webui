@@ -9,15 +9,17 @@ export const defaultWidgets: WidgetGroup[] = [
     ],
   },
   {
-    layout: WidgetGroupLayout.Full,
+    layout: WidgetGroupLayout.Halves,
     slots: [
-      { type: WidgetType.Help },
+      { type: WidgetType.CpuModelWidget },
+      { type: WidgetType.CpuUsageBar },
     ],
   },
   {
-    layout: WidgetGroupLayout.Full,
+    layout: WidgetGroupLayout.Halves,
     slots: [
-      { type: WidgetType.Cpu },
+      { type: WidgetType.CpuUsageRecent },
+      { type: WidgetType.CpuTemperatureBar },
     ],
   },
   {
@@ -35,13 +37,20 @@ export const defaultWidgets: WidgetGroup[] = [
   {
     layout: WidgetGroupLayout.Full,
     slots: [
+      { type: WidgetType.BackupTasks },
+    ],
+  },
+  {
+    layout: WidgetGroupLayout.Halves,
+    slots: [
+      { type: WidgetType.Ipv4Address },
       { type: WidgetType.Interface },
     ],
   },
   {
     layout: WidgetGroupLayout.Full,
     slots: [
-      { type: WidgetType.BackupTasks },
+      { type: WidgetType.Help },
     ],
   },
 ];
