@@ -40,7 +40,7 @@ export class DisableFocusableElementsDirective implements OnChanges {
 
   private getFocusableElements(): NodeListOf<HTMLElement> {
     return this.elementRef.nativeElement.querySelectorAll(
-      'a, button, input, textarea, select, [tabindex]',
+      'a, button:not([disabled]), input, textarea, select, [tabindex]',
     );
   }
 
