@@ -202,7 +202,7 @@ def verify_that_the_trust_secret_succeeded(driver):
 @then('after, go to the Dashboard')
 def after_go_to_the_dashboard(driver):
     """after, go to the Dashboard."""
-    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
+    rsc.Click_On_Element(driver, xpaths.side_Menu.dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     time.sleep(20)
 

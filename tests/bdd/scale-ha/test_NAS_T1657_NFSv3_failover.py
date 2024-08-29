@@ -301,7 +301,7 @@ def get_the_checksum_for_those_files_to_compare_it_after_the_failover(checksum, 
 @then('go to the Dashboard and click Initiate Failover on the standby controller')
 def go_to_the_dashboard_and_click_initiate_failover_on_the_standby_controller(driver):
     """go to the Dashboard and click Initiate Failover on the standby controller."""
-    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
+    rsc.Click_On_Element(driver, xpaths.side_Menu.dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     time.sleep(10)
 
