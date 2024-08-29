@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, take } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import {
   ConfirmOptions,
@@ -149,13 +149,33 @@ export class DialogService {
    */
   jobDialog<R>(
     job$: Observable<Job<R>>,
-    { title, description, canMinimize }: {
+    {
+      title, description, canMinimize, onError, onSuccess,
+    }: {
       title?: string;
       description?: string;
 
       // Use for long jobs where it's not required for user to wait for the result.
       // Note that `complete` handler will be called immediately and `next` will never be called.
       canMinimize?: boolean;
+
+      /**
+       * Use to register callback method for job failure/error handling. This callback is helpful when
+       * the component/service calling `jobDialog` method is prone to lose its subscription to the dialog
+       * `afterClosed` observable.
+       * @param error
+       * @returns void
+       */
+      onError?: (error: unknown) => void;
+
+      /**
+       * Use to register callback method for job success handling. This callback is helpful when
+       * the component/service calling `jobDialog` method is prone to lose its subscription to the dialog
+       * `afterClosed` observable.
+       * @param result
+       * @returns void
+       */
+      onSuccess?: (result: Job<R>) => void;
     } = {},
   ): JobProgressDialogRef<R> {
     const matDialogRef = this.matDialog.open(JobProgressDialogComponent<R>, {
@@ -166,6 +186,28 @@ export class DialogService {
         canMinimize,
       },
     });
-    return new JobProgressDialogRef<R>(matDialogRef, this.translate);
+
+    const jobProgressDialogRef = new JobProgressDialogRef<R>(matDialogRef, this.translate);
+
+    if (onError || onSuccess) {
+      jobProgressDialogRef.afterClosed().pipe(
+        take(1),
+        untilDestroyed(this),
+      ).subscribe({
+        next: (result) => {
+          if (!onSuccess) {
+            return;
+          }
+          onSuccess(result);
+        },
+        error: (error) => {
+          if (!onError) {
+            return;
+          }
+          onError(error);
+        },
+      });
+    }
+    return jobProgressDialogRef;
   }
 }

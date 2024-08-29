@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextGlobal } from 'app/helptext/global-helptext';
@@ -82,14 +82,11 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
           {
             title: this.translate.instant('Task is running'),
             canMinimize: true,
+            onError: (error) => {
+              this.errorHandler.showErrorModal(error);
+            },
           },
-        ).afterClosed().pipe(
-          catchError((error) => {
-            this.errorHandler.showErrorModal(error);
-            return EMPTY;
-          }),
-          untilDestroyed(this),
-        ).subscribe();
+        );
       } else if (state.state === JobState.Hold) {
         this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
       } else if (state.warnings?.length > 0) {
