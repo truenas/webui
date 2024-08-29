@@ -214,9 +214,9 @@ def navigate_to_network_then_under_interfacesclick_enp0s6f0(driver):
     driver.find_element_by_xpath(xpaths.side_Menu.network).click()
     assert wait_on_element(driver, 7, xpaths.network.title)
     assert wait_on_element(driver, 7, xpaths.network.interface_Card_Title)
-    assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp0s6f0'))
-    assert wait_on_element(driver, 7, xpaths.network.interface_Edit_Button('enp-0-s-6-f-0'))
-    driver.find_element_by_xpath(xpaths.network.interface_Edit_Button('enp-0-s-6-f-0')).click()
+    assert wait_on_element(driver, 7, xpaths.network.interface_Row('ens1'))
+    assert wait_on_element(driver, 7, xpaths.network.interface_Edit_Button('ens-1'))
+    driver.find_element_by_xpath(xpaths.network.interface_Edit_Button('ens-1')).click()
 
 
 @then('the Edit Interface should appear')
