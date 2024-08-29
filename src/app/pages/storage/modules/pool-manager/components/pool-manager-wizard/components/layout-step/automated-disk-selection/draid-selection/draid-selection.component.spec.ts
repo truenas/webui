@@ -7,7 +7,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   DiskSizeSelectsComponent,
@@ -28,7 +28,6 @@ describe('DraidSelectionComponent', () => {
     component: DraidSelectionComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     declarations: [
       DiskSizeSelectsComponent,

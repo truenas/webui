@@ -9,7 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -22,7 +22,6 @@ describe('SignCsrDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: SignCsrDialogComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       AppLoaderModule,
     ],

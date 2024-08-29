@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, throwError } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
@@ -23,7 +23,6 @@ describe('DownloadKeyDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: DownloadKeyDialogComponent,
     imports: [
-      IxFormsModule,
     ],
     providers: [
       mockWebSocket([

@@ -13,7 +13,7 @@ import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
@@ -43,7 +43,6 @@ describe('InstalledAppsComponent', () => {
   const createComponent = createComponentFactory({
     component: InstalledAppsComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       MatTableModule,
       MockModule(PageHeaderModule),

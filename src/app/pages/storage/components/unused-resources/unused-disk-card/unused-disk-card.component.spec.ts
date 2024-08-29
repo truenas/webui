@@ -6,7 +6,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import {
   ManageUnusedDiskDialogComponent,
 } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
@@ -19,7 +19,6 @@ describe('UnusedDiskCardComponent', () => {
   const createComponent = createComponentFactory({
     component: UnusedDiskCardComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [mockAuth()],

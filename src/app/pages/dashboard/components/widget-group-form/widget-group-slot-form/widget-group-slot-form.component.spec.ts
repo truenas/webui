@@ -5,7 +5,7 @@ import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-slot-form/widget-group-slot-form.component';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
@@ -23,7 +23,6 @@ describe('WidgetGroupSlotComponent', () => {
   const createComponent = createComponentFactory({
     component: WidgetGroupSlotFormComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     declarations: [

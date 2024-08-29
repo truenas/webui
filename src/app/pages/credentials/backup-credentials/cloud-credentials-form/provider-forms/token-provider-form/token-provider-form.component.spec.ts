@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/components/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   OauthProviderComponent,
@@ -21,7 +21,6 @@ describe('TokenProviderFormComponent', () => {
     detectChanges: false,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     declarations: [
       OauthProviderComponent,

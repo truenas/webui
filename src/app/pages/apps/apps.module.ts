@@ -85,6 +85,19 @@ import { AppMetadataCardComponent } from './components/installed-apps/app-metada
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { DockerStatusComponent } from './components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
+import {
+  IxModalHeaderComponent
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxCheckboxListComponent
+} from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 
 @NgModule({
   declarations: [
@@ -175,6 +188,15 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     FileSizePipe,
     NetworkSpeedPipe,
     OrNotAvailablePipe,
+    IxModalHeaderComponent,
+    IxFieldsetComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    IxChipsComponent,
+    IxSelectComponent,
+    IxCheckboxListComponent,
+    IxCheckboxComponent,
+    ReadOnlyComponent,
   ],
 })
 export class AppsModule { }

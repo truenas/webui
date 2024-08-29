@@ -17,7 +17,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { GlobalSearchModule } from 'app/modules/global-search/global-search.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
@@ -55,12 +55,17 @@ import { JobsIndicatorComponent } from './components/topbar/jobs-indicator/jobs-
 import { PowerMenuComponent } from './components/topbar/power-menu/power-menu.component';
 import { ResilveringIndicatorComponent } from './components/topbar/resilvering-indicator/resilvering-indicator.component';
 import { UserMenuComponent } from './components/topbar/user-menu/user-menu.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import {
+  IxChainedSlideInComponent
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-chained-slide-in/ix-chained-slide-in.component';
 
 @NgModule({
   imports: [
     CommonModule,
     TranslateModule,
-    IxFormsModule,
     IxIconModule,
     ReactiveFormsModule,
     MatButtonModule,
@@ -83,6 +88,10 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     MatProgressSpinnerModule,
     GlobalSearchModule,
     MapValuePipe,
+    IxInputComponent,
+    FormActionsComponent,
+    IxSlideInComponent,
+    IxChainedSlideInComponent,
   ],
   declarations: [
     ChangePasswordDialogComponent,

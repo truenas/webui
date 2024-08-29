@@ -6,7 +6,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   CaIdentifierAndTypeComponent,
@@ -24,7 +24,6 @@ describe('CaIdentifierAndTypeComponent', () => {
     component: CaIdentifierAndTypeComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockWebSocket([

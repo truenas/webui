@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetInterfaceIpSettingsComponent } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip-settings/widget-interface-ip-settings.component';
@@ -15,7 +15,7 @@ describe('WidgetInterfaceIpSettingsComponent', () => {
 
   const createComponent = createComponentFactory({
     component: WidgetInterfaceIpSettingsComponent,
-    imports: [ReactiveFormsModule, IxFormsModule],
+    imports: [ReactiveFormsModule],
     providers: [
       mockProvider(WidgetSettingsRef, {
         getSettings: jest.fn(() => {}),

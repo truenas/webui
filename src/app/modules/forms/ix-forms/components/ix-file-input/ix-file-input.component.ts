@@ -4,8 +4,14 @@ import {
 import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
 @UntilDestroy()
 @Component({
@@ -13,6 +19,15 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
   templateUrl: './ix-file-input.component.html',
   styleUrls: ['./ix-file-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    TestIdModule,
+    MatTooltip,
+    IxIconModule,
+    IxErrorsComponent,
+    TranslateModule,
+  ],
 })
 export class IxFileInputComponent implements ControlValueAccessor {
   @Input() label: string;

@@ -11,7 +11,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -26,7 +26,6 @@ describe('AutotrimDialogComponent', () => {
     component: AutotrimDialogComponent,
     imports: [
       AppLoaderModule,
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [

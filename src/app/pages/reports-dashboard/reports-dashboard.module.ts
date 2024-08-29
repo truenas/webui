@@ -15,7 +15,7 @@ import { CommonDirectivesModule } from 'app/directives/common-directives.module'
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -37,12 +37,22 @@ import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.ser
 import { SmoothPlotterService } from 'app/pages/reports-dashboard/services/smooth-plotter.service';
 import { ReportComponent } from './components/report/report.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import {
+  IxModalHeaderComponent
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import {
+  IxSlideToggleComponent
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    IxFormsModule,
     IxDynamicFormModule,
     routing,
     ScrollingModule,
@@ -66,6 +76,13 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     EmptyComponent,
     SearchInput1Component,
     MapValuePipe,
+    IxFieldsetComponent,
+    IxModalHeaderComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    IxSlideToggleComponent,
   ],
   declarations: [
     LineChartComponent,

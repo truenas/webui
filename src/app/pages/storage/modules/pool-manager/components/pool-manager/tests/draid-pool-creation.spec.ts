@@ -13,7 +13,7 @@ import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -36,7 +36,6 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
   const createComponent = createComponentFactory({
     component: PoolManagerComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       MatStepperModule,
       FileSizePipe,

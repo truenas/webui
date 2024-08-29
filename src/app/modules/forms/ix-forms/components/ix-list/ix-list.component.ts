@@ -7,12 +7,25 @@ import {
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { MatButton } from '@angular/material/button';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
 @Component({
   selector: 'ix-list',
   templateUrl: './ix-list.component.html',
   styleUrls: ['./ix-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    MatButton,
+    TestIdModule,
+    IxErrorsComponent,
+    TranslateModule,
+  ],
 })
 export class IxListComponent implements AfterViewInit {
   @Input() formArray: AbstractControl;

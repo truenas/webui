@@ -11,7 +11,7 @@ import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   SelectPresetModalConfig,
@@ -52,7 +52,6 @@ describe('SelectPresetModalComponent', () => {
     imports: [
       AppLoaderModule,
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockProvider(DatasetAclEditorStore, {

@@ -22,7 +22,17 @@ import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -36,6 +46,12 @@ import { UserListComponent } from 'app/pages/account/users/user-list/user-list.c
 import { routing } from 'app/pages/account/users/users.routing';
 import { DeleteUserDialogComponent } from './user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserDetailsRowComponent } from './user-details-row/user-details-row.component';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 
 @NgModule({
   providers: [],
@@ -44,7 +60,6 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     CommonModule,
     EffectsModule.forFeature([UserEffects]),
     EntityModule,
-    IxFormsModule,
     MatButtonModule,
     IxIconModule,
     MatListModule,
@@ -71,6 +86,19 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     TestIdModule,
     IxTableModule,
     SearchInput1Component,
+    IxModalHeaderComponent,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxSlideToggleComponent,
+    IxChipsComponent,
+    IxComboboxComponent,
+    IxTextareaComponent,
+    IxCheckboxComponent,
+    IxExplorerComponent,
+    IxPermissionsComponent,
+    IxSelectComponent,
+    IxFileInputComponent,
+    FormActionsComponent,
   ],
   declarations: [
     UserListComponent,

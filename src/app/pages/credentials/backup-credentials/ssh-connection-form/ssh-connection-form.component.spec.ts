@@ -13,7 +13,7 @@ import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-metho
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
@@ -47,7 +47,6 @@ describe('SshConnectionFormComponent', () => {
     component: SshConnectionFormComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
       AppLoaderModule,
     ],
     providers: [

@@ -9,7 +9,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
@@ -26,7 +26,6 @@ describe('SchedulerModalComponent', () => {
   const createComponent = createComponentFactory({
     component: SchedulerModalComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       TooltipComponent,
     ],

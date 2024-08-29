@@ -6,7 +6,7 @@ import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 
 describe('IxIconGroupComponent', () => {
   let spectator: SpectatorHost<IxIconGroupComponent>;
@@ -17,7 +17,6 @@ describe('IxIconGroupComponent', () => {
     component: IxIconGroupComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     declareComponent: false,
   });

@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   TelegramServiceComponent,
@@ -14,7 +14,6 @@ describe('TelegramServiceComponent', () => {
   const createComponent = createComponentFactory({
     component: TelegramServiceComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
   });

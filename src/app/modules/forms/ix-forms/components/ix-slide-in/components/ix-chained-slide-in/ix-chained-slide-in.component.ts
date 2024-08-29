@@ -7,6 +7,8 @@ import {
   ChainedComponentSerialized,
   IxChainedSlideInService,
 } from 'app/services/ix-chained-slide-in.service';
+import { AsyncPipe } from '@angular/common';
+import { IxSlideIn2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-slide-in2/ix-slide-in2.component';
 
 @UntilDestroy()
 @Component({
@@ -14,6 +16,8 @@ import {
   templateUrl: './ix-chained-slide-in.component.html',
   styleUrls: ['./ix-chained-slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [IxSlideIn2Component, AsyncPipe],
 })
 export class IxChainedSlideInComponent implements OnInit, OnDestroy {
   readonly id = input<string>();

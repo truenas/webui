@@ -21,6 +21,7 @@ import {
   ChainedComponentSerialized,
   IxChainedSlideInService,
 } from 'app/services/ix-chained-slide-in.service';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 
 @UntilDestroy()
 @Component({
@@ -28,6 +29,8 @@ import {
   templateUrl: './ix-slide-in2.component.html',
   styleUrls: ['./ix-slide-in2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CdkTrapFocus],
 })
 export class IxSlideIn2Component implements OnInit, OnDestroy {
   @Input() componentInfo: ChainedComponentSerialized;

@@ -18,6 +18,7 @@ import { Subscription, timer } from 'rxjs';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 
 @UntilDestroy()
 @Component({
@@ -25,6 +26,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './ix-slide-in.component.html',
   styleUrls: ['./ix-slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CdkTrapFocus],
 })
 export class IxSlideInComponent implements OnInit, OnDestroy {
   @Input() id: string;

@@ -15,7 +15,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
 describe('CloudCredentialsSelectComponent', () => {
@@ -55,7 +55,6 @@ describe('CloudCredentialsSelectComponent', () => {
     component: CloudCredentialsSelectComponent,
     imports: [
       TranslateModule.forRoot(),
-      IxFormsModule,
       ReactiveFormsModule,
       FormsModule,
     ],

@@ -23,7 +23,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -50,12 +50,21 @@ import { DiskHealthCardComponent } from './components/dashboard-pool/disk-health
 import { ExportDisconnectModalComponent } from './components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { AutotrimDialogComponent } from './components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-card/zfs-health-card.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 
 @NgModule({
   imports: [
     PoolManagerModule,
     routing,
-    IxFormsModule,
     TranslateModule,
     MatCardModule,
     MatTooltipModule,
@@ -88,6 +97,14 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     FileSizePipe,
     FormatDateTimePipe,
     MapValuePipe,
+    FormActionsComponent,
+    IxCheckboxComponent,
+    IxWarningComponent,
+    IxFieldsetComponent,
+    IxRadioGroupComponent,
+    IxSelectComponent,
+    IxModalHeaderComponent,
+    IxInputComponent,
   ],
   declarations: [
     PoolsDashboardComponent,

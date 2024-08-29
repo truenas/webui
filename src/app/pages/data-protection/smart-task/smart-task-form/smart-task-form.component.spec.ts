@@ -11,7 +11,7 @@ import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
@@ -41,7 +41,6 @@ describe('SmartTaskFormComponent', () => {
   const createComponent = createComponentFactory({
     component: SmartTaskFormComponent,
     imports: [
-      IxFormsModule,
       SchedulerModule,
       ReactiveFormsModule,
     ],

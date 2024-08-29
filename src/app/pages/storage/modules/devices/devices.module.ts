@@ -12,7 +12,7 @@ import { CommonDirectivesModule } from 'app/directives/common-directives.module'
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
@@ -47,12 +47,14 @@ import { routes } from 'app/pages/storage/modules/devices/devices.routing';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { SmartInfoCardComponent } from './components/smart-info-card/smart-info-card.component';
 import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/extend-dialog.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 
 @NgModule({
   imports: [
     CommonModule,
     EntityModule,
-    IxFormsModule,
     TreeModule,
     MatButtonModule,
     MatCardModule,
@@ -78,6 +80,9 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     FileSizePipe,
     CopyButtonComponent,
     OrNotAvailablePipe,
+    FormActionsComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
   ],
   declarations: [
     DevicesComponent,

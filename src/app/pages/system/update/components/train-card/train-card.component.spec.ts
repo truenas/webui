@@ -7,7 +7,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemUpdateTrains } from 'app/interfaces/system-update.interface';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { TrainCardComponent } from 'app/pages/system/update/components/train-card/train-card.component';
 import { TrainService } from 'app/pages/system/update/services/train.service';
@@ -22,7 +22,6 @@ describe('TrainCardComponent', () => {
     component: TrainCardComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockAuth(),

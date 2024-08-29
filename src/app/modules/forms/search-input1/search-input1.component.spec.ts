@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 
 describe('SearchInputComponent', () => {
@@ -13,7 +13,6 @@ describe('SearchInputComponent', () => {
   const createHost = createHostFactory({
     component: SearchInput1Component,
     imports: [
-      IxFormsModule,
     ],
   });
 

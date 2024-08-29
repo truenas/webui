@@ -13,7 +13,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -42,7 +42,6 @@ describe('BootenvStatsDialogComponent', () => {
     component: BootenvStatsDialogComponent,
     imports: [
       AppLoaderModule,
-      IxFormsModule,
       ReactiveFormsModule,
       MapValuePipe,
       FileSizePipe,

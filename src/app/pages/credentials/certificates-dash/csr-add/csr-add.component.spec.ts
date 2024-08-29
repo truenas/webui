@@ -17,7 +17,7 @@ import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import {
@@ -61,7 +61,6 @@ describe('CsrAddComponent', () => {
     component: CsrAddComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
       MatStepperModule,
     ],
     declarations: [

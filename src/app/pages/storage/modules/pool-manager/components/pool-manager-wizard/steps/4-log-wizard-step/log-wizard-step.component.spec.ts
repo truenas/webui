@@ -3,7 +3,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { LogWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
@@ -34,7 +34,6 @@ describe('LogWizardStepComponent', () => {
   const createComponent = createComponentFactory({
     component: LogWizardStepComponent,
     imports: [
-      IxFormsModule,
     ],
     declarations: [
       MockComponent(LayoutStepComponent),

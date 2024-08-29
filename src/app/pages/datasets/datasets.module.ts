@@ -17,7 +17,7 @@ import { CommonDirectivesModule } from 'app/directives/common-directives.module'
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -53,6 +53,16 @@ import { QuotasSectionComponent } from './components/dataset-form/sections/quota
 import { DatasetIconComponent } from './components/dataset-icon/dataset-icon.component';
 import { DatasetEncryptionCellComponent } from './components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
 import { DatasetNodeComponent } from './components/dataset-node/dataset-node.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import {
+  IxModalHeaderComponent
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 
 @NgModule({
   imports: [
@@ -72,7 +82,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     PermissionsModule,
     EncryptionModule,
     ReactiveFormsModule,
-    IxFormsModule,
     TreeModule,
     EntityModule,
     MatDialogModule,
@@ -90,6 +99,14 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     FileSizePipe,
     CopyButtonComponent,
     OrNotAvailablePipe,
+    IxInputComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    IxSelectComponent,
+    IxFieldsetComponent,
+    IxModalHeaderComponent,
+    IxChipsComponent,
+    IxTextareaComponent,
   ],
   declarations: [
     DatasetsManagementComponent,

@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -25,6 +25,8 @@ import { DisconnectedMessageComponent } from './signin/disconnected-message/disc
 import { FailoverStatusComponent } from './signin/failover-status/failover-status.component';
 import { SigninFormComponent } from './signin/signin-form/signin-form.component';
 import { SigninComponent } from './signin/signin.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 
 @NgModule({
   imports: [
@@ -40,12 +42,13 @@ import { SigninComponent } from './signin/signin.component';
     IxIconModule,
     TranslateModule,
     RouterModule.forChild(sessionsRoutes),
-    IxFormsModule,
     MatInputModule,
     CommonDirectivesModule,
     TestIdModule,
     NgxSkeletonLoaderModule,
     MapValuePipe,
+    IxInputComponent,
+    IxRadioGroupComponent,
   ],
   declarations: [
     SigninComponent,

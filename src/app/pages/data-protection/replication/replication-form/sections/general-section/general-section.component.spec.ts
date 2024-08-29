@@ -7,7 +7,7 @@ import { LoggingLevel } from 'app/enums/logging-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import {
   GeneralSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/general-section/general-section.component';
@@ -19,7 +19,6 @@ describe('GeneralSectionComponent', () => {
   const createComponent = createComponentFactory({
     component: GeneralSectionComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
   });

@@ -10,7 +10,12 @@ import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatOption } from '@angular/material/core';
+import { MatHint } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY,
   fromEvent,
@@ -22,6 +27,10 @@ import {
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider, IxComboboxProviderManager } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +38,20 @@ import { IxComboboxProvider, IxComboboxProviderManager } from 'app/modules/forms
   templateUrl: './ix-combobox.component.html',
   styleUrls: ['./ix-combobox.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    TestIdModule,
+    MatInput,
+    MatAutocompleteTrigger,
+    MatProgressSpinner,
+    IxIconModule,
+    MatAutocomplete,
+    MatOption,
+    IxErrorsComponent,
+    MatHint,
+    TranslateModule,
+  ],
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() label: string;

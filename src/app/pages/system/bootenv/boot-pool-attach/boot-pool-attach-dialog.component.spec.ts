@@ -12,7 +12,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UnusedDiskSelectComponent,
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -27,7 +27,6 @@ describe('BootPoolAttachDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: BootPoolAttachDialogComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       UnusedDiskSelectComponent,
     ],

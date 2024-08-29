@@ -3,7 +3,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { SpareWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/5-spare-wizard-step/spare-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -33,7 +33,6 @@ describe('DataWizardStepComponent', () => {
   const createComponent = createComponentFactory({
     component: SpareWizardStepComponent,
     imports: [
-      IxFormsModule,
     ],
     declarations: [
       MockComponent(LayoutStepComponent),

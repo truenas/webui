@@ -15,7 +15,7 @@ import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 
@@ -31,7 +31,6 @@ describe('FileTicketComponent', () => {
     component: FileTicketComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     declarations: [
       MockComponent(OauthButtonComponent),

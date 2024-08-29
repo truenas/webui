@@ -4,8 +4,11 @@ import {
 import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -13,6 +16,13 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   styleUrls: ['./ix-slide-toggle.component.scss'],
   templateUrl: './ix-slide-toggle.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatSlideToggle,
+    TestIdModule,
+    TooltipComponent,
+    IxErrorsComponent,
+  ],
 })
 export class IxSlideToggleComponent implements ControlValueAccessor {
   @Input() label: string;

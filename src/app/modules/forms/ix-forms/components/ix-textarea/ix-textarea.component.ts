@@ -1,8 +1,13 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { MatHint } from '@angular/material/form-field';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { MatInput } from '@angular/material/input';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
 @UntilDestroy()
 @Component({
@@ -10,6 +15,15 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   templateUrl: './ix-textarea.component.html',
   styleUrls: ['./ix-textarea.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    TestIdModule,
+    MatInput,
+    FormsModule,
+    IxErrorsComponent,
+    MatHint,
+  ],
 })
 export class IxTextareaComponent implements ControlValueAccessor {
   @Input() label: string;

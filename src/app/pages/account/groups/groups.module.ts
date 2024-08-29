@@ -20,7 +20,7 @@ import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -39,6 +39,16 @@ import { GroupEffects } from 'app/pages/account/groups/store/group.effects';
 import { groupReducer } from 'app/pages/account/groups/store/group.reducer';
 import { groupStateKey } from 'app/pages/account/groups/store/group.selectors';
 import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dialog/delete-group-dialog.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import {
+  IxModalHeaderComponent
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 
 @NgModule({
   providers: [],
@@ -47,7 +57,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     CommonModule,
     EffectsModule.forFeature([GroupEffects]),
     EntityModule,
-    IxFormsModule,
     MatButtonModule,
     IxIconModule,
     MatListModule,
@@ -74,6 +83,14 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     IxTableModule,
     SearchInputModule,
     SearchInput1Component,
+    IxFieldsetComponent,
+    IxModalHeaderComponent,
+    IxInputComponent,
+    IxChipsComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    IxSelectComponent,
+    ReadOnlyComponent,
   ],
   declarations: [
     GroupListComponent,
