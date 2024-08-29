@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-import { omit } from 'lodash';
+import * as _ from 'lodash-es';
+import { omit } from 'lodash-es';
 import {
   EMPTY, forkJoin, Observable, of,
 } from 'rxjs';

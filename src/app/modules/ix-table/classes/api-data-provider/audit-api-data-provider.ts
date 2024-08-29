@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';

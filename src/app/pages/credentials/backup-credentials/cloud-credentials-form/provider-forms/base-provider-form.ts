@@ -1,5 +1,5 @@
 import { FormGroup } from '@angular/forms';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';

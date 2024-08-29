@@ -10,11 +10,11 @@ function parseEnvironmentVersion(contents: string): string {
   return match ? match[1] : '';
 }
 
-export function checkEnvironment(): void {
+export async function checkEnvironment(): Promise<void> {
   const currentConfig = getCurrentConfigAsString().trim();
   if (!currentConfig) {
     console.info('No current config set. Creating default config...');
-    updateEnvironment({});
+    await updateEnvironment({});
     adviseToSetRemote();
 
     process.exit(0);

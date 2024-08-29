@@ -1,3 +1,4 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
@@ -13,7 +14,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { Subscription, timer } from 'rxjs';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import {
@@ -21,7 +22,6 @@ import {
   ChainedComponentSerialized,
   IxChainedSlideInService,
 } from 'app/services/ix-chained-slide-in.service';
-import { CdkTrapFocus } from '@angular/cdk/a11y';
 
 @UntilDestroy()
 @Component({

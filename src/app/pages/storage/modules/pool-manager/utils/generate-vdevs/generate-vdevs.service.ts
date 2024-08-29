@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
