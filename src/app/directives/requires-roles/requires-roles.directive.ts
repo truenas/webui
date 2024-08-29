@@ -2,7 +2,7 @@ import {
   Directive, HostBinding, Input, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { take } from 'rxjs';
 import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 import { Role } from 'app/enums/role.enum';

@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';

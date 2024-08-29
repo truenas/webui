@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from "fs";
 
 const productionFilePath = './src/environments/environment.prod.ts';
 const productionFileContent = `import { enableProdMode } from '@angular/core';

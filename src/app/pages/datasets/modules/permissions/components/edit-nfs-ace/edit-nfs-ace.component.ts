@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { of } from 'rxjs';
 import {
   NfsAclTag, nfsAclTagLabels, NfsAclType,

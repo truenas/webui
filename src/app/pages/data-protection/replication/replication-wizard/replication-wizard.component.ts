@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   catchError, EMPTY, forkJoin, map, Observable, of, switchMap, tap,
 } from 'rxjs';

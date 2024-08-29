@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   EMPTY, Observable, catchError, combineLatest, map, of, switchMap, tap,
 } from 'rxjs';

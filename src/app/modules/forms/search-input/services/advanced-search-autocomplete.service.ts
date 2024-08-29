@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CompletionContext, CompletionResult, startCompletion } from '@codemirror/autocomplete';
 import { EditorView } from '@codemirror/view';
 import { TranslateService } from '@ngx-translate/core';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import {
   BehaviorSubject,
   Observable, lastValueFrom, map, of,
