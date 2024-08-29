@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { isEmpty } from 'lodash';
+import { differenceWith, isEmpty } from 'lodash';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
@@ -67,7 +67,11 @@ export class GenerateVdevsService {
       return topologyCategoryToDisks(category);
     }, [] as DetailsDisk[]);
 
-    return disks.filter((disk) => !manualSelectionDisks.includes(disk));
+    return differenceWith(
+      disks,
+      manualSelectionDisks,
+      (disk, manualSelectionDisk) => disk.name === manualSelectionDisk.name,
+    );
   }
 
   /**
