@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
+import { defaultWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -97,7 +97,7 @@ describe('DashboardStore', () => {
     expect(finalizeSpy).toHaveBeenCalledWith(false);
   });
 
-  it('should load demoWidgets if user does not have dashState', async () => {
+  it('should load defaultWidgets if user does not have dashState', async () => {
     const authService = spectator.inject(AuthService);
     Object.defineProperty(authService, 'user$', { value: of({ attributes: {} }) });
 
@@ -105,7 +105,7 @@ describe('DashboardStore', () => {
 
     expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
       ...initialState,
-      groups: demoWidgets,
+      groups: defaultWidgets,
     });
   });
 

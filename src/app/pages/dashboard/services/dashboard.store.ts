@@ -6,7 +6,7 @@ import {
   Observable, catchError, filter, finalize, map, of, switchMap, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
-import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
+import { defaultWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -69,11 +69,10 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         map((user) => user.attributes.dashState),
       )),
       tap((dashState) => {
-        // TODO: Convert demoWidgets into default template
         this.setState({
           isLoading: false,
           globalError: '',
-          groups: this.getDashboardGroups(dashState || demoWidgets),
+          groups: this.getDashboardGroups(dashState || defaultWidgets),
         });
       }),
       catchError((error) => {
