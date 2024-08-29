@@ -39,29 +39,15 @@ describe('SmbCardComponent', () => {
       id: 3,
       purpose: SmbPresetType.MultiUserTimeMachine,
       path: '/mnt/APPS/smb1',
-      path_suffix: '',
       home: true,
       name: 'smb123',
       comment: 'pool',
-      ro: false,
-      browsable: true,
-      recyclebin: false,
-      guestok: false,
-      hostsallow: [],
-      hostsdeny: [],
-      aapl_name_mangling: false,
-      abe: false,
-      acl: true,
-      durablehandle: true,
-      streams: true,
-      timemachine: true,
       vuid: '04305a6f-7a37-43dc-8fc0-fe6662751437',
-      shadowcopy: true,
-      fsrvp: false,
       enabled: true,
-      cluster_volname: '',
       path_local: '/mnt/APPS/smb1',
-      locked: false,
+      audit: {
+        enable: true,
+      },
     },
   ] as SmbShare[];
 
@@ -124,7 +110,7 @@ describe('SmbCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Path', 'Description', 'Enabled', 'Audit Logging', ''],
-      ['smb123', '/mnt/APPS/smb1', 'pool', '', 'No', ''],
+      ['smb123', '/mnt/APPS/smb1', 'pool', '', 'Yes', ''],
     ];
 
     const cells = await table.getCellTexts();
