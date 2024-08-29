@@ -40,7 +40,7 @@
     <button
       type="button"
       mat-button
-      class="mat-mdc-button mat-button mat-accent action-btn"
+      class="action-btn"
       name="Cancel_button"
       ixTest="cancel"
       (click)="cancel()"
@@ -51,8 +51,7 @@
       *ixRequiresRoles="requiredRoles"
       type="submit"
       mat-button
-      class="mat-mdc-button mat-button mat-primary"
-      name="Delete Device_button"
+      color="primary"
       ixTest="delete-device"
       [disabled]="form.invalid"
     >

@@ -15,6 +15,7 @@ import {
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { BootPoolAttachDialogComponent } from './boot-pool-attach-dialog.component';
 
@@ -52,6 +53,7 @@ describe('BootPoolAttachDialogComponent', () => {
       }),
       mockProvider(MatDialogRef),
       mockAuth(),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -72,5 +74,6 @@ describe('BootPoolAttachDialogComponent', () => {
     await saveButton.click();
 
     expect(ws.job).toHaveBeenCalledWith('boot.attach', ['sdb', { expand: true }]);
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device «sdb» was successfully attached.');
   });
 });

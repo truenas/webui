@@ -58,7 +58,6 @@
   <ix-form-actions>
     <button
       mat-button
-      class="mat-mdc-button mat-button mat-secondary"
       ixTest="close"
       (click)="dialogRef.close(false)"
     >
@@ -67,7 +66,6 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
-      class="mat-mdc-button mat-button"
       color="primary"
       ixTest="upgrade"
       (click)="dialogRef.close(selectedVersionKey)"

@@ -17,4 +17,6 @@
 
 @if (selectedEnclosure()) {
   <router-outlet></router-outlet>
+} @else {
+  <ix-empty [conf]="emptyDashboardConf"></ix-empty>
 }

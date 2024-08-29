@@ -306,7 +306,7 @@ export interface ApiCallDirectory {
 
   // API Key
   'api_key.create': { params: [CreateApiKeyRequest]; response: ApiKey };
-  'api_key.delete': { params: [id: string]; response: boolean };
+  'api_key.delete': { params: [id: number]; response: boolean };
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
   'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
 
@@ -606,6 +606,7 @@ export interface ApiCallDirectory {
   // Docker
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusResponse };
+  'docker.lacks_nvidia_drivers': { params: void; response: boolean };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };

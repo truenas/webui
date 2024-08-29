@@ -75,7 +75,8 @@
 
   .description {
     -webkit-box-orient: vertical;
-    display: inline-box;
+    /* stylelint-disable-next-line */
+    display: -webkit-inline-box;
     font-size: 1.2em;
     -webkit-line-clamp: 4;
     line-clamp: 4;

@@ -4,10 +4,11 @@ import {
   mockProvider,
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import {
   EnclosureDashboardComponent,
 } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
@@ -18,13 +19,12 @@ describe('EnclosureDashboardComponent', () => {
   const createComponent = createRoutingFactory({
     component: EnclosureDashboardComponent,
     shallow: true,
+    declarations: [
+      MockComponent(EmptyComponent),
+    ],
     componentProviders: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: () => ({
-          id: 'enclosure-id',
-          name: 'M50',
-          label: 'Current label',
-        } as DashboardEnclosure),
+        selectedEnclosure: jest.fn(),
         initiate: jest.fn(),
         listenForDiskUpdates: jest.fn(() => of()),
         selectEnclosure: jest.fn(),
@@ -41,6 +41,15 @@ describe('EnclosureDashboardComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+  });
+
+  it('shows empty message when no enclosure is available', () => {
+    spectator.inject(EnclosureStore, true).selectedEnclosure.mockReturnValueOnce(undefined);
+
+    spectator.detectChanges();
+
+    const emptyComponent = spectator.query(EmptyComponent);
+    expect(emptyComponent).toExist();
   });
 
   it('initializes store when component is initialized', () => {

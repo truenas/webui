@@ -145,6 +145,7 @@ export class WebSocketService {
     const uuid = UUID.UUID();
     return of(uuid).pipe(
       tap(() => {
+        performance.mark(`${method} - ${uuid} - start`);
         this.wsManager.send({
           id: uuid, msg: IncomingApiMessageType.Method, method, params,
         });
@@ -158,6 +159,8 @@ export class WebSocketService {
           return throwError(() => error);
         }
 
+        performance.mark(`${method} - ${uuid} - end`);
+        performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
         return of(data);
       }),
 

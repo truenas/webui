@@ -62,4 +62,17 @@ export class WidgetSysInfoActiveComponent {
   ) {
     this.resources.refreshSystemInfo();
   }
+
+  isFirstRender = true;
+
+  rendered(): string {
+    if (!this.isFirstRender) {
+      return '';
+    }
+
+    this.isFirstRender = false;
+    performance.mark('Dashboard End');
+    performance.measure('Dashboard Init', 'Dashboard Start', 'Dashboard End');
+    return '';
+  }
 }

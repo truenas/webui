@@ -26,7 +26,7 @@
     <button
       mat-button
       type="button"
-      class="mat-mdc-button mat-button mat-accent action-btn"
+      class="action-btn"
       name="Cancel_button"
       ixTest="cancel"
       (click)="onCancel()"
@@ -40,7 +40,7 @@
           *ixRequiresRoles="requiredRoles"
           mat-button
           type="button"
-          class="mat-mdc-button mat-button action-btn"
+          class="action-btn"
           id="cust_button_deregister"
           ixTest="deregister"
           [name]="helptext.tcDeregisterBtn + '_button'"
@@ -55,7 +55,7 @@
       *ixRequiresRoles="requiredRoles"
       mat-button
       type="submit"
-      class="mat-mdc-button mat-button mat-primary"
+      color="primary"
       ixTest="save"
       [name]="saveButtonText + '_button'"
       [disabled]="form.invalid"

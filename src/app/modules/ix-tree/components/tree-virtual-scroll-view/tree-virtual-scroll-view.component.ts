@@ -81,13 +81,13 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   override ngOnInit(): void {
     this.scrollableElement = document.querySelector('.rightside-content-hold');
     if (this.scrollableElement) {
-      this.scrollableElement.addEventListener('scroll', this.scrolled.bind(this));
+      this.scrollableElement.addEventListener('scroll', this.scrolled);
     }
   }
 
   override ngOnDestroy(): void {
     if (this.scrollableElement) {
-      this.scrollableElement.removeEventListener('scroll', this.scrolled.bind(this));
+      this.scrollableElement.removeEventListener('scroll', this.scrolled);
     }
   }
 
@@ -131,7 +131,7 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     });
   }
 
-  private scrolled(): void {
+  private readonly scrolled = (): void => {
     this.viewportScrolled.emit(this.virtualScrollViewport.elementRef.nativeElement.scrollLeft);
-  }
+  };
 }
