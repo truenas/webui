@@ -8,11 +8,11 @@ import {
 import { getCurrentConfig, updateEnvironment } from '../utils/save-environment';
 
 export async function mockEnclosureCommand(): Promise<void> {
-  console.info(currentMockConfig());
+  console.info(await currentMockConfig());
   const enable = await confirm({ message: 'Enable enclosure mocking?' });
 
   if (!enable) {
-    updateEnvironment({
+    await updateEnvironment({
       mockConfig: {
         enabled: false,
       },
@@ -53,7 +53,7 @@ Available options: ${allShelves.join(', ')}:\n`,
     default: MockEnclosureScenario.FillSomeSlots,
   });
 
-  updateEnvironment({
+  await updateEnvironment({
     mockConfig: {
       controllerModel,
       expansionModels,
@@ -63,8 +63,8 @@ Available options: ${allShelves.join(', ')}:\n`,
   });
 }
 
-export function currentMockConfig(): string {
-  const environment = getCurrentConfig();
+export async function currentMockConfig(): Promise<string> {
+  const environment = await getCurrentConfig();
   const printedConfig = `Enclosure Mocks: ${environment.mockConfig.enabled ? 'Enabled' : 'Disabled'}`;
 
   if (!environment.mockConfig.enabled) {

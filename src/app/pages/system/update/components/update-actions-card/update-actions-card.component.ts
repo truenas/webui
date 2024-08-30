@@ -210,7 +210,7 @@ export class UpdateActionsCardComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe(() => this.confirmAndUpdate());
         } else if (update.status === SystemUpdateStatus.Unavailable) {
-          this.dialogService.info(this.translate.instant('Check Now'), this.translate.instant('No updates available.'));
+          this.snackbar.success(this.translate.instant('No updates available.'));
         }
       },
       error: (error: WebSocketError) => {

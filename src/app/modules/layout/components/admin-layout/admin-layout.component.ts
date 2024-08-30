@@ -86,6 +86,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    performance.mark('Admin Init');
+    performance.measure('Login', 'Login Start', 'Admin Init');
     this.tokenLifetimeService.start();
     this.themeService.loadTheme$.next('');
     this.sentryService.init();

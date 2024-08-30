@@ -1,7 +1,7 @@
 import {
   FormControl, FormGroup, UntypedFormControl, ValidatorFn,
 } from '@angular/forms';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export function greaterThanFg(
   controlName: string,

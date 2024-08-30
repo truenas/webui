@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { OperatorFunction } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';

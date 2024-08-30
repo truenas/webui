@@ -7,7 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { range } from 'lodash';
+import { range } from 'lodash-es';
 import { forkJoin, of } from 'rxjs';
 import {
   CreateNetworkInterfaceType,

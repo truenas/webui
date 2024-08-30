@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   Observable, combineLatest, of,
 } from 'rxjs';

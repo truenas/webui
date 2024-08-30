@@ -1,7 +1,7 @@
 import {
   Directive, ElementRef, HostBinding, Input, Optional,
 } from '@angular/core';
-import { kebabCase } from 'lodash';
+import { kebabCase } from 'lodash-es';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
 /**
