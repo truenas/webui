@@ -177,6 +177,10 @@ module.exports = {
             selector: 'MemberExpression[property.name="email"][object.name="Validators"]',
             message: 'For email validation, it is prefer to use the `emailValidator` validator.',
           },
+          {
+            message: "Do not import default from lodash-es. Use a namespace import (* as) instead.",
+            selector: 'ImportDeclaration[source.value="lodash-es"] ImportDefaultSpecifier',
+          },
         ],
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",

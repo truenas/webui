@@ -1,5 +1,5 @@
-const fs = require('fs');
-const parse = require('messageformat-parser').parse;
+import fs from "fs";
+import {parse} from "messageformat-parser";
 
 const translationDir = "src/assets/i18n/";
 

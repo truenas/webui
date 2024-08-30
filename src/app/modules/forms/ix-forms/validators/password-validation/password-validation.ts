@@ -1,5 +1,5 @@
 import { FormGroup, UntypedFormControl, ValidatorFn } from '@angular/forms';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export function matchOthersFgValidator(
   controlName: string,

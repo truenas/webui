@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { chain } from 'lodash';
+import { chain } from 'lodash-es';
 import { enclosureDiskStatusLabels } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { getDiskStatusColor } from 'app/pages/system/enclosure/utils/disk-status-tint.utils';

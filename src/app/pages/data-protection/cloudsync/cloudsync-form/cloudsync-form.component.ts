@@ -7,7 +7,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Observable, forkJoin, of } from 'rxjs';
 import {
   filter, map, pairwise, startWith, tap,

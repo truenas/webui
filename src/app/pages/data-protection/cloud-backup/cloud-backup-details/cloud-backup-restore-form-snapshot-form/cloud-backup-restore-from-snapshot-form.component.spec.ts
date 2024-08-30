@@ -44,7 +44,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         provide: SLIDE_IN_DATA,
         useValue: {
           snapshot: { id: 1 },
-          backup: { id: 1 },
+          backup: { id: 1, path: '/mnt/backup/path' },
         },
       },
     ],
@@ -67,7 +67,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        '/',
+        '/mnt/backup/path',
         '/mnt/my pool',
         {},
       ]);
@@ -89,7 +89,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        '/',
+        '/mnt/backup/path',
         '/mnt/my pool',
         {
           exclude: [
@@ -142,7 +142,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        '/',
+        '/mnt/backup/path',
         '/mnt/my pool',
         {
           exclude: [

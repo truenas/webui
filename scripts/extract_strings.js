@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-
-const fs = require('fs');
-const exec = require('child_process').exec;
+import fs from "fs";
+import { exec } from "child_process";
 
 const translationDir = "src/assets/i18n/";
 

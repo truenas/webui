@@ -79,15 +79,6 @@ describe('WidgetSysInfoPassiveComponent', () => {
         getDateAndTime: () => ['2024-03-15', '10:34:11'],
         getDateFromString: (date: string) => new Date(date),
       }),
-      mockProvider(WidgetResourcesService, {
-        systemInfo$: of({
-          isLoading: false,
-          error: null,
-          value: systemInfo,
-        } as LoadingState<SystemInfo>),
-        updateAvailable$: of(true),
-        refreshInterval$,
-      }),
       provideMockStore({
         selectors: [
           {
@@ -127,59 +118,105 @@ describe('WidgetSysInfoPassiveComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        size: SlotSize.Full,
-      },
+  describe('system info remote_info is loaded', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+        providers: [
+          mockProvider(WidgetResourcesService, {
+            systemInfo$: of({
+              isLoading: false,
+              error: null,
+              value: systemInfo,
+            } as LoadingState<SystemInfo>),
+            updateAvailable$: of(true),
+            refreshInterval$,
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      store$ = spectator.inject(MockStore);
     });
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    store$ = spectator.inject(MockStore);
+
+    it('checks title', () => {
+      expect(spectator.query('.header h3')).toHaveText('System Information standby');
+    });
+
+    it('checks system info rows', async () => {
+      const matListItems = await loader.getAllHarnesses(MatListItemHarness);
+      const items = await parallel(() => matListItems.map((item) => item.getFullText()));
+      expect(items).toEqual([
+        'Platform: TRUENAS-M40-HA',
+        'Version: ElectricEel-24.10.0-MASTER-20240301-233006',
+        'Support License: Best contract, expires 2025-01-01',
+        'System Serial: AA-00002',
+        'Hostname: test-hostname-b',
+        'Uptime: 1 minute 17 seconds as of 2024-03-15 10:34:11',
+      ]);
+    });
+
+    it('checks Uptime changed over time', () => {
+      jest.useFakeTimers();
+
+      const initialUptime = spectator.component.uptime();
+      const initialDatetime = spectator.component.datetime();
+
+      jest.advanceTimersByTime(5000);
+      refreshInterval$.next(1);
+
+      spectator.detectChanges();
+
+      const updatedUptime = spectator.component.uptime();
+      const updatedDatetime = spectator.component.datetime();
+
+      expect(updatedUptime).toBeGreaterThan(initialUptime);
+      expect(updatedDatetime).toBeGreaterThan(initialDatetime);
+
+      jest.useRealTimers();
+    });
+
+    it('checks unlicensed HA system', () => {
+      store$.overrideSelector(selectIsHaLicensed, false);
+      store$.refreshState();
+      spectator.detectChanges();
+
+      expect(spectator.query('.container.empty div')).toHaveText('This system is not licensed for HA.');
+      expect(spectator.query('.container.empty small')).toHaveText('Configure dashboard to edit this widget.');
+    });
   });
 
-  it('checks title', () => {
-    expect(spectator.query('.header h3')).toHaveText('System Information standby');
-  });
+  describe('system info remote_info is not loaded - waiting for standby controller', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+        providers: [
+          mockProvider(WidgetResourcesService, {
+            systemInfo$: of({
+              isLoading: false,
+              error: null,
+              value: { ...systemInfo, remote_info: null },
+            } as LoadingState<SystemInfo>),
+            updateAvailable$: of(true),
+            refreshInterval$,
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      store$ = spectator.inject(MockStore);
+    });
 
-  it('checks system info rows', async () => {
-    const matListItems = await loader.getAllHarnesses(MatListItemHarness);
-    const items = await parallel(() => matListItems.map((item) => item.getFullText()));
-    expect(items).toEqual([
-      'Platform: TRUENAS-M40-HA',
-      'Version: ElectricEel-24.10.0-MASTER-20240301-233006',
-      'Support License: Best contract, expires 2025-01-01',
-      'System Serial: AA-00002',
-      'Hostname: test-hostname-b',
-      'Uptime: 1 minute 17 seconds as of 2024-03-15 10:34:11',
-    ]);
-  });
+    it('shows "Waiting for standby controller" content', () => {
+      store$.overrideSelector(selectCanFailover, false);
+      store$.overrideSelector(selectIsHaEnabled, false);
 
-  it('checks Uptime changed over time', () => {
-    jest.useFakeTimers();
+      store$.refreshState();
+      spectator.detectChanges();
 
-    const initialUptime = spectator.component.uptime();
-    const initialDatetime = spectator.component.datetime();
-
-    jest.advanceTimersByTime(5000);
-    refreshInterval$.next(1);
-
-    spectator.detectChanges();
-
-    const updatedUptime = spectator.component.uptime();
-    const updatedDatetime = spectator.component.datetime();
-
-    expect(updatedUptime).toBeGreaterThan(initialUptime);
-    expect(updatedDatetime).toBeGreaterThan(initialDatetime);
-
-    jest.useRealTimers();
-  });
-
-  it('checks unlicensed HA system', () => {
-    store$.overrideSelector(selectIsHaLicensed, false);
-    store$.refreshState();
-    spectator.detectChanges();
-
-    expect(spectator.query('.container.empty div')).toHaveText('This system is not licensed for HA.');
-    expect(spectator.query('.container.empty small')).toHaveText('Configure dashboard to edit this widget.');
+      expect(spectator.query('.container.empty h3')).toHaveText('Waiting for standby controller');
+    });
   });
 });

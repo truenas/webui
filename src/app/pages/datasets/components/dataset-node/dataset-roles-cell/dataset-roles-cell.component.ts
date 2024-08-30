@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { doesDatasetHaveShares, ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 

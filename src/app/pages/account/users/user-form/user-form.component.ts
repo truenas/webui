@@ -6,7 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   from, Observable, of, Subscription,
 } from 'rxjs';

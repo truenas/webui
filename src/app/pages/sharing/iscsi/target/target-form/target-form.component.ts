@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';

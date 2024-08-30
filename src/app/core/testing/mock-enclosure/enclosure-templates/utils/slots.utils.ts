@@ -1,4 +1,4 @@
-import { mapValues } from 'lodash';
+import { mapValues } from 'lodash-es';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 

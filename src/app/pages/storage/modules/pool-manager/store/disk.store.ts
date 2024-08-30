@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
-import { sortBy } from 'lodash';
+import { sortBy } from 'lodash-es';
 import { Observable, tap } from 'rxjs';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';

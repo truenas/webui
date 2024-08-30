@@ -68,7 +68,7 @@ export class SmbCardComponent implements OnInit {
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
-      propertyName: 'audit',
+      getValue: (row) => Boolean(row.audit?.enable),
     }),
     actionsColumn({
       cssClass: 'wide-actions',
