@@ -168,6 +168,15 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   private createDataSource(dataNodes: DeviceNestedDataNode[]): void {
     this.dataSource = new NestedTreeDataSource();
+    const dataNodesWithRootSet: DeviceNestedDataNode[] = dataNodes.map((node: DeviceNestedDataNode) => {
+      return {
+        ...node,
+        children: node.children.map((child: TopologyDisk | TopologyItem) => {
+          child.isRoot = true;
+          return child;
+        }) as TopologyDisk[],
+      };
+    });
     this.dataSource.filterPredicate = (nodesToFilter, query = '') => {
       return flattenTreeWithFilter(nodesToFilter, (dataNode) => {
         if (isVdevGroup(dataNode)) {
@@ -199,7 +208,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
       return collator.compare(topologyDiskA.name, topologyDiskB.name);
     };
-    this.dataSource.data = dataNodes;
+    this.dataSource.data = dataNodesWithRootSet;
   }
 
   private openGroupNodes(): void {

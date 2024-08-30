@@ -15,6 +15,7 @@ export interface VDev {
   status: TopologyItemStatus;
   unavail_disk: unknown;
   disk?: string;
+  isRoot?: boolean;
 }
 
 export interface TopologyDisk {
@@ -27,6 +28,7 @@ export interface TopologyDisk {
   path: string;
   stats: TopologyItemStats;
   status: TopologyItemStatus;
+  isRoot?: boolean;
   unavail_disk: unknown;
 }
 
