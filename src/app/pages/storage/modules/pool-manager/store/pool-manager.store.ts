@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   combineLatest,
   forkJoin, Observable, of, Subject,

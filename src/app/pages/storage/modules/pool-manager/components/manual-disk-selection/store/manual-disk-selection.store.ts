@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {

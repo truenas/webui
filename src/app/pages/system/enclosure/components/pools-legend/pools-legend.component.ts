@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { chain } from 'lodash';
+import { chain } from 'lodash-es';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';

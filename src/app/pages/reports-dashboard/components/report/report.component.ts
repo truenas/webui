@@ -13,7 +13,7 @@ import { UUID } from 'angular2-uuid';
 import {
   add, isToday, sub,
 } from 'date-fns';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   BehaviorSubject, Subscription, timer,
 } from 'rxjs';

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   CreateVdevLayout, TopologyItemType, VdevType, vdevTypeLabels,
 } from 'app/enums/v-dev-type.enum';

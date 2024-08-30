@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import {
   filter, map, switchMap, take, tap,
 } from 'rxjs';

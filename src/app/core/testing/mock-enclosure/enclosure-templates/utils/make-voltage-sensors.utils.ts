@@ -1,4 +1,4 @@
-import { range } from 'lodash';
+import { range } from 'lodash-es';
 import { EnclosureElement } from 'app/interfaces/enclosure.interface';
 
 export function makeVoltageSensors(from: number, to: number): Record<number, EnclosureElement> {

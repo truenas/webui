@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as ts from 'typescript';
+import ts from 'typescript';
 
 export function extractComponentFileContent(filePath: string): Record<string, string> {
   const fileContents = fs.readFileSync(filePath, 'utf8');

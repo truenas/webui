@@ -5,7 +5,7 @@ import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';

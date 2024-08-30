@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   Subject, Observable,
 } from 'rxjs';

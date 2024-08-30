@@ -1,5 +1,5 @@
 import { FormControl } from '@angular/forms';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
