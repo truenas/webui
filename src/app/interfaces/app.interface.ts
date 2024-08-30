@@ -98,11 +98,13 @@ export interface ChartReleaseStats {
 }
 
 export interface AppCreate {
-  values: Record<string, ChartFormValue>;
+  values?: Record<string, ChartFormValue>;
   app_name: string;
   catalog_app: string;
   train: string;
-  version: string;
+  version?: string;
+  custom_compose_config_string?: string;
+  custom_app?: boolean;
 }
 
 export interface AppUpdate {

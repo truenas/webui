@@ -1,6 +1,7 @@
 {
   "": "",
   "1m Average": "",
+  "Add custom app config in Yaml format.": "",
   "App Info": "",
   "App Network": "",
   "Application CPU Usage": "",
@@ -17,7 +18,9 @@
   "Container ID": "",
   "Container Logs": "",
   "Container Shell": "",
+  "Creating custom app": "",
   "Credentials have been successfully added.": "",
+  "Custom Config": "",
   "Delete Snapshot": "",
   "Device «{disk}» has been detached.": "",
   "Device «{name}» was successfully attached.": "",
