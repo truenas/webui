@@ -84,7 +84,7 @@ export class SmbListComponent implements OnInit {
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
-      propertyName: 'audit',
+      getValue: (row) => Boolean(row.audit?.enable),
     }),
     actionsColumn({
       actions: [
