@@ -1003,7 +1003,7 @@
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n Il semble que votre session soit inactive depuis plus de {lifetime} secondes.<br>\n Pour des raisons de sécurité, nous vous déconnecterons à {time}.\n",
   " Est. Usable Raw Capacity": " Est. Capacité brute utilisable",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Lorsque le <b>mode UPS</b> est réglé sur <i>Esclave</i>. Entrez le numéro de port réseau ouvert du système UPS <i>Maître</i> . Le port par défaut est <i>3493</i>.",
-  " as of {dateTime}": "à compter de {dateTime}",
+  " as of {dateTime}": " à compter de {dateTime}",
   " bytes.": " octets.",
   " seconds.": " secondes.",
   "% of all cores": "% de tous les cœurs",
