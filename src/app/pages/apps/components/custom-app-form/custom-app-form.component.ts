@@ -1,15 +1,19 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { map } from 'rxjs';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Role } from 'app/enums/role.enum';
 import { AppCreate } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -19,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './custom-app-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CustomAppFormComponent {
+export class CustomAppFormComponent implements OnInit {
   protected requiredRoles = [Role.AppsWrite];
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
   form = this.fb.group({
@@ -28,6 +32,7 @@ export class CustomAppFormComponent {
   });
   isLoading = false;
   protected tooltip = this.translate.instant('Add custom app config in Yaml format.');
+  forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -35,8 +40,18 @@ export class CustomAppFormComponent {
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
+    private appService: ApplicationsService,
     private dialogRef: IxSlideInRef<CustomAppFormComponent>,
   ) {}
+
+  ngOnInit(): void {
+    this.addForbiddenAppNamesValidator();
+  }
+
+  addForbiddenAppNamesValidator(): void {
+    this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
+    this.form.controls.release_name.updateValueAndValidity();
+  }
 
   onSubmit(): void {
     this.isLoading = true;
