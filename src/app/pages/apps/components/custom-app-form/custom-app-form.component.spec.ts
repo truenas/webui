@@ -7,13 +7,30 @@ import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { AppState } from 'app/enums/app-state.enum';
+import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
+import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+
+const fakeApp = {
+  name: 'test-app-one',
+  version: '1',
+  id: 'test-app-one',
+  state: AppState.Running,
+  upgrade_available: true,
+  human_version: '2022.10_1.0.7',
+  metadata: {
+    app_version: '2022.10_1.0.8',
+    icon: 'path-to-icon',
+    train: 'stable',
+  },
+} as App;
 
 describe('CustomAppFormComponent', () => {
   let spectator: Spectator<CustomAppFormComponent>;
@@ -28,6 +45,11 @@ describe('CustomAppFormComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockProvider(ApplicationsService, {
+        getAllApps: jest.fn(() => {
+          return of([fakeApp]);
+        }),
+      }),
       mockProvider(ErrorHandlerService),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -60,5 +82,15 @@ describe('CustomAppFormComponent', () => {
       app_name: 'test',
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+  });
+
+  it('forbidden app names are not allowed', async () => {
+    spectator.component.form.patchValue({
+      release_name: 'test-app-one',
+    });
+    spectator.detectChanges();
+
+    const button = await loader.getHarness(MatButtonHarness);
+    expect(button.isDisabled()).toBeTruthy();
   });
 });
