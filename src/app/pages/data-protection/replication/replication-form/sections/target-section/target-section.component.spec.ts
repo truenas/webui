@@ -11,7 +11,6 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-
 import {
   TargetSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/target-section/target-section.component';

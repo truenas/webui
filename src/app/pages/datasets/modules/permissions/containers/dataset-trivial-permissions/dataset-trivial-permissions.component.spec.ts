@@ -12,7 +12,6 @@ import {
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';

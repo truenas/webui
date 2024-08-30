@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { MatHint } from '@angular/material/form-field';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { MatInput } from '@angular/material/input';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({

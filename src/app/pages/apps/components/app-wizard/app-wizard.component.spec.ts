@@ -17,7 +17,6 @@ import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynami
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';

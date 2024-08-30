@@ -1,9 +1,9 @@
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgClass } from '@angular/common';
 
 @UntilDestroy()
 @Component({

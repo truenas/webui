@@ -2,10 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component, Input, input, output,
 } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { MatIconButton } from '@angular/material/button';
 
 @Component({
   selector: 'ix-list-item',

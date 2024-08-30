@@ -8,7 +8,6 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
-
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SigninFormComponent } from 'app/views/sessions/signin/signin-form/signin-form.component';

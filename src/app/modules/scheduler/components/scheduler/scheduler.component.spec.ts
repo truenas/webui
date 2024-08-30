@@ -9,7 +9,6 @@ import {
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { SchedulerModalComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';

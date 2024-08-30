@@ -7,7 +7,6 @@ import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-i
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
 
-
 describe('IxIconGroupComponent', () => {
   let spectator: SpectatorHost<IxIconGroupComponent>;
   let loader: HarnessLoader;

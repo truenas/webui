@@ -6,7 +6,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, throwError } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,

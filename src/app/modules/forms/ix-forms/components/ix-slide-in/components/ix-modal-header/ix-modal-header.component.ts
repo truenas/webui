@@ -1,14 +1,14 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { TranslateModule } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { AuthService } from 'app/services/auth/auth.service';
-import { TranslateModule } from '@ngx-translate/core';
-import { AsyncPipe } from '@angular/common';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { AuthService } from 'app/services/auth/auth.service';
 
 @Component({
   selector: 'ix-modal-header',

@@ -8,7 +8,6 @@ import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
-
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { UploadService } from 'app/services/upload.service';

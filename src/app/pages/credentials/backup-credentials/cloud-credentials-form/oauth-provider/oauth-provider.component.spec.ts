@@ -7,7 +7,6 @@ import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
-
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   OauthProviderComponent, OauthProviderData,

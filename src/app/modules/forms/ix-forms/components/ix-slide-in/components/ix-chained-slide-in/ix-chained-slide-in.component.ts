@@ -1,14 +1,14 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ElementRef, input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { IxSlideIn2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-slide-in2/ix-slide-in2.component';
 import {
   ChainedComponentSerialized,
   IxChainedSlideInService,
 } from 'app/services/ix-chained-slide-in.service';
-import { AsyncPipe } from '@angular/common';
-import { IxSlideIn2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-slide-in2/ix-slide-in2.component';
 
 @UntilDestroy()
 @Component({
