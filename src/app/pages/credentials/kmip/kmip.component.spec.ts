@@ -11,6 +11,9 @@ import {
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import {
+  WithManageCertificatesLinkComponent,
+} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -25,6 +28,7 @@ describe('KmipComponent', () => {
     component: KmipComponent,
     imports: [
       ReactiveFormsModule,
+      WithManageCertificatesLinkComponent,
     ],
     providers: [
       mockWebSocket([

@@ -7,6 +7,7 @@ import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
+import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
@@ -20,6 +21,7 @@ describe('EditPosixAceComponent', () => {
     component: EditPosixAceComponent,
     imports: [
       ReactiveFormsModule,
+      IxPermissionsComponent,
     ],
     providers: [
       mockProvider(DatasetAclEditorStore, {

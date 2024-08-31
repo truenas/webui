@@ -8,8 +8,12 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import {
+  WithManageCertificatesLinkComponent,
+} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -66,6 +70,8 @@ describe('ServiceFtpComponent', () => {
     component: ServiceFtpComponent,
     imports: [
       ReactiveFormsModule,
+      IxPermissionsComponent,
+      WithManageCertificatesLinkComponent,
     ],
     providers: [
       mockWebSocket([

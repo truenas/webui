@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -77,6 +77,7 @@ describe('JobsListComponent', () => {
       MockModule(PageHeaderModule),
       SearchInput1Component,
       MatButtonToggleGroup,
+      MatButtonToggle,
       CopyButtonComponent,
     ],
     declarations: [
