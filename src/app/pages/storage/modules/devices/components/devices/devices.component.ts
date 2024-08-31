@@ -171,7 +171,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     const dataNodesWithRootSet: DeviceNestedDataNode[] = dataNodes.map((node: DeviceNestedDataNode) => {
       return {
         ...node,
-        children: node.children.map((child: TopologyDisk | TopologyItem) => {
+        children: node.children.map((child: TopologyItem) => {
           child.isRoot = true;
           return child;
         }) as TopologyDisk[],

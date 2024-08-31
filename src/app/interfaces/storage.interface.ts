@@ -3,7 +3,7 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
-export type TopologyItem = VDev | TopologyDisk;
+export type TopologyItem = (VDev | TopologyDisk) & { isRoot?: boolean };
 
 export interface VDev {
   type: Exclude<TopologyItemType, TopologyItemType.Disk>;
@@ -15,7 +15,6 @@ export interface VDev {
   status: TopologyItemStatus;
   unavail_disk: unknown;
   disk?: string;
-  isRoot?: boolean;
 }
 
 export interface TopologyDisk {
@@ -28,7 +27,6 @@ export interface TopologyDisk {
   path: string;
   stats: TopologyItemStats;
   status: TopologyItemStatus;
-  isRoot?: boolean;
   unavail_disk: unknown;
 }
 
