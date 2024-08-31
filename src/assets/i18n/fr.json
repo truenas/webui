@@ -4391,7 +4391,6 @@
   "Target dataset encryption will be inherited from its parent dataset.": "Le chiffrement du dataset cible sera hérité de son dataset parent.",
   "Target with this name already exists": "La cible portant ce nom existe déjà",
   "Targets": "Cibles",
-  "Task Aborted": "Tâche annulée",
   "Task Name": "Nom de la tâche",
   "Task created": "Tâche créée",
   "Task is on hold": "La tâche est en attente",
