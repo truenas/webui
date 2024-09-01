@@ -88,7 +88,7 @@ export class DiskWipeDialogComponent {
           message: helptextDisks.diskWipeDialogForm.infoContent,
           hideCancel: true,
         });
-        this.dialogRef.close();
+        this.dialogRef.close(true);
       });
   }
 }
