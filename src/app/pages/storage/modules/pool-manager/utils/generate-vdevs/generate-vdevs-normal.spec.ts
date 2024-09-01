@@ -6,7 +6,7 @@ import { PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/stor
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { generateVdevDisks, expectDisks } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/test-utils';
+import { generateVdevDisks, expectDisks, categorySequence } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/test-utils';
 
 describe('GenerateVdevsService - normal cases', () => {
   let spectator: SpectatorService<GenerateVdevsService>;
@@ -27,6 +27,7 @@ describe('GenerateVdevsService - normal cases', () => {
         },
       } as PoolManagerTopology,
       maximizeDispersal: false,
+      categorySequence,
     });
 
     expect(vdevs).toEqual({
@@ -65,6 +66,7 @@ describe('GenerateVdevsService - normal cases', () => {
         },
       } as PoolManagerTopology,
       maximizeDispersal: false,
+      categorySequence,
     });
 
     expect(vdevs).toEqual({
@@ -110,6 +112,7 @@ describe('GenerateVdevsService - normal cases', () => {
         },
       } as PoolManagerTopology,
       maximizeDispersal: false,
+      categorySequence,
     });
 
     expect(vdevs).toEqual({

@@ -262,10 +262,10 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
             { type: TopologyItemType.Mirror, disks: ['sda3', 'sda0'] },
           ],
           dedup: [
-            { type: TopologyItemType.Mirror, disks: ['sda1', 'sda2', 'sda5'] },
+            { type: TopologyItemType.Mirror, disks: ['sda2', 'sda5', 'sda6'] },
           ],
           log: [
-            { type: TopologyItemType.Stripe, disks: ['sda6'] },
+            { type: TopologyItemType.Stripe, disks: ['sda1'] },
           ],
           spares: [],
           special: [],
