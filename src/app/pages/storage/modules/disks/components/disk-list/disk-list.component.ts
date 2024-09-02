@@ -183,12 +183,6 @@ export class DiskListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(request$);
     this.dataProvider.load();
-
-    // this.dataProvider.currentPage$.pipe(
-    //   untilDestroyed(this),
-    // ).subscribe((disks) => {
-    //   this.visibleRows = disks;
-    // })
   }
 
   manualTest(disks: DiskUi[]): void {
