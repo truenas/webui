@@ -2,7 +2,7 @@ import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { maxBy } from 'lodash';
+import { maxBy } from 'lodash-es';
 import { forkJoin, Subject } from 'rxjs';
 import {
   map, take, switchMap, tap,

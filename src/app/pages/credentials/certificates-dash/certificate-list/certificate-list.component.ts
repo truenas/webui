@@ -5,7 +5,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { isObject } from 'lodash';
+import { isObject } from 'lodash-es';
 import {
   filter, map, of, switchMap, tap,
 } from 'rxjs';

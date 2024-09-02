@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { produce } from 'immer';
-import { chain } from 'lodash';
+import { chain } from 'lodash-es';
 import { Observable, switchMap, tap } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';

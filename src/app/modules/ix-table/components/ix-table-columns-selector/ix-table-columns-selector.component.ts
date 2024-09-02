@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 

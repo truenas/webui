@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';

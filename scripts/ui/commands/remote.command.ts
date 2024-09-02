@@ -23,25 +23,25 @@ function saveProxyConfig(file: string, url: string): void {
   fs.writeFileSync(file, result, 'utf8');
 }
 
-function printCurrentRemote(): void {
-  const environment = getCurrentConfig();
+async function printCurrentRemote(): Promise<void> {
+  const environment = await getCurrentConfig();
   const remote = environment.remote === '_REMOTE_' ? 'Not set' : environment.remote;
   const report = `Server URL: ${remote}`;
   console.info(report);
 }
 
-export function remoteCommand(ip: string, force: boolean): void {
+export async function remoteCommand(ip: string, force: boolean): Promise<void> {
   const proxyConfigJson = './proxy.config.json';
   const url = force ? ip : normalizeUrl(ip);
 
-  printCurrentRemote();
+  await printCurrentRemote();
 
   if (!url) {
     process.exit(0);
   }
 
   saveProxyConfig(proxyConfigJson, url);
-  updateEnvironment({
+  await updateEnvironment({
     remote: url,
   });
   console.info(`New Server URL: ${url}`);
