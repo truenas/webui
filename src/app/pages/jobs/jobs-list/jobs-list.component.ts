@@ -58,7 +58,6 @@ export class JobsListComponent implements OnInit {
       title: this.translate.instant('State'),
       propertyName: 'state',
       cssClass: 'state-button',
-      getJob: (row) => row,
     }),
     textColumn({
       title: this.translate.instant('ID'),

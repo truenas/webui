@@ -15,7 +15,7 @@ export abstract class ColumnComponent<T> {
     return this.getValue ? this.getValue(this.row) : this.row[this.propertyName];
   }
 
-  protected row: T;
+  row: T;
 
   getRow(): T {
     return this.row;

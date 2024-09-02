@@ -1,9 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, Observable } from 'rxjs';
+import {
+  catchError, EMPTY, Observable, of, switchMap, tap,
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextGlobal } from 'app/helptext/global-helptext';
@@ -31,54 +35,73 @@ interface RowState {
   styleUrls: ['./ix-cell-state-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
+export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements OnInit {
   matDialog: MatDialog = inject(MatDialog);
   translate: TranslateService = inject(TranslateService);
   dialogService: DialogService = inject(DialogService);
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
 
+  private cdr = inject(ChangeDetectorRef);
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
+  job = signal<Job>(null);
+  jobUpdates$: Observable<Job<ApiJobResponse<ApiJobMethod>>>;
+
+  ngOnInit(): void {
+    this.jobUpdates$ = this.store$.pipe(
+      select(selectJob((this.row as Job).id)),
+      tap((job) => {
+        this.job.set(job);
+      }),
+    ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>;
+    this.jobUpdates$.pipe(
+      switchMap((job) => {
+        return [JobState.Aborted, JobState.Error, JobState.Failed,
+          JobState.Finished, JobState.Success].includes(job.state)
+          ? EMPTY
+          : of(job);
+      }),
+      observeJob(),
+      tap((job) => {
+        this.job.set(job);
+        this.cdr.markForCheck();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   getWarnings?: (row: T) => unknown[];
-  getJob?: (row: T) => Job;
 
   protected get warnings(): unknown[] {
     return this.getWarnings ? this.getWarnings(this.row) : [];
   }
 
-  protected get job(): Job {
-    return this.getJob ? this.getJob(this.row) : undefined;
-  }
-
-  protected get state(): JobState {
-    return this.value as JobState;
-  }
-
   protected get tooltip(): string {
-    if (this.job?.logs_path && this.job?.logs_excerpt) {
+    if (this.job()?.logs_path && this.job()?.logs_excerpt) {
       return this.translate.instant('Show Logs');
     }
 
     return this.translate.instant('No logs available');
   }
 
+  // ngOnDestroy(): void {
+  // console.log('[ix-cell-state-button][ngOnDestroy] destroyed');
+  // }
+
   protected onButtonClick(): void {
     let state = (this.row as RowState).state;
+    // console.log('[ix-cell-state-button][onButtonClick] job', this.job);
 
-    if (this.job?.state && !state) {
+    if (this.job()?.state && !state) {
       state = {
-        state: this.job.state,
-        error: this.job.error,
+        state: this.job().state,
+        error: this.job().error,
       } as RowState['state'];
     }
 
     if (this.job && state) {
-      if (this.job.state === JobState.Running) {
+      if (this.job().state === JobState.Running) {
         this.dialogService.jobDialog(
-          this.store$.pipe(
-            select(selectJob(this.job.id)),
-            observeJob(),
-          ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>,
+          this.jobUpdates$.pipe(observeJob()),
           {
             title: this.translate.instant('Task is running'),
             canMinimize: true,
@@ -101,7 +124,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
         this.dialogService.error({ title: state.state, message: `<pre>${list}</pre>` });
       } else if (state.error) {
         this.dialogService.error({ title: state.state, message: `<pre>${state.error}</pre>` });
-      } else if (!this.job.logs_excerpt) {
+      } else if (!this.job().logs_excerpt) {
         this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
       } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: this.job });
@@ -117,7 +140,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
       return 'fn-theme-orange';
     }
 
-    switch (this.state) {
+    switch (this.job().state) {
       case JobState.Pending:
       case JobState.Aborted:
       case JobState.Running:

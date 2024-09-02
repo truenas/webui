@@ -23,6 +23,10 @@ export class IxTableBodyCellDirective<T> implements AfterViewInit {
     this.createComponent();
   }
 
+  // ngOnDestroy(): void {
+  //   console.log('[ix-body-cell][ngOnDestroy] destroy');
+  // }
+
   createComponent(): void {
     if (!this.column.type) {
       this.column.type = IxCellTextComponent;

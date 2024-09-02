@@ -79,8 +79,22 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
       && (this.dataProvider?.expandedRow?.[this.detailsRowIdentifier] === row?.[this.detailsRowIdentifier]);
   }
 
-  // TODO: Come up with a proper identifier
-  protected trackByIdentity<X>(item: X): X {
-    return item;
+  protected trackRowByIdentity(item: T): string {
+    return this.getTestAttr(item);
   }
+
+  protected displayedColumnsForRow(row: T, columns: Column<T, ColumnComponent<T>>[]): Column<T, ColumnComponent<T>>[] {
+    for (const column of columns) {
+      column.row = row;
+    }
+    return columns;
+  }
+
+  protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>): string {
+    return this.getTestAttr(column.row) + '-' + (column.title || 'actions');
+  }
+
+  // ngOnDestroy(): void {
+  // console.log('[ix-table-body][ngOnDestroy] destroyed');
+  // }
 }

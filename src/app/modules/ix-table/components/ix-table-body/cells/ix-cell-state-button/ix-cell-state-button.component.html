@@ -1,4 +1,4 @@
-@if (state) {
+@if (job().state) {
   <button
     mat-stroked-button
     class="state-button"
@@ -9,7 +9,7 @@
     [attr.aria-label]="getAriaLabel(row)"
     (click)="$event.stopPropagation(); onButtonClick()"
   >
-    {{ state }}
+    {{ job().state }}
     @if (warnings?.length > 0) {
       <div class="label-warning-icon">
         <ix-icon name="mdi-alert"></ix-icon>

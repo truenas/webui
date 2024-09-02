@@ -123,7 +123,6 @@ export class RsyncTaskListComponent implements OnInit {
 
         return row.job.state;
       },
-      getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     yesNoColumn({
