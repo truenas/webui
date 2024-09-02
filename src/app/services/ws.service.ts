@@ -6,6 +6,8 @@ import {
   merge, Observable, of, Subject, Subscriber, throwError,
 } from 'rxjs';
 import {
+  debounceTime,
+  distinctUntilChanged,
   filter, map, share, startWith, switchMap, take, takeUntil, tap,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -137,6 +139,13 @@ export class WebSocketService {
   clearSubscriptions(): void {
     this.clearSubscriptions$.next();
     this.eventSubscribers.clear();
+  }
+
+  getDebouncedWebSocketStream$(): Observable<unknown> {
+    return this.ws$.pipe(
+      debounceTime(5000),
+      distinctUntilChanged(),
+    );
   }
 
   private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;

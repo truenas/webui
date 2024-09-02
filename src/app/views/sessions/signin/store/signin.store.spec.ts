@@ -15,6 +15,7 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { TokenLifetimeService } from 'app/services/token-lifetime.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -24,6 +25,7 @@ describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
   let websocket: MockWebSocketService;
   let authService: AuthService;
+  let tokenLifetimeService: TokenLifetimeService;
   const testScheduler = getTestScheduler();
 
   const createService = createServiceFactory({
@@ -67,6 +69,7 @@ describe('SigninStore', () => {
     spectator = createService();
     websocket = spectator.inject(MockWebSocketService);
     authService = spectator.inject(AuthService);
+    tokenLifetimeService = spectator.inject(TokenLifetimeService);
 
     Object.defineProperty(authService, 'authToken$', {
       value: of('EXISTING_TOKEN'),
@@ -74,7 +77,12 @@ describe('SigninStore', () => {
     Object.defineProperty(authService, 'user$', {
       get: () => of({ twofactor_auth_configured: false }),
     });
+    Object.defineProperty(tokenLifetimeService, 'isTokenWithinTimeline', {
+      get: () => true,
+      configurable: true,
+    });
     jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
+    jest.spyOn(authService, 'clearAuthToken').mockReturnValue(null);
   });
 
   describe('selectors', () => {
@@ -178,6 +186,16 @@ describe('SigninStore', () => {
 
       expect(authService.loginWithToken).toHaveBeenCalled();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
+    });
+
+    it('should not call "loginWithToken" if token is not within timeline and clear auth token', () => {
+      jest.spyOn(tokenLifetimeService, 'isTokenWithinTimeline', 'get').mockReturnValue(false);
+
+      spectator.service.init();
+
+      expect(authService.clearAuthToken).toHaveBeenCalled();
+      expect(authService.loginWithToken).not.toHaveBeenCalled();
+      expect(spectator.inject(Router).navigateByUrl).not.toHaveBeenCalled();
     });
   });
 

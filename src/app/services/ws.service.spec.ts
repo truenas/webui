@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -163,5 +163,29 @@ describe('WebSocketService', () => {
       expect(service.clearSubscriptions$.next).toHaveBeenCalled();
       expect(mockEventSubscriptions.size).toBe(0);
     });
+  });
+
+  describe('getDebouncedWebSocketStream$', () => {
+    it('should debounce and emit distinct values', fakeAsync(() => {
+      const emittedValues: unknown[] = [];
+
+      service.getDebouncedWebSocketStream$().subscribe((value) => emittedValues.push(value));
+
+      mockWebSocketConnectionService.websocket$.next(1);
+      tick(1000);
+
+      mockWebSocketConnectionService.websocket$.next(2);
+      tick(6000);
+
+      mockWebSocketConnectionService.websocket$.next(3);
+      tick(1000);
+
+      mockWebSocketConnectionService.websocket$.next(4);
+      tick(5000);
+
+      mockWebSocketConnectionService.websocket$.complete();
+
+      expect(emittedValues).toEqual([2, 4]);
+    }));
   });
 });

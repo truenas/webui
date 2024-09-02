@@ -20,6 +20,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { TokenLifetimeService } from 'app/services/token-lifetime.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -68,6 +69,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   constructor(
     private ws: WebSocketService,
     private translate: TranslateService,
+    private tokenLifetimeService: TokenLifetimeService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private router: Router,
@@ -93,6 +95,15 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.loadFailoverStatus(),
         this.updateService.hardRefreshIfNeeded(),
       ]).pipe(
+        filter(() => {
+          const isTokenWithinTimeline = this.tokenLifetimeService.isTokenWithinTimeline;
+
+          if (!isTokenWithinTimeline) {
+            this.authService.clearAuthToken();
+          }
+
+          return isTokenWithinTimeline;
+        }),
         switchMap(() => this.authService.loginWithToken()),
         tap((loginResult) => {
           if (loginResult !== LoginResult.Success) {
