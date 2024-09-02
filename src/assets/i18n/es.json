@@ -4611,7 +4611,7 @@
   "{tasks, plural, =1 {# receive task} other {# receive tasks}}": "",
   "{tasks, plural, =1 {# received task} other {# received tasks}} this week": "",
   "{tasks, plural, =1 {# send task} other {# send tasks}}": "",
-  "{tasks, plural, =1 {# sent task} other {# sent tasks}} this week": "{tasks, plural, =1 {# sent task} otras {# sent tasks}} esta semana",
+  "{tasks, plural, =1 {# sent task} other {# sent tasks}} this week": "{tasks, plural, =1 {# sent task} other {# sent tasks}} esta semana",
   "{temp}°C (All Threads)": "{temp}°C (Todos los hilos)",
   "{temp}°C (Core #{core})": "{temp}°C (Núcleo #{core})",
   "{temp}°C ({coreCount} cores at {temp}°C)": "{temp}°C ({coreCount} nucleos a {temp}°C)",
