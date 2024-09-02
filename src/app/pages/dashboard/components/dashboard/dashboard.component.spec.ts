@@ -10,6 +10,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
   WidgetGroupControlsComponent,
@@ -54,6 +55,7 @@ describe('DashboardComponent', () => {
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of({ error: false, response: groupA })),
       }),
+      mockProvider(SnackbarService),
       provideMockStore(),
     ],
   });
@@ -153,13 +155,8 @@ describe('DashboardComponent', () => {
       const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
       await resetButton.click();
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-        buttonText: 'Reset',
-        cancelText: 'Cancel',
-        hideCheckbox: true,
-        message: 'Are you sure you want to reset your dashboard to the default layout?',
-        title: 'Reset Dashboard',
-      });
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
       expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith(defaultWidgets);
     });
