@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { QrCodeModule } from 'ng-qrcode';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-viewer/qr-viewer.component';
@@ -20,7 +20,6 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
 
 @NgModule({
   imports: [
-    IxFormsModule,
     ReactiveFormsModule,
     CommonModule,
     AppLoaderModule,
@@ -36,6 +35,7 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
     QrCodeModule,
     CommonDirectivesModule,
     routing,
+    IxWarningComponent,
   ],
   declarations: [
     TwoFactorComponent,

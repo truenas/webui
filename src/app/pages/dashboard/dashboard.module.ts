@@ -15,7 +15,14 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeader2Component,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -86,7 +93,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     WidgetResourcesService,
   ],
   imports: [
-    IxFormsModule,
     ReactiveFormsModule,
     TranslateModule,
     AppLoaderModule,
@@ -126,6 +132,12 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     ViewChartAreaComponent,
     ViewChartGaugeComponent,
     NetworkSpeedPipe,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    FormActionsComponent,
+    IxIconGroupComponent,
+    IxModalHeader2Component,
+    IxInputComponent,
   ],
 })
 export class DashboardModule {

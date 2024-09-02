@@ -1,11 +1,12 @@
 import { MatInputModule } from '@angular/material/input';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
+import { MockComponents, MockModule } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
@@ -33,13 +34,14 @@ describe('SigninComponent', () => {
   const hasFailover$ = new BehaviorSubject<boolean>(undefined);
   const canLogin$ = new BehaviorSubject<boolean>(undefined);
   const isConnected$ = new BehaviorSubject<boolean>(undefined);
-  const managedByTrueCommand$ = new BehaviorSubject<boolean>(undefined);
   const loginBanner$ = new BehaviorSubject<string>(undefined);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
     imports: [
       MatInputModule,
+      MockModule(LayoutModule),
+      MockModule(IxIconModule),
     ],
     declarations: [
       MockComponents(
@@ -48,18 +50,10 @@ describe('SigninComponent', () => {
         SetAdminPasswordFormComponent,
         TrueCommandStatusComponent,
         FailoverStatusComponent,
-        CopyrightLineComponent,
       ),
     ],
-    providers: [
-      mockProvider(DialogService, {
-        fullScreenDialog: jest.fn(),
-      }),
-      mockProvider(WebSocketConnectionService, {
-        isConnected$,
-      }),
+    componentProviders: [
       mockProvider(SigninStore, {
-        managedByTrueCommand$,
         wasAdminSet$,
         failover$,
         hasFailover$,
@@ -67,6 +61,14 @@ describe('SigninComponent', () => {
         loginBanner$,
         isLoading$: of(false),
         init: jest.fn(),
+      }),
+    ],
+    providers: [
+      mockProvider(DialogService, {
+        fullScreenDialog: jest.fn(),
+      }),
+      mockProvider(WebSocketConnectionService, {
+        isConnected$,
       }),
     ],
   });
@@ -78,12 +80,11 @@ describe('SigninComponent', () => {
     hasFailover$.next(false);
     canLogin$.next(true);
     isConnected$.next(true);
-    managedByTrueCommand$.next(false);
     loginBanner$.next('');
   });
 
   it('initializes SigninStore on component init', () => {
-    expect(spectator.inject(SigninStore).init).toHaveBeenCalled();
+    expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
   });
 
   describe('disconnected', () => {
@@ -104,7 +105,7 @@ describe('SigninComponent', () => {
     });
 
     it('initializes SigninStore when component is initialized', () => {
-      expect(spectator.inject(SigninStore).init).toHaveBeenCalled();
+      expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
     });
 
     it('shows SigninFormComponent when root password is set,', () => {
@@ -112,11 +113,6 @@ describe('SigninComponent', () => {
     });
 
     it('shows TrueCommandStatusComponent', () => {
-      expect(spectator.query(TrueCommandStatusComponent)).not.toExist();
-
-      managedByTrueCommand$.next(true);
-      spectator.detectChanges();
-
       expect(spectator.query(TrueCommandStatusComponent)).toExist();
     });
 

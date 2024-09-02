@@ -10,7 +10,6 @@ import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.ut
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   StripAclModalComponent, StripAclModalData,
 } from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
@@ -22,7 +21,6 @@ describe('StripAclModalComponent', () => {
   const createComponent = createComponentFactory({
     component: StripAclModalComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [

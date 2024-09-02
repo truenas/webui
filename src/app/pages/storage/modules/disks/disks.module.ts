@@ -11,7 +11,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -38,7 +47,6 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     CommonModule,
     TranslateModule,
     ReactiveFormsModule,
-    IxFormsModule,
     MatButtonModule,
     MatDialogModule,
     RouterModule.forChild(routes),
@@ -55,6 +63,14 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     SearchInput1Component,
     UnusedDiskSelectComponent,
     FormatDateTimePipe,
+    IxModalHeaderComponent,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    IxWarningComponent,
+    IxChipsComponent,
   ],
   declarations: [
     DiskBulkEditComponent,

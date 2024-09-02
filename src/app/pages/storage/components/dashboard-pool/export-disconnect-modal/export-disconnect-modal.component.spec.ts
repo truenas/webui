@@ -17,7 +17,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -66,7 +65,6 @@ describe('ExportDisconnectModalComponent', () => {
     return createComponentFactory({
       component: ExportDisconnectModalComponent,
       imports: [
-        IxFormsModule,
         ReactiveFormsModule,
         AppLoaderModule,
       ],

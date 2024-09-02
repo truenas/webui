@@ -6,7 +6,6 @@ import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   PoolCardIconComponent,
 } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
@@ -23,7 +22,6 @@ describe('TopologyCardComponent', () => {
   const createComponent = createComponentFactory({
     component: TopologyCardComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     declarations: [

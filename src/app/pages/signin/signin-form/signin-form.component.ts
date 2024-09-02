@@ -16,7 +16,7 @@ import { filter, take } from 'rxjs/operators';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
@@ -34,13 +34,13 @@ import { WebSocketService } from 'app/services/ws.service';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    IxFormsModule,
     CommonDirectivesModule,
     InsecureConnectionComponent,
     MatButton,
     TestIdModule,
     AsyncPipe,
     TranslateModule,
+    IxInputComponent,
   ],
 })
 export class SigninFormComponent implements OnInit {

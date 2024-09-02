@@ -51,7 +51,6 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
   providers: [SigninStore],
 })
 export class SigninComponent implements OnInit {
-  readonly managedByTrueCommand$ = this.signinStore.managedByTrueCommand$;
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly failover$ = this.signinStore.failover$;
   readonly hasFailover$ = this.signinStore.hasFailover$;

@@ -1,8 +1,11 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { async } from 'rxjs';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -11,6 +14,17 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['./true-command-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [TranslateModule],
+  imports: [
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
-export class TrueCommandStatusComponent {}
+export class TrueCommandStatusComponent {
+  protected isManagedByTruecommand$ = this.ws.call('truenas.managed_by_truecommand');
+
+  constructor(
+    private ws: WebSocketService,
+  ) {}
+
+  protected readonly async = async;
+}

@@ -5,9 +5,14 @@ import {
 import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
+import { MatHint } from '@angular/material/form-field';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @UntilDestroy()
 @Component({
@@ -15,6 +20,15 @@ import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.servi
   styleUrls: ['./ix-checkbox.component.scss'],
   templateUrl: './ix-checkbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCheckbox,
+    TestIdModule,
+    TooltipComponent,
+    IxWarningComponent,
+    IxErrorsComponent,
+    MatHint,
+  ],
 })
 export class IxCheckboxComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
   @Input() label: string;

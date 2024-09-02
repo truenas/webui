@@ -9,7 +9,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -19,7 +18,6 @@ describe('CloneVmDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: CloneVmDialogComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [

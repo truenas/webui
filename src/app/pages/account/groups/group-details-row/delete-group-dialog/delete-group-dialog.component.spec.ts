@@ -9,7 +9,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { Group } from 'app/interfaces/group.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -24,7 +23,6 @@ describe('DeleteGroupDialogComponent', () => {
     component: DeleteGroupDialogComponent,
     imports: [
       AppLoaderModule,
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [

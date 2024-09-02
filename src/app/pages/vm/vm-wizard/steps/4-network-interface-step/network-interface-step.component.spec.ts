@@ -5,7 +5,6 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmNicType } from 'app/enums/vm.enum';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   NetworkInterfaceStepComponent,
@@ -20,7 +19,6 @@ describe('NetworkInterfaceStepComponent', () => {
     component: NetworkInterfaceStepComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockWebSocket([

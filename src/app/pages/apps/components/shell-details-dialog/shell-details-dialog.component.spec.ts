@@ -6,7 +6,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
@@ -23,7 +22,6 @@ describe.skip('ShellDetailsDialogComponent', () => {
     imports: [
       AppLoaderModule,
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockProvider(MatDialogRef),

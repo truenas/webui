@@ -12,7 +12,8 @@ import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { RadioOption } from 'app/interfaces/option.interface';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -32,11 +33,12 @@ const adminUsername = 'truenas_admin';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    IxFormsModule,
     MatButton,
     TestIdModule,
     AsyncPipe,
     TranslateModule,
+    IxInputComponent,
+    IxRadioGroupComponent,
   ],
 })
 export class SetAdminPasswordFormComponent {

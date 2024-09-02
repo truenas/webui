@@ -12,7 +12,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
@@ -38,7 +37,6 @@ describe('CertificateAuthorityEditComponent', () => {
     component: CertificateAuthorityEditComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockWebSocket([

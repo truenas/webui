@@ -11,7 +11,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -34,7 +36,6 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     ClipboardModule,
     EntityModule,
     CommonDirectivesModule,
-    IxFormsModule,
     MatButtonModule,
     MatCardModule,
     MatSortModule,
@@ -48,6 +49,9 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     IxTableModule,
     routing,
     SearchInput1Component,
+    IxInputComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
   ],
   declarations: [
     ApiKeyListComponent,

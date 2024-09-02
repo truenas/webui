@@ -5,7 +5,6 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
@@ -18,7 +17,6 @@ describe('QuotasSectionComponent', () => {
   const createComponent = createComponentFactory({
     component: QuotasSectionComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
   });
