@@ -13,7 +13,6 @@ import {
 } from 'app/modules/layout/components/topbar/change-password-dialog/change-password-dialog.component';
 import { userMenuElements } from 'app/modules/layout/components/topbar/user-menu/user-menu.elements';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +31,6 @@ export class UserMenuComponent {
     private matDialog: MatDialog,
     private authService: AuthService,
     private router: Router,
-    private wsManager: WebSocketConnectionService,
   ) { }
 
   openChangePasswordDialog(): void {
@@ -50,8 +48,10 @@ export class UserMenuComponent {
   }
 
   onSignOut(): void {
-    this.authService.logout().pipe(untilDestroyed(this)).subscribe();
-    this.authService.clearAuthToken();
-    this.wsManager.isClosed$ = true;
+    this.authService.logout()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.router.navigate(['/signin']);
+      });
   }
 }

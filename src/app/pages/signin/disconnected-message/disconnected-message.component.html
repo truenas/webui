@@ -1,0 +1,11 @@
+<div class="fake-icon">?</div>
+@if (hasFailover()) {
+  <p>
+    {{ 'Waiting for Active TrueNAS controller to come up...' | translate }}
+  </p>
+} @else {
+  <p>
+    {{ 'Connecting to TrueNAS' | translate }}
+    {{ '... Make sure the TrueNAS system is powered on and connected to the network.' | translate }}
+  </p>
+}

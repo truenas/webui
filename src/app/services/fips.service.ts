@@ -38,7 +38,7 @@ export class FipsService {
       .pipe(
         tap((approved) => {
           if (approved) {
-            this.router.navigate(['/others/reboot'], { skipLocationChange: true });
+            this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
           }
         }),
       );
@@ -58,7 +58,7 @@ export class FipsService {
       tap((approved) => {
         this.isFailoverPromptOpen = false;
         if (approved) {
-          this.router.navigate(['/others/failover'], { skipLocationChange: true });
+          this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
         }
       }),
     );
