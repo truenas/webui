@@ -111,8 +111,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
             this.errorHandler.showErrorModal(error);
             return EMPTY;
           }),
-        // TODO: Remove this ignore eslint lint line and add takeUntil (untilDestroyed)
-        // eslint-disable-next-line rxjs-angular/prefer-takeuntil
+          untilDestroyed(this),
         ).subscribe();
       } else if (state.state === JobState.Hold) {
         this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
