@@ -88,31 +88,14 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   // }
 
   protected onButtonClick(): void {
-    let state = (this.row as RowState).state;
-    // console.log('[ix-cell-state-button][onButtonClick] job', this.job);
-
-    if (this.job()?.state && !state) {
-      state = {
-        state: this.job().state,
-        error: this.job().error,
-      } as RowState['state'];
-    }
+    const state = {
+      state: this.job().state,
+      error: this.job().error,
+    } as RowState['state'];
 
     if (this.job && state) {
       if (this.job().state === JobState.Running) {
-        this.dialogService.jobDialog(
-          this.jobUpdates$.pipe(observeJob()),
-          {
-            title: this.translate.instant('Task is running'),
-            canMinimize: true,
-          },
-        ).afterClosed().pipe(
-          catchError((error) => {
-            this.errorHandler.showErrorModal(error);
-            return EMPTY;
-          }),
-          untilDestroyed(this),
-        ).subscribe();
+        this.showJobDialog();
       } else if (state.state === JobState.Hold) {
         this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
       } else if (state.warnings?.length > 0) {
@@ -131,6 +114,22 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     } else {
       this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
     }
+  }
+
+  showJobDialog(): void {
+    this.dialogService.jobDialog(
+      this.jobUpdates$.pipe(observeJob()),
+      {
+        title: this.translate.instant('Task is running'),
+        canMinimize: true,
+      },
+    ).afterClosed().pipe(
+      catchError((error) => {
+        this.errorHandler.showErrorModal(error);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   protected getButtonClass(): string {
