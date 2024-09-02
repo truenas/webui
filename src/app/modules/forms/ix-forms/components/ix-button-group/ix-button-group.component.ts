@@ -1,16 +1,33 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
+import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatHint } from '@angular/material/form-field';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @Component({
   selector: 'ix-button-group',
   templateUrl: './ix-button-group.component.html',
   styleUrls: ['./ix-button-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    TestIdModule,
+    MatButtonToggleGroup,
+    MatButtonToggle,
+    IxErrorsComponent,
+    MatHint,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class IxButtonGroupComponent implements ControlValueAccessor {
   @Input() label: string;

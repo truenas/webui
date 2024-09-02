@@ -1,12 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, Input,
   signal,
 } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
@@ -16,6 +23,17 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
   templateUrl: './ix-modal-header2.component.html',
   styleUrls: ['./ix-modal-header2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatIconButton,
+    TestIdModule,
+    MatTooltip,
+    IxIconModule,
+    ReadOnlyComponent,
+    MatProgressBar,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class IxModalHeader2Component implements AfterViewInit {
   @Input() title: string;

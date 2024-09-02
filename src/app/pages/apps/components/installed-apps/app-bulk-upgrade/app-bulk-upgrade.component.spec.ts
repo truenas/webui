@@ -14,7 +14,6 @@ import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -77,7 +76,11 @@ describe('AppBulkUpgradeComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppBulkUpgradeComponent,
-    imports: [AppLoaderModule, ReactiveFormsModule, IxFormsModule, ImgFallbackModule],
+    imports: [
+      AppLoaderModule,
+      ReactiveFormsModule,
+      ImgFallbackModule,
+    ],
     declarations: [
       BulkListItemComponent,
       FakeFormatDateTimePipe,

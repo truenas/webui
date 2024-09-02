@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
@@ -17,7 +16,7 @@ describe('WidgetPoolSettingsComponent', () => {
 
   const createComponent = createComponentFactory({
     component: WidgetPoolSettingsComponent,
-    imports: [ReactiveFormsModule, IxFormsModule],
+    imports: [ReactiveFormsModule],
     providers: [
       mockProvider(WidgetSettingsRef, {
         getSettings: jest.fn(() => settings$),

@@ -2,7 +2,13 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
+import { MatInput } from '@angular/material/input';
+import { MatSelectChange, MatSelect } from '@angular/material/select';
+import { TranslateModule } from '@ngx-translate/core';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { NetworkService } from 'app/services/network.service';
 
 @Component({
@@ -10,6 +16,16 @@ import { NetworkService } from 'app/services/network.service';
   templateUrl: './ix-ip-input-with-netmask.component.html',
   styleUrls: ['./ix-ip-input-with-netmask.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    TestIdModule,
+    MatInput,
+    MatSelect,
+    MatOption,
+    IxErrorsComponent,
+    TranslateModule,
+  ],
 })
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   @Input() label: string;

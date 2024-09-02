@@ -9,7 +9,6 @@ import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   AclEditorSaveControlsComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/acl-editor-save-controls/acl-editor-save-controls.component';
@@ -26,7 +25,6 @@ describe('AclEditorSaveControlsComponent', () => {
   const createComponent = createComponentFactory({
     component: AclEditorSaveControlsComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [
