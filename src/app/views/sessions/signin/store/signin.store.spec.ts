@@ -35,7 +35,6 @@ describe('SigninStore', () => {
         mockCall('failover.get_ips', ['123.23.44.54']),
         mockCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
-        mockCall('truenas.managed_by_truecommand', false),
         mockCall('system.advanced.login_banner', ''),
       ]),
       mockProvider(WebSocketConnectionService, {
@@ -87,7 +86,6 @@ describe('SigninStore', () => {
     const initialState = {
       failover: initialFailover,
       wasAdminSet: true,
-      managedByTrueCommand: false,
       isLoading: false,
       loginBanner: '',
     };
@@ -132,7 +130,6 @@ describe('SigninStore', () => {
 
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
-        managedByTrueCommand: false,
         loginBanner: 'HELLO USER',
         isLoading: false,
         failover: {
@@ -149,7 +146,6 @@ describe('SigninStore', () => {
 
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
-        managedByTrueCommand: false,
         loginBanner: '',
         isLoading: false,
         failover: {
@@ -168,7 +164,6 @@ describe('SigninStore', () => {
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
         isLoading: false,
-        managedByTrueCommand: false,
         loginBanner: '',
         failover: {
           disabledReasons: [FailoverDisabledReason.NoLicense],
@@ -212,7 +207,6 @@ describe('SigninStore', () => {
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
         isLoading: false,
-        managedByTrueCommand: false,
         loginBanner: '',
         failover: {
           disabledReasons: [FailoverDisabledReason.NoLicense],
@@ -243,7 +237,6 @@ describe('SigninStore', () => {
         expectObservable(spectator.service.state$).toBe('a', {
           a: {
             wasAdminSet: true,
-            managedByTrueCommand: false,
             isLoading: false,
             loginBanner: '',
             failover: {

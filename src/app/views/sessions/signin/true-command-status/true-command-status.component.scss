@@ -1,13 +1,12 @@
 :host {
   align-items: center;
   display: flex;
+  justify-content: center;
   text-align: center;
 
   img {
     cursor: pointer;
     height: 24px;
-    position: relative;
-    top: 7px;
   }
 
   .truecommand-text {

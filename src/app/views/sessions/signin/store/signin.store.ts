@@ -28,7 +28,6 @@ import { loginBannerUpdated } from 'app/store/system-config/system-config.action
 interface SigninState {
   isLoading: boolean;
   wasAdminSet: boolean;
-  managedByTrueCommand: boolean;
   failover: {
     status: FailoverStatus;
     ips?: string[];
@@ -39,7 +38,6 @@ interface SigninState {
 
 const initialState: SigninState = {
   isLoading: false,
-  managedByTrueCommand: false,
   wasAdminSet: true,
   failover: null,
   loginBanner: null,
@@ -49,7 +47,6 @@ const initialState: SigninState = {
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
   loginBanner$ = this.select((state) => state.loginBanner);
-  managedByTrueCommand$ = this.select((state) => state.managedByTrueCommand);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   failover$ = this.select((state) => state.failover);
   isLoading$ = this.select((state) => state.isLoading);
@@ -89,11 +86,10 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => this.setLoadingState(true)),
-    switchMap(() => this.checkForLoginBanner()),
     switchMap(() => {
       return forkJoin([
         this.checkIfAdminPasswordSet(),
-        this.checkIfManagedByTrueCommand(),
+        this.checkForLoginBanner(),
         this.loadFailoverStatus(),
         this.updateService.hardRefreshIfNeeded(),
       ]).pipe(
@@ -198,16 +194,6 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.window.sessionStorage.removeItem('loginBannerDismissed');
       this.patchState({ loginBanner });
     });
-  }
-
-  private checkIfManagedByTrueCommand(): Observable<boolean> {
-    return this.ws.call('truenas.managed_by_truecommand').pipe(
-      tap((managedByTrueCommand) => this.patchState({ managedByTrueCommand })),
-      catchError((error) => {
-        this.errorHandler.showErrorModal(error);
-        return of(initialState.managedByTrueCommand);
-      }),
-    );
   }
 
   private checkIfAdminPasswordSet(): Observable<boolean> {
