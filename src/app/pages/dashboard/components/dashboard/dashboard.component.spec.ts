@@ -155,10 +155,13 @@ describe('DashboardComponent', () => {
       const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
       await resetButton.click();
 
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Default widgets restored');
+
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith(defaultWidgets);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
 
     it('saves new configuration when Save is pressed', async () => {
@@ -169,6 +172,7 @@ describe('DashboardComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith([groupB, groupC, groupD]);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
 
     it('reverts to loaded configuration when Cancel button is pressed', async () => {
