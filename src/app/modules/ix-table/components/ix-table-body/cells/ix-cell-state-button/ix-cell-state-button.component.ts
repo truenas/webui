@@ -83,10 +83,6 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     return this.translate.instant('No logs available');
   }
 
-  // ngOnDestroy(): void {
-  // console.log('[ix-cell-state-button][ngOnDestroy] destroyed');
-  // }
-
   protected onButtonClick(): void {
     const state = {
       state: this.job().state,

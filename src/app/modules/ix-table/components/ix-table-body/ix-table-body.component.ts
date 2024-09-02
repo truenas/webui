@@ -93,8 +93,4 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>): string {
     return this.getTestAttr(column.row) + '-' + (column.title || 'actions');
   }
-
-  // ngOnDestroy(): void {
-  // console.log('[ix-table-body][ngOnDestroy] destroyed');
-  // }
 }
