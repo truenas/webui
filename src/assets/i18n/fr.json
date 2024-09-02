@@ -2592,7 +2592,6 @@
   "Failover is in an error state.": "Le basculement est en état d'erreur.",
   "Failover is recommended for new FIPS setting to take effect. Would you like to failover now?": "Le failover est recommandé pour que le nouveau paramètre FIPS prenne effet. Souhaitez-vous effectuer un faileover maintenant ?",
   "Fatal error! Check logs.": "Erreur fatale ! Vérifiez les logs.",
-  "Fault light is on.": "Le voyant de défaut est allumé.",
   "Faulted": "Faulted",
   "Feature Request": "Demande de fonctionnalité",
   "Features": "Fonctionnalités",
