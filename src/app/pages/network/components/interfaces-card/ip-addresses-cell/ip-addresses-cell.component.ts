@@ -4,7 +4,7 @@ import {
 import * as _ from 'lodash-es';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Component({
   selector: 'ix-ip-addresses-cell',
@@ -15,9 +15,9 @@ import { ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.in
 export class IpAddressesCellComponent extends ColumnComponent<NetworkInterface> {
   protected addresses: string[] = [];
 
-  override setRow(row: NetworkInterface): void {
+  override setRow = (row: NetworkInterface): void => {
     this.addresses = this.extractAddresses(row);
-  }
+  };
 
   extractAddresses(row: NetworkInterface): string[] {
     const addresses = this.aliasesToAddress(row.aliases);

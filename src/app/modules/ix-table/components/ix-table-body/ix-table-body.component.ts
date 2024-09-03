@@ -12,8 +12,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 
 @UntilDestroy()
 @Component({
@@ -85,12 +85,12 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
 
   protected displayedColumnsForRow(row: T, columns: Column<T, ColumnComponent<T>>[]): Column<T, ColumnComponent<T>>[] {
     for (const column of columns) {
-      column.row = row;
+      column.setRow(row);
     }
     return columns;
   }
 
   protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>): string {
-    return this.getTestAttr(column.row) + '-' + (column.title || 'actions');
+    return this.getTestAttr(column.getRow()) + '-' + (column.title || 'actions');
   }
 }

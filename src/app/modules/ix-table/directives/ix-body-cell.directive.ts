@@ -5,7 +5,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { IxCellTextComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Directive({
   selector: '[ix-body-cell]',
@@ -34,6 +34,9 @@ export class IxTableBodyCellDirective<T> implements AfterViewInit {
 
     componentRef.instance.setRow(this.row);
     Object.keys(this.column).forEach((key: keyof ColumnComponent<T>) => {
+      if (key === 'value') {
+        return;
+      }
       // TODO: Replace never.
       componentRef.instance[key] = this.column[key] as never;
     });

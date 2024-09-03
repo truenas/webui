@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Component({
   selector: 'ix-cell-checkbox',

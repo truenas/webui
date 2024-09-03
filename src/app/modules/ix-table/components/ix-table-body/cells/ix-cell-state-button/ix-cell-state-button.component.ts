@@ -15,7 +15,7 @@ import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directo
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -49,9 +49,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   ngOnInit(): void {
     this.jobUpdates$ = this.store$.pipe(
       select(selectJob((this.row as Job).id)),
-      tap((job) => {
-        this.job.set(job);
-      }),
+      tap((job) => this.job.set(job)),
     ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>;
     this.jobUpdates$.pipe(
       switchMap((job) => {
@@ -61,10 +59,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
           : of(job);
       }),
       observeJob(),
-      tap((job) => {
-        this.job.set(job);
-        this.cdr.markForCheck();
-      }),
+      tap((job) => this.job.set(job)),
       untilDestroyed(this),
     ).subscribe();
   }

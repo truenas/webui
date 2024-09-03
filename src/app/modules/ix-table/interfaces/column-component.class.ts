@@ -1,32 +1,32 @@
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 
 export abstract class ColumnComponent<T> {
-  propertyName: keyof T;
-  title: string;
+  propertyName?: keyof T;
+  title?: string;
   cssClass?: string;
   rowTestId: (row: T) => string;
   ariaLabels: (row: T) => string[];
   sortBy?: (row: T) => string | number;
   disableSorting?: boolean;
+  dataProvider?: DataProvider<T>;
   getValue?: (row: T) => unknown;
   hidden = false;
 
-  protected get value(): unknown {
+  get value(): unknown {
     return this.getValue ? this.getValue(this.row) : this.row[this.propertyName];
   }
 
-  row: T;
+  protected row: T;
 
-  getRow(): T {
+  getRow = (): T => {
     return this.row;
-  }
-  setRow(row: T): void {
+  };
+  setRow = (row: T): void => {
     this.row = row;
-  }
-  getAriaLabel(row: T): string {
-    return this.ariaLabels(row)?.join(' ') || this.title;
-  }
-  dataProvider?: DataProvider<T>;
+  };
+  getAriaLabel = (row: T): string => {
+    return this.ariaLabels(row)?.join(' ') || (this.title ? this.title : '');
+  };
 }
 
 export type Column<T, C extends ColumnComponent<T>> = {

@@ -5,8 +5,8 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { IxHeaderCellTextComponent } from 'app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 
 @Directive({
   selector: '[ix-header-cell]',
@@ -32,6 +32,10 @@ export class IxTableHeaderCellDirective<T> implements AfterViewInit {
 
     componentRef.instance.dataProvider = this.dataProvider;
     Object.keys(this.column).forEach((key: keyof ColumnComponent<T>) => {
+      if (key === 'value') {
+        return;
+      }
+      // TODO: replace never
       componentRef.instance[key] = this.column[key] as never;
     });
   }
