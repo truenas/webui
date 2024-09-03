@@ -46,6 +46,8 @@
 }
 
 .card-bottom {
+  height: 510px;
+  overflow: auto;
   padding: 0 16px;
 }
 
@@ -58,12 +60,12 @@
 }
 
 .form-container {
-  margin-bottom: 20px;
   padding: 20px 32px 8px;
 }
 
 .logo-wrapper {
   background-color: var(--bg2);
+  height: 250px;
   padding: 20% 0;
   position: relative;
   text-align: center;
@@ -126,11 +128,22 @@
   }
 
   .logo-wrapper {
+    align-items: center;
+    display: flex;
+    justify-content: center;
     padding: 20% 0;
   }
 }
 
-.failover-status {
-  margin-top: 25px;
-}
+.loader {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
 
+  h3 {
+    color: var(--fg2);
+    margin-right: 15px;
+  }
+}

@@ -1,16 +1,16 @@
 <!-- TODO: Hack. Mat inputs don't get their styles imported unless mat-form-field is used somewhere -->
 <mat-form-field style="display: none;"><input ixTest="noop" matInput></mat-form-field>
 
-<div class="page-wrap login-form">
-  <div class="session-form-hold">
-    <mat-progress-bar
-      value="0"
-      class="session-progress"
-      [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
-    ></mat-progress-bar>
-    <mat-card>
-      <mat-card-content>
-        @if (isConnected$ | async) {
+@if (!hasAuthToken) {
+  <div class="page-wrap login-form">
+    <div class="session-form-hold">
+      <mat-progress-bar
+        value="0"
+        class="session-progress"
+        [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
+      ></mat-progress-bar>
+      <mat-card>
+        <mat-card-content>
           <div>
             <div class="logo-wrapper">
               <img
@@ -23,15 +23,13 @@
             </div>
 
             <div class="card-bottom">
-              @if (canLogin$ | async) {
-                <div class="form-container">
-                  @if (wasAdminSet$ | async) {
-                    <ix-signin-form></ix-signin-form>
-                  } @else {
-                    <ix-set-admin-password-form></ix-set-admin-password-form>
-                  }
-                </div>
-              }
+              <div class="form-container">
+                @if (wasAdminSet$ | async) {
+                  <ix-signin-form [disabled]="!(canLogin$ | async)"></ix-signin-form>
+                } @else {
+                  <ix-set-admin-password-form></ix-set-admin-password-form>
+                }
+              </div>
 
               @if (failover$ | async; as failover) {
                 @if (hasFailover$ | async) {
@@ -52,12 +50,17 @@
               <ix-copyright-line class="copyright" [withIxLogo]="false"></ix-copyright-line>
             </div>
           </div>
-        } @else {
-          <ix-disconnected-message
-            [hasFailover]="hasFailover$ | async"
-          ></ix-disconnected-message>
-        }
-      </mat-card-content>
-    </mat-card>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
-</div>
+} @else {
+  <div class="loader">
+    <h3>{{ 'Please wait' | translate }}</h3>
+    <mat-progress-spinner
+      class="loader"
+      mode="indeterminate"
+      [diameter]="35"
+    ></mat-progress-spinner>
+  </div>
+}

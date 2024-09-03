@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, Inject, input, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
@@ -44,6 +45,8 @@ import { WebSocketService } from 'app/services/ws.service';
   ],
 })
 export class SigninFormComponent implements OnInit {
+  disabled = input.required<boolean>();
+
   hasTwoFactor = false;
   showSecurityWarning = false;
 
@@ -57,7 +60,8 @@ export class SigninFormComponent implements OnInit {
     otp: ['', Validators.required],
   });
 
-  protected isLoading$ = this.signinStore.isLoading$;
+  protected isLoading = toSignal(this.signinStore.isLoading$);
+  readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
 
   constructor(
     private formBuilder: FormBuilder,
@@ -73,7 +77,7 @@ export class SigninFormComponent implements OnInit {
       this.showSecurityWarning = true;
     }
 
-    this.isLoading$.pipe(
+    this.signinStore.isLoading$.pipe(
       filter((isLoading) => !isLoading),
       take(1),
       untilDestroyed(this),

@@ -2,12 +2,15 @@ import { AsyncPipe } from '@angular/common';
 import {
   Component, OnInit, ChangeDetectionStrategy,
   Inject,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest } from 'rxjs';
 import {
   filter, map, switchMap, take,
@@ -35,6 +38,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
   imports: [
     MatFormField,
     MatInput,
+    MatProgressSpinner,
     TestIdModule,
     MatProgressBar,
     MatCard,
@@ -47,10 +51,12 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
     LayoutModule,
     DisconnectedMessageComponent,
     AsyncPipe,
+    TranslateModule,
   ],
   providers: [SigninStore],
 })
 export class SigninComponent implements OnInit {
+  protected hasAuthToken = this.checkHasAuthToken();
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly failover$ = this.signinStore.failover$;
   readonly hasFailover$ = this.signinStore.hasFailover$;
@@ -64,6 +70,7 @@ export class SigninComponent implements OnInit {
     private wsManager: WebSocketConnectionService,
     private signinStore: SigninStore,
     private dialog: DialogService,
+    private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -84,5 +91,15 @@ export class SigninComponent implements OnInit {
       // Restore focus on username input
       this.window.document?.querySelector<HTMLElement>('[ixAutofocus] input')?.focus();
     });
+
+    setTimeout(() => {
+      this.hasAuthToken = this.checkHasAuthToken();
+      this.cdr.markForCheck();
+    }, 1500);
+  }
+
+  private checkHasAuthToken(): boolean {
+    const authToken = this.window.localStorage.getItem('ngx-webstorage|token');
+    return !!authToken && authToken !== 'null';
   }
 }

@@ -27,7 +27,7 @@
       type="button"
       color="primary"
       ixTest="log-in"
-      [disabled]="isLoading$ | async"
+      [disabled]="isFormDisabled()"
       (click)="login()"
     >
       {{ 'Log In' | translate }}
@@ -58,7 +58,7 @@
         type="button"
         color="primary"
         ixTest="log-in"
-        [disabled]="isLoading$ | async"
+        [disabled]="isFormDisabled()"
         (click)="loginWithOtp()"
       >
         {{ 'Proceed' | translate }}
@@ -68,7 +68,7 @@
         mat-button
         type="button"
         ixTest="otp-log-in"
-        [disabled]="isLoading$ | async"
+        [disabled]="isFormDisabled()"
         (click)="cancelOtpLogin()"
       >{{ 'Cancel' | translate }}</button>
     </div>
