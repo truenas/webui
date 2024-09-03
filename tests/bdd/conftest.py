@@ -42,6 +42,13 @@ def get_config_value(key: str) -> str:
 def nas_hostname():
     return hostname
 
+@pytest.fixture
+def nas_hostname_c1():
+    return f'{hostname}-c1'
+
+@pytest.fixture
+def nas_hostname_c2():
+    return f'{hostname}-c2'
 
 @pytest.fixture
 def nas_ip():
