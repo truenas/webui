@@ -13,7 +13,10 @@ export abstract class ColumnComponent<T> {
   hidden = false;
 
   get value(): unknown {
-    return this.getValue ? this.getValue(this.row) : this.row[this.propertyName];
+    if (this.getValue) {
+      return this.getValue(this.row);
+    }
+    return this.propertyName ? this.row[this.propertyName] : '';
   }
 
   protected row: T;

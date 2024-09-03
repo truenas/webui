@@ -4,7 +4,7 @@ import {
 import * as _ from 'lodash-es';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Component({
   selector: 'ix-ip-addresses-cell',
@@ -12,11 +12,11 @@ import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-componen
   styleUrls: ['./ip-addresses-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IpAddressesCellComponent extends ColumnComponent<NetworkInterface> {
+export class IpAddressesCellComponent<T> extends ColumnComponent<T> {
   protected addresses: string[] = [];
 
-  override setRow = (row: NetworkInterface): void => {
-    this.addresses = this.extractAddresses(row);
+  override setRow = (row: T): void => {
+    this.addresses = this.extractAddresses(row as NetworkInterface);
   };
 
   extractAddresses(row: NetworkInterface): string[] {
@@ -43,4 +43,10 @@ export class IpAddressesCellComponent extends ColumnComponent<NetworkInterface> 
       .filter((alias) => alias.type?.startsWith(NetworkInterfaceAliasType.Inet))
       .map((alias) => `${alias.address}/${alias.netmask}`);
   }
+}
+
+export function ipAddressesColumn<T>(
+  options: Partial<IpAddressesCellComponent<T>>,
+): Column<T, IpAddressesCellComponent<T>> {
+  return { type: IpAddressesCellComponent, ...options };
 }
