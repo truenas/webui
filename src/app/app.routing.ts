@@ -3,8 +3,9 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
 import { WebSocketConnectionGuard } from 'app/core/guards/websocket-connection.guard';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
+import { BlankLayoutComponent } from 'app/modules/layout/components/blank-layout/blank-layout.component';
+import { SigninComponent } from 'app/pages/signin/signin.component';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
-import { AuthLayoutComponent } from './modules/layout/components/auth-layout/auth-layout.component';
 import { AuthGuardService } from './services/auth/auth-guard.service';
 
 export const rootRouterConfig: Routes = [
@@ -15,17 +16,17 @@ export const rootRouterConfig: Routes = [
   },
   {
     path: '',
-    component: AuthLayoutComponent,
+    component: BlankLayoutComponent,
     canActivate: [TranslationsLoadedGuard, WebSocketConnectionGuard],
     children: [
       {
-        path: 'sessions',
-        loadChildren: () => import('./views/sessions/sessions.module').then((module) => module.SessionsModule),
-        data: { title: T('Session') },
+        path: 'signin',
+        component: SigninComponent,
+        data: { title: T('Signin') },
       },
       {
-        path: 'others',
-        loadChildren: () => import('./views/others/others.module').then((module) => module.OthersModule),
+        path: 'system-tasks',
+        loadChildren: () => import('app/pages/system-tasks/system-tasks.module').then((module) => module.SystemTasksModule),
         data: { title: T('Others'), breadcrumb: T('Others') },
       },
     ],

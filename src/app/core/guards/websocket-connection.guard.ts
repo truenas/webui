@@ -35,7 +35,7 @@ export class WebSocketConnectionGuard {
   private resetUi(): void {
     this.closeAllDialogs();
     if (!this.wsManager.shutDownInProgress) {
-      this.router.navigate(['/sessions/signin']);
+      this.router.navigate(['/signin']);
     }
   }
 
