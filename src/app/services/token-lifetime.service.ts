@@ -7,8 +7,10 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import {
+  debounceTime,
   filter, switchMap, tap,
 } from 'rxjs';
+import { oneMinuteMillis } from 'app/constants/time.constant';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
@@ -29,7 +31,9 @@ export class TokenLifetimeService {
   protected terminateCancelTimeout: Timeout;
   private resumeBound;
 
-  // Check if token was used no more than 15 minutes ago
+  /**
+   * Check if token was used no more than 15 minutes ago
+  */
   get isTokenWithinTimeline(): boolean {
     const tokenLastUsed = this.window.localStorage.getItem('tokenLastUsed');
 
@@ -37,11 +41,11 @@ export class TokenLifetimeService {
       return false;
     }
 
-    const tokenLastUsedDate = new Date(tokenLastUsed).getTime();
-    const tokenLifetime = 60 * 15 * 1000;
+    const tokenRecentUsageLifetime = 15 * oneMinuteMillis;
+    const tokenLastUsedTime = new Date(tokenLastUsed).getTime();
     const currentTime = Date.now();
 
-    return currentTime - tokenLastUsedDate <= tokenLifetime;
+    return currentTime - tokenLastUsedTime <= tokenRecentUsageLifetime;
   }
 
   constructor(
@@ -140,8 +144,9 @@ export class TokenLifetimeService {
     this.authService.user$.pipe(
       filter(Boolean),
       tapOnce(() => this.updateTokenLastUsed()),
-      switchMap(() => this.ws.getDebouncedWebSocketStream$()),
+      switchMap(() => this.ws.getWebSocketStream$().pipe(debounceTime(5000))),
       tap(() => this.updateTokenLastUsed()),
+      untilDestroyed(this),
     ).subscribe();
   }
 

@@ -88,38 +88,13 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => this.setLoadingState(true)),
-    switchMap(() => {
-      return forkJoin([
-        this.checkIfAdminPasswordSet(),
-        this.checkForLoginBanner(),
-        this.loadFailoverStatus(),
-        this.updateService.hardRefreshIfNeeded(),
-      ]).pipe(
-        filter(() => {
-          const isTokenWithinTimeline = this.tokenLifetimeService.isTokenWithinTimeline;
-
-          if (!isTokenWithinTimeline) {
-            this.authService.clearAuthToken();
-          }
-
-          return isTokenWithinTimeline;
-        }),
-        switchMap(() => this.authService.loginWithToken()),
-        tap((loginResult) => {
-          if (loginResult !== LoginResult.Success) {
-            this.authService.clearAuthToken();
-            return;
-          }
-          this.handleSuccessfulLogin();
-        }),
-        tapResponse(
-          () => {},
-          (error: unknown) => {
-            this.dialogService.error(this.errorHandler.parseError(error));
-          },
-        ),
-      );
-    }),
+    switchMap(() => forkJoin([
+      this.checkIfAdminPasswordSet(),
+      this.checkForLoginBanner(),
+      this.loadFailoverStatus(),
+      this.updateService.hardRefreshIfNeeded(),
+    ])),
+    switchMap(() => this.handleLoginWithToken()),
   ));
 
   handleSuccessfulLogin = this.effect((trigger$: Observable<void>) => trigger$.pipe(
@@ -260,5 +235,33 @@ export class SigninStore extends ComponentStore<SigninState> {
     this.disabledReasonsSubscription = this.ws.subscribe('failover.disabled.reasons')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe((event) => this.setFailoverDisabledReasons(event.disabled_reasons));
+  }
+
+  private handleLoginWithToken(): Observable<LoginResult> {
+    return of(null).pipe(
+      filter(() => {
+        const isTokenWithinTimeline = this.tokenLifetimeService.isTokenWithinTimeline;
+
+        if (!isTokenWithinTimeline) {
+          this.authService.clearAuthToken();
+        }
+
+        return isTokenWithinTimeline;
+      }),
+      switchMap(() => this.authService.loginWithToken()),
+      tap((loginResult) => {
+        if (loginResult !== LoginResult.Success) {
+          this.authService.clearAuthToken();
+        } else {
+          this.handleSuccessfulLogin();
+        }
+      }),
+      tapResponse(
+        () => {},
+        (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
+        },
+      ),
+    );
   }
 }

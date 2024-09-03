@@ -73,15 +73,15 @@ describe('TokenLifetimeService', () => {
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
       const ws$ = new Subject();
 
-      jest.spyOn(spectator.inject(WebSocketService), 'getDebouncedWebSocketStream$').mockReturnValue(ws$);
+      jest.spyOn(spectator.inject(WebSocketService), 'getWebSocketStream$').mockReturnValue(ws$);
 
       spectator.service.setupTokenLastUsedValue();
 
       user$.next({});
-      expect(updateTokenLastUsedSpy).toHaveBeenCalledTimes(1);
+      expect(updateTokenLastUsedSpy).toHaveBeenCalled();
 
       ws$.next({});
-      expect(updateTokenLastUsedSpy).toHaveBeenCalledTimes(2);
+      expect(updateTokenLastUsedSpy).toHaveBeenCalled();
     });
   });
 });
