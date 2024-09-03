@@ -8,12 +8,15 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { isEqual } from 'lodash';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
+import { defaultWidgets } from 'app/pages/dashboard/services/default-widgets.constant';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -46,6 +49,9 @@ export class DashboardComponent implements OnInit {
     key: 'dashboardConfigure',
     message: this.translate.instant('New widgets and layouts.'),
   };
+  readonly customLayout = computed(() => {
+    return !isEqual(this.renderedGroups(), defaultWidgets);
+  });
 
   emptyDashboardConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -61,6 +67,7 @@ export class DashboardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private dialog: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -136,6 +143,11 @@ export class DashboardComponent implements OnInit {
         this.isEditing.set(false);
         this.snackbar.success(this.translate.instant('Dashboard settings saved'));
       });
+  }
+
+  protected onReset(): void {
+    this.renderedGroups.set(defaultWidgets);
+    this.snackbar.success(this.translate.instant('Default widgets restored'));
   }
 
   private loadGroups(): void {
