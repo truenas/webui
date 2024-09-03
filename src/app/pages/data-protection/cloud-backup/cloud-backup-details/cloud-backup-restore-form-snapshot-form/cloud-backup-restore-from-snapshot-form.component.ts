@@ -6,7 +6,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, map, of } from 'rxjs';
+import { map, of } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -121,7 +121,6 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
       this.form.controls.target.value,
       options,
     ];
-    console.info('request', params);
     this.ws.job('cloud_backup.restore', params)
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -180,17 +179,6 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
         this.cdr.markForCheck();
         this.form.updateValueAndValidity();
-      },
-    });
-
-    combineLatest([
-      this.form.controls.includedPaths.valueChanges,
-      this.form.controls.excludedPaths.valueChanges,
-    ]).pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (values) => {
-        console.info(values);
       },
     });
 
