@@ -20,7 +20,18 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -55,7 +66,6 @@ const components = [
     CommonModule,
     EffectsModule.forFeature([SnapshotEffects]),
     EntityModule,
-    IxFormsModule,
     IxIconModule,
     IxTableModule,
     LayoutModule,
@@ -81,6 +91,14 @@ const components = [
     TranslateModule,
     FileSizePipe,
     FormatDateTimePipe,
+    IxFieldsetComponent,
+    IxRadioGroupComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    IxSelectComponent,
+    IxModalHeaderComponent,
+    IxInputComponent,
+    IxSlideToggleComponent,
   ],
   declarations: [
     ...components,

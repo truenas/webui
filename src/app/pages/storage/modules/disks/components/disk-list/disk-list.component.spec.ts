@@ -104,7 +104,9 @@ describe('DiskListComponent', () => {
         open: jest.fn(() => mockSlideInRef),
       }),
       mockProvider(MatDialog, {
-        open: jest.fn(),
+        open: jest.fn(() => ({
+          afterClosed: jest.fn(() => of(true)),
+        })),
       }),
       mockWebSocket([
         mockCall('disk.query', fakeDisks),

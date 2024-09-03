@@ -11,7 +11,6 @@ import { MatchDatastoresWithDatasets, VmwareSnapshot } from 'app/interfaces/vmwa
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -34,7 +33,6 @@ describe('VmwareSnapshotFormComponent', () => {
   const createComponent = createComponentFactory({
     component: VmwareSnapshotFormComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [

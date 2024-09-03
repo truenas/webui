@@ -39,7 +39,7 @@ describe('PowerMenuComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Restart the system?',
     }));
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot'], { skipLocationChange: true });
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/reboot'], { skipLocationChange: true });
   });
 
   it('has a Shutdown menu item that shuts down system after confirmation', async () => {
@@ -49,6 +49,6 @@ describe('PowerMenuComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Shut down the system?',
     }));
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/shutdown'], { skipLocationChange: true });
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/shutdown'], { skipLocationChange: true });
   });
 });

@@ -16,7 +16,25 @@ import { CommonDirectivesModule } from 'app/directives/common-directives.module'
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import {
+  IxModalHeader2Component,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -107,7 +125,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatCardModule,
     TranslateModule,
     IxTableModule,
-    IxFormsModule,
     CloudCredentialsSelectModule,
     SshCredentialsSelectModule,
     PageHeaderModule,
@@ -124,6 +141,19 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     CloudSyncProviderDescriptionComponent,
     SearchInput1Component,
     MatProgressSpinnerModule,
+    IxExplorerComponent,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    IxRadioGroupComponent,
+    IxChipsComponent,
+    IxModalHeader2Component,
+    IxModalHeaderComponent,
+    IxComboboxComponent,
+    IxSlideToggleComponent,
+    IxTextareaComponent,
   ],
   declarations: [
     SnapshotTaskListComponent,

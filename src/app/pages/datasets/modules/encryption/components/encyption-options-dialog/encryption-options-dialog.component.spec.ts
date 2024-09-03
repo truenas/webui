@@ -11,7 +11,6 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
@@ -28,7 +27,6 @@ describe('EncryptionOptionsDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: EncryptionOptionsDialogComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       AppLoaderModule,
       SnackbarModule,

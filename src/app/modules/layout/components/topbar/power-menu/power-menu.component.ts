@@ -34,7 +34,7 @@ export class PowerMenuComponent {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
+      this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
     });
   }
 
@@ -47,7 +47,7 @@ export class PowerMenuComponent {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.router.navigate(['/others/shutdown'], { skipLocationChange: true });
+      this.router.navigate(['/system-tasks/shutdown'], { skipLocationChange: true });
     });
   }
 }

@@ -13,7 +13,22 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -59,7 +74,6 @@ import { routing } from './network.routing';
     MatToolbarModule,
     TranslateModule,
     CommonDirectivesModule,
-    IxFormsModule,
     MatDialogModule,
     TestIdModule,
     NgxOrderedListboxModule,
@@ -70,6 +84,18 @@ import { routing } from './network.routing';
     EmptyComponent,
     CastPipe,
     FormatDateTimePipe,
+    IxModalHeaderComponent,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    IxChipsComponent,
+    IxRadioGroupComponent,
+    IxSelectComponent,
+    IxListComponent,
+    IxListItemComponent,
+    IxIpInputWithNetmaskComponent,
+    IxErrorsComponent,
+    FormActionsComponent,
   ],
   declarations: [
     DefaultGatewayDialogComponent,

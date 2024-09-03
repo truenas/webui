@@ -7,7 +7,6 @@ import { of, Subject } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import {
   AutomatedDiskSelectionComponent,
@@ -35,7 +34,6 @@ describe('AutomatedDiskSelection', () => {
     component: AutomatedDiskSelectionComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
       CastPipe,
     ],
     declarations: [

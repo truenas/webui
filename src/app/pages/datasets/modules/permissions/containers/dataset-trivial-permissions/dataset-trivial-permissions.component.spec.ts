@@ -12,7 +12,7 @@ import {
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -28,8 +28,8 @@ describe('DatasetTrivialPermissionsComponent', () => {
   const createComponent = createRoutingFactory({
     component: DatasetTrivialPermissionsComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
+      IxPermissionsComponent,
     ],
     params: {
       datasetId: 'pool/trivial',

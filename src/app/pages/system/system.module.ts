@@ -23,7 +23,31 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import {
   UnusedDiskSelectComponent,
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import {
+  IxModalHeader2Component,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import {
+  WithManageCertificatesLinkComponent,
+} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -148,7 +172,6 @@ import { routing } from './system.routing';
     CommonModule,
     EntityModule,
     FormsModule,
-    IxFormsModule,
     TreeModule,
     SchedulerModule,
     JobsModule,
@@ -185,6 +208,23 @@ import { routing } from './system.routing';
     BulkListItemComponent,
     YesNoPipe,
     CastPipe,
+    IxInputComponent,
+    IxFieldsetComponent,
+    IxFileInputComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    IxModalHeaderComponent,
+    IxTextareaComponent,
+    FormActionsComponent,
+    IxComboboxComponent,
+    IxRadioGroupComponent,
+    IxChipsComponent,
+    IxModalHeader2Component,
+    IxSlideToggleComponent,
+    WithManageCertificatesLinkComponent,
+    IxListComponent,
+    IxListItemComponent,
+    IxExplorerComponent,
   ],
   declarations: [
     AdvancedSettingsComponent,

@@ -203,7 +203,7 @@ export class FeedbackService {
 
   private prepareReview(data: ReviewData): Observable<AddReview> {
     return this.getSystemInfo().pipe(
-      map(({ systemInfo, isIxHardware, systemHostId }) => {
+      map(([{ systemInfo, isIxHardware }, systemHostId]) => {
         return {
           host_u_id: systemHostId,
           rating: data.rating,
@@ -254,12 +254,15 @@ export class FeedbackService {
     );
   }
 
-  private getSystemInfo(): Observable<SystemInfoState> {
-    return this.store$.pipe(
-      select(selectSystemInfoState),
-      filter((systemInfoState) => Boolean(systemInfoState.systemInfo)),
-      take(1),
-    );
+  private getSystemInfo(): Observable<[SystemInfoState, string]> {
+    return forkJoin([
+      this.store$.pipe(
+        select(selectSystemInfoState),
+        filter((systemInfoState) => Boolean(systemInfoState.systemInfo)),
+        take(1),
+      ),
+      this.ws.call('system.host_id'),
+    ]);
   }
 
   private addTicket(ticket: CreateNewTicket): Observable<NewTicketResponse> {

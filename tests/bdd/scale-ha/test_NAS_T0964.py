@@ -34,7 +34,7 @@ def the_browser_is_open_and_to_nas_hostname(driver, nas_vip, request):
     """the browser is open and to <nas_hostname>."""
     depends(request, ['Active_Directory'], scope='session')
     if nas_vip not in driver.current_url:
-        driver.get(f"http://{nas_vip}/ui/sessions/signin")
+        driver.get(f"http://{nas_vip}/ui/signin")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
 
 

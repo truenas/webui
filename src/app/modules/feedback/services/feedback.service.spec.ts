@@ -9,7 +9,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { lastValueFrom, of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import {
   TicketCategory, TicketCriticality, TicketEnvironment, TicketType,
@@ -22,7 +22,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
-import { selectSystemHostId, selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
+import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackService', () => {
   let spectator: SpectatorService<FeedbackService>;
@@ -44,13 +44,10 @@ describe('FeedbackService', () => {
     providers: [
       mockWebSocket([
         mockJob('support.new_ticket', fakeSuccessfulJob(newTicket)),
+        mockCall('system.host_id', 'testHostId'),
       ]),
       provideMockStore({
         selectors: [
-          {
-            selector: selectSystemHostId,
-            value: 'testHostId',
-          },
           {
             selector: selectSystemInfoState,
             value: {
@@ -59,7 +56,6 @@ describe('FeedbackService', () => {
                 system_product: 'M40',
               },
               isIxHardware: true,
-              systemHostId: 'testHostId',
             } as SystemInfoState,
           },
         ],

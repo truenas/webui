@@ -90,7 +90,7 @@ export class TopbarComponent implements OnInit {
       ) {
         this.systemWillRestart = true;
         if (job.state === JobState.Success) {
-          this.router.navigate(['/others/reboot'], { skipLocationChange: true });
+          this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
         }
       }
 
