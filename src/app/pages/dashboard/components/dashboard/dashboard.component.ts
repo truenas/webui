@@ -8,8 +8,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { isEqual } from 'lodash-es';
-import { filter, switchMap } from 'rxjs';
+import { isEqual } from 'lodash';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -51,7 +50,7 @@ export class DashboardComponent implements OnInit {
     message: this.translate.instant('New widgets and layouts.'),
   };
   readonly customLayout = computed(() => {
-    return !isEqual(this.savedGroups(), defaultWidgets);
+    return !isEqual(this.renderedGroups(), defaultWidgets);
   });
 
   emptyDashboardConf: EmptyConfig = {
@@ -147,21 +146,8 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onReset(): void {
-    this.dialog.confirm({
-      title: this.translate.instant('Reset Dashboard'),
-      message: this.translate.instant('Are you sure you want to reset your dashboard to the default layout?'),
-      hideCheckbox: true,
-      buttonText: this.translate.instant('Reset'),
-      cancelText: this.translate.instant('Cancel'),
-    }).pipe(
-      filter(Boolean),
-      switchMap(() => this.dashboardStore.save(defaultWidgets)),
-      this.errorHandler.catchError(),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.isEditing.set(false);
-      this.snackbar.success(this.translate.instant('Dashboard settings saved'));
-    });
+    this.renderedGroups.set(defaultWidgets);
+    this.snackbar.success(this.translate.instant('Default widgets restored'));
   }
 
   private loadGroups(): void {
