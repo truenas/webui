@@ -39,7 +39,7 @@ export class GenerateVdevsService {
     this.groupedDisks = new GroupedDisks(disks);
     this.enclosureList = new EnclosureList(disks);
 
-    const categories = this.excludeManualCategories(topology, categorySequence);
+    const categories = this.generateCategories(topology, categorySequence);
 
     return this.placeDisksInCategories(categories, maximizeDispersal);
   }
@@ -93,7 +93,7 @@ export class GenerateVdevsService {
     });
   }
 
-  private excludeManualCategories(topology: PoolManagerTopology, categorySequence: VdevType[]): TypeAndCategory[] {
+  private generateCategories(topology: PoolManagerTopology, categorySequence: VdevType[]): TypeAndCategory[] {
     return categorySequence
       .filter((category) => topology[category] && !topology[category].hasCustomDiskSelection)
       .map((category) => [category, topology[category]]);
