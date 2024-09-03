@@ -32,7 +32,7 @@ export class TokenLifetimeService {
   private resumeBound;
 
   /**
-   * Check if token was used no more than 15 minutes ago
+   * Check if token was used no more than 5 minutes ago (default )
   */
   get isTokenWithinTimeline(): boolean {
     const tokenLastUsed = this.window.localStorage.getItem('tokenLastUsed');
@@ -41,7 +41,7 @@ export class TokenLifetimeService {
       return false;
     }
 
-    const tokenRecentUsageLifetime = 15 * oneMinuteMillis;
+    const tokenRecentUsageLifetime = 5 * oneMinuteMillis;
     const tokenLastUsedTime = new Date(tokenLastUsed).getTime();
     const currentTime = Date.now();
 
