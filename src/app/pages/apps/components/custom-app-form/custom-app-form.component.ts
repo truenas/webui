@@ -28,7 +28,7 @@ export class CustomAppFormComponent implements OnInit {
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
   form = this.fb.group({
     release_name: ['', Validators.required],
-    custom_compose_config_string: ['', Validators.required],
+    custom_compose_config_string: ['\n\n', Validators.required],
   });
   isLoading = false;
   protected tooltip = this.translate.instant('Add custom app config in Yaml format.');
