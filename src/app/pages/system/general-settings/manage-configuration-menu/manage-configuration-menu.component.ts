@@ -52,7 +52,7 @@ export class ManageConfigurationMenuComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/others/config-reset'], { skipLocationChange: true });
+        this.router.navigate(['/system-tasks/config-reset'], { skipLocationChange: true });
       });
   }
 }
