@@ -42,7 +42,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { UserEffects } from 'app/pages/account/users/store/user.effects';
 import { userReducer } from 'app/pages/account/users/store/user.reducer';
@@ -82,7 +82,6 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     StoreModule.forFeature(userStateKey, userReducer),
     TranslateModule,
     TranslateModule,
-    LayoutModule,
     TestIdModule,
     IxTableModule,
     SearchInput1Component,
@@ -99,6 +98,7 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     IxSelectComponent,
     IxFileInputComponent,
     FormActionsComponent,
+    PageHeaderModule,
   ],
   declarations: [
     UserListComponent,

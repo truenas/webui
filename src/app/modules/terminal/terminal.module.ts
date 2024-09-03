@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -19,11 +19,11 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     TranslateModule,
     CommonDirectivesModule,
     MatButtonModule,
-    LayoutModule,
     TestIdModule,
     MatDialogModule,
     ToolbarSliderComponent,
     TooltipComponent,
+    PageHeaderModule,
   ],
   declarations: [
     TerminalComponent,

@@ -35,7 +35,7 @@ import {
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -68,7 +68,6 @@ const components = [
     EntityModule,
     IxIconModule,
     IxTableModule,
-    LayoutModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
@@ -99,6 +98,7 @@ const components = [
     IxModalHeaderComponent,
     IxInputComponent,
     IxSlideToggleComponent,
+    PageHeaderModule,
   ],
   declarations: [
     ...components,

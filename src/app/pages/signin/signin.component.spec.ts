@@ -6,7 +6,6 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
@@ -40,7 +39,6 @@ describe('SigninComponent', () => {
     component: SigninComponent,
     imports: [
       MatInputModule,
-      MockModule(LayoutModule),
       MockModule(IxIconModule),
     ],
     declarations: [

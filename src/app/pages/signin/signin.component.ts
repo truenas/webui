@@ -15,7 +15,7 @@ import {
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
 import { FailoverStatusComponent } from 'app/pages/signin/failover-status/failover-status.component';
@@ -44,9 +44,9 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
     SetAdminPasswordFormComponent,
     FailoverStatusComponent,
     TrueCommandStatusComponent,
-    LayoutModule,
     DisconnectedMessageComponent,
     AsyncPipe,
+    CopyrightLineComponent,
   ],
   providers: [SigninStore],
 })
