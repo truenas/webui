@@ -44,7 +44,7 @@ def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas
     admin_User = user
     admin_Password = password
     if nas_vip not in driver.current_url:
-        driver.get(f"http://{nas_vip}/ui/sessions/signin")
+        driver.get(f"http://{nas_vip}/ui/signin")
 
     rsc.Login_If_Not_On_Dashboard(driver, user, password)
 

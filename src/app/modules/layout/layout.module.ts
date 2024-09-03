@@ -26,7 +26,7 @@ import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-sli
 import { GlobalSearchModule } from 'app/modules/global-search/global-search.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
-import { AuthLayoutComponent } from 'app/modules/layout/components/auth-layout/auth-layout.component';
+import { BlankLayoutComponent } from 'app/modules/layout/components/blank-layout/blank-layout.component';
 import { ConsoleFooterComponent } from 'app/modules/layout/components/console-footer/console-footer.component';
 import {
   ConsolePanelDialogComponent,
@@ -99,7 +99,7 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     PowerMenuComponent,
     TopbarComponent,
     UserMenuComponent,
-    AuthLayoutComponent,
+    BlankLayoutComponent,
     AdminLayoutComponent,
     CopyrightLineComponent,
     ConsoleFooterComponent,

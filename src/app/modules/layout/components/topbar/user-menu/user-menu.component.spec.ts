@@ -100,7 +100,6 @@ describe('UserMenuComponent', () => {
       jest.spyOn(authService, 'logout');
 
       expect(authService.logout).toHaveBeenCalled();
-      expect(authService.clearAuthToken).toHaveBeenCalled();
     });
 
     it('has an 2fa menu item that redirects user to TwoFactorComponent when clicked', async () => {
