@@ -519,7 +519,6 @@
     "./src/app/modules/ix-tree/tree-datasource.ts",
     "./src/app/modules/ix-tree/tree-flattener.ts",
     "./src/app/modules/layout/admin-layout/admin-layout.component.const.ts",
-    "./src/app/modules/layout/secondary-menu/secondary-menu.component.ts",
     "./src/app/modules/layout/topbar/topbar-dialog-position.constant.ts",
     "./src/app/modules/lists/ordered-list/ordered-list.component.ts",
     "./src/app/modules/loader/components/app-loader/app-loader.component.ts",
