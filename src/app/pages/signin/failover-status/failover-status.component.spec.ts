@@ -29,6 +29,21 @@ describe('FailoverStatusComponent', () => {
     expect(spectator.query('.failover-status')).toHaveText('Active TrueNAS Controller.');
   });
 
+  it('shows Checking HA status if failover status is not yet known', () => {
+    spectator.setInput({ disabledReasons: undefined });
+    expect(spectator.query('.failover-status-message')).toHaveText('Checking HA status');
+  });
+
+  it('shows HA is reconnecting when disabledReasons only has NoSystemReady', () => {
+    spectator.setInput({ disabledReasons: [FailoverDisabledReason.NoSystemReady] });
+    expect(spectator.query('.failover-status-message')).toHaveText('HA is reconnecting.');
+  });
+
+  it('shows HA is disabled when disabledReasons only has NoFailover', () => {
+    spectator.setInput({ disabledReasons: [FailoverDisabledReason.NoFailover] });
+    expect(spectator.query('.failover-status-message')).toHaveText('HA is administratively disabled.');
+  });
+
   it('shows failover disabled reasons when failover is disabled', () => {
     spectator.setInput({
       disabledReasons: [
