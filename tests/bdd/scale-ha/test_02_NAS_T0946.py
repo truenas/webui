@@ -228,8 +228,8 @@ def the_edit_interface_should_appear(driver):
 @then(parsers.parse('uncheck DHCP, check Critical, Select 1 for Failover Group, input IP Address (This Controller) "{ip1}" then select /"{netmask}", IP Address (TrueNAS Controller 2) "{ip2}", Virtual IP Address "{vip}"'))
 def uncheck_dhcp_check_critical_select_1_for_failover_group_input_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_virtual_ip_address(driver, nas_ip, netmask, nas_ip2, nas_vip):
     """uncheck DHCP, check Critical, Select 1 for Failover Group, input IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}", Virtual IP Address, "{vip}"."""
-    rsc.set_checkbox(driver, xpaths.interface.dhcp_Checkbox)
-    rsc.set_checkbox(driver, xpaths.interface.autoconfigure_IPv6)
+    rsc.unset_checkbox(driver, xpaths.interface.dhcp_Checkbox)
+    rsc.unset_checkbox(driver, xpaths.interface.autoconfigure_IPv6)
     rsc.set_checkbox(driver, xpaths.interface.critical_Checkbox)
     driver.find_element_by_xpath(xpaths.interface.failover_Group_Select).click()
     assert wait_on_element(driver, 5, xpaths.interface.failover_Group_Option, 'clickable')
