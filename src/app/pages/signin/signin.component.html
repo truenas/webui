@@ -56,11 +56,23 @@
   </div>
 } @else {
   <div class="loader">
-    <h3>{{ 'Please wait' | translate }}</h3>
-    <mat-progress-spinner
-      class="loader"
-      mode="indeterminate"
-      [diameter]="35"
-    ></mat-progress-spinner>
+    <div>
+      <div class="wait-text">
+        <h3>{{ 'Please wait' | translate }}</h3>
+        <mat-progress-spinner
+          class="loader"
+          mode="indeterminate"
+          [diameter]="35"
+        ></mat-progress-spinner>
+      </div>
+
+      <mat-card>
+        <mat-card-content>
+          <ix-disconnected-message
+            [hasFailover]="hasFailover$ | async"
+          ></ix-disconnected-message>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 }
