@@ -425,6 +425,7 @@ class groups:
 class interface:
     title = '//h3[contains(text(),"Edit Interface")]'
     dhcp_Checkbox = '//mat-checkbox[contains(.,"DHCP")]'
+    autoconfigure_IPv6 = '//mat-checkbox[@data-test="checkbox-ipv-6-auto"]'
     critical_Checkbox = '//mat-checkbox[contains(.,"Critical")]'
     failover_Group_Select = '//ix-select[@formcontrolname="failover_group"]//mat-select'
     failover_Group_Option = '//mat-option[@id="mat-option-1"]'
