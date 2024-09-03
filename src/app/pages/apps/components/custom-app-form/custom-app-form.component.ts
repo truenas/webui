@@ -26,13 +26,13 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CustomAppFormComponent implements OnInit {
   protected requiredRoles = [Role.AppsWrite];
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
-  form = this.fb.group({
+  protected form = this.fb.group({
     release_name: ['', Validators.required],
     custom_compose_config_string: ['\n\n', Validators.required],
   });
-  isLoading = false;
+  protected isLoading = false;
   protected tooltip = this.translate.instant('Add custom app config in Yaml format.');
-  forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
+  protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -48,12 +48,12 @@ export class CustomAppFormComponent implements OnInit {
     this.addForbiddenAppNamesValidator();
   }
 
-  addForbiddenAppNamesValidator(): void {
+  protected addForbiddenAppNamesValidator(): void {
     this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
     this.form.controls.release_name.updateValueAndValidity();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading = true;
     this.cdr.markForCheck();
     const data = this.form.value;

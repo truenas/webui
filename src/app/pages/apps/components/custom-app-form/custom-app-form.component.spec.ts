@@ -10,6 +10,8 @@ import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.ut
 import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCodeEditorHarness } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.harness';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -69,10 +71,11 @@ describe('CustomAppFormComponent', () => {
   });
 
   it('closes slide in when successfully submitted', async () => {
-    spectator.component.form.patchValue({
-      release_name: 'test',
-      custom_compose_config_string: 'config',
-    });
+    const appNameControl = await loader.getHarness(IxInputHarness);
+    await appNameControl.setValue('test');
+    const configControl = await loader.getHarness(IxCodeEditorHarness);
+    await configControl.setValue('config');
+    spectator.detectChanges();
     const button = await loader.getHarness(MatButtonHarness);
     await button.click();
 
@@ -85,9 +88,8 @@ describe('CustomAppFormComponent', () => {
   });
 
   it('forbidden app names are not allowed', async () => {
-    spectator.component.form.patchValue({
-      release_name: 'test-app-one',
-    });
+    const appNameControl = await loader.getHarness(IxInputHarness);
+    await appNameControl.setValue('test-app-one');
     spectator.detectChanges();
 
     const button = await loader.getHarness(MatButtonHarness);
