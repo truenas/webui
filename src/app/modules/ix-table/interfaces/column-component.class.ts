@@ -11,6 +11,10 @@ export abstract class ColumnComponent<T> {
   dataProvider?: DataProvider<T>;
   getValue?: (row: T) => unknown;
   hidden = false;
+  /**
+   * Set `isExtra` to `true` if this column can be hidden based on some conditions in the future.
+   */
+  isExtra = false;
 
   get value(): unknown {
     if (this.getValue) {

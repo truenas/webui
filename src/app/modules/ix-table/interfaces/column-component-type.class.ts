@@ -13,6 +13,7 @@ export class ColumnComponentType<T> extends ColumnComponent<T> {
     getValue?: (row: T) => unknown,
     hidden?: boolean,
     dataProvider?: DataProvider<T>,
+    isExtra?: boolean,
   ) {
     super();
     this.propertyName = propertyName;
@@ -33,6 +34,9 @@ export class ColumnComponentType<T> extends ColumnComponent<T> {
     }
     if (hidden != null) {
       this.hidden = hidden;
+    }
+    if (isExtra != null) {
+      this.isExtra = isExtra;
     }
     if (dataProvider != null) {
       this.dataProvider = dataProvider;

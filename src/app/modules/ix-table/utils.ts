@@ -31,6 +31,7 @@ export function createTable<T>(
       column.getValue,
       column.hidden,
       column.dataProvider,
+      column.isExtra,
     );
     return {
       ...column,

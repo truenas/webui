@@ -106,16 +106,19 @@ export class SnapshotListComponent implements OnInit {
     sizeColumn({
       title: this.translate.instant('Used'),
       hidden: !this.showExtraColumnsControl.value,
+      isExtra: true,
       getValue: (row) => row?.properties?.used?.parsed,
     }),
     dateColumn({
       title: this.translate.instant('Date created'),
       hidden: !this.showExtraColumnsControl.value,
+      isExtra: true,
       getValue: (row) => row?.properties?.creation?.parsed.$date,
     }),
     sizeColumn({
       title: this.translate.instant('Referenced'),
       hidden: !this.showExtraColumnsControl.value,
+      isExtra: true,
       getValue: (row) => row?.properties?.referenced?.parsed,
     }),
   ], {
@@ -167,7 +170,7 @@ export class SnapshotListComponent implements OnInit {
 
   updateColumnVisibility(): void {
     this.columns = this.columns.map((column) => {
-      if (column.hasOwnProperty('hidden')) {
+      if (column.isExtra) {
         column.hidden = !this.showExtraColumnsControl.value;
       }
       return column;
