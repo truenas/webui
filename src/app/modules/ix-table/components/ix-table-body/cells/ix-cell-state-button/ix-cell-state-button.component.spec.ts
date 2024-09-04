@@ -13,7 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxCellStateButtonComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 
 interface TestTableData {
   state: JobState;
@@ -33,12 +33,12 @@ describe('IxCellStateButtonComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectJob(1),
-            value: {
+            selector: selectJobs,
+            value: [{
               id: 123456,
               logs_excerpt: 'completed',
               state: JobState.Success,
-            } as Job,
+            } as Job],
           },
         ],
       }),
