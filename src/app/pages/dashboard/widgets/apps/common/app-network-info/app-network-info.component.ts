@@ -67,7 +67,7 @@ export class AppNetworkInfoComponent {
       const networkStats = this.stats()?.value?.networks[0];
       if (networkStats) {
         this.cachedNetworkStats.update((cachedStats) => {
-          return [...cachedStats, Object.values(networkStats)].slice(-60);
+          return [...cachedStats, [networkStats.rx_bytes, networkStats.tx_bytes]].slice(-60);
         });
       }
     }, { allowSignalWrites: true });
