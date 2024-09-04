@@ -410,3 +410,18 @@ def create_group(ip: str, auth: tuple, group_name: str) -> None:
     }
     response = post(ip, '/group', auth, payload)
     assert response.status_code == 200, response.text
+
+
+def reboot(ip: str, auth: tuple) -> None:
+    """
+    This method reboots the given TrueNAS server
+
+    :param ip: IP of the TrueNAS server
+    :param auth: (username, password) tuple
+    :return: Response object
+
+    Example:
+        - reboot('00.00.00.00', ('name', 'password'))
+    """
+    response = post(ip, '/system/reboot', auth)
+    assert response.status_code == 200, response.text
