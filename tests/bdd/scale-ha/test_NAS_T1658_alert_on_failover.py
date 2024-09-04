@@ -2,11 +2,13 @@
 
 import pytest
 import reusableSeleniumCode as rsc
+import time
 import xpaths
 from function import (
     wait_on_element,
     ssh_cmd,
-    get
+    get,
+    reboot
 )
 from pytest_dependency import depends
 from pytest_bdd import (
@@ -78,13 +80,12 @@ def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     """on the Dashboard, click Initiate Failover on the standby controller."""
     rsc.Verify_The_Dashboard(driver)
 
-    rsc.Trigger_Failover(driver)
-
 
 @then('on the Initiate Failover box, check the Confirm checkbox, then click Failover')
-def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver):
+def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver, nas_ip, root_password):
     """on the Initiate Failover box, check the Confirm checkbox, then click Failover."""
-    rsc.Confirm_Failover(driver)
+    reboot(nas_ip, ('root', root_password))
+    time.sleep(10)
 
 
 @then(parsers.parse('wait for the login to appear and HA to be enabled, login with {user} and {password}'))
