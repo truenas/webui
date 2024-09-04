@@ -9,7 +9,8 @@ from function import (
     wait_on_element,
     wait_on_element_disappear,
     get,
-    create_Pool, reboot
+    create_Pool,
+    reboot
 )
 from pytest_bdd import (
     given,

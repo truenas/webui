@@ -11,7 +11,8 @@ from function import (
     is_element_present,
     wait_on_element_disappear,
     ssh_cmd,
-    service_Start
+    service_Start,
+    reboot
 )
 from pytest_bdd import (
     given,
@@ -208,11 +209,10 @@ def after_go_to_the_dashboard(driver):
 
 
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
-def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
+def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver, nas_ip, root_password):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
-    rsc.Trigger_Failover(driver)
-
-    rsc.Confirm_Failover(driver)
+    reboot(nas_ip, ('root', root_password))
+    time.sleep(10)
 
 
 @then('wait for the login page to appear')
