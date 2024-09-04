@@ -32,7 +32,7 @@ def test_verify_active_directory_works_after_failover_with_new_system_dataset(dr
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_vip, request):
     """the browser is open, navigate to "{nas_url}"."""
-    depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
+    depends(request, ['Setup_SSH'], scope='session')
     if nas_vip not in driver.current_url:
         driver.get(f"http://{nas_vip}/ui/sessions/signin")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
