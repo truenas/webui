@@ -243,7 +243,7 @@ class common_Input():
 
 class dashboard:
     title = '//h1[contains(.,"Dashboard")]'
-    system_Info_Card_Title = '//span[text()="System Information"]'
+    system_Info_Card_Title = '//h3[text()="System Information"]'
     help_Card_Title = '//*[text()="TrueNAS Help"]'
     system_Information_Standby_Title = '//span[contains(.,"System Information Standby")]'
 
