@@ -1165,6 +1165,7 @@
   "Default Route": "",
   "Default TrueNAS controller": "",
   "Default is UTF-8 which supports all characters in all languages.": "",
+  "Default widgets restored": "",
   "Default – follow upstream / TrueNAS default": "",
   "Defect": "",
   "Define a length of time to retain the snapshot on this system. After the   time expires, the snapshot is removed. Snapshots which have been replicated   to other systems are not affected.": "",
