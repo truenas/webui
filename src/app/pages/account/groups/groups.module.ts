@@ -34,8 +34,8 @@ import { SearchInputModule } from 'app/modules/forms/search-input/search-input.m
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
@@ -77,7 +77,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     TranslateModule,
     DualListModule,
     MatSlideToggleModule,
-    LayoutModule,
     TestIdModule,
     IxTableModule,
     SearchInputModule,
@@ -90,6 +89,7 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     FormActionsComponent,
     IxSelectComponent,
     ReadOnlyComponent,
+    PageHeaderModule,
   ],
   declarations: [
     GroupListComponent,

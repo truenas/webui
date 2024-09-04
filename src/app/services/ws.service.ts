@@ -139,6 +139,10 @@ export class WebSocketService {
     this.eventSubscribers.clear();
   }
 
+  getWebSocketStream$(): Observable<unknown> {
+    return this.ws$;
+  }
+
   private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;
   private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number>;
   private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown): Observable<unknown> {
