@@ -64,6 +64,7 @@ export class CloudBackupCardComponent implements OnInit {
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row?.job?.state,
+      getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     textColumn({

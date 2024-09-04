@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal,
+  ChangeDetectionStrategy, Component, inject, OnInit, signal,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   catchError, EMPTY, Observable, of, switchMap, tap,
@@ -41,14 +41,14 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   dialogService: DialogService = inject(DialogService);
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
 
-  private cdr = inject(ChangeDetectorRef);
+  getJob: (row: T) => Job;
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
   job = signal<Job>(null);
   jobUpdates$: Observable<Job<ApiJobResponse<ApiJobMethod>>>;
 
   ngOnInit(): void {
-    this.jobUpdates$ = this.store$.pipe(
-      select(selectJob((this.row as Job).id)),
+    const jobId = (this.getJob(this.row)).id;
+    this.jobUpdates$ = this.store$.select(selectJob(jobId)).pipe(
       tap((job) => this.job.set(job)),
     ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>;
     this.jobUpdates$.pipe(
@@ -100,7 +100,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
       } else if (!this.job().logs_excerpt) {
         this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
       } else {
-        this.matDialog.open(ShowLogsDialogComponent, { data: this.job });
+        this.matDialog.open(ShowLogsDialogComponent, { data: this.job() });
       }
     } else {
       this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);

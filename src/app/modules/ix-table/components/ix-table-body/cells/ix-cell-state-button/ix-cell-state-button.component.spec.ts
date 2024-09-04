@@ -4,12 +4,17 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxCellStateButtonComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 
 interface TestTableData {
   state: JobState;
@@ -26,8 +31,23 @@ describe('IxCellStateButtonComponent', () => {
     imports: [IxTableModule],
     detectChanges: false,
     providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectJob(1),
+            value: fakeSuccessfulJob(),
+          },
+        ],
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(),
+      }),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => {
+          return {
+            afterClosed: jest.fn(() => of()),
+          };
+        }),
       }),
     ],
   });
@@ -43,6 +63,11 @@ describe('IxCellStateButtonComponent', () => {
     spectator.component.getJob = (row) => row.job;
     spectator.component.rowTestId = () => '';
     spectator.component.ariaLabels = () => ['Label 1', 'Label 2'];
+    spectator.component.job.set({
+      id: 123456,
+      logs_excerpt: 'completed',
+      state: JobState.Success,
+    } as Job);
     spectator.detectChanges();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -51,6 +76,7 @@ describe('IxCellStateButtonComponent', () => {
   it('shows status text', async () => {
     const button = await loader.getHarness(MatButtonHarness);
     expect(await button.getText()).toBe(JobState.Success);
+    expect(await (await button.host()).hasClass('fn-theme-green')).toBeTruthy();
   });
 
   it('sets class', async () => {

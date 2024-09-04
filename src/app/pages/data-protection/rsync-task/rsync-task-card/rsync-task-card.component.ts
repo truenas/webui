@@ -77,6 +77,7 @@ export class RsyncTaskCardComponent implements OnInit {
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
+      getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     actionsColumn({
