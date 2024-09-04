@@ -105,7 +105,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
       spectator.component.form.patchValue({
         subFolder: '/test',
-        includedPaths: ['/test/first'],
+        includedPaths: ['/first'],
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -118,7 +118,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         '/mnt/my pool',
         {
           include: [
-            '/test/first',
+            '/first',
           ],
         },
       ]);
