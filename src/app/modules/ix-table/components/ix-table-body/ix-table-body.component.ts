@@ -93,14 +93,15 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
 
   protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>, index: number): string {
     const trackById = this.getTestAttr(column.getRow());
+
     if (column.title) {
-      return trackById + '-' + column.title;
+      return trackById + '-' + column.title + '-' + index;
     }
     const actionsColumn = column as Column<T, IxCellActionsComponent<T>>;
     if (actionsColumn.actions?.length) {
       return trackById + '-' + actionsColumn.actions.reduce((all, action) => {
         return all + '-' + action.iconName;
-      }, '');
+      }, '') + '-' + index;
     }
 
     return trackById + '-' + (column.propertyName ? column.propertyName.toString() : index);

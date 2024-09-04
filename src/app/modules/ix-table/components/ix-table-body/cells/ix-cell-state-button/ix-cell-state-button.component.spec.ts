@@ -6,7 +6,6 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
@@ -35,7 +34,11 @@ describe('IxCellStateButtonComponent', () => {
         selectors: [
           {
             selector: selectJob(1),
-            value: fakeSuccessfulJob(),
+            value: {
+              id: 123456,
+              logs_excerpt: 'completed',
+              state: JobState.Success,
+            } as Job,
           },
         ],
       }),
@@ -57,7 +60,7 @@ describe('IxCellStateButtonComponent', () => {
     spectator.component.propertyName = 'state';
     spectator.component.setRow({
       state: JobState.Success,
-      job: { id: 123456, logs_excerpt: 'completed' },
+      job: { id: 123456, logs_excerpt: 'completed', state: JobState.Success },
       warnings: [{}, {}],
     } as TestTableData);
     spectator.component.getJob = (row) => row.job;
@@ -68,6 +71,7 @@ describe('IxCellStateButtonComponent', () => {
       logs_excerpt: 'completed',
       state: JobState.Success,
     } as Job);
+    spectator.component.ngOnInit();
     spectator.detectChanges();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
