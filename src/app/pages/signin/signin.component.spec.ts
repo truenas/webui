@@ -6,6 +6,7 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
@@ -48,6 +49,7 @@ describe('SigninComponent', () => {
         SetAdminPasswordFormComponent,
         TrueCommandStatusComponent,
         FailoverStatusComponent,
+        CopyrightLineComponent,
       ),
     ],
     componentProviders: [
