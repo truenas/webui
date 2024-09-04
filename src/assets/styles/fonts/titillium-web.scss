@@ -19,26 +19,3 @@
   font-weight: 700;
   src: local('Titillium Web Bold'), local('TitilliumWeb-Bold'), url('../../fonts/TitilliumWeb/TitilliumWeb-Bold.ttf') format('truetype');
 }
-@font-face {
-  font-display: swap;
-  font-family: 'Titillium Web';
-  font-style: italic;
-  font-weight: 400;
-  src: local('Titillium Web Italic'), local('TitilliumWeb-Italic'), url('../../fonts/TitilliumWeb/TitilliumWeb-Italic.ttf') format('truetype');
-}
-@font-face {
-  font-display: swap;
-  font-family: 'Titillium Web';
-  font-style: italic;
-  font-weight: 500;
-  src: local('Titillium Web SemiBold Italic'), local('TitilliumWeb-SemiBoldItalic'),
-    url('../../fonts/TitilliumWeb/TitilliumWeb-SemiBoldItalic.ttf') format('truetype');
-}
-@font-face {
-  font-display: swap;
-  font-family: 'Titillium Web';
-  font-style: italic;
-  font-weight: 700;
-  src: local('Titillium Web Bold Italic'), local('TitilliumWeb-BoldItalic'),
-    url('../../fonts/TitilliumWeb/TitilliumWeb-BoldItalic.ttf') format('truetype');
-}
