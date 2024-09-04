@@ -232,7 +232,7 @@ def press_initiate_failover_and_confirm(driver, nas_ip):
 def wait_for_the_login_and_the_ha_enabled_status_than_verify_the_system_dataset_and_login(driver, nas_vip):
     """wait for the login and the HA enabled status than verify the system dataset and login."""
     wait_on_element(driver, 180, xpaths.login.user_Input)
-    driver.refresh()
+
     # Do not assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable) we need to verify the system dataset.
     wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 

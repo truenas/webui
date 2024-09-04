@@ -92,7 +92,6 @@ def Go_To_Service(driver):
 
 def HA_Login_Status_Enable(driver):
     wait_on_element(driver, 180, xpaths.login.user_Input)
-    driver.refresh()
     assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 
 
