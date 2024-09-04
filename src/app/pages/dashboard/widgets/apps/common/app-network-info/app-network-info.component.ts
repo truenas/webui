@@ -7,7 +7,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartReleaseStats } from 'app/interfaces/app.interface';
+import { AppStats } from 'app/interfaces/app.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
@@ -17,7 +17,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppNetworkInfoComponent {
-  stats = input.required<LoadingState<ChartReleaseStats>>();
+  stats = input.required<LoadingState<AppStats>>();
 
   protected readonly initialNetworkStats = Array.from({ length: 60 }, () => ([0, 0]));
   cachedNetworkStats = signal<number[][]>([]);
@@ -63,7 +63,8 @@ export class AppNetworkInfoComponent {
     private translate: TranslateService,
   ) {
     effect(() => {
-      const networkStats = this.stats()?.value?.network;
+      // TODO: Fix this
+      const networkStats = this.stats()?.value?.networks[0];
       if (networkStats) {
         this.cachedNetworkStats.update((cachedStats) => {
           return [...cachedStats, Object.values(networkStats)].slice(-60);
