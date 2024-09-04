@@ -40,7 +40,6 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -171,7 +170,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     LightboxModule,
     MarkdownModule,
     IxTableModule,
-    LayoutModule,
     SearchInput1Component,
     EmptyComponent,
     MatSort,

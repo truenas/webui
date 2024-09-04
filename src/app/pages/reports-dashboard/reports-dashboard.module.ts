@@ -29,8 +29,8 @@ import {
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -67,7 +67,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     MatMenuModule,
     MatCardModule,
     CommonDirectivesModule,
-    LayoutModule,
     MatButtonToggleModule,
     MatSlideToggleModule,
     TestIdModule,
@@ -82,6 +81,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxCheckboxComponent,
     FormActionsComponent,
     IxSlideToggleComponent,
+    PageHeaderModule,
   ],
   declarations: [
     LineChartComponent,

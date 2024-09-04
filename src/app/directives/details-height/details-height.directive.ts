@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { headerHeight, footerHeight } from 'app/modules/layout/components/admin-layout/admin-layout.component.const';
+import { headerHeight, footerHeight } from 'app/modules/layout/admin-layout/admin-layout.component.const';
 import { LayoutService } from 'app/services/layout.service';
 import { AppsState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
