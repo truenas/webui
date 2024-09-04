@@ -50,6 +50,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   ngOnInit(): void {
     if (this.getJob) {
       this.job.set(this.getJob(this.row));
+      this.state.set(this.job().state);
     }
     if (!this.job()) {
       this.state.set(this.value as JobState);
