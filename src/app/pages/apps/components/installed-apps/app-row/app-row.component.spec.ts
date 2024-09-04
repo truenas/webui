@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
+import { MiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
@@ -21,6 +22,21 @@ describe('AppRowComponent', () => {
     state: AppState.Running,
     metadata: { icon: 'https://image/' },
   } as App;
+
+  const stats = {
+    app_name: app.name,
+    cpu_usage: 90,
+    memory: 80 * MiB,
+    networks: [{
+      interface_name: 'eth0',
+      rx_bytes: 256,
+      tx_bytes: 512,
+    }],
+    blkio: {
+      read: 1024,
+      write: 2048,
+    },
+  };
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,
@@ -42,6 +58,7 @@ describe('AppRowComponent', () => {
       props: {
         app,
         selected: false,
+        stats,
       },
     });
 
@@ -64,11 +81,10 @@ describe('AppRowComponent', () => {
     expect(updateCell.hasUpdate).toBeFalsy();
   });
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130471
-  it.skip('shows app usages statistics', () => {
-    expect(spectator.query('.cell-cpu')).toHaveText('50%');
-    expect(spectator.query('.cell-ram')).toHaveText('19.07 MiB');
-    expect(spectator.query('.cell-network')).toHaveText('50 Mb/s - 55.5 Mb/s');
+  it('shows app usages stats', () => {
+    expect(spectator.query('.cell-cpu')).toHaveText('90%');
+    expect(spectator.query('.cell-ram')).toHaveText('80 MiB');
+    expect(spectator.query('.cell-network')).toHaveText('256 b/s - 512 b/s');
   });
 
   describe('actions', () => {

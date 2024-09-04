@@ -5,7 +5,7 @@ import {
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
+import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
@@ -16,6 +16,7 @@ import { Job } from 'app/interfaces/job.interface';
 })
 export class AppRowComponent {
   readonly app = input.required<App>();
+  readonly stats = input.required<AppStats>();
   readonly selected = input.required<boolean>();
   readonly job = input<Job<void, AppStartQueryParams>>();
 
@@ -27,10 +28,7 @@ export class AppRowComponent {
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  readonly hasUpdates = computed(() => {
-    return this.app().upgrade_available;
-  });
-
+  readonly hasUpdates = computed(() => this.app().upgrade_available);
   readonly isAppStopped = computed(() => this.app().state === AppState.Stopped);
 
   readonly inProgress = computed(() => {
