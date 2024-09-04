@@ -222,7 +222,7 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(nas_vip):
 @then('press Initiate Failover and confirm')
 def press_initiate_failover_and_confirm(driver, nas_ip):
     """press Initiate Failover and confirm."""
-    time.sleep(10)
+    time.sleep(20)
     reboot(nas_ip, (ADMIN_USER, ADMIN_PASSWORD))
     time.sleep(10)
 
@@ -233,7 +233,7 @@ def wait_for_the_login_and_the_ha_enabled_status_than_verify_the_system_dataset_
     wait_on_element(driver, 180, xpaths.login.user_Input)
     driver.refresh()
     # Do not assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable) we need to verify the system dataset.
-    #wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
+    wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 
     results = get(nas_vip, '/systemdataset/', (ADMIN_USER, ADMIN_PASSWORD))
     assert results.status_code == 200, results.text
