@@ -29,6 +29,7 @@ import {
   IxCheckboxListComponent,
 } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -144,6 +145,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
   imports: [
     CommonModule,
     AppsRoutingModule,
+    IxCodeEditorComponent,
     PageHeaderModule,
     MatButtonModule,
     TranslateModule,
