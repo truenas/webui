@@ -1,5 +1,5 @@
 <div class="header">
-  <h3 class="title" [class.no-buttons]="dataset.locked || isZvol">
+  <h3 class="title" [class.no-buttons]="dataset().locked || isZvol()">
     <div class="mobile-prefix">
       <a
         tabindex="0"
@@ -19,13 +19,13 @@
     </span>
 
     <div class="full-path">
-      <ix-dataset-icon [dataset]="dataset"></ix-dataset-icon>
-      <span class="own-name" [matTooltip]="ownName">{{ ownName }}</span>
+      <ix-dataset-icon [dataset]="dataset()"></ix-dataset-icon>
+      <span class="own-name" [matTooltip]="ownName()">{{ ownName() }}</span>
     </div>
   </h3>
 
   <div class="add-buttons">
-    @if (!dataset.locked && !isZvol) {
+    @if (!dataset().locked && !isZvol()) {
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
@@ -53,37 +53,37 @@
   <div class="scroll-window">
     <ix-dataset-details-card
       [ixUiSearch]="searchableElements.elements.datasetDetailsCard"
-      [dataset]="dataset"
+      [dataset]="dataset()"
     ></ix-dataset-details-card>
-    @if (isCapacityAllowed) {
+    @if (isCapacityAllowed()) {
       <ix-dataset-capacity-management-card
         [ixUiSearch]="searchableElements.elements.datasetCapacityCard"
-        [dataset]="dataset"
+        [dataset]="dataset()"
       ></ix-dataset-capacity-management-card>
     }
-    @if (isEncryptionAllowed) {
+    @if (isEncryptionAllowed()) {
       <ix-zfs-encryption-card
-        [dataset]="dataset"
+        [dataset]="dataset()"
         [ixUiSearch]="searchableElements.elements.datasetZfsEncryptionCard"
         [parentDataset]="selectedParentDataset$ | async"
       ></ix-zfs-encryption-card>
     }
     <ix-data-protection-card
-      [dataset]="dataset"
+      [dataset]="dataset()"
       [ixUiSearch]="searchableElements.elements.datasetDataProtectionCard"
     ></ix-data-protection-card>
-    @if (datasetHasRoles) {
+    @if (hasRoles()) {
       <ix-roles-card
-        [dataset]="dataset"
-        [hasChildrenWithShares]="datasetHasChildrenWithShares"
+        [dataset]="dataset()"
+        [hasChildrenWithShares]="hasChildrenWithShares()"
         [ixUiSearch]="searchableElements.elements.datasetRolesCard"
-        [systemDataset]="systemDataset"
+        [systemDataset]="systemDataset()"
       ></ix-roles-card>
     }
-    @if (hasPermissions && !dataset.locked) {
+    @if (hasPermissions()) {
       <ix-permissions-card
         [ixUiSearch]="searchableElements.elements.datasetPermissionsCard"
-        [dataset]="dataset"
+        [dataset]="dataset()"
       ></ix-permissions-card>
     }
   </div>

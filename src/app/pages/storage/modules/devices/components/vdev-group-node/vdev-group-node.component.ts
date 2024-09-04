@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 
@@ -10,5 +12,5 @@ import { VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VDevGroupNodeComponent {
-  @Input() vdevGroup: VDevGroup;
+  readonly vdevGroup = input.required<VDevGroup>();
 }

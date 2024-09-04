@@ -57,6 +57,7 @@ describe('RolesCardComponent', () => {
     spectator = createComponent({
       props: {
         hasChildrenWithShares: true,
+        systemDataset: 'pool/system-dataset',
         dataset: {
           ...datasetDummy,
           smb_shares: [

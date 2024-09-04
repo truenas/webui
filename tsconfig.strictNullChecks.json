@@ -570,7 +570,7 @@
     "./src/app/pages/apps/utils/get-clean-link.ts",
     "./src/app/pages/audit/components/event-data-details-card/event-data-details-card.component.ts",
     "./src/app/pages/audit/components/log-details-panel/log-details-panel.component.ts",
-    "./src/app/pages/audit/components/log-details-panel/log-details.panel.spec.ts",
+    "./src/app/pages/audit/components/log-details-panel/log-details-panel.component.spec.ts",
     "./src/app/pages/audit/components/metadata-details-card/metadata-details-card.component.ts",
     "./src/app/pages/credentials/backup-credentials/backup-credentials.component.ts",
     "./src/app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component.ts",

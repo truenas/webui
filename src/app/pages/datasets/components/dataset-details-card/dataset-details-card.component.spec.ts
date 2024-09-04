@@ -82,7 +82,7 @@ describe('DatasetDetailsCardComponent', () => {
     ],
   });
 
-  function setupTest(props: Partial<DatasetDetailsCardComponent> = {}): void {
+  function setupTest(props: Partial<{ dataset: DatasetDetails }> = {}): void {
     spectator = createComponent({ props });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }

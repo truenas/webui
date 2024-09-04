@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 
@@ -9,8 +9,8 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SecondaryMenuComponent {
-  @Input() menuName: string;
-  @Input() subMenuItems: SubMenuItem[];
+  readonly menuName = input<string>();
+  readonly subMenuItems = input<SubMenuItem[]>();
 
   readonly toggleMenu = output();
 }
