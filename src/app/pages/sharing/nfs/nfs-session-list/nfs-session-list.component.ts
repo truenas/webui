@@ -68,26 +68,31 @@ export class NfsSessionListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Minor Version'),
       propertyName: 'minor version',
+      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Implementation Domain'),
+      isExtra: true,
       hidden: true,
       propertyName: 'Implementation domain',
     }),
     textColumn({
       title: this.translate.instant('Implementation Name'),
+      isExtra: true,
       hidden: true,
       propertyName: 'Implementation name',
     }),
     textColumn({
       title: this.translate.instant('Callback State'),
+      isExtra: true,
       hidden: true,
       propertyName: 'callback state',
     }),
     textColumn({
       title: this.translate.instant('Callback Address'),
       propertyName: 'callback address',
+      isExtra: true,
       hidden: true,
     }),
   ], {

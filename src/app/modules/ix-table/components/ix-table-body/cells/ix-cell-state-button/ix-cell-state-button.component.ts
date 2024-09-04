@@ -47,6 +47,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   jobUpdates$: Observable<Job<ApiJobResponse<ApiJobMethod>>>;
 
   ngOnInit(): void {
+    this.job.set(this.getJob(this.row));
     const jobId = (this.getJob(this.row)).id;
     this.jobUpdates$ = this.store$.select(selectJob(jobId)).pipe(
       tap((job) => this.job.set(job)),

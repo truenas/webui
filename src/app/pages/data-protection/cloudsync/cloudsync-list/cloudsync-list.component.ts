@@ -60,26 +60,31 @@ export class CloudSyncListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Credential'),
       hidden: true,
+      isExtra: true,
       getValue: (task) => task.credentials.name,
     }),
     textColumn({
       title: this.translate.instant('Direction'),
       propertyName: 'direction',
+      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Transfer Mode'),
       propertyName: 'transfer_mode',
+      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path',
+      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
+      isExtra: true,
       hidden: true,
       getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
     }),
@@ -90,6 +95,7 @@ export class CloudSyncListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Next Run'),
+      isExtra: true,
       hidden: true,
       getValue: (task) => {
         if (task.enabled) {
@@ -102,6 +108,7 @@ export class CloudSyncListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
+      isExtra: true,
       hidden: true,
       getValue: (task) => {
         if (task.job?.time_finished?.$date) {

@@ -65,6 +65,7 @@ export class RsyncTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Remote SSH Port'),
       propertyName: 'remoteport',
+      isExtra: true,
       hidden: true,
     }),
     textColumn({
@@ -74,6 +75,7 @@ export class RsyncTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Remote Path'),
       propertyName: 'remotepath',
+      isExtra: true,
       hidden: true,
     }),
     textColumn({
@@ -83,6 +85,7 @@ export class RsyncTaskListComponent implements OnInit {
     scheduleColumn({
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
+      isExtra: true,
       hidden: true,
     }),
     textColumn({
@@ -99,6 +102,7 @@ export class RsyncTaskListComponent implements OnInit {
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
       getValue: (row) => row.job?.time_finished?.$date,
+      isExtra: true,
       hidden: true,
     }),
     textColumn({
@@ -112,6 +116,7 @@ export class RsyncTaskListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Delay Updates'),
       propertyName: 'delayupdates',
+      isExtra: true,
       hidden: true,
     }),
     stateButtonColumn({
@@ -123,6 +128,7 @@ export class RsyncTaskListComponent implements OnInit {
 
         return row.job.state;
       },
+      getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     yesNoColumn({
