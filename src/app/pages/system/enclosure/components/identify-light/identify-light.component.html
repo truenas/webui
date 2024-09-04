@@ -28,7 +28,7 @@
       (click)="changeLightStatus(DriveBayLightStatus.On)"
     >{{ 'Identify' | translate }}</button>
   }
-  @if (status() !== DriveBayLightStatus.Off || status() !== DriveBayLightStatus.Clear || !isStatusKnown()) {
+  @if ((status() !== DriveBayLightStatus.Off && status() !== DriveBayLightStatus.Clear) || !isStatusKnown()) {
     <button
       mat-button
       ixTest="turn-off"
