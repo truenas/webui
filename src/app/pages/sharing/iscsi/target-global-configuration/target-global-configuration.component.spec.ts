@@ -13,7 +13,6 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,7 +33,6 @@ describe('TargetGlobalConfigurationComponent', () => {
     component: TargetGlobalConfigurationComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockAuth(),

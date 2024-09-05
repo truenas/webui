@@ -5,6 +5,7 @@ export interface VDevGroup {
   group: string;
   guid: VdevType;
   children: TopologyItem[];
+  isRoot?: boolean;
 }
 
 export type DeviceNestedDataNode = TopologyItem | VDevGroup;

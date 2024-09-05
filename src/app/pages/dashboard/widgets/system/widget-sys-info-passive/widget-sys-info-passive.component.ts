@@ -90,7 +90,7 @@ export class WidgetSysInfoPassiveComponent {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.router.navigate(['/others/failover'], { skipLocationChange: true });
+      this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
     });
   }
 }

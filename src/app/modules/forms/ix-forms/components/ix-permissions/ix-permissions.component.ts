@@ -2,14 +2,27 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { TranslateModule } from '@ngx-translate/core';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @Component({
   selector: 'ix-permissions',
   templateUrl: './ix-permissions.component.html',
   styleUrls: ['./ix-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    TestIdModule,
+    MatCheckbox,
+    IxErrorsComponent,
+    TranslateModule,
+  ],
 })
 export class IxPermissionsComponent implements ControlValueAccessor {
   @Input() label: string;

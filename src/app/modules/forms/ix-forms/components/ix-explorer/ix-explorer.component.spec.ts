@@ -4,12 +4,16 @@ import { EventEmitter } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { TreeComponent as BaseTreeComponent, TreeModel } from '@bugsplat/angular-tree-component';
+import {
+  TreeComponent,
+  TreeModel,
+  TreeModule,
+} from '@bugsplat/angular-tree-component';
 import { IDTypeDictionary } from '@bugsplat/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
 import { SpectatorHost } from '@ngneat/spectator';
 import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent, MockInstance } from 'ng-mocks';
+import { MockComponent, MockInstance, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -19,14 +23,6 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-
-/**
- * Provides better typing.
- */
-class TreeComponent extends BaseTreeComponent {
-  override select: EventEmitter<unknown>;
-  override deselect: EventEmitter<unknown>;
-}
 
 describe('IxExplorerComponent', () => {
   const mockTreeMock = {
@@ -58,11 +54,11 @@ describe('IxExplorerComponent', () => {
     imports: [
       ReactiveFormsModule,
       FormsModule,
+      MockModule(TreeModule),
     ],
     declarations: [
-      MockComponent(IxErrorsComponent),
       MockComponent(IxLabelComponent),
-      MockComponent(TreeComponent),
+      MockComponent(IxErrorsComponent),
     ],
     providers: [
       mockAuth(),
@@ -167,7 +163,7 @@ describe('IxExplorerComponent', () => {
 
     it('updates form control when user selects a node', () => {
       const tree = spectator.query(TreeComponent);
-      tree.select.emit({ node: { id: '/mnt/new' } });
+      (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new' } });
 
       expect(mockTreeMock.setState).toHaveBeenCalledWith({ selectedLeafNodeIds: { '/mnt/new': true } });
       expect(formControl.value).toBe('/mnt/new');
@@ -175,8 +171,8 @@ describe('IxExplorerComponent', () => {
 
     it('updates form control when user deselects a node', () => {
       const tree = spectator.query(TreeComponent);
-      tree.select.emit({ node: { id: '/mnt/new' } });
-      tree.deselect.emit({ node: { id: '/mnt/new' } });
+      (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new' } });
+      (tree.deselect as EventEmitter<unknown>).emit({ node: { id: '/mnt/new' } });
 
       expect(mockTreeMock.setState).toHaveBeenLastCalledWith({ selectedLeafNodeIds: {} });
       expect(formControl.value).toBeUndefined();
@@ -220,8 +216,8 @@ describe('IxExplorerComponent', () => {
 
     it('updates form control when user selects multiple nodes', () => {
       const tree = spectator.query(TreeComponent);
-      tree.select.emit({ node: { id: '/mnt/new1' } });
-      tree.select.emit({ node: { id: '/mnt/new2' } });
+      (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new1' } });
+      (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new2' } });
 
       expect(mockTreeMock.setState).toHaveBeenCalledWith({
         selectedLeafNodeIds: {
@@ -234,9 +230,9 @@ describe('IxExplorerComponent', () => {
 
     it('updates form control when user deselects multiple nodes', () => {
       const tree = spectator.query(TreeComponent);
-      tree.select.emit({ node: { id: '/mnt/new1' } });
-      tree.select.emit({ node: { id: '/mnt/new2' } });
-      tree.deselect.emit({ node: { id: '/mnt/new1' } });
+      (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new1' } });
+      (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new2' } });
+      (tree.deselect as EventEmitter<unknown>).emit({ node: { id: '/mnt/new1' } });
 
       expect(mockTreeMock.setState).toHaveBeenLastCalledWith({
         selectedLeafNodeIds: { '/mnt/new2': true },

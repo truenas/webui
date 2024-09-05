@@ -14,12 +14,22 @@ import {
   ControlValueAccessor,
   NgControl,
 } from '@angular/forms';
+import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
+import { MatIconButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatError, MatHint } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -27,6 +37,22 @@ import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.servi
   templateUrl: './ix-input.component.html',
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    TestIdModule,
+    IxIconModule,
+    MatInput,
+    MatAutocompleteTrigger,
+    MatIconButton,
+    MatTooltip,
+    MatAutocomplete,
+    MatOption,
+    MatError,
+    IxErrorsComponent,
+    MatHint,
+    TranslateModule,
+  ],
 })
 export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges, AfterViewInit, OnDestroy {
   @Input() label: string;

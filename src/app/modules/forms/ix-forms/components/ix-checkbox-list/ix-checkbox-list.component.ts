@@ -1,10 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -12,6 +18,15 @@ import { Option } from 'app/interfaces/option.interface';
   templateUrl: './ix-checkbox-list.component.html',
   styleUrls: ['./ix-checkbox-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    MatCheckbox,
+    TestIdModule,
+    IxErrorsComponent,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class IxCheckboxListComponent implements ControlValueAccessor {
   @Input() label: string;

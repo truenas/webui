@@ -38,7 +38,6 @@ export interface AddReview {
   user_agent: string;
   release: string;
   environment: FeedbackEnvironment;
-  host_u_id: string;
   message: string;
   extra: object;
   product_type: ProductType;

@@ -11,7 +11,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
@@ -42,7 +41,6 @@ describe('ScrubTaskFormComponent', () => {
   const createComponent = createComponentFactory({
     component: ScrubTaskFormComponent,
     imports: [
-      IxFormsModule,
       SchedulerModule,
       ReactiveFormsModule,
     ],

@@ -8,7 +8,6 @@ import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { UploadService } from 'app/services/upload.service';
@@ -20,7 +19,6 @@ describe('UploadConfigDialogComponent', () => {
     component: UploadConfigDialogComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
       AppLoaderModule,
     ],
     providers: [
@@ -56,6 +54,6 @@ describe('UploadConfigDialogComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({ file, method: 'config.upload' });
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot'], { skipLocationChange: true });
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/reboot'], { skipLocationChange: true });
   });
 });

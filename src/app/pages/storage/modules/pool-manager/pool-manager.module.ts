@@ -16,7 +16,13 @@ import { DndModule } from 'ngx-drag-drop';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -69,7 +75,6 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
 
 @NgModule({
   imports: [
-    IxFormsModule,
     IxIconModule,
     MatButtonModule,
     MatCardModule,
@@ -95,6 +100,13 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     FileSizePipe,
     MapValuePipe,
     DiskIconComponent,
+    IxSelectComponent,
+    FormActionsComponent,
+    IxWarningComponent,
+    IxRadioGroupComponent,
+    IxLabelComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
   ],
   declarations: [
     PoolManagerComponent,

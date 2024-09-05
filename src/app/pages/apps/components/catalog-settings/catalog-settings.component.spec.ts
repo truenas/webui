@@ -10,7 +10,6 @@ import { Catalog } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
@@ -24,7 +23,6 @@ describe('CatalogEditFormComponent', () => {
   const createComponent = createComponentFactory({
     component: CatalogSettingsComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [

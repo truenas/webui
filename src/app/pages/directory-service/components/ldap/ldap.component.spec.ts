@@ -13,7 +13,9 @@ import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import {
+  WithManageCertificatesLinkComponent,
+} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
@@ -48,7 +50,7 @@ describe('LdapComponent', () => {
     component: LdapComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
+      WithManageCertificatesLinkComponent,
     ],
     providers: [
       mockWebSocket([

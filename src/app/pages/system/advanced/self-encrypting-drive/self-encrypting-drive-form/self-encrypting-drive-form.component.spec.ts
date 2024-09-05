@@ -8,7 +8,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -21,7 +20,6 @@ describe('SedFormComponent', () => {
   const createComponent = createComponentFactory({
     component: SelfEncryptingDriveFormComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [

@@ -1,7 +1,9 @@
+import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { MatHint } from '@angular/material/form-field';
 import { Compartment } from '@codemirror/state';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorView, EditorViewConfig, placeholder } from '@codemirror/view';
@@ -13,7 +15,10 @@ import {
 import { languageFunctionsMap } from 'app/constants/language-functions-map.constant';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +26,14 @@ import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/i
   templateUrl: './ix-code-editor.component.html',
   styleUrls: ['./ix-code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    TestIdModule,
+    IxErrorsComponent,
+    MatHint,
+    AsyncPipe,
+  ],
 })
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {
   @Input() label: string;
