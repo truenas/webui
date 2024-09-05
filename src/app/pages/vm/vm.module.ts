@@ -30,8 +30,8 @@ import {
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
@@ -65,7 +65,6 @@ import { routing } from './vm.routing';
     EntityModule,
     IxIconModule,
     IxTableModule,
-    LayoutModule,
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
@@ -95,6 +94,7 @@ import { routing } from './vm.routing';
     IxErrorsComponent,
     IxFileInputComponent,
     IxRadioGroupComponent,
+    PageHeaderModule,
   ],
   declarations: [
     VmSerialShellComponent,

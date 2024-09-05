@@ -21,8 +21,8 @@ import {
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -115,7 +115,6 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MatButtonModule,
     TranslateModule,
     IxIconModule,
-    LayoutModule,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
@@ -139,6 +138,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     IxCheckboxComponent,
     IxFieldsetComponent,
     IxModalHeaderComponent,
+    PageHeaderModule,
   ],
   declarations: [
     EnclosureDashboardComponent,
