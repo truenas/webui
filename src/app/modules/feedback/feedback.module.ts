@@ -14,7 +14,17 @@ import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket
 import { FileTicketLicensedComponent } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import {
+  IxButtonGroupComponent,
+} from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -24,7 +34,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     AppLoaderModule,
     CommonModule,
-    IxFormsModule,
     IxIconModule,
     RouterModule,
     MatButtonModule,
@@ -36,6 +45,15 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     OauthButtonModule,
     NgxSkeletonLoaderModule,
     CastPipe,
+    IxButtonGroupComponent,
+    IxStarRatingComponent,
+    IxTextareaComponent,
+    IxCheckboxComponent,
+    IxFileInputComponent,
+    FormActionsComponent,
+    IxInputComponent,
+    IxChipsComponent,
+    IxSelectComponent,
   ],
   declarations: [
     FeedbackDialogComponent,

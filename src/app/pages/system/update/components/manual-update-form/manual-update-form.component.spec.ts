@@ -16,7 +16,6 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -32,7 +31,6 @@ describe('ManualUpdateFormComponent', () => {
     component: ManualUpdateFormComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockWebSocket([

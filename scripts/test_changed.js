@@ -1,6 +1,6 @@
-const { execSync } = require('child_process');
-const { existsSync, readdirSync } = require('fs');
-const path = require('path');
+import { execSync } from "child_process";
+import { existsSync, readdirSync } from "fs";
+import path from "path";
 
 /**
  * Runs tests in immediate directory of changed files staged for the commit.
