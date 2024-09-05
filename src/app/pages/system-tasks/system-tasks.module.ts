@@ -9,7 +9,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
 import { FailoverComponent } from 'app/pages/system-tasks/failover/failover.component';
 import { RebootComponent } from 'app/pages/system-tasks/reboot/reboot.component';
@@ -19,7 +19,6 @@ import { systemTasksRoutes } from 'app/pages/system-tasks/system-tasks.routing';
 @NgModule({
   imports: [
     CommonModule,
-    LayoutModule,
     MatListModule,
     IxIconModule,
     MatButtonModule,
@@ -29,6 +28,7 @@ import { systemTasksRoutes } from 'app/pages/system-tasks/system-tasks.routing';
     MatGridListModule,
     TranslateModule,
     RouterModule.forChild(systemTasksRoutes),
+    CopyrightLineComponent,
   ],
   declarations: [RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent],
 })

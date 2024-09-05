@@ -1,0 +1,51 @@
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+// eslint-disable-next-line no-restricted-imports
+import { MediaObserver } from '@ngbracket/ngx-layout';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { ThemeService } from 'app/services/theme/theme.service';
+
+@Component({
+  selector: 'ix-logo',
+  templateUrl: './ix-logo.component.html',
+  styleUrls: ['./ix-logo.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TestIdModule,
+    IxIconModule,
+    AsyncPipe,
+  ],
+})
+export class IxLogoComponent {
+  constructor(
+    private mediaObserver: MediaObserver,
+    private themeService: ThemeService,
+  ) {}
+
+  screenSize$ = this.mediaObserver.asObservable().pipe(
+    map((changes) => changes[0].mqAlias),
+  );
+
+  logoIcon$ = combineLatest([
+    this.themeService.activeTheme$,
+    this.screenSize$,
+  ]).pipe(
+    map(([activeTheme, screenSize]) => {
+      const isBlueTheme = activeTheme === 'ix-blue' || activeTheme === 'midnight';
+      if (isBlueTheme && screenSize === 'xs') {
+        return 'ix:logo_mark';
+      }
+      if (!isBlueTheme && screenSize === 'xs') {
+        return 'ix:logo_mark_rgb';
+      }
+      if (isBlueTheme && screenSize !== 'xs') {
+        return 'ix:logo_full';
+      }
+      return 'ix:logo_full_rgb';
+    }),
+  );
+}

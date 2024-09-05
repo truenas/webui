@@ -53,9 +53,9 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
@@ -191,7 +191,6 @@ import { routing } from './system.routing';
     routing,
     TranslateModule,
     MatDialogModule,
-    LayoutModule,
     MatExpansionModule,
     MatSlideToggleModule,
     AppLoaderModule,
@@ -225,6 +224,7 @@ import { routing } from './system.routing';
     IxListComponent,
     IxListItemComponent,
     IxExplorerComponent,
+    PageHeaderModule,
   ],
   declarations: [
     AdvancedSettingsComponent,

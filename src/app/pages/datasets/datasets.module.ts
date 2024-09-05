@@ -31,8 +31,8 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -68,7 +68,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     CommonModule,
     CommonDirectivesModule,
     BaseChartDirective,
-    LayoutModule,
     routing,
     TranslateModule,
     IxIconModule,
@@ -106,6 +105,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxModalHeaderComponent,
     IxChipsComponent,
     IxTextareaComponent,
+    PageHeaderModule,
   ],
   declarations: [
     DatasetsManagementComponent,
