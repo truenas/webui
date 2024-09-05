@@ -76,7 +76,7 @@
 .c3-chart-arcs-title,
 .c3-gauge-value {
   color: rgba(0, 0, 0, 0.55);
-  font-family: 'IBM Plex Sans';
+  font-family: var(--font-family-body);
 }
 
 .c3-axis-y-label {
@@ -84,7 +84,7 @@
 }
 
 .c3-legend-item text {
-  font-family: 'IBM Plex Sans';
+  font-family: var(--font-family-body);
 }
 
 /* Chart Tooltips */

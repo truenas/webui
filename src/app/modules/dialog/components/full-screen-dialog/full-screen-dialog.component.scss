@@ -26,7 +26,7 @@
   .message {
     &.pre {
       display: block;
-      font-family: 'IBM Plex Sans', 'Courier New', Courier, monospace;
+      font-family: var(--font-family-body);
       unicode-bidi: isolate;
       white-space: pre;
     }
