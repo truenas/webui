@@ -20,7 +20,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer';
 import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
@@ -73,7 +72,6 @@ describe('JobsListComponent', () => {
     imports: [
       IxTableModule,
       MatTabsModule,
-      MockModule(LayoutModule),
       MockModule(PageHeaderModule),
       SearchInput1Component,
       MatButtonToggleGroup,

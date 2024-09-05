@@ -38,9 +38,9 @@ import {
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
@@ -108,7 +108,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     DualListModule,
     IxTableModule,
     MatToolbarModule,
-    LayoutModule,
     MatExpansionModule,
     MatButtonToggleModule,
     SearchInput1Component,
@@ -126,6 +125,7 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     IxComboboxComponent,
     IxIpInputWithNetmaskComponent,
     IxErrorsComponent,
+    PageHeaderModule,
   ],
   declarations: [
     NfsListComponent,

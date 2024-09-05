@@ -26,7 +26,7 @@ import {
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -98,7 +98,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     AppLoaderModule,
     NgComponentOutlet,
     CommonDirectivesModule,
-    LayoutModule,
     TestIdModule,
     PageHeaderModule,
     routing,
@@ -138,6 +137,7 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     IxIconGroupComponent,
     IxModalHeader2Component,
     IxInputComponent,
+    CopyrightLineComponent,
   ],
 })
 export class DashboardModule {

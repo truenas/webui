@@ -6,7 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
+import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetHelpComponent } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.component';
 import { AppsState } from 'app/store';
