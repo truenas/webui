@@ -42,7 +42,7 @@ describe('FipsService', () => {
           buttonText: 'Restart Now',
         }),
       );
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot'], { skipLocationChange: true });
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/reboot'], { skipLocationChange: true });
     });
   });
 
@@ -55,7 +55,7 @@ describe('FipsService', () => {
           buttonText: 'Failover Now',
         }),
       );
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/failover'], { skipLocationChange: true });
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/failover'], { skipLocationChange: true });
     });
   });
 

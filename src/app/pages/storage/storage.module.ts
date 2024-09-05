@@ -34,8 +34,8 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -76,7 +76,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatToolbarModule,
     BaseChartDirective,
     ReactiveFormsModule,
-    LayoutModule,
     MatFormFieldModule,
     MatOptionModule,
     MatCheckboxModule,
@@ -88,7 +87,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     CommonDirectivesModule,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
-    LayoutModule,
     EntityModule,
     TestIdModule,
     AppLoaderModule,
@@ -104,6 +102,7 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     IxSelectComponent,
     IxModalHeaderComponent,
     IxInputComponent,
+    PageHeaderModule,
   ],
   declarations: [
     PoolsDashboardComponent,
