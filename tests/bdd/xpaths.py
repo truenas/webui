@@ -472,7 +472,7 @@ class iscsi_Wizard:
     portal_Next_Button = '(//button[@data-test="button-next"])[2]'
     initiator_Title = '//mat-step-header[contains(.,"Initiator") and @tabindex="0"]'
     initiator_Input = '//input[@data-test="input-initiators"]'
-    initiator_Next_Button = '(//button[@data-test="button-save"])[2]'
+    initiator_Next_Button = '//button[@data-test="button-save"]'
     confirm_Options_Title = '//mat-step-header[contains(.,"Confirm Options") and @tabindex="0"]'
     iscsi_Summary = '//div[contains(text(),"iSCSI Summary")]'
     summary_Name = '//div[contains(text(),"Name: iscsitest1")]'
