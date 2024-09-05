@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  catchError, EMPTY, Observable, of, switchMap, tap,
+  catchError, EMPTY, Observable, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -66,20 +66,20 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
         this.state.set(job.state);
       }),
     ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>;
-    this.jobUpdates$.pipe(
-      switchMap((job) => {
-        return [JobState.Aborted, JobState.Error, JobState.Failed,
-          JobState.Finished, JobState.Success].includes(job.state)
-          ? EMPTY
-          : of(job);
-      }),
-      observeJob(),
-      tap((job) => {
-        this.job.set(job);
-        this.state.set(job.state);
-      }),
-      untilDestroyed(this),
-    ).subscribe();
+    // this.jobUpdates$.pipe(
+    //   switchMap((job) => {
+    //     return [JobState.Aborted, JobState.Error, JobState.Failed,
+    //       JobState.Finished, JobState.Success].includes(job.state)
+    //       ? EMPTY
+    //       : of(job);
+    //   }),
+    //   observeJob(),
+    //   tap((job) => {
+    //     this.job.set(job);
+    //     this.state.set(job.state);
+    //   }),
+    //   untilDestroyed(this),
+    // ).subscribe();
   }
 
   getWarnings?: (row: T) => unknown[];

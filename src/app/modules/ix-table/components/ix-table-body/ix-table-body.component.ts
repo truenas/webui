@@ -10,7 +10,6 @@ import {
   TemplateRef, output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { IxCellActionsComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -91,19 +90,20 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
     return columns;
   }
 
-  protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>, index: number): string {
-    const trackById = this.getTestAttr(column.getRow());
+  protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>): Column<T, ColumnComponent<T>> {
+    return column;
+    // const trackById = this.getTestAttr(column.getRow());
 
-    if (column.title) {
-      return trackById + '-' + column.title + '-' + index;
-    }
-    const actionsColumn = column as Column<T, IxCellActionsComponent<T>>;
-    if (actionsColumn.actions?.length) {
-      return trackById + '-' + actionsColumn.actions.reduce((all, action) => {
-        return all + '-' + action.iconName;
-      }, '') + '-' + index;
-    }
+    // if (column.title) {
+    //   return trackById + '-' + column.title + '-' + index;
+    // }
+    // const actionsColumn = column as Column<T, IxCellActionsComponent<T>>;
+    // if (actionsColumn.actions?.length) {
+    //   return trackById + '-' + actionsColumn.actions.reduce((all, action) => {
+    //     return all + '-' + action.iconName;
+    //   }, '') + '-' + index;
+    // }
 
-    return trackById + '-' + (column.propertyName ? column.propertyName.toString() : index);
+    // return trackById + '-' + (column.propertyName ? column.propertyName.toString() : index);
   }
 }
