@@ -391,6 +391,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 240, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
+    # TODO: Restore once NAS-130980 is resolved
     # assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
     time.sleep(5)
 
@@ -413,12 +414,14 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver, nas_hostname_c1
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 15, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, f'//span[contains(.,"Hostname:") and contains(.,"{nas_hostname_c1}")]')
+    # TODO: Restore once NAS-130980 is resolved
     # assert wait_on_element(driver, 15, f'//span[contains(.,"Hostname:") and contains(.,"{nas_hostname_c2}")]')
 
 
 @then('both controllers should show version and license on the dashboard')
 def both_controllers_should_show_model_and_version_on_the_dashboard(driver):
     """both controllers should show version and license on the dashboard."""
+    # TODO: Restore once NAS-130980 is resolved
     version1 = driver.find_element_by_xpath('(//strong[contains(.,"Version:")])[1]/../div/div/span').text
     #version2 = driver.find_element_by_xpath('(//strong[contains(.,"Version:")])[2]/../div/div/span').text
     #assert version1 == version2
