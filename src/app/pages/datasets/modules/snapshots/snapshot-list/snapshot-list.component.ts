@@ -89,9 +89,14 @@ export class SnapshotListComponent implements OnInit {
         this.onListFiltered(this.filterString);
       },
       onColumnCheck: (checked) => {
-        this.snapshots.forEach((bootenv) => bootenv.selected = checked);
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString);
+        this.dataProvider.currentPage$.pipe(
+          take(1),
+          untilDestroyed(this),
+        ).subscribe((snapshots) => {
+          snapshots.forEach((snapshot) => snapshot.selected = checked);
+          this.dataProvider.setRows([]);
+          this.onListFiltered(this.filterString);
+        });
       },
       cssClass: 'checkboxs-column',
     }),
