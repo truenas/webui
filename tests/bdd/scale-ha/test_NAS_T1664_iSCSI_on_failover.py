@@ -2,6 +2,7 @@
 
 import pytest
 import random
+import re
 import reusableSeleniumCode as rsc
 import string
 import time
@@ -201,58 +202,47 @@ def on_the_service_page_verify_iscsi_is_running_and_click_the_start_automaticall
 
 
 @then(parsers.parse('SSH to {hostname} with {host_user} and {host_password} then connect to "iscsitest1"'))
-def ssh_to_host_with_host_user_and_host_password_then_connect_to_iscsitest1(nas_vip, hostname, host_user, host_password, host_info):
+def ssh_to_host_with_host_user_and_host_password_then_connect_to_iscsitest1(nas_vip):
     """SSH to <host> with <host_user> and <host_password> then connect to "iscsitest1"."""
-    host_info['hostname'] = hostname
-    host_info['host_user'] = host_user
-    host_info['host_password'] = host_password
-
-    cmd = f'iscsictl -A -p {nas_vip}:3260 -t iqn.2005-10.org.freenas.ctl:iscsitest1'
-    login_results = run_cmd(cmd)
-    assert login_results['result'], str(login_results)
-
+    cmd = f"iscsiadm --mode discovery --type sendtargets --portal {nas_vip}"
+    discovery_results = run_cmd(cmd)
+    assert discovery_results['result'], str(discovery_results)
+    discovery_text = discovery_results['output']
+    global iqn
+    target_list = re.findall(r'.*iscsitest1$', discovery_text, re.MULTILINE)[0].split()
+    iqn = target_list[1]
+    cmd = f"run_cmd --mode node --targetname {iqn} --portal {nas_vip}:3260 --login"
+    login_results = run_cmd(f"iscsiadm --mode node --targetname {iqn} --portal {nas_vip}:3260 --login")
+    assert login_results['result'] is True, str(login_results)
+    assert 'iscsitest1' in login_results['output'], str(login_results)
+    cmd = "iscsiadm -m session"
+    session_results = run_cmd('iscsiadm -m session')
+    assert session_results['result'], str(session_results)
+    assert 'iscsitest1' in session_results['output'], str(session_results)
 
 @then('find the iscsi device with iscsictl -L and format the device newfs')
-def find_the_iscsi_device_with_iscsictl_l_and_format_the_device_newfs(driver, host_info, device):
+def find_the_iscsi_device_with_iscsictl_l_and_format_the_device_newfs(driver, device):
     """find the iscsi device with iscsictl -L and format the device newfs."""
-    cmd = 'iscsictl -L | grep iqn.2005-10.org.freenas.ctl:iscsitest1'
-    iscsictl_results = None
-    for _ in list(range(15)):
-        iscsictl_results = run_cmd(cmd)
-        assert iscsictl_results['result'], str(iscsictl_results)
-        iscsictl_list = iscsictl_results['output'].strip().split()
-        if iscsictl_list[2] == "Connected:":
-            device['iscsitest1'] = f"/dev/{iscsictl_list[3]}"
-            break
-        time.sleep(1)
-    else:
-        assert False, str(iscsictl_results)
+    fdisk_results = run_cmd("fdisk -l | grep -B 1 'iSCSI Disk' | grep -v 'iSCSI Disk'")
+    assert fdisk_results['result'] is True, str(fdisk_results)
+    device["iscsitest1"] = fdisk_results['output'].replace('Disk ', '').split(':')[0]
 
-    for _ in list(range(15)):
-        cmd = f'test -e {device["iscsitest1"]}'
-        results = run_cmd(cmd)
-        if results['result']:
-            break
-        time.sleep(0.5)
-
-    cmd = f'newfs {device["iscsitest1"]}'
-    format_results = run_cmd(cmd)
+    format_results = run_cmd(f'mkfs {device["iscsitest1"]}')
     assert format_results['result'], str(format_results)
 
 
 @then('create a mount point, then mount the iscsi device to it')
-def create_a_mount_point_then_mount_the_iscsi_device_to_it(driver, host_info, device):
+def create_a_mount_point_then_mount_the_iscsi_device_to_it(driver, device):
     """create a mount point, then mount the iscsi device to it."""
-    cmd = f"mkdir -p {MOUNT_POINT}"
-    mkdir_results = run_cmd(cmd)
+    mkdir_results = run_cmd("mkdir -p {MOUNT_POINT}")
     assert mkdir_results['result'], str(mkdir_results)
-    cmd = f"mount {device['iscsitest1']} {MOUNT_POINT}"
-    mount_results = run_cmd(cmd)
+
+    mount_results = run_cmd(f"mount {device['iscsitest1']} {MOUNT_POINT}")
     assert mount_results['result'], str(mount_results)
 
 
 @then('create a file in the mount point and get the checksum of the files to compare it after the failover')
-def create_a_file_in_the_mount_point_and_get_the_checksum_of_the_files_to_compare_it_after_the_failover(driver, host_info, checksum):
+def create_a_file_in_the_mount_point_and_get_the_checksum_of_the_files_to_compare_it_after_the_failover(driver, checksum):
     """create a file in the mount point and get the checksum of the files to compare it after the failover."""
     cmd = f"echo 'adding some text' > {MOUNT_POINT}/testfile.txt"
     touch_results = run_cmd(cmd)
@@ -314,27 +304,22 @@ def verify_the_iscsi_service_is_running_in_the_ui_and_with_the_api(driver, nas_v
 
 
 @then('verify the file verify iSCSI is still connected and the checksum in the mount point')
-def verify_the_file_verify_iscsi_is_still_connected_and_the_checksum_in_the_mount_point(driver, host_info, checksum):
+def verify_the_file_verify_iscsi_is_still_connected_and_the_checksum_in_the_mount_point(driver, checksum):
     """verify the file verify iSCSI is still connected and the checksum in the mount point."""
-    cmd = f"test -f {MOUNT_POINT}/testfile.txt"
-    test_results = run_cmd(cmd)
+    test_results = run_cmd("test -f {MOUNT_POINT}/testfile.txt")
     assert test_results['result'], str(test_results)
 
-    cmd = f'sha256 {MOUNT_POINT}/testfile.txt'
-    results1 = run_cmd(cmd)
+    results1 = run_cmd(f'sha256 {MOUNT_POINT}/testfile.txt')
     assert results1['result'], f'{results1["output"]} \n {results1["stderr"]}'
     assert checksum['testfile.txt'] in results1["output"], f'{results1["output"]} \n {results1["stderr"]}'
 
 
 @then('unmount and remove the mount point, disconnect from the iSCSI target')
-def unmount_and_remove_the_mount_point_disconnect_from_the_iscsi_target(driver, host_info):
+def unmount_and_remove_the_mount_point_disconnect_from_the_iscsi_target(driver, nas_vip):
     """unmount and remove the mount point, disconnect from the iSCSI target."""
-    cmd = f"umount {MOUNT_POINT}"
-    umount_results = run_cmd(cmd)
-    assert umount_results['result'], str(umount_results)
-    cmd = f"rm -rf {MOUNT_POINT}"
-    rm_results = run_cmd(cmd)
-    assert rm_results['result'], str(rm_results)
-    iscsictl_cmd = 'iscsictl -R -t iqn.2005-10.org.freenas.ctl:iscsitest1'
-    remove_results = run_cmd(iscsictl_cmd)
-    assert remove_results['result'], str(remove_results)
+    umount_results = run_cmd(f"umount {MOUNT_POINT}")
+    assert umount_results['result'] is True, str(umount_results)
+    rm_results = run_cmd(f"rm -rf {MOUNT_POINT}")
+    assert rm_results['result'] is True, str(rm_results)
+    remove_results = run_cmd(f'sudo iscsiadm -m node -T {iqn} -p {nas_vip}:3260 --logout')
+    assert remove_results['result'] is True, str(remove_results)
