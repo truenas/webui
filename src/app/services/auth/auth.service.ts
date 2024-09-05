@@ -118,6 +118,7 @@ export class AuthService {
    */
   clearAuthToken(): void {
     this.window.sessionStorage.removeItem('loginBannerDismissed');
+    this.window.localStorage.removeItem('tokenLastUsed');
     this.latestTokenGenerated$.next(null);
     this.latestTokenGenerated$.complete();
     this.latestTokenGenerated$ = new ReplaySubject<string>(1);

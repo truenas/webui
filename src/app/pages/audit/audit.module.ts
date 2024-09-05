@@ -12,8 +12,8 @@ import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
 import { routing } from './audit.routing';
@@ -24,7 +24,6 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
 @NgModule({
   imports: [
     CommonModule,
-    LayoutModule,
     MatButtonModule,
     TestIdModule,
     TranslateModule,
@@ -40,6 +39,7 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     routing,
     ExportButtonComponent,
     CopyButtonComponent,
+    PageHeaderModule,
   ],
   exports: [],
   declarations: [
