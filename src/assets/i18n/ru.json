@@ -702,6 +702,7 @@
   "De-duplication tables are stored on this special VDEV type. These VDEVs must be sized to X GiB for each X TiB of general storage.": "",
   "Debugs may contain log files with personal information such as usernames or other identifying information about your system.": "",
   "Dedup": "",
+  "Deduplication is experimental in 24.10 and not fully supported. When enabled, data is permanently stored with this memory-intensive method and cannot be undone. Take extreme caution and ensure you have adequate data backups before enabling this feature.": "",
   "Default Checksum Warning": "",
   "Default Route": "",
   "Default TrueNAS controller": "",
