@@ -4,7 +4,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, tap } from 'rxjs/operators';
+import {
+  filter, map, take, tap,
+} from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -50,9 +52,14 @@ export class DockerImagesListComponent implements OnInit {
         this.onListFiltered(this.filterString);
       },
       onColumnCheck: (checked) => {
-        this.containerImages.forEach((image) => image.selected = checked);
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString);
+        this.dataProvider.currentPage$.pipe(
+          take(1),
+          untilDestroyed(this),
+        ).subscribe((images) => {
+          images.forEach((image) => image.selected = checked);
+          this.dataProvider.setRows([]);
+          this.onListFiltered(this.filterString);
+        });
       },
       cssClass: 'checkboxs-column',
     }),
