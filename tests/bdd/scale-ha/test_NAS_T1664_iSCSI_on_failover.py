@@ -252,7 +252,7 @@ def create_a_file_in_the_mount_point_and_get_the_checksum_of_the_files_to_compar
     test_results = run_cmd(cmd)
     assert test_results['result'], str(test_results)
 
-    cmd = f'sha256 {MOUNT_POINT}/testfile.txt'
+    cmd = f'sha256sum {MOUNT_POINT}/testfile.txt'
     results1 = run_cmd(cmd)
     assert results1['result'], f'{results1["output"]} \n {results1["stderr"]}'
     checksum['testfile.txt'] = results1["output"].partition('=')[2].strip()
@@ -309,7 +309,7 @@ def verify_the_file_verify_iscsi_is_still_connected_and_the_checksum_in_the_moun
     test_results = run_cmd(f"test -f {MOUNT_POINT}/testfile.txt")
     assert test_results['result'], str(test_results)
 
-    results1 = run_cmd(f'sha256 {MOUNT_POINT}/testfile.txt')
+    results1 = run_cmd(f'sha256sum {MOUNT_POINT}/testfile.txt')
     assert results1['result'], f'{results1["output"]} \n {results1["stderr"]}'
     assert checksum['testfile.txt'] in results1["output"], f'{results1["output"]} \n {results1["stderr"]}'
 
