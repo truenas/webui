@@ -234,7 +234,7 @@ def find_the_iscsi_device_with_iscsictl_l_and_format_the_device_newfs(driver, de
 @then('create a mount point, then mount the iscsi device to it')
 def create_a_mount_point_then_mount_the_iscsi_device_to_it(driver, device):
     """create a mount point, then mount the iscsi device to it."""
-    mkdir_results = run_cmd("mkdir -p {MOUNT_POINT}")
+    mkdir_results = run_cmd(f"mkdir -p {MOUNT_POINT}")
     assert mkdir_results['result'], str(mkdir_results)
 
     mount_results = run_cmd(f"mount {device['iscsitest1']} {MOUNT_POINT}")
@@ -306,7 +306,7 @@ def verify_the_iscsi_service_is_running_in_the_ui_and_with_the_api(driver, nas_v
 @then('verify the file verify iSCSI is still connected and the checksum in the mount point')
 def verify_the_file_verify_iscsi_is_still_connected_and_the_checksum_in_the_mount_point(driver, checksum):
     """verify the file verify iSCSI is still connected and the checksum in the mount point."""
-    test_results = run_cmd("test -f {MOUNT_POINT}/testfile.txt")
+    test_results = run_cmd(f"test -f {MOUNT_POINT}/testfile.txt")
     assert test_results['result'], str(test_results)
 
     results1 = run_cmd(f'sha256 {MOUNT_POINT}/testfile.txt')
