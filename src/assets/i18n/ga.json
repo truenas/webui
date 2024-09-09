@@ -33,6 +33,7 @@
   "Exited": "",
   "For performance reasons SHA512 is recommended over SHA256 for datasets with deduplication enabled.": "",
   "General Settings": "",
+  "If URL above fails to open, it may be due to the unavailability of Basic HTTP authentication in your browser.": "",
   "Incoming / Outgoing network traffic": "",
   "Install NDIVIA Drivers": "",
   "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "",
