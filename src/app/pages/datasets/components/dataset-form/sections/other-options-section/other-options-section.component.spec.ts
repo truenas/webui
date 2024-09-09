@@ -9,7 +9,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
-  DatasetCaseSensitivity, DatasetChecksum, DatasetRecordSize,
+  DatasetCaseSensitivity, DatasetRecordSize,
   DatasetSnapdev,
   DatasetSnapdir,
   DatasetSync,
@@ -387,7 +387,7 @@ describe('OtherOptionsSectionComponent', () => {
   });
 
   describe('ZFS Deduplication', () => {
-    it('shows a warning when checksum is not SHA-512 and deduplication is enabled', async () => {
+    it('shows a warning when deduplication is enabled', async () => {
       spectator.setInput({
         parent: parentDataset,
       });
@@ -401,8 +401,6 @@ describe('OtherOptionsSectionComponent', () => {
           message: helptextDatasetForm.deduplicationWarning,
         }),
       );
-      expect(spectator.query('.dedup-warning')).toExist();
-      expect(spectator.component.form.value.checksum).toBe(DatasetChecksum.Sha512);
     });
 
     it('does not show deduplication field on Enterprise systems that do not have a dedup license', async () => {
