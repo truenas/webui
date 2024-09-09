@@ -32,6 +32,7 @@ export class CertificateAuthorityEditComponent implements OnInit {
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
+    add_to_trusted_store: [false],
   });
 
   certificateAuthority: CertificateAuthority;

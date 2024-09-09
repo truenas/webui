@@ -36,6 +36,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
     ]],
     create_type: [CertificateCreateType.CreateInternal],
     profile: [''],
+    add_to_trusted_store: [false],
   });
 
   profiles: CertificateProfiles;
@@ -91,11 +92,15 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
       summary.push({ label: this.translate.instant('Profile'), value: values.profile });
     }
 
+    if (values.add_to_trusted_store) {
+      summary.push({ label: this.translate.instant('Add To Trusted Store'), value: this.translate.instant('Yes') });
+    }
+
     return summary;
   }
 
-  getPayload(): Pick<CertificateIdentifierAndTypeComponent['form']['value'], 'name' | 'create_type'> {
-    return _.pick(this.form.value, ['name', 'create_type']);
+  getPayload(): Pick<CertificateIdentifierAndTypeComponent['form']['value'], 'name' | 'create_type' | 'add_to_trusted_store'> {
+    return _.pick(this.form.value, ['name', 'create_type', 'add_to_trusted_store']);
   }
 
   private emitEventOnProfileChange(): void {
