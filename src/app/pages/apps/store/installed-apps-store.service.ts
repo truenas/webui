@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, Subscription, catchError, combineLatest, debounceTime, filter, of, switchMap, tap,
+  Observable, Subscription, catchError, combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -87,7 +87,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     // TODO: Messy. Refactor.
     this.installedAppsSubscription = this.appsService.getInstalledAppsUpdates().pipe(
       tap(() => this.patchState({ isLoading: true })),
-      tap((apiEvent: ApiEvent) => {
+      tap((apiEvent: ApiEvent<App>) => {
         if (apiEvent.msg === IncomingApiMessageType.Removed) {
           this.patchState((state: InstalledAppsState): InstalledAppsState => {
             return {
@@ -111,34 +111,31 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         }
         return apiEvent.msg !== IncomingApiMessageType.Removed;
       }),
-      switchMap((apiEvent: ApiEvent) => combineLatest([
-        of(apiEvent),
-        this.appsService.getApp(apiEvent.id as string),
-      ])),
-      tap(([apiEvent, apps]) => {
-        if (!apps?.length) {
+      tap((apiEvent) => {
+        const app = apiEvent.fields;
+        if (apiEvent.fields) {
           return;
         }
         this.patchState((state: InstalledAppsState): InstalledAppsState => {
           if (apiEvent.msg === IncomingApiMessageType.Added) {
             return {
               ...state,
-              installedApps: [...state.installedApps, { ...apps[0] }],
+              installedApps: [...state.installedApps, app],
             };
           }
           return {
             ...state,
             installedApps: state.installedApps.map((installedApp) => {
               if (installedApp.name === apiEvent.id) {
-                return { ...installedApp, ...apps[0] };
+                return { ...installedApp, ...app };
               }
               return installedApp;
             }),
           };
         });
 
-        const updateApps = (appsToUpdate: AvailableApp[]): AvailableApp[] => appsToUpdate.map((app) => {
-          return app.name === apps[0].id ? { ...app, installed: true } : app;
+        const updateApps = (appsToUpdate: AvailableApp[]): AvailableApp[] => appsToUpdate.map((appDate) => {
+          return app.name === app.id ? { ...appDate, installed: true } : appDate;
         });
 
         this.appsStore.patchState((state) => {
@@ -160,16 +157,15 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       this.dockerStore.isLoading$,
       this.dockerStore.isDockerStarted$,
     ]).pipe(
-      debounceTime(300),
       filter(([loading, isDockerStarted]) => {
         return !loading && isDockerStarted !== null;
       }),
-      tap((isDockerStarted) => {
+      tap(([, isDockerStarted]) => {
         if (isDockerStarted) {
           this.subscribeToInstalledAppsUpdates();
         }
       }),
-      switchMap((isDockerStarted) => {
+      switchMap(([, isDockerStarted]) => {
         if (!isDockerStarted) {
           return of([]);
         }
