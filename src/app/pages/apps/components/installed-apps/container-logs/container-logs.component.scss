@@ -9,7 +9,7 @@
 
   .logs {
     background: black;
-    font-family: 'Inconsolata';
+    font-family: var(--font-family-monospace);
     height: calc(100% - 70px);
     overflow: auto;
     padding: 5px;

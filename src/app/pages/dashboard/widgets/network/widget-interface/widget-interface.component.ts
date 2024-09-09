@@ -99,7 +99,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
   protected chartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
     const response = this.networkStats();
-    const networkInterfaceName = this.interfaceId();
+    const networkInterfaceName = this.interface().value.name;
     const startDate = Date.now() - oneHourMillis - oneMinuteMillis;
     const labels = response.map((_, index) => (startDate + index * 1000));
 
