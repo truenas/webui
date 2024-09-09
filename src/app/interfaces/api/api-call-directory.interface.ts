@@ -314,6 +314,7 @@ export interface ApiCallDirectory {
   'app.query': { params: AppQueryParams; response: App[] };
   'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
+  'app.available_space': { params: void; response: number };
   'app.categories': { params: void; response: string[] };
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
