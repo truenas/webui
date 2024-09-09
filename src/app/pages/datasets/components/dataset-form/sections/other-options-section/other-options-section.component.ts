@@ -73,7 +73,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   @Output() formValidityChange = new EventEmitter<boolean>();
 
   hasDeduplication = false;
-  hasDedupWarning = false;
   hasRecordsizeWarning = false;
   wasDedupChecksumWarningShown = false;
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
@@ -150,6 +149,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     private datasetFormService: DatasetFormService,
   ) {}
 
+  get hasChecksumWarning(): boolean {
+    return this.form.value.checksum === DatasetChecksum.Sha256
+      && this.form.value.deduplication !== DeduplicationSetting.Off;
+  }
+
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.datasetPreset?.currentValue) {
       this.setUpDatasetPresetSelect();
@@ -159,10 +163,13 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.setUpDedupWarnings();
     this.setUpRecordsizeWarning();
     this.setSelectOptions();
+
     this.setFormValues();
+
+    this.checkDedupChecksum();
+    this.setUpDedupWarning();
     this.setUpAclTypeWarning();
     this.updateAclMode();
     this.disableCaseSensitivityOnEdit();
@@ -367,26 +374,50 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
   }
 
-  private setUpDedupWarnings(): void {
+  private setUpDedupWarning(): void {
     this.form.controls.deduplication.valueChanges.pipe(untilDestroyed(this)).subscribe((dedup) => {
       if (!dedup || [DeduplicationSetting.Off, inherit].includes(dedup)) {
-        this.hasDedupWarning = false;
         this.cdr.markForCheck();
         return;
       }
 
-      this.hasDedupWarning = true;
-      this.cdr.markForCheck();
+      this.dialogService.confirm({
+        title: this.translate.instant('Warning'),
+        message: this.translate.instant(helptextDatasetForm.deduplicationWarning),
+        hideCheckbox: true,
+      })
+        .pipe(untilDestroyed(this))
+        .subscribe((confirmed) => {
+          if (confirmed) {
+            this.checkDedupChecksum();
+          } else {
+            this.form.patchValue({
+              deduplication: inherit,
+            });
+          }
+        });
+    });
+  }
 
-      const checksum = this.form.controls.checksum.value;
-      if (this.wasDedupChecksumWarningShown || !checksum || checksum === DatasetChecksum.Sha512) {
-        return;
-      }
+  private checkDedupChecksum(): void {
+    const dedup = this.form.controls.deduplication.value;
+    if (!dedup || [DeduplicationSetting.Off, inherit].includes(dedup)) {
+      return;
+    }
 
-      this.showDedupChecksumWarning();
-      this.form.patchValue({
-        checksum: DatasetChecksum.Sha512,
-      });
+    const checksum = this.form.controls.checksum.value;
+    if (
+      this.wasDedupChecksumWarningShown
+      || !checksum
+      || checksum === DatasetChecksum.Sha512
+      || checksum !== DatasetChecksum.Sha256
+    ) {
+      return;
+    }
+
+    this.showDedupChecksumWarning();
+    this.form.patchValue({
+      checksum: DatasetChecksum.Sha512,
     });
   }
 
@@ -407,7 +438,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       hideCancel: true,
       title: this.translate.instant('Default Checksum Warning'),
       hideCheckbox: true,
-      message: this.translate.instant(helptextDatasetForm.deduplicationWarning),
+      message: this.translate.instant(helptextDatasetForm.deduplicationChecksumWarning),
       buttonText: this.translate.instant('OK'),
     });
   }
