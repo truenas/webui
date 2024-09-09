@@ -17,7 +17,6 @@ import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -101,7 +100,6 @@ describe('CloudCredentialsFormComponent', () => {
     component: CloudCredentialsFormComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
       CloudSyncProviderDescriptionComponent,
     ],
     declarations: [

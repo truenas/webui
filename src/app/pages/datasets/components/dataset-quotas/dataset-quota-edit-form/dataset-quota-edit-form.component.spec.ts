@@ -10,7 +10,6 @@ import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
@@ -25,7 +24,6 @@ describe('DatasetQuotaEditFormComponent', () => {
   const createComponent = createComponentFactory({
     component: DatasetQuotaEditFormComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [

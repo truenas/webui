@@ -1,8 +1,10 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ElementRef, input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { IxSlideIn2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-slide-in2/ix-slide-in2.component';
 import {
   ChainedComponentSerialized,
   IxChainedSlideInService,
@@ -14,6 +16,8 @@ import {
   templateUrl: './ix-chained-slide-in.component.html',
   styleUrls: ['./ix-chained-slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [IxSlideIn2Component, AsyncPipe],
 })
 export class IxChainedSlideInComponent implements OnInit, OnDestroy {
   readonly id = input<string>();

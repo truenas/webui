@@ -9,7 +9,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import {
   GeneralWizardStepComponent,
@@ -28,7 +27,6 @@ describe('GeneralWizardStepComponent', () => {
     component: GeneralWizardStepComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     declarations: [
       PoolWarningsComponent,

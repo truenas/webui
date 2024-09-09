@@ -30,7 +30,7 @@ def test_add_user(driver):
 def the_browser_is_open_navigate_to_nas_url(driver, nas_vip):
     """The browser is open navigate to "{nas_url}"."""
     if nas_vip not in driver.current_url:
-        driver.get(f"http://{nas_vip}/ui/sessions/signin")
+        driver.get(f"http://{nas_vip}/ui/signin")
 
 
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))

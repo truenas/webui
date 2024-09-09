@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, of, switchMap,
+  take,
 } from 'rxjs';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { BootEnvironmentActive } from 'app/enums/boot-environment-active.enum';
@@ -64,9 +65,14 @@ export class BootEnvironmentListComponent implements OnInit {
         this.onListFiltered(this.filterString);
       },
       onColumnCheck: (checked) => {
-        this.bootenvs.forEach((bootenv) => bootenv.selected = checked);
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString);
+        this.dataProvider.currentPage$.pipe(
+          take(1),
+          untilDestroyed(this),
+        ).subscribe((bootEnvs) => {
+          bootEnvs.forEach((bootEnv) => bootEnv.selected = checked);
+          this.dataProvider.setRows([]);
+          this.onListFiltered(this.filterString);
+        });
       },
       cssClass: 'checkboxs-column',
     }),

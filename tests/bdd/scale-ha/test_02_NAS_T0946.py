@@ -30,7 +30,7 @@ def test_verify_setting_up_ha_works_with_a_single_failover_group(driver):
 def the_browser_is_open_navigate_to_nas_url(driver, nas_ip):
     """the browser is open navigate to "nas(url"."""
     if nas_ip not in driver.current_url:
-        driver.get(f"http://{nas_ip}/ui/sessions/signin")
+        driver.get(f"http://{nas_ip}/ui/signin")
 
 
 @when(parsers.parse('login appear enter "root" and "{password}"'))

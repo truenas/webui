@@ -10,7 +10,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
@@ -23,7 +22,6 @@ describe('ServiceUpsComponent', () => {
   const createComponent = createRoutingFactory({
     component: ServiceUpsComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [

@@ -1,14 +1,24 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import {
-  ControlValueAccessor, NgControl,
-} from '@angular/forms';
+import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
+import { MatOption } from '@angular/material/core';
+import { MatHint } from '@angular/material/form-field';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatSelect, MatSelectTrigger } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 export type IxSelectValue = SelectOptionValueType;
 
@@ -18,6 +28,23 @@ export type IxSelectValue = SelectOptionValueType;
   styleUrls: ['./ix-select.component.scss'],
   templateUrl: './ix-select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    TestIdModule,
+    MatSelect,
+    FormsModule,
+    MatSelectTrigger,
+    IxIconModule,
+    MatOption,
+    MatTooltip,
+    TooltipComponent,
+    MatProgressSpinner,
+    IxErrorsComponent,
+    MatHint,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   @Input() label: string;

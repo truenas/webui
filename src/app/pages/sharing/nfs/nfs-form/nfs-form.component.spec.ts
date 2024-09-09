@@ -18,13 +18,15 @@ import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import {
   IxIpInputWithNetmaskHarness,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -63,7 +65,7 @@ describe('NfsFormComponent', () => {
     component: NfsFormComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
+      IxIpInputWithNetmaskComponent,
     ],
     providers: [
       mockWebSocket([

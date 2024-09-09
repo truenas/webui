@@ -11,7 +11,6 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -25,7 +24,6 @@ describe('SelectPoolDialogComponent', () => {
     component: SelectPoolDialogComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockAuth(),

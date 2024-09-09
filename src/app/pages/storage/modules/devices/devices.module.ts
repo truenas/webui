@@ -12,12 +12,14 @@ import { CommonDirectivesModule } from 'app/directives/common-directives.module'
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -52,7 +54,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
   imports: [
     CommonModule,
     EntityModule,
-    IxFormsModule,
     TreeModule,
     MatButtonModule,
     MatCardModule,
@@ -68,7 +69,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     RouterModule.forChild(routes),
     TranslateModule,
     AppLoaderModule,
-    LayoutModule,
     CommonDirectivesModule,
     TestIdModule,
     MatTooltipModule,
@@ -78,6 +78,10 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     FileSizePipe,
     CopyButtonComponent,
     OrNotAvailablePipe,
+    FormActionsComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    PageHeaderModule,
   ],
   declarations: [
     DevicesComponent,

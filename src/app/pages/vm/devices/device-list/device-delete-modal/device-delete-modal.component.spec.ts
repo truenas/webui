@@ -11,7 +11,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { WebSocketService } from 'app/services/ws.service';
@@ -25,7 +24,6 @@ describe('DeviceDeleteModalComponent', () => {
     return createComponentFactory({
       component: DeviceDeleteModalComponent,
       imports: [
-        IxFormsModule,
         ReactiveFormsModule,
       ],
       providers: [

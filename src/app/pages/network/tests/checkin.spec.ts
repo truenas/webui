@@ -19,8 +19,10 @@ import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-l
 import { PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -54,10 +56,10 @@ describe('NetworkComponent', () => {
     component: NetworkComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
       IxTableModule,
       FormsModule,
       MatInputModule,
+      IxIpInputWithNetmaskComponent,
     ],
     declarations: [
       InterfacesCardComponent,

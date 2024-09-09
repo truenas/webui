@@ -1,7 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   S3ProviderFormComponent,
@@ -14,7 +13,6 @@ describe('S3ProviderFormComponent', () => {
     component: S3ProviderFormComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
   });
 

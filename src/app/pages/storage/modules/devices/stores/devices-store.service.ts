@@ -8,6 +8,7 @@ import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
+import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService } from 'app/services/ws.service';
@@ -187,6 +188,14 @@ export class DevicesStore extends ComponentStore<DevicesState> {
         guid: VdevType.Dedup,
       });
     }
-    return dataNodes;
+    return dataNodes.map((node: DeviceNestedDataNode) => {
+      return {
+        ...node,
+        children: node.children.map((child: TopologyItem) => {
+          child.isRoot = true;
+          return child;
+        }) as TopologyDisk[],
+      };
+    });
   }
 }

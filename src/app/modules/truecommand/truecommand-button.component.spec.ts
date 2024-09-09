@@ -9,7 +9,6 @@ import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   TruecommandSignupModalComponent,
 } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
@@ -38,7 +37,6 @@ describe('TruecommandButtonComponent', () => {
     return createComponentFactory({
       component: TruecommandButtonComponent,
       imports: [
-        IxFormsModule,
         ReactiveFormsModule,
       ],
       declarations: [

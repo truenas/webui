@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { convertObjectKeysToHumanReadable } from 'app/helpers/object-keys-to-human-readable.helper';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -10,9 +12,9 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventDataDetailsCardComponent {
-  @Input() log: AuditEntry;
+  readonly log = input.required<AuditEntry>();
 
-  get yamlContent(): string {
-    return jsonToYaml(convertObjectKeysToHumanReadable(this.log.event_data));
-  }
+  protected yamlContent = computed(() => {
+    return jsonToYaml(convertObjectKeysToHumanReadable(this.log().event_data));
+  });
 }

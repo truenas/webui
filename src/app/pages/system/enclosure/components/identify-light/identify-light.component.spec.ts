@@ -79,11 +79,11 @@ describe('IdentifyLightComponent', () => {
     });
   });
 
-  describe('when status is Identify', () => {
+  describe('when status is on', () => {
     beforeEach(() => {
       selectedSlot.set({
         drive_bay_number: 5,
-        drive_bay_light_status: DriveBayLightStatus.Identify,
+        drive_bay_light_status: DriveBayLightStatus.On,
       } as DashboardEnclosureSlot);
       spectator.detectChanges();
     });
@@ -101,25 +101,25 @@ describe('IdentifyLightComponent', () => {
     });
   });
 
-  describe('when status is Fault', () => {
+  describe('when status is Clear', () => {
     beforeEach(() => {
       selectedSlot.set({
         drive_bay_number: 5,
-        drive_bay_light_status: DriveBayLightStatus.Fault,
+        drive_bay_light_status: DriveBayLightStatus.Clear,
       } as DashboardEnclosureSlot);
       spectator.detectChanges();
     });
 
     it('shows status string', async () => {
-      expect(spectator.query('.status-line')).toHaveText('Fault light is on.');
+      expect(spectator.query('.status-line')).toHaveText('Identify light is off.');
 
       const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.status-line' }));
-      expect(await icon.getName()).toBe('mdi-lightbulb-on');
+      expect(await icon.getName()).toBe('mdi-lightbulb-off-outline');
     });
 
-    it('shows turn off button', async () => {
-      const turnOffButton = await loader.getHarness(MatButtonHarness.with({ text: 'Turn Off' }));
-      expect(turnOffButton).toExist();
+    it('shows Identify button', async () => {
+      const identifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Identify' }));
+      expect(identifyButton).toExist();
     });
   });
 
@@ -147,12 +147,12 @@ describe('IdentifyLightComponent', () => {
       expect(spectator.inject(EnclosureStore).changeLightStatus).toHaveBeenCalledWith({
         driveBayNumber: 5,
         enclosureId: 'enclosure1',
-        status: DriveBayLightStatus.Identify,
+        status: DriveBayLightStatus.On,
       });
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('enclosure2.set_slot_status', [{
         enclosure_id: 'enclosure1',
         slot: 5,
-        status: DriveBayLightStatus.Identify,
+        status: DriveBayLightStatus.On,
       }]);
     });
 

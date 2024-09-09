@@ -23,11 +23,24 @@ import { CommonDirectivesModule } from 'app/directives/common-directives.module'
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  IxCheckboxListComponent,
+} from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -49,6 +62,7 @@ import {
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
+import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
@@ -98,6 +112,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppInfoCardComponent,
     AppRowComponent,
     AppDetailsPanelComponent,
+    CustomAppFormComponent,
     AppWorkloadsCardComponent,
     AppResourcesCardComponent,
     AppNotesCardComponent,
@@ -129,6 +144,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
   imports: [
     CommonModule,
     AppsRoutingModule,
+    IxCodeEditorComponent,
     PageHeaderModule,
     MatButtonModule,
     TranslateModule,
@@ -158,7 +174,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     LightboxModule,
     MarkdownModule,
     IxTableModule,
-    LayoutModule,
     SearchInput1Component,
     EmptyComponent,
     MatSort,
@@ -175,6 +190,15 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     FileSizePipe,
     NetworkSpeedPipe,
     OrNotAvailablePipe,
+    IxModalHeaderComponent,
+    IxFieldsetComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    IxChipsComponent,
+    IxSelectComponent,
+    IxCheckboxListComponent,
+    IxCheckboxComponent,
+    ReadOnlyComponent,
   ],
 })
 export class AppsModule { }

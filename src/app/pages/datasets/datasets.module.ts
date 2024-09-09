@@ -17,13 +17,22 @@ import { CommonDirectivesModule } from 'app/directives/common-directives.module'
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -59,7 +68,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     CommonModule,
     CommonDirectivesModule,
     BaseChartDirective,
-    LayoutModule,
     routing,
     TranslateModule,
     IxIconModule,
@@ -72,7 +80,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     PermissionsModule,
     EncryptionModule,
     ReactiveFormsModule,
-    IxFormsModule,
     TreeModule,
     EntityModule,
     MatDialogModule,
@@ -90,6 +97,15 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     FileSizePipe,
     CopyButtonComponent,
     OrNotAvailablePipe,
+    IxInputComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    IxSelectComponent,
+    IxFieldsetComponent,
+    IxModalHeaderComponent,
+    IxChipsComponent,
+    IxTextareaComponent,
+    PageHeaderModule,
   ],
   declarations: [
     DatasetsManagementComponent,

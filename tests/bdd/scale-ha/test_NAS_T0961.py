@@ -32,7 +32,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_vip, request):
     """the browser is open, navigate to "{nas_url}"."""
     depends(request, ["Setup_HA"], scope='session')
     if nas_vip not in driver.current_url:
-        driver.get(f"http://{nas_vip}/ui/sessions/signin")
+        driver.get(f"http://{nas_vip}/ui/signin")
         assert wait_on_element(driver, 5, xpaths.login.user_Input)
 
 
