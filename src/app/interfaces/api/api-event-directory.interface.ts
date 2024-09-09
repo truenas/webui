@@ -1,7 +1,7 @@
 import { DockerStatusResponse } from 'app/enums/docker-config.interface';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { App, ChartStatisticsUpdate } from 'app/interfaces/app.interface';
+import { App, AppStats } from 'app/interfaces/app.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -20,24 +20,23 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export interface ApiEventDirectory {
   'alert.list': { response: Alert };
-  'chart.release.query': { response: App };
+  'app.image.query': { response: ContainerImage };
   'app.query': { response: App };
-  'chart.release.statistics': { response: ChartStatisticsUpdate[] };
+  'app.stats': { response: AppStats[] };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
-  'failover.status': { response: { status: FailoverStatus } };
-  'failover.disabled.reasons': { response: FailoverDisabledReasonEvent };
-  'service.query': { response: Service };
-  'truecommand.config': { response: TrueCommandConfig };
-  'vm.query': { response: VirtualMachine };
-  'zfs.snapshot.query': { response: ZfsSnapshot };
-  'zfs.pool.scan': { response: PoolScan };
-  'user.query': { response: User };
   'disk.query': { response: Disk };
-  'pool.query': { response: Pool };
-  'group.query': { response: Group };
-  'app.image.query': { response: ContainerImage };
-  'reporting.realtime': { response: ReportingRealtimeUpdate };
-  'smart.test.progress': { response: SmartTestProgressUpdate };
   'docker.state': { response: DockerStatusResponse };
+  'failover.disabled.reasons': { response: FailoverDisabledReasonEvent };
+  'failover.status': { response: { status: FailoverStatus } };
+  'group.query': { response: Group };
+  'pool.query': { response: Pool };
+  'reporting.realtime': { response: ReportingRealtimeUpdate };
+  'service.query': { response: Service };
+  'smart.test.progress': { response: SmartTestProgressUpdate };
+  'truecommand.config': { response: TrueCommandConfig };
+  'user.query': { response: User };
+  'vm.query': { response: VirtualMachine };
+  'zfs.pool.scan': { response: PoolScan };
+  'zfs.snapshot.query': { response: ZfsSnapshot };
 }
