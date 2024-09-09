@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 
 @Component({
@@ -8,5 +10,5 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskInfoComponent {
-  @Input() disk: DetailsDisk;
+  readonly disk = input.required<DetailsDisk>();
 }

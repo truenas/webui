@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -23,8 +23,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetDetailsPanelComponent {
-  @Input() dataset: DatasetDetails;
-  @Input() systemDataset: string;
+  readonly dataset = input.required<DatasetDetails>();
+  readonly systemDataset = input<string>();
 
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetDetailsPanelElements;
@@ -37,37 +37,21 @@ export class DatasetDetailsPanelComponent {
     private slideInService: IxSlideInService,
   ) { }
 
-  get datasetHasRoles(): boolean {
-    return this.dataset.type === DatasetType.Filesystem && !isIocageMounted(this.dataset);
-  }
+  protected readonly hasRoles = computed(() => {
+    return this.dataset().type === DatasetType.Filesystem && !isIocageMounted(this.dataset());
+  });
 
-  get datasetHasChildrenWithShares(): boolean {
-    return doesDatasetHaveShares(this.dataset);
-  }
+  protected readonly hasPermissions = computed(() => {
+    return this.hasRoles() && !this.dataset().locked;
+  });
 
-  get hasPermissions(): boolean {
-    return this.dataset.type === DatasetType.Filesystem && !isIocageMounted(this.dataset);
-  }
+  protected readonly hasChildrenWithShares = computed(() => doesDatasetHaveShares(this.dataset()));
 
-  get isCapacityAllowed(): boolean {
-    return !this.dataset.locked;
-  }
+  protected readonly isCapacityAllowed = computed(() => !this.dataset().locked);
+  protected readonly isEncryptionAllowed = computed(() => this.dataset().encrypted);
+  protected readonly ownName = computed(() => this.dataset().name.split('/').slice(-1)[0]);
 
-  get isEncryptionAllowed(): boolean {
-    return this.dataset.encrypted;
-  }
-
-  get ownName(): string {
-    return this.dataset.name.split('/').slice(-1)[0];
-  }
-
-  get isZvol(): boolean {
-    return this.dataset.type === DatasetType.Volume;
-  }
-
-  get isSystemDataset(): boolean {
-    return this.dataset.name === this.systemDataset;
-  }
+  protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown>, modalType: unknown): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this))
@@ -87,14 +71,14 @@ export class DatasetDetailsPanelComponent {
 
   onAddDataset(): void {
     const slideInRef = this.slideInService.open(DatasetFormComponent, {
-      wide: true, data: { isNew: true, datasetId: this.dataset.id },
+      wide: true, data: { isNew: true, datasetId: this.dataset().id },
     });
     this.handleSlideInClosed(slideInRef, DatasetFormComponent);
   }
 
   onAddZvol(): void {
     const slideInRef = this.slideInService.open(ZvolFormComponent, {
-      data: { isNew: true, parentId: this.dataset.id },
+      data: { isNew: true, parentId: this.dataset().id },
     });
     this.handleSlideInClosed(slideInRef, ZvolFormComponent);
   }

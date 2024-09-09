@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 
@@ -10,7 +10,7 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudBackupDetailsComponent {
-  @Input() backup: CloudBackup;
+  readonly backup = input.required<CloudBackup>();
 
   readonly closeMobileDetails = output();
 
