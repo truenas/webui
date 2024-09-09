@@ -20,13 +20,14 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter,
+  Observable,
 } from 'rxjs';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
+import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -37,6 +38,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -158,6 +160,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppsState>,
     private location: Location,
+    private appsStats: AppsStatsService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -458,5 +461,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
+  }
+
+  getAppStats(name: string): Observable<AppStats> {
+    return this.appsStats.getStatsForApp(name);
   }
 }

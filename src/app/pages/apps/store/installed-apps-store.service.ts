@@ -10,6 +10,7 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -34,6 +35,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   constructor(
     private appsService: ApplicationsService,
     private appsStore: AppsStore,
+    private appsStats: AppsStatsService,
     private dockerStore: DockerStore,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -166,6 +168,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       ),
       tap((isDockerStarted) => {
         if (isDockerStarted) {
+          this.appsStats.subscribeToUpdates();
           this.subscribeToInstalledAppsUpdates();
         }
       }),

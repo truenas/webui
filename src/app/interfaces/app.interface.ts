@@ -83,18 +83,42 @@ export interface App {
   version_details?: ChartSchema;
 }
 
-export interface ChartStatisticsUpdate {
-  id: string;
-  stats: ChartReleaseStats;
+export interface AppStats {
+  app_name: string;
+  /**
+   * Percentage of cpu used by an app
+   */
+  cpu_usage: number;
+  /**
+   * Current memory(in bytes) used by an app
+   */
+  memory: number;
+  networks: AppNetworkStats[];
+  blkio: {
+    /**
+     * Blkio read bytes
+     */
+    read: number;
+    /**
+     * Blkio write bytes
+     */
+    write: number;
+  };
 }
 
-export interface ChartReleaseStats {
-  cpu: number;
-  memory: number;
-  network: {
-    incoming: number;
-    outgoing: number;
-  };
+interface AppNetworkStats {
+  /**
+   * Name of the interface use by the app
+   */
+  interface_name: string;
+  /**
+   * Received bytes/s by an interface
+   */
+  rx_bytes: number;
+  /**
+   * Transmitted bytes/s by an interface
+   */
+  tx_bytes: number;
 }
 
 export interface AppCreate {

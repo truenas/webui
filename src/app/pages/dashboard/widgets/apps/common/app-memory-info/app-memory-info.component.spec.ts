@@ -1,7 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartReleaseStats } from 'app/interfaces/app.interface';
+import { AppStats } from 'app/interfaces/app.interface';
 import { AppMemoryInfoComponent } from './app-memory-info.component';
 
 describe('AppMemoryInfoComponent', () => {
@@ -20,7 +20,7 @@ describe('AppMemoryInfoComponent', () => {
           value: {
             memory: 123456789,
           },
-        } as LoadingState<ChartReleaseStats>,
+        } as LoadingState<AppStats>,
       },
     });
   });
