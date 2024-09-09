@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import {
   Component, OnInit, ChangeDetectionStrategy,
   Inject,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatFormField } from '@angular/material/form-field';
@@ -26,6 +25,7 @@ import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-passwo
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { TrueCommandStatusComponent } from 'app/pages/signin/true-command-status/true-command-status.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
@@ -56,7 +56,9 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
   providers: [SigninStore],
 })
 export class SigninComponent implements OnInit {
-  protected hasAuthToken = this.checkHasAuthToken();
+  protected hasAuthToken$ = this.authService.instantAuthTokenValue$.pipe(
+    map((token) => !!token && token !== 'null'),
+  );
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly failover$ = this.signinStore.failover$;
   readonly hasFailover$ = this.signinStore.hasFailover$;
@@ -70,7 +72,7 @@ export class SigninComponent implements OnInit {
     private wsManager: WebSocketConnectionService,
     private signinStore: SigninStore,
     private dialog: DialogService,
-    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -91,15 +93,5 @@ export class SigninComponent implements OnInit {
       // Restore focus on username input
       this.window.document?.querySelector<HTMLElement>('[ixAutofocus] input')?.focus();
     });
-
-    setTimeout(() => {
-      this.hasAuthToken = this.checkHasAuthToken();
-      this.cdr.markForCheck();
-    }, 1500);
-  }
-
-  private checkHasAuthToken(): boolean {
-    const authToken = this.window.localStorage.getItem('ngx-webstorage|token');
-    return !!authToken && authToken !== 'null';
   }
 }

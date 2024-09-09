@@ -48,10 +48,6 @@
 .card-bottom {
   overflow: auto;
   padding: 0 16px;
-
-  @media(min-width: $breakpoint-xs) {
-    height: 510px;
-  }
 }
 
 .ix-logo {
