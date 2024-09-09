@@ -87,7 +87,6 @@ export class CertificateEditComponent implements OnInit {
       data: {
         certificate: this.isCsr ? this.certificate.CSR : this.certificate.certificate,
         name: this.certificate.name,
-        add_to_trusted_store: this.certificate.add_to_trusted_store,
         extension: 'crt',
       } as ViewCertificateDialogData,
     });
