@@ -236,24 +236,24 @@ describe('PoolManagerComponent – create pool', () => {
         name: 'pool1',
         topology: {
           cache: [{
-            disks: ['sda3'],
-            type: 'STRIPE',
-          }],
-          data: [{
-            disks: ['sda0'],
-            type: 'STRIPE',
-          }],
-          dedup: [{
-            disks: ['sda1'],
-            type: 'STRIPE',
-          }],
-          log: [{
             disks: ['sda2'],
             type: 'STRIPE',
           }],
-          spares: ['sda5'],
-          special: [{
+          data: [{
+            disks: ['sda3'],
+            type: 'STRIPE',
+          }],
+          dedup: [{
             disks: ['sda6'],
+            type: 'STRIPE',
+          }],
+          log: [{
+            disks: ['sda0'],
+            type: 'STRIPE',
+          }],
+          spares: ['sda1'],
+          special: [{
+            disks: ['sda5'],
             type: 'STRIPE',
           }],
         },
