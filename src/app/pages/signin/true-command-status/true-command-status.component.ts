@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { async } from 'rxjs';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -25,6 +24,4 @@ export class TrueCommandStatusComponent {
   constructor(
     private ws: WebSocketService,
   ) {}
-
-  protected readonly async = async;
 }

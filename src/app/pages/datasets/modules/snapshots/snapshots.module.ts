@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -63,7 +63,6 @@ const components = [
   providers: [],
   imports: [
     CommonDirectivesModule,
-    CommonModule,
     EffectsModule.forFeature([SnapshotEffects]),
     EntityModule,
     IxIconModule,
@@ -99,6 +98,7 @@ const components = [
     IxInputComponent,
     IxSlideToggleComponent,
     PageHeaderModule,
+    AsyncPipe,
   ],
   declarations: [
     ...components,

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
@@ -9,7 +8,6 @@ import { routing } from './shell.routing';
 
 @NgModule({
   imports: [
-    CommonModule,
     EntityModule,
     routing,
     TranslateModule,

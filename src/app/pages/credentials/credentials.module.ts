@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -165,7 +165,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
   ],
   imports: [
     CommonDirectivesModule,
-    CommonModule,
     EntityModule,
     IxDynamicFormModule,
     IxIconModule,
@@ -203,6 +202,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     IxChipsComponent,
     WithManageCertificatesLinkComponent,
     IxFileInputComponent,
+    AsyncPipe,
   ],
 })
 export class CredentialsModule { }

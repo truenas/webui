@@ -294,6 +294,16 @@ module.exports = {
               "message": "Use signal output() instead."
             },
             {
+              "name": "@angular/common",
+              "importNames": ["NgIf"],
+              "message": "Use built-in control flow syntax instead"
+            },
+            {
+              "name": "@angular/common",
+              "importNames": ["CommonModule"],
+              "message": "Import individual constituents instead."
+            },
+            {
               "name": "@ngbracket/ngx-layout",
               "message": "Do not use this package. Use native CSS instead."
             }

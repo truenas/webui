@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe, JsonPipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
@@ -27,7 +29,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 @NgModule({
   imports: [
     EntityModule,
-    CommonModule,
     IxIconModule,
     MatTooltipModule,
     MatProgressBarModule,
@@ -47,6 +48,9 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     CopyButtonComponent,
     MatIconButton,
     PageHeaderModule,
+    AsyncPipe,
+    DecimalPipe,
+    JsonPipe,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent, JobNameComponent],
 })

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -8,9 +8,9 @@ import { FilterSelectListComponent } from 'app/pages/apps/modules/custom-forms/c
 @NgModule({
   imports: [
     IxIconModule,
-    CommonModule,
     TranslateModule,
     IxErrorsComponent,
+    AsyncPipe,
   ],
   declarations: [
     FilterSelectListComponent,

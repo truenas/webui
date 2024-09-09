@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -110,7 +110,6 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
   imports: [
     routing,
     TestIdModule,
-    CommonModule,
     MatCardModule,
     MatButtonModule,
     TranslateModule,
@@ -139,6 +138,8 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     IxFieldsetComponent,
     IxModalHeaderComponent,
     PageHeaderModule,
+    DecimalPipe,
+    AsyncPipe,
   ],
   declarations: [
     EnclosureDashboardComponent,

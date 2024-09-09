@@ -1,5 +1,5 @@
 import { CdkAccordionModule } from '@angular/cdk/accordion';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,7 +48,6 @@ import { LdapComponent } from './components/ldap/ldap.component';
 
 @NgModule({
   imports: [
-    CommonModule,
     EntityModule,
     ReactiveFormsModule,
     routing,
@@ -76,6 +75,7 @@ import { LdapComponent } from './components/ldap/ldap.component';
     IxTextareaComponent,
     IxFileInputComponent,
     FormActionsComponent,
+    AsyncPipe,
   ],
   declarations: [
     LdapComponent,

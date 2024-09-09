@@ -1,6 +1,6 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTreeModule } from '@angular/cdk/tree';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -32,7 +32,6 @@ const components = [
 @NgModule({
   imports: [
     CdkTreeModule,
-    CommonModule,
     IxIconModule,
     MatButtonModule,
     MatTooltipModule,
@@ -41,6 +40,7 @@ const components = [
     TranslateModule,
     TestIdModule,
     AngularResizeEventModule,
+    AsyncPipe,
   ],
   declarations: [
     ...components,

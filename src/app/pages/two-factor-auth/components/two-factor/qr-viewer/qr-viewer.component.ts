@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { helptext2fa } from 'app/helptext/system/2fa';
@@ -12,8 +12,8 @@ import { helptext2fa } from 'app/helptext/system/2fa';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QrViewerComponent {
-  @Input() showWarning = false;
-  @Input() qrInfo: string;
+  readonly qrInfo = input.required<string>();
+  readonly showWarning = input(false);
 
   readonly helpText = helptext2fa;
 }

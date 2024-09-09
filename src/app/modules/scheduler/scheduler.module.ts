@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, SlicePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,7 +31,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @NgModule({
   imports: [
-    CommonModule,
     TranslateModule,
     ReactiveFormsModule,
     IxDateComponent,
@@ -50,6 +49,8 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     IxInputComponent,
     IxLabelComponent,
     IxErrorsComponent,
+    SlicePipe,
+    AsyncPipe,
   ],
   exports: [
     SchedulerComponent,

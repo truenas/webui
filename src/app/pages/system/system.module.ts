@@ -1,4 +1,6 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import {
+  AsyncPipe, DatePipe, KeyValuePipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -169,7 +171,6 @@ import { routing } from './system.routing';
   imports: [
     AppLoaderModule,
     CommonDirectivesModule,
-    CommonModule,
     EntityModule,
     FormsModule,
     TreeModule,
@@ -225,6 +226,8 @@ import { routing } from './system.routing';
     IxListItemComponent,
     IxExplorerComponent,
     PageHeaderModule,
+    AsyncPipe,
+    KeyValuePipe,
   ],
   declarations: [
     AdvancedSettingsComponent,

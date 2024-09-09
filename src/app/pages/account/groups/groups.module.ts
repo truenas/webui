@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,7 +53,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
   providers: [],
   imports: [
     CommonDirectivesModule,
-    CommonModule,
     EffectsModule.forFeature([GroupEffects]),
     EntityModule,
     MatButtonModule,
@@ -90,6 +89,7 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     IxSelectComponent,
     ReadOnlyComponent,
     PageHeaderModule,
+    AsyncPipe,
   ],
   declarations: [
     GroupListComponent,
