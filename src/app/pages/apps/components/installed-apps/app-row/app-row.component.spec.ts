@@ -31,6 +31,10 @@ describe('AppRowComponent', () => {
       interface_name: 'eth0',
       rx_bytes: 256,
       tx_bytes: 512,
+    }, {
+      interface_name: 'eth1',
+      rx_bytes: 512,
+      tx_bytes: 512,
     }],
     blkio: {
       read: 1024,
@@ -84,7 +88,7 @@ describe('AppRowComponent', () => {
   it('shows app usages stats', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('90%');
     expect(spectator.query('.cell-ram')).toHaveText('80 MiB');
-    expect(spectator.query('.cell-network')).toHaveText('256 b/s - 512 b/s');
+    expect(spectator.query('.cell-network')).toHaveText('768 b/s - 1.02 kb/s');
   });
 
   describe('actions', () => {

@@ -38,11 +38,11 @@
   }
 </div>
 <div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
-  @if (stats()?.networks) {
+  @if (stats()?.networks?.length) {
     <span>
-      {{ stats().networks[0].rx_bytes | ixNetworkSpeed }}
+      {{ incomingTraffic() | ixNetworkSpeed }}
       -
-      {{ stats().networks[0].tx_bytes | ixNetworkSpeed }}
+      {{ outgoingTraffic() | ixNetworkSpeed }}
     </span>
   } @else {
     {{ 'N/A' | translate }}

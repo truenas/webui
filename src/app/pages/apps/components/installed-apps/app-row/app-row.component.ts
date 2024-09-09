@@ -39,6 +39,14 @@ export class AppRowComponent {
     return [AppState.Deploying, AppState.Stopping].includes(this.app().state);
   });
 
+  readonly incomingTraffic = computed(() => {
+    return this.stats().networks.reduce((sum, stats) => sum + stats.rx_bytes, 0);
+  });
+
+  readonly outgoingTraffic = computed(() => {
+    return this.stats().networks.reduce((sum, stats) => sum + stats.tx_bytes, 0);
+  });
+
   toggleAppChecked(): void {
     this.selectionChange.emit();
   }
