@@ -31,6 +31,7 @@
   "Ensure that ACL permissions are validated for all users and groups. Disabling this may allow configurations that do not provide the intended access.  It is recommended to keep this option enabled.": "",
   "Error when loading similar apps.": "",
   "Exited": "",
+  "For performance reasons SHA512 is recommended over SHA256 for datasets with deduplication enabled.": "",
   "General Settings": "",
   "Install NDIVIA Drivers": "",
   "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/truenas/webui/blob/master/TRANSLATING.md\" target=\"_blank\">Learn how to contribute.</a>": "",

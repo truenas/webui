@@ -27,6 +27,7 @@ import {
   IxModalHeaderComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -106,6 +107,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxChipsComponent,
     IxTextareaComponent,
     PageHeaderModule,
+    IxWarningComponent,
   ],
   declarations: [
     DatasetsManagementComponent,

@@ -55,6 +55,10 @@
       [label]="'Checksum' | translate"
     ></ix-select>
 
+    @if (hasChecksumWarning) {
+      <ix-warning [message]="helptext.deduplicationChecksumInlineWarning"></ix-warning>
+    }
+
     <ix-select
       formControlName="readonly"
       [label]="'Read-only' | translate"

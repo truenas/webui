@@ -148,6 +148,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     private datasetFormService: DatasetFormService,
   ) {}
 
+  get hasChecksumWarning(): boolean {
+    return this.form.value.checksum === DatasetChecksum.Sha256
+      && this.form.value.deduplication !== DeduplicationSetting.Off;
+  }
+
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.datasetPreset?.currentValue) {
       this.setUpDatasetPresetSelect();

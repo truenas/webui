@@ -668,6 +668,7 @@
   "Flags Basic": "",
   "Flash Identify Light": "",
   "For example if you set this value to 5, system will renew certificates that expire in 5 days or less.": "",
+  "For performance reasons SHA512 is recommended over SHA256 for datasets with deduplication enabled.": "",
   "Force using  <a href=\"https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html\"  target=\"_blank\">Signature Version 2</a> to sign API requests.  Set this only  if your AWS provider does not support default version 4 signatures.": "",
   "Forums": "",
   "Four quarter widgets in two by two grid": "",

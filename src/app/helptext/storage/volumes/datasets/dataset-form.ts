@@ -63,6 +63,8 @@ export const helptextDatasetForm = {
        Our testing has shown that SHA512 performs better for such datasets.
        We've changed the checksum value from SHA256 to SHA512. You can change it back in "Advanced Options".`),
 
+  deduplicationChecksumInlineWarning: T('For performance reasons SHA512 is recommended over SHA256 for datasets with deduplication enabled.'),
+
   dataset_form_readonly_tooltip: T('Set to prevent the dataset from being modified.'),
 
   dataset_form_exec_tooltip: T('Set whether processes can be executed from within this dataset.'),

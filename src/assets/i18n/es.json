@@ -1710,6 +1710,7 @@
   "Follow symlinks and copy the items to which they link.": "",
   "Following container images are available to update:\n": "",
   "For example if you set this value to 5, system will renew certificates that expire in 5 days or less.": "",
+  "For performance reasons SHA512 is recommended over SHA256 for datasets with deduplication enabled.": "",
   "Force Clear": "",
   "Force Delete": "",
   "Force Delete?": "",

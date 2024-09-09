@@ -443,6 +443,7 @@
   "Flags Advanced": "",
   "Flags Basic": "",
   "Flash Identify Light": "",
+  "For performance reasons SHA512 is recommended over SHA256 for datasets with deduplication enabled.": "",
   "Forums": "",
   "Four quarter widgets in two by two grid": "",
   "Free RAM": "",
