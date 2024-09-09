@@ -6,6 +6,7 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -37,6 +38,7 @@ describe('InstalledAppsStore', () => {
       mockProvider(AppsStore, {
         patchState: jest.fn(),
       }),
+      mockProvider(AppsStatsService),
       mockProvider(DockerStore, {
         isLoading$: of(false),
         isDockerStarted$: of(true),
