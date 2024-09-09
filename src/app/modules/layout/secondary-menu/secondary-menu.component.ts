@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input, output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { MatList, MatListItem } from '@angular/material/list';
 import { RouterLinkActive, RouterLink } from '@angular/router';
@@ -26,8 +26,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   ],
 })
 export class SecondaryMenuComponent {
-  @Input() menuName: string;
-  @Input() subMenuItems: SubMenuItem[];
+  readonly menuName = input<string>();
+  readonly subMenuItems = input<SubMenuItem[]>();
 
   readonly toggleMenu = output();
 }

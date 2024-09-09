@@ -3,17 +3,17 @@
     <h3 mat-card-title>{{ 'Roles' | translate }}</h3>
   </mat-card-header>
   <mat-card-content>
-    @if (dataset.apps?.length || isApplications) {
+    @if (dataset().apps?.length || isApplications()) {
       <div class="details-item">
         <ix-icon class="icon" name="apps"></ix-icon>
         <div class="label">{{ 'Apps' | translate }}:</div>
-        @if (isApplications) {
+        @if (isApplications()) {
           <div class="apps value">
             {{ 'This dataset is used to store apps config and other container related data' | translate }}
           </div>
         } @else {
           <div class="apps value">
-            {{ 'This dataset is used by: {apps}' | translate: { apps: appsNames } }}
+            {{ 'This dataset is used by: {apps}' | translate: { apps: appNames() } }}
           </div>
         }
         <a class="action" ixTest="manage-apps-settings" [routerLink]="['/apps']">
@@ -21,7 +21,7 @@
         </a>
       </div>
     }
-    @if (isSystemDataset) {
+    @if (isSystemDataset()) {
       <div class="details-item">
         <ix-icon class="icon" name="ix:logo_truenas_scale_mark"></ix-icon>
         <div class="label">{{ 'System Dataset' | translate }}:</div>
@@ -33,7 +33,7 @@
         </a>
       </div>
     }
-    @if (hasChildrenWithShares) {
+    @if (hasChildrenWithShares()) {
       <div class="details-item">
         <ix-icon class="icon" name="share"></ix-icon>
         <div class="label">{{ 'Child Shares' | translate }}:</div>
@@ -42,31 +42,31 @@
         </div>
       </div>
     }
-    @if (dataset.vms?.length) {
+    @if (dataset().vms?.length) {
       <div class="details-item">
         <ix-icon class="icon" name="computer"></ix-icon>
         <div class="label">{{ 'VM' | translate }}:</div>
         <div class="vms value">
-          {{ 'This dataset is used by: {vms}' | translate: { vms: vmsNames } }}
+          {{ 'This dataset is used by: {vms}' | translate: { vms: vmNames() } }}
         </div>
         <a class="action" ixTest="manage-vm-settings" [routerLink]="['/vm']">
           {{ 'Manage VM Settings' | translate }}
         </a>
       </div>
     }
-    @if (dataset.smb_shares?.length) {
+    @if (dataset().smb_shares?.length) {
       <div class="details-item">
         <ix-icon name="ix:smb_share" class="icon"></ix-icon>
         <div class="label">{{ 'Share Attached' | translate }}:</div>
         <div class="smb-shares value">
-          {{ 'Dataset is shared via SMB as {shares}' | translate: { shares: smbSharesNames } }}
+          {{ 'Dataset is shared via SMB as {shares}' | translate: { shares: smbShareNames() } }}
         </div>
         <a class="action" ixTest="manage-smb-shares" [routerLink]="['/sharing/smb']">
           {{ 'Manage SMB Shares' | translate }}
         </a>
       </div>
     }
-    @if (dataset.nfs_shares?.length) {
+    @if (dataset().nfs_shares?.length) {
       <div class="details-item">
         <ix-icon name="ix:nfs_share" class="icon"></ix-icon>
         <div class="label">{{ 'Share Attached' | translate }}:</div>
@@ -82,7 +82,7 @@
         </a>
       </div>
     }
-    @if (dataset.iscsi_shares?.length) {
+    @if (dataset().iscsi_shares?.length) {
       <div class="details-item">
         <ix-icon name="ix:iscsi_share" class="icon"></ix-icon>
         <div class="label">{{ 'Share Attached' | translate }}:</div>
@@ -94,7 +94,7 @@
         </a>
       </div>
     }
-    @if (canCreateShare) {
+    @if (canCreateShare()) {
       <div class="details-item">
         <ix-icon class="icon" name="share"></ix-icon>
         <div class="label">{{ 'Not Shared' | translate }}</div>

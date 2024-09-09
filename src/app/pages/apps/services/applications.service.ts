@@ -11,7 +11,9 @@ import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { App, AppStartQueryParams, AppUpgradeParams } from 'app/interfaces/app.interface';
+import {
+  App, AppStartQueryParams, AppUpgradeParams,
+} from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';

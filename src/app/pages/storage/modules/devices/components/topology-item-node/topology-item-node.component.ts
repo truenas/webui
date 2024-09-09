@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -18,42 +20,42 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopologyItemNodeComponent {
-  @Input() topologyItem: TopologyItem;
-  @Input() disk: Disk;
+  readonly topologyItem = input.required<TopologyItem>();
+  readonly disk = input.required<Disk>();
 
   constructor(
     protected translate: TranslateService,
   ) {}
 
-  get name(): string {
-    if ((this.topologyItem as TopologyDisk).disk) {
-      return (this.topologyItem as TopologyDisk).disk;
+  protected readonly name = computed(() => {
+    if ((this.topologyItem() as TopologyDisk).disk) {
+      return (this.topologyItem() as TopologyDisk).disk;
     }
-    if (this.isDisk) {
-      return this.topologyItem.guid;
+    if (this.isDisk()) {
+      return this.topologyItem().guid;
     }
-    return this.topologyItem.type;
-  }
+    return this.topologyItem().type;
+  });
 
-  get status(): string {
-    return this.topologyItem?.status ? this.topologyItem.status : '';
-  }
+  protected readonly status = computed(() => {
+    return this.topologyItem()?.status ? this.topologyItem().status : '';
+  });
 
-  get capacity(): string {
-    return this.isDisk && this.disk?.size ? buildNormalizedFileSize(this.disk.size) : '';
-  }
+  protected readonly capacity = computed(() => {
+    return this.isDisk() && this.disk()?.size ? buildNormalizedFileSize(this.disk().size) : '';
+  });
 
-  get errors(): string {
-    if (this.topologyItem.stats) {
-      const stats = this.topologyItem.stats;
+  protected readonly errors = computed(() => {
+    if (this.topologyItem().stats) {
+      const stats = this.topologyItem().stats;
       const errors = (stats?.checksum_errors || 0) + (stats?.read_errors || 0) + (stats?.write_errors || 0);
       return this.translate.instant('{n, plural, =0 {No errors} one {# Error} other {# Errors}}', { n: errors });
     }
     return '';
-  }
+  });
 
-  get statusClass(): string {
-    switch (this.topologyItem.status as (PoolStatus | TopologyItemStatus)) {
+  protected readonly statusClass = computed(() => {
+    switch (this.topologyItem().status as (PoolStatus | TopologyItemStatus)) {
       case PoolStatus.Faulted:
         return 'fn-theme-red';
       case PoolStatus.Degraded:
@@ -63,9 +65,9 @@ export class TopologyItemNodeComponent {
       default:
         return '';
     }
-  }
+  });
 
-  get isDisk(): boolean {
-    return Boolean(this.topologyItem.type === TopologyItemType.Disk && this.topologyItem.path);
-  }
+  private readonly isDisk = computed(() => {
+    return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
+  });
 }
