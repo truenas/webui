@@ -50,6 +50,7 @@ import {
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
+import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
@@ -99,6 +100,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppInfoCardComponent,
     AppRowComponent,
     AppDetailsPanelComponent,
+    CustomAppFormComponent,
     AppWorkloadsCardComponent,
     AppResourcesCardComponent,
     AppNotesCardComponent,
