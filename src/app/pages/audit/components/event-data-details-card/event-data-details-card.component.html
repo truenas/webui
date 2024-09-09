@@ -7,6 +7,6 @@
     <ix-copy-button [text]="yamlContent()" [jsonText]="log().event_data"></ix-copy-button>
   </mat-card-header>
   <mat-card-content>
-    <pre [innerHTML]="yamlContent()"></pre>
+    <pre>{{ yamlContent() }}</pre>
   </mat-card-content>
 </mat-card>

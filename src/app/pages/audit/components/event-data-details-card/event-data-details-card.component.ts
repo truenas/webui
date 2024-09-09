@@ -14,7 +14,7 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 export class EventDataDetailsCardComponent {
   readonly log = input.required<AuditEntry>();
 
-  protected readonly yamlContent = computed(() => {
+  protected yamlContent = computed(() => {
     return jsonToYaml(convertObjectKeysToHumanReadable(this.log().event_data));
   });
 }

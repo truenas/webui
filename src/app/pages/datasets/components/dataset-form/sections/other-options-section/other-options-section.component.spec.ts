@@ -23,6 +23,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -358,6 +359,30 @@ describe('OtherOptionsSectionComponent', () => {
       await aclType.setValue('Inherit');
       expect(await aclMode.getValue()).toBe('Inherit');
       expect(await aclMode.isDisabled()).toBe(true);
+    });
+
+    it('should not disable incorrect ACL type & ACL mode setup to allow user to fix the issue in edit mode', async () => {
+      spectator.setInput({
+        parent: parentDataset,
+        existing: {
+          ...existingDataset,
+          acltype: {
+            value: DatasetAclType.Posix,
+          } as ZfsProperty<DatasetAclType, string>,
+          aclmode: {
+            value: AclMode.Passthrough,
+          } as ZfsProperty<AclMode, string>,
+        },
+      });
+
+      const aclType = await form.getControl('ACL Type') as IxSelectHarness;
+      const aclMode = await form.getControl('ACL Mode') as IxSelectHarness;
+
+      expect(await aclMode.getValue()).toBe('Passthrough');
+      expect(await aclMode.isDisabled()).toBe(false);
+
+      expect(await aclType.getValue()).toBe('POSIX');
+      expect(await aclType.isDisabled()).toBe(false);
     });
   });
 

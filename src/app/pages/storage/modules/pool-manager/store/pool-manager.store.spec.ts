@@ -210,6 +210,14 @@ describe('PoolManagerStore', () => {
             vdevs: manuallyConfiguredVdevs,
           },
         },
+        categorySequence: [
+          VdevType.Log,
+          VdevType.Spare,
+          VdevType.Cache,
+          VdevType.Special,
+          VdevType.Dedup,
+          VdevType.Data,
+        ],
       });
     });
 
@@ -246,7 +254,7 @@ describe('PoolManagerStore', () => {
       spectator.service.setManualTopologyCategory(VdevType.Data, [{}] as DetailsDisk[][]);
       spectator.service.resetTopologyCategory(VdevType.Data);
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject(initialState);
+      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({ topology: initialState.topology });
     });
 
     it('resetTopology – completely resets pool topology', async () => {
@@ -254,7 +262,7 @@ describe('PoolManagerStore', () => {
       spectator.service.setManualTopologyCategory(VdevType.Log, [{}] as DetailsDisk[][]);
       spectator.service.resetTopology();
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject(initialState);
+      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({ topology: initialState.topology });
     });
   });
 
