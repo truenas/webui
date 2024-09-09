@@ -1,7 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
-import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -9,6 +8,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -25,11 +25,12 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-describe('PoolManagerComponent – create pool', () => {
+describe('PoolManagerComponent – step changing', () => {
   let spectator: Spectator<PoolManagerComponent>;
   let wizard: PoolManagerHarness;
+  let store: PoolManagerStore;
   const createComponent = createComponentFactory({
     component: PoolManagerComponent,
     imports: [
@@ -149,10 +150,20 @@ describe('PoolManagerComponent – create pool', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
+    store = spectator.inject(PoolManagerStore);
     wizard = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, PoolManagerHarness);
   });
 
-  it('creates a pool', async () => {
+  it('changes the sequence of categories', async () => {
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+      VdevType.Cache,
+    ]);
+
     await wizard.fillStep({
       Name: 'pool1',
     });
@@ -167,6 +178,15 @@ describe('PoolManagerComponent – create pool', () => {
       'Number of VDEVs': '1',
     });
 
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Log,
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+      VdevType.Cache,
+      VdevType.Data,
+    ]);
+
     // Log
     await wizard.clickNext();
     await wizard.fillStep({
@@ -175,6 +195,15 @@ describe('PoolManagerComponent – create pool', () => {
       Width: '1',
     });
 
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+      VdevType.Cache,
+      VdevType.Data,
+      VdevType.Log,
+    ]);
+
     // Spare
     await wizard.clickNext();
     await wizard.fillStep({
@@ -182,12 +211,30 @@ describe('PoolManagerComponent – create pool', () => {
       Width: '1',
     });
 
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Cache,
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Spare,
+    ]);
+
     // Cache
     await wizard.clickNext();
     await wizard.fillStep({
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
     });
+
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Spare,
+      VdevType.Cache,
+    ]);
 
     // Metadata
     await wizard.clickNext();
@@ -198,6 +245,15 @@ describe('PoolManagerComponent – create pool', () => {
       'Number of VDEVs': '1',
     });
 
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Dedup,
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Spare,
+      VdevType.Cache,
+      VdevType.Special,
+    ]);
+
     // Dedup
     await wizard.clickNext();
     await wizard.fillStep({
@@ -207,58 +263,46 @@ describe('PoolManagerComponent – create pool', () => {
       'Number of VDEVs': '1',
     });
 
-    const reviewView = await wizard.getReviewWizardStep();
-    expect(await reviewView.getConfigurationItems()).toEqual({
-      Cache: '1 × 20 GiB (HDD)',
-      Data: '1 × STRIPE | 1 × 20 GiB (HDD)',
-      Dedup: '1 × STRIPE | 1 × 20 GiB (HDD)',
-      Log: '1 × STRIPE | 1 × 20 GiB (HDD)',
-      Spare: '1 × 20 GiB (HDD)',
-      Metadata: '1 × STRIPE | 1 × 20 GiB (HDD)',
-    });
-    expect(await reviewView.getWarnings()).toEqual([
-      'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Spare,
+      VdevType.Cache,
+      VdevType.Special,
+      VdevType.Dedup,
     ]);
-    expect(await reviewView.getErrors()).toEqual([
-      'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
-      'A stripe dedup VDEV is highly discouraged and will result in data loss if it fails',
-      'A stripe metadata VDEV is highly discouraged and will result in data loss if it fails',
-    ]);
-    const router = spectator.inject(Router);
-    jest.spyOn(router, 'navigate').mockImplementation();
 
-    await (await wizard.getCreatePoolButton()).click();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
-      'pool.create',
-      [{
-        name: 'pool1',
-        topology: {
-          cache: [{
-            disks: ['sda2'],
-            type: 'STRIPE',
-          }],
-          data: [{
-            disks: ['sda3'],
-            type: 'STRIPE',
-          }],
-          dedup: [{
-            disks: ['sda6'],
-            type: 'STRIPE',
-          }],
-          log: [{
-            disks: ['sda0'],
-            type: 'STRIPE',
-          }],
-          spares: ['sda1'],
-          special: [{
-            disks: ['sda5'],
-            type: 'STRIPE',
-          }],
-        },
-        allow_duplicate_serials: false,
-        encryption: false,
-      }],
-    );
-    expect(router.navigate).toHaveBeenCalledWith(['/storage']);
+    // Spare again
+    await wizard.clickBack();
+    await wizard.clickBack();
+    await wizard.clickBack();
+    await wizard.fillStep({
+      Width: '2',
+    });
+
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Cache,
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+    ]);
+
+    // Data again
+    await wizard.clickBack();
+    await wizard.clickBack();
+    await wizard.fillStep({
+      Width: '2',
+    });
+
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Log,
+      VdevType.Cache,
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+      VdevType.Data,
+    ]);
   });
 });

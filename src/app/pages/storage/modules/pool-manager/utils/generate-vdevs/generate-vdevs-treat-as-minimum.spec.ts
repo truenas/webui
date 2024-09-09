@@ -6,7 +6,7 @@ import { PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/stor
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { generateVdevDisks, expectDisks } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/test-utils';
+import { generateVdevDisks, expectDisks, categorySequence } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/test-utils';
 
 describe('GenerateVdevsService - treat disk size as minimum', () => {
   let spectator: SpectatorService<GenerateVdevsService>;
@@ -45,6 +45,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
           },
         } as PoolManagerTopology,
         maximizeDispersal: false,
+        categorySequence,
       });
 
       expect(vdevs).toEqual({
@@ -91,6 +92,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
           },
         } as PoolManagerTopology,
         maximizeDispersal: false,
+        categorySequence,
       });
 
       expect(vdevs).toEqual({
@@ -132,6 +134,7 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
           },
         } as PoolManagerTopology,
         maximizeDispersal: true,
+        categorySequence,
       });
 
       expect(vdevs).toEqual({
