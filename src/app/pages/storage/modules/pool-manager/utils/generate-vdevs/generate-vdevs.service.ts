@@ -27,17 +27,19 @@ export class GenerateVdevsService {
     allowedDisks,
     topology,
     maximizeDispersal,
+    categorySequence,
   }: {
     allowedDisks: DetailsDisk[];
     topology: PoolManagerTopology;
     maximizeDispersal: boolean;
+    categorySequence: VdevType[];
   }): GeneratedVdevs {
     let disks = this.excludeManualSelectionDisks([...allowedDisks], topology);
     disks = this.sortDisksByEnclosure(disks);
     this.groupedDisks = new GroupedDisks(disks);
     this.enclosureList = new EnclosureList(disks);
 
-    const categories = this.excludeManualCategories(topology);
+    const categories = this.generateCategories(topology, categorySequence);
 
     return this.placeDisksInCategories(categories, maximizeDispersal);
   }
@@ -95,10 +97,10 @@ export class GenerateVdevsService {
     });
   }
 
-  private excludeManualCategories(topology: PoolManagerTopology): TypeAndCategory[] {
-    return Object.entries(topology)
-      .filter(([, category]) => !category.hasCustomDiskSelection)
-      .map(([type, category]) => [type as VdevType, category]);
+  private generateCategories(topology: PoolManagerTopology, categorySequence: VdevType[]): TypeAndCategory[] {
+    return categorySequence
+      .filter((category) => topology[category] && !topology[category].hasCustomDiskSelection)
+      .map((category) => [category, topology[category]]);
   }
 
   private isCategorySet(category: PoolManagerTopologyCategory): boolean {
