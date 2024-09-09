@@ -257,6 +257,16 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     const aclModeControl = this.form.controls.aclmode;
     const aclTypeControl = this.form.controls.acltype;
 
+    const invalidPosixOrOffAclType = (aclTypeControl.value === DatasetAclType.Posix
+      || aclTypeControl.value === DatasetAclType.Off) && aclModeControl.value !== AclMode.Discard;
+
+    const invalidInheritAclType = aclTypeControl.value === DatasetAclType.Inherit
+      && aclModeControl.value !== AclMode.Inherit;
+
+    if (!!this.existing && (invalidPosixOrOffAclType || invalidInheritAclType) && !aclTypeControl.touched) {
+      return;
+    }
+
     if (!this.parent) {
       aclModeControl.disable({ emitEvent: false });
       aclTypeControl.disable({ emitEvent: false });
