@@ -63,7 +63,9 @@ const defaultWidgets: WidgetGroup[] = [
 
 export const getDefaultWidgets = (isHaLicensed?: boolean): WidgetGroup[] => {
   if (!isHaLicensed) {
-    return defaultWidgets.filter((_, index) => index !== 1);
+    return defaultWidgets.filter(
+      (widgetGroup) => !widgetGroup.slots.some((slot) => slot.type === WidgetType.SystemInfoPassive),
+    );
   }
 
   return defaultWidgets;
