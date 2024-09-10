@@ -12,7 +12,7 @@ export interface DockerConfigUpdate {
   nvidia?: boolean;
 }
 
-export interface DockerStatusResponse {
+export interface DockerStatusData {
   status: DockerStatus;
   description: string;
 }

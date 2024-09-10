@@ -1,11 +1,17 @@
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 
-export const defaultWidgets: WidgetGroup[] = [
+const defaultWidgets: WidgetGroup[] = [
   {
     layout: WidgetGroupLayout.Full,
     slots: [
       { type: WidgetType.SystemInfoActive },
+    ],
+  },
+  {
+    layout: WidgetGroupLayout.Full,
+    slots: [
+      { type: WidgetType.SystemInfoPassive },
     ],
   },
   {
@@ -54,3 +60,13 @@ export const defaultWidgets: WidgetGroup[] = [
     ],
   },
 ];
+
+export const getDefaultWidgets = (isHaLicensed?: boolean): WidgetGroup[] => {
+  if (!isHaLicensed) {
+    return defaultWidgets.filter(
+      (widgetGroup) => !widgetGroup.slots.some((slot) => slot.type === WidgetType.SystemInfoPassive),
+    );
+  }
+
+  return defaultWidgets;
+};

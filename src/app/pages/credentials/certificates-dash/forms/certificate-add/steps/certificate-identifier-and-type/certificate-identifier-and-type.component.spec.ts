@@ -48,6 +48,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
         Name: 'New Certificate',
         Type: 'Internal Certificate',
         Profile: 'Openvpn Client Certificate',
+        'Add To Trusted Store': true,
       });
     });
 
@@ -55,6 +56,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
       expect(spectator.component.getPayload()).toEqual({
         name: 'New Certificate',
         create_type: CertificateCreateType.CreateInternal,
+        add_to_trusted_store: true,
       });
     });
 
@@ -75,6 +77,10 @@ describe('CertificateIdentifierAndTypeComponent', () => {
         {
           label: 'Profile',
           value: 'Openvpn Client Certificate',
+        },
+        {
+          label: 'Add To Trusted Store',
+          value: 'Yes',
         },
       ]);
     });

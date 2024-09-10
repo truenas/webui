@@ -1,7 +1,7 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
-import { DockerConfig, DockerStatusResponse } from 'app/enums/docker-config.interface';
+import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -314,6 +314,7 @@ export interface ApiCallDirectory {
   'app.query': { params: AppQueryParams; response: App[] };
   'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
   'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
+  'app.available_space': { params: void; response: number };
   'app.categories': { params: void; response: string[] };
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
@@ -605,7 +606,7 @@ export interface ApiCallDirectory {
 
   // Docker
   'docker.config': { params: void; response: DockerConfig };
-  'docker.status': { params: void; response: DockerStatusResponse };
+  'docker.status': { params: void; response: DockerStatusData };
   'docker.lacks_nvidia_drivers': { params: void; response: boolean };
 
   // LDAP

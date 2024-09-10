@@ -1,4 +1,4 @@
-import { DockerStatusResponse } from 'app/enums/docker-config.interface';
+import { DockerStatusData } from 'app/enums/docker-config.interface';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { App, AppStats } from 'app/interfaces/app.interface';
@@ -26,7 +26,7 @@ export interface ApiEventDirectory {
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
   'disk.query': { response: Disk };
-  'docker.state': { response: DockerStatusResponse };
+  'docker.state': { response: DockerStatusData };
   'failover.disabled.reasons': { response: FailoverDisabledReasonEvent };
   'failover.status': { response: { status: FailoverStatus } };
   'group.query': { response: Group };
