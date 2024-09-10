@@ -12,6 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -101,10 +102,15 @@ describe('CertificateEditComponent', () => {
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Identifier' }));
       await nameInput.setValue('New Name');
 
+      const addToTrustedStoreCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Add to trusted store' }));
+      await addToTrustedStoreCheckbox.setValue(true);
+
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.update', [1,
+        { name: 'New Name', add_to_trusted_store: true },
+      ]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
 

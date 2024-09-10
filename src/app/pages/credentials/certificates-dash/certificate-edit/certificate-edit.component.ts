@@ -39,8 +39,10 @@ export class CertificateEditComponent implements OnInit {
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
+    add_to_trusted_store: [false],
   }) as FormGroup<{
     name: FormControl<string | null>;
+    add_to_trusted_store: FormControl<boolean>;
     renew_days?: FormControl<number | null>;
   }>;
 
