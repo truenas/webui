@@ -1,8 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -12,8 +11,6 @@ describe('AppResourcesCardComponent', () => {
   let spectator: Spectator<AppResourcesCardComponent>;
   let websocket: WebSocketService;
 
-  const isLoading$ = new BehaviorSubject(false);
-
   const createComponent = createComponentFactory({
     component: AppResourcesCardComponent,
     imports: [
@@ -21,9 +18,7 @@ describe('AppResourcesCardComponent', () => {
     ],
     providers: [
       mockWebSocket([
-        mockCall('filesystem.statfs', {
-          avail_bytes: 2500,
-        } as Statfs),
+        mockCall('app.available_space', 2500),
       ]),
       mockProvider(DockerStore, {
         selectedPool$: of('pool'),
@@ -34,7 +29,7 @@ describe('AppResourcesCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        isLoading$,
+        isLoading: false,
       },
     });
     websocket = spectator.inject(WebSocketService);
@@ -53,7 +48,7 @@ describe('AppResourcesCardComponent', () => {
   });
 
   it('loads and reports available space on apps dataset', () => {
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.statfs', ['/mnt/.ix-apps']);
+    expect(websocket.call).toHaveBeenCalledWith('app.available_space');
     expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Available Space: 2.44 KiB');
   });
 });

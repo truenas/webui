@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
+import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -14,6 +15,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
     InstalledAppsStore,
     DockerStore,
     AppsStore,
+    AppsStatsService,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

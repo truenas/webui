@@ -22,6 +22,7 @@ import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-
 import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -103,6 +104,7 @@ describe('InstalledAppsComponent', () => {
       },
       mockWebSocket([]),
       mockAuth(),
+      mockProvider(AppsStatsService),
     ],
   });
 

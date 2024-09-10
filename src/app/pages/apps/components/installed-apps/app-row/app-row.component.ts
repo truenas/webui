@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
-import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
+import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
@@ -17,6 +17,7 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 export class AppRowComponent {
   readonly app = input.required<App>();
   readonly status = input.required<AppStatus>();
+  readonly stats = input.required<AppStats>();
   readonly selected = input.required<boolean>();
   readonly job = input<Job<void, AppStartQueryParams>>();
 
@@ -28,10 +29,7 @@ export class AppRowComponent {
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  readonly hasUpdates = computed(() => {
-    return this.app().upgrade_available;
-  });
-
+  readonly hasUpdates = computed(() => this.app().upgrade_available);
   readonly isAppStopped = computed(() => this.status() === AppStatus.Stopped);
 
   readonly inProgress = computed(() => {
@@ -40,6 +38,14 @@ export class AppRowComponent {
 
   readonly isStartingOrStopping = computed(() => {
     return [AppStatus.Starting, AppStatus.Stopping].includes(this.status());
+  });
+
+  readonly incomingTraffic = computed(() => {
+    return this.stats().networks.reduce((sum, stats) => sum + stats.rx_bytes, 0);
+  });
+
+  readonly outgoingTraffic = computed(() => {
+    return this.stats().networks.reduce((sum, stats) => sum + stats.tx_bytes, 0);
   });
 
   toggleAppChecked(): void {
