@@ -13,7 +13,7 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -37,12 +37,12 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
   const createComponent = createComponentFactory({
     component: AddVdevsComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       MatStepperModule,
       FileSizePipe,
       MapValuePipe,
       CastPipe,
+      IxWarningComponent,
     ],
     declarations: [
       ...commonDeclarations,
@@ -262,10 +262,10 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
             { type: TopologyItemType.Mirror, disks: ['sda3', 'sda0'] },
           ],
           dedup: [
-            { type: TopologyItemType.Mirror, disks: ['sda1', 'sda2', 'sda5'] },
+            { type: TopologyItemType.Mirror, disks: ['sda2', 'sda5', 'sda6'] },
           ],
           log: [
-            { type: TopologyItemType.Stripe, disks: ['sda6'] },
+            { type: TopologyItemType.Stripe, disks: ['sda1'] },
           ],
           spares: [],
           special: [],

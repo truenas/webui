@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 

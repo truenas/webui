@@ -29,7 +29,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadOptions, UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -71,7 +71,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private translate: TranslateService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private cdr: ChangeDetectorRef,
     private upload: UploadService,
   ) {
@@ -172,7 +172,7 @@ export class ManualUpdateFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/others/reboot'], { skipLocationChange: true });
+        this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
       });
   }
 
@@ -223,7 +223,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   finishNonHaUpdate(): void {
     if (this.form.value.rebootAfterManualUpdate) {
-      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
+      this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Restart'),
@@ -231,7 +231,7 @@ export class ManualUpdateFormComponent implements OnInit {
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),
-      ).subscribe(() => this.router.navigate(['/others/reboot'], { skipLocationChange: true }));
+      ).subscribe(() => this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true }));
     }
   }
 

@@ -13,7 +13,6 @@ import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services/ws.service';
 import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
@@ -24,7 +23,6 @@ describe('ManualTestDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: ManualTestDialogComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     declarations: [

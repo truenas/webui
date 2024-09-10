@@ -9,7 +9,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
-  DatasetCaseSensitivity, DatasetChecksum, DatasetRecordSize,
+  DatasetCaseSensitivity, DatasetRecordSize,
   DatasetSnapdev,
   DatasetSnapdir,
   DatasetSync,
@@ -23,10 +23,10 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   OtherOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/other-options-section/other-options-section.component';
@@ -178,7 +178,6 @@ describe('OtherOptionsSectionComponent', () => {
     component: OtherOptionsSectionComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockWebSocket([
@@ -361,10 +360,34 @@ describe('OtherOptionsSectionComponent', () => {
       expect(await aclMode.getValue()).toBe('Inherit');
       expect(await aclMode.isDisabled()).toBe(true);
     });
+
+    it('should not disable incorrect ACL type & ACL mode setup to allow user to fix the issue in edit mode', async () => {
+      spectator.setInput({
+        parent: parentDataset,
+        existing: {
+          ...existingDataset,
+          acltype: {
+            value: DatasetAclType.Posix,
+          } as ZfsProperty<DatasetAclType, string>,
+          aclmode: {
+            value: AclMode.Passthrough,
+          } as ZfsProperty<AclMode, string>,
+        },
+      });
+
+      const aclType = await form.getControl('ACL Type') as IxSelectHarness;
+      const aclMode = await form.getControl('ACL Mode') as IxSelectHarness;
+
+      expect(await aclMode.getValue()).toBe('Passthrough');
+      expect(await aclMode.isDisabled()).toBe(false);
+
+      expect(await aclType.getValue()).toBe('POSIX');
+      expect(await aclType.isDisabled()).toBe(false);
+    });
   });
 
   describe('ZFS Deduplication', () => {
-    it('shows a warning when checksum is not SHA-512 and deduplication is enabled', async () => {
+    it('shows a warning when deduplication is enabled', async () => {
       spectator.setInput({
         parent: parentDataset,
       });
@@ -378,8 +401,6 @@ describe('OtherOptionsSectionComponent', () => {
           message: helptextDatasetForm.deduplicationWarning,
         }),
       );
-      expect(spectator.query('.dedup-warning')).toExist();
-      expect(spectator.component.form.value.checksum).toBe(DatasetChecksum.Sha512);
     });
 
     it('does not show deduplication field on Enterprise systems that do not have a dedup license', async () => {

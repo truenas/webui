@@ -12,7 +12,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatColumnDef } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
@@ -24,11 +23,24 @@ import { CommonDirectivesModule } from 'app/directives/common-directives.module'
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  IxCheckboxListComponent,
+} from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -50,6 +62,7 @@ import {
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
+import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
@@ -60,11 +73,12 @@ import { AppNotesCardComponent } from 'app/pages/apps/components/installed-apps/
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
+import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import { VolumeMountsDialogComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
+import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { ContainerShellComponent } from 'app/pages/apps/components/installed-apps/container-shell/container-shell.component';
-import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
@@ -82,7 +96,6 @@ import { CategoryViewComponent } from './components/available-apps/category-view
 import { CustomAppButtonComponent } from './components/available-apps/custom-app-button/custom-app-button.component';
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
-import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { DockerStatusComponent } from './components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
@@ -99,13 +112,14 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppInfoCardComponent,
     AppRowComponent,
     AppDetailsPanelComponent,
+    CustomAppFormComponent,
     AppWorkloadsCardComponent,
     AppResourcesCardComponent,
     AppNotesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
     ContainerShellComponent,
-    PodLogsComponent,
+    ContainerLogsComponent,
     LogsDetailsDialogComponent,
     ShellDetailsDialogComponent,
     AppUpgradeDialogComponent,
@@ -130,6 +144,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
   imports: [
     CommonModule,
     AppsRoutingModule,
+    IxCodeEditorComponent,
     PageHeaderModule,
     MatButtonModule,
     TranslateModule,
@@ -146,7 +161,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     ImgFallbackModule,
     NgxSkeletonLoaderModule,
     IxIconModule,
-    FlexLayoutModule,
     LazyLoadImageModule,
     TestIdModule,
     AppLoaderModule,
@@ -160,14 +174,13 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     LightboxModule,
     MarkdownModule,
     IxTableModule,
-    LayoutModule,
     SearchInput1Component,
     EmptyComponent,
     MatSort,
     MatColumnDef,
     MatSortHeader,
     AppCardLogoComponent,
-    AppStatusCellComponent,
+    AppStateCellComponent,
     AppUpdateCellComponent,
     ToolbarSliderComponent,
     FormatDateTimePipe,
@@ -177,6 +190,15 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     FileSizePipe,
     NetworkSpeedPipe,
     OrNotAvailablePipe,
+    IxModalHeaderComponent,
+    IxFieldsetComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    IxChipsComponent,
+    IxSelectComponent,
+    IxCheckboxListComponent,
+    IxCheckboxComponent,
+    ReadOnlyComponent,
   ],
 })
 export class AppsModule { }

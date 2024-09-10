@@ -5,7 +5,7 @@ import { environment } from 'environments/environment';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
-import { MockStorageGenerator } from 'app/core/testing/mock-enclosure/mock-storage-generator.utils';
+import { MockEnclosureGenerator } from 'app/core/testing/mock-enclosure/mock-enclosure-generator.utils';
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -16,7 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class MockEnclosureWebsocketService extends WebSocketService {
   private mockConfig: MockEnclosureConfig = environment.mockConfig;
-  private mockStorage = new MockStorageGenerator(this.mockConfig);
+  private mockStorage = new MockEnclosureGenerator(this.mockConfig);
 
   constructor(
     router: Router,

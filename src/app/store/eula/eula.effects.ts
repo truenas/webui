@@ -12,7 +12,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -53,7 +53,7 @@ export class EulaEffects {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private authService: AuthService,
   ) { }
 }

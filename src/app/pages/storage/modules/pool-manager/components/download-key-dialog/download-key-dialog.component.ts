@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  signal,
 } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,7 +28,7 @@ export interface DownloadKeyDialogParams {
 })
 export class DownloadKeyDialogComponent {
   protected helptext = helptextDownloadKey;
-  protected wasDownloaded = false;
+  protected wasDownloaded = signal(false);
 
   private filename: string;
 
@@ -44,27 +45,29 @@ export class DownloadKeyDialogComponent {
   }
 
   downloadKey(): void {
+    this.loader.open();
+
     this.ws.call('core.download', ['pool.dataset.export_keys', [this.data.name], this.filename]).pipe(
-      this.loader.withLoader(),
       switchMap(([, url]) => {
         return this.download.streamDownloadFile(url, this.filename, 'application/json').pipe(
           tap((file) => {
             this.download.downloadBlob(file, this.filename);
-            this.wasDownloaded = true;
-            this.cdr.markForCheck();
+            this.wasDownloaded.set(true);
           }),
           catchError((error: HttpErrorResponse) => {
             this.dialog.error(this.errorHandler.parseHttpError(error));
+            this.wasDownloaded.set(true);
             return EMPTY;
           }),
         );
       }),
       untilDestroyed(this),
     ).subscribe({
-      error: (error: unknown) => {
+      error: (error) => {
         this.loader.close();
         this.dialog.error(this.errorHandler.parseError(error));
       },
+      complete: () => this.loader.close(),
     });
   }
 }

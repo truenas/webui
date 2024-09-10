@@ -6,14 +6,20 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
-import { filter } from 'rxjs';
+import {
+  debounceTime,
+  filter, switchMap, tap,
+} from 'rxjs';
+import { oneMinuteMillis } from 'app/constants/time.constant';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { SessionExpiringDialogComponent } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AuthService } from 'app/services/auth/auth.service';
-import { AppState } from 'app/store';
+import { WebSocketService } from 'app/services/ws.service';
+import { AppsState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
@@ -26,6 +32,23 @@ export class TokenLifetimeService {
   // TODO: Just make resume an arrow function.
   private resumeBound;
 
+  /**
+   * Check if token was used no more than 5 minutes ago (default )
+  */
+  get isTokenWithinTimeline(): boolean {
+    const tokenLastUsed = this.window.localStorage.getItem('tokenLastUsed');
+
+    if (!tokenLastUsed) {
+      return false;
+    }
+
+    const tokenRecentUsageLifetime = 5 * oneMinuteMillis;
+    const tokenLastUsedTime = new Date(tokenLastUsed).getTime();
+    const currentTime = Date.now();
+
+    return currentTime - tokenLastUsedTime <= tokenRecentUsageLifetime;
+  }
+
   constructor(
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -33,7 +56,8 @@ export class TokenLifetimeService {
     private authService: AuthService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private appStore$: Store<AppState>,
+    private appStore$: Store<AppsState>,
+    private ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.resumeBound = this.resume.bind(this);
@@ -49,6 +73,7 @@ export class TokenLifetimeService {
   }
 
   start(): void {
+    this.setupTokenLastUsedValue();
     this.addListeners();
     this.resume();
   }
@@ -63,7 +88,7 @@ export class TokenLifetimeService {
 
         this.terminateCancelTimeout = setTimeout(() => {
           this.authService.clearAuthToken();
-          this.router.navigate(['/sessions/signin']);
+          this.router.navigate(['/signin']);
           this.dialogService.closeAllDialogs();
           this.snackbar.open(
             this.translate.instant('Token expired'),
@@ -114,5 +139,19 @@ export class TokenLifetimeService {
   removeListeners(): void {
     this.window.removeEventListener('mouseover', this.resumeBound, false);
     this.window.removeEventListener('keypress', this.resumeBound, false);
+  }
+
+  setupTokenLastUsedValue(): void {
+    this.authService.user$.pipe(
+      filter(Boolean),
+      tapOnce(() => this.updateTokenLastUsed()),
+      switchMap(() => this.ws.getWebSocketStream$().pipe(debounceTime(5000))),
+      tap(() => this.updateTokenLastUsed()),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  updateTokenLastUsed(): void {
+    this.window.localStorage.setItem('tokenLastUsed', new Date().toISOString());
   }
 }

@@ -114,6 +114,6 @@ describe('ApiKeyListComponent', () => {
       message: 'Are you sure you want to delete the <b>first-api-key</b> API Key?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.delete', ['1']);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.delete', [1]);
   });
 });

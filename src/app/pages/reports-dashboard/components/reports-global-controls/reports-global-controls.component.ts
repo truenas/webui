@@ -15,7 +15,7 @@ import {
 import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -45,7 +45,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,

@@ -141,15 +141,14 @@
           {{ 'Application' | translate }}
         </div>
         <div
-          [matColumnDef]="sortableField.Status"
-          [mat-sort-header]="sortableField.Status"
+          [matColumnDef]="sortableField.State"
+          [mat-sort-header]="sortableField.State"
         >
           {{ 'Status' | translate }}
         </div>
-        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130471 -->
-        <!-- <div>{{ 'CPU' | translate }}</div> -->
-        <!-- <div>{{ 'RAM' | translate }}</div> -->
-        <!-- <div>{{ 'Network' | translate }}</div> -->
+        <div>{{ 'CPU' | translate }}</div>
+        <div>{{ 'RAM' | translate }}</div>
+        <div>{{ 'Network' | translate }}</div>
         <div
           class="app-update-header"
           [matColumnDef]="sortableField.Updates"
@@ -183,9 +182,9 @@
             <ix-app-row
               tabindex="0"
               [app]="app"
+              [stats]="getAppStats(app.name) | async"
               [class.selected]="selectedApp.id === app.id"
               [selected]="selection.isSelected(app.id)"
-              [status]="getAppStatus(app.name)"
               [job]="appJobs.get(app.name)"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"
@@ -214,7 +213,6 @@
     >
       <ix-app-details-panel
         [app]="selectedApp"
-        [status]="getAppStatus(selectedApp.name)"
         (startApp)="start(selectedApp.name)"
         (stopApp)="stop(selectedApp.name)"
         (closeMobileDetails)="closeMobileDetails()"

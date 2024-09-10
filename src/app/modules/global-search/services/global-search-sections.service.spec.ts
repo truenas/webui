@@ -79,14 +79,24 @@ describe('GlobalSearchSectionsProvider', () => {
     }]);
   });
 
+  it('should generate help section results based on search term and missing app version', () => {
+    const searchTerm = 'test';
+    const results = spectator.service.getHelpSectionResults(searchTerm, undefined);
+
+    expect(results).toEqual([{
+      hierarchy: ['Search Documentation for «{value}»'],
+      targetHref: 'https://www.truenas.com/docs/search/?query=test',
+      section: GlobalSearchSection.Help,
+    }]);
+  });
+
   it('should generate help section results based on special case search term', () => {
     const searchTerm = 'help';
-    const appVersion = '24.10';
-    const results = spectator.service.getHelpSectionResults(searchTerm, appVersion);
+    const results = spectator.service.getHelpSectionResults(searchTerm);
 
     expect(results).toEqual([{
       hierarchy: ['Go to Documentation'],
-      targetHref: 'https://www.truenas.com/docs/search/',
+      targetHref: 'https://www.truenas.com/docs/search',
       section: GlobalSearchSection.Help,
     }]);
   });

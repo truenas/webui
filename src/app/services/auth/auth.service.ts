@@ -31,7 +31,7 @@ import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 @Injectable({
@@ -85,7 +85,7 @@ export class AuthService {
 
   constructor(
     private wsManager: WebSocketConnectionService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -118,6 +118,7 @@ export class AuthService {
    */
   clearAuthToken(): void {
     this.window.sessionStorage.removeItem('loginBannerDismissed');
+    this.window.localStorage.removeItem('tokenLastUsed');
     this.latestTokenGenerated$.next(null);
     this.latestTokenGenerated$.complete();
     this.latestTokenGenerated$ = new ReplaySubject<string>(1);
@@ -147,6 +148,7 @@ export class AuthService {
       return of(LoginResult.NoToken);
     }
 
+    performance.mark('Login Start');
     return this.makeRequest('auth.login_with_token', [this.token]).pipe(
       switchMap((wasLoggedIn) => {
         return this.processLoginResult(wasLoggedIn);
@@ -236,6 +238,7 @@ export class AuthService {
     };
 
     const requestTrigger$ = new Observable((subscriber) => {
+      performance.mark(`${method} - ${uuid} - start`);
       this.wsManager.send(payload);
       subscriber.next();
     }).pipe(take(1));
@@ -247,6 +250,10 @@ export class AuthService {
       uuidFilteredResponse$,
     ]).pipe(
       take(1),
+      tap(() => {
+        performance.mark(`${method} - ${uuid} - end`);
+        performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
+      }),
       map(([, response]) => response),
     );
   }

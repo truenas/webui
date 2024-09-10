@@ -61,6 +61,11 @@ are submitted only when this box is set.'),
   dataset_acl_traverse_placeholder: T('Apply permissions to child datasets'),
   dataset_acl_traverse_tooltip: T('Apply permissions recursively to all child datasets of the current dataset.'),
 
+  dataset_acl_validate_placeholder: T('Validate effective ACL'),
+  dataset_acl_validate_tooltip: T('Ensure that ACL permissions are validated for all users and groups.\
+ Disabling this may allow configurations that do not provide the intended access. \
+ It is recommended to keep this option enabled.'),
+
   dataset_acl_dialog_warning: T('Warning'),
   dataset_acl_dialog_warning_message: T('Changing dataset permission mode\
  can severely affect existing permissions.'),

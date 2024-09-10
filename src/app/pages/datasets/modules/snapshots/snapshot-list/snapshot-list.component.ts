@@ -35,7 +35,7 @@ import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/s
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -89,9 +89,14 @@ export class SnapshotListComponent implements OnInit {
         this.onListFiltered(this.filterString);
       },
       onColumnCheck: (checked) => {
-        this.snapshots.forEach((bootenv) => bootenv.selected = checked);
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString);
+        this.dataProvider.currentPage$.pipe(
+          take(1),
+          untilDestroyed(this),
+        ).subscribe((snapshots) => {
+          snapshots.forEach((snapshot) => snapshot.selected = checked);
+          this.dataProvider.setRows([]);
+          this.onListFiltered(this.filterString);
+        });
       },
       cssClass: 'checkboxs-column',
     }),
@@ -144,7 +149,7 @@ export class SnapshotListComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
   ) {

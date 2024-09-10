@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { combineLatest, map, Observable } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
@@ -27,14 +27,14 @@ import {
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 @Injectable()
 export class PoolManagerValidationService {
   constructor(
     protected store: PoolManagerStore,
-    protected systemStore$: Store<AppState>,
+    protected systemStore$: Store<AppsState>,
     protected translate: TranslateService,
     private addVdevsStore: AddVdevsStore,
   ) {}

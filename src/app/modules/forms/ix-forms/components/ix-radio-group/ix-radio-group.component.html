@@ -9,7 +9,7 @@
 
 <mat-radio-group
   color="primary"
-  [fxLayout]="containerLayout"
+  [class.inline]="inlineFields"
   [required]="required"
   [disabled]="isDisabled"
   [ixTest]="controlDirective.name"
@@ -19,8 +19,8 @@
 >
   @for (option of options | async; track option) {
     <div
-      fxFlex="100%"
-      [fxFlex.gt-md]="fieldFlex"
+      class="radio-item"
+      [style.flex-basis]="fieldFlex"
     >
       <mat-radio-button
         [value]="option.value"

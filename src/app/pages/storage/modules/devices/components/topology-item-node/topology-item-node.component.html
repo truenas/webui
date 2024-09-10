@@ -2,21 +2,21 @@
   <div class="cell cell-name">
     <div class="icon-container">
       <ix-topology-item-icon
-        [topologyItem]="topologyItem"
-        [disk]="disk"
+        [topologyItem]="topologyItem()"
+        [disk]="disk()"
       ></ix-topology-item-icon>
     </div>
     <div class="name">
-      <span>{{ name }}</span>
+      <span>{{ name() }}</span>
     </div>
   </div>
-  <div class="cell cell-status" [ngClass]="statusClass">
-    <span>{{ status }}</span>
+  <div class="cell cell-status" [ngClass]="statusClass()">
+    <span>{{ status() }}</span>
   </div>
   <div class="cell cell-capacity">
-    <span>{{ capacity }}</span>
+    <span>{{ capacity() }}</span>
   </div>
   <div class="cell cell-errors">
-    <span>{{ errors | translate }}</span>
+    <span>{{ errors() }}</span>
   </div>
 </div>

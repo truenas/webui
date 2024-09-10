@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import {
   Subject, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
@@ -12,7 +12,7 @@ import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-sett
 import { syslogCardElements } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.elements';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 export interface SyslogConfig {
@@ -88,7 +88,7 @@ export class SyslogCardComponent {
   readonly syslogLevelLabels = syslogLevelLabels;
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private chainedSlideIns: IxChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}

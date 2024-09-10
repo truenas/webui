@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -28,8 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetDetailsCardComponent {
-  @Input() dataset: DatasetDetails;
-  @Input() isLoading: boolean;
+  readonly dataset = input.required<DatasetDetails>();
 
   protected readonly Role = Role;
   readonly OnOff = OnOff;
@@ -45,36 +44,23 @@ export class DatasetDetailsCardComponent {
     private snackbar: SnackbarService,
   ) { }
 
-  get datasetCompression(): string {
-    return this.dataset?.compression?.source === ZfsPropertySource.Inherited
-      ? `Inherit (${this.dataset.compression?.value})`
-      : this.dataset.compression?.value;
-  }
+  protected readonly datasetCompression = computed(() => {
+    return this.dataset()?.compression?.source === ZfsPropertySource.Inherited
+      ? this.translate.instant('Inherit ({value})', { value: this.dataset().compression?.value })
+      : this.dataset().compression?.value;
+  });
 
-  get datasetSpace(): string {
-    return (this.dataset.quota.value !== null || this.dataset.quota.value !== '0')
-    || (this.dataset.refquota.value !== null || this.dataset.refquota.value !== '0')
-      ? this.dataset.available.value + ' (Quota set)' : this.dataset.available.value;
-  }
+  protected readonly isFilesystem = computed(() => this.dataset().type === DatasetType.Filesystem);
+  protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
-  get isFilesystem(): boolean {
-    return this.dataset.type === DatasetType.Filesystem;
-  }
+  protected readonly hasComments = computed(() => {
+    return this.dataset().comments?.source === ZfsPropertySource.Local && !!this.dataset().comments?.value?.length;
+  });
 
-  get isZvol(): boolean {
-    return this.dataset.type === DatasetType.Volume;
-  }
-
-  get hasComments(): boolean {
-    return this.dataset.comments?.source === ZfsPropertySource.Local && !!this.dataset.comments?.value?.length;
-  }
-
-  get canBePromoted(): boolean {
-    return Boolean(this.dataset.origin?.parsed);
-  }
+  protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
 
   deleteDataset(): void {
-    this.matDialog.open(DeleteDatasetDialogComponent, { data: this.dataset })
+    this.matDialog.open(DeleteDatasetDialogComponent, { data: this.dataset() })
       .afterClosed()
       .pipe(
         filter(Boolean),
@@ -90,7 +76,7 @@ export class DatasetDetailsCardComponent {
   }
 
   promoteDataset(): void {
-    this.ws.call('pool.dataset.promote', [this.dataset.id])
+    this.ws.call('pool.dataset.promote', [this.dataset().id])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
@@ -100,7 +86,7 @@ export class DatasetDetailsCardComponent {
 
   editDataset(): void {
     const slideInRef = this.slideInService.open(DatasetFormComponent, {
-      wide: true, data: { datasetId: this.dataset.id, isNew: false },
+      wide: true, data: { datasetId: this.dataset().id, isNew: false },
     });
     slideInRef.slideInClosed$.pipe(
       filter(Boolean),
@@ -110,7 +96,7 @@ export class DatasetDetailsCardComponent {
 
   editZvol(): void {
     const slideInRef = this.slideInService.open(ZvolFormComponent, {
-      data: { isNew: false, parentId: this.dataset.id },
+      data: { isNew: false, parentId: this.dataset().id },
     });
     slideInRef.slideInClosed$.pipe(
       filter(Boolean),

@@ -17,7 +17,6 @@ import {
   FileTicketLicensedComponent,
 } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 
@@ -32,7 +31,6 @@ describe('FileTicketLicensedFormComponent', () => {
   const createComponent = createComponentFactory({
     component: FileTicketLicensedComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     declarations: [],

@@ -14,12 +14,24 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
@@ -51,10 +63,8 @@ import { routing } from './vm.routing';
     CommonDirectivesModule,
     CommonModule,
     EntityModule,
-    IxFormsModule,
     IxIconModule,
     IxTableModule,
-    LayoutModule,
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
@@ -73,6 +83,18 @@ import { routing } from './vm.routing';
     SummaryComponent,
     EmptyComponent,
     FileSizePipe,
+    IxModalHeaderComponent,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    IxExplorerComponent,
+    IxComboboxComponent,
+    IxErrorsComponent,
+    IxFileInputComponent,
+    IxRadioGroupComponent,
+    PageHeaderModule,
   ],
   declarations: [
     VmSerialShellComponent,

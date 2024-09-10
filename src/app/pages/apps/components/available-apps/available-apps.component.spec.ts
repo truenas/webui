@@ -3,14 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputHarness } from '@angular/material/input/testing';
 import {
-  Spectator, mockProvider, createRoutingFactory,
+  Spectator, mockProvider, createComponentFactory,
 } from '@ngneat/spectator/jest';
 import { MockDeclaration, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
@@ -21,6 +20,7 @@ import {
   CustomAppButtonComponent,
 } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
+import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -39,10 +39,9 @@ describe('Finding app', () => {
   let loader: HarnessLoader;
   let searchInput: MatInputHarness;
 
-  const createComponent = createRoutingFactory({
+  const createComponent = createComponentFactory({
     component: AvailableAppsComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       MockModule(PageHeaderModule),
       OrNotAvailablePipe,
@@ -50,7 +49,7 @@ describe('Finding app', () => {
     declarations: [
       AvailableAppsHeaderComponent,
       AppCardComponent,
-      AppCardLogoComponent,
+      MockDeclaration(AppCardLogoComponent),
       MockDeclaration(CustomAppButtonComponent),
     ],
     providers: [
@@ -69,6 +68,7 @@ describe('Finding app', () => {
         searchQuery$: of('webdav'),
       }),
       mockAuth(),
+      mockProvider(AppsStatsService),
     ],
   });
 
@@ -86,11 +86,7 @@ describe('Finding app', () => {
   });
 
   it('redirect to details app when app card is pressed', () => {
-    spectator.click('ix-app-card');
-
-    // TODO: Figure out a way to test href without relying on Angular's internals.
-    const href = spectator.query('ix-app-card').getAttribute('ng-reflect-router-link').replace(/,/g, '/');
-    const appPath = '/apps/available/community/webdav';
-    expect(appPath.startsWith(href)).toBeTruthy();
+    const href = spectator.query('.apps a').getAttribute('href');
+    expect(href).toBe('/apps/available/community/webdav');
   });
 });

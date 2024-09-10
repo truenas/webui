@@ -12,7 +12,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
@@ -43,7 +42,6 @@ describe('TruecommandConnectModalComponent', () => {
     return createComponentFactory({
       component: TruecommandConnectModalComponent,
       imports: [
-        IxFormsModule,
         ReactiveFormsModule,
       ],
       providers: [
@@ -79,7 +77,7 @@ describe('TruecommandConnectModalComponent', () => {
         'API Key': '',
         Enable: true,
       },
-      expectedSubmitButtonText: 'CONNECT',
+      expectedSubmitButtonText: 'Connect',
     },
     {
       fakeConfig: {
@@ -92,7 +90,7 @@ describe('TruecommandConnectModalComponent', () => {
         'API Key': '1234567890123456',
         Enable: true,
       },
-      expectedSubmitButtonText: 'SAVE',
+      expectedSubmitButtonText: 'Save',
     },
   ].forEach(({
     fakeConfig, isConnected, expectedFormValue, expectedTitle, expectedSubmitButtonText,
@@ -131,7 +129,7 @@ describe('TruecommandConnectModalComponent', () => {
       enabled: false,
     },
     isConnected: false,
-    expectedSubmitButtonText: 'CONNECT',
+    expectedSubmitButtonText: 'Connect',
   };
   describe(`when '${caseWhenConnectClicked.expectedSubmitButtonText}' is clicked`, () => {
     const {
@@ -171,7 +169,7 @@ describe('TruecommandConnectModalComponent', () => {
       enabled: true,
     },
     isConnected: true,
-    expectedSubmitButtonText: 'SAVE',
+    expectedSubmitButtonText: 'Save',
   };
   describe(`when '${caseWhenSaveClicked.expectedSubmitButtonText}' is clicked`, () => {
     const {

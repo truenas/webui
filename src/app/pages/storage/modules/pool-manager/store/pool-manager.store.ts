@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   combineLatest,
   forkJoin, Observable, of, Subject,
@@ -35,7 +35,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 
 export interface PoolManagerTopologyCategory {
   layout: CreateVdevLayout;
@@ -76,6 +76,7 @@ export interface PoolManagerState {
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
+  categorySequence: VdevType[];
 }
 
 type TopologyCategoryUpdate = Partial<Omit<PoolManagerTopologyCategory, 'vdevs' | 'hasCustomDiskSelection'>>;
@@ -116,6 +117,15 @@ export const initialState: PoolManagerState = {
   },
 
   topology: initialTopology,
+
+  categorySequence: [
+    VdevType.Data,
+    VdevType.Log,
+    VdevType.Spare,
+    VdevType.Cache,
+    VdevType.Special,
+    VdevType.Dedup,
+  ],
 };
 
 @UntilDestroy()
@@ -222,7 +232,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
-    private settingsStore$: Store<AppState>,
+    private settingsStore$: Store<AppsState>,
     private matDialog: MatDialog,
   ) {
     super(initialState);
@@ -357,8 +367,15 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   private updateTopologyCategory(type: VdevType, update: Partial<PoolManagerTopologyCategory>): void {
     this.patchState((state) => {
       const topology = state.topology[type];
+      const wasCategoryChanged = !Object.entries(update)
+        .every(([key, value]) => _.isEqual(topology[key as keyof typeof topology], value));
+      const categorySequence = wasCategoryChanged
+        ? _.without(state.categorySequence, type).concat([type])
+        : state.categorySequence;
+
       return {
         ...state,
+        categorySequence,
         topology: {
           ...state.topology,
           [type]: {
@@ -395,6 +412,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
           allowedDisks,
           topology: this.get().topology,
           maximizeDispersal: this.get().enclosureSettings.maximizeEnclosureDispersal,
+          categorySequence: this.get().categorySequence,
         });
         Object.entries(newVdevs).forEach(([type, vdevs]) => {
           this.updateTopologyCategory(type as VdevType, { vdevs });

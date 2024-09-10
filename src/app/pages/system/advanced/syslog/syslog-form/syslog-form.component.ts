@@ -21,7 +21,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SyslogConfig } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
@@ -72,7 +72,7 @@ export class SyslogFormComponent implements OnInit {
     private fb: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,

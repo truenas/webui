@@ -5,7 +5,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
@@ -42,11 +41,6 @@ export class DatasetAclEditorComponent implements OnInit {
   acl: Acl;
   selectedAceIndex: number;
   acesWithError: number[];
-
-  saveParameters = this.formBuilder.group({
-    recursive: [false],
-    traverse: [false],
-  });
 
   ownerFormGroup = this.formBuilder.group({
     owner: ['', Validators.required],
@@ -109,23 +103,6 @@ export class DatasetAclEditorComponent implements OnInit {
 
         this.cdr.markForCheck();
       });
-
-    this.saveParameters.get('recursive').valueChanges.pipe(
-      filter(Boolean),
-      switchMap(() => {
-        return this.dialogService.confirm({
-          title: helptextAcl.dataset_acl_recursive_dialog_warning,
-          message: helptextAcl.dataset_acl_recursive_dialog_warning_message,
-        });
-      }),
-      untilDestroyed(this),
-    ).subscribe((confirmed) => {
-      if (confirmed) {
-        return;
-      }
-
-      this.saveParameters.patchValue({ recursive: false });
-    });
   }
 
   onAddItemPressed(): void {
@@ -147,17 +124,6 @@ export class DatasetAclEditorComponent implements OnInit {
 
         this.router.navigate(['/datasets', this.datasetPath]);
       });
-  }
-
-  onSavePressed(): void {
-    this.store.saveAcl({
-      recursive: !!(this.saveParameters.get('recursive').value),
-      traverse: !!(this.saveParameters.get('recursive').value && this.saveParameters.get('traverse').value),
-      owner: this.ownerFormGroup.get('owner').value,
-      ownerGroup: this.ownerFormGroup.get('ownerGroup').value,
-      applyOwner: this.ownerFormGroup.get('applyOwner').value,
-      applyGroup: this.ownerFormGroup.get('applyGroup').value,
-    });
   }
 
   onSavePreset(): void {

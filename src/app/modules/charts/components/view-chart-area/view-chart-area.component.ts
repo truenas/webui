@@ -1,17 +1,21 @@
 import {
   Component, OnDestroy, ChangeDetectionStrategy,
-  input,
   computed,
   effect,
   ViewChild,
   ElementRef,
+  input,
 } from '@angular/core';
 import {
   Chart, ChartOptions,
   ChartConfiguration,
   ChartData,
+  registerables,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+
+// Register all necessary components (Fixed https://ixsystems.atlassian.net/browse/NAS-130717)
+Chart.register(...registerables);
 
 @Component({
   selector: 'ix-view-chart-area',
@@ -61,6 +65,8 @@ export class ViewChartAreaComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.chart?.destroy();
+    if (this.chart) {
+      this.chart.destroy();
+    }
   }
 }

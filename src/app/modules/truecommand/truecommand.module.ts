@@ -7,10 +7,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TruecommandConnectModalComponent } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
@@ -31,7 +31,6 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FlexLayoutModule,
     CommonDirectivesModule,
     TranslateModule,
     IxIconModule,
@@ -39,9 +38,10 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
     MatDividerModule,
     MatButtonModule,
     MatTooltipModule,
-    IxFormsModule,
     MatDialogModule,
     TestIdModule,
+    IxInputComponent,
+    IxCheckboxComponent,
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),

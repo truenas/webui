@@ -11,7 +11,6 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   TargetSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/target-section/target-section.component';
@@ -24,7 +23,6 @@ describe('TargetSectionComponent', () => {
   const createComponent = createComponentFactory({
     component: TargetSectionComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [
@@ -114,10 +112,12 @@ describe('TargetSectionComponent', () => {
   });
 
   describe('encryption', () => {
-    beforeEach(async () => {
-      await form.fillForm({
-        Encryption: true,
-      });
+    beforeEach(() => {
+      spectator.setInput('replication', {
+        encryption: true,
+        encryption_inherit: false,
+        encryption_key_location: truenasDbKeyLocation,
+      } as ReplicationTask);
     });
 
     it('hides encryption fields when Encryption inherit is selected', async () => {
@@ -157,6 +157,7 @@ describe('TargetSectionComponent', () => {
     it('shows Generate Encryption Key when HEX format is used', async () => {
       await form.fillForm({
         'Encryption Key Format': 'HEX',
+        'Generate Encryption Key': true,
       });
 
       expect(await form.getLabels()).toContain('Generate Encryption Key');

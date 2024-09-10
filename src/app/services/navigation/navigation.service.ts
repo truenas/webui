@@ -9,7 +9,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectHasEnclosureSupport, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -71,8 +71,8 @@ export class NavigationService {
       icon: 'vpn_key',
       state: 'credentials',
       sub: [
-        { name: T('Local Users'), state: 'users' },
-        { name: T('Local Groups'), state: 'groups' },
+        { name: T('Users'), state: 'users' },
+        { name: T('Groups'), state: 'groups' },
         { name: T('Directory Services'), state: 'directory-services' },
         { name: T('Backup Credentials'), state: 'backup-credentials' },
         { name: T('Certificates'), state: 'certificates' },
@@ -132,7 +132,7 @@ export class NavigationService {
   ];
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
   ) {

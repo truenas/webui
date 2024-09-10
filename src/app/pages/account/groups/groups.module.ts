@@ -15,19 +15,27 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
@@ -48,8 +56,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     CommonModule,
     EffectsModule.forFeature([GroupEffects]),
     EntityModule,
-    IxFormsModule,
-    FlexLayoutModule,
     MatButtonModule,
     IxIconModule,
     MatListModule,
@@ -71,11 +77,19 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     TranslateModule,
     DualListModule,
     MatSlideToggleModule,
-    LayoutModule,
     TestIdModule,
     IxTableModule,
     SearchInputModule,
     SearchInput1Component,
+    IxFieldsetComponent,
+    IxModalHeaderComponent,
+    IxInputComponent,
+    IxChipsComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    IxSelectComponent,
+    ReadOnlyComponent,
+    PageHeaderModule,
   ],
   declarations: [
     GroupListComponent,

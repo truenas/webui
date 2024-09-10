@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { keyBy } from 'lodash';
+import { keyBy } from 'lodash-es';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { MiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';

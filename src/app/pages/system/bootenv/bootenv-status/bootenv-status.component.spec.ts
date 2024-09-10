@@ -72,8 +72,10 @@ describe('BootStatusListComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
+      mockProvider(SnackbarService),
       mockWebSocket([
         mockCall('boot.get_state', poolInstance),
+        mockCall('boot.detach'),
       ]),
     ],
     declarations: [

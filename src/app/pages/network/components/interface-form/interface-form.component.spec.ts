@@ -20,11 +20,13 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   DefaultGatewayDialogComponent,
@@ -63,7 +65,7 @@ describe('InterfaceFormComponent', () => {
     component: InterfaceFormComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
+      IxIpInputWithNetmaskComponent,
       StoreModule.forRoot({ [haInfoStateKey]: haInfoReducer }, {
         initialState: {
           [haInfoStateKey]: {

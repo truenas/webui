@@ -7,7 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { range } from 'lodash';
+import { range } from 'lodash-es';
 import { forkJoin, of } from 'rxjs';
 import {
   CreateNetworkInterfaceType,
@@ -46,7 +46,7 @@ import {
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -145,7 +145,7 @@ export class InterfaceFormComponent implements OnInit {
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
     private slideInRef: IxSlideInRef<InterfaceFormComponent>,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     @Inject(SLIDE_IN_DATA) private existingInterface: NetworkInterface,
   ) {}
 

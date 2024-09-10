@@ -71,14 +71,14 @@ describe('DevicesStore', () => {
           nodes: [
             {
               children: [
-                { name: 'raidz1-0', guid: 'guid1' },
+                { name: 'raidz1-0', guid: 'guid1', isRoot: true },
               ],
               group: 'Data VDEVs',
               guid: 'data',
             },
             {
               children: [
-                { name: 'sdr', guid: 'guid2' },
+                { name: 'sdr', guid: 'guid2', isRoot: true },
               ],
               group: 'Cache',
               guid: 'cache',

@@ -14,6 +14,7 @@ export interface DatasetAclEditorState {
 export interface AclSaveFormParams {
   recursive: boolean;
   traverse: boolean;
+  validateEffectiveAcl: boolean;
   owner: string;
   applyOwner: boolean;
   ownerGroup: string;

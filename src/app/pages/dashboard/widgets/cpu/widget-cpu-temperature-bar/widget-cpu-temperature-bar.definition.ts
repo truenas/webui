@@ -5,7 +5,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetCpuTemperatureBarComponent } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temperature-bar/widget-cpu-temperature-bar.component';
 
 export const cpuTemperatureBarWidget = dashboardWidget({
-  name: T('CPU Temperature per Core Bar Graph'),
+  name: T('CPU Temperature Per Core'),
   supportedSizes: [SlotSize.Half],
   category: WidgetCategory.Cpu,
   component: WidgetCpuTemperatureBarComponent,

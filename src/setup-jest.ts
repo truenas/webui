@@ -33,11 +33,43 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import {
   Observable,
 } from 'rxjs';
-import { EmptyAuthService } from 'test-utils/empty-auth.service';
-import { EmptyWebsocketService } from 'test-utils/empty-ws.service';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
+import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
+import { EmptyWebsocketService } from 'app/core/testing/utils/empty-ws.service';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { WINDOW } from 'app/helpers/window.helper';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import {
+  IxButtonGroupComponent,
+} from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  IxCheckboxListComponent,
+} from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import {
+  IxModalHeader2Component,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxIconTestingModule } from 'app/modules/ix-icon/ix-icon-testing.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -74,6 +106,28 @@ defineGlobalsInjections({
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatButtonModule,
+    IxInputComponent,
+    IxCheckboxComponent,
+    IxRadioGroupComponent,
+    IxSelectComponent,
+    IxFieldsetComponent,
+    IxModalHeaderComponent,
+    IxModalHeader2Component,
+    IxButtonGroupComponent,
+    IxExplorerComponent,
+    IxFileInputComponent,
+    IxTextareaComponent,
+    IxSlideToggleComponent,
+    IxIconGroupComponent,
+    IxChipsComponent,
+    IxComboboxComponent,
+    IxListComponent,
+    IxListItemComponent,
+    IxErrorsComponent,
+    IxLabelComponent,
+    IxWarningComponent,
+    IxCheckboxListComponent,
+    FormActionsComponent,
     RouterModule.forRoot([]),
     CommonDirectivesModule,
     SnackbarModule,
@@ -174,3 +228,11 @@ Range.prototype.getClientRects = () => ({
 
 // eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window.URL, 'createObjectURL', { value: () => '' });
+
+Object.defineProperty(global, 'performance', {
+  writable: true,
+  value: {
+    mark: () => {},
+    measure: () => {},
+  },
+});

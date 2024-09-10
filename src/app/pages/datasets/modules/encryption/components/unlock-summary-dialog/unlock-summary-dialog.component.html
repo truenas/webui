@@ -8,11 +8,12 @@
         @for (dataset of errorDatasets; track dataset) {
           <div class="row">
             <strong>{{ dataset.name }}</strong>
-            <span fxFlex></span>
-            <a ixTest="unlock-summary-details" (click)="showError(dataset)">
-              <u>{{ 'details' | translate }}</u>
-            </a>
-            <ix-icon name="cancel" class="red-icon"></ix-icon>
+            <div>
+              <a ixTest="unlock-summary-details" (click)="showError(dataset)">
+                <u>{{ 'details' | translate }}</u>
+              </a>
+              <ix-icon name="cancel" class="red-icon"></ix-icon>
+            </div>
           </div>
         }
       </div>
@@ -24,7 +25,6 @@
         @for (dataset of skippedDatasets; track dataset) {
           <div class="row">
             <strong>{{ dataset.name }}</strong>
-            <span fxFlex></span>
             <ix-icon name="cancel" class="red-icon"></ix-icon>
           </div>
         }
@@ -37,37 +37,35 @@
         @for (dataset of unlockDatasets; track dataset) {
           <div class="row">
             <strong>{{ dataset.name }}</strong>
-            <span fxFlex></span>
             <ix-icon name="check_circle" class="green-icon"></ix-icon>
           </div>
         }
       </div>
     }
   </div>
-</div>
-<mat-divider></mat-divider>
-<div mat-dialog-actions>
-  <span fxFlex></span>
-  <button
-    id="unlock-dialog__cancel-button"
-    mat-button
-    name="cancel_button"
-    class="mat-mdc-button mat-button mat-accent"
-    ixTest="close"
-    (click)="cancel()"
-  >
-    {{ cancelMessage | translate | uppercase }}
-  </button>
-  @if (!final) {
+  <mat-divider></mat-divider>
+  <ix-form-actions>
     <button
-      id="unlock-dialog__action-button"
+      id="unlock-dialog__cancel-button"
       mat-button
-      name="ok_button"
-      class="mat-mdc-button mat-button mat-primary"
-      ixTest="continue"
-      (click)="submit()"
+      name="cancel_button"
+      class="mat-mdc-button mat-button mat-accent"
+      ixTest="close"
+      (click)="cancel()"
     >
-      {{ buttonMessage | translate | uppercase }}
+      {{ cancelMessage | translate }}
     </button>
-  }
+    @if (!final) {
+      <button
+        id="unlock-dialog__action-button"
+        mat-button
+        name="ok_button"
+        class="mat-mdc-button mat-button mat-primary"
+        ixTest="continue"
+        (click)="submit()"
+      >
+        {{ buttonMessage | translate }}
+      </button>
+    }
+  </ix-form-actions>
 </div>

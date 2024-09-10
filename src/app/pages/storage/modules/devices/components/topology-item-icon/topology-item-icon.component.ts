@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -12,28 +12,28 @@ import { isVdev, TopologyItem } from 'app/interfaces/storage.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopologyItemIconComponent {
-  @Input() topologyItem: TopologyItem;
-  @Input() disk: Disk;
+  readonly topologyItem = input.required<TopologyItem>();
+  readonly disk = input.required<Disk>();
 
-  get diskIcon(): string {
-    if (!this.disk) {
+  protected readonly diskIcon = computed(() => {
+    if (!this.disk()) {
       return '';
     }
-    if (isVdev(this.topologyItem)) {
-      if (this.disk.type === DiskType.Hdd) {
+    if (isVdev(this.topologyItem())) {
+      if (this.disk().type === DiskType.Hdd) {
         return 'ix:hdd_mirror';
       }
-      if (this.disk.type === DiskType.Ssd) {
+      if (this.disk().type === DiskType.Ssd) {
         return 'ix:ssd_mirror';
       }
     } else {
-      if (this.disk.type === DiskType.Hdd) {
+      if (this.disk().type === DiskType.Hdd) {
         return 'ix:hdd';
       }
-      if (this.disk.type === DiskType.Ssd) {
+      if (this.disk().type === DiskType.Ssd) {
         return 'ix:ssd';
       }
     }
     return '';
-  }
+  });
 }

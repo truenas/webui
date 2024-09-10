@@ -65,6 +65,7 @@ export class WebSocketConnectionService {
       this.ws$.complete();
     }
 
+    performance.mark('WS Init');
     this.ws$ = this.webSocket({
       url: this.connectionUrl,
       openObserver: {
@@ -87,6 +88,8 @@ export class WebSocketConnectionService {
     this.ws$.pipe(
       tap((response: IncomingWebSocketMessage) => {
         if (response.msg === IncomingApiMessageType.Connected) {
+          performance.mark('WS Connected');
+          performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');
           this.isConnected$.next(true);
         }
       }),

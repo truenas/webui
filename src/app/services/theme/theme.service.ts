@@ -8,7 +8,7 @@ import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Theme } from 'app/interfaces/theme.interface';
 import { allThemes, defaultTheme } from 'app/services/theme/theme.constants';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { themeNotFound } from 'app/store/preferences/preferences.actions';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 
@@ -31,7 +31,7 @@ export class ThemeService {
   }
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.loadTheme$.subscribe(() => {

@@ -1,6 +1,9 @@
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import {
+  cloudsyncProviderDescriptionMap,
+} from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description';
 import { CloudSyncProviderDescriptionComponent } from './cloudsync-provider-description.component';
 
 describe('CloudSyncProviderDescriptionComponent', () => {
@@ -11,14 +14,23 @@ describe('CloudSyncProviderDescriptionComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        provider: CloudSyncProviderName.Storj,
+      },
+    });
   });
 
   it('should have the correct details for Storj', () => {
     spectator.setInput('provider', CloudSyncProviderName.Storj);
 
-    expect(spectator.component.image).toBe('/assets/images/cloudsync/STORJ_IX.png');
-    expect(spectator.component.name).toBe('Storj');
-    expect(spectator.component.description).toBe('Storj is a decentralized, open-source cloud storage platform. It uses blockchain technology and cryptography to secure files. Instead of storing files in a centralized server, Storj splits up files, encrypts them, and distributes them across a network of computers around the world.');
+    const image = spectator.query('.image img');
+    expect(image).toHaveAttribute('src', '/assets/images/cloudsync/STORJ_IX.png');
+
+    const name = spectator.query('.name');
+    expect(name).toHaveText('Storj');
+
+    const description = spectator.query('.body');
+    expect(description).toHaveText(cloudsyncProviderDescriptionMap.get(CloudSyncProviderName.Storj));
   });
 });

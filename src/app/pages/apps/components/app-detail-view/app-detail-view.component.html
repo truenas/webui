@@ -56,7 +56,7 @@
     <section class="app-info-cards">
       <ix-app-resources-card
         class="app-info-card"
-        [isLoading$]="isLoading$"
+        [isLoading]="isLoading$ | async"
       ></ix-app-resources-card>
       <ix-app-available-info-card
         class="app-info-card"

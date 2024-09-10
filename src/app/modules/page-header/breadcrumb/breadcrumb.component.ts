@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { chain } from 'lodash';
+import { chain } from 'lodash-es';
 import { filter } from 'rxjs/operators';
 import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 

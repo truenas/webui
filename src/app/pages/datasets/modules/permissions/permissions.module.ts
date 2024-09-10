@@ -12,7 +12,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  IxCheckboxListComponent,
+} from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -41,6 +51,9 @@ import {
   ViewTrivialPermissionsComponent,
 } from 'app/pages/datasets/modules/permissions/components/view-trivial-permissions/view-trivial-permissions.component';
 import {
+  AclEditorSaveControlsComponent,
+} from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/acl-editor-save-controls/acl-editor-save-controls.component';
+import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
 import {
@@ -57,7 +70,6 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
 @NgModule({
   imports: [
     RouterModule,
-    IxFormsModule,
     ReactiveFormsModule,
     CommonModule,
     TranslateModule,
@@ -73,6 +85,15 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     CommonDirectivesModule,
     EmptyComponent,
     CastPipe,
+    IxSelectComponent,
+    IxComboboxComponent,
+    IxRadioGroupComponent,
+    IxFieldsetComponent,
+    IxCheckboxListComponent,
+    FormActionsComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    IxPermissionsComponent,
   ],
   declarations: [
     AclEditorListComponent,
@@ -88,6 +109,7 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     PermissionsCardComponent,
     StripAclModalComponent,
     SaveAsPresetModalComponent,
+    AclEditorSaveControlsComponent,
   ],
   exports: [
     PermissionsCardComponent,

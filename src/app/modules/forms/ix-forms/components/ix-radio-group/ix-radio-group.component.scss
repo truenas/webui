@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 :host {
   display: block;
   font-size: 12px;
@@ -9,6 +11,11 @@
     display: flex;
     flex-direction: column;
 
+    &.inline {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
     > div {
       align-items: center;
       display: flex;
@@ -17,6 +24,14 @@
     mat-radio-button {
       margin: 0 8px 0 -10px;
       width: initial;
+    }
+  }
+
+  .radio-item {
+    flex: 1 1 100%;
+
+    @media(max-width: $breakpoint-md) {
+      flex-basis: 100% !important;
     }
   }
 }

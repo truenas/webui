@@ -13,6 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemUpdate } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SaveConfigDialogComponent } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { TrainService } from 'app/pages/system/update/services/train.service';
@@ -44,6 +45,7 @@ describe('UpdateActionsCardComponent', () => {
       ]),
       mockProvider(Router),
       mockProvider(TrainService),
+      mockProvider(SnackbarService),
       mockProvider(UpdateService, {
         updatesAvailable$: of(true),
         updateDownloaded$: of(true),

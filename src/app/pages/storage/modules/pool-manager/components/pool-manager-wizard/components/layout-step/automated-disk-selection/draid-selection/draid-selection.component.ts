@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -190,44 +190,25 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     const dataDevices = this.form.controls.dataDevicesPerGroup.value;
     const hotSpares = this.form.controls.spares.value;
     const groupSize = Math.min(dataDevices + this.parityDevices, maxDisksInDraidGroup);
-    const maxGroups = Math.floor((maxPossibleWidth - hotSpares) / groupSize);
-    const optimalMaximum = maxGroups * groupSize + hotSpares;
 
     let nextOptions: Option[] = [];
     if ((groupSize + hotSpares) <= maxPossibleWidth && dataDevices) {
-      nextOptions = _.range(1, maxGroups + 1).map((i) => {
-        const disks = i * groupSize + hotSpares;
+      nextOptions = _.range(groupSize + hotSpares, maxPossibleWidth).map((item) => {
+        const disks = item + 1;
         return {
           label: String(disks),
           value: disks,
         };
       });
-
-      if (maxPossibleWidth > optimalMaximum) {
-        nextOptions.push({
-          label: String(maxPossibleWidth),
-          value: maxPossibleWidth,
-        });
-      }
     }
 
     unsetControlIfNoMatchingOption(this.form.controls.children, nextOptions);
 
     if (this.isStepActive) {
-      const hasOptimalOption = nextOptions.some((option) => option.value === optimalMaximum);
-      if (nextOptions.length === 1) {
-        // If there is one option, pick it.
-        setValueIfNotSame(
-          this.form.controls.children,
-          Number(nextOptions[0].value),
-        );
-      } else if (hasOptimalOption) {
-        // Or try to default to normal maximum number of groups and spares.
-        setValueIfNotSame(
-          this.form.controls.children,
-          optimalMaximum,
-        );
-      }
+      setValueIfNotSame(
+        this.form.controls.children,
+        maxPossibleWidth,
+      );
     }
 
     this.widthOptions$ = of(nextOptions);

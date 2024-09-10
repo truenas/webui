@@ -37,7 +37,7 @@
               ixTest="initiate-failover"
               [matTooltip]="'HA is Disabled' | translate"
               [matTooltipDisabled]="isHaEnabled()"
-              [disabled]="isDisabled$ | async"
+              [disabled]="!canFailover()"
               (click)="openDialog()"
             >
               @if (!isHaEnabled()) {
@@ -177,6 +177,13 @@
           <div>{{ 'This system is not licensed for HA.' | translate }}</div>
           <small>{{ 'Configure dashboard to edit this widget.' | translate }}</small>
         </h3>
+      </div>
+    }
+
+    @if (isWaitingForEnabledHa()) {
+      <div [class]="['empty', 'container', size()]">
+        <ix-icon class="icon" name="mdi-timer-cog-outline"></ix-icon>
+        <h3>{{ 'Waiting for standby controller' | translate }}</h3>
       </div>
     }
   </mat-card-content>

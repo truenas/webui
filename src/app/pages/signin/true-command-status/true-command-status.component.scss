@@ -1,0 +1,17 @@
+:host {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+
+  img {
+    cursor: pointer;
+    height: 24px;
+  }
+
+  .truecommand-text {
+    opacity: 0.5;
+    padding-left: 5px;
+    text-align: center;
+  }
+}

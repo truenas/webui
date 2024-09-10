@@ -16,7 +16,6 @@ import {
 import { VirtualMachine, VmPortWizardResult } from 'app/interfaces/virtual-machine.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
@@ -51,7 +50,6 @@ describe('VmWizardComponent', () => {
     component: VmWizardComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
       MatStepperModule,
     ],
     declarations: [

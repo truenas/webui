@@ -1,11 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
+  ChangeDetectionStrategy, Component, computed, effect, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { filter, map } from 'rxjs';
+import {
+  filter, map,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -14,7 +16,7 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LocaleService } from 'app/services/locale.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectIsIxHardware, selectIsEnterprise, selectHasEnclosureSupport,
@@ -30,9 +32,9 @@ import {
 export class WidgetSysInfoPassiveComponent {
   size = input.required<SlotSize>();
 
-  protected readonly isDisabled$ = this.store$.select(selectCanFailover).pipe(map((canFailover) => !canFailover));
   protected readonly requiredRoles = [Role.FailoverWrite];
 
+  canFailover = toSignal(this.store$.select(selectCanFailover));
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
@@ -54,22 +56,29 @@ export class WidgetSysInfoPassiveComponent {
     }),
   ));
 
+  isWaitingForEnabledHa = computed(() => !this.systemInfo() && !this.canFailover() && !this.isHaEnabled());
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
   datetime = computed(() => {
-    const [dateValue, timeValue] = this.localeService.getDateAndTime(this.systemInfo().timezone);
-    return new Date(`${dateValue} ${timeValue}`).getTime() + (this.realElapsedSeconds() * 1000);
+    const [dateValue, timeValue] = this.localeService.getDateAndTime();
+    const extractedDate = this.localeService.getDateFromString(`${dateValue} ${timeValue}`, this.systemInfo().timezone);
+
+    return extractedDate.getTime() + (this.realElapsedSeconds() * 1000);
   });
   isLoaded = computed(() => this.systemInfo());
 
   constructor(
     private resources: WidgetResourcesService,
     private dialog: DialogService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private router: Router,
     private localeService: LocaleService,
   ) {
-    this.resources.refreshSystemInfo();
+    effect(() => {
+      if (!this.systemInfo() && this.canFailover()) {
+        this.resources.refreshSystemInfo();
+      }
+    });
   }
 
   openDialog(): void {
@@ -81,7 +90,7 @@ export class WidgetSysInfoPassiveComponent {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.router.navigate(['/others/failover'], { skipLocationChange: true });
+      this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
     });
   }
 }

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -11,15 +13,15 @@ import { TaskService } from 'app/services/task.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudBackupScheduleComponent {
-  @Input() backup: CloudBackup;
+  readonly backup = input.required<CloudBackup>();
 
-  get frequency(): string {
-    return this.taskService.getTaskCronDescription(scheduleToCrontab(this.backup.schedule));
-  }
+  protected readonly frequency = computed(() => {
+    return this.taskService.getTaskCronDescription(scheduleToCrontab(this.backup().schedule));
+  });
 
-  get schedule(): string {
-    return (this.backup.enabled ? scheduleToCrontab(this.backup.schedule) : this.translate.instant('Disabled'));
-  }
+  protected readonly schedule = computed(() => {
+    return this.backup().enabled ? scheduleToCrontab(this.backup().schedule) : this.translate.instant('Disabled');
+  });
 
   constructor(
     private taskService: TaskService,

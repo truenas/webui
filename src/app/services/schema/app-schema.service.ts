@@ -4,7 +4,7 @@ import {
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { parseString } from 'cron-parser';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounceTime, take } from 'rxjs/operators';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';

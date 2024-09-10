@@ -6,13 +6,13 @@
     </h3>
   </mat-card-header>
   <mat-card-content>
-    <p>{{ 'Path' | translate }}: {{ backup.path || '-' }}</p>
-    <p>{{ 'Credentials' | translate }}: {{ backup.credentials.name || '-' }}</p>
-    <p>{{ 'Bucket' | translate }}: {{ backup.attributes.bucket || '-' }}</p>
-    <p>{{ 'Folder' | translate }}: {{ backup.attributes.folder || '-' }}</p>
-    <p>{{ 'Keep Last' | translate }}: {{ backup.keep_last || '-' }}</p>
-    <p>{{ 'Transfers' | translate }}: {{ backup.transfers || '-' }}</p>
-    <p>{{ 'Post Script' | translate }}: {{ backup.post_script || '-' }}</p>
-    <p>{{ 'Pre Script' | translate }}: {{ backup.pre_script || '-' }}</p>
+    <p>{{ 'Path' | translate }}: {{ backup().path || '-' }}</p>
+    <p>{{ 'Credentials' | translate }}: {{ backup().credentials.name || '-' }}</p>
+    <p>{{ 'Bucket' | translate }}: {{ backup().attributes.bucket || '-' }}</p>
+    <p>{{ 'Folder' | translate }}: {{ backup().attributes.folder || '-' }}</p>
+    <p>{{ 'Keep Last' | translate }}: {{ backup().keep_last || '-' }}</p>
+    <p>{{ 'Transfers' | translate }}: {{ backup().transfers || '-' }}</p>
+    <p>{{ 'Post Script' | translate }}: {{ backup().post_script || '-' }}</p>
+    <p>{{ 'Pre Script' | translate }}: {{ backup().pre_script || '-' }}</p>
   </mat-card-content>
 </mat-card>

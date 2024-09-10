@@ -40,13 +40,6 @@
       ></ix-select>
     }
 
-    @if (hasDedupWarning) {
-      <div
-        class="dedup-warning"
-        [innerHtml]="helptext.dataset_form_deduplication_warning | translate"
-      ></div>
-    }
-
     <ix-select
       formControlName="casesensitivity"
       [label]="'Case Sensitivity' | translate"
@@ -61,6 +54,10 @@
       [options]="checksumOptions$"
       [label]="'Checksum' | translate"
     ></ix-select>
+
+    @if (hasChecksumWarning) {
+      <ix-warning [message]="helptext.deduplicationChecksumInlineWarning"></ix-warning>
+    }
 
     <ix-select
       formControlName="readonly"

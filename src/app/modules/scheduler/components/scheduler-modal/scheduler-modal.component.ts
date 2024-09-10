@@ -20,7 +20,7 @@ import {
   CrontabPartValidatorService,
 } from 'app/modules/scheduler/services/crontab-part-validator.service';
 import { getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -100,7 +100,7 @@ export class SchedulerModalComponent implements OnInit {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private validators: CrontabPartValidatorService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     @Inject(MAT_DIALOG_DATA) public config: SchedulerModalConfig,
   ) {}
 

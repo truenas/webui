@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, effect, input, Input, InputSignal, output,
+  ChangeDetectionStrategy, Component, computed, effect, input, output,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -7,11 +7,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import {
   filter, map, switchMap, take, tap,
 } from 'rxjs';
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
+import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
@@ -20,7 +21,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
-import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -35,9 +35,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppInfoCardComponent {
-  app: InputSignal<App> = input<App>();
-  @Input() status: AppStatus;
-
+  readonly app = input<App>();
   readonly startApp = output();
   readonly stopApp = output();
 
@@ -54,15 +52,15 @@ export class AppInfoCardComponent {
   }, { allowSignalWrites: true });
 
   get inProgress(): boolean {
-    return [AppStatus.Deploying].includes(this.status) || this.isStartingOrStopping;
+    return [AppState.Deploying].includes(this.app().state) || this.isStartingOrStopping;
   }
 
   get isAppStopped(): boolean {
-    return this.status === AppStatus.Stopped;
+    return this.app().state === AppState.Stopped;
   }
 
   get isStartingOrStopping(): boolean {
-    return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
+    return [AppState.Deploying, AppState.Stopping].includes(this.app().state);
   }
 
   get appDetailsRouterUrl(): string[] {

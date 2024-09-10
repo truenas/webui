@@ -12,14 +12,15 @@ table {
   width: 100%;
 }
 
-/* stylelint-disable */
 :host ::ng-deep {
   tr > th ng-component,
   tr > td span.mat-mdc-tooltip-trigger,
   tr > td div.mat-mdc-tooltip-trigger span {
     -webkit-box-orient: vertical;
+    /* stylelint-disable-next-line */
     display: -webkit-inline-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     margin: 0 0 -5px;
     overflow: hidden;
     white-space: normal;

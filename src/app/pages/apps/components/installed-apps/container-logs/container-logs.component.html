@@ -1,0 +1,48 @@
+<ix-page-header>
+  <ix-toolbar-slider
+    [label]="'Set font size' | translate"
+    [min]="10"
+    [max]="20"
+    [value]="fontSize"
+    (valueChange)="onFontSizeChanged($event)"
+  ></ix-toolbar-slider>
+
+  <button mat-button ixTest="reconnect" (click)="reconnect()">
+    {{ 'Reconnect' | translate }}
+  </button>
+
+  @if (false) {
+    <button mat-button color="primary" ixTest="download-logs" (click)="onDownloadLogs()">
+      {{ 'Download Logs' | translate }}
+    </button>
+  }
+</ix-page-header>
+
+<div class="logs-wrapper">
+  <div class="meta-data">
+    <label>{{ 'Application Name' | translate }}:</label>
+    <span class="name">{{ appName }}</span>
+    <label>{{ 'Container ID' | translate }}:</label>
+    <span class="name">{{ containerId }}</span>
+  </div>
+  <div
+    #logContainer
+    class="logs"
+    [style.font-size]="fontSize + 'px'"
+  >
+    @if (isLoading) {
+      <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
+    } @else if (!logs.length) {
+      <div class="log-row">
+        <span  class="no-logs">{{ 'No logs yet' | translate }}</span>
+      </div>
+    } @else {
+      @for (podLog of logs; track podLog) {
+        <div class="log-row">
+          <span class="timestamp">{{ podLog.timestamp }}</span>
+          <span class="log-data">{{ podLog.data }}</span>
+        </div>
+      }
+    }
+  </div>
+</div>

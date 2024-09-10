@@ -5,7 +5,7 @@ import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -20,6 +20,7 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -92,6 +93,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     private ws: WebSocketService,
     private datasetStore: DatasetTreeStore,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public pool: Pool,
   ) {}
 
@@ -228,12 +230,14 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.isFormLoading = false;
     this.dialogRef.close(true);
 
-    const message = this.translate.instant('Successfully exported/disconnected {pool}.', { pool: this.pool.name });
+    const message = this.translate.instant('Pool «{pool}» has been exported/disconnected successfully.', {
+      pool: this.pool.name,
+    });
     const destroyed = this.translate.instant('All data on that pool was destroyed.');
     if (!value.destroy) {
-      this.dialogService.info(helptextVolumes.exportDisconnect, message);
+      this.snackbar.success(message);
     } else {
-      this.dialogService.info(helptextVolumes.exportDisconnect, message + ' ' + destroyed);
+      this.snackbar.success(`${message} ${destroyed}`);
     }
   }
 

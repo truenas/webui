@@ -9,11 +9,10 @@ import { MockDeclaration, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
@@ -22,6 +21,7 @@ import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-
 import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -37,13 +37,12 @@ describe('InstalledAppsComponent', () => {
       name: 'rude-cardinal',
       train: 'test-catalog-train',
     },
-    state: CatalogAppState.Running,
+    state: AppState.Running,
   } as App;
 
   const createComponent = createComponentFactory({
     component: InstalledAppsComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       MatTableModule,
       MockModule(PageHeaderModule),
@@ -103,6 +102,7 @@ describe('InstalledAppsComponent', () => {
       },
       mockWebSocket([]),
       mockAuth(),
+      mockProvider(AppsStatsService),
     ],
   });
 

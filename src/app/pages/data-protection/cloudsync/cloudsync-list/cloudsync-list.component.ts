@@ -34,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -139,7 +139,7 @@ export class CloudSyncListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     protected emptyService: EmptyService,
   ) {}
 
@@ -200,11 +200,7 @@ export class CloudSyncListComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.dialogService.info(
-          this.translate.instant('Task Stopped'),
-          this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
-          true,
-        );
+        this.snackbar.success(this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }));
         this.updateRowStateAndJob(row, JobState.Aborted, null);
         this.cdr.markForCheck();
       });
@@ -234,10 +230,15 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   restore(row: CloudSyncTaskUi): void {
-    const dialog = this.matDialog.open(CloudSyncRestoreDialogComponent, {
-      data: row.id,
-    });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
+    this.matDialog.open(CloudSyncRestoreDialogComponent, { data: row.id })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.snackbar.success(
+          this.translate.instant('Cloud Sync «{name}» has been restored.', { name: row.description }),
+        );
+        this.getCloudSyncTasks();
+      });
   }
 
   openForm(row?: CloudSyncTaskUi): void {
@@ -274,6 +275,9 @@ export class CloudSyncListComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.snackbar.success(
+          this.translate.instant('Cloud Sync «{name}» has been deleted.', { name: row.description }),
+        );
         this.getCloudSyncTasks();
       },
       error: (err) => {

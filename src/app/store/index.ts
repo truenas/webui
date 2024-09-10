@@ -26,7 +26,7 @@ import { systemInfoReducer, SystemInfoState } from 'app/store/system-info/system
 import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors';
 import { servicesStateKey } from './services/services.selectors';
 
-export interface AppState {
+export interface AppsState {
   [systemConfigStateKey]: SystemConfigState;
   [preferencesStateKey]: PreferencesState;
   [systemInfoStateKey]: SystemInfoState;
@@ -36,7 +36,7 @@ export interface AppState {
   router: RouterReducerState<CustomRouterState>;
 }
 
-export const rootReducers: ActionReducerMap<AppState> = {
+export const rootReducers: ActionReducerMap<AppsState> = {
   [systemConfigStateKey]: systemConfigReducer,
   [preferencesStateKey]: preferencesReducer,
   [systemInfoStateKey]: systemInfoReducer,

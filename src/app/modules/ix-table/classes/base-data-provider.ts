@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   BehaviorSubject, Observable, Subscription, map,
 } from 'rxjs';

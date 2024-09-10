@@ -13,7 +13,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -40,7 +40,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private gpuValidator: IsolatedGpuValidatorService,
     private gpuService: GpuService,
     private snackbar: SnackbarService,
