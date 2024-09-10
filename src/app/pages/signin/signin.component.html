@@ -1,14 +1,29 @@
 <!-- TODO: Hack. Mat inputs don't get their styles imported unless mat-form-field is used somewhere -->
 <mat-form-field style="display: none;"><input ixTest="noop" matInput></mat-form-field>
 
-@if (!(hasAuthToken$ | async)) {
-  <div class="page-wrap login-form">
-    <div class="session-form-hold">
-      <mat-progress-bar
-        value="0"
-        class="session-progress"
-        [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
-      ></mat-progress-bar>
+<div class="page-wrap login-form">
+  <div class="session-form-hold">
+    <mat-progress-bar
+      value="0"
+      class="session-progress"
+      [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
+    ></mat-progress-bar>
+
+    @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
+      <mat-card>
+        <mat-card-content>
+          <ix-disconnected-message
+            [hasFailover]="hasFailover$ | async"
+          ></ix-disconnected-message>
+        </mat-card-content>
+      </mat-card>
+    } @else if (hasAuthToken && (isTokenWithinTimeline$ | async)) {
+      <mat-card>
+        <mat-card-content>
+          <h3 class="logging-in">{{ 'Logging in...' | translate }}</h3>
+        </mat-card-content>
+      </mat-card>
+    } @else {
       <mat-card>
         <mat-card-content>
           <div>
@@ -46,35 +61,6 @@
           </div>
         </mat-card-content>
       </mat-card>
-    </div>
+    }
   </div>
-} @else {
-  <div class="loader">
-    <div>
-      @if (isConnected$ | async) {
-        <div class="wait-text">
-          <h3>{{ 'Logging in...' | translate }}</h3>
-          <mat-progress-spinner
-            class="loader"
-            mode="indeterminate"
-            [diameter]="35"
-          ></mat-progress-spinner>
-        </div>
-      } @else {
-        <mat-card>
-          <mat-progress-bar
-            value="0"
-            class="session-progress"
-            [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
-          ></mat-progress-bar>
-
-          <mat-card-content>
-            <ix-disconnected-message
-              [hasFailover]="hasFailover$ | async"
-            ></ix-disconnected-message>
-          </mat-card-content>
-        </mat-card>
-      }
-    </div>
-  </div>
-}
+</div>

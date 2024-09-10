@@ -10,8 +10,9 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import {
+  delay,
   filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -26,6 +27,7 @@ import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.co
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { TrueCommandStatusComponent } from 'app/pages/signin/true-command-status/true-command-status.component';
 import { AuthService } from 'app/services/auth/auth.service';
+import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
@@ -56,16 +58,26 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
   providers: [SigninStore],
 })
 export class SigninComponent implements OnInit {
-  protected hasAuthToken$ = this.authService.instantAuthTokenValue$.pipe(
-    map((token) => !!token && token !== 'null'),
-  );
+  protected hasAuthToken = this.authService.hasAuthToken;
+  protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
+
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly failover$ = this.signinStore.failover$;
   readonly hasFailover$ = this.signinStore.hasFailover$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsManager.isConnected$;
-  readonly hasLoadingIndicator$ = combineLatest([this.signinStore.isLoading$, this.isConnected$]).pipe(
-    map(([isLoading, isConnected]) => isLoading || !isConnected),
+  readonly isConnectedDelayed$: Observable<boolean> = of(null).pipe(
+    delay(2000),
+    switchMap(() => this.isConnected$),
+  );
+  readonly hasLoadingIndicator$ = combineLatest([
+    this.signinStore.isLoading$,
+    this.isConnected$,
+    this.isTokenWithinTimeline$,
+  ]).pipe(
+    map(([isLoading, isConnected, isTokenWithinTimeline]) => {
+      return isLoading || !isConnected || (isTokenWithinTimeline && this.hasAuthToken);
+    }),
   );
 
   constructor(
@@ -73,6 +85,7 @@ export class SigninComponent implements OnInit {
     private signinStore: SigninStore,
     private dialog: DialogService,
     private authService: AuthService,
+    private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
