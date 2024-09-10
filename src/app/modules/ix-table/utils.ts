@@ -1,5 +1,4 @@
 import { get } from 'lodash-es';
-import { ColumnComponentType } from 'app/modules/ix-table/interfaces/column-component-type.class';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 
@@ -20,22 +19,10 @@ export function createTable<T>(
   return columns.map((column) => {
     const rowTestId = (row: T): string => convertStringToId(config.rowTestId(row));
     const ariaLabels = (row: T): string[] => config.ariaLabels(row);
-    const columnComponentType = new ColumnComponentType(
-      rowTestId,
-      ariaLabels,
-      column.propertyName,
-      column.title,
-      column.cssClass,
-      column.sortBy,
-      column.disableSorting,
-      column.getValue,
-      column.hidden,
-      column.dataProvider,
-      column.isExtra,
-    );
     return {
       ...column,
-      ...columnComponentType,
+      uniqueRowTag: rowTestId,
+      ariaLabels,
     };
   });
 }
