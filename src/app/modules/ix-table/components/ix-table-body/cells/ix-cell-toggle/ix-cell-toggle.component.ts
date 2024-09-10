@@ -19,7 +19,7 @@ export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   }
 
   onSlideToggleChanged(event: MatSlideToggleChange): void {
-    this.onRowToggle(this.row, event.checked);
+    this.onRowToggle(this.row(), event.checked);
   }
 }
 

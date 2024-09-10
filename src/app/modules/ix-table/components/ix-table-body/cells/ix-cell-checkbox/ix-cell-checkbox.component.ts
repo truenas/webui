@@ -16,7 +16,7 @@ export class IxCellCheckboxComponent<T> extends ColumnComponent<T> {
   }
 
   onCheckboxChange(event: MatCheckboxChange): void {
-    this.onRowCheck(this.row, event.checked);
+    this.onRowCheck(this.row(), event.checked);
   }
 }
 

@@ -1,8 +1,8 @@
 <mat-checkbox
   color="primary"
-  [ixTest]="[title, uniqueRowTag(row), 'row-checkbox']"
+  [ixTest]="[title, uniqueRowTag(row()), 'row-checkbox']"
   [checked]="checked"
-  [aria-label]="(checked ? ('Uncheck' | translate) : ('Check' | translate)) + ' ' + getAriaLabel(row)"
+  [aria-label]="(checked ? ('Uncheck' | translate) : ('Check' | translate)) + ' ' + getAriaLabel(row())"
   (change)="onCheckboxChange($event)"
   (click)="$event.stopPropagation()"
 ></mat-checkbox>

@@ -1,3 +1,4 @@
+import { signal, WritableSignal } from '@angular/core';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 
 export abstract class ColumnComponent<T> {
@@ -14,19 +15,17 @@ export abstract class ColumnComponent<T> {
 
   get value(): unknown {
     if (this.getValue) {
-      return this.getValue(this.row);
+      return this.getValue(this.row());
     }
-    return this.propertyName ? this.row[this.propertyName] : '';
+    return this.propertyName ? this.row()[this.propertyName] : '';
   }
 
-  protected row: T;
+  protected row: WritableSignal<T> = signal(null as T);
 
-  getRow = (): T => {
-    return this.row;
-  };
   setRow = (row: T): void => {
-    this.row = row;
+    this.row.set(row);
   };
+
   getAriaLabel = (row: T): string => {
     return this.ariaLabels(row)?.join(' ') || (this.title ? this.title : '');
   };

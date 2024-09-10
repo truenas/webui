@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, inject, OnInit, signal,
+  ChangeDetectionStrategy, Component, effect, inject, OnInit, signal,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,6 +41,13 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   dialogService: DialogService = inject(DialogService);
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
 
+  private readonly rowUpdateEffect = effect(() => {
+    const row = this.row();
+    this.state.set(this.getJob(row).state);
+  }, {
+    allowSignalWrites: true,
+  });
+
   getJob: (row: T) => Job;
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
   job = signal<Job>(null);
@@ -49,7 +56,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
 
   ngOnInit(): void {
     if (this.getJob) {
-      const job = this.getJob(this.row);
+      const job = this.getJob(this.row());
       this.job.set(job);
       if (job?.state) {
         this.state.set(job.state);
@@ -59,33 +66,19 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
       this.state.set(this.value as JobState);
       return;
     }
-    const jobId = this.getJob(this.row).id;
+    const jobId = this.getJob(this.row()).id;
     this.jobUpdates$ = this.store$.select(selectJob(jobId)).pipe(
       tap((job) => {
         this.job.set(job);
         this.state.set(job.state);
       }),
     ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>;
-    // this.jobUpdates$.pipe(
-    //   switchMap((job) => {
-    //     return [JobState.Aborted, JobState.Error, JobState.Failed,
-    //       JobState.Finished, JobState.Success].includes(job.state)
-    //       ? EMPTY
-    //       : of(job);
-    //   }),
-    //   observeJob(),
-    //   tap((job) => {
-    //     this.job.set(job);
-    //     this.state.set(job.state);
-    //   }),
-    //   untilDestroyed(this),
-    // ).subscribe();
   }
 
   getWarnings?: (row: T) => unknown[];
 
   protected get warnings(): unknown[] {
-    return this.getWarnings ? this.getWarnings(this.row) : [];
+    return this.getWarnings ? this.getWarnings(this.row()) : [];
   }
 
   protected get tooltip(): string {

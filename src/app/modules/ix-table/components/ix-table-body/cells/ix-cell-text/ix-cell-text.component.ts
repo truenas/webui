@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component,
+} from '@angular/core';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Component({

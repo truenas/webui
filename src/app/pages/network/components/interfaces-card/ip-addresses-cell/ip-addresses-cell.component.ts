@@ -1,5 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  effect,
+  inject,
 } from '@angular/core';
 import * as _ from 'lodash-es';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
@@ -14,10 +16,13 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
 })
 export class IpAddressesCellComponent<T> extends ColumnComponent<T> {
   protected addresses: string[] = [];
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  override setRow = (row: T): void => {
+  private readonly rowUpdateEffect = effect(() => {
+    const row = this.row();
     this.addresses = this.extractAddresses(row as NetworkInterface);
-  };
+    this.cdr.markForCheck();
+  });
 
   extractAddresses(row: NetworkInterface): string[] {
     const addresses = this.aliasesToAddress(row.aliases);

@@ -1,8 +1,8 @@
 @if (!requiredRoles?.length && !dynamicRequiredRoles) {
   <mat-slide-toggle
     color="primary"
-    [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row)"
-    [ixTest]="[title, uniqueRowTag(row), 'row-toggle']"
+    [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row())"
+    [ixTest]="[title, uniqueRowTag(row()), 'row-toggle']"
     [checked]="checked"
     (change)="onSlideToggleChanged($event)"
     (click)="$event.stopPropagation()"
@@ -10,10 +10,10 @@
 }
 @if (requiredRoles?.length || dynamicRequiredRoles) {
   <mat-slide-toggle
-    *ixRequiresRoles="dynamicRequiredRoles ? (dynamicRequiredRoles(row) | async) : requiredRoles"
+    *ixRequiresRoles="dynamicRequiredRoles ? (dynamicRequiredRoles(row()) | async) : requiredRoles"
     color="primary"
-    [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row)"
-    [ixTest]="[title, uniqueRowTag(row), 'row-toggle']"
+    [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row())"
+    [ixTest]="[title, uniqueRowTag(row()), 'row-toggle']"
     [checked]="checked"
     (change)="onSlideToggleChanged($event)"
     (click)="$event.stopPropagation()"
