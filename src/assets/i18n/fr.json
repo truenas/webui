@@ -4292,7 +4292,7 @@
   "Storj is a decentralized, open-source cloud storage platform. It uses blockchain technology and cryptography to secure files. Instead of storing files in a centralized server, Storj splits up files, encrypts them, and distributes them across a network of computers around the world.": "Storj est une plateforme de stockage cloud décentralisée et open source. Il utilise la technologie blockchain et la cryptographie pour sécuriser les fichiers. Au lieu de stocker les fichiers sur un serveur centralisé, Storj divise les fichiers, les crypte et les distribue sur un réseau d'ordinateurs à travers le monde.",
   "Strip ACL": "Supprimer ACL",
   "Strip ACLs": "Supprimer les ACLs",
-  "Stripe": "Rayure",
+  "Stripe": "",
   "Stripping ACLs": "Suppression des ACLs",
   "Subject": "Sujet",
   "Subject Alternative Name": "Nom alternatif de sujet",
