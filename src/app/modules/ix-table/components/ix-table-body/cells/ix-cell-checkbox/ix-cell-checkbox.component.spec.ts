@@ -40,8 +40,9 @@ describe('IxCellCheckboxComponent', () => {
     expect(spectator.component.onRowCheck).toHaveBeenCalledWith({ booleanField: true }, false);
   });
 
-  it('gets aria label correctly', () => {
-    const ariaLabel = spectator.component.getAriaLabel(spectator.component.getRow());
-    expect(ariaLabel).toBe('Label 1 Label 2');
+  it('gets aria label correctly', async () => {
+    const checkbox = await loader.getHarness(MatCheckboxHarness);
+    const ariaLabel = await checkbox.getAriaLabel();
+    expect(ariaLabel).toBe('Uncheck Label 1 Label 2');
   });
 });

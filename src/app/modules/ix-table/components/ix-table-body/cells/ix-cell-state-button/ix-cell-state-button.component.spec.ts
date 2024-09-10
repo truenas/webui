@@ -119,7 +119,7 @@ describe('IxCellStateButtonComponent', () => {
   });
 
   it('gets aria label correctly', () => {
-    const ariaLabel = spectator.component.getAriaLabel(spectator.component.getRow());
-    expect(ariaLabel).toBe('Label 1 Label 2');
+    const button = spectator.query('button');
+    expect(button.getAttribute('aria-label')).toBe('Label 1 Label 2');
   });
 });
