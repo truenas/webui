@@ -83,13 +83,6 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
     return this.getRowTag(item);
   }
 
-  protected displayedColumnsForRow(row: T, columns: Column<T, ColumnComponent<T>>[]): Column<T, ColumnComponent<T>>[] {
-    for (const column of columns) {
-      column.setRow(row);
-    }
-    return columns;
-  }
-
   protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>): Column<T, ColumnComponent<T>> {
     return column;
   }

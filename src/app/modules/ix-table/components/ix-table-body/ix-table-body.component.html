@@ -11,7 +11,7 @@
     (keydown.enter)="onToggle(row)"
   >
 
-    @for (column of displayedColumnsForRow(row, displayedColumns); track trackColumnByIdentity(column); let idx = $index) {
+    @for (column of displayedColumns; track trackColumnByIdentity(column); let idx = $index) {
       <td [ngClass]="column.cssClass || ''">
         @if (getTemplateByColumnIndex(idx); as template) {
           <ng-container
