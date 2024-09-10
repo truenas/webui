@@ -76,6 +76,7 @@ export interface PoolManagerState {
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
+  categorySequence: VdevType[];
 }
 
 type TopologyCategoryUpdate = Partial<Omit<PoolManagerTopologyCategory, 'vdevs' | 'hasCustomDiskSelection'>>;
@@ -116,6 +117,15 @@ export const initialState: PoolManagerState = {
   },
 
   topology: initialTopology,
+
+  categorySequence: [
+    VdevType.Data,
+    VdevType.Log,
+    VdevType.Spare,
+    VdevType.Cache,
+    VdevType.Special,
+    VdevType.Dedup,
+  ],
 };
 
 @UntilDestroy()
@@ -357,8 +367,15 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   private updateTopologyCategory(type: VdevType, update: Partial<PoolManagerTopologyCategory>): void {
     this.patchState((state) => {
       const topology = state.topology[type];
+      const wasCategoryChanged = !Object.entries(update)
+        .every(([key, value]) => _.isEqual(topology[key as keyof typeof topology], value));
+      const categorySequence = wasCategoryChanged
+        ? _.without(state.categorySequence, type).concat([type])
+        : state.categorySequence;
+
       return {
         ...state,
+        categorySequence,
         topology: {
           ...state.topology,
           [type]: {
@@ -395,6 +412,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
           allowedDisks,
           topology: this.get().topology,
           maximizeDispersal: this.get().enclosureSettings.maximizeEnclosureDispersal,
+          categorySequence: this.get().categorySequence,
         });
         Object.entries(newVdevs).forEach(([type, vdevs]) => {
           this.updateTopologyCategory(type as VdevType, { vdevs });

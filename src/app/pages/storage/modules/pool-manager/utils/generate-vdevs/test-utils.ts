@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 
 function makeDisk(enclosure: string, slot: number): DetailsDisk {
@@ -68,6 +69,15 @@ export const generateVdevDisks = _.shuffle([
     size: 2 * GiB,
   },
 ] as DetailsDisk[]);
+
+export const categorySequence: VdevType[] = [
+  VdevType.Data,
+  VdevType.Log,
+  VdevType.Spare,
+  VdevType.Cache,
+  VdevType.Special,
+  VdevType.Dedup,
+];
 
 export function expectDisks(vdevs: string[][]): unknown[][] {
   return vdevs.map((vdev) => {
