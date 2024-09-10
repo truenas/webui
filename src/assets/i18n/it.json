@@ -1941,6 +1941,7 @@
   "Idle": "",
   "Idmap": "",
   "Idmap Backend": "",
+  "If URL above fails to open, it may be due to the unavailability of Basic HTTP authentication in your browser.": "",
   "If automatic login has failed, please try the following credentials manually.": "",
   "If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.": "",
   "If downloading a file returns the error \"This file has been identified as malware or spam and cannot be downloaded\" with the error code \"cannotDownloadAbusiveFile\" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.": "",

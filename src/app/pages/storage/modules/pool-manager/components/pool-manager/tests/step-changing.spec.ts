@@ -1,7 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
-import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -9,17 +8,16 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
-import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
-import { existingPool, existingPoolDisks } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/add-vdev-to-pool-data';
+import {
+  PoolManagerComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import {
   commonDeclarations,
   commonProviders,
@@ -28,14 +26,14 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-describe('AddVdevsComponent – Add Vdev to existing pool', () => {
-  let spectator: Spectator<AddVdevsComponent>;
+describe('PoolManagerComponent – step changing', () => {
+  let spectator: Spectator<PoolManagerComponent>;
   let wizard: PoolManagerHarness;
-
+  let store: PoolManagerStore;
   const createComponent = createComponentFactory({
-    component: AddVdevsComponent,
+    component: PoolManagerComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
@@ -84,6 +82,24 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
               exported_zpool: 'oldpool',
             },
             {
+              devname: 'sda0',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+              enclosure: {
+                id: 'id4',
+                drive_bay_number: 0,
+              },
+            },
+            {
+              devname: 'sda3',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+              enclosure: {
+                id: '2',
+                drive_bay_number: 0,
+              },
+            },
+            {
               devname: 'sda4',
               size: 10 * GiB,
               type: DiskType.Hdd,
@@ -93,22 +109,8 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
               },
               exported_zpool: 'anotherpool',
             },
-            {
-              devname: 'sda3',
-              size: 20 * GiB,
-              type: DiskType.Hdd,
-              enclosure: {
-                id: 'id2',
-                drive_bay_number: 0,
-              },
-            },
           ] as DetailsDisk[],
           unused: [
-            {
-              devname: 'sda0',
-              size: 20 * GiB,
-              type: DiskType.Hdd,
-            },
             {
               devname: 'sda1',
               size: 20 * GiB,
@@ -139,17 +141,10 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
         mockCall('enclosure2.query', [] as Enclosure[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
-        mockJob('pool.update', fakeSuccessfulJob()),
+        mockJob('pool.create', fakeSuccessfulJob()),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
-      }),
-      mockProvider(AddVdevsStore, {
-        initialize: jest.fn(),
-        isLoading$: of(false),
-        pool$: of(existingPool),
-        poolDisks$: of(existingPoolDisks),
-        loadPoolData: jest.fn(),
       }),
       mockAuth(),
     ],
@@ -157,121 +152,159 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
+    store = spectator.inject(PoolManagerStore);
     wizard = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, PoolManagerHarness);
-    jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
   });
 
-  it('adds Vdevs to existing Pool', async () => {
-    // General Info Step
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('General Info');
-
-    const generalStepValues = await wizard.getStepValues();
-    expect(generalStepValues).toEqual({
-      Name: 'APPS',
-    });
-
-    // Data Step
-    await wizard.clickNext();
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Data');
-
-    const dataStepValues = await wizard.getStepValues();
-    expect(dataStepValues).toEqual({
-      'Disk Size': '',
-      Layout: TopologyItemType.Mirror,
-      'Number of VDEVs': '',
-      'Treat Disk Size as Minimum': false,
-      Width: '',
-    });
+  it('changes the sequence of categories', async () => {
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+      VdevType.Cache,
+    ]);
 
     await wizard.fillStep({
-      'Disk Size': '20 GiB (HDD)',
-      'Treat Disk Size as Minimum': true,
-      Width: '2',
-      'Number of VDEVs': '1',
+      Name: 'pool1',
     });
-
-    expect(await wizard.getExistingConfigurationPreviewSummary()).toMatchObject({
-      'Data:': '3 × MIRROR | 2 × 10.91 TiB (HDD)',
-    });
-
-    expect(await wizard.getNewDevicesConfigurationPreviewSummary()).toMatchObject({
-      'Data:': '1 × MIRROR | 2 × 20 GiB (HDD)',
-    });
-
-    // Log step
     await wizard.clickNext();
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Log (Optional)');
 
+    // Data
+    await wizard.clickNext();
     await wizard.fillStep({
       Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
-      'Treat Disk Size as Minimum': true,
       Width: '1',
-    });
-
-    expect(await wizard.getNewDevicesConfigurationPreviewSummary()).toMatchObject({
-      'Data:': '1 × MIRROR | 2 × 20 GiB (HDD)',
-      'Log:': '1 × STRIPE | 1 × 20 GiB (HDD)',
-    });
-
-    // Spare step
-    await wizard.clickNext();
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
-
-    // Cache step
-    await wizard.clickNext();
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Cache (Optional)');
-
-    // Metadata step
-    await wizard.clickNext();
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
-
-    // Dedup step
-    await wizard.clickNext();
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Dedup (Optional)');
-
-    await wizard.fillStep({
-      Layout: 'Mirror',
-      'Disk Size': '20 GiB (HDD)',
-      'Treat Disk Size as Minimum': true,
-      Width: '3',
       'Number of VDEVs': '1',
     });
 
-    expect(await wizard.getNewDevicesConfigurationPreviewSummary()).toMatchObject({
-      'Data:': '1 × MIRROR | 2 × 20 GiB (HDD)',
-      'Log:': '1 × STRIPE | 1 × 20 GiB (HDD)',
-      'Dedup:': '1 × MIRROR | 3 × 20 GiB (HDD)',
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Log,
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+      VdevType.Cache,
+      VdevType.Data,
+    ]);
+
+    // Log
+    await wizard.clickNext();
+    await wizard.fillStep({
+      Layout: 'Stripe',
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
     });
 
-    // Review step
-    const stepper = await wizard.getStepper();
-    await stepper.selectStep({ label: 'Review' });
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+      VdevType.Cache,
+      VdevType.Data,
+      VdevType.Log,
+    ]);
 
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Review');
+    // Spare
+    await wizard.clickNext();
+    await wizard.fillStep({
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
+    });
 
-    await wizard.clickUpdatePoolButton();
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Cache,
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Spare,
+    ]);
 
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.update', [
-      1,
-      {
-        topology: {
-          cache: [],
-          data: [
-            { type: TopologyItemType.Mirror, disks: ['sda3', 'sda0'] },
-          ],
-          dedup: [
-            { type: TopologyItemType.Mirror, disks: ['sda2', 'sda5', 'sda6'] },
-          ],
-          log: [
-            { type: TopologyItemType.Stripe, disks: ['sda1'] },
-          ],
-          spares: [],
-          special: [],
-        },
-        allow_duplicate_serials: false,
-      },
+    // Cache
+    await wizard.clickNext();
+    await wizard.fillStep({
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
+    });
+
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Spare,
+      VdevType.Cache,
+    ]);
+
+    // Metadata
+    await wizard.clickNext();
+    await wizard.fillStep({
+      Layout: 'Stripe',
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
+      'Number of VDEVs': '1',
+    });
+
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Dedup,
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Spare,
+      VdevType.Cache,
+      VdevType.Special,
+    ]);
+
+    // Dedup
+    await wizard.clickNext();
+    await wizard.fillStep({
+      Layout: 'Stripe',
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
+      'Number of VDEVs': '1',
+    });
+
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Spare,
+      VdevType.Cache,
+      VdevType.Special,
+      VdevType.Dedup,
+    ]);
+
+    // Spare again
+    await wizard.clickBack();
+    await wizard.clickBack();
+    await wizard.clickBack();
+    await wizard.fillStep({
+      Width: '2',
+    });
+
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Data,
+      VdevType.Log,
+      VdevType.Cache,
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+    ]);
+
+    // Data again
+    await wizard.clickBack();
+    await wizard.clickBack();
+    await wizard.fillStep({
+      Width: '2',
+    });
+
+    expect(store.state().categorySequence).toEqual([
+      VdevType.Log,
+      VdevType.Cache,
+      VdevType.Special,
+      VdevType.Dedup,
+      VdevType.Spare,
+      VdevType.Data,
     ]);
   });
 });

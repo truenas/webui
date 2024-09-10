@@ -61,6 +61,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         this.handleError(error);
         return EMPTY;
       }),
+      untilDestroyed(this),
     );
   });
 
@@ -69,6 +70,39 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     this.patchState({
       isLoading: false,
     });
+  }
+
+  private loadInstalledApps(): Observable<unknown> {
+    return combineLatest([
+      this.dockerStore.isLoading$,
+      this.dockerStore.isDockerStarted$,
+    ]).pipe(
+      filter(
+        ([loading, isDockerStarted]) => {
+          return !loading && isDockerStarted !== null;
+        },
+      ),
+      tap(([, isDockerStarted]) => {
+        if (isDockerStarted) {
+          this.appsStats.subscribeToUpdates();
+          this.subscribeToInstalledAppsUpdates();
+        }
+      }),
+      switchMap(([, isDockerStarted]) => {
+        if (!isDockerStarted) {
+          return of([]);
+        }
+
+        return this.appsService.getAllApps().pipe(
+          tap((installedApps) => {
+            this.patchState({
+              installedApps: [...installedApps],
+            });
+          }),
+        );
+      }),
+      untilDestroyed(this),
+    );
   }
 
   private handleRemovedApps(updatedAppName: string, allApps: AvailableApp[]): AvailableApp[] {
@@ -154,37 +188,5 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       tap(() => this.patchState({ isLoading: false })),
       untilDestroyed(this),
     ).subscribe();
-  }
-
-  private loadInstalledApps(): Observable<unknown> {
-    return combineLatest([
-      this.dockerStore.isLoading$,
-      this.dockerStore.isDockerStarted$,
-    ]).pipe(
-      filter(
-        ([loading, isDockerStarted]) => {
-          return !loading && isDockerStarted !== null;
-        },
-      ),
-      tap((isDockerStarted) => {
-        if (isDockerStarted) {
-          this.appsStats.subscribeToUpdates();
-          this.subscribeToInstalledAppsUpdates();
-        }
-      }),
-      switchMap((isDockerStarted) => {
-        if (!isDockerStarted) {
-          return of([]);
-        }
-
-        return this.appsService.getAllApps().pipe(
-          tap((installedApps: App[]) => {
-            this.patchState({
-              installedApps: [...installedApps],
-            });
-          }),
-        );
-      }),
-    );
   }
 }
