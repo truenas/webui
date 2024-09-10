@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -35,6 +36,9 @@ describe('DashboardComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DashboardComponent,
+    imports: [
+      NgTemplateOutlet,
+    ],
     declarations: [
       WidgetGroupControlsComponent,
       MockComponent(PageHeaderComponent),
