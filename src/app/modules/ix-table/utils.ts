@@ -14,14 +14,14 @@ function convertStringToId(inputString: string): string {
 
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
-  config: { rowTestId: (row: T) => string; ariaLabels: (row: T) => string[] },
+  config: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
 ): Column<T, ColumnComponent<T>>[] {
   return columns.map((column) => {
-    const rowTestId = (row: T): string => convertStringToId(config.rowTestId(row));
+    const uniqueRowTag = (row: T): string => convertStringToId(config.uniqueRowTag(row));
     const ariaLabels = (row: T): string[] => config.ariaLabels(row);
     return {
       ...column,
-      uniqueRowTag: rowTestId,
+      uniqueRowTag,
       ariaLabels,
     };
   });

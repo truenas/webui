@@ -157,7 +157,7 @@ export class RsyncTaskListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'rsync-task-' + row.path + '-' + row.remotehost,
+    uniqueRowTag: (row) => 'rsync-task-' + row.path + '-' + row.remotehost,
     ariaLabels: (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')],
   });
 

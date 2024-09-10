@@ -42,7 +42,7 @@ describe('IxTableColumnsSelectorComponent', () => {
       hidden: true,
     }),
   ], {
-    rowTestId: (row: CronjobRow) => 'cronjob-' + row.id.toString(),
+    uniqueRowTag: (row: CronjobRow) => 'cronjob-' + row.id.toString(),
     ariaLabels: (row) => ['Column', row.id.toString()],
   }) as Column<unknown, ColumnComponent<unknown>>[];
 

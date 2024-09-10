@@ -2,7 +2,7 @@
   <mat-slide-toggle
     color="primary"
     [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row)"
-    [ixTest]="[title, rowTestId(row), 'row-toggle']"
+    [ixTest]="[title, uniqueRowTag(row), 'row-toggle']"
     [checked]="checked"
     (change)="onSlideToggleChanged($event)"
     (click)="$event.stopPropagation()"
@@ -13,7 +13,7 @@
     *ixRequiresRoles="dynamicRequiredRoles ? (dynamicRequiredRoles(row) | async) : requiredRoles"
     color="primary"
     [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row)"
-    [ixTest]="[title, rowTestId(row), 'row-toggle']"
+    [ixTest]="[title, uniqueRowTag(row), 'row-toggle']"
     [checked]="checked"
     (change)="onSlideToggleChanged($event)"
     (click)="$event.stopPropagation()"

@@ -94,7 +94,7 @@ export class ServicesComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'service-' + row.name.replace(/\./g, ''),
+    uniqueRowTag: (row) => 'service-' + row.name.replace(/\./g, ''),
     ariaLabels: (row) => [row.name, this.translate.instant('Service')],
   });
 

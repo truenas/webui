@@ -39,7 +39,7 @@ export class NfsSessionListComponent implements OnInit {
       propertyName: 'export',
     }),
   ], {
-    rowTestId: (row) => 'nfs3-session-' + row.export + '-' + row.ip,
+    uniqueRowTag: (row) => 'nfs3-session-' + row.export + '-' + row.ip,
     ariaLabels: (row) => [row.ip, this.translate.instant('NFS3 Session')],
   });
 
@@ -96,7 +96,7 @@ export class NfsSessionListComponent implements OnInit {
       hidden: true,
     }),
   ], {
-    rowTestId: (row) => 'nfs4-session-' + row.address + '-' + row.clientid,
+    uniqueRowTag: (row) => 'nfs4-session-' + row.address + '-' + row.clientid,
     ariaLabels: (row) => [row.name, this.translate.instant('NFS4 Session')],
   });
 

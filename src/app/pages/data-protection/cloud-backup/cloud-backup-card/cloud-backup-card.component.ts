@@ -106,7 +106,7 @@ export class CloudBackupCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'cloud-backup-' + row.description,
+    uniqueRowTag: (row) => 'cloud-backup-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Backup')],
   });
 

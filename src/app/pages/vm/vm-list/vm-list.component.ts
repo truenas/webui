@@ -130,7 +130,7 @@ export class VmListComponent implements OnInit {
       getValue: (row) => `${row.shutdown_timeout} seconds`,
     }),
   ], {
-    rowTestId: (row) => 'virtual-machine-' + row.name,
+    uniqueRowTag: (row) => 'virtual-machine-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Virtual Machine')],
   });
 

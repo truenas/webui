@@ -87,7 +87,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'csr-' + row.name,
+    uniqueRowTag: (row) => 'csr-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('CSR')],
   });
 

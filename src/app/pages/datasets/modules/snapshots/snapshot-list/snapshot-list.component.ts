@@ -122,7 +122,7 @@ export class SnapshotListComponent implements OnInit {
       getValue: (row) => row?.properties?.referenced?.parsed,
     }),
   ], {
-    rowTestId: (row) => 'snapshot-' + row.id,
+    uniqueRowTag: (row) => 'snapshot-' + row.id,
     ariaLabels: (row) => [row.name, this.translate.instant('Snapshot')],
   });
 

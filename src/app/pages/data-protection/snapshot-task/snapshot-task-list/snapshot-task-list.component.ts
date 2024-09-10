@@ -129,7 +129,7 @@ export class SnapshotTaskListComponent implements OnInit {
       cssClass: 'state-button',
     }),
   ], {
-    rowTestId: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
+    uniqueRowTag: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
     ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
   });
 

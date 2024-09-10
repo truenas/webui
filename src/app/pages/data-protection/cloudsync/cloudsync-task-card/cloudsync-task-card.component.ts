@@ -122,7 +122,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-cloudsync-task-' + row.description,
+    uniqueRowTag: (row) => 'card-cloudsync-task-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 

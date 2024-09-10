@@ -97,7 +97,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       ],
     }),
   ], {
-    rowTestId: (row) => 'interface-' + row.name,
+    uniqueRowTag: (row) => 'interface-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Interface')],
   });
 

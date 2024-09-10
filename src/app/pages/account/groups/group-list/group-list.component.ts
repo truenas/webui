@@ -67,7 +67,7 @@ export class GroupListComponent implements OnInit {
         .join(', ') || this.translate.instant('N/A'),
     }),
   ], {
-    rowTestId: (row) => 'group-' + row.group,
+    uniqueRowTag: (row) => 'group-' + row.group,
     ariaLabels: (row) => [row.group, this.translate.instant('Group')],
   });
 

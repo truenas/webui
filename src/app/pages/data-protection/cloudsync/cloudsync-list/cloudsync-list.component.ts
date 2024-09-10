@@ -128,7 +128,7 @@ export class CloudSyncListComponent implements OnInit {
       propertyName: 'enabled',
     }),
   ], {
-    rowTestId: (row) => 'cloudsync-task-' + row.description,
+    uniqueRowTag: (row) => 'cloudsync-task-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 

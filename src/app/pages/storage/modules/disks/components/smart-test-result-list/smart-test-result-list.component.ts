@@ -70,7 +70,7 @@ export class SmartTestResultListComponent implements OnInit {
       },
     }),
   ], {
-    rowTestId: (row) => `smart-test-result-${row.disk}-${row.num}`,
+    uniqueRowTag: (row) => `smart-test-result-${row.disk}-${row.num}`,
     ariaLabels: (row) => [row.disk, this.translate.instant('Smart Test Result')],
   });
 

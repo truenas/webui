@@ -135,7 +135,7 @@ export class DiskListComponent implements OnInit {
       hidden: true,
     }),
   ], {
-    rowTestId: (row) => `disk-${row.name}`,
+    uniqueRowTag: (row) => `disk-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
   });
 

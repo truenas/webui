@@ -104,7 +104,7 @@ export class RsyncTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-rsync-task-' + row.path + '-' + row.remotehost,
+    uniqueRowTag: (row) => 'card-rsync-task-' + row.path + '-' + row.remotehost,
     ariaLabels: (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')],
   });
 

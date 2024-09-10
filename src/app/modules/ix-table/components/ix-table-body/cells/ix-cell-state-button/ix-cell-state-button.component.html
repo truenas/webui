@@ -3,7 +3,7 @@
     mat-stroked-button
     class="state-button"
     matTooltipPosition="above"
-    [ixTest]="[title, rowTestId(row), 'row-state']"
+    [ixTest]="[title, uniqueRowTag(row), 'row-state']"
     [ngClass]="getButtonClass()"
     [matTooltip]="tooltip"
     [attr.aria-label]="getAriaLabel(row)"

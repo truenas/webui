@@ -29,7 +29,7 @@ export class SmbNotificationListComponent implements OnInit {
     textColumn({ title: this.translate.instant('Subdir Filter'), propertyName: 'subdir_filter' }),
     textColumn({ title: this.translate.instant('Creation Time'), propertyName: 'creation_time' }),
   ], {
-    rowTestId: (row) => 'smb-notification-' + row.creation_time + '-' + row.server_id.unique_id,
+    uniqueRowTag: (row) => 'smb-notification-' + row.creation_time + '-' + row.server_id.unique_id,
     ariaLabels: (row) => [row.creation_time, this.translate.instant('SMB Notification')],
   });
 
