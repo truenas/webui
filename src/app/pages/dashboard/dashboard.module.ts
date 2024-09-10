@@ -1,5 +1,5 @@
 import {
-  AsyncPipe, NgClass, NgComponentOutlet, PercentPipe, TitleCasePipe,
+  AsyncPipe, NgClass, NgComponentOutlet, NgTemplateOutlet, PercentPipe, TitleCasePipe,
 } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -143,6 +143,7 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     PercentPipe,
     AsyncPipe,
     NgClass,
+    NgTemplateOutlet,
   ],
 })
 export class DashboardModule {

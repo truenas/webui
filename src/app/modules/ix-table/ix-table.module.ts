@@ -1,6 +1,6 @@
 import { CdkPortalOutlet } from '@angular/cdk/portal';
 import {
-  AsyncPipe, NgClass, NgStyle,
+  AsyncPipe, NgClass, NgStyle, NgTemplateOutlet,
 } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -102,6 +102,7 @@ const components = [
     AsyncPipe,
     NgStyle,
     NgClass,
+    NgTemplateOutlet,
   ],
   declarations: [
     ...components,

@@ -1,6 +1,6 @@
 import 'jest-preset-angular/setup-jest';
 import { HighContrastModeDetector } from '@angular/cdk/a11y';
-import { APP_BASE_HREF, NgTemplateOutlet } from '@angular/common';
+import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -86,7 +86,6 @@ jest.setTimeout(30 * 1000);
 
 defineGlobalsInjections({
   imports: [
-    NgTemplateOutlet,
     HttpClientModule,
     MatCheckboxModule,
     MatSlideToggleModule,
