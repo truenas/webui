@@ -80,58 +80,49 @@ export class DiskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Disk Type'),
       propertyName: 'type',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Model'),
       propertyName: 'model',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Transfer Mode'),
       propertyName: 'transfermode',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Rotation Rate (RPM)'),
       propertyName: 'rotationrate',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('HDD Standby'),
       propertyName: 'hddstandby',
       getValue: (row) => this.translate.instant(stringToTitleCase(row.hddstandby)),
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Adv. Power Management'),
       propertyName: 'advpowermgmt',
       getValue: (row) => this.translate.instant(stringToTitleCase(row.advpowermgmt)),
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Enable S.M.A.R.T.'),
       propertyName: 'togglesmart',
       getValue: (row) => (row.togglesmart ? this.translate.instant('Yes') : this.translate.instant('No')),
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('S.M.A.R.T. extra options'),
       propertyName: 'smartoptions',
-      isExtra: true,
       hidden: true,
     }),
   ], {

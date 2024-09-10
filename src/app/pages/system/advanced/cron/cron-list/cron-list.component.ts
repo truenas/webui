@@ -64,7 +64,6 @@ export class CronListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Next Run'),
-      isExtra: true,
       hidden: true,
       getValue: (task) => {
         if (task.enabled) {
@@ -79,14 +78,12 @@ export class CronListComponent implements OnInit {
       title: this.translate.instant('Hide Stdout'),
       propertyName: 'stdout',
       getValue: (task) => (task.stdout ? this.translate.instant('Yes') : this.translate.instant('No')),
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Hide Stderr'),
       propertyName: 'stderr',
       getValue: (task) => (task.stderr ? this.translate.instant('Yes') : this.translate.instant('No')),
-      isExtra: true,
       hidden: true,
     }),
   ], {

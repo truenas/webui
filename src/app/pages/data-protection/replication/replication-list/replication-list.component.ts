@@ -70,11 +70,9 @@ export class ReplicationListComponent implements OnInit {
       title: this.translate.instant('Transport'),
       propertyName: 'transport',
       hidden: true,
-      isExtra: true,
     }),
     textColumn({
       title: this.translate.instant('SSH Connection'),
-      isExtra: true,
       hidden: true,
       propertyName: 'ssh_credentials',
       getValue: (task) => {
@@ -86,25 +84,21 @@ export class ReplicationListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Source Dataset'),
       propertyName: 'source_datasets',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Target Dataset'),
       propertyName: 'target_dataset',
-      isExtra: true,
       hidden: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Recursive'),
-      isExtra: true,
       propertyName: 'recursive',
       hidden: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Auto'),
       propertyName: 'auto',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({

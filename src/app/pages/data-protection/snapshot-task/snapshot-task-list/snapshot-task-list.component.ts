@@ -74,7 +74,6 @@ export class SnapshotTaskListComponent implements OnInit {
       getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
     }),
     textColumn({
-      isExtra: true,
       hidden: true,
       title: this.translate.instant('Next Run'),
       getValue: (task) => {
@@ -88,7 +87,6 @@ export class SnapshotTaskListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
-      isExtra: true,
       hidden: true,
       getValue: (row) => {
         if (row.state?.datetime?.$date) {
@@ -101,19 +99,16 @@ export class SnapshotTaskListComponent implements OnInit {
       title: this.translate.instant('Keep snapshot for'),
       getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
       propertyName: 'lifetime_unit',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Legacy'),
-      isExtra: true,
       hidden: true,
       getValue: (row) => (row.legacy ? this.translate.instant('Yes') : this.translate.instant('No')),
       propertyName: 'legacy',
     }),
     textColumn({
       title: this.translate.instant('VMware Sync'),
-      isExtra: true,
       hidden: true,
       getValue: (row) => (row.vmware_sync ? this.translate.instant('Yes') : this.translate.instant('No')),
       propertyName: 'vmware_sync',

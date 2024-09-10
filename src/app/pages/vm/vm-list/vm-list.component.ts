@@ -75,24 +75,20 @@ export class VmListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Virtual CPUs'),
       propertyName: 'vcpus',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Cores'),
       propertyName: 'cores',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Threads'),
       propertyName: 'threads',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Memory Size'),
-      isExtra: true,
       hidden: true,
       getValue: (row) => {
         return this.fileSizePipe.transform(row.memory * MiB);
@@ -101,31 +97,26 @@ export class VmListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Boot Loader Type'),
       propertyName: 'bootloader',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('System Clock'),
       propertyName: 'time',
-      isExtra: true,
       hidden: true,
       getValue: (row) => vmTimeNames.get(row.time),
     }),
     textColumn({
       title: this.translate.instant('Display Port'),
-      isExtra: true,
       hidden: true,
       getValue: (row) => this.getDisplayPort(row),
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
-      isExtra: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Shutdown Timeout'),
-      isExtra: true,
       hidden: true,
       getValue: (row) => `${row.shutdown_timeout} seconds`,
     }),

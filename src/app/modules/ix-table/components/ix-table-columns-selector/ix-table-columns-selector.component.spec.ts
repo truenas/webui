@@ -29,7 +29,6 @@ describe('IxTableColumnsSelectorComponent', () => {
       title: 'Description',
       propertyName: 'description',
       hidden: true,
-      isExtra: true,
     }),
     textColumn({
       title: 'Schedule',
@@ -38,7 +37,6 @@ describe('IxTableColumnsSelectorComponent', () => {
     yesNoColumn({
       title: 'Enabled',
       propertyName: 'enabled',
-      isExtra: true,
       hidden: true,
     }),
   ], {
