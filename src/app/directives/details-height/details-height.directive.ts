@@ -1,4 +1,3 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   Directive, ElementRef, HostListener, Inject, OnChanges, OnDestroy, OnInit,
 } from '@angular/core';
@@ -37,7 +36,6 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     private element: ElementRef<HTMLElement>,
     private layoutService: LayoutService,
     private store$: Store<AppsState>,
-    private breakpointObserver: BreakpointObserver,
   ) {}
 
   ngOnInit(): void {
