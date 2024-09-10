@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  effect,
   inject,
 } from '@angular/core';
 import * as _ from 'lodash-es';
@@ -18,11 +17,11 @@ export class IpAddressesCellComponent<T> extends ColumnComponent<T> {
   protected addresses: string[] = [];
   private readonly cdr = inject(ChangeDetectorRef);
 
-  private readonly rowUpdateEffect = effect(() => {
-    const row = this.row();
+  override setRow = (row: T): void => {
+    this.row.set(row);
     this.addresses = this.extractAddresses(row as NetworkInterface);
     this.cdr.markForCheck();
-  });
+  };
 
   extractAddresses(row: NetworkInterface): string[] {
     const addresses = this.aliasesToAddress(row.aliases);
