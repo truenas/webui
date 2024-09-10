@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -50,6 +51,7 @@ const components = [
     Ng2FittextModule,
     CastPipe,
     TestIdModule,
+    NgTemplateOutlet,
   ],
   declarations: [
     ...components,
