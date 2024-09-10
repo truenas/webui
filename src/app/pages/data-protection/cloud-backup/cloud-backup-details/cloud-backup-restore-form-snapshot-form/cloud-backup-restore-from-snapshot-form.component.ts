@@ -56,7 +56,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     includeExclude: [SnapshotIncludeExclude.IncludeEverything, Validators.required],
     excludedPaths: [[] as string[], Validators.required],
     excludePattern: [null as string | null, Validators.required],
-    subFolder: [mntPath],
+    subFolder: [this.data.backup.path],
     includedPaths: [[] as string[]],
   });
 
