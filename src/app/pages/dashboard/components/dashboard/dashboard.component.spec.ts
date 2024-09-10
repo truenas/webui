@@ -18,7 +18,7 @@ import {
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
-import { defaultWidgets } from 'app/pages/dashboard/services/default-widgets.constant';
+import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
@@ -160,7 +160,7 @@ describe('DashboardComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith(defaultWidgets);
+      expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith(getDefaultWidgets());
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
 

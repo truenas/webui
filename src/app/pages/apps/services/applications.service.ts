@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY,
   Observable, OperatorFunction, filter, map, pipe,
+  shareReplay,
   switchMap,
 } from 'rxjs';
 import { customApp } from 'app/constants/catalog.constants';
@@ -10,7 +11,9 @@ import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { App, AppStartQueryParams, AppUpgradeParams } from 'app/interfaces/app.interface';
+import {
+  App, AppStartQueryParams, AppUpgradeParams,
+} from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -62,7 +65,9 @@ export class ApplicationsService {
   }
 
   getAllApps(): Observable<App[]> {
-    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]);
+    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]).pipe(
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
   }
 
   getApp(name: string): Observable<App[]> {

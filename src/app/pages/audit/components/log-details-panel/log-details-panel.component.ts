@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 
@@ -10,7 +10,7 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogDetailsPanelComponent {
-  @Input() log: AuditEntry;
+  readonly log = input.required<AuditEntry>();
 
   readonly hide = output();
 

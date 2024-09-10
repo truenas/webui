@@ -178,6 +178,7 @@ describe('CertificateAddComponent', () => {
         organization: 'Umbrella Corp',
         organizational_unit: 'Virus Research Dept',
         email: 'no-reply@umbrella.com',
+        add_to_trusted_store: false,
         san: ['jobs.umbrella.com'],
         cert_extensions: {
           BasicConstraints: {
@@ -232,6 +233,7 @@ describe('CertificateAddComponent', () => {
       certificate: '-----BEGIN CERTIFICATE-----',
       passphrase: '1234567890',
       privatekey: '-----BEGIN PRIVATE-----',
+      add_to_trusted_store: false,
     }]);
   });
 

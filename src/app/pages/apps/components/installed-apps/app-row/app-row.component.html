@@ -23,6 +23,31 @@
     (click)="statusPressed(); $event.stopPropagation()"
   ></ix-app-state-cell>
 </div>
+<div class="cell cell-cpu" [matTooltip]="'Percentage of total core utilization' | translate">
+  @if (stats()?.cpu_usage) {
+    <span>{{ stats().cpu_usage.toFixed(0) }}%</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+<div class="cell cell-ram" [matTooltip]="'Memory usage of app' | translate">
+  @if (stats()?.memory) {
+    <span>{{ stats().memory | ixFileSize }}</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+<div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
+  @if (stats()?.networks?.length) {
+    <span>
+      {{ incomingTraffic() | ixNetworkSpeed }}
+      -
+      {{ outgoingTraffic() | ixNetworkSpeed }}
+    </span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
 <div class="cell cell-update">
   <ix-app-update-cell [app]="app()" [showIcon]="true"></ix-app-update-cell>
 </div>

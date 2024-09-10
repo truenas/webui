@@ -1,14 +1,11 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import {
-  Observable, filter, map, switchMap, throttleTime,
-} from 'rxjs';
-import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { map, throttleTime } from 'rxjs';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -19,24 +16,18 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppResourcesCardComponent implements OnInit {
-  @Input() isLoading$: Observable<boolean>;
+  isLoading = input<boolean>(true);
   cpuPercentage = 0;
   memoryUsed: number;
   memoryTotal: number;
-  pool: string;
 
-  availableSpace$ = this.dockerStore.selectedPool$.pipe(
-    filter((pool) => !!pool),
-    switchMap((pool) => this.ws.call('pool.dataset.get_instance', [`${pool}/${ixAppsDataset}`])),
-    map((dataset) => dataset.available.rawvalue),
-  ).pipe(
-    toLoadingState(),
-  );
+  availableSpace = toSignal(this.ws.call('app.available_space'));
+  selectedPool = toSignal(this.dockerStore.selectedPool$);
 
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    protected dockerStore: DockerStore,
+    private dockerStore: DockerStore,
   ) {}
 
   ngOnInit(): void {

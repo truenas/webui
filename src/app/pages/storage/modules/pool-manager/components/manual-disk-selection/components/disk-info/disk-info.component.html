@@ -1,23 +1,23 @@
 <div
   class="container"
-  [class.no-slot]="!disk.enclosure"
+  [class.no-slot]="!disk().enclosure"
 >
-  @if (disk.enclosure) {
+  @if (disk().enclosure) {
     <div class="item">
       <div class="label">{{ 'Slot' | translate }}:</div>
-      <div class="value">{{ disk.enclosure.drive_bay_number }}</div>
+      <div class="value">{{ disk().enclosure.drive_bay_number }}</div>
     </div>
   }
   <div class="item model">
     <div class="label">{{ 'Model' | translate }}:</div>
-    <div class="value">{{ disk.model }}</div>
+    <div class="value">{{ disk().model }}</div>
   </div>
   <div class="item">
     <div class="label">{{ 'Type' | translate }}:</div>
-    <div class="value">{{ disk.type }}</div>
+    <div class="value">{{ disk().type }}</div>
   </div>
   <div class="item">
     <div class="label">{{ 'Serial' | translate }}:</div>
-    <div class="value">{{ disk.serial }}</div>
+    <div class="value">{{ disk().serial }}</div>
   </div>
 </div>

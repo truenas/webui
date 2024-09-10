@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash-es';
 import { filter } from 'rxjs';
@@ -18,34 +20,34 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RolesCardComponent {
-  @Input() dataset: DatasetDetails;
-  @Input() systemDataset: string;
-  @Input() hasChildrenWithShares = false;
+  readonly dataset = input.required<DatasetDetails>();
+  readonly systemDataset = input.required<string>();
+  readonly hasChildrenWithShares = input<boolean>(false);
 
   protected readonly nfsRequiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
-  get isApplications(): boolean {
-    return this.dataset.name && this.dataset.name.endsWith(ixAppsDataset);
-  }
+  readonly isApplications = computed(() => {
+    return this.dataset().name && this.dataset().name.endsWith(ixAppsDataset);
+  });
 
-  get appsNames(): string {
-    return _.uniq(this.dataset.apps.map((app) => app.name)).join(', ');
-  }
+  readonly appNames = computed(() => {
+    return _.uniq(this.dataset().apps.map((app) => app.name)).join(', ');
+  });
 
-  get vmsNames(): string {
-    return _.uniq(this.dataset.vms.map((app) => app.name)).join(', ');
-  }
+  readonly vmNames = computed(() => {
+    return _.uniq(this.dataset().vms.map((app) => app.name)).join(', ');
+  });
 
-  get isSystemDataset(): boolean {
-    return this.dataset.name === this.systemDataset;
-  }
+  readonly isSystemDataset = computed(() => {
+    return this.dataset().name === this.systemDataset();
+  });
 
-  get smbSharesNames(): string {
-    if (!this.dataset.smb_shares?.length) {
+  readonly smbShareNames = computed(() => {
+    if (!this.dataset().smb_shares?.length) {
       return '';
     }
-    const shareNames: string[] = this.dataset.smb_shares.map((item) => item.share_name);
+    const shareNames: string[] = this.dataset().smb_shares.map((item) => item.share_name);
     if (shareNames.length === 1) {
       return "'" + shareNames[0] + "'";
     }
@@ -58,18 +60,18 @@ export class RolesCardComponent {
       }
     }
     return shareNamesPretty;
-  }
+  });
 
-  get canCreateShare(): boolean {
-    return !this.hasChildrenWithShares
-      && !this.isSystemDataset
-      && !this.isApplications
-      && !this.dataset.apps?.length
-      && !this.dataset.vms?.length
-      && !this.dataset.smb_shares?.length
-      && !this.dataset.nfs_shares?.length
-      && !this.dataset.iscsi_shares?.length;
-  }
+  readonly canCreateShare = computed(() => {
+    return !this.hasChildrenWithShares()
+      && !this.isSystemDataset()
+      && !this.isApplications()
+      && !this.dataset().apps?.length
+      && !this.dataset().vms?.length
+      && !this.dataset().smb_shares?.length
+      && !this.dataset().nfs_shares?.length
+      && !this.dataset().iscsi_shares?.length;
+  });
 
   constructor(
     private slideInService: IxSlideInService,
@@ -78,7 +80,7 @@ export class RolesCardComponent {
 
   createSmbShare(): void {
     const slideInRef = this.slideInService.open(SmbFormComponent, {
-      data: { defaultSmbShare: { path: this.dataset.mountpoint } },
+      data: { defaultSmbShare: { path: this.dataset().mountpoint } },
     });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.datasetStore.datasetUpdated();
@@ -87,7 +89,7 @@ export class RolesCardComponent {
 
   createNfsShare(): void {
     const slideInRef = this.slideInService.open(NfsFormComponent, {
-      data: { defaultNfsShare: { path: this.dataset.mountpoint } },
+      data: { defaultNfsShare: { path: this.dataset().mountpoint } },
     });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.datasetStore.datasetUpdated();

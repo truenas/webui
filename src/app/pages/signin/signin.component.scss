@@ -64,7 +64,16 @@
 
 .logo-wrapper {
   background-color: var(--bg2);
+
+  // Fallback for browsers that don't support image-set
+  background-image: url('assets/images/signin/stars-sky-800w.jpg');
+  background-image: image-set(url('assets/images/signin/stars-sky-400w.avif') 1x,
+  url('assets/images/signin/stars-sky-800w.avif') 2x,
+  url('assets/images/signin/stars-sky-1200w.avif') 3x);
+  background-size: cover;
+  border-bottom: solid 1px var(--lines);
   height: 250px;
+
   padding: 20% 0;
   position: relative;
   text-align: center;
@@ -76,21 +85,9 @@
     width: 256px;
     z-index: 2;
   }
-
-  img.logo-bg {
-    border-bottom: solid 1px var(--lines);
-    height: 100%;
-    left: 0;
-    opacity: 0.75;
-    position: absolute;
-    top: 0;
-    user-select: none;
-    width: 100%;
-    z-index: 1;
-  }
 }
 
-@media (max-width:600px) {
+@media (max-width: 600px) {
   .page-wrap {
     bottom: 0;
     height: 100vh;

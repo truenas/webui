@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
+import { Store } from '@ngrx/store';
 import {
   EMPTY,
-  Observable, catchError, filter, finalize, map, of, switchMap, tap,
+  Observable, catchError, combineLatest, filter, finalize, map, of, switchMap, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
-import { defaultWidgets } from 'app/pages/dashboard/services/default-widgets.constant';
+import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppsState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 // we have external `DashConfigItem` in old dashboard, but it will be removed once we go ahead with new dashboard
 export interface OldDashboardConfigItem {
@@ -50,6 +53,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     private authService: AuthService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
+    private store$: Store<AppsState>,
   ) {
     super(initialState);
   }
@@ -64,15 +68,18 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         }
         return this.authService.refreshUser();
       }),
-      switchMap(() => this.authService.user$.pipe(
-        filter(Boolean),
-        map((user) => user.attributes.dashState),
-      )),
-      tap((dashState) => {
+      switchMap(() => combineLatest([
+        this.authService.user$.pipe(
+          filter(Boolean),
+          map((user) => user.attributes.dashState),
+        ),
+        this.store$.select(selectIsHaLicensed),
+      ])),
+      tap(([dashState, isHaLicensed]) => {
         this.setState({
           isLoading: false,
           globalError: '',
-          groups: this.getDashboardGroups(dashState || defaultWidgets),
+          groups: this.getDashboardGroups(dashState || getDefaultWidgets(isHaLicensed)),
         });
       }),
       catchError((error) => {

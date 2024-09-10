@@ -1,9 +1,9 @@
 <div class="header">
   <div class="image">
-    <img [src]="image" [src-fallback]="imagePlaceholder">
+    <img [src]="image()" [src-fallback]="imagePlaceholder">
   </div>
-  <div class="name">{{ name }}</div>
+  <div class="name">{{ name() }}</div>
 </div>
 <div class="body">
-  <p>{{ description }}</p>
+  <p>{{ description() }}</p>
 </div>

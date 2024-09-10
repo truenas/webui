@@ -1,7 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ChartReleaseStats } from 'app/interfaces/app.interface';
+import { AppStats } from 'app/interfaces/app.interface';
 import { AppCpuInfoComponent } from './app-cpu-info.component';
 
 describe('AppCpuInfoComponent', () => {
@@ -18,9 +18,9 @@ describe('AppCpuInfoComponent', () => {
           isLoading: false,
           error: null,
           value: {
-            cpu: 12.34,
+            cpu_usage: 12.34,
           },
-        } as LoadingState<ChartReleaseStats>,
+        } as LoadingState<AppStats>,
       },
     });
   });

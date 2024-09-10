@@ -26,6 +26,7 @@ import {
 import {
   AppResourcesCardComponent,
 } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
+import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -88,6 +89,7 @@ describe('AppDetailViewComponent', () => {
       mockProvider(DockerStore, {
         selectedPool$: of('pool'),
       }),
+      mockProvider(AppsStatsService),
     ],
     params: { appId: 'webdav', catalog: 'TRUENAS', train: 'community' },
   });
