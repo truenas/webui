@@ -2,8 +2,8 @@
   <tr
     class="row"
     tabindex="0"
-    [ixTest]="getTestAttr(row)"
-    [ixUiSearch]="{ anchor: getTestAttr(row) }"
+    [ixTest]="getRowTag(row)"
+    [ixUiSearch]="{ anchor: getRowTag(row) }"
     [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : null }"
     [class.expanded]="isExpanded(row)"
     [class.hidden]="isLoading"

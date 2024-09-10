@@ -22,7 +22,7 @@ describe('IxCellCheckboxComponent', () => {
     spectator = createComponent();
     spectator.component.propertyName = 'booleanField';
     spectator.component.setRow({ booleanField: true });
-    spectator.component.rowTestId = (row) => 'checkbox-' + row.booleanField.toString();
+    spectator.component.uniqueRowTag = (row) => 'checkbox-' + row.booleanField.toString();
     spectator.component.ariaLabels = () => ['Label 1', 'Label 2'];
     spectator.detectChanges();
 

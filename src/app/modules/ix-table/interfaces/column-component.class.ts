@@ -4,7 +4,7 @@ export abstract class ColumnComponent<T> {
   propertyName?: keyof T;
   title?: string;
   cssClass?: string;
-  rowTestId: (row: T) => string;
+  uniqueRowTag: (row: T) => string;
   ariaLabels: (row: T) => string[];
   sortBy?: (row: T) => string | number;
   disableSorting?: boolean;

@@ -23,7 +23,7 @@ describe('IxCellToggleComponent', () => {
     spectator.component.propertyName = 'booleanField';
     spectator.component.setRow({ booleanField: true });
     spectator.component.onRowToggle = jest.fn();
-    spectator.component.rowTestId = (row) => row.booleanField.toString();
+    spectator.component.uniqueRowTag = (row) => row.booleanField.toString();
     spectator.component.ariaLabels = () => ['Label 1', 'Label 2'];
     spectator.detectChanges();
 

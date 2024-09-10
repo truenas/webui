@@ -64,7 +64,7 @@ describe('IxCellStateButtonComponent', () => {
       warnings: [{}, {}],
     } as TestTableData);
     spectator.component.getJob = (row) => row.job;
-    spectator.component.rowTestId = () => '';
+    spectator.component.uniqueRowTag = () => '';
     spectator.component.ariaLabels = () => ['Label 1', 'Label 2'];
     spectator.component.job.set({
       id: 123456,

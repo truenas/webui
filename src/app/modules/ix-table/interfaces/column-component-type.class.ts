@@ -21,7 +21,7 @@ export class ColumnComponentType<T> extends ColumnComponent<T> {
     if (cssClass != null) {
       this.cssClass = cssClass;
     }
-    this.rowTestId = rowTestId;
+    this.uniqueRowTag = rowTestId;
     this.ariaLabels = ariaLabels;
     if (sortBy != null) {
       this.sortBy = sortBy;

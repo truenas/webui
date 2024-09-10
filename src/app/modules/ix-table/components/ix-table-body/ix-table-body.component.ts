@@ -61,8 +61,8 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
     });
   }
 
-  getTestAttr(row: T): string {
-    return this.columns[0]?.rowTestId(row) ?? '';
+  getRowTag(row: T): string {
+    return this.columns[0]?.uniqueRowTag(row) ?? '';
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
@@ -80,7 +80,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   protected trackRowByIdentity(item: T): string {
-    return this.getTestAttr(item);
+    return this.getRowTag(item);
   }
 
   protected displayedColumnsForRow(row: T, columns: Column<T, ColumnComponent<T>>[]): Column<T, ColumnComponent<T>>[] {
@@ -92,18 +92,5 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
 
   protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>): Column<T, ColumnComponent<T>> {
     return column;
-    // const trackById = this.getTestAttr(column.getRow());
-
-    // if (column.title) {
-    //   return trackById + '-' + column.title + '-' + index;
-    // }
-    // const actionsColumn = column as Column<T, IxCellActionsComponent<T>>;
-    // if (actionsColumn.actions?.length) {
-    //   return trackById + '-' + actionsColumn.actions.reduce((all, action) => {
-    //     return all + '-' + action.iconName;
-    //   }, '') + '-' + index;
-    // }
-
-    // return trackById + '-' + (column.propertyName ? column.propertyName.toString() : index);
   }
 }
