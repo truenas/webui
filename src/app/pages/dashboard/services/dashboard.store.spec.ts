@@ -1,11 +1,13 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { defaultWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
+import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { DashboardStore, initialState } from './dashboard.store';
 
 const initialGroups = [
@@ -34,6 +36,14 @@ describe('DashboardStore', () => {
             dashState: initialGroups,
           },
         }),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectIsHaLicensed,
+            value: true,
+          },
+        ],
       }),
       mockWebSocket([
         mockCall('auth.set_attribute'),
@@ -105,7 +115,7 @@ describe('DashboardStore', () => {
 
     expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
       ...initialState,
-      groups: defaultWidgets,
+      groups: getDefaultWidgets(true),
     });
   });
 
