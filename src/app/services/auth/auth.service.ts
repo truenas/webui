@@ -42,8 +42,6 @@ export class AuthService {
   @LocalStorage() private token: string;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
 
-  instantAuthTokenValue$ = new BehaviorSubject<string>(this.window.localStorage.getItem('ngx-webstorage|token'));
-
   /**
    * This is 10 seconds less than 300 seconds which is the default life
    * time of a token generated with auth.generate_token. The 10 seconds
@@ -317,7 +315,6 @@ export class AuthService {
   private setupTokenUpdate(): void {
     this.latestTokenGenerated$.subscribe((token) => {
       this.token = token;
-      this.instantAuthTokenValue$.next(token);
     });
   }
 }
