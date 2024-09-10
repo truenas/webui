@@ -23,6 +23,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 export class TokenLifetimeService {
   protected actionWaitTimeout: Timeout;
   protected terminateCancelTimeout: Timeout;
+  // TODO: Just make resume an arrow function.
   private resumeBound;
 
   constructor(

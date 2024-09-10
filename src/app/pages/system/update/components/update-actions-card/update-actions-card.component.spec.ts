@@ -7,14 +7,12 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemUpdate } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SaveConfigDialogComponent } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { TrainService } from 'app/pages/system/update/services/train.service';
@@ -28,17 +26,9 @@ describe('UpdateActionsCardComponent', () => {
   let loader: HarnessLoader;
 
   const mockDialogRef = {
-    componentInstance: {
-      setDescription: jest.fn(),
-      setCall: jest.fn(),
-      submit: jest.fn(),
-      success: of(fakeSuccessfulJob(true)),
-      failure: of(),
-      wspost: jest.fn(),
-    },
     close: jest.fn(),
     afterClosed: () => of(true),
-  } as unknown as MatDialogRef<EntityJobComponent>;
+  } as unknown as MatDialogRef<unknown>;
 
   const createComponent = createComponentFactory({
     component: UpdateActionsCardComponent,
@@ -50,6 +40,7 @@ describe('UpdateActionsCardComponent', () => {
           status: SystemUpdateStatus.Available,
           changes: [],
         } as SystemUpdate),
+        mockJob('update.update'),
       ]),
       mockProvider(Router),
       mockProvider(TrainService),
@@ -107,8 +98,7 @@ describe('UpdateActionsCardComponent', () => {
       title: 'Apply Pending Updates',
     });
 
-    expect(mockDialogRef.componentInstance.setCall).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
-    expect(mockDialogRef.componentInstance.submit).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
   });
 
   it('shows save configuration dialog and runs update when Download Updates button is pressed', async () => {
@@ -138,8 +128,7 @@ describe('UpdateActionsCardComponent', () => {
       title: 'Download Update',
     });
 
-    expect(mockDialogRef.componentInstance.setCall).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
-    expect(mockDialogRef.componentInstance.submit).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
   });
 
   it('shows save configuration dialog and redirects to the manual update page when Install Manual Update File button is pressed', async () => {
