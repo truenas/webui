@@ -3,6 +3,6 @@
     *ixWithLoadingState="systemInfo$ as systemInfo"
     [size]="size()"
     [label]="name | translate"
-    [text]="uptime() | uptime: (datetime() | formatDateTime:' ':'HH:mm')"
+    [text]="uptime() | uptime: datetime()"
   ></ix-widget-datapoint>
 </div>
