@@ -41,8 +41,9 @@ describe('IxCellToggleComponent', () => {
     expect(spectator.component.onRowToggle).toHaveBeenCalledWith({ booleanField: true }, false);
   });
 
-  it('gets aria label correctly', () => {
-    const ariaLabel = spectator.component.getAriaLabel(spectator.component.getRow());
-    expect(ariaLabel).toBe('Label 1 Label 2');
+  it('gets aria label correctly', async () => {
+    const toggle = await loader.getHarness(MatSlideToggleHarness);
+
+    expect(await toggle.getAriaLabel()).toBe('Disable Label 1 Label 2');
   });
 });

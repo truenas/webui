@@ -43,7 +43,13 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
 
   private readonly rowUpdateEffect = effect(() => {
     const row = this.row();
-    this.state.set(this.getJob(row).state);
+    const job = !row || !this.getJob ? undefined : this.getJob(row);
+
+    if (!job) {
+      return;
+    }
+
+    this.state.set(job.state);
   }, {
     allowSignalWrites: true,
   });
