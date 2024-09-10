@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@angular/core';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Inject, Injectable, signal } from '@angular/core';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
-// eslint-disable-next-line no-restricted-imports
-import { MediaObserver } from '@ngbracket/ngx-layout';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { take, filter, distinctUntilChanged } from 'rxjs';
@@ -15,6 +15,7 @@ import { sidenavIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar
 
 export const collapsedMenuClass = 'collapsed-menu';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -38,9 +39,7 @@ export class SidenavService {
     return '0px';
   }
 
-  get isMobile(): boolean {
-    return this.window.innerWidth < 960;
-  }
+  readonly isMobile = signal(false);
 
   get isMenuCollapsed(): boolean {
     return document.getElementsByClassName(collapsedMenuClass).length === 1;
@@ -62,7 +61,7 @@ export class SidenavService {
 
   constructor(
     private router: Router,
-    private mediaService: MediaObserver,
+    private breakpointObserver: BreakpointObserver,
     private store$: Store<AppsState>,
     private actions$: Actions,
     @Inject(WINDOW) private window: Window,
@@ -74,10 +73,6 @@ export class SidenavService {
 
   setSidenav(sidenav: MatSidenav): void {
     this.sidenav = sidenav;
-  }
-
-  getSidenav(): MatSidenav {
-    return this.sidenav;
   }
 
   setSidenavStatus(sidenav: SidenavStatusData): void {
@@ -103,27 +98,32 @@ export class SidenavService {
   }
 
   private listenForScreenSizeChanges(): void {
-    this.mediaService.asObservable().subscribe(() => {
-      this.isOpen = !this.isMobile;
-      this.mode = this.isMobile ? 'over' : 'side';
-      if (!this.isMobile) {
-        // TODO: This is hack to resolve issue described here: https://ixsystems.atlassian.net/browse/NAS-110404
-        setTimeout(() => {
-          this.sidenav?.open();
-        });
-        this.store$.pipe(
-          waitForPreferences,
-          take(1),
-          filter((preferences) => Boolean(preferences.sidenavStatus)),
-        ).subscribe(({ sidenavStatus }) => {
-          this.isMenuCollapsed = sidenavStatus.isCollapsed;
-          this.isCollapsed = sidenavStatus.isCollapsed;
-        });
-      } else {
-        this.isMenuCollapsed = false;
-        this.isOpen = false;
-      }
-    });
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small])
+      .pipe(untilDestroyed(this))
+      .subscribe((state) => {
+        const isMobile = state.matches;
+        this.isMobile.set(isMobile);
+        this.isOpen = !isMobile;
+        this.mode = isMobile ? 'over' : 'side';
+        if (!isMobile) {
+          // TODO: This is hack to resolve issue described here: https://ixsystems.atlassian.net/browse/NAS-110404
+          setTimeout(() => {
+            this.sidenav?.open();
+          });
+          this.store$.pipe(
+            waitForPreferences,
+            take(1),
+            filter((preferences) => Boolean(preferences.sidenavStatus)),
+          ).subscribe(({ sidenavStatus }) => {
+            this.isMenuCollapsed = sidenavStatus.isCollapsed;
+            this.isCollapsed = sidenavStatus.isCollapsed;
+          });
+        } else {
+          this.isMenuCollapsed = false;
+          this.isOpen = false;
+        }
+      });
   }
 
   private listenForSidenavIndicatorPressed(): void {
@@ -137,7 +137,7 @@ export class SidenavService {
   }
 
   private toggleSidenav(): void {
-    if (this.isMobile) {
+    if (this.isMobile()) {
       this.sidenav?.toggle();
     } else {
       this.sidenav?.open();
@@ -150,7 +150,7 @@ export class SidenavService {
       isCollapsed: this.isMenuCollapsed,
     };
 
-    if (!this.isMobile) {
+    if (!this.isMobile()) {
       this.store$.dispatch(sidenavUpdated(data));
     }
 
@@ -159,7 +159,7 @@ export class SidenavService {
 
   private listenForRouteChanges(): void {
     this.router.events.pipe(
-      filter((routeChange) => routeChange instanceof NavigationEnd && this.isMobile),
+      filter((routeChange) => routeChange instanceof NavigationEnd && this.isMobile()),
     ).subscribe(() => {
       this.sidenav?.close();
     });
