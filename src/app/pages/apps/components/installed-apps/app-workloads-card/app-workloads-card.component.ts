@@ -27,7 +27,7 @@ import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 export class AppWorkloadsCardComponent {
   readonly app = input.required<App>();
 
-  readonly CatalogAppState = CatalogAppState;
+  readonly AppState = CatalogAppState;
   readonly AppContainerState = AppContainerState;
 
   protected readonly requiredRoles = [Role.AppsWrite];

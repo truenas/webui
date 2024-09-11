@@ -3,6 +3,7 @@ import {
   Component, computed, input, output,
 } from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -33,11 +34,7 @@ export class AppRowComponent {
   readonly isAppStopped = computed(() => this.status() === AppStatus.Stopped);
 
   readonly inProgress = computed(() => {
-    return [AppStatus.Deploying].includes(this.status()) || this.isStartingOrStopping();
-  });
-
-  readonly isStartingOrStopping = computed(() => {
-    return [AppStatus.Starting, AppStatus.Stopping].includes(this.status());
+    return [CatalogAppState.Deploying].includes(this.app().state);
   });
 
   readonly incomingTraffic = computed(() => {

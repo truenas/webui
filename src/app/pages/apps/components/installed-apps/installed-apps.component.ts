@@ -24,7 +24,9 @@ import {
 } from 'rxjs';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
@@ -34,6 +36,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
@@ -163,6 +166,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private store$: Store<AppState>,
     private location: Location,
     private appsStats: AppsStatsService,
+    private loader: AppLoaderService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -316,8 +320,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   stop(name: string): void {
     this.appService.stopApplication(name)
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(
+        tapOnce(() => this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }))),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
+        if (job.state !== JobState.Running) {
+          this.loader.close();
+        }
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
