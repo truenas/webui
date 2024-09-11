@@ -2555,6 +2555,7 @@
   "Stop {serviceName}?": "",
   "Stop {vmName}?": "",
   "Stopped": "",
+  "Stopping \"{app}\"": "",
   "Stopping Apps Service": "",
   "Stopping {rowName}": "",
   "Stops the rollback when the safety  check finds any related clone snapshots that are newer than the  rollback snapshot.": "",

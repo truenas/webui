@@ -12,6 +12,7 @@ import {
   filter, map, switchMap, take, tap,
 } from 'rxjs';
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
@@ -53,15 +54,11 @@ export class AppInfoCardComponent {
   }, { allowSignalWrites: true });
 
   get inProgress(): boolean {
-    return [AppStatus.Deploying].includes(this.status) || this.isStartingOrStopping;
+    return [CatalogAppState.Deploying].includes(this.app().state);
   }
 
   get isAppStopped(): boolean {
     return this.status === AppStatus.Stopped;
-  }
-
-  get isStartingOrStopping(): boolean {
-    return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
   }
 
   get appDetailsRouterUrl(): string[] {

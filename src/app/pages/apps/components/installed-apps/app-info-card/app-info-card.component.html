@@ -119,7 +119,7 @@
               matTooltipPosition="above"
               [ixTest]="[app().name, 'stop']"
               [matTooltip]="'Stop' | translate"
-              [disabled]="isStartingOrStopping"
+              [disabled]="inProgress"
               (click)="stopApp.emit(); $event.stopPropagation()"
             >
               <ix-icon name="mdi-stop"></ix-icon> {{ 'Stop' | translate }}
