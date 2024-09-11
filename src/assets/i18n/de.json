@@ -423,6 +423,8 @@
   "Bind Interfaces": "",
   "Bind Password": "",
   "Block (iSCSI) Shares Targets": "",
+  "Block I/O": "",
+  "Block I/O read and writes": "",
   "Boot": "",
   "Boot Environment": "",
   "Boot Pool Condition": "",

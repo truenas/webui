@@ -57,6 +57,8 @@
   "Bind DN": "",
   "Bind Interfaces": "",
   "Bind Password": "",
+  "Block I/O": "",
+  "Block I/O read and writes": "",
   "Boot Environment": "",
   "Boot Pool Condition": "",
   "Box": "",
