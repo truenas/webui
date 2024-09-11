@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe, KeyValuePipe, NgTemplateOutlet, TitleCasePipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -142,7 +144,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     VolumeMountsDialogComponent,
   ],
   imports: [
-    CommonModule,
     AppsRoutingModule,
     IxCodeEditorComponent,
     PageHeaderModule,
@@ -199,6 +200,11 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     IxCheckboxListComponent,
     IxCheckboxComponent,
     ReadOnlyComponent,
+    AsyncPipe,
+    KeyValuePipe,
+    TitleCasePipe,
+    NgTemplateOutlet,
+    DecimalPipe,
   ],
 })
 export class AppsModule { }

@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
@@ -7,6 +8,9 @@ import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator
 describe('NewFeatureIndicatorDirective', () => {
   const createDirective = createHostFactory({
     component: NewFeatureIndicatorDirective,
+    imports: [
+      NgTemplateOutlet,
+    ],
     providers: [
       mockProvider(NewFeatureIndicatorService, {
         wasIndicatorShown: (indicator: NewFeatureIndicator) => {

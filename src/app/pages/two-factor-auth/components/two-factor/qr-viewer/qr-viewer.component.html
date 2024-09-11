@@ -1,10 +1,10 @@
 <div>
-  @if (showWarning) {
+  @if (showWarning()) {
     <ix-warning
       class="warning"
       [message]="helpText.two_factor.qrCodeMessage | translate"
     ></ix-warning>
   }
 
-  <qr-code [value]="qrInfo" [size]="200"></qr-code>
+  <qr-code [value]="qrInfo()" [size]="200"></qr-code>
 </div>

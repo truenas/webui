@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -49,7 +49,6 @@ import { routing } from './services.routing';
 
 @NgModule({
   imports: [
-    CommonModule,
     FormsModule,
     EntityModule,
     routing,
@@ -84,6 +83,7 @@ import { routing } from './services.routing';
     FormActionsComponent,
     IxChipsComponent,
     PageHeaderModule,
+    AsyncPipe,
   ],
   declarations: [
     ServicesComponent,

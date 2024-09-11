@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -61,7 +61,6 @@ import { routing } from './network.routing';
 @NgModule({
   imports: [
     EntityModule,
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     routing,
@@ -96,6 +95,7 @@ import { routing } from './network.routing';
     IxIpInputWithNetmaskComponent,
     IxErrorsComponent,
     FormActionsComponent,
+    AsyncPipe,
   ],
   declarations: [
     DefaultGatewayDialogComponent,

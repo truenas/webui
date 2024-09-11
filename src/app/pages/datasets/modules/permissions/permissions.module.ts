@@ -1,5 +1,5 @@
 import { CdkAccordionModule } from '@angular/cdk/accordion';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -71,7 +71,6 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    CommonModule,
     TranslateModule,
     MatCardModule,
     IxIconModule,
@@ -94,6 +93,8 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     IxCheckboxComponent,
     IxInputComponent,
     IxPermissionsComponent,
+    AsyncPipe,
+    NgClass,
   ],
   declarations: [
     AclEditorListComponent,

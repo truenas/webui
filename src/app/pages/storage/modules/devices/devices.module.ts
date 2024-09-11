@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe, NgClass, NgTemplateOutlet, UpperCasePipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -52,7 +54,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
 
 @NgModule({
   imports: [
-    CommonModule,
     EntityModule,
     TreeModule,
     MatButtonModule,
@@ -82,6 +83,11 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     IxInputComponent,
     IxCheckboxComponent,
     PageHeaderModule,
+    NgClass,
+    DecimalPipe,
+    AsyncPipe,
+    NgTemplateOutlet,
+    UpperCasePipe,
   ],
   declarations: [
     DevicesComponent,

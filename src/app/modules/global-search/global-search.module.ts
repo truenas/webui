@@ -1,6 +1,5 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { CommonModule, NgIf } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,10 +22,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     GlobalSearchTriggerComponent,
   ],
   imports: [
-    CommonModule,
     IxIconModule,
     MatInputModule,
-    NgIf,
     TestIdModule,
     TranslateModule,
     MatDialogModule,

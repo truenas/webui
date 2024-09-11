@@ -1,4 +1,6 @@
-import { CommonModule, NgIf } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -39,7 +41,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
-    NgIf,
     MatCheckboxModule,
     MatDialogModule,
     FormsModule,
@@ -47,7 +48,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TestIdModule,
     MatButtonModule,
     IxIconModule,
-    CommonModule,
     MatProgressBarModule,
     MatDividerModule,
     CommonDirectivesModule,
@@ -57,6 +57,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     CopyButtonComponent,
     IxSlideToggleComponent,
     FormActionsComponent,
+    DecimalPipe,
+    AsyncPipe,
   ],
   declarations: [
     ConfirmDialogComponent,

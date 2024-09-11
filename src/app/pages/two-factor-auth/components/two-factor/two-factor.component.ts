@@ -5,7 +5,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, forkJoin, of } from 'rxjs';
+import {
+  Observable, forkJoin, of,
+} from 'rxjs';
 import {
   catchError,
   filter, switchMap, take, tap,

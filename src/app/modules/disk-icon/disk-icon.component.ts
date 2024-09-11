@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
@@ -11,7 +10,6 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
   styleUrls: ['./disk-icon.component.scss'],
   standalone: true,
   imports: [
-    NgIf,
     FileSizePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
