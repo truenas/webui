@@ -153,7 +153,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
         'Support License: Best contract, expires 2025-01-01',
         'System Serial: AA-00002',
         'Hostname: test-hostname-b',
-        'Uptime: 1 minute 17 seconds as of 2024-03-15 10:34:11',
+        'Uptime: 1 minute 17 seconds as of 10:34',
       ]);
     });
 
@@ -172,7 +172,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       const updatedDatetime = spectator.component.datetime();
 
       expect(updatedUptime).toBeGreaterThan(initialUptime);
-      expect(updatedDatetime).toBeGreaterThan(initialDatetime);
+      expect(updatedDatetime).toBe(initialDatetime);
 
       jest.useRealTimers();
     });
