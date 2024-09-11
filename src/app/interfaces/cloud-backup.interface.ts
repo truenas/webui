@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { BwLimit, BwLimitUpdate, CloudCredential } from './cloud-sync-task.interface';
@@ -50,6 +51,13 @@ export enum SnapshotIncludeExclude {
   ExcludePaths = 'excludePaths',
   ExcludeByPattern = 'excludeByPattern',
 }
+
+export const snapshotIncludeExcludeOptions = new Map<SnapshotIncludeExclude, string>([
+  [SnapshotIncludeExclude.IncludeEverything, T('Include everything')],
+  [SnapshotIncludeExclude.IncludeFromSubFolder, T('Include from subfolder')],
+  [SnapshotIncludeExclude.ExcludePaths, T('Select paths to exclude')],
+  [SnapshotIncludeExclude.ExcludeByPattern, T('Exclude by pattern')],
+]);
 
 export type CloudBackupRestoreParams = [
   id: number,
