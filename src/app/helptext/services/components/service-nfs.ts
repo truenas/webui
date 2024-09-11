@@ -20,6 +20,8 @@ export const helptextServiceNfs = {
   nfs_srv_v4_v3owner_tooltip: T('Set when NFSv4 ACL support is needed without requiring\
  the client and the server to sync users and groups.'),
 
+  nfs_srv_protocols_tooltip: T('Enable server support for NFSv3 or NFSv4 or both NFSv3 and NFSv4 clients.'),
+
   nfs_srv_v4_krb_tooltip: T('Set to force NFS shares to fail if the Kerberos ticket\
  is unavailable.'),
 

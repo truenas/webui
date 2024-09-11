@@ -81,6 +81,7 @@
           [empty]="form.controls.networks.controls.length === 0"
           [label]="'Networks' | translate"
           [formArray]="form.get('networks')"
+          [tooltip]="helptext.tooltip_networks_wrapper | translate"
           (add)="addNetworkControl()"
         >
           @for (network of form.controls.networks.controls; track network; let i = $index) {
@@ -103,6 +104,7 @@
           [empty]="form.controls.hosts.controls.length === 0"
           [label]="'Hosts' | translate"
           [formArray]="form.get('hosts')"
+          [tooltip]="helptext.tooltip_hosts_wrapper | translate"
           (add)="addHostControl()"
         >
           @for (network of form.controls.hosts.controls; track network; let i = $index) {
