@@ -24,21 +24,30 @@
   ></ix-app-status-cell>
 </div>
 <div class="cell cell-cpu" [matTooltip]="'Percentage of total core utilization' | translate">
-  @if (stats()?.cpu_usage) {
+  @if (hasStats()) {
     <span>{{ stats().cpu_usage.toFixed(0) }}%</span>
   } @else {
     {{ 'N/A' | translate }}
   }
 </div>
 <div class="cell cell-ram" [matTooltip]="'Memory usage of app' | translate">
-  @if (stats()?.memory) {
+  @if (hasStats()) {
     <span>{{ stats().memory | ixFileSize }}</span>
   } @else {
     {{ 'N/A' | translate }}
   }
 </div>
+<div class="cell cell-io" [matTooltip]="'Block I/O read and writes' | translate">
+  @if (hasStats()) {
+    <span>
+      {{ stats().blkio.read | ixFileSize }} - {{ stats().blkio.write | ixFileSize }}
+    </span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
 <div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
-  @if (stats()?.networks?.length) {
+  @if (hasStats() && stats()?.networks?.length) {
     <span>
       {{ incomingTraffic() | ixNetworkSpeed }}
       -
