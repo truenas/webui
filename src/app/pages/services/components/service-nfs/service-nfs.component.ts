@@ -59,6 +59,7 @@ export class ServiceNfsComponent implements OnInit {
     servers: helptextServiceNfs.nfs_srv_servers_tooltip,
     servers_auto: helptextServiceNfs.nfs_srv_servers_auto_tooltip,
     v4_domain: helptextServiceNfs.nfs_srv_v4_domain_tooltip,
+    protocols: helptextServiceNfs.nfs_srv_protocols_tooltip,
     v4_v3owner: helptextServiceNfs.nfs_srv_v4_v3owner_tooltip,
     v4_krb: helptextServiceNfs.nfs_srv_v4_krb_tooltip,
     mountd_port: helptextServiceNfs.nfs_srv_mountd_port_tooltip,
