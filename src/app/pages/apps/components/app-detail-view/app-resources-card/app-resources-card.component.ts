@@ -21,7 +21,7 @@ export class AppResourcesCardComponent implements OnInit {
   memoryUsed: number;
   memoryTotal: number;
 
-  availableSpace = toSignal(this.ws.call('app.available_space'));
+  readonly availableSpace$ = this.ws.call('app.available_space');
   selectedPool = toSignal(this.dockerStore.selectedPool$);
 
   constructor(
