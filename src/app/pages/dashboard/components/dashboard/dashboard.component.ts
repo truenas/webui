@@ -7,19 +7,21 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
-import { defaultWidgets } from 'app/pages/dashboard/services/default-widgets.constant';
+import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -44,13 +46,14 @@ export class DashboardComponent implements OnInit {
   readonly renderedGroups = signal<WidgetGroup[]>([]);
   readonly savedGroups = toSignal(this.dashboardStore.groups$);
   readonly isLoading = toSignal(this.dashboardStore.isLoading$);
+  readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   readonly isLoadingFirstTime = computed(() => this.isLoading() && this.savedGroups() === null);
   readonly newFeatureConfig = {
     key: 'dashboardConfigure',
     message: this.translate.instant('New widgets and layouts.'),
   };
   readonly customLayout = computed(() => {
-    return !isEqual(this.renderedGroups(), defaultWidgets);
+    return !isEqual(this.renderedGroups(), getDefaultWidgets(this.isHaLicensed()));
   });
 
   emptyDashboardConf: EmptyConfig = {
@@ -67,7 +70,7 @@ export class DashboardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private dialog: DialogService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
@@ -146,7 +149,7 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onReset(): void {
-    this.renderedGroups.set(defaultWidgets);
+    this.renderedGroups.set(getDefaultWidgets(this.isHaLicensed()));
     this.snackbar.success(this.translate.instant('Default widgets restored'));
   }
 
