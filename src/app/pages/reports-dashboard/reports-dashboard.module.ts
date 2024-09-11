@@ -1,5 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { AsyncPipe, KeyValuePipe } from '@angular/common';
+import { AsyncPipe, KeyValuePipe, NgTemplateOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -83,6 +83,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     PageHeaderModule,
     AsyncPipe,
     KeyValuePipe,
+    NgTemplateOutlet,
   ],
   declarations: [
     LineChartComponent,
