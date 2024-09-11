@@ -120,6 +120,31 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       ]);
     });
 
+    it('submits backup restore from snapshot with `Include from subfolder` matches paths', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
+        'Include/Exclude': 'Include from subfolder',
+        Subfolder: '/mnt/dozer/a',
+        'Included Paths': '/mnt/dozer/a',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        '/mnt/dozer/a',
+        '/mnt/bulldozer',
+        {
+          include: [
+            '/',
+          ],
+        },
+      ]);
+    });
+
     it('submits backup restore from snapshot with `Exclude by pattern`', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
