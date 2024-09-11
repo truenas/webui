@@ -115,7 +115,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       }),
       tap((apiEvent) => {
         const app = apiEvent.fields;
-        if (apiEvent.fields) {
+        if (!app) {
           return;
         }
         this.patchState((state: InstalledAppsState): InstalledAppsState => {
