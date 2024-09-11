@@ -111,11 +111,13 @@ describe.skip('AppBulkUpgradeComponent', () => {
     );
   });
 
-  // TODO:
-  it.skip('checks for the correct payload and success toast', async () => {
+  it('checks for the correct payload and success toast', async () => {
+    const expandHeader = spectator.query('mat-expansion-panel-header');
+    expandHeader.dispatchEvent(new Event('click'));
+    spectator.detectChanges();
     const jobArguments: CoreBulkQuery = ['app.upgrade', [
-      ['test-app-one', { app_version: '1.0.8' }],
-      ['test-app-two', { app_version: '1.6.34' }],
+      ['test-app-one', { app_version: '15.3.36' }],
+      ['test-app-two'],
     ]];
 
     const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
