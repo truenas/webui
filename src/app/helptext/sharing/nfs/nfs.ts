@@ -29,12 +29,20 @@ export const helptextSharingNfs = {
   ),
   tooltip_enabled: T('Enable this NFS share. Unset to disable this NFS share \
  without deleting it.'),
+  tooltip_networks_wrapper: T(
+    'Click "Add" to specify NFS client network ranges for this share.\
+ If both networks and hosts are empty the share will be exported to everyone.',
+  ),
   tooltip_network: T(
     'Allowed network in network/mask CIDR notation (example <i>1.2.3.4/24<i>).\
      One entry per field. Leave empty to allow everybody.',
   ),
   tooltip_hosts: T(
     'Allowed IP address or hostname. One entry per field. Leave empty to allow everybody.',
+  ),
+  tooltip_hosts_wrapper: T(
+    'Click "Add" to specify NFS client hosts for this share.\
+ If both networks and hosts are empty the share will be exported to everyone.',
   ),
   tooltip_maproot_user: T(
     'When a user is selected, the <i>root</i> user is\
