@@ -12,6 +12,7 @@ import {
   filter, map, switchMap, take, tap,
 } from 'rxjs';
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
@@ -26,7 +27,6 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 
 @UntilDestroy()
 @Component({
