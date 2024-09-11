@@ -107,7 +107,10 @@ describe('AppRowComponent', () => {
     });
 
     it('shows Start button when app status is Stopped', async () => {
-      spectator.setInput('status', AppStatus.Stopped);
+      spectator.setInput('app', {
+        ...app,
+        state: CatalogAppState.Stopped,
+      });
 
       const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop' }));
       const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play' }));
