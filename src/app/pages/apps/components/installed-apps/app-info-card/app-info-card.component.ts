@@ -52,15 +52,11 @@ export class AppInfoCardComponent {
   }, { allowSignalWrites: true });
 
   get inProgress(): boolean {
-    return [AppState.Deploying].includes(this.app().state) || this.isStartingOrStopping;
+    return [AppState.Deploying].includes(this.app().state);
   }
 
   get isAppStopped(): boolean {
     return this.app().state === AppState.Stopped;
-  }
-
-  get isStartingOrStopping(): boolean {
-    return [AppState.Deploying, AppState.Stopping].includes(this.app().state);
   }
 
   get appDetailsRouterUrl(): string[] {
