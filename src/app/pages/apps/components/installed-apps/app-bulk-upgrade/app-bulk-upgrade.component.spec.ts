@@ -30,6 +30,7 @@ const fakeAppOne = {
   upgrade_available: true,
   human_version: '2022.10_1.0.7',
   metadata: {
+    app_version: '2022.10_1.0.8',
     icon: 'path-to-icon',
     train: 'stable',
   },
@@ -43,6 +44,7 @@ const fakeAppTwo = {
   upgrade_available: true,
   human_version: '25_1.6.33',
   metadata: {
+    app_version: '25_1.6.34',
     icon: 'path-to-icon',
     train: 'stable'
   },
@@ -70,8 +72,7 @@ const fakeUpgradeSummary: AppUpgradeSummary = {
   upgrade_human_version: '24.0.6_15.3.36',
 };
 
-// TODO:
-describe.skip('AppBulkUpgradeComponent', () => {
+describe('AppBulkUpgradeComponent', () => {
   let spectator: Spectator<AppBulkUpgradeComponent>;
   let loader: HarnessLoader;
 
@@ -104,8 +105,7 @@ describe.skip('AppBulkUpgradeComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  // TODO:
-  it.skip('checks dialog confirmation text', () => {
+  it('checks dialog confirmation text', () => {
     expect(spectator.fixture.nativeElement).toHaveText(
       'The following 2 applications will be upgraded. Are you sure you want to proceed?',
     );
