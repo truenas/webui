@@ -13,7 +13,7 @@ import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 // we have external `DashConfigItem` in old dashboard, but it will be removed once we go ahead with new dashboard
@@ -53,7 +53,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     private authService: AuthService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) {
     super(initialState);
   }
