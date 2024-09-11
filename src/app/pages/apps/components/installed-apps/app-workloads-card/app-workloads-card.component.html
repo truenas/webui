@@ -46,7 +46,7 @@
             <div class="container-state">
               {{ container.state | mapValue: appContainerStateLabels | translate  }}
             </div>
-            @if (app().state === CatalogAppState.Running || app().state === CatalogAppState.Deploying) {
+            @if (app().state === AppState.Running || app().state === AppState.Deploying) {
               <div class="container-action">
                 <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130392 -->
                 @if (container.state === AppContainerState.Running) {

@@ -26,6 +26,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 
 @UntilDestroy()
 @Component({
@@ -53,15 +54,11 @@ export class AppInfoCardComponent {
   }, { allowSignalWrites: true });
 
   get inProgress(): boolean {
-    return [AppStatus.Deploying].includes(this.status) || this.isStartingOrStopping;
+    return [CatalogAppState.Deploying].includes(this.app().state);
   }
 
   get isAppStopped(): boolean {
     return this.status === AppStatus.Stopped;
-  }
-
-  get isStartingOrStopping(): boolean {
-    return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
   }
 
   get appDetailsRouterUrl(): string[] {
