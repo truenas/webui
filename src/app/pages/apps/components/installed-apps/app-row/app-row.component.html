@@ -37,6 +37,15 @@
     {{ 'N/A' | translate }}
   }
 </div>
+<div class="cell cell-io" [matTooltip]="'Block I/O read and writes' | translate">
+  @if (stats()?.blkio) {
+    <span>
+      {{ stats().blkio.read | ixFileSize }} - {{ stats().blkio.write | ixFileSize }}
+    </span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
 <div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
   @if (stats()?.networks?.length) {
     <span>

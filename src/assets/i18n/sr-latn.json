@@ -595,6 +595,8 @@
   "Bind Interfaces": "",
   "Bind Password": "",
   "Block (iSCSI) Shares Targets": "",
+  "Block I/O": "",
+  "Block I/O read and writes": "",
   "Block Size": "",
   "Block size": "",
   "Boot": "",
