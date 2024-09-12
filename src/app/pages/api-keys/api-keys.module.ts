@@ -9,7 +9,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -34,7 +35,6 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     ReactiveFormsModule,
     ClipboardModule,
     EntityModule,
-    CommonDirectivesModule,
     MatButtonModule,
     MatCardModule,
     MatSortModule,
@@ -52,6 +52,8 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     FormActionsComponent,
     PageHeaderModule,
     AsyncPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     ApiKeyListComponent,

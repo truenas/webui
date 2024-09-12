@@ -18,6 +18,7 @@ interface LetContext<T = unknown> {
  */
 @Directive({
   selector: '[appLet]',
+  standalone: true,
 })
 export class LetDirective<T> {
   private context: LetContext<T> = { appLet: null };

@@ -19,6 +19,7 @@ import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator
 @UntilDestroy()
 @Directive({
   selector: '[ixNewFeatureIndicator]',
+  standalone: true,
 })
 export class NewFeatureIndicatorDirective {
   private wrapperContainer: ComponentRef<NewFeatureIndicatorWrapperComponent>;

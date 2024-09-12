@@ -19,7 +19,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -45,7 +45,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxLabelComponent,
     TestIdModule,
     MatInput,
-    CommonDirectivesModule,
     MatButton,
     IxIconModule,
     TreeModule,
@@ -53,6 +52,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxErrorsComponent,
     MatHint,
     TranslateModule,
+    RequiresRolesDirective,
   ],
 })
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
