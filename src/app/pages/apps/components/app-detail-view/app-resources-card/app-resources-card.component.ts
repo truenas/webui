@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
+  ChangeDetectionStrategy, Component, input, OnInit,
+  signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,17 +17,15 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppResourcesCardComponent implements OnInit {
-  isLoading = input<boolean>(true);
-  cpuPercentage = 0;
-  memoryUsed: number;
-  memoryTotal: number;
-
+  readonly isLoading = input<boolean>();
+  readonly cpuPercentage = signal(0);
+  readonly memoryUsed = signal(0);
+  readonly memoryTotal = signal(0);
   readonly availableSpace$ = this.ws.call('app.available_space');
-  selectedPool = toSignal(this.dockerStore.selectedPool$);
+  readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
 
   constructor(
     private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
     private dockerStore: DockerStore,
   ) {}
 
@@ -41,7 +40,7 @@ export class AppResourcesCardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((update) => {
       if (update?.cpu?.average) {
-        this.cpuPercentage = parseInt(update.cpu.average.usage.toFixed(1));
+        this.cpuPercentage.set(parseInt(update.cpu.average.usage.toFixed(1)));
       }
 
       if (update?.virtual_memory) {
@@ -52,10 +51,9 @@ export class AppResourcesCardComponent implements OnInit {
           memStats.arc_size = update.zfs.arc_size;
         }
         const services = memStats.total - memStats.free - memStats.arc_size;
-        this.memoryUsed = memStats.arc_size + services;
-        this.memoryTotal = memStats.total;
+        this.memoryUsed.set(memStats.arc_size + services);
+        this.memoryTotal.set(memStats.total);
       }
-      this.cdr.markForCheck();
     });
   }
 }

@@ -1,15 +1,17 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
+  signal,
+  input,
+  computed,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Gallery, GalleryItem, ImageItem } from 'ng-gallery';
 import {
-  map, filter, BehaviorSubject, tap, switchMap,
+  map, filter, switchMap,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
-import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
@@ -21,19 +23,17 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDetailViewComponent implements OnInit {
-  app: AvailableApp;
-
-  appId: string;
-  train: string;
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
+  readonly app = input<AvailableApp>();
+  readonly appId = input.required<string>();
+  readonly train = input.required<string>();
+  readonly isLoading = signal(true);
   readonly imagePlaceholder = appImagePlaceholder;
 
   items: GalleryItem[];
 
-  get pageTitle(): string {
-    return this.app?.title || this.app?.name || this.translate.instant('...');
-  }
+  pageTitle = computed<string>(() => {
+    return this.app()?.title || this.app?.name || this.translate.instant('...');
+  });
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -45,59 +45,38 @@ export class AppDetailViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.listenForRouteChanges();
     this.setLightbox();
   }
 
-  private listenForRouteChanges(): void {
-    this.activatedRoute.params
-      .pipe(
-        filter((params) => {
-          return !!(params.appId as string) && !!(params.train as string);
-        }),
-        tap(() => {
-          this.isLoading$.next(true);
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe(({ appId, train }: AppDetailsRouteParams) => {
-        this.appId = appId;
-        this.train = train;
-        this.loadAppInfo();
-      });
-  }
-
   private loadAppInfo(): void {
-    this.isLoading$.next(true);
+    this.isLoading.set(true);
     this.applicationsStore.isLoading$.pipe(
       filter((isLoading) => !isLoading),
       switchMap(() => {
         return this.applicationsStore.availableApps$.pipe(
           map((apps: AvailableApp[]) => apps.find(
-            (app) => app.name === this.appId && this.train === app.train,
+            (app) => app.name === this.appId() && this.train() === app.train,
           )),
         );
       }),
     ).pipe(untilDestroyed(this)).subscribe({
       next: (app) => {
-        this.isLoading$.next(false);
+        this.isLoading.set(false);
         this.cdr.markForCheck();
 
-        if (app) {
-          this.app = app;
-        } else {
+        if (!app) {
           this.router.navigate(['/apps/installed']);
         }
       },
       error: () => {
-        this.isLoading$.next(false);
+        this.isLoading.set(false);
         this.cdr.markForCheck();
       },
     });
   }
 
   setLightbox(): void {
-    this.items = this.app?.screenshots?.map((image) => new ImageItem({ src: image, thumb: image }));
+    this.items = this.app()?.screenshots?.map((image) => new ImageItem({ src: image, thumb: image }));
     this.gallery.ref('lightbox').load(this.items);
   }
 }

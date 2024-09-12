@@ -110,6 +110,10 @@
   }
 }
 
+.screenshots-container {
+  // fxLayout="row nowrap" fxLayoutGap="16px"
+}
+
 .screenshot {
   position: relative;
 
@@ -134,6 +138,8 @@
 }
 
 .screenshot-loader {
+  flex: 1;
+
   ::ng-deep span {
     height: 160px;
   }
