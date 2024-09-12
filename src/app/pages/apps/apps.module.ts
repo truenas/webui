@@ -47,6 +47,7 @@ import {
 import {
   AppDetailsSimilarComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
+import { AppJsonDetailsCardComponent } from 'app/pages/apps/components/app-detail-view/app-json-details-card/app-json-details-card.component';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
@@ -106,6 +107,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppNotesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
+    AppJsonDetailsCardComponent,
     ContainerShellComponent,
     ContainerLogsComponent,
     LogsDetailsDialogComponent,
