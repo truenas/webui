@@ -26,28 +26,28 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    data: { title: T('View Enclosure'), breadcrumb: null, isNew: true },
+    data: { title: T('View Enclosure'), breadcrumb: null },
     redirectTo: '/system/viewenclosure/',
   },
   {
     path: ':enclosure',
     component: EnclosureDashboardComponent,
-    data: { title: T('View Enclosure'), breadcrumb: null, isNew: true },
+    data: { title: T('View Enclosure'), breadcrumb: null },
     children: [
       {
         path: '',
         component: EnclosurePageComponent,
-        data: { title: T('View Enclosure'), breadcrumb: null, isNew: true },
+        data: { title: T('View Enclosure'), breadcrumb: null },
       },
       {
         path: 'mini',
         component: MiniPageComponent,
-        data: { title: T('View Enclosure'), breadcrumb: null, isNew: true },
+        data: { title: T('View Enclosure'), breadcrumb: null },
       },
       {
         path: ':view',
         component: ElementsPageComponent,
-        data: { title: T('View Enclosure'), breadcrumb: null, isNew: true },
+        data: { title: T('View Enclosure'), breadcrumb: null },
       },
     ],
   },
