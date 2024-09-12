@@ -29,9 +29,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
-import {
-  IpAddressesCellComponent,
-} from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { IpmiCardComponent } from 'app/pages/network/components/ipmi-card/ipmi-card.component';
 import {
   NetworkConfigurationCardComponent,
@@ -70,7 +67,6 @@ describe('NetworkComponent', () => {
         StaticRoutesCardComponent,
         IpmiCardComponent,
         InterfaceStatusIconComponent,
-        IpAddressesCellComponent,
       ),
     ],
     providers: [

@@ -66,7 +66,7 @@ export class JbofListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'jbof-' + row.mgmt_username,
+    uniqueRowTag: (row) => 'jbof-' + row.mgmt_username,
     ariaLabels: (row) => [row.mgmt_username, this.translate.instant('JBOF')],
   });
 

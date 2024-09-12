@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 
 @UntilDestroy()
 @Component({

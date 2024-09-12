@@ -55,7 +55,7 @@ export class DeviceListComponent implements OnInit {
     }),
     actionsColumn({}),
   ], {
-    rowTestId: (row) => 'vm-device-' + row.dtype + '-' + row.order,
+    uniqueRowTag: (row) => 'vm-device-' + row.dtype + '-' + row.order,
     ariaLabels: (row) => [row.dtype, this.translate.instant('Device')],
   });
 

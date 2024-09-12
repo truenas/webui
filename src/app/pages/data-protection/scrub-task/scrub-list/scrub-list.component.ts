@@ -92,7 +92,7 @@ export class ScrubListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'scrub-task-' + row.pool + '-' + row.description,
+    uniqueRowTag: (row) => 'scrub-task-' + row.pool + '-' + row.description,
     ariaLabels: (row) => [row.pool_name, row.description, this.translate.instant('Scrub Task')],
   });
 

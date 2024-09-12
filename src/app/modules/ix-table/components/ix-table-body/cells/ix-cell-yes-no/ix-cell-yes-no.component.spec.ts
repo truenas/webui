@@ -18,7 +18,7 @@ describe('IxCellYesNoComponent', () => {
     spectator = createComponent();
     spectator.component.propertyName = 'yesNoField';
     spectator.component.setRow({ yesNoField: true });
-    spectator.component.rowTestId = (row) => row.yesNoField.toString();
+    spectator.component.uniqueRowTag = (row) => row.yesNoField.toString();
     spectator.detectChanges();
   });
 

@@ -30,7 +30,7 @@ describe('IxCellDateComponent', () => {
       spectator = createComponent();
       spectator.component.propertyName = 'dateField';
       spectator.component.setRow({ dateField: new Date('2023-07-12 09:10:00') });
-      spectator.component.rowTestId = () => '';
+      spectator.component.uniqueRowTag = () => '';
       spectator.detectChanges();
     });
 
@@ -44,7 +44,7 @@ describe('IxCellDateComponent', () => {
       spectator = createComponent();
       spectator.component.propertyName = 'dateField';
       spectator.component.setRow({ dateField: null });
-      spectator.component.rowTestId = () => '';
+      spectator.component.uniqueRowTag = () => '';
       spectator.detectChanges();
     });
 

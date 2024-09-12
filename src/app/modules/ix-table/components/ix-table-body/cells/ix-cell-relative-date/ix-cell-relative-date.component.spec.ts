@@ -28,7 +28,7 @@ describe('IxCellRelativeDateComponent', () => {
     spectator = createComponent();
     spectator.component.propertyName = 'dateField';
     spectator.component.setRow({ dateField: new Date(new Date().getTime() - (oneDayMillis * 10)) });
-    spectator.component.rowTestId = () => '';
+    spectator.component.uniqueRowTag = () => '';
     spectator.detectChanges();
   });
 

@@ -94,7 +94,7 @@ export class TargetListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'iscsi-target-' + row.name,
+    uniqueRowTag: (row) => 'iscsi-target-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Target')],
   });
 

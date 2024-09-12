@@ -1,15 +1,15 @@
-@if (state) {
+@if (state()) {
   <button
     mat-stroked-button
     class="state-button"
     matTooltipPosition="above"
-    [ixTest]="[title, rowTestId(row), 'row-state']"
+    [ixTest]="[title, uniqueRowTag(row()), 'row-state']"
     [ngClass]="getButtonClass()"
     [matTooltip]="tooltip"
-    [attr.aria-label]="getAriaLabel(row)"
+    [attr.aria-label]="getAriaLabel(row())"
     (click)="$event.stopPropagation(); onButtonClick()"
   >
-    {{ state }}
+    {{ state() }}
     @if (warnings?.length > 0) {
       <div class="label-warning-icon">
         <ix-icon name="mdi-alert"></ix-icon>

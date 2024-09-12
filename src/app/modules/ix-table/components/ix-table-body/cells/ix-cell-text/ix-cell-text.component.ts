@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import {
+  ChangeDetectionStrategy, Component,
+} from '@angular/core';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Component({
   selector: 'ix-cell-text',

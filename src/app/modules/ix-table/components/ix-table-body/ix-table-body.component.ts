@@ -12,8 +12,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 
 @UntilDestroy()
 @Component({
@@ -61,8 +61,8 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
     });
   }
 
-  getTestAttr(row: T): string {
-    return this.columns[0]?.rowTestId(row) ?? '';
+  getRowTag(row: T): string {
+    return this.columns[0]?.uniqueRowTag(row) ?? '';
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
@@ -79,8 +79,11 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
       && (this.dataProvider?.expandedRow?.[this.detailsRowIdentifier] === row?.[this.detailsRowIdentifier]);
   }
 
-  // TODO: Come up with a proper identifier
-  protected trackByIdentity<X>(item: X): X {
-    return item;
+  protected trackRowByIdentity(item: T): string {
+    return this.getRowTag(item);
+  }
+
+  protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>): Column<T, ColumnComponent<T>> {
+    return column;
   }
 }

@@ -21,7 +21,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -121,7 +121,7 @@ export class CloudSyncListComponent implements OnInit {
       propertyName: 'enabled',
     }),
   ], {
-    rowTestId: (row) => 'cloudsync-task-' + row.description,
+    uniqueRowTag: (row) => 'cloudsync-task-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 

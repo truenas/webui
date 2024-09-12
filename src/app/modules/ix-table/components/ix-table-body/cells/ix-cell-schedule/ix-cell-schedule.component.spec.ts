@@ -26,7 +26,7 @@ describe('IxCellScheduleComponent', () => {
     spectator = createComponent();
     spectator.component.propertyName = 'scheduleField';
     spectator.component.setRow({ scheduleField: schedule });
-    spectator.component.rowTestId = () => '';
+    spectator.component.uniqueRowTag = () => '';
     spectator.detectChanges();
   });
 

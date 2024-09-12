@@ -73,7 +73,7 @@ export class NtpServerCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'ntp-server-' + row.address + '-' + row.minpoll + '-' + row.maxpoll,
+    uniqueRowTag: (row) => 'ntp-server-' + row.address + '-' + row.minpoll + '-' + row.maxpoll,
     ariaLabels: (row) => [row.address, this.translate.instant('NTP Server')],
   });
 

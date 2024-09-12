@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -14,6 +15,7 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   CloudBackupCardComponent,
@@ -67,6 +69,19 @@ describe('CloudBackupCardComponent', () => {
         open: jest.fn(() => of({
           response: true,
         })),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectJobs,
+            value: [{
+              state: JobState.Finished,
+              time_finished: {
+                $date: new Date().getTime() - 50000,
+              },
+            }],
+          },
+        ],
       }),
     ],
   });

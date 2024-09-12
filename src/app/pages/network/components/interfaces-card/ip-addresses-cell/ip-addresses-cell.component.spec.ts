@@ -6,9 +6,9 @@ import {
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 
 describe('IpAddressesCellComponent', () => {
-  let spectator: Spectator<IpAddressesCellComponent>;
+  let spectator: Spectator<IpAddressesCellComponent<NetworkInterface>>;
   const createComponent = createComponentFactory({
-    component: IpAddressesCellComponent,
+    component: IpAddressesCellComponent<NetworkInterface>,
   });
 
   beforeEach(() => {

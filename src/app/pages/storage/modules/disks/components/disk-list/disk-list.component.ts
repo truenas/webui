@@ -19,7 +19,7 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -133,7 +133,7 @@ export class DiskListComponent implements OnInit {
       hidden: true,
     }),
   ], {
-    rowTestId: (row) => `disk-${row.name}`,
+    uniqueRowTag: (row) => `disk-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
   });
 

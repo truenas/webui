@@ -86,7 +86,7 @@ export class InitiatorListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'iscsi-initiator-' + row.id,
+    uniqueRowTag: (row) => 'iscsi-initiator-' + row.id,
     ariaLabels: (row) => [row.id.toString(), this.translate.instant('iSCSI Initiator')],
   });
 
