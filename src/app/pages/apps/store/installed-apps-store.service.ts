@@ -136,8 +136,8 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
           };
         });
 
-        const updateApps = (appsToUpdate: AvailableApp[]): AvailableApp[] => appsToUpdate.map((appData) => {
-          return app.name === app.id ? { ...appData, installed: true } : appData;
+        const updateApps = (appsToUpdate: AvailableApp[]): AvailableApp[] => appsToUpdate.map((installedApp) => {
+          return installedApp.name === app.id ? { ...installedApp, installed: true } : installedApp;
         });
 
         this.appsStore.patchState((state) => {
