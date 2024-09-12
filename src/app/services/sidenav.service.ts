@@ -1,12 +1,11 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Inject, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { take, filter, distinctUntilChanged } from 'rxjs';
-import { WINDOW } from 'app/helpers/window.helper';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AppsState } from 'app/store';
@@ -22,6 +21,7 @@ export const collapsedMenuClass = 'collapsed-menu';
 export class SidenavService {
   sidenav: MatSidenav;
   isOpen = true;
+  // TODO: How is this different from isMenuCollapsed?
   isCollapsed = false;
   mode: MatDrawerMode = 'over';
   isOpenSecondaryMenu = false;
@@ -64,7 +64,6 @@ export class SidenavService {
     private breakpointObserver: BreakpointObserver,
     private store$: Store<AppsState>,
     private actions$: Actions,
-    @Inject(WINDOW) private window: Window,
   ) {
     this.listenForScreenSizeChanges();
     this.listenForRouteChanges();
