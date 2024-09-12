@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -14,7 +14,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @NgModule({
   imports: [
-    CommonModule,
     EntityModule,
     TranslateModule,
     CommonDirectivesModule,
@@ -24,6 +23,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     ToolbarSliderComponent,
     TooltipComponent,
     PageHeaderModule,
+    NgStyle,
   ],
   declarations: [
     TerminalComponent,

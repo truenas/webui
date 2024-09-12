@@ -1,5 +1,5 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,7 +31,6 @@ import { ApiKeyComponentStore } from './store/api-key.store';
 
 @NgModule({
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     ClipboardModule,
     EntityModule,
@@ -52,6 +51,7 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     IxCheckboxComponent,
     FormActionsComponent,
     PageHeaderModule,
+    AsyncPipe,
   ],
   declarations: [
     ApiKeyListComponent,

@@ -1,5 +1,7 @@
 import { CdkPortalOutlet } from '@angular/cdk/portal';
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, NgClass, NgStyle, NgTemplateOutlet,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -78,7 +80,6 @@ const components = [
 
 @NgModule({
   imports: [
-    CommonModule,
     IxIconModule,
     MatProgressSpinnerModule,
     MatButtonModule,
@@ -98,6 +99,10 @@ const components = [
     ScheduleToCrontabPipe,
     CdkPortalOutlet,
     FormatDateTimePipe,
+    AsyncPipe,
+    NgStyle,
+    NgClass,
+    NgTemplateOutlet,
   ],
   declarations: [
     ...components,

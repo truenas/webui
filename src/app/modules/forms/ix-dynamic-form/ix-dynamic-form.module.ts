@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider';
@@ -34,7 +34,6 @@ const components = [
     ...components,
   ],
   imports: [
-    CommonModule,
     TranslateModule,
     ReactiveFormsModule,
     SchedulerModule,
@@ -52,6 +51,7 @@ const components = [
     IxCheckboxComponent,
     IxIpInputWithNetmaskComponent,
     IxFieldsetComponent,
+    AsyncPipe,
   ],
   exports: [
     ...components,

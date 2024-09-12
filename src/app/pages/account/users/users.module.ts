@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -57,7 +57,6 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
   providers: [],
   imports: [
     CommonDirectivesModule,
-    CommonModule,
     EffectsModule.forFeature([UserEffects]),
     EntityModule,
     MatButtonModule,
@@ -99,6 +98,7 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     IxFileInputComponent,
     FormActionsComponent,
     PageHeaderModule,
+    AsyncPipe,
   ],
   declarations: [
     UserListComponent,

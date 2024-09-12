@@ -292,7 +292,17 @@ module.exports = {
               "name": "@angular/core",
               "importNames": ["Output"],
               "message": "Use signal output() instead."
-            }
+            },
+            {
+              "name": "@angular/common",
+              "importNames": ["NgIf"],
+              "message": "Use built-in control flow syntax instead"
+            },
+            {
+              "name": "@angular/common",
+              "importNames": ["CommonModule"],
+              "message": "Import individual constituents instead."
+            },
           ],
           "patterns": [{
             "group": [ "../**"],

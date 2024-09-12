@@ -38,7 +38,7 @@
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
     @if (selectedPool()) {
-      {{ availableSpace() | ixFileSize }}
+      {{ availableSpace$ | async | ixFileSize }}
     } @else {
       {{ 'N/A' | translate }}
     }

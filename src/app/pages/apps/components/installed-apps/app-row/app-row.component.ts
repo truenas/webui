@@ -30,13 +30,12 @@ export class AppRowComponent {
 
   readonly hasUpdates = computed(() => this.app().upgrade_available);
   readonly isAppStopped = computed(() => this.app().state === AppState.Stopped);
-
-  readonly inProgress = computed(() => {
-    return [AppState.Deploying].includes(this.app().state) || this.isStartingOrStopping();
+  readonly hasStats = computed(() => {
+    return this.app().state === AppState.Running && this.stats();
   });
 
-  readonly isStartingOrStopping = computed(() => {
-    return [AppState.Deploying, AppState.Stopping].includes(this.app().state);
+  readonly inProgress = computed(() => {
+    return [AppState.Deploying].includes(this.app().state);
   });
 
   readonly incomingTraffic = computed(() => {

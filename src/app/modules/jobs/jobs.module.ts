@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -22,7 +22,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
-    CommonModule,
     StoreModule.forFeature(jobStateKey, jobReducer),
     EffectsModule.forFeature([JobEffects]),
     CommonDirectivesModule,
@@ -37,6 +36,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TestIdModule,
     FormatDateTimePipe,
     MapValuePipe,
+    DecimalPipe,
+    AsyncPipe,
   ],
   declarations: [JobItemComponent, JobsPanelComponent],
   exports: [JobItemComponent, JobsPanelComponent],

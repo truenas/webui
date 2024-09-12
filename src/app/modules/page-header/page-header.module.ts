@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
@@ -15,13 +15,13 @@ import { NewPageBadgeComponent } from './is-new-indicator/new-page-badge.compone
 
 @NgModule({
   imports: [
-    CommonModule,
     RouterModule,
     TranslateModule,
     CommonDirectivesModule,
     TestIdModule,
     AppLoaderModule,
     MatButton,
+    AsyncPipe,
   ],
   declarations: [
     BreadcrumbComponent,

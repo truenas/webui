@@ -1,4 +1,4 @@
-import { CommonModule, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -18,10 +18,8 @@ import { SearchInputComponent } from './components/search-input/search-input.com
 
 @NgModule({
   imports: [
-    CommonModule,
     IxIconModule,
     MatInputModule,
-    NgIf,
     TestIdModule,
     TranslateModule,
     ReactiveFormsModule,
@@ -30,6 +28,7 @@ import { SearchInputComponent } from './components/search-input/search-input.com
     MatNativeDateModule,
     MatCardModule,
     MatTooltipModule,
+    AsyncPipe,
   ],
   exports: [
     SearchInputComponent,

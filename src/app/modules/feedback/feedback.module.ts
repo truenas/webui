@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,7 +33,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 @NgModule({
   imports: [
     AppLoaderModule,
-    CommonModule,
     IxIconModule,
     RouterModule,
     MatButtonModule,
@@ -54,6 +53,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxInputComponent,
     IxChipsComponent,
     IxSelectComponent,
+    AsyncPipe,
   ],
   declarations: [
     FeedbackDialogComponent,

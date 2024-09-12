@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe, PercentPipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -69,7 +71,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatTooltipModule,
     MatButtonModule,
     RouterModule,
-    CommonModule,
     MatPaginatorModule,
     IxIconModule,
     MatProgressSpinnerModule,
@@ -103,6 +104,9 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     IxModalHeaderComponent,
     IxInputComponent,
     PageHeaderModule,
+    AsyncPipe,
+    DecimalPipe,
+    PercentPipe,
   ],
   declarations: [
     PoolsDashboardComponent,

@@ -1,4 +1,6 @@
-import { CommonModule, NgComponentOutlet } from '@angular/common';
+import {
+  AsyncPipe, NgClass, NgComponentOutlet, NgTemplateOutlet, PercentPipe, TitleCasePipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -103,7 +105,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     routing,
     MatCard,
     IxIconModule,
-    CommonModule,
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,
@@ -138,6 +139,11 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     IxModalHeader2Component,
     IxInputComponent,
     CopyrightLineComponent,
+    TitleCasePipe,
+    PercentPipe,
+    AsyncPipe,
+    NgClass,
+    NgTemplateOutlet,
   ],
 })
 export class DashboardModule {
