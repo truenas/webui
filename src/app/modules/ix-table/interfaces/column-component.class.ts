@@ -1,4 +1,5 @@
 import { signal, WritableSignal } from '@angular/core';
+import { MutableKeys } from 'utility-types';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 
 export abstract class ColumnComponent<T> {
@@ -35,3 +36,5 @@ export type Column<T, C extends ColumnComponent<T>> = {
   type?: new () => C;
   headerType?: new () => C;
 } & Partial<C>;
+
+export type ColumnKeys<T> = MutableKeys<ColumnComponent<T>>;
