@@ -122,7 +122,6 @@ export const dataProtectionRoutes: Routes = [{
       data: {
         title: T('TrueCloud Backup Tasks'),
         breadcrumb: null,
-        isNew: true,
       },
       component: CloudBackupListComponent,
     },
