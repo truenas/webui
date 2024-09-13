@@ -39,7 +39,7 @@ export class SmbShareListComponent implements OnInit {
       getValue: (row) => row.signing.cipher,
     }),
   ], {
-    rowTestId: (row) => 'smb-share-' + row.server_id.unique_id + '-' + row.machine,
+    uniqueRowTag: (row) => 'smb-share-' + row.server_id.unique_id + '-' + row.machine,
     ariaLabels: (row) => [row.machine, this.translate.instant('SMB Share')],
   });
 

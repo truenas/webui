@@ -120,7 +120,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'replication-task-' + row.name,
+    uniqueRowTag: (row) => 'replication-task-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
   });
 

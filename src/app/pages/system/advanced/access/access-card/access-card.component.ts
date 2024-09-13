@@ -88,7 +88,7 @@ export class AccessCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'session-' + this.getUsername(row) + '-' + row.origin,
+    uniqueRowTag: (row) => 'session-' + this.getUsername(row) + '-' + row.origin,
     ariaLabels: (row) => [this.getUsername(row), this.translate.instant('Session')],
   });
 

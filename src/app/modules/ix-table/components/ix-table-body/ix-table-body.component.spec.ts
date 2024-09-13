@@ -52,7 +52,7 @@ const columns = createTable<TestTableData>([
     onRowToggle: () => jest.fn(),
   }),
 ], {
-  rowTestId: (row) => 'row-' + row.numberField.toString(),
+  uniqueRowTag: (row) => 'row-' + row.numberField.toString(),
   ariaLabels: (row) => ['Column', row.stringField],
 });
 

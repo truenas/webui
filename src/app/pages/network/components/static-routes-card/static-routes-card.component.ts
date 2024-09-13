@@ -59,7 +59,7 @@ export class StaticRoutesCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'static-route-' + row.destination + '-' + row.gateway,
+    uniqueRowTag: (row) => 'static-route-' + row.destination + '-' + row.gateway,
     ariaLabels: (row) => [row.description, this.translate.instant('Static Route')],
   });
 

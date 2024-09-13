@@ -28,7 +28,7 @@ const columns = createTable<TestTableData>([
     disableSorting: true,
   }),
 ], {
-  rowTestId: (row) => 'row' + row.numberField.toString(),
+  uniqueRowTag: (row) => 'row' + row.numberField.toString(),
   ariaLabels: (row) => ['Column', row.stringField],
 });
 

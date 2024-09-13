@@ -23,7 +23,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -113,8 +113,8 @@ export class ReplicationListComponent implements OnInit {
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
-      getJob: (row) => row.job,
       cssClass: 'state-button',
+      getJob: (row) => row.job,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -131,7 +131,7 @@ export class ReplicationListComponent implements OnInit {
       },
     }),
   ], {
-    rowTestId: (row) => 'replication-task-' + row.name,
+    uniqueRowTag: (row) => 'replication-task-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
   });
 

@@ -88,7 +88,7 @@ export class SnapshotTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'snapshot-task-' + row.dataset + '-' + row.state.state,
+    uniqueRowTag: (row) => 'snapshot-task-' + row.dataset + '-' + row.state.state,
     ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
   });
 

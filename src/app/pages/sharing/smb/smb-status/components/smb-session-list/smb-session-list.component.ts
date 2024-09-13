@@ -43,7 +43,7 @@ export class SmbSessionListComponent implements OnInit {
       getValue: (row) => row.signing.cipher,
     }),
   ], {
-    rowTestId: (row) => 'smb-session-' + row.session_id,
+    uniqueRowTag: (row) => 'smb-session-' + row.session_id,
     ariaLabels: (row) => [row.hostname, this.translate.instant('SMB Session')],
   });
 

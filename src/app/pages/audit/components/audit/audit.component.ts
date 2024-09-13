@@ -97,7 +97,7 @@ export class AuditComponent implements OnInit, OnDestroy {
       getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
   ], {
-    rowTestId: (row) => 'audit-' + row.service + '-' + row.username + '-' + row.event,
+    uniqueRowTag: (row) => 'audit-' + row.service + '-' + row.username + '-' + row.event,
     ariaLabels: (row) => [row.service, row.username, row.event, this.translate.instant('Audit Entry')],
   });
 

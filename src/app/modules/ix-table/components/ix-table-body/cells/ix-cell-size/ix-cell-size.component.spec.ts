@@ -18,7 +18,7 @@ describe('IxCellSizeComponent', () => {
     spectator = createComponent();
     spectator.component.propertyName = 'numberField';
     spectator.component.setRow({ numberField: 5 * 1024 * 1024 * 1024 });
-    spectator.component.rowTestId = () => '';
+    spectator.component.uniqueRowTag = () => '';
     spectator.detectChanges();
   });
 

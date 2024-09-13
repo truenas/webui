@@ -60,7 +60,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'cloud-cred-' + row.name,
+    uniqueRowTag: (row) => 'cloud-cred-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Cloud Credential')],
   });
 
