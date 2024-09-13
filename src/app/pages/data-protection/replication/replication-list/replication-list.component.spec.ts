@@ -25,7 +25,7 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -122,8 +122,8 @@ describe('ReplicationListComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectJob(1),
-            value: {} as Job,
+            selector: selectJobs,
+            value: [{ id: 2, state: JobState.Success } as Job],
           },
           {
             selector: selectSystemConfigState,

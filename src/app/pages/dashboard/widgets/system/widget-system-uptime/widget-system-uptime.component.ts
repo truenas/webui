@@ -41,13 +41,9 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
   });
 
   datetime = computed(() => {
-    const [dateValue, timeValue] = this.localeService.getDateAndTime();
-    const extractedDate = this.localeService.getDateFromString(
-      `${dateValue} ${timeValue}`,
-      this.loadedSystemInfo().timezone,
-    );
-
-    return extractedDate.getTime() + (this.realElapsedSeconds() * 1000);
+    this.realElapsedSeconds();
+    const [, timeValue] = this.localeService.getDateAndTime();
+    return `${timeValue.split(':')[0]}:${timeValue.split(':')[1]}`;
   });
 
   constructor(

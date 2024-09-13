@@ -63,7 +63,7 @@ export class UserListComponent implements OnInit {
         .join(', ') || this.translate.instant('N/A'),
     }),
   ], {
-    rowTestId: (row) => 'user-' + row.username,
+    uniqueRowTag: (row) => 'user-' + row.username,
     ariaLabels: (row) => [row.username, this.translate.instant('User')],
   });
 

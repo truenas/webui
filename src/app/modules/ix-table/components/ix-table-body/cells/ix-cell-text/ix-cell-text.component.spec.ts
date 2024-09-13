@@ -18,7 +18,7 @@ describe('IxCellTextComponent', () => {
     spectator = createComponent();
     spectator.component.propertyName = 'stringField';
     spectator.component.setRow({ stringField: 'text in cell' });
-    spectator.component.rowTestId = (row) => 'text-' + row.stringField.toString();
+    spectator.component.uniqueRowTag = (row) => 'text-' + row.stringField.toString();
     spectator.detectChanges();
   });
 

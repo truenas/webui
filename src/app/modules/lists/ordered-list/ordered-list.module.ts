@@ -1,5 +1,4 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
@@ -14,7 +13,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 @NgModule({
   declarations: [OrderedListboxComponent],
   imports: [
-    CommonModule,
     MatButtonModule,
     MatListModule,
     IxIconModule,

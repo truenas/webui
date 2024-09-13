@@ -102,7 +102,7 @@ export class CertificateAuthorityListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'ca-' + row.name,
+    uniqueRowTag: (row) => 'ca-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Certificate Authority')],
   });
 

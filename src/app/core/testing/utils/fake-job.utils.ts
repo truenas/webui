@@ -13,6 +13,7 @@ export function fakeSuccessfulJob<T = void, A = unknown[]>(
     exception: '',
     id: 0,
     result: jobResult,
+    time_finished: { $date: 12345678900 },
     state: JobState.Success,
   } as Job<T, A>;
 }

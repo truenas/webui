@@ -17,7 +17,9 @@ import {
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ResizedEvent } from 'angular-resize-event';
-import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
+import {
+  animationFrameScheduler, asapScheduler, BehaviorSubject,
+} from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';

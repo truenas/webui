@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,7 +21,6 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
 @NgModule({
   imports: [
     ReactiveFormsModule,
-    CommonModule,
     AppLoaderModule,
     MatCardModule,
     MatProgressBarModule,
@@ -36,6 +35,7 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
     CommonDirectivesModule,
     routing,
     IxWarningComponent,
+    AsyncPipe,
   ],
   declarations: [
     TwoFactorComponent,

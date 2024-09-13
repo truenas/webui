@@ -50,7 +50,7 @@ export class IpmiCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'ipmi-' + row.channel + '-' + row.ip_address,
+    uniqueRowTag: (row) => 'ipmi-' + row.channel + '-' + row.ip_address,
     ariaLabels: (row) => [row.ip_address, this.translate.instant('IPMI')],
   });
 

@@ -61,7 +61,7 @@ export class ElementsPageComponent {
       }),
     ],
     {
-      rowTestId: (element) => element.descriptor,
+      uniqueRowTag: (element) => element.descriptor,
       ariaLabels: (row) => [row.descriptor, this.translate.instant('Element')],
     },
   );

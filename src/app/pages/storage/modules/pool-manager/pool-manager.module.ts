@@ -1,5 +1,7 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, KeyValuePipe, NgClass,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -78,7 +80,6 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     IxIconModule,
     MatButtonModule,
     MatCardModule,
-    CommonModule,
     MatDialogModule,
     MatStepperModule,
     MatDividerModule,
@@ -88,7 +89,6 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     DndModule,
     RouterModule.forChild(routes),
     TranslateModule,
-    CommonModule,
     TestIdModule,
     AppLoaderModule,
     NgxSkeletonLoaderModule,
@@ -107,6 +107,9 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     IxLabelComponent,
     IxCheckboxComponent,
     IxInputComponent,
+    AsyncPipe,
+    KeyValuePipe,
+    NgClass,
   ],
   declarations: [
     PoolManagerComponent,

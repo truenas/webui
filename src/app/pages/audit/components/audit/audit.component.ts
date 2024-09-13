@@ -33,7 +33,6 @@ import {
   searchProperties,
   textProperty,
 } from 'app/modules/forms/search-input/utils/search-properties.utils';
-import { AuditApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/audit-api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
@@ -42,6 +41,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { auditElements } from 'app/pages/audit/components/audit/audit.elements';
+import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -97,7 +97,7 @@ export class AuditComponent implements OnInit, OnDestroy {
       getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
   ], {
-    rowTestId: (row) => 'audit-' + row.service + '-' + row.username + '-' + row.event,
+    uniqueRowTag: (row) => 'audit-' + row.service + '-' + row.username + '-' + row.event,
     ariaLabels: (row) => [row.service, row.username, row.event, this.translate.instant('Audit Entry')],
   });
 

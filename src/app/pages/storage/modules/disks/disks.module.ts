@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, PercentPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -43,7 +43,6 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
 
 @NgModule({
   imports: [
-    CommonModule,
     TranslateModule,
     ReactiveFormsModule,
     MatButtonModule,
@@ -69,6 +68,8 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     FormActionsComponent,
     IxWarningComponent,
     IxChipsComponent,
+    PercentPipe,
+    AsyncPipe,
   ],
   declarations: [
     DiskBulkEditComponent,

@@ -5,7 +5,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash-es';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @UntilDestroy()
 @Component({

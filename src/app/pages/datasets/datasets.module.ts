@@ -1,5 +1,5 @@
 import { CdkTreeNodePadding } from '@angular/cdk/tree';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, PercentPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -66,7 +66,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
 
 @NgModule({
   imports: [
-    CommonModule,
     CommonDirectivesModule,
     BaseChartDirective,
     routing,
@@ -108,6 +107,8 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxTextareaComponent,
     PageHeaderModule,
     IxWarningComponent,
+    AsyncPipe,
+    PercentPipe,
   ],
   declarations: [
     DatasetsManagementComponent,

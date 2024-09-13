@@ -67,7 +67,7 @@ export class SysctlCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'sysctl-' + row.var + '-' + row.value,
+    uniqueRowTag: (row) => 'sysctl-' + row.var + '-' + row.value,
     ariaLabels: (row) => [row.var, this.translate.instant('Sysctl')],
   });
 

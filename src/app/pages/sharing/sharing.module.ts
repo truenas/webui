@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, LowerCasePipe, NgClass,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -85,7 +87,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
 
 @NgModule({
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     routing,
     EntityModule,
@@ -126,6 +127,9 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     IxIpInputWithNetmaskComponent,
     IxErrorsComponent,
     PageHeaderModule,
+    AsyncPipe,
+    LowerCasePipe,
+    NgClass,
   ],
   declarations: [
     NfsListComponent,

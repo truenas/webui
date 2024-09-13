@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, input,
 } from '@angular/core';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Component({
   selector: 'ix-table-details-row',

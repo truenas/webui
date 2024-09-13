@@ -1,9 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, effect, inject, OnInit, signal,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { select, Store } from '@ngrx/store';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, Observable } from 'rxjs';
+import {
+  catchError, EMPTY, Observable, tap,
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextGlobal } from 'app/helptext/global-helptext';
@@ -11,7 +15,7 @@ import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directo
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -31,31 +35,60 @@ interface RowState {
   styleUrls: ['./ix-cell-state-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
+export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements OnInit {
   matDialog: MatDialog = inject(MatDialog);
   translate: TranslateService = inject(TranslateService);
   dialogService: DialogService = inject(DialogService);
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
 
+  private readonly rowUpdateEffect = effect(() => {
+    const row = this.row();
+    const job = !row || !this.getJob ? undefined : this.getJob(row);
+
+    if (!job) {
+      return;
+    }
+
+    this.state.set(job.state);
+  }, {
+    allowSignalWrites: true,
+  });
+
+  getJob: (row: T) => Job;
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
+  job = signal<Job>(null);
+  jobUpdates$: Observable<Job<ApiJobResponse<ApiJobMethod>>>;
+  state = signal<JobState>(null);
+
+  ngOnInit(): void {
+    if (this.getJob) {
+      const job = this.getJob(this.row());
+      this.job.set(job);
+      if (job?.state) {
+        this.state.set(job.state);
+      }
+    }
+    if (!this.job()) {
+      this.state.set(this.value as JobState);
+      return;
+    }
+    const jobId = this.getJob(this.row()).id;
+    this.jobUpdates$ = this.store$.select(selectJob(jobId)).pipe(
+      tap((job) => {
+        this.job.set(job);
+        this.state.set(job.state);
+      }),
+    ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>;
+  }
 
   getWarnings?: (row: T) => unknown[];
-  getJob?: (row: T) => Job;
 
   protected get warnings(): unknown[] {
-    return this.getWarnings ? this.getWarnings(this.row) : [];
-  }
-
-  protected get job(): Job {
-    return this.getJob ? this.getJob(this.row) : undefined;
-  }
-
-  protected get state(): JobState {
-    return this.value as JobState;
+    return this.getWarnings ? this.getWarnings(this.row()) : [];
   }
 
   protected get tooltip(): string {
-    if (this.job?.logs_path && this.job?.logs_excerpt) {
+    if (this.job()?.logs_path && this.job()?.logs_excerpt) {
       return this.translate.instant('Show Logs');
     }
 
@@ -63,52 +96,62 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
   }
 
   protected onButtonClick(): void {
-    let state = (this.row as RowState).state;
+    const state: RowState['state'] = {
+      state: this.state(),
+      error: this.job()?.error,
+    } as RowState['state'];
 
-    if (this.job?.state && !state) {
-      state = {
-        state: this.job.state,
-        error: this.job.error,
-      } as RowState['state'];
-    }
-
-    if (this.job && state) {
-      if (this.job.state === JobState.Running) {
-        this.dialogService.jobDialog(
-          this.store$.pipe(
-            select(selectJob(this.job.id)),
-            observeJob(),
-          ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>,
-          {
-            title: this.translate.instant('Task is running'),
-            canMinimize: true,
-          },
-        ).afterClosed().pipe(
-          catchError((error) => {
-            this.errorHandler.showErrorModal(error);
-            return EMPTY;
-          }),
-        // TODO: Remove this ignore eslint lint line and add takeUntil (untilDestroyed)
-        // eslint-disable-next-line rxjs-angular/prefer-takeuntil
-        ).subscribe();
-      } else if (state.state === JobState.Hold) {
-        this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
-      } else if (state.warnings?.length > 0) {
-        let list = '';
-        state.warnings.forEach((warning: string) => {
-          list += warning + '\n';
-        });
-        this.dialogService.error({ title: state.state, message: `<pre>${list}</pre>` });
-      } else if (state.error) {
-        this.dialogService.error({ title: state.state, message: `<pre>${state.error}</pre>` });
-      } else if (!this.job.logs_excerpt) {
-        this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
-      } else {
-        this.matDialog.open(ShowLogsDialogComponent, { data: this.job });
-      }
-    } else {
+    if (!state.state) {
       this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
+      return;
     }
+
+    if (state.state === JobState.Running) {
+      this.showJobDialog();
+      return;
+    }
+
+    if (state.state === JobState.Hold) {
+      this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
+      return;
+    }
+
+    if (state.warnings?.length > 0) {
+      let list = '';
+      state.warnings.forEach((warning: string) => {
+        list += warning + '\n';
+      });
+      this.dialogService.error({ title: state.state, message: `<pre>${list}</pre>` });
+      return;
+    }
+
+    if (state.error) {
+      this.dialogService.error({ title: state.state, message: `<pre>${state.error}</pre>` });
+      return;
+    }
+
+    if (this.job()?.logs_excerpt) {
+      this.matDialog.open(ShowLogsDialogComponent, { data: this.job() });
+      return;
+    }
+
+    this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
+  }
+
+  showJobDialog(): void {
+    this.dialogService.jobDialog(
+      this.jobUpdates$.pipe(observeJob()),
+      {
+        title: this.translate.instant('Task is running'),
+        canMinimize: true,
+      },
+    ).afterClosed().pipe(
+      catchError((error) => {
+        this.errorHandler.showErrorModal(error);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   protected getButtonClass(): string {
@@ -117,7 +160,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
       return 'fn-theme-orange';
     }
 
-    switch (this.state) {
+    switch (this.state()) {
       case JobState.Pending:
       case JobState.Aborted:
       case JobState.Running:

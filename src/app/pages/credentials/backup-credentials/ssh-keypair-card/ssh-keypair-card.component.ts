@@ -61,7 +61,7 @@ export class SshKeypairCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'ssh-keypair-' + row.name,
+    uniqueRowTag: (row) => 'ssh-keypair-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('SSH Key Pair')],
   });
 

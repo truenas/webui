@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -29,7 +29,6 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
     TruecommandButtonComponent,
   ],
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     CommonDirectivesModule,
     TranslateModule,
@@ -42,6 +41,7 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
     TestIdModule,
     IxInputComponent,
     IxCheckboxComponent,
+    NgClass,
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),

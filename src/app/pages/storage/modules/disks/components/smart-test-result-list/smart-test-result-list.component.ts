@@ -16,7 +16,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -70,7 +70,7 @@ export class SmartTestResultListComponent implements OnInit {
       },
     }),
   ], {
-    rowTestId: (row) => `smart-test-result-${row.disk}-${row.num}`,
+    uniqueRowTag: (row) => `smart-test-result-${row.disk}-${row.num}`,
     ariaLabels: (row) => [row.disk, this.translate.instant('Smart Test Result')],
   });
 

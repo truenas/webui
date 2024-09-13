@@ -19,7 +19,7 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import {
   toggleColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { vmListElements } from 'app/pages/vm/vm-list/vm-list.elements';
@@ -121,7 +121,7 @@ export class VmListComponent implements OnInit {
       getValue: (row) => `${row.shutdown_timeout} seconds`,
     }),
   ], {
-    rowTestId: (row) => 'virtual-machine-' + row.name,
+    uniqueRowTag: (row) => 'virtual-machine-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Virtual Machine')],
   });
 

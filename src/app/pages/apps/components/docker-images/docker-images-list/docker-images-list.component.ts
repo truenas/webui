@@ -92,7 +92,7 @@ export class DockerImagesListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'container-image-' + row.id,
+    uniqueRowTag: (row) => 'container-image-' + row.id,
     ariaLabels: (row) => [row.id, this.translate.instant('Docker Image')],
   });
 

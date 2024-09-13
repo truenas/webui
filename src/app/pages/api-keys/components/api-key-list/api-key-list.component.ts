@@ -66,7 +66,7 @@ export class ApiKeyListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'api-key-' + row.name + '-' + row.created_at.$date,
+    uniqueRowTag: (row) => 'api-key-' + row.name + '-' + row.created_at.$date,
     ariaLabels: (row) => [row.name, this.translate.instant('Api Key')],
   });
 

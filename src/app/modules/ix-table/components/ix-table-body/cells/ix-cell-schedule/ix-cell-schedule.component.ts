@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Component({
   selector: 'ix-cell-schedule',

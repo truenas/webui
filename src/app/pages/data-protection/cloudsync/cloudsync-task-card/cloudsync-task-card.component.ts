@@ -77,7 +77,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
-      getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     actionsColumn({
@@ -123,7 +122,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-cloudsync-task-' + row.description,
+    uniqueRowTag: (row) => 'card-cloudsync-task-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 
