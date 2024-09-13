@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, Inject, input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, Inject, input, OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -73,6 +73,14 @@ export class SigninFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {
+    effect(() => {
+      if (this.isFormDisabled()) {
+        this.form.disable();
+      } else {
+        this.form.enable();
+      }
+    });
+
     if (this.window.location.protocol !== 'https:') {
       this.showSecurityWarning = true;
     }
