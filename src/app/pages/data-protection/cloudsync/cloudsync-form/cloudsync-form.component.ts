@@ -7,7 +7,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Observable, forkJoin, of } from 'rxjs';
 import {
   filter, map, pairwise, startWith, tap,
@@ -151,6 +151,7 @@ export class CloudSyncFormComponent implements OnInit {
     { label: 'One Zone-IA', value: 'ONEZONE_IA' },
     { label: 'Intelligent-Tiering', value: 'INTELLIGENT_TIERING' },
     { label: 'Glacier', value: 'GLACIER' },
+    { label: 'Glacier Instant Retrieval', value: 'GLACIER_IR' },
     { label: 'Glacier Deep Archive', value: 'DEEP_ARCHIVE' },
   ]);
 

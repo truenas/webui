@@ -10,7 +10,7 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @Injectable({
@@ -21,7 +21,7 @@ export class GpuService {
 
   constructor(
     private ws: WebSocketService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
   ) {}
 
   /**

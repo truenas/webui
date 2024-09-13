@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -14,9 +13,11 @@ import {
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -51,9 +52,8 @@ describe('TargetFormComponent', () => {
   const createComponent = createComponentFactory({
     component: TargetFormComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
-      FlexLayoutModule,
+      IxIpInputWithNetmaskComponent,
     ],
     providers: [
       mockProvider(IxSlideInService),
@@ -187,7 +187,6 @@ describe('TargetFormComponent', () => {
       await form.fillForm({
         'Target Name': 'name_new',
         'Target Alias': 'alias_new',
-        'Target Mode': 'iSCSI',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -233,8 +232,8 @@ describe('TargetFormComponent', () => {
       expect(websocket.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
 
       expect(portal).toEqual([
-        { label: '11 (comment_1)', value: 1 },
-        { label: '22 (comment_2)', value: 2 },
+        { label: '1 (comment_1)', value: 1 },
+        { label: '2 (comment_2)', value: 2 },
       ]);
 
       expect(initiator).toEqual([

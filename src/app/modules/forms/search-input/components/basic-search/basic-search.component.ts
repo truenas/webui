@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild,
+  ChangeDetectionStrategy, Component, ElementRef, Input, output, ViewChild,
 } from '@angular/core';
 
 @Component({
@@ -13,9 +13,9 @@ export class BasicSearchComponent implements AfterViewInit {
   @Input() query: string;
   @Input() allowAdvanced = false;
 
-  @Output() switchToAdvanced = new EventEmitter<void>();
-  @Output() queryChange = new EventEmitter<string>();
-  @Output() runSearch = new EventEmitter<void>();
+  readonly switchToAdvanced = output();
+  readonly queryChange = output<string>();
+  readonly runSearch = output();
 
   @ViewChild('searchControl') searchControl: ElementRef<HTMLInputElement>;
 

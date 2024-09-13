@@ -19,6 +19,7 @@ import {
   CloudBackupSnapshot,
   CloudBackupSnapshotDirectoryFileType,
   SnapshotIncludeExclude,
+  snapshotIncludeExcludeOptions,
 } from 'app/interfaces/cloud-backup.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -44,13 +45,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   fileNodeProvider: TreeNodeProvider;
   snapshotNodeProvider: TreeNodeProvider;
 
-  readonly includeExcludeOptions = new Map<SnapshotIncludeExclude, string>([
-    [SnapshotIncludeExclude.IncludeEverything, this.translate.instant('Include everything')],
-    [SnapshotIncludeExclude.IncludeFromSubFolder, this.translate.instant('Include from subfolder')],
-    [SnapshotIncludeExclude.ExcludePaths, this.translate.instant('Select paths to exclude')],
-    [SnapshotIncludeExclude.ExcludeByPattern, this.translate.instant('Exclude by pattern')],
-  ]);
-  readonly includeExcludeOptions$ = of(mapToOptions(this.includeExcludeOptions, this.translate));
+  readonly includeExcludeOptions$ = of(mapToOptions(snapshotIncludeExcludeOptions, this.translate));
 
   get title(): string {
     return this.translate.instant('Restore from Snapshot');
@@ -61,7 +56,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     includeExclude: [SnapshotIncludeExclude.IncludeEverything, Validators.required],
     excludedPaths: [[] as string[], Validators.required],
     excludePattern: [null as string | null, Validators.required],
-    subFolder: [mntPath],
+    subFolder: [this.data.backup.path],
     includedPaths: [[] as string[]],
   });
 
@@ -105,24 +100,27 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
+    const subfolder = this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.data.backup.path;
+
     const options = {
       exclude: this.isExcludeByPatternSelected
         ? [this.form.controls.excludePattern.value]
-        : this.form.controls.excludedPaths.value,
-      include: this.isIncludeFromSubfolderSelected ? this.form.value.includedPaths : null,
+        : this.form.controls.excludedPaths.value.map((path) => path.replace(subfolder, '') || '/'),
+      include: this.isIncludeFromSubfolderSelected
+        ? this.form.value.includedPaths.map((path) => path.replace(subfolder, '') || '/')
+        : null,
     };
 
     if (!options.exclude?.length) delete options.exclude;
     if (!options.include?.length) delete options.include;
 
-    const params = [
+    const params: CloudBackupRestoreParams = [
       this.data.backup.id,
       this.data.snapshot.id,
-      this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : '/',
+      subfolder,
       this.form.controls.target.value,
       options,
-    ] as CloudBackupRestoreParams;
-
+    ];
     this.ws.job('cloud_backup.restore', params)
       .pipe(untilDestroyed(this))
       .subscribe({

@@ -1,9 +1,29 @@
+@import 'scss-imports/cssvars';
+
 .pool-info-top {
   background: var(--bg1);
   border-radius: 2px;
   display: flex;
   height: 190px;
   padding: 12px;
+}
+
+.pool-name {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  span {
+    &.stats {
+      display: none;
+
+      @media (max-width: $breakpoint-xs) {
+        display: block;
+        font-size: 20px;
+        font-weight: normal;
+      }
+    }
+  }
 }
 
 .pool-info-top .left {
@@ -23,12 +43,16 @@
   .lines {
     display: flex;
     flex-direction: column;
-    font-size: 13px;
+    font-size: 12px;
     gap: 10px;
 
     .line {
       display: flex;
       height: initial;
+
+      &.pool-usage {
+        display: none;
+      }
     }
 
     .label {

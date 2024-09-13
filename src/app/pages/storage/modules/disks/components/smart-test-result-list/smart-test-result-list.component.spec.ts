@@ -43,7 +43,7 @@ describe('SmartTestResultListComponent', () => {
       remaining: null,
     },
     {
-      num: 1,
+      num: 3,
       description: 'Background short',
       status_verbose: 'Completed',
       segment_number: null,
@@ -75,7 +75,7 @@ describe('SmartTestResultListComponent', () => {
       remaining: null,
     },
     {
-      num: 1,
+      num: 3,
       description: 'Background short',
       status_verbose: 'Completed',
       segment_number: null,

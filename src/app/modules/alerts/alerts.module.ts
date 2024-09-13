@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -23,7 +23,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
-    CommonModule,
     StoreModule.forFeature(alertStateKey, alertReducer),
     EffectsModule.forFeature([AlertEffects]),
     TranslateModule,
@@ -39,6 +38,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatRippleModule,
     TestIdModule,
     FormatDateTimePipe,
+    AsyncPipe,
   ],
   declarations: [
     AlertsPanelComponent,

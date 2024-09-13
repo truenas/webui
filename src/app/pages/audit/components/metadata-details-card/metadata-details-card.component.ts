@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 
 @Component({
@@ -8,5 +10,5 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MetadataDetailsCardComponent {
-  @Input() log: AuditEntry;
+  readonly log = input.required<AuditEntry>();
 }

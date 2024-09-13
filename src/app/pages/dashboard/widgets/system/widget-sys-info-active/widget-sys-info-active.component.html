@@ -93,6 +93,7 @@
                 <div class="copy-version-text" [matTooltip]="version()">
                   <span>
                     {{ version() }}
+                    {{ rendered() }}
                   </span>
                 </div>
                 <ix-copy-button [text]="version()"></ix-copy-button>
@@ -157,7 +158,7 @@
             <strong>{{ 'Uptime' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
-                {{ uptime() | uptime: (datetime() | formatDateTime:' ':'HH:mm') }}
+                {{ uptime() | uptime: datetime() }}
               </span>
             } @else {
               <ngx-skeleton-loader

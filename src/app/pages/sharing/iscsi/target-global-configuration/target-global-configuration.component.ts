@@ -12,7 +12,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -53,7 +53,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     private ws: WebSocketService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private dialogService: DialogService,

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,12 +9,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
 import { routing } from './audit.routing';
@@ -24,12 +23,9 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
 
 @NgModule({
   imports: [
-    CommonModule,
-    LayoutModule,
     MatButtonModule,
     TestIdModule,
     TranslateModule,
-    IxFormsModule,
     MatCardModule,
     IxIconModule,
     ReactiveFormsModule,
@@ -42,6 +38,9 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     routing,
     ExportButtonComponent,
     CopyButtonComponent,
+    PageHeaderModule,
+    NgTemplateOutlet,
+    AsyncPipe,
   ],
   exports: [],
   declarations: [

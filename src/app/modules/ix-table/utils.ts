@@ -1,5 +1,5 @@
-import { get } from 'lodash';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { get } from 'lodash-es';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 
 function convertStringToId(inputString: string): string {
@@ -14,13 +14,17 @@ function convertStringToId(inputString: string): string {
 
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
-  config: { rowTestId: (row: T) => string; ariaLabels: (row: T) => string[] },
+  config: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
 ): Column<T, ColumnComponent<T>>[] {
-  return columns.map((column) => ({
-    ...column,
-    rowTestId: (row) => convertStringToId(config.rowTestId(row)),
-    ariaLabels: (row) => config.ariaLabels(row),
-  }));
+  return columns.map((column) => {
+    const uniqueRowTag = (row: T): string => convertStringToId(config.uniqueRowTag(row));
+    const ariaLabels = (row: T): string[] => config.ariaLabels(row);
+    return {
+      ...column,
+      uniqueRowTag,
+      ariaLabels,
+    };
+  });
 }
 
 export function filterTableRows<T>(filter: TableFilter<T>): T[] {

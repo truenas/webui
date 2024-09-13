@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { isValid } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { LocaleService } from 'app/services/locale.service';
 

@@ -11,7 +11,6 @@ import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-we
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -34,7 +33,6 @@ describe('PoolManagerComponent – create pool', () => {
   const createComponent = createComponentFactory({
     component: PoolManagerComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       MatStepperModule,
       FileSizePipe,
@@ -236,24 +234,24 @@ describe('PoolManagerComponent – create pool', () => {
         name: 'pool1',
         topology: {
           cache: [{
-            disks: ['sda3'],
-            type: 'STRIPE',
-          }],
-          data: [{
-            disks: ['sda0'],
-            type: 'STRIPE',
-          }],
-          dedup: [{
-            disks: ['sda1'],
-            type: 'STRIPE',
-          }],
-          log: [{
             disks: ['sda2'],
             type: 'STRIPE',
           }],
-          spares: ['sda5'],
-          special: [{
+          data: [{
+            disks: ['sda3'],
+            type: 'STRIPE',
+          }],
+          dedup: [{
             disks: ['sda6'],
+            type: 'STRIPE',
+          }],
+          log: [{
+            disks: ['sda0'],
+            type: 'STRIPE',
+          }],
+          spares: ['sda1'],
+          special: [{
+            disks: ['sda5'],
             type: 'STRIPE',
           }],
         },

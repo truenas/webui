@@ -1,17 +1,16 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -20,12 +19,11 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-ca-identifier-and-type',
-  styleUrls: ['./ca-identifier-and-type.component.scss'],
   templateUrl: './ca-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
-  @Output() profileSelected = new EventEmitter<CertificateProfile>();
+  readonly profileSelected = output<CertificateProfile>();
 
   form = this.formBuilder.group({
     name: ['', [
@@ -57,7 +55,6 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
-    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
   ) {}

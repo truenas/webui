@@ -1,0 +1,29 @@
+.messages {
+  background: #000;
+  border: none;
+  box-sizing: border-box;
+  color: #0f0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 100%;
+  height: 100vh;
+  margin: 0;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 20px 5px 20px 10px;
+  white-space: pre-wrap;
+  width: 100%;
+  word-wrap: break-word;
+}
+
+#console-box {
+  max-height: 575px;
+}
+
+.close-button {
+  margin-left: auto;
+}
+
+@media screen and (max-height: 750px) {
+  .message { max-height: 340px;}
+  #console-box { max-height: 415px; }
+}

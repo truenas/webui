@@ -1,3 +1,4 @@
+import { outputToObservable } from '@angular/core/rxjs-interop';
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -14,11 +15,12 @@ export class JobProgressDialogRef<T> {
 
   afterClosed(): Observable<Job<T>> {
     return merge(
-      this.matDialogRef.componentInstance.jobSuccess,
-      this.matDialogRef.componentInstance.jobAborted.pipe(
+      outputToObservable(this.matDialogRef.componentInstance.jobSuccess),
+      outputToObservable(this.matDialogRef.componentInstance.jobAborted).pipe(
         switchMap(() => throwError(() => new Error(this.translate.instant('Job aborted')))),
       ),
-      this.matDialogRef.componentInstance.jobFailure.pipe(switchMap((error) => throwError(() => error))),
+      outputToObservable(this.matDialogRef.componentInstance.jobFailure)
+        .pipe(switchMap((error) => throwError(() => error))),
     ).pipe(take(1));
   }
 }

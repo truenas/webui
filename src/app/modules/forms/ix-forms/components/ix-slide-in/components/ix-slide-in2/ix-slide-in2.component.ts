@@ -1,3 +1,4 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
@@ -13,7 +14,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { Subscription, timer } from 'rxjs';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import {
@@ -28,6 +29,8 @@ import {
   templateUrl: './ix-slide-in2.component.html',
   styleUrls: ['./ix-slide-in2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CdkTrapFocus],
 })
 export class IxSlideIn2Component implements OnInit, OnDestroy {
   @Input() componentInfo: ChainedComponentSerialized;

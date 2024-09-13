@@ -10,7 +10,7 @@ import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directo
 import { Job } from 'app/interfaces/job.interface';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AuthService } from 'app/services/auth/auth.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 
 interface UploadOptions<M extends ApiJobMethod = ApiJobMethod> {
   file: File;
@@ -25,7 +25,7 @@ export class UploadService {
   constructor(
     protected http: HttpClient,
     private authService: AuthService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
   ) {}
 
   /**

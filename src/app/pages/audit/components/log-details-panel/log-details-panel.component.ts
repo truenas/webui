@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 
@@ -10,9 +10,9 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogDetailsPanelComponent {
-  @Input() log: AuditEntry;
+  readonly log = input.required<AuditEntry>();
 
-  @Output() hide = new EventEmitter();
+  readonly hide = output();
 
   onCloseMobileDetails(): void {
     this.hide.emit();

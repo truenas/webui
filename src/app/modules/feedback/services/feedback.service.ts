@@ -30,7 +30,7 @@ import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -48,7 +48,7 @@ export class FeedbackService {
   constructor(
     private httpClient: HttpClient,
     private ws: WebSocketService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private systemGeneralService: SystemGeneralService,
     private sentryService: SentryService,
     private fileUpload: UploadService,
@@ -203,7 +203,7 @@ export class FeedbackService {
 
   private prepareReview(data: ReviewData): Observable<AddReview> {
     return this.getSystemInfo().pipe(
-      map(({ systemInfo, isIxHardware, systemHostId }) => {
+      map(([{ systemInfo, isIxHardware }, systemHostId]) => {
         return {
           host_u_id: systemHostId,
           rating: data.rating,
@@ -254,12 +254,15 @@ export class FeedbackService {
     );
   }
 
-  private getSystemInfo(): Observable<SystemInfoState> {
-    return this.store$.pipe(
-      select(selectSystemInfoState),
-      filter((systemInfoState) => Boolean(systemInfoState.systemInfo)),
-      take(1),
-    );
+  private getSystemInfo(): Observable<[SystemInfoState, string]> {
+    return forkJoin([
+      this.store$.pipe(
+        select(selectSystemInfoState),
+        filter((systemInfoState) => Boolean(systemInfoState.systemInfo)),
+        take(1),
+      ),
+      this.ws.call('system.host_id'),
+    ]);
   }
 
   private addTicket(ticket: CreateNewTicket): Observable<NewTicketResponse> {

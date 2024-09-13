@@ -5,8 +5,8 @@
     </h3>
   </mat-card-header>
   <mat-card-content>
-    <p>{{ 'Task Name' | translate }}: {{ backup.description || '-' }}</p>
-    <p>{{ 'Frequency' | translate }}: {{ frequency }}</p>
-    <p>{{ 'Schedule' | translate }}: {{ schedule || '-' }}</p>
+    <p>{{ 'Task Name' | translate }}: {{ backup().description || '-' }}</p>
+    <p>{{ 'Frequency' | translate }}: {{ frequency() }}</p>
+    <p>{{ 'Schedule' | translate }}: {{ schedule() || '-' }}</p>
   </mat-card-content>
 </mat-card>

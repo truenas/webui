@@ -1,5 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { AppMaintainer } from 'app/interfaces/available-app.interface';
@@ -65,7 +65,7 @@ export interface App {
   name: string;
   id: string;
   active_workloads: AppActiveWorkloads;
-  state: CatalogAppState;
+  state: AppState;
   upgrade_available: boolean;
   human_version: string;
   metadata: AppMetadata;
@@ -83,26 +83,52 @@ export interface App {
   version_details?: ChartSchema;
 }
 
-export interface ChartStatisticsUpdate {
-  id: string;
-  stats: ChartReleaseStats;
-}
-
-export interface ChartReleaseStats {
-  cpu: number;
+export interface AppStats {
+  app_name: string;
+  /**
+   * Percentage of cpu used by an app
+   */
+  cpu_usage: number;
+  /**
+   * Current memory(in bytes) used by an app
+   */
   memory: number;
-  network: {
-    incoming: number;
-    outgoing: number;
+  networks: AppNetworkStats[];
+  blkio: {
+    /**
+     * Blkio read bytes
+     */
+    read: number;
+    /**
+     * Blkio write bytes
+     */
+    write: number;
   };
 }
 
+interface AppNetworkStats {
+  /**
+   * Name of the interface use by the app
+   */
+  interface_name: string;
+  /**
+   * Received bytes/s by an interface
+   */
+  rx_bytes: number;
+  /**
+   * Transmitted bytes/s by an interface
+   */
+  tx_bytes: number;
+}
+
 export interface AppCreate {
-  values: Record<string, ChartFormValue>;
+  values?: Record<string, ChartFormValue>;
   app_name: string;
   catalog_app: string;
   train: string;
-  version: string;
+  version?: string;
+  custom_compose_config_string?: string;
+  custom_app?: boolean;
 }
 
 export interface AppUpdate {

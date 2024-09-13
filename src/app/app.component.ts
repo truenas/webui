@@ -40,7 +40,7 @@ export class AppComponent {
       // save currenturl
       if (event instanceof NavigationEnd) {
         const navigation = this.router.getCurrentNavigation();
-        if (this.isAuthenticated && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
+        if (this.isAuthenticated && event.url !== '/signin' && !navigation?.extras?.skipLocationChange) {
           this.window.sessionStorage.setItem('redirectUrl', event.url);
         }
       }

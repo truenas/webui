@@ -33,7 +33,7 @@ import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -76,7 +76,7 @@ export class UpdateActionsCardComponent implements OnInit {
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private snackbar: SnackbarService,
     protected trainService: TrainService,
     protected updateService: UpdateService,
@@ -125,7 +125,7 @@ export class UpdateActionsCardComponent implements OnInit {
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
+      this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       this.dialogService.error(this.errorHandler.parseError(err));
@@ -210,7 +210,7 @@ export class UpdateActionsCardComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe(() => this.confirmAndUpdate());
         } else if (update.status === SystemUpdateStatus.Unavailable) {
-          this.dialogService.info(this.translate.instant('Check Now'), this.translate.instant('No updates available.'));
+          this.snackbar.success(this.translate.instant('No updates available.'));
         }
       },
       error: (error: WebSocketError) => {

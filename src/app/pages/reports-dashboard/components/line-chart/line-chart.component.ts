@@ -6,9 +6,7 @@ import {
   OnChanges,
   ViewChild,
   ElementRef,
-  EventEmitter,
-  Output,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, output,
 } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UUID } from 'angular2-uuid';
@@ -68,7 +66,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   timeFormat = '%H:%M';
   controlUid = `chart_${UUID.UUID()}`;
 
-  @Output() zoomChange = new EventEmitter<number[]>();
+  readonly zoomChange = output<number[]>();
 
   constructor(
     public themeService: ThemeService,
@@ -201,63 +199,63 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean, axis = false): Conversion {
     const day = 60 * 60 * 24;
-    let output: Conversion = { value };
+    let result: Conversion = { value };
     if (!fixed) { fixed = -1; }
     if (typeof value !== 'number') { return value; }
 
     switch (units.toLowerCase()) {
       case 'seconds':
-        output = { value: value / day, shortName: ' days' };
+        result = { value: value / day, shortName: ' days' };
         break;
       case 'kilobits':
-        output = this.convertKmgt(value * 1000, 'bits', fixed, prefixRules);
+        result = this.convertKmgt(value * 1000, 'bits', fixed, prefixRules);
         if (axis) {
-          output.value = this.getValueForAxis(value * 1000, output.prefix);
+          result.value = this.getValueForAxis(value * 1000, result.prefix);
         }
         break;
       case 'mebibytes':
-        output = this.convertKmgt(value * MiB, 'bytes', fixed, prefixRules);
+        result = this.convertKmgt(value * MiB, 'bytes', fixed, prefixRules);
         if (axis) {
-          output.value = this.getValueForAxis(value * 1000 * 1000, output.prefix);
+          result.value = this.getValueForAxis(value * 1000 * 1000, result.prefix);
         }
         break;
       case 'kibibytes':
-        output = this.convertKmgt(value * KiB, 'bytes', fixed, prefixRules);
+        result = this.convertKmgt(value * KiB, 'bytes', fixed, prefixRules);
         if (axis) {
-          output.value = this.getValueForAxis(value * 1000, output.prefix);
+          result.value = this.getValueForAxis(value * 1000, result.prefix);
         }
         break;
       case 'bits':
       case 'bytes':
-        output = this.convertKmgt(value, units.toLowerCase(), fixed, prefixRules);
+        result = this.convertKmgt(value, units.toLowerCase(), fixed, prefixRules);
         if (axis) {
-          output.value = this.getValueForAxis(value, output.prefix);
+          result.value = this.getValueForAxis(value, result.prefix);
         }
         break;
       case '%':
       case '°':
       default:
-        output = this.convertByKilo(value);
+        result = this.convertByKilo(value);
         break;
     }
 
-    return output;
+    return result;
   }
 
-  convertByKilo(input: number): Conversion {
-    if (typeof input !== 'number') { return input; }
-    let output = input;
+  convertByKilo(value: number): Conversion {
+    if (typeof value !== 'number') { return value; }
+    let newValue = value;
     let suffix = '';
 
-    if (input >= 1000000) {
-      output = input / 1000000;
+    if (value >= 1000000) {
+      newValue = value / 1000000;
       suffix = 'm';
-    } else if (input < 1000000 && input >= 1000) {
-      output = input / 1000;
+    } else if (value < 1000000 && value >= 1000) {
+      newValue = value / 1000;
       suffix = 'k';
     }
 
-    return { value: output, suffix };
+    return { value: newValue, suffix };
   }
 
   limitDecimals(numero: number): string | number {
@@ -385,25 +383,25 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   convertKmgt(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
     let prefix = '';
-    let output: number = value;
+    let newValue: number = value;
     let shortName = '';
 
     if (value > TiB || (prefixRules && this.yLabelPrefix === 'Tebi')) {
       prefix = 'Tebi';
       shortName = 'TiB';
-      output = value / TiB;
+      newValue = value / TiB;
     } else if ((value < TiB && value > GiB) || (prefixRules && this.yLabelPrefix === 'Gibi')) {
       prefix = 'Gibi';
       shortName = 'GiB';
-      output = value / GiB;
+      newValue = value / GiB;
     } else if ((value < GiB && value > MiB) || (prefixRules && this.yLabelPrefix === 'Mebi')) {
       prefix = 'Mebi';
       shortName = 'MiB';
-      output = value / MiB;
+      newValue = value / MiB;
     } else if ((value < MiB && value > KiB) || (prefixRules && this.yLabelPrefix === 'Kibi')) {
       prefix = 'Kibi';
       shortName = 'KiB';
-      output = value / KiB;
+      newValue = value / KiB;
     }
 
     if (units === 'bits') {
@@ -411,7 +409,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substring(1).toLowerCase()}`; // Kb, Mb, Gb, Tb
     }
 
-    return { value: output, prefix, shortName };
+    return { value: newValue, prefix, shortName };
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

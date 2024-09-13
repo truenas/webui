@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
@@ -13,18 +15,19 @@ import { cloudsyncProviderDescriptionMap } from 'app/pages/data-protection/cloud
   imports: [ImgFallbackModule],
 })
 export class CloudSyncProviderDescriptionComponent {
-  @Input() provider: CloudSyncProviderName;
+  readonly provider = input.required<CloudSyncProviderName>();
+
   readonly imagePlaceholder = appImagePlaceholder;
 
-  get image(): string {
-    return `/assets/images/cloudsync/${this.provider}.png`;
-  }
+  protected readonly image = computed(() => {
+    return `/assets/images/cloudsync/${this.provider()}.png`;
+  });
 
-  get name(): string {
-    return cloudSyncProviderNameMap.get(this.provider);
-  }
+  protected readonly name = computed(() => {
+    return cloudSyncProviderNameMap.get(this.provider());
+  });
 
-  get description(): string {
-    return cloudsyncProviderDescriptionMap.get(this.provider);
-  }
+  protected readonly description = computed(() => {
+    return cloudsyncProviderDescriptionMap.get(this.provider());
+  });
 }

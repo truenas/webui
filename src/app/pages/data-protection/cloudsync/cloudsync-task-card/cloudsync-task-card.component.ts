@@ -33,7 +33,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -77,7 +77,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
-      getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     actionsColumn({
@@ -123,7 +122,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-cloudsync-task-' + row.description,
+    uniqueRowTag: (row) => 'card-cloudsync-task-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 
@@ -135,7 +134,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private slideIn: IxChainedSlideInService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
     protected emptyService: EmptyService,
@@ -240,11 +239,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.dialogService.info(
-          this.translate.instant('Task Stopped'),
-          this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
-          true,
-        );
+        this.snackbar.success(this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }));
         this.updateRowStateAndJob(row, JobState.Aborted, null);
         this.cdr.markForCheck();
       });
@@ -276,10 +271,16 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   restore(row: CloudSyncTaskUi): void {
-    const dialog = this.matDialog.open(CloudSyncRestoreDialogComponent, {
-      data: row.id,
-    });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
+    this.matDialog
+      .open(CloudSyncRestoreDialogComponent, { data: row.id })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.snackbar.success(
+          this.translate.instant('Cloud Sync «{name}» has been restored.', { name: row.description }),
+        );
+        this.getCloudSyncTasks();
+      });
   }
 
   private transformCloudSyncTasks(cloudSyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {

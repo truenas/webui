@@ -4,18 +4,22 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
@@ -94,6 +98,8 @@ describe('CloudSyncListComponent', () => {
       mockAuth(),
       mockWebSocket([
         mockCall('cloudsync.query', cloudSyncList),
+        mockCall('cloudsync.delete'),
+        mockJob('cloudsync.sync', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -112,6 +118,15 @@ describe('CloudSyncListComponent', () => {
       mockProvider(LocaleService),
       mockProvider(TaskService, {
         getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
+      }),
+      mockProvider(SnackbarService),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectJob(1),
+            value: fakeSuccessfulJob(),
+          },
+        ],
       }),
     ],
   });
@@ -148,6 +163,7 @@ describe('CloudSyncListComponent', () => {
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
   });
 
   it('shows form to edit an existing CloudSync when Edit button is pressed', async () => {
@@ -179,8 +195,8 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
-
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been deleted.');
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -196,6 +212,7 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been restored.');
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
@@ -211,7 +228,7 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
-
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
   });
 });

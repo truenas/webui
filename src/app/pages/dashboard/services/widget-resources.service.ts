@@ -16,7 +16,7 @@ import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 /**
@@ -48,6 +48,13 @@ export class WidgetResourcesService {
   readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(
     repeat({ delay: () => this.triggerRefreshSystemInfo$ }),
     debounceTime(300),
+    toLoadingState(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  readonly cpuModel$ = this.store$.pipe(
+    waitForSystemInfo,
+    map((systemInfo) => systemInfo.model),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
@@ -160,7 +167,7 @@ export class WidgetResourcesService {
 
   constructor(
     private ws: WebSocketService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
   ) {}
 
   private parseVolumeData(datasets: Dataset[]): VolumesData {

@@ -29,7 +29,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -104,7 +104,7 @@ export class RsyncTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-rsync-task-' + row.path + '-' + row.remotehost,
+    uniqueRowTag: (row) => 'card-rsync-task-' + row.path + '-' + row.remotehost,
     ariaLabels: (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')],
   });
 
@@ -114,7 +114,7 @@ export class RsyncTaskCardComponent implements OnInit {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private taskService: TaskService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private snackbar: SnackbarService,
     protected emptyService: EmptyService,
     private chainedSlideInService: IxChainedSlideInService,

@@ -3,10 +3,11 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { format, utcToZonedTime } from 'date-fns-tz';
+import { isValid, parse } from 'date-fns';
+import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { combineLatest } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -19,7 +20,7 @@ export class LocaleService {
   timeFormat = 'HH:mm:ss';
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private translate: TranslateService,
   ) {
     combineLatest([
@@ -66,6 +67,30 @@ export class LocaleService {
       { label: format(date, 'hh:mm:ss aaaaa\'m\''), value: 'hh:mm:ss aaaaa\'m\'' },
       { label: format(date, 'hh:mm:ss aa'), value: 'hh:mm:ss aa' },
     ];
+  }
+
+  getDateFromString(timestamp: string, timezone?: string): Date {
+    const normalizedTimestamp = timestamp.trim();
+
+    const dateFormats = this.getDateFormatOptions().map((option) => option.value);
+    const timeFormats = this.getTimeFormatOptions().map((option) => option.value);
+
+    const formats = [
+      ...dateFormats,
+      ...dateFormats.flatMap((dateFormat) => timeFormats.map((timeFormat) => `${dateFormat} ${timeFormat}`)),
+    ] as string[];
+
+    for (const dateFormat of formats) {
+      const parsedDate = parse(normalizedTimestamp, dateFormat, new Date());
+      if (isValid(parsedDate)) {
+        if (timezone) {
+          return zonedTimeToUtc(parsedDate, timezone);
+        }
+        return parsedDate;
+      }
+    }
+
+    throw new Error(`Invalid date format: ${timestamp}`);
   }
 
   getPreferredDateFormat(): string {

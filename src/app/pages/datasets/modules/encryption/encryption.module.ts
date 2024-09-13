@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,11 +6,18 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
-import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
@@ -27,20 +34,27 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
 
 @NgModule({
   imports: [
-    CommonModule,
     MatDividerModule,
     TranslateModule,
     MatCardModule,
     RouterModule,
     MatButtonModule,
     EntityModule,
-    IxFormsModule,
     ReactiveFormsModule,
     MatDialogModule,
     CommonDirectivesModule,
-    FlexModule,
     TestIdModule,
     IxIconModule,
+    IxCheckboxComponent,
+    IxRadioGroupComponent,
+    IxFileInputComponent,
+    IxListComponent,
+    IxListItemComponent,
+    IxInputComponent,
+    IxTextareaComponent,
+    IxSelectComponent,
+    FormActionsComponent,
+    AsyncPipe,
   ],
   exports: [
     ZfsEncryptionCardComponent,

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Role } from 'app/enums/role.enum';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @Component({
   selector: 'ix-cell-actions',

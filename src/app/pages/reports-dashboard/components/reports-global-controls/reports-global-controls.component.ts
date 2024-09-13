@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, EventEmitter, OnInit, Output,
+  Component, OnInit, output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +15,7 @@ import {
 import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -27,6 +27,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsGlobalControlsComponent implements OnInit {
+  readonly diskOptionsChanged = output<{ devices: string[]; metrics: string[] }>();
+
   form = this.fb.group({
     autoRefresh: [false],
     devices: [[] as string[]],
@@ -36,7 +38,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
   allTabs: ReportTab[];
   diskDevices$ = this.reportsService.getDiskDevices();
   diskMetrics$ = this.reportsService.getDiskMetrics();
-  @Output() diskOptionsChanged = new EventEmitter<{ devices: string[]; metrics: string[] }>();
 
   readonly ReportType = ReportType;
   readonly searchableElements = reportingGlobalControlsElements;
@@ -44,7 +45,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,

@@ -17,7 +17,11 @@ describe('QrViewerComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        qrInfo: '12345',
+      },
+    });
   });
 
   it('shows warning message when parent component requires it', () => {

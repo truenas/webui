@@ -10,7 +10,7 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LocaleService } from 'app/services/locale.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware,
@@ -48,16 +48,30 @@ export class WidgetSysInfoActiveComponent {
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
   datetime = computed(() => {
-    const [dateValue, timeValue] = this.localeService.getDateAndTime(this.systemInfo().timezone);
-    return new Date(`${dateValue} ${timeValue}`).getTime() + (this.realElapsedSeconds() * 1000);
+    this.realElapsedSeconds();
+    const [, timeValue] = this.localeService.getDateAndTime();
+    return `${timeValue.split(':')[0]}:${timeValue.split(':')[1]}`;
   });
   isLoaded = computed(() => this.systemInfo());
 
   constructor(
     private resources: WidgetResourcesService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private localeService: LocaleService,
   ) {
     this.resources.refreshSystemInfo();
+  }
+
+  isFirstRender = true;
+
+  rendered(): string {
+    if (!this.isFirstRender) {
+      return '';
+    }
+
+    this.isFirstRender = false;
+    performance.mark('Dashboard End');
+    performance.measure('Dashboard Init', 'Dashboard Start', 'Dashboard End');
+    return '';
   }
 }

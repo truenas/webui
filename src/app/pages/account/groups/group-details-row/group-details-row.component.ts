@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, EventEmitter, Output, input,
+  Component, ChangeDetectionStrategy, input, output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -22,7 +22,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class GroupDetailsRowComponent {
   readonly group = input.required<Group>();
   readonly colspan = input<number>();
-  @Output() delete = new EventEmitter<number>();
+
+  readonly delete = output<number>();
 
   protected readonly Role = Role;
 

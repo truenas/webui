@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { find } from 'lodash';
+import { find } from 'lodash-es';
 import { combineLatest } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
@@ -113,7 +113,7 @@ export class AssociatedTargetListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'iscsi-associated-target-' + row.target + '-' + row.extent,
+    uniqueRowTag: (row) => 'iscsi-associated-target-' + row.target + '-' + row.extent,
     ariaLabels: (row) => [row.target.toString(), this.translate.instant('ISCSI Associated Target')],
   });
 

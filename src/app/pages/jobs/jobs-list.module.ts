@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe, JsonPipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
@@ -16,7 +18,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
@@ -27,7 +29,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 @NgModule({
   imports: [
     EntityModule,
-    CommonModule,
     IxIconModule,
     MatTooltipModule,
     MatProgressBarModule,
@@ -39,7 +40,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     ReactiveFormsModule,
     routing,
     CommonDirectivesModule,
-    LayoutModule,
     MatSortModule,
     MatButtonToggleModule,
     TestIdModule,
@@ -47,6 +47,10 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     MapValuePipe,
     CopyButtonComponent,
     MatIconButton,
+    PageHeaderModule,
+    AsyncPipe,
+    DecimalPipe,
+    JsonPipe,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent, JobNameComponent],
 })

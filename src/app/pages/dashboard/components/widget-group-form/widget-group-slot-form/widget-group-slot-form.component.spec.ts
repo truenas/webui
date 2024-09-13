@@ -5,7 +5,6 @@ import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-slot-form/widget-group-slot-form.component';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
@@ -23,7 +22,6 @@ describe('WidgetGroupSlotComponent', () => {
   const createComponent = createComponentFactory({
     component: WidgetGroupSlotFormComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
     ],
     declarations: [
@@ -72,18 +70,18 @@ describe('WidgetGroupSlotComponent', () => {
 
   it('emits updated value when value changed', async () => {
     const categorySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Widget Category' }));
-    await categorySelect.setValue(`${widgetCategoryLabels.get(WidgetCategory.Cpu)} (5 widgets)`);
+    await categorySelect.setValue(`${widgetCategoryLabels.get(WidgetCategory.Cpu)} (6 widgets)`);
 
     spectator.detectChanges();
 
     const widgetTypeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Widget Type' }));
-    expect(await widgetTypeSelect.getValue()).toBe('CPU Recent Usage');
+    expect(await widgetTypeSelect.getValue()).toBe('CPU Model');
 
     expect(spectator.component.slot()).toEqual({
       slotPosition: SlotPosition.First,
       slotSize: SlotSize.Half,
       settings: undefined,
-      type: WidgetType.CpuUsageRecent,
+      type: WidgetType.CpuModelWidget,
     });
   });
 });

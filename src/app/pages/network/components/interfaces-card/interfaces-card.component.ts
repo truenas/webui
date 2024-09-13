@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
-  OnInit,
-  Output,
+  OnInit, output,
   signal,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,14 +26,14 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/network/components/interfaces-card/interfaces-card.elements';
 import {
-  IpAddressesCellComponent,
+  ipAddressesColumn,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -48,7 +46,8 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 export class InterfacesCardComponent implements OnInit, OnChanges {
   protected readonly searchableElements = interfacesCardElements.elements;
   @Input() isHaEnabled = false;
-  @Output() interfacesUpdated = new EventEmitter<void>();
+
+  readonly interfacesUpdated = output();
 
   readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
@@ -66,11 +65,10 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
-    {
-      type: IpAddressesCellComponent,
+    ipAddressesColumn({
       title: this.translate.instant('IP Addresses'),
       sortBy: (row) => row.aliases.map((alias) => alias.address).join(', '),
-    },
+    }),
     actionsColumn({
       actions: [
         {
@@ -99,7 +97,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       ],
     }),
   ], {
-    rowTestId: (row) => 'interface-' + row.name,
+    uniqueRowTag: (row) => 'interface-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Interface')],
   });
 
@@ -107,7 +105,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   constructor(
     private interfacesStore$: InterfacesStore,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

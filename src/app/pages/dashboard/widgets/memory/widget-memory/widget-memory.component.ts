@@ -11,7 +11,7 @@ import { GiB } from 'app/constants/bytes.constant';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -96,7 +96,7 @@ export class WidgetMemoryComponent {
   });
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private resources: WidgetResourcesService,
     private theme: ThemeService,
     private translate: TranslateService,

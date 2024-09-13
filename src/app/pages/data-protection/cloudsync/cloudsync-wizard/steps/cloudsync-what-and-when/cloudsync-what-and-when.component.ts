@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { Validators, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   Observable, combineLatest, filter, map, merge, of, tap,
 } from 'rxjs';
@@ -48,7 +48,8 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
 })
 export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   @Input() credentialId: number;
-  @Output() save = new EventEmitter<void>();
+
+  readonly save = output();
 
   form = this.formBuilder.group({
     description: ['' as string, Validators.required],

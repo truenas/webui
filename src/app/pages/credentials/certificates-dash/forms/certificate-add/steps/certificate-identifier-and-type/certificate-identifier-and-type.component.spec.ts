@@ -6,7 +6,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   CertificateIdentifierAndTypeComponent,
@@ -24,7 +23,6 @@ describe('CertificateIdentifierAndTypeComponent', () => {
     component: CertificateIdentifierAndTypeComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockWebSocket([
@@ -50,6 +48,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
         Name: 'New Certificate',
         Type: 'Internal Certificate',
         Profile: 'Openvpn Client Certificate',
+        'Add To Trusted Store': true,
       });
     });
 
@@ -57,6 +56,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
       expect(spectator.component.getPayload()).toEqual({
         name: 'New Certificate',
         create_type: CertificateCreateType.CreateInternal,
+        add_to_trusted_store: true,
       });
     });
 
@@ -77,6 +77,10 @@ describe('CertificateIdentifierAndTypeComponent', () => {
         {
           label: 'Profile',
           value: 'Openvpn Client Certificate',
+        },
+        {
+          label: 'Add To Trusted Store',
+          value: 'Yes',
         },
       ]);
     });

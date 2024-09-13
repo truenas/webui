@@ -21,7 +21,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -34,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -121,7 +121,7 @@ export class CloudSyncListComponent implements OnInit {
       propertyName: 'enabled',
     }),
   ], {
-    rowTestId: (row) => 'cloudsync-task-' + row.description,
+    uniqueRowTag: (row) => 'cloudsync-task-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 
@@ -139,7 +139,7 @@ export class CloudSyncListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     protected emptyService: EmptyService,
   ) {}
 
@@ -200,11 +200,7 @@ export class CloudSyncListComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.dialogService.info(
-          this.translate.instant('Task Stopped'),
-          this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
-          true,
-        );
+        this.snackbar.success(this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }));
         this.updateRowStateAndJob(row, JobState.Aborted, null);
         this.cdr.markForCheck();
       });
@@ -234,10 +230,15 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   restore(row: CloudSyncTaskUi): void {
-    const dialog = this.matDialog.open(CloudSyncRestoreDialogComponent, {
-      data: row.id,
-    });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
+    this.matDialog.open(CloudSyncRestoreDialogComponent, { data: row.id })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.snackbar.success(
+          this.translate.instant('Cloud Sync «{name}» has been restored.', { name: row.description }),
+        );
+        this.getCloudSyncTasks();
+      });
   }
 
   openForm(row?: CloudSyncTaskUi): void {
@@ -274,6 +275,9 @@ export class CloudSyncListComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.snackbar.success(
+          this.translate.instant('Cloud Sync «{name}» has been deleted.', { name: row.description }),
+        );
         this.getCloudSyncTasks();
       },
       error: (err) => {

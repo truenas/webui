@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, pairwise, switchMap,
 } from 'rxjs';

@@ -39,13 +39,14 @@
     <div *appLet="availableJobs$ | async as jobs">
       @if (jobs.length) {
         <div class="jobs-list">
-          <ix-job-item
-            *ngFor="let job of jobs; trackBy: trackByJobId"
-            [job]="job"
-            [clickable]="true"
-            (aborted)="onAbort(job)"
-            (opened)="openJobDialog(job)"
-          ></ix-job-item>
+          @for (job of jobs; track job.id) {
+            <ix-job-item
+              [job]="job"
+              [clickable]="true"
+              (aborted)="onAbort(job)"
+              (opened)="openJobDialog(job)"
+            ></ix-job-item>
+          }
         </div>
       } @else {
         <div class="no-jobs">

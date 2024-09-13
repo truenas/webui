@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe, PercentPipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,17 +19,25 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule, FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -56,24 +66,19 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
   imports: [
     PoolManagerModule,
     routing,
-    IxFormsModule,
     TranslateModule,
     MatCardModule,
     MatTooltipModule,
     MatButtonModule,
     RouterModule,
-    CommonModule,
     MatPaginatorModule,
     IxIconModule,
     MatProgressSpinnerModule,
     MatToolbarModule,
     BaseChartDirective,
-    FlexLayoutModule,
     ReactiveFormsModule,
-    LayoutModule,
     MatFormFieldModule,
     MatOptionModule,
-    FlexModule,
     MatCheckboxModule,
     MatSelectModule,
     MatMenuModule,
@@ -83,7 +88,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     CommonDirectivesModule,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
-    LayoutModule,
     EntityModule,
     TestIdModule,
     AppLoaderModule,
@@ -91,6 +95,18 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     FileSizePipe,
     FormatDateTimePipe,
     MapValuePipe,
+    FormActionsComponent,
+    IxCheckboxComponent,
+    IxWarningComponent,
+    IxFieldsetComponent,
+    IxRadioGroupComponent,
+    IxSelectComponent,
+    IxModalHeaderComponent,
+    IxInputComponent,
+    PageHeaderModule,
+    AsyncPipe,
+    DecimalPipe,
+    PercentPipe,
   ],
   declarations: [
     PoolsDashboardComponent,

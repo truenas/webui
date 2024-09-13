@@ -1,0 +1,132 @@
+@import 'scss-imports/cssvars';
+
+.session-form-hold {
+  margin: 0 auto;
+  max-width: 480px;
+  position: relative;
+  width: 100%;
+
+  .mat-mdc-card-content {
+    padding: 0 !important;
+  }
+
+  > .mat-mdc-card {
+    border: 0;
+    margin: 0;
+  }
+}
+
+.login-form {
+  min-height: 100vh;
+}
+
+.page-wrap {
+  align-items: center;
+  background-color: var(--bg1);
+  display: flex;
+  height: 100vh;
+  padding: 0;
+}
+
+.copyright {
+  color: var(--alt-fg1);
+  font-size: 85%;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.mat-mdc-card {
+  background-color: var(--bg2);
+  color: var(--fg2);
+  padding: 0 0 18px !important;
+}
+
+.mat-mdc-card .mat-mdc-card-content > div {
+  padding: 0;
+}
+
+.card-bottom {
+  padding: 0 16px;
+}
+
+.ix-logo {
+  text-align: center;
+
+  img {
+    height: 40px;
+  }
+}
+
+.form-container {
+  margin-bottom: 20px;
+  padding: 20px 32px 8px;
+}
+
+.logo-wrapper {
+  background-color: var(--bg2);
+  // Fallback for browsers that don't support image-set
+  background-image: url('assets/images/signin/stars-sky-800w.jpg');
+  background-image: image-set(url('assets/images/signin/stars-sky-400w.avif') 1x,
+  url('assets/images/signin/stars-sky-800w.avif') 2x,
+  url('assets/images/signin/stars-sky-1200w.avif') 3x);
+  background-size: cover;
+  border-bottom: solid 1px var(--lines);
+
+  padding: 20% 0;
+  position: relative;
+  text-align: center;
+
+  .logo {
+    fill: #fff;
+    height: auto;
+    position: relative;
+    width: 256px;
+    z-index: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-wrap {
+    bottom: 0;
+    height: 100vh;
+    left: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100vw;
+  }
+
+  .mat-mdc-card {
+    min-height: 100vh;
+    top: 0;
+  }
+
+  .card-bottom {
+    padding: 0;
+  }
+
+  /* Not sure how to workaround browser bug.
+  *  Apparently 100vw is actually viewport width + scrollbar width
+  *  if vertical scrollbar is present
+  */
+  .page-wrap > * {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .session-progress {
+    position: fixed;
+    top: 0;
+  }
+
+  .logo-wrapper {
+    padding: 20% 0;
+  }
+}
+
+.failover-status {
+  margin-top: 25px;
+}
+

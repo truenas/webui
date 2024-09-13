@@ -7,15 +7,13 @@ import {
   ContentChildren,
   Input,
   QueryList,
-  TemplateRef,
-  Output,
-  EventEmitter,
+  TemplateRef, output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +28,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() isLoading = false;
   @Input() detailsRowIdentifier: keyof T = 'id' as keyof T;
 
-  @Output() expanded = new EventEmitter<T>();
+  readonly expanded = output<T>();
 
   @ContentChildren(IxTableCellDirective) customCells!: QueryList<IxTableCellDirective<T>>;
 
@@ -63,8 +61,8 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
     });
   }
 
-  getTestAttr(row: T): string {
-    return this.columns[0]?.rowTestId(row) ?? '';
+  getRowTag(row: T): string {
+    return this.columns[0]?.uniqueRowTag(row) ?? '';
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
@@ -79,5 +77,13 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   isExpanded(row: T): boolean {
     return this.detailsRowIdentifier
       && (this.dataProvider?.expandedRow?.[this.detailsRowIdentifier] === row?.[this.detailsRowIdentifier]);
+  }
+
+  protected trackRowByIdentity(item: T): string {
+    return this.getRowTag(item);
+  }
+
+  protected trackColumnByIdentity(column: Column<T, ColumnComponent<T>>): Column<T, ColumnComponent<T>> {
+    return column;
   }
 }

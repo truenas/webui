@@ -19,7 +19,6 @@ import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import {
@@ -66,7 +65,6 @@ describe('CertificateAddComponent', () => {
     component: CertificateAddComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
       MatStepperModule,
     ],
     declarations: [
@@ -180,6 +178,7 @@ describe('CertificateAddComponent', () => {
         organization: 'Umbrella Corp',
         organizational_unit: 'Virus Research Dept',
         email: 'no-reply@umbrella.com',
+        add_to_trusted_store: false,
         san: ['jobs.umbrella.com'],
         cert_extensions: {
           BasicConstraints: {
@@ -234,6 +233,7 @@ describe('CertificateAddComponent', () => {
       certificate: '-----BEGIN CERTIFICATE-----',
       passphrase: '1234567890',
       privatekey: '-----BEGIN PRIVATE-----',
+      add_to_trusted_store: false,
     }]);
   });
 

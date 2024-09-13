@@ -33,6 +33,7 @@ export enum WidgetType {
   ArbitraryText = 'arbitrary-text',
   SerialActive = 'serial-active',
   SerialPassive = 'serial-passive',
+  CpuModelWidget = 'cpu-model-widget',
 }
 
 export enum SlotSize {

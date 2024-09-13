@@ -84,7 +84,7 @@ export class SmbListComponent implements OnInit {
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
-      propertyName: 'audit',
+      getValue: (row) => Boolean(row.audit?.enable),
     }),
     actionsColumn({
       actions: [
@@ -165,7 +165,7 @@ export class SmbListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'smb-' + row.name,
+    uniqueRowTag: (row) => 'smb-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
   });
 

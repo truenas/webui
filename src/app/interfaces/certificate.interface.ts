@@ -38,6 +38,7 @@ export interface Certificate {
   key_type: CertificateKeyType;
   lifetime: number;
   name: string;
+  add_to_trusted_store: boolean;
   organization: string;
   organizational_unit: string;
   parsed: boolean;

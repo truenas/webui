@@ -53,7 +53,7 @@ export class SshConnectionCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'ssh-con-' + row.name,
+    uniqueRowTag: (row) => 'ssh-con-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('SSH Connection')],
   });
 

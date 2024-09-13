@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
+// eslint-disable-next-line no-restricted-imports
 import { MediaObserver } from '@ngbracket/ngx-layout';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -8,7 +9,7 @@ import { take, filter, distinctUntilChanged } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { sidenavIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
@@ -62,7 +63,7 @@ export class SidenavService {
   constructor(
     private router: Router,
     private mediaService: MediaObserver,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private actions$: Actions,
     @Inject(WINDOW) private window: Window,
   ) {

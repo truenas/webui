@@ -19,27 +19,33 @@
               <div class="version">
                 <span>{{ bulkItem.value.item.human_version.split('_')[1] }}</span>
                 <ix-icon name="mdi-arrow-right-thin"></ix-icon>
-                <span>{{ form.get(bulkItem.key)?.value }}</span>
+                @if(isItemExpanded(bulkItem)){
+                  <span>{{ form.get(bulkItem.key)?.value }}</span>
+                } @else {
+                  <span>{{ 'Latest version' | translate }}</span>
+                }
               </div>
 
               <div class="logo">
                 <img
                   [src]="bulkItem.value.item.metadata.icon"
                   [src-fallback]="imagePlaceholder"
-                  />
+                />
               </div>
             </ix-bulk-list-item>
           </mat-panel-title>
         </mat-expansion-panel-header>
 
         <div *appLet="upgradeSummaryMap.get(bulkItem.key) as summary" class="expansion-content">
-          <ix-select
-            [formControlName]="bulkItem.key"
-            [label]="'Version to be upgraded to' | translate"
-            [required]="true"
-            [options]="optionsMap.get(bulkItem.key)"
-          ></ix-select>
-
+          @if(isItemExpanded(bulkItem)) {
+            <ix-select
+              [formControlName]="bulkItem.key"
+              [label]="'Version to be upgraded to' | translate"
+              [required]="true"
+              [options]="optionsMap.get(bulkItem.key)"
+            ></ix-select>
+          }
+          
           @if (hasErrors(bulkItem.key)) {
             <span>{{ bulkItem.value.message | translate }}</span>
           }

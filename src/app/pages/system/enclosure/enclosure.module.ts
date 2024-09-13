@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,12 +11,18 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -104,12 +110,10 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
   imports: [
     routing,
     TestIdModule,
-    CommonModule,
     MatCardModule,
     MatButtonModule,
     TranslateModule,
     IxIconModule,
-    LayoutModule,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
@@ -117,7 +121,6 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     CommonDirectivesModule,
     SearchInput1Component,
     MatTooltip,
-    IxFormsModule,
     ReactiveFormsModule,
     MatDialogClose,
     MatDialogTitle,
@@ -129,6 +132,14 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     DiskIconComponent,
     TooltipComponent,
     OrNotAvailablePipe,
+    IxInputComponent,
+    FormActionsComponent,
+    IxCheckboxComponent,
+    IxFieldsetComponent,
+    IxModalHeaderComponent,
+    PageHeaderModule,
+    DecimalPipe,
+    AsyncPipe,
   ],
   declarations: [
     EnclosureDashboardComponent,

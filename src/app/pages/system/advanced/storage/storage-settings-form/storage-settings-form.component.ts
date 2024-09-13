@@ -20,7 +20,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -55,7 +55,7 @@ export class StorageSettingsFormComponent implements OnInit {
     private ixValidator: IxValidatorsService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private snackbar: SnackbarService,
     private chainedRef: ChainedRef<StorageSettings>,
   ) {

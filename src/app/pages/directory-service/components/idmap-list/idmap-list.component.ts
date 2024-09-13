@@ -109,7 +109,7 @@ export class IdmapListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'idmap-' + row.name,
+    uniqueRowTag: (row) => 'idmap-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Idmap')],
   });
 

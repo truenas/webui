@@ -1,8 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { CommonModule } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Subject } from 'rxjs';
@@ -22,10 +20,6 @@ describe('IxModalHeader2Component', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: IxModalHeader2Component,
-    imports: [
-      CommonModule,
-      FlexLayoutModule,
-    ],
     declarations: [
       MockComponent(CloudSyncWizardComponent),
     ],

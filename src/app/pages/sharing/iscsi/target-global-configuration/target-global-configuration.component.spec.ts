@@ -13,11 +13,10 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -27,14 +26,13 @@ describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<TargetGlobalConfigurationComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  let mockStore$: MockStore<AppState>;
-  let store$: Store<AppState>;
+  let mockStore$: MockStore<AppsState>;
+  let store$: Store<AppsState>;
 
   const createComponent = createComponentFactory({
     component: TargetGlobalConfigurationComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
     ],
     providers: [
       mockAuth(),

@@ -13,7 +13,6 @@ import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -36,7 +35,6 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
   const createComponent = createComponentFactory({
     component: PoolManagerComponent,
     imports: [
-      IxFormsModule,
       ReactiveFormsModule,
       MatStepperModule,
       FileSizePipe,
@@ -122,6 +120,11 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
               size: 20 * GiB,
               type: DiskType.Hdd,
             },
+            {
+              devname: 'sda5',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+            },
           ] as DetailsDisk[],
         }),
         mockCall('enclosure2.query', [] as Enclosure[]),
@@ -160,12 +163,12 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
       'Disk Size': '20 GiB (HDD)',
       'Data Devices': '2',
       'Distributed Hot Spares': '1',
-      Children: '4',
+      Children: '5',
       'Number of VDEVs': '1',
     });
 
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({
-      'Data:': '1 × DRAID1 | 4 × 20 GiB (HDD)',
+      'Data:': '1 × DRAID1 | 5 × 20 GiB (HDD)',
     });
 
     const stepper = await wizard.getStepper();
@@ -183,7 +186,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
       topology: {
         data: [
           {
-            disks: ['sda3', 'sda0', 'sda1', 'sda2'],
+            disks: ['sda3', 'sda0', 'sda1', 'sda2', 'sda5'],
             type: CreateVdevLayout.Draid1,
             draid_data_disks: 2,
             draid_spare_disks: 1,

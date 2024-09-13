@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, SlicePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +8,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
@@ -28,11 +31,9 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @NgModule({
   imports: [
-    CommonModule,
     TranslateModule,
     ReactiveFormsModule,
     IxDateComponent,
-    IxFormsModule,
     FormsModule,
     MatSelectModule,
     MatDatepickerModule,
@@ -44,6 +45,12 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     TestIdModule,
     TooltipComponent,
     CastPipe,
+    IxSelectComponent,
+    IxInputComponent,
+    IxLabelComponent,
+    IxErrorsComponent,
+    SlicePipe,
+    AsyncPipe,
   ],
   exports: [
     SchedulerComponent,

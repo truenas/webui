@@ -1,13 +1,16 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { MatError } from '@angular/material/form-field';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 
 type SomeError = Record<string, unknown>;
 
@@ -19,6 +22,13 @@ export const ixManualValidateError = 'ixManualValidateError';
   templateUrl: './ix-errors.component.html',
   styleUrls: ['./ix-errors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatError,
+    IxIconModule,
+    MatTooltip,
+    TranslateModule,
+  ],
 })
 export class IxErrorsComponent implements OnChanges {
   @Input() control: AbstractControl;
@@ -75,11 +85,11 @@ export class IxErrorsComponent implements OnChanges {
         filter((status) => status !== 'PENDING'),
         untilDestroyed(this),
       ).subscribe(() => {
-        const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
+        const newErrors: (string | null)[] = Object.keys(this.control.errors || []).map((error) => {
           if (error === ixManualValidateError) {
             return null;
           }
-          const message = (this.control.errors[error] as SomeError)?.message as string;
+          const message = (this.control.errors?.[error] as SomeError)?.message as string;
           if (message) {
             return message;
           }
@@ -87,7 +97,8 @@ export class IxErrorsComponent implements OnChanges {
           return this.getDefaultError(error as DefaultValidationError);
         });
 
-        this.messages = newErrors.filter((message) => !!message);
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        this.messages = newErrors.filter((message) => !!message) as string[];
 
         if (this.control.errors) {
           this.control.markAllAsTouched();
@@ -105,28 +116,30 @@ export class IxErrorsComponent implements OnChanges {
    * @returns A default error message for the error type
    */
   getDefaultError(error: DefaultValidationError): string {
+    // eslint-disable-next-line
+    const errors = this.control.errors as ValidationErrors;
     switch (error) {
       case DefaultValidationError.Min:
-        return this.defaultErrMessages.min((this.control.errors.min as SomeError).min as number);
+        return this.defaultErrMessages.min((errors.min as SomeError).min as number);
       case DefaultValidationError.Max:
-        return this.defaultErrMessages.max((this.control.errors.max as SomeError).max as number);
+        return this.defaultErrMessages.max((errors.max as SomeError).max as number);
       case DefaultValidationError.Required:
         return this.defaultErrMessages.required();
       case DefaultValidationError.Email:
         return this.defaultErrMessages.email();
       case DefaultValidationError.MinLength:
-        return this.defaultErrMessages.minlength((this.control.errors.minlength as SomeError).requiredLength as number);
+        return this.defaultErrMessages.minlength((errors.minlength as SomeError).requiredLength as number);
       case DefaultValidationError.MaxLength:
-        return this.defaultErrMessages.maxlength((this.control.errors.maxlength as SomeError).requiredLength as number);
+        return this.defaultErrMessages.maxlength((errors.maxlength as SomeError).requiredLength as number);
       case DefaultValidationError.Range:
         return this.defaultErrMessages.range(
-          (this.control.errors.rangeValue as SomeError).min as number,
-          (this.control.errors.rangeValue as SomeError).max as number,
+          (errors.rangeValue as SomeError).min as number,
+          (errors.rangeValue as SomeError).max as number,
         );
       case DefaultValidationError.Pattern:
         return this.defaultErrMessages.pattern();
       case DefaultValidationError.Forbidden:
-        return this.defaultErrMessages.forbidden(this.control.errors.value as string);
+        return this.defaultErrMessages.forbidden(errors.value as string);
       case DefaultValidationError.Number:
         return this.defaultErrMessages.number();
       case DefaultValidationError.Cron:
@@ -134,7 +147,7 @@ export class IxErrorsComponent implements OnChanges {
       case DefaultValidationError.Ip2:
         return this.defaultErrMessages.ip2();
       default:
-        return undefined;
+        return '';
     }
   }
 
@@ -146,5 +159,10 @@ export class IxErrorsComponent implements OnChanges {
     }
     this.control.updateValueAndValidity();
     this.cdr.markForCheck();
+  }
+
+  // TODO: Workaround for https://github.com/angular/angular/issues/56471
+  protected trackMessage(message: string): string {
+    return message;
   }
 }

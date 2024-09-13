@@ -15,7 +15,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
@@ -124,7 +124,7 @@ export class SnapshotTaskListComponent implements OnInit {
       cssClass: 'state-button',
     }),
   ], {
-    rowTestId: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
+    uniqueRowTag: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
     ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
   });
 

@@ -67,7 +67,7 @@ export class NfsCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-nfs-share-' + row.path + '-' + row.comment,
+    uniqueRowTag: (row) => 'card-nfs-share-' + row.path + '-' + row.comment,
     ariaLabels: (row) => [row.path, this.translate.instant('NFS Share')],
   });
 

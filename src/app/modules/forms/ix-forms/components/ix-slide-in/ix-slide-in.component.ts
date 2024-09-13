@@ -1,3 +1,4 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
@@ -25,6 +26,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './ix-slide-in.component.html',
   styleUrls: ['./ix-slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CdkTrapFocus],
 })
 export class IxSlideInComponent implements OnInit, OnDestroy {
   @Input() id: string;

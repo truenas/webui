@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,7 +24,7 @@ import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.int
 })
 export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvider {
   @Input() isCustomRetentionVisible = true;
-  @Output() save = new EventEmitter<void>();
+  readonly save = output();
 
   form = this.formBuilder.group({
     schedule_method: [ScheduleMethod.Cron, [Validators.required]],

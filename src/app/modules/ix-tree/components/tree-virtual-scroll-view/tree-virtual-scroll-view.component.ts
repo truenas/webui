@@ -6,20 +6,20 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   HostBinding,
   Input,
   IterableDiffers,
   OnChanges,
   OnDestroy,
-  OnInit,
-  Output,
+  OnInit, output,
   TrackByFunction,
   ViewChild,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ResizedEvent } from 'angular-resize-event';
-import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
+import {
+  animationFrameScheduler, asapScheduler, BehaviorSubject,
+} from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
@@ -50,8 +50,8 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   @Input() ixMaxBufferPx = defaultSize * 8;
   @Input() override trackBy!: TrackByFunction<T>;
 
-  @Output() viewportScrolled = new EventEmitter<number>();
-  @Output() viewportResized = new EventEmitter<ResizedEvent>();
+  readonly viewportScrolled = output<number>();
+  readonly viewportResized = output<ResizedEvent>();
 
   nodes$ = new BehaviorSubject<TreeVirtualNodeData<T>[]>([]);
   innerTrackBy: TrackByFunction<TreeVirtualNodeData<T>> = (index: number) => index;
@@ -83,13 +83,13 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   override ngOnInit(): void {
     this.scrollableElement = document.querySelector('.rightside-content-hold');
     if (this.scrollableElement) {
-      this.scrollableElement.addEventListener('scroll', this.scrolled.bind(this));
+      this.scrollableElement.addEventListener('scroll', this.scrolled);
     }
   }
 
   override ngOnDestroy(): void {
     if (this.scrollableElement) {
-      this.scrollableElement.removeEventListener('scroll', this.scrolled.bind(this));
+      this.scrollableElement.removeEventListener('scroll', this.scrolled);
     }
   }
 
@@ -133,7 +133,7 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     });
   }
 
-  private scrolled(): void {
+  private readonly scrolled = (): void => {
     this.viewportScrolled.emit(this.virtualScrollViewport.elementRef.nativeElement.scrollLeft);
-  }
+  };
 }

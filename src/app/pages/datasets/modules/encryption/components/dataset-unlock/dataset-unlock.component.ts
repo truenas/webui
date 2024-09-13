@@ -155,10 +155,13 @@ export class DatasetUnlockComponent implements OnInit {
         }
 
         (this.form.controls.datasets.controls[i].controls.file as FormControl)?.valueChanges.pipe(
-          switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
+          switchMap((files: File[]) => (!files?.length ? of('{}') : from(files[0].text()))),
           untilDestroyed(this),
-        ).subscribe((key) => {
-          (this.form.controls.datasets.controls[i].controls.key as FormControl).setValue(key);
+        ).subscribe((textFromFile) => {
+          const key = (JSON.parse(textFromFile) as Record<string, string>)[result.name];
+          if (key) {
+            this.form.controls.datasets.controls[i].controls.key.setValue(key);
+          }
         });
       }
       this.form.controls.datasets.disable();
@@ -202,13 +205,11 @@ export class DatasetUnlockComponent implements OnInit {
 
     if (!values.use_file) {
       values.datasets.forEach((dataset) => {
-        if (values.unlock_children || dataset.name === this.pk) {
-          if (dataset.is_passphrase && dataset.passphrase) {
-            datasets.push({ name: dataset.name, passphrase: dataset.passphrase });
-          }
-          if (!dataset.is_passphrase && dataset.key) {
-            datasets.push({ name: dataset.name, key: dataset.key });
-          }
+        if (dataset.is_passphrase && dataset.passphrase) {
+          datasets.push({ name: dataset.name, passphrase: dataset.passphrase });
+        }
+        if (!dataset.is_passphrase && dataset.key) {
+          datasets.push({ name: dataset.name, key: dataset.key });
         }
       });
     }

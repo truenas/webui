@@ -5,7 +5,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, forkJoin, map } from 'rxjs';
+import {
+  filter, forkJoin, map, take,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -17,7 +19,7 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -55,9 +57,14 @@ export class DiskListComponent implements OnInit {
         this.onListFiltered(this.filterString);
       },
       onColumnCheck: (checked) => {
-        this.disks.forEach((disk) => disk.selected = checked);
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString);
+        this.dataProvider.currentPage$.pipe(
+          take(1),
+          untilDestroyed(this),
+        ).subscribe((disks) => {
+          disks.forEach((disk) => disk.selected = checked);
+          this.dataProvider.setRows([]);
+          this.onListFiltered(this.filterString);
+        });
       },
     }),
     textColumn({
@@ -126,7 +133,7 @@ export class DiskListComponent implements OnInit {
       hidden: true,
     }),
   ], {
-    rowTestId: (row) => `disk-${row.name}`,
+    uniqueRowTag: (row) => `disk-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
   });
 
@@ -211,11 +218,14 @@ export class DiskListComponent implements OnInit {
 
   wipe(disk: Disk): void {
     const exportedPool = this.unusedDisks.find((dev) => dev.devname === disk.devname)?.exported_zpool;
-    this.matDialog.open(DiskWipeDialogComponent, {
+    const dialog = this.matDialog.open(DiskWipeDialogComponent, {
       data: {
         diskName: disk.name,
         exportedPool,
       },
+    });
+    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.dataProvider.load();
     });
   }
 

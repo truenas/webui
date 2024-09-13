@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, Observable } from 'rxjs';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
@@ -24,7 +24,7 @@ describe('AppControlsComponent', () => {
     portals: {
       'Web UI': 'http://test.com',
     } as Record<string, string>,
-    status: CatalogAppState.Running,
+    status: AppState.Running,
     upgrade_available: true,
     metadata: {
       icon: 'http://localhost/test-app.png',

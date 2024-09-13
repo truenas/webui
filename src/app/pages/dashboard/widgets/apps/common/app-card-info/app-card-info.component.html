@@ -3,12 +3,12 @@
   <div *ixWithLoadingState="app() as app" class="version">v{{ app.metadata?.app_version }}</div>
 </div>
 <div class="app-status">
-  <ix-app-status-cell
+  <ix-app-state-cell
     *ixWithLoadingState="app() as app"
     [app]="app"
     [job]="job()"
     [showIcon]="true"
-  ></ix-app-status-cell>
+  ></ix-app-state-cell>
   <ix-app-update-cell
     *ixWithLoadingState="app() as app"
     [app]="app"

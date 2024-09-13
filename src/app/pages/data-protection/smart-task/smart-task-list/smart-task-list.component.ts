@@ -80,7 +80,7 @@ export class SmartTaskListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'smart-task-' + row.type + '-' + row.disks.join(','),
+    uniqueRowTag: (row) => 'smart-task-' + row.type + '-' + row.disks.join(','),
     ariaLabels: (row) => [row.type, row.disks.join(','), this.translate.instant('Smart Task')],
   });
 

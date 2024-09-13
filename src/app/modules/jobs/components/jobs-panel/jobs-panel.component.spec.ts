@@ -99,7 +99,12 @@ describe('JobsPanelComponent', () => {
         })),
       }),
       mockWebSocket([
-        mockCall('core.get_jobs', [runningJob, waitingJob, failedJob, transientRunningJob]),
+        mockCall('core.get_jobs', (query) => {
+          if (query[0][0][2] === JobState.Success) {
+            return [];
+          }
+          return [runningJob, waitingJob, failedJob, transientRunningJob];
+        }),
         mockCall('core.job_abort'),
       ]),
       mockProvider(MatDialogRef),
@@ -127,6 +132,8 @@ describe('JobsPanelComponent', () => {
   });
 
   it('checks component header is present', () => {
+    spectator.inject(Store).dispatch(adminUiInitialized());
+
     expect(jobPanel.title).toHaveExactText('Jobs');
     expect(jobPanel.runningBadgeCount).toHaveText('1');
     expect(jobPanel.waitingBadgeCount).toHaveText('1');
@@ -145,11 +152,11 @@ describe('JobsPanelComponent', () => {
     expect(jobs[4]).toBeUndefined();
   });
 
-  it('shows confirm dialog if user clicks on the abort button', async () => {
+  it('aborts a job when abort button is pressed', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const abortButton = await loader.getHarness(MatButtonHarness.with({ selector: '.job-button-abort' }));
-    await abortButton.click();
+    const abortButton = spectator.query('.job-button-abort');
+    spectator.click(abortButton);
 
     expect(websocket.call).toHaveBeenCalledWith('core.job_abort', [1]);
   });

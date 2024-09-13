@@ -13,7 +13,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UnusedDiskSelectComponent,
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services/ws.service';
 import { BootPoolReplaceDialogComponent } from './boot-pool-replace-dialog.component';
@@ -25,7 +24,6 @@ describe('BootPoolReplaceDialogComponent', () => {
   const createComponent = createRoutingFactory({
     component: BootPoolReplaceDialogComponent,
     imports: [
-      IxFormsModule,
       UnusedDiskSelectComponent,
       ReactiveFormsModule,
     ],

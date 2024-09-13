@@ -1,8 +1,8 @@
 import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 import {
-  ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, TemplateRef,
+  ChangeDetectionStrategy, Component, ContentChild, Input, OnChanges, OnInit, output, TemplateRef,
 } from '@angular/core';
-import { differenceBy, isEqual } from 'lodash';
+import { differenceBy, isEqual } from 'lodash-es';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ListSelection } from 'app/modules/lists/dual-list/models';
 
@@ -26,12 +26,12 @@ export class DualListboxComponent<T extends { id: string | number }> implements 
   @Input() items: T[];
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('selectedItems') _selectedItems: T[];
-  @Output() selectedItemsChange = new EventEmitter<T[]>();
-
   @Input() minHeight = '200px';
   @Input() maxHeight = '300px';
   @Input() title1: string;
   @Input() title2: string;
+
+  readonly selectedItemsChange = output<T[]>();
 
   @ContentChild('templateItem', { static: true }) templateItem: TemplateRef<{ $implicit: T }>;
   @ContentChild('templateArrowLeft', { static: true }) templateArrowLeft: TemplateRef<void>;
@@ -108,5 +108,10 @@ export class DualListboxComponent<T extends { id: string | number }> implements 
     chosenItems.forEach((item) => {
       item.classList.add('cdk-drag-placeholder');
     });
+  }
+
+  // TODO: Come up with a way to track ids
+  protected trackIdentity(item: T): T {
+    return item;
   }
 }

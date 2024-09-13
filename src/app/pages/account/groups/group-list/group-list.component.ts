@@ -7,7 +7,9 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, combineLatest, of } from 'rxjs';
+import {
+  Observable, combineLatest, of,
+} from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -23,7 +25,7 @@ import { groupListElements } from 'app/pages/account/groups/group-list/group-lis
 import { groupPageEntered, groupRemoved } from 'app/pages/account/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/account/groups/store/group.selectors';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -67,7 +69,7 @@ export class GroupListComponent implements OnInit {
         .join(', ') || this.translate.instant('N/A'),
     }),
   ], {
-    rowTestId: (row) => 'group-' + row.group,
+    uniqueRowTag: (row) => 'group-' + row.group,
     ariaLabels: (row) => [row.group, this.translate.instant('Group')],
   });
 
@@ -103,7 +105,7 @@ export class GroupListComponent implements OnInit {
     private emptyService: EmptyService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private translate: TranslateService,
   ) { }
 

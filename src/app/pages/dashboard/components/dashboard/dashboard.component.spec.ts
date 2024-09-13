@@ -1,14 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockDirective } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
   WidgetGroupControlsComponent,
@@ -16,6 +19,7 @@ import {
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
+import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
@@ -32,6 +36,9 @@ describe('DashboardComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DashboardComponent,
+    imports: [
+      NgTemplateOutlet,
+    ],
     declarations: [
       WidgetGroupControlsComponent,
       MockComponent(PageHeaderComponent),
@@ -40,6 +47,9 @@ describe('DashboardComponent', () => {
       MockDirective(IxDropGridDirective),
     ],
     providers: [
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockProvider(DashboardStore, {
         groups$,
         isLoading$,
@@ -49,6 +59,7 @@ describe('DashboardComponent', () => {
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of({ error: false, response: groupA })),
       }),
+      mockProvider(SnackbarService),
       provideMockStore(),
     ],
   });
@@ -144,6 +155,19 @@ describe('DashboardComponent', () => {
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true);
     });
 
+    it('resets configuration to defaults when Reset is pressed', async () => {
+      const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
+      await resetButton.click();
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Default widgets restored');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith(getDefaultWidgets());
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
+    });
+
     it('saves new configuration when Save is pressed', async () => {
       const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'delete' }));
       await deleteIcon.click();
@@ -152,6 +176,7 @@ describe('DashboardComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith([groupB, groupC, groupD]);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
 
     it('reverts to loaded configuration when Cancel button is pressed', async () => {

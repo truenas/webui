@@ -1,11 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, Component, OnInit,
+  output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { isObject } from 'lodash';
+import { isObject } from 'lodash-es';
 import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
@@ -47,7 +48,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateAuthorityListComponent implements OnInit {
-  @Output() certificateSigned = new EventEmitter<void>();
+  readonly certificateSigned = output();
 
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = certificateAuthorityListElements;
@@ -101,7 +102,7 @@ export class CertificateAuthorityListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'ca-' + row.name,
+    uniqueRowTag: (row) => 'ca-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Certificate Authority')],
   });
 

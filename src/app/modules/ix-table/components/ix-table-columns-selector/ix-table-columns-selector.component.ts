@@ -1,11 +1,11 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
 @UntilDestroy()
 @Component({
@@ -16,7 +16,9 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-c
 })
 export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   @Input() columns: Column<T, ColumnComponent<T>>[];
-  @Output() columnsChange = new EventEmitter<Column<T, ColumnComponent<T>>[]>();
+
+  readonly columnsChange = output<Column<T, ColumnComponent<T>>[]>();
+
   hiddenColumns = new SelectionModel<Column<T, ColumnComponent<T>>>(true, []);
   private defaultColumns: Column<T, ColumnComponent<T>>[];
 

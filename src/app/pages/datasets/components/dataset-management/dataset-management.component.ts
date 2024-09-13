@@ -25,7 +25,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import { Subject, Subscription } from 'rxjs';
 import {
   debounceTime,

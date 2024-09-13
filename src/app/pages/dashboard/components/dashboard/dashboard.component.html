@@ -16,6 +16,18 @@
 
 @if (isEditing()) {
   <div class="edit-mode-buttons">
+    @if (customLayout()) {
+      <button
+        mat-button
+        type="button"
+        ixTest="reset"
+        [disabled]="isLoading()"
+        (click)="onReset()"
+      >
+        {{ 'Reset' | translate }}
+      </button>
+    }
+
     <button
       mat-button
       class="add-button"
@@ -60,35 +72,36 @@
     (ixDropGridModelChange)="onGroupsReordered($event)"
   >
     @if (renderedGroups().length > 0) {
-      <div
-        *ngFor="let group of renderedGroups(); index as i; trackBy: trackByFn"
-        class="group-slot"
-        ixDropGridItem
-        @groupRemovedTrigger
-      >
+      @for (group of renderedGroups(); track group; let i = $index) {
         <div
-          ixDrag
-          class="group-container"
-          [class.editing]="isEditing()"
+          class="group-slot"
+          ixDropGridItem
+          @groupRemovedTrigger
         >
-          <ix-widget-group-controls
-            class="controls"
-            [index]="i"
-            [totalGroups]="renderedGroups().length"
-            [disableFocusableElements]="!isEditing()"
-            (moveUp)="onMoveGroup(i, -1)"
-            (moveDown)="onMoveGroup(i, 1)"
-            (edit)="onEditGroup(i)"
-            (delete)="onDeleteGroup(group)"
-          ></ix-widget-group-controls>
+          <div
+            ixDrag
+            class="group-container"
+            [class.editing]="isEditing()"
+          >
+            <ix-widget-group-controls
+              class="controls"
+              [index]="i"
+              [totalGroups]="renderedGroups().length"
+              [disableFocusableElements]="!isEditing()"
+              (moveUp)="onMoveGroup(i, -1)"
+              (moveDown)="onMoveGroup(i, 1)"
+              (edit)="onEditGroup(i)"
+              (delete)="onDeleteGroup(group)"
+            ></ix-widget-group-controls>
 
-          <ix-widget-group
-            class="group"
-            [disableFocusableElements]="isEditing()"
-            [group]="group"
-          ></ix-widget-group>
+            <ix-widget-group
+              class="group"
+              [disableFocusableElements]="isEditing()"
+              [group]="group"
+            ></ix-widget-group>
+          </div>
         </div>
-      </div>
+      }
     } @else {
       <ix-empty [conf]="emptyDashboardConf"></ix-empty>
     }

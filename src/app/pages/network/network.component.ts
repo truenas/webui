@@ -30,7 +30,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { AppState } from 'app/store/index';
+import { AppsState } from 'app/store/index';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -71,7 +71,7 @@ export class NetworkComponent implements OnInit {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
     private interfacesStore: InterfacesStore,

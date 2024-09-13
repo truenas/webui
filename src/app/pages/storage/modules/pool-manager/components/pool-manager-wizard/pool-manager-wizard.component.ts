@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -26,7 +26,7 @@ import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/po
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -38,7 +38,8 @@ import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.sel
 })
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   protected existingPool: Pool = null;
-  @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
+
+  readonly stepChanged = output<PoolCreationWizardStep>();
 
   @ViewChild('stepper') stepper: MatStepper;
 
@@ -62,7 +63,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: PoolManagerStore,
-    private systemStore$: Store<AppState>,
+    private systemStore$: Store<AppsState>,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,

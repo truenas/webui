@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -43,7 +43,6 @@ const components = [
 
 @NgModule({
   imports: [
-    CommonModule,
     MatTooltipModule,
     TranslateModule,
     IxIconModule,
@@ -52,6 +51,7 @@ const components = [
     Ng2FittextModule,
     CastPipe,
     TestIdModule,
+    NgTemplateOutlet,
   ],
   declarations: [
     ...components,

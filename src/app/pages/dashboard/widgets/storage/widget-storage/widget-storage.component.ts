@@ -249,8 +249,8 @@ export class WidgetStorageComponent {
       level = isScanFinished ? StatusLevel.Safe : StatusLevel.Warn;
       value = this.formatDateTimePipe.transform(endTime);
     } else {
-      icon = StatusIcon.MdiCloseCircle;
-      level = StatusLevel.Error;
+      icon = StatusIcon.Neutral;
+      level = StatusLevel.Neutral;
       value = this.translate.instant('Never');
     }
 

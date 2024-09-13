@@ -1,0 +1,17 @@
+<mat-list role="list">
+  @for (subItem of subMenuItems(); track subItem) {
+    @if (!subItem.isVisible$ || (subItem.isVisible$ | async)) {
+      <mat-list-item
+        *ixHasAccess="!subItem.hasAccess$ || (subItem.hasAccess$ | async)"
+        routerLinkActive="selected"
+        class="sidebar-list-item slide-in-nav-item"
+        role="listitem"
+        (click)="toggleMenu.emit()"
+      >
+        <a class="slidein-nav-link" [ixTest]="subItem.name" [routerLink]="['/', menuName(), subItem.state]">
+          {{ subItem.name | translate }}
+        </a>
+      </mat-list-item>
+    }
+  }
+</mat-list>

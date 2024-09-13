@@ -396,8 +396,10 @@ body .mdc-card__actions,
 
     > a {
       -webkit-box-orient: vertical;
-      display: inline-box;
+      /* stylelint-disable-next-line */
+      display: -webkit-inline-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       max-width: 75%;
       overflow: hidden;
       text-overflow: ellipsis;

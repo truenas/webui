@@ -83,6 +83,7 @@ describe('WidgetSysInfoActiveComponent', () => {
       }),
       mockProvider(LocaleService, {
         getDateAndTime: () => ['2024-03-15', '10:34:11'],
+        getDateFromString: (date: string) => new Date(date),
       }),
       provideMockStore({
         selectors: [
@@ -141,7 +142,7 @@ describe('WidgetSysInfoActiveComponent', () => {
       'Support License: Best contract, expires 2025-01-01',
       'System Serial: AA-00001',
       'Hostname: test-hostname-a',
-      'Uptime: 23 hours 12 minutes as of 2024-03-15 10:34:11',
+      'Uptime: 23 hours 12 minutes as of 10:34',
     ]);
   });
 
@@ -160,7 +161,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     const updatedDatetime = spectator.component.datetime();
 
     expect(updatedUptime).toBeGreaterThan(initialUptime);
-    expect(updatedDatetime).toBeGreaterThan(initialDatetime);
+    expect(updatedDatetime).toBe(initialDatetime);
 
     jest.useRealTimers();
   });

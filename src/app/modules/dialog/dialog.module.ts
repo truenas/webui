@@ -1,4 +1,6 @@
-import { CommonModule, NgIf } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,7 +8,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -29,7 +30,10 @@ import {
   StartServiceDialogComponent,
 } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -37,24 +41,24 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
-    NgIf,
     MatCheckboxModule,
     MatDialogModule,
     FormsModule,
     TranslateModule,
     TestIdModule,
     MatButtonModule,
-    FlexModule,
     IxIconModule,
-    CommonModule,
     MatProgressBarModule,
     MatDividerModule,
     CommonDirectivesModule,
     AppLoaderModule,
-    IxFormsModule,
     ReactiveFormsModule,
     JobsModule,
     CopyButtonComponent,
+    IxSlideToggleComponent,
+    FormActionsComponent,
+    DecimalPipe,
+    AsyncPipe,
   ],
   declarations: [
     ConfirmDialogComponent,

@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
@@ -43,17 +43,13 @@ export class TargetFormComponent implements OnInit {
   }
 
   readonly helptext = helptextSharingIscsi;
-  readonly modes$ = of(this.helptext.target_form_enum_mode);
   readonly portals$ = this.iscsiService.listPortals().pipe(
     map((portals) => {
-      const opts: Option[] = [];
-      portals.forEach((portal) => {
-        let label = String(portal.tag);
-        if (portal.comment) {
-          label += ' (' + portal.comment + ')';
-        }
-        opts.push({ label, value: portal.id });
+      const opts: Option[] = portals.map((portal) => {
+        const label = portal.comment ? `${portal.id} (${portal.comment})` : String(portal.id);
+        return { label, value: portal.id };
       });
+
       return opts;
     }),
   );

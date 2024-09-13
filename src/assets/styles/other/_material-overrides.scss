@@ -6,7 +6,7 @@ html .ix-dark {
   --mdc-list-list-item-label-text-color: var(--fg2);
   --mdc-list-list-item-disabled-label-text-color: var(--fg2);
   --mdc-list-list-item-hover-label-text-color: var(--fg2);
-  --mdc-list-list-item-label-text-font: var(--font-family-body2);
+  --mdc-list-list-item-label-text-font: var(--font-family-body);
   --mdc-list-list-item-one-line-container-height: 48px;
   --mdc-list-list-item-selected-container-color: var(--bg2);
   --mdc-list-list-item-supporting-text-color: var(--fg2);
@@ -18,7 +18,7 @@ html .ix-dark {
   --mdc-dialog-supporting-text-font: var(--font-family-body);
   --mdc-dialog-supporting-text-size: 0.875rem;
   --mdc-dialog-subhead-size: 1.42rem;
-  --mdc-dialog-subhead-font: 'Roboto', 'Helvetica Neue', sans-serif;
+  --mdc-dialog-subhead-font: var(--font-family-body);
   --mdc-dialog-supporting-text-weight: 400;
   --mdc-dialog-subhead-weight: 600;
   --mdc-dialog-supporting-text-line-height: 1.65;
@@ -83,14 +83,14 @@ html .ix-dark {
   --mdc-filled-text-field-input-text-color: var(--alt-fg2);
   --mat-option-selected-state-label-text-color: var(--fg1);
   --mat-menu-item-label-text-line-height: 36px;
-  --mat-menu-item-label-text-font: var(--font-family-body2);
+  --mat-menu-item-label-text-font: var(--font-family-body);
   --mat-paginator-container-size: unset;
-  --mat-paginator-container-text-font: var(--font-family-body2);
+  --mat-paginator-container-text-font: var(--font-family-body);
 
   --mat-stepper-header-selected-state-label-text-size: 14px;
   --mat-stepper-header-selected-state-label-text-weight: 500;
-  --mat-stepper-container-text-font: var(--font-family-body2);
-  --mat-stepper-header-label-text-font: var(--font-family-body2);
+  --mat-stepper-container-text-font: var(--font-family-body);
+  --mat-stepper-header-label-text-font: var(--font-family-body);
   --mat-stepper-header-label-text-size: 14px;
 
   --mat-checkbox-label-text-color: var(--fg1);
@@ -133,7 +133,7 @@ html .ix-dark {
     --mdc-form-field-label-text-color: var(--fg1);
     --mdc-form-field-label-text-tracking: normal;
     --mdc-form-field-label-text-size: inherit;
-    --mdc-form-field-label-text-font: var(--font-family-body2);
+    --mdc-form-field-label-text-font: var(--font-family-body);
   }
 
   .mat-mdc-slide-toggle {
@@ -141,7 +141,7 @@ html .ix-dark {
   }
 
   .mat-mdc-checkbox {
-    --mdc-form-field-label-text-font: var(--font-family-body2);
+    --mdc-form-field-label-text-font: var(--font-family-body);
 
     &.mat-mdc-checkbox-disabled label {
       color: var(--grey);
@@ -178,7 +178,7 @@ html .ix-dark {
   }
 
   .mat-button-toggle-button {
-    font-family: var(--font-family-body2);
+    font-family: var(--font-family-body);
   }
 
   .mat-mdc-select {

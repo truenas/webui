@@ -1,18 +1,18 @@
 import { confirm, select, input } from '@inquirer/prompts';
 import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import {
-  MockStorageScenario,
-  mockStorageScenarioLabels,
-} from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
+  MockEnclosureScenario,
+  mockEnclosureScenarioLabels,
+} from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 // eslint-disable-next-line no-restricted-imports
 import { getCurrentConfig, updateEnvironment } from '../utils/save-environment';
 
 export async function mockEnclosureCommand(): Promise<void> {
-  console.info(currentMockConfig());
+  console.info(await currentMockConfig());
   const enable = await confirm({ message: 'Enable enclosure mocking?' });
 
   if (!enable) {
-    updateEnvironment({
+    await updateEnvironment({
       mockConfig: {
         enabled: false,
       },
@@ -46,14 +46,14 @@ Available options: ${allShelves.join(', ')}:\n`,
 
   const scenario = await select({
     message: 'Select mocking scenario',
-    choices: Array.from(mockStorageScenarioLabels).map(([key, name]) => ({
+    choices: Array.from(mockEnclosureScenarioLabels).map(([key, name]) => ({
       name,
       value: key,
     })),
-    default: MockStorageScenario.FillSomeSlots,
+    default: MockEnclosureScenario.FillSomeSlots,
   });
 
-  updateEnvironment({
+  await updateEnvironment({
     mockConfig: {
       controllerModel,
       expansionModels,
@@ -63,8 +63,8 @@ Available options: ${allShelves.join(', ')}:\n`,
   });
 }
 
-export function currentMockConfig(): string {
-  const environment = getCurrentConfig();
+export async function currentMockConfig(): Promise<string> {
+  const environment = await getCurrentConfig();
   const printedConfig = `Enclosure Mocks: ${environment.mockConfig.enabled ? 'Enabled' : 'Disabled'}`;
 
   if (!environment.mockConfig.enabled) {
@@ -75,5 +75,5 @@ export function currentMockConfig(): string {
 ${printedConfig}
   - Controller: ${environment.mockConfig.controllerModel}
   - Expansion Shelves: ${environment.mockConfig.expansionModels.join(', ')}
-  - Scenario: ${mockStorageScenarioLabels.get(environment.mockConfig.scenario)}`;
+  - Scenario: ${mockEnclosureScenarioLabels.get(environment.mockConfig.scenario)}`;
 }

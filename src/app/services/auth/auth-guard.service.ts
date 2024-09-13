@@ -24,7 +24,7 @@ export class AuthGuardService {
     }
 
     this.window.sessionStorage.setItem('redirectUrl', state.url);
-    this.router.navigate(['/sessions/signin']);
+    this.router.navigate(['/signin']);
 
     return false;
   }

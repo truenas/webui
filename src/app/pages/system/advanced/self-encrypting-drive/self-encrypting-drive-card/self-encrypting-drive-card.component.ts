@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Subject, combineLatest } from 'rxjs';
 import {
   distinctUntilChanged,
@@ -16,7 +16,7 @@ import { sedCardElements } from 'app/pages/system/advanced/self-encrypting-drive
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -58,7 +58,7 @@ export class SelfEncryptingDriveCardComponent {
   );
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private ws: WebSocketService,
     private chainedSlideIns: IxChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,

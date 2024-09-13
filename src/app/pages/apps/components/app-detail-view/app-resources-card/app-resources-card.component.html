@@ -2,7 +2,7 @@
 
 <div class="app-list-item">
   <span class="label">{{ 'CPU Usage' | translate }}:</span>
-  @if (isLoading$ | async) {
+  @if (isLoading()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
     <div>{{ "{cpuPercentage}% Avg. Usage" | translate: { cpuPercentage } }}</div>
@@ -10,7 +10,7 @@
 </div>
 <div class="app-list-item">
   <span class="label">{{ 'Memory Usage' | translate }}:</span>
-  @if (isLoading$ | async) {
+  @if (isLoading()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
     @if (memoryUsed && memoryTotal) {
@@ -22,22 +22,25 @@
 </div>
 <div class="app-list-item">
   <span class="label">{{ 'Pool' | translate }}:</span>
-  @if (isLoading$ | async) {
+  @if (isLoading()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
-    @if ((dockerStore.selectedPool$| async); as selectedPool) {
-      {{ selectedPool }}
+    @if (selectedPool()) {
+      {{ selectedPool() }}
     } @else {
       {{ 'N/A' | translate }}
     }
   }
 </div>
-
-@if (dockerStore.selectedPool$| async) {
-  <div class="app-list-item">
-    <span class="label">{{ 'Available Space' | translate }}:</span>
-    <span *ixWithLoadingState="availableSpace$ as availableSpace">
-      {{ +availableSpace | ixFileSize }}
-    </span>
-  </div>
-}
+<div class="app-list-item">
+  <span class="label">{{ 'Available Space' | translate }}:</span>
+  @if (isLoading()) {
+    <ngx-skeleton-loader></ngx-skeleton-loader>
+  } @else {
+    @if (selectedPool()) {
+      {{ availableSpace$ | async | ixFileSize }}
+    } @else {
+      {{ 'N/A' | translate }}
+    }
+  }
+</div>

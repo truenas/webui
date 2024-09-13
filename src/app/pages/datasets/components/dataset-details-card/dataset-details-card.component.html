@@ -1,9 +1,10 @@
 <mat-card class="card">
   <mat-card-header>
-    <h3 *ngIf="isFilesystem" mat-card-title>
-      {{ 'Dataset Details' | translate }}
+    <h3 mat-card-title>
+      {{ isFilesystem() ? ('Dataset Details' | translate) : ('Zvol Details' | translate) }}
     </h3>
-    <ng-container *ngIf="isFilesystem">
+
+    @if (isFilesystem()) {
       <button
         *ixRequiresRoles="[Role.DatasetWrite]"
         mat-button
@@ -12,10 +13,7 @@
       >
         {{ 'Edit' | translate }}
       </button>
-    </ng-container>
-
-    <h3 *ngIf="isZvol" mat-card-title>{{ 'Zvol Details' | translate }}</h3>
-    <ng-container *ngIf="isZvol">
+    } @else {
       <button
         *ixRequiresRoles="[Role.DatasetWrite]"
         mat-button
@@ -24,69 +22,67 @@
       >
         {{ 'Edit Zvol' | translate }}
       </button>
-    </ng-container>
+    }
   </mat-card-header>
   <mat-card-content>
     <div class="details-item">
       <div class="label">{{ 'Type' | translate }}:</div>
-      <div class="value">{{ dataset.type | orNotAvailable }}</div>
+      <div class="value">{{ dataset().type | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Sync' | translate }}:</div>
-      <div class="value">{{ dataset?.sync?.value | orNotAvailable }}</div>
+      <div class="value">{{ dataset().sync?.value | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Compression Level' | translate }}:</div>
       <div class="value">
-        @if (datasetCompression) {
-          {{ datasetCompression }}
+        @if (datasetCompression()) {
+          {{ datasetCompression() }}
         } @else {
           {{ 'N/A' | translate }}
         }
       </div>
     </div>
-    @if (!isZvol) {
+    @if (!isZvol()) {
       <div class="details-item">
         <div class="label">{{ 'Enable Atime' | translate }}:</div>
         <div class="value">
-          {{ (dataset.atime ? OnOff.On : OnOff.Off) | translate }}
+          {{ (dataset().atime ? OnOff.On : OnOff.Off) | translate }}
         </div>
       </div>
     }
     <div class="details-item">
       <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
-      <div class="value">{{ dataset?.deduplication?.value | orNotAvailable }}</div>
+      <div class="value">{{ dataset().deduplication?.value | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
       <div class="value">
-        {{ (dataset.casesensitive ? OnOff.On : OnOff.Off) | translate }}
+        {{ (dataset().casesensitive ? OnOff.On : OnOff.Off) | translate }}
       </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Path' | translate }}:</div>
-      @if (!isLoading) {
-        <div
-          matTooltipPosition="above"
-          class="value dataset-path"
-          [matTooltip]="dataset.name"
-          [matTooltipClass]="['dataset-path-tooltip']"
-        >
-          {{ dataset.name }}
-        </div>
-      }
-      <ix-copy-button [text]="dataset.name"></ix-copy-button>
+      <div
+        matTooltipPosition="above"
+        class="value dataset-path"
+        [matTooltip]="dataset().name"
+        [matTooltipClass]="['dataset-path-tooltip']"
+      >
+        {{ dataset().name }}
+      </div>
+      <ix-copy-button [text]="dataset().name"></ix-copy-button>
     </div>
-    @if (!isLoading && hasComments) {
+    @if (hasComments()) {
       <div class="details-item">
         <div class="label">{{ 'Comments' | translate }}:</div>
-        <div class="value dataset-comments">{{ dataset.comments.value }}</div>
+        <div class="value dataset-comments">{{ dataset().comments.value }}</div>
       </div>
     }
   </mat-card-content>
-  @if (dataset.id !== dataset.pool) {
+  @if (dataset().id !== dataset().pool) {
     <mat-card-actions>
-      @if (canBePromoted) {
+      @if (canBePromoted()) {
         <button
           *ixRequiresRoles="[Role.FullAdmin]"
           mat-button

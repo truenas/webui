@@ -1,11 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+  ChangeDetectionStrategy, Component, OnInit, output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { isObject } from 'lodash';
+import { isObject } from 'lodash-es';
 import {
   filter, map, of, switchMap, tap,
 } from 'rxjs';
@@ -44,7 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateListComponent implements OnInit {
-  @Output() certificateDeleted = new EventEmitter<void>();
+  readonly certificateDeleted = output();
 
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = certificateListElements;
@@ -98,7 +98,7 @@ export class CertificateListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'cert-' + row.name,
+    uniqueRowTag: (row) => 'cert-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Certificate')],
   });
 

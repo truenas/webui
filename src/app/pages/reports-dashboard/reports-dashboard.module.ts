@@ -1,5 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, KeyValuePipe, NgTemplateOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,18 +10,27 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -41,9 +50,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
 
 @NgModule({
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    IxFormsModule,
     IxDynamicFormModule,
     routing,
     ScrollingModule,
@@ -58,9 +65,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxIconModule,
     MatMenuModule,
     MatCardModule,
-    FlexLayoutModule,
     CommonDirectivesModule,
-    LayoutModule,
     MatButtonToggleModule,
     MatSlideToggleModule,
     TestIdModule,
@@ -68,6 +73,17 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     EmptyComponent,
     SearchInput1Component,
     MapValuePipe,
+    IxFieldsetComponent,
+    IxModalHeaderComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    IxSlideToggleComponent,
+    PageHeaderModule,
+    AsyncPipe,
+    KeyValuePipe,
+    NgTemplateOutlet,
   ],
   declarations: [
     LineChartComponent,

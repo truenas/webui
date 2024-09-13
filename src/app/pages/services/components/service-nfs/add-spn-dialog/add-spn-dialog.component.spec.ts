@@ -6,10 +6,9 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -20,7 +19,6 @@ describe('AddSpnDialogComponent', () => {
     component: AddSpnDialogComponent,
     imports: [
       ReactiveFormsModule,
-      IxFormsModule,
       AppLoaderModule,
     ],
     providers: [
@@ -29,7 +27,7 @@ describe('AddSpnDialogComponent', () => {
         mockCall('nfs.add_principal'),
       ]),
       mockProvider(MatDialogRef),
-      mockProvider(DialogService),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -53,10 +51,7 @@ describe('AddSpnDialogComponent', () => {
       username: 'username',
       password: 'password',
     }]);
-    expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
-      'Success',
-      'You have successfully added credentials.',
-    );
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Credentials have been successfully added.');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });

@@ -10,9 +10,9 @@ export enum EnclosureSlotStatus {
 }
 
 export enum DriveBayLightStatus {
-  Identify = 'IDENTIFY',
-  Fault = 'FAULT',
+  On = 'ON',
   Off = 'OFF',
+  Clear = 'CLEAR',
 }
 
 export enum EnclosureStatus {

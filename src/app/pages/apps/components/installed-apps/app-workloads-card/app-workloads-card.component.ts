@@ -5,8 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
-import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   App, AppContainerDetails, AppContainerState, appContainerStateLabels,
@@ -16,6 +15,7 @@ import {
   VolumeMountsDialogComponent,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
+import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +27,7 @@ import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-det
 export class AppWorkloadsCardComponent {
   readonly app = input.required<App>();
 
-  readonly CatalogAppState = CatalogAppState;
+  readonly AppState = AppState;
   readonly AppContainerState = AppContainerState;
 
   protected readonly requiredRoles = [Role.AppsWrite];
@@ -62,7 +62,6 @@ export class AppWorkloadsCardComponent {
     });
   }
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-130392
   shellButtonPressed(containerId: string): void {
     this.matDialog.open(ShellDetailsDialogComponent, {
       minWidth: '650px',
@@ -70,7 +69,7 @@ export class AppWorkloadsCardComponent {
       data: {
         appName: this.app().name,
         title: this.translate.instant('Choose Shell Details'),
-        type: PodSelectDialogType.Shell,
+        type: ShellDetailsType.Shell,
         customSubmit: (values: ShellDetailsDialogFormValue) => this.shellDialogSubmit(values, containerId),
       },
     });

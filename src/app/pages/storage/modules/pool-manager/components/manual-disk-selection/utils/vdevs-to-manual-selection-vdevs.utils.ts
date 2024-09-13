@@ -1,5 +1,5 @@
 import { UUID } from 'angular2-uuid';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   ManualSelectionVdev,

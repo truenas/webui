@@ -1,0 +1,114 @@
+// TODO: reenable by renaming after switching jest to ESM
+import * as fs from 'fs';
+import { Role } from 'app/enums/role.enum';
+import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
+import { extractComponentFileContent } from './extract-component-file-content';
+import { extractUiSearchElements } from './extract-ui-search-elements';
+import { findComponentFiles } from './find-component-files';
+import { parseUiSearchElements } from './parse-ui-search-elements';
+
+jest.mock('fs');
+jest.mock('path');
+jest.mock('./extract-component-file-content', () => ({ extractComponentFileContent: jest.fn() }));
+jest.mock('./find-component-files', () => ({ findComponentFiles: jest.fn() }));
+jest.mock('./parse-ui-search-elements', () => ({ parseUiSearchElements: jest.fn() }));
+
+const mockUiElements = [
+  {
+    hierarchy: [
+      'System',
+      'Advanced Settings',
+      'Audit',
+      'Reservation',
+    ],
+    synonyms: [
+      'Audit',
+    ],
+    requiredRoles: [
+      Role.SystemAuditWrite,
+    ],
+    anchorRouterLink: [
+      '/system',
+      'advanced',
+    ],
+    anchor: 'reservation',
+    triggerAnchor: 'configure-audit',
+    section: GlobalSearchSection.Ui,
+  },
+  {
+    hierarchy: [
+      'Credentials',
+      'Groups',
+      'Add',
+    ],
+    synonyms: [
+      'Groups',
+    ],
+    requiredRoles: [
+      Role.AccountWrite,
+    ],
+    anchorRouterLink: [
+      '/credentials',
+      'groups',
+    ],
+    anchor: 'add-group',
+    triggerAnchor: null,
+    section: GlobalSearchSection.Ui,
+  },
+];
+
+describe('extract [ixUiSearch] elements', () => {
+  it('should extract UI searchable elements and write to a file', async () => {
+    (findComponentFiles as jest.Mock).mockResolvedValue(['audit-form.elements.ts', 'group-list.elements.ts']);
+    (extractComponentFileContent as jest.Mock).mockReturnValue({});
+    (parseUiSearchElements as jest.Mock)
+      .mockReturnValueOnce([mockUiElements[0]])
+      .mockReturnValueOnce([mockUiElements[1]]);
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (fs.writeFileSync as jest.Mock).mockImplementation(() => {});
+
+    await extractUiSearchElements();
+
+    expect(findComponentFiles).toHaveBeenCalledWith('src/**/*.elements.ts');
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      'src/assets/ui-searchable-elements.json',
+      JSON.stringify(mockUiElements, null, 2),
+    );
+  });
+});
+
+describe('Parsing and Role Extraction', () => {
+  it('should correctly extract required roles for elements', async () => {
+    (findComponentFiles as jest.Mock).mockResolvedValue(['ipmi.elements.ts']);
+    (extractComponentFileContent as jest.Mock).mockReturnValue({
+      requiredRoles: [Role.IpmiWrite],
+    });
+    (parseUiSearchElements as jest.Mock).mockImplementation((_1, _2, componentProperties) => {
+      return [{
+        elements: {
+          add: {
+            requiredRoles: (componentProperties as { requiredRoles: Role [] }).requiredRoles,
+          },
+        },
+      }];
+    });
+
+    await extractUiSearchElements();
+
+    const expectedOutput = JSON.stringify([
+      ...mockUiElements,
+      {
+        elements: {
+          add: {
+            requiredRoles: [Role.IpmiWrite],
+          },
+        },
+      },
+    ], null, 2);
+
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      'src/assets/ui-searchable-elements.json',
+      expectedOutput,
+    );
+  });
+});

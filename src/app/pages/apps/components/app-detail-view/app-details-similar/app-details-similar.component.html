@@ -10,11 +10,12 @@
 } @else if (similarApps().length) {
   <div class="similar-apps">
     @for (app of similarApps(); track trackByAppId($index, app)) {
-      <ix-app-card
-        [app]="app"
+      <a
         [routerLink]="['/apps', 'available', app.train, app.name]"
-        (keyup.enter)="router.navigate(['/apps', 'available', app.train, app.name])"
-      ></ix-app-card>
+        [ixTest]="['open', app.train, app.name]"
+      >
+        <ix-app-card [app]="app"></ix-app-card>
+      </a>
     }
   </div>
 } @else {

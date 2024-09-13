@@ -20,34 +20,37 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter,
+  Observable,
 } from 'rxjs';
-import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
+import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
+import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
-import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { getAppStatus } from 'app/pages/apps/utils/get-app-status';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 
 enum SortableField {
   Application = 'application',
-  Status = 'status',
+  State = 'state',
   Updates = 'updates',
 }
 
@@ -115,13 +118,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get isBulkStartDisabled(): boolean {
     return this.dataSource.every((app) => [
-      CatalogAppState.Running,
-      CatalogAppState.Deploying,
+      AppState.Running,
+      AppState.Deploying,
     ].includes(app.state));
   }
 
   get isBulkStopDisabled(): boolean {
-    return this.dataSource.every((app) => CatalogAppState.Stopped === app.state);
+    return this.dataSource.every((app) => AppState.Stopped === app.state);
   }
 
   get isBulkUpgradeDisabled(): boolean {
@@ -132,13 +135,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get startedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === CatalogAppState.Running && this.selection.isSelected(app.id),
+      (app) => app.state === AppState.Running && this.selection.isSelected(app.id),
     );
   }
 
   get stoppedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === CatalogAppState.Stopped && this.selection.isSelected(app.id),
+      (app) => app.state === AppState.Stopped && this.selection.isSelected(app.id),
     );
   }
 
@@ -158,8 +161,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private dockerStore: DockerStore,
     private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private location: Location,
+    private appsStats: AppsStatsService,
+    private loader: AppLoaderService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -313,8 +318,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   stop(name: string): void {
     this.appService.stopApplication(name)
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(
+        tapOnce(() => this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }))),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
+        if (job.state !== JobState.Running) {
+          this.loader.close();
+        }
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
@@ -392,13 +404,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       });
   }
 
-  getAppStatus(name: string): AppStatus {
-    const app = this.dataSource.find((installedApp) => installedApp.name === name);
-    const job = this.appJobs.get(name);
-
-    return getAppStatus(app, job);
-  }
-
   sortChanged(sort: Sort, apps?: App[]): void {
     this.sortingInfo = sort;
 
@@ -408,8 +413,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       switch (sort.active as SortableField) {
         case SortableField.Application:
           return doSortCompare(a.name, b.name, isAsc);
-        case SortableField.Status:
-          return doSortCompare(this.getAppStatus(a.name), this.getAppStatus(b.name), isAsc);
+        case SortableField.State:
+          return doSortCompare(a.state, b.state, isAsc);
         case SortableField.Updates:
           return doSortCompare(
             a.upgrade_available ? 1 : 0,
@@ -467,5 +472,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
+  }
+
+  getAppStats(name: string): Observable<AppStats> {
+    return this.appsStats.getStatsForApp(name);
   }
 }

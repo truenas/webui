@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output,
+  ChangeDetectionStrategy, Component, Input, OnChanges, output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _, { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
@@ -29,12 +29,13 @@ export class DiskSizeSelectsComponent implements OnChanges {
   @Input({ required: true }) type: VdevType;
   @Input({ required: true }) inventory: DetailsDisk[];
   @Input() isStepActive = false;
-  @Output() disksSelected = new EventEmitter<DetailsDisk[]>();
+
+  readonly disksSelected = output<DetailsDisk[]>();
 
   protected diskSizeAndTypeOptions$ = of<SelectOption[]>([]);
 
   protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
-  protected compareSizeAndTypeWith = _.isEqual;
+  protected compareSizeAndTypeWith = isEqual;
 
   protected form = this.formBuilder.group({
     sizeAndType: [[null, null] as SizeAndType, Validators.required],

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import {
   Subject, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
@@ -11,7 +11,7 @@ import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-sett
 import { consoleCardElements } from 'app/pages/system/advanced/console/console-card/console-card.elements';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 export interface ConsoleConfig {
@@ -73,7 +73,7 @@ export class ConsoleCardComponent {
   );
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private chainedSlideIns: IxChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}

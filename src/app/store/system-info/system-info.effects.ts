@@ -9,7 +9,7 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
   productTypeLoaded,
-  systemHostIdLoaded, systemInfoLoaded, systemInfoUpdated, systemIsStableLoaded,
+  systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
@@ -37,32 +37,6 @@ export class SystemInfoEffects {
           // TODO: Show error message to user?
           console.error(error);
           return of(ixHardwareLoaded({ isIxHardware: false }));
-        }),
-      );
-    }),
-  ));
-
-  loadSystemHostId = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized),
-    mergeMap(() => {
-      return this.ws.call('system.host_id').pipe(
-        map((systemHostId) => systemHostIdLoaded({ systemHostId })),
-        catchError((error) => {
-          console.error(error);
-          return of(systemHostIdLoaded({ systemHostId: null }));
-        }),
-      );
-    }),
-  ));
-
-  loadSystemIsStable = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized),
-    mergeMap(() => {
-      return this.ws.call('system.is_stable').pipe(
-        map((systemIsStable) => systemIsStableLoaded({ systemIsStable })),
-        catchError((error) => {
-          console.error(error);
-          return of(systemIsStableLoaded({ systemIsStable: false }));
         }),
       );
     }),

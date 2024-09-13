@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Output, TemplateRef, input,
+  ChangeDetectionStrategy, Component, TemplateRef, input, output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Role } from 'app/enums/role.enum';
@@ -16,10 +16,10 @@ export class BackupTaskEmptyComponent {
   backupActions = input<TemplateRef<BackupTaskActionsComponent>>();
   isLoading = input<boolean>();
 
-  @Output() taskAdded = new EventEmitter();
-  @Output() addReplicationTask = new EventEmitter();
-  @Output() addRsyncTask = new EventEmitter();
-  @Output() addCloudSyncTask = new EventEmitter();
+  readonly taskAdded = output();
+  readonly addReplicationTask = output();
+  readonly addRsyncTask = output();
+  readonly addCloudSyncTask = output();
 
   readonly Role = Role;
 }

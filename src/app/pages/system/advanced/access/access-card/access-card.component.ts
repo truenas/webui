@@ -27,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { AppsState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -88,7 +88,7 @@ export class AccessCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'session-' + this.getUsername(row) + '-' + row.origin,
+    uniqueRowTag: (row) => 'session-' + this.getUsername(row) + '-' + row.origin,
     ariaLabels: (row) => [this.getUsername(row), this.translate.instant('Session')],
   });
 
@@ -97,7 +97,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   constructor(
-    private store$: Store<AppState>,
+    private store$: Store<AppsState>,
     private chainedSlideIn: IxChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,

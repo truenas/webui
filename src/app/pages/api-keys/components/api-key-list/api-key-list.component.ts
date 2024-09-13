@@ -66,7 +66,7 @@ export class ApiKeyListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'api-key-' + row.name + '-' + row.created_at.$date,
+    uniqueRowTag: (row) => 'api-key-' + row.name + '-' + row.created_at.$date,
     ariaLabels: (row) => [row.name, this.translate.instant('Api Key')],
   });
 
@@ -151,7 +151,7 @@ export class ApiKeyListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('api_key.delete', [String(apiKey.id)])),
+      switchMap(() => this.ws.call('api_key.delete', [apiKey.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => this.store.apiKeyDeleted(apiKey.id),

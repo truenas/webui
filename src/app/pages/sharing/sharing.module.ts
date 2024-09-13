@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, LowerCasePipe, NgClass,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,17 +17,32 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxModalHeaderComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { LayoutModule } from 'app/modules/layout/layout.module';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
@@ -70,7 +87,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
 
 @NgModule({
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     routing,
     EntityModule,
@@ -79,7 +95,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     MatTabsModule,
     MatCardModule,
     IxIconModule,
-    FlexLayoutModule,
     MatListModule,
     MatDialogModule,
     MatMenuModule,
@@ -89,17 +104,32 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     MatButtonModule,
     MatProgressSpinnerModule,
     CommonDirectivesModule,
-    IxFormsModule,
     TestIdModule,
     MatStepperModule,
     DualListModule,
     IxTableModule,
     MatToolbarModule,
-    LayoutModule,
     MatExpansionModule,
     MatButtonToggleModule,
     SearchInput1Component,
     MapValuePipe,
+    IxModalHeaderComponent,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxListComponent,
+    IxListItemComponent,
+    IxSelectComponent,
+    FormActionsComponent,
+    IxExplorerComponent,
+    IxChipsComponent,
+    IxCheckboxComponent,
+    IxComboboxComponent,
+    IxIpInputWithNetmaskComponent,
+    IxErrorsComponent,
+    PageHeaderModule,
+    AsyncPipe,
+    LowerCasePipe,
+    NgClass,
   ],
   declarations: [
     NfsListComponent,
