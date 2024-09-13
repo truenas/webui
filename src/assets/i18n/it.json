@@ -4805,7 +4805,7 @@
   "{count} snapshots found.": "{count} snapshot trovati.",
   "{cpuPercentage}% Avg. Usage": "{cpuPercentage}% Utilizzo medio",
   "{days, plural, =1 {# day} other {# days}}": "",
-  "{duration} remaining": "{duration} rimanente"",
+  "{duration} remaining": "{duration} rimanente",
   "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "{eligible} di {total} snapshot esistenti del dataset {targetDataset} verrebbero replicati con questa attività.",
   "{email} via {server}": "",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} non riuscito/i",
