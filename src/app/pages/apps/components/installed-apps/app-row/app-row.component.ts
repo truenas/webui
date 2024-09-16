@@ -31,7 +31,9 @@ export class AppRowComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   readonly hasUpdates = computed(() => this.app().upgrade_available);
-  readonly isAppStopped = computed(() => this.app().state === CatalogAppState.Stopped);
+  readonly isAppStopped = computed(() => {
+    return this.app().state === CatalogAppState.Stopped || this.app().state === CatalogAppState.Crashed;
+  });
   readonly hasStats = computed(() => {
     return this.app().state === CatalogAppState.Running && this.stats();
   });
