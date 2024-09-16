@@ -23,6 +23,7 @@ import {
 } from 'app/interfaces/cloud-backup.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -87,6 +88,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private slideInRef: IxSlideInRef<CloudBackupSnapshot>,
     private filesystemService: FilesystemService,
+    private dialogService: DialogService,
     @Inject(SLIDE_IN_DATA) public data: { backup: CloudBackup; snapshot: CloudBackupSnapshot },
   ) {}
 
@@ -100,31 +102,19 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    const subfolder = this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.data.backup.path;
+    const params = this.prepareParams();
 
-    const options = {
-      exclude: this.isExcludeByPatternSelected
-        ? [this.form.controls.excludePattern.value]
-        : this.form.controls.excludedPaths.value.map((path) => path.replace(subfolder, '') || '/'),
-      include: this.isIncludeFromSubfolderSelected
-        ? this.form.value.includedPaths.map((path) => path.replace(subfolder, '') || '/')
-        : null,
-    };
-
-    if (!options.exclude?.length) delete options.exclude;
-    if (!options.include?.length) delete options.include;
-
-    const params: CloudBackupRestoreParams = [
-      this.data.backup.id,
-      this.data.snapshot.id,
-      subfolder,
-      this.form.controls.target.value,
-      options,
-    ];
-    this.ws.job('cloud_backup.restore', params)
+    this.dialogService.jobDialog(
+      this.ws.job('cloud_backup.restore', params),
+      {
+        title: this.translate.instant('Restoring backup'),
+        canMinimize: true,
+      },
+    )
+      .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
+        complete: () => {
           this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
           this.isLoading = false;
           this.slideInRef.close(true);
@@ -161,6 +151,30 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
         }),
       );
     };
+  }
+
+  private prepareParams(): CloudBackupRestoreParams {
+    const subfolder = this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.data.backup.path;
+
+    const options = {
+      exclude: this.isExcludeByPatternSelected
+        ? [this.form.controls.excludePattern.value]
+        : this.form.controls.excludedPaths.value.map((path) => path.replace(subfolder, '') || '/'),
+      include: this.isIncludeFromSubfolderSelected
+        ? this.form.value.includedPaths.map((path) => path.replace(subfolder, '') || '/')
+        : null,
+    };
+
+    if (!options.exclude?.length) delete options.exclude;
+    if (!options.include?.length) delete options.include;
+
+    return [
+      this.data.backup.id,
+      this.data.snapshot.id,
+      subfolder,
+      this.form.controls.target.value,
+      options,
+    ];
   }
 
   private listenForFormChanges(): void {
