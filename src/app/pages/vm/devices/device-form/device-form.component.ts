@@ -27,7 +27,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
-import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const specifyCustom = T('Specify custom');
@@ -200,7 +199,6 @@ export class DeviceFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private networkService: NetworkService,
     private filesystemService: FilesystemService,
-    private vmService: VmService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,

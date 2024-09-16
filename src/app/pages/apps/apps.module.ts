@@ -21,7 +21,10 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
@@ -61,6 +64,7 @@ import {
 import {
   AppDetailsSimilarComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
+import { AppJsonDetailsCardComponent } from 'app/pages/apps/components/app-detail-view/app-json-details-card/app-json-details-card.component';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
@@ -120,6 +124,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppNotesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
+    AppJsonDetailsCardComponent,
     ContainerShellComponent,
     ContainerLogsComponent,
     LogsDetailsDialogComponent,
@@ -165,7 +170,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     LazyLoadImageModule,
     TestIdModule,
     AppLoaderModule,
-    CommonDirectivesModule,
     MatExpansionModule,
     TerminalModule,
     MatTooltipModule,
@@ -205,6 +209,10 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     TitleCasePipe,
     NgTemplateOutlet,
     DecimalPipe,
+    IxDetailsHeightDirective,
+    UiSearchDirective,
+    RequiresRolesDirective,
+    LetDirective,
   ],
 })
 export class AppsModule { }

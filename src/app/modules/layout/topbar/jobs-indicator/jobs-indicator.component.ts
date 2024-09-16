@@ -8,7 +8,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
@@ -27,7 +28,6 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CommonDirectivesModule,
     MatIconButton,
     TestIdModule,
     MatBadge,
@@ -35,6 +35,8 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
     IxIconModule,
     AsyncPipe,
     TranslateModule,
+    LetDirective,
+    UiSearchDirective,
   ],
 })
 export class JobsIndicatorComponent implements OnInit {

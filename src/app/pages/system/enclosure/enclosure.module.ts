@@ -8,7 +8,8 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -118,7 +119,6 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MatMenuItem,
     MatMenuTrigger,
     IxTableModule,
-    CommonDirectivesModule,
     SearchInput1Component,
     MatTooltip,
     ReactiveFormsModule,
@@ -140,6 +140,8 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     PageHeaderModule,
     DecimalPipe,
     AsyncPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     EnclosureDashboardComponent,

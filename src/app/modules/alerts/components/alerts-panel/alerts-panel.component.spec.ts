@@ -4,6 +4,8 @@ import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -74,6 +76,8 @@ describe('AlertsPanelComponent', () => {
         },
       }),
       EffectsModule.forRoot([AlertEffects]),
+      NavigateAndInteractDirective,
+      LetDirective,
     ],
     declarations: [
       MockComponent(AlertComponent),

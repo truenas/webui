@@ -6,7 +6,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
@@ -34,13 +35,14 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     AppLoaderModule,
     SearchInputModule,
     MatTooltipModule,
-    CommonDirectivesModule,
     routing,
     ExportButtonComponent,
     CopyButtonComponent,
     PageHeaderModule,
     NgTemplateOutlet,
     AsyncPipe,
+    IxDetailsHeightDirective,
+    UiSearchDirective,
   ],
   exports: [],
   declarations: [
