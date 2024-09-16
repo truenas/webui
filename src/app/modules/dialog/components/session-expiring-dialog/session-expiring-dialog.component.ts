@@ -1,15 +1,33 @@
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   Component, Inject,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
+} from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
+import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
 import { ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @Component({
   selector: 'ix-session-expiring-dialog',
   templateUrl: './session-expiring-dialog.component.html',
   styleUrls: ['./session-expiring-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatDialogActions,
+    MatButton,
+    TestIdModule,
+    TranslateModule,
+    NavigateAndInteractDirective,
+  ],
 })
 export class SessionExpiringDialogComponent {
   options: ConfirmOptionsWithSecondaryCheckbox;

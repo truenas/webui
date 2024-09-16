@@ -13,7 +13,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -66,7 +68,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
 
 @NgModule({
   imports: [
-    CommonDirectivesModule,
     BaseChartDirective,
     routing,
     TranslateModule,
@@ -109,6 +110,9 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxWarningComponent,
     AsyncPipe,
     PercentPipe,
+    IxDetailsHeightDirective,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     DatasetsManagementComponent,

@@ -5,6 +5,7 @@ import {
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
@@ -17,6 +18,9 @@ describe('HardwareDiskEncryptionComponent', () => {
   let spectator: Spectator<HardwareDiskEncryptionComponent>;
   const createComponent = createComponentFactory({
     component: HardwareDiskEncryptionComponent,
+    imports: [
+      HasRoleDirective,
+    ],
     providers: [
       mockWebSocket([
         mockCall('disk.query', [{ passwd: '' } as Disk]),

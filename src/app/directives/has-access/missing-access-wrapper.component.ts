@@ -1,12 +1,25 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, Input, TemplateRef,
 } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TranslateModule } from '@ngx-translate/core';
+import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 
 @Component({
   selector: 'ix-missing-access-wrapper',
   templateUrl: './missing-access-wrapper.component.html',
   styleUrls: ['./missing-access-wrapper.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    DisableFocusableElementsDirective,
+    MatTooltip,
+    NgTemplateOutlet,
+    IxIconModule,
+    TranslateModule,
+  ],
 })
 export class MissingAccessWrapperComponent {
   @Input() template: TemplateRef<HTMLElement>;

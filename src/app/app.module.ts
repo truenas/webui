@@ -27,30 +27,20 @@ import { rootRouterConfig } from 'app/app.routing';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
-import { DialogModule } from 'app/modules/dialog/dialog.module';
 import { FeedbackModule } from 'app/modules/feedback/feedback.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { AuthService } from 'app/services/auth/auth.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { FocusService } from 'app/services/focus.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
-import { ThemeService } from 'app/services/theme/theme.service';
-import { UploadService } from 'app/services/upload.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
 import { AppLoaderModule } from './modules/loader/app-loader.module';
-import { AppLoaderService } from './modules/loader/app-loader.service';
 import { AuthGuardService } from './services/auth/auth-guard.service';
-import { RoutePartsService } from './services/route-parts/route-parts.service';
 
 @NgModule({
   declarations: [
@@ -89,7 +79,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     }),
     NgxPopperjsModule.forRoot({ appendTo: 'body', hideOnScroll: true }),
     MatSnackBarModule,
-    CommonDirectivesModule,
     StoreModule.forRoot(rootReducers, {
       runtimeChecks: {
         strictStateImmutability: true,
@@ -121,19 +110,11 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     TestIdModule,
     MarkdownModule.forRoot({ loader: HttpClient }),
     FeedbackModule,
-    DialogModule,
   ],
   providers: [
-    RoutePartsService,
-    FocusService,
     AuthGuardService,
     TwoFactorGuardService,
     NavigationService,
-    AuthService,
-    AppLoaderService,
-    IxSlideInService,
-    IxChainedSlideInService,
-    UploadService,
     provideNgxWebstorage(
       withLocalStorage(),
     ),
@@ -141,7 +122,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
       provide: ErrorHandler,
       useClass: ErrorHandlerService,
     },
-    ThemeService,
     {
       provide: WINDOW,
       useFactory: getWindow,

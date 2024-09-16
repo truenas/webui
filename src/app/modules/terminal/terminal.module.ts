@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -16,7 +15,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   imports: [
     EntityModule,
     TranslateModule,
-    CommonDirectivesModule,
     MatButtonModule,
     TestIdModule,
     MatDialogModule,
