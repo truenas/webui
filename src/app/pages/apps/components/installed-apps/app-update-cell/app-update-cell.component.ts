@@ -21,14 +21,9 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 export class AppUpdateCellComponent {
   app = input.required<App>();
   showIcon = input<boolean>(false);
+  hasUpdate = computed(() => this.app()?.upgrade_available);
 
   @HostBinding('class') get hostClasses(): string[] {
     return ['update', this.showIcon() ? 'has-icon' : 'has-cell'];
   }
-
-  hasUpdate = computed(() => {
-    const app = this.app();
-
-    return app.upgrade_available;
-  });
 }

@@ -27,6 +27,14 @@ export class AppNetworkInfoComponent {
     return [...this.initialNetworkStats, ...cachedStats].slice(-60);
   });
 
+  readonly incomingTraffic = computed(() => {
+    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.rx_bytes, 0);
+  });
+
+  readonly outgoingTraffic = computed(() => {
+    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.tx_bytes, 0);
+  });
+
   protected networkChartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
     const data = this.networkStats();
@@ -63,11 +71,12 @@ export class AppNetworkInfoComponent {
     private translate: TranslateService,
   ) {
     effect(() => {
-      // TODO: Fix this
-      const networkStats = this.stats()?.value?.networks[0];
-      if (networkStats) {
+      const networkStats = this.stats()?.value?.networks;
+      const incomingTraffic = networkStats?.reduce((sum, stats) => sum + stats.rx_bytes, 0);
+      const outgoingTraffic = networkStats?.reduce((sum, stats) => sum + stats.tx_bytes, 0);
+      if (networkStats && incomingTraffic && outgoingTraffic) {
         this.cachedNetworkStats.update((cachedStats) => {
-          return [...cachedStats, [networkStats.rx_bytes, networkStats.tx_bytes]].slice(-60);
+          return [...cachedStats, [incomingTraffic, outgoingTraffic]].slice(-60);
         });
       }
     }, { allowSignalWrites: true });
