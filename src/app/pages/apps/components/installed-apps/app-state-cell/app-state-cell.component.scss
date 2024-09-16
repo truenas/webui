@@ -41,7 +41,8 @@
     }
   }
 
-  &.stopped {
+  &.stopped,
+  &.crashed {
     border-color: var(--red);
     color: var(--red);
   }
