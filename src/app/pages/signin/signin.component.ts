@@ -66,7 +66,7 @@ export class SigninComponent implements OnInit {
   readonly hasFailover$ = this.signinStore.hasFailover$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsManager.isConnected$;
-  readonly isConnectedDelayed$: Observable<boolean> = of(null).pipe(
+  isConnectedDelayed$: Observable<boolean> = of(null).pipe(
     delay(1000),
     switchMap(() => this.isConnected$),
   );
