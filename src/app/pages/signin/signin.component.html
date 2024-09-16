@@ -9,7 +9,7 @@
       [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
     ></mat-progress-bar>
 
-    @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
+    @if (!(isConnected$ | async)) {
       <mat-card>
         <mat-card-content>
           <ix-disconnected-message

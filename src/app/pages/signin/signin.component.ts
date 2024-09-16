@@ -10,9 +10,8 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { combineLatest, Observable, of } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import {
-  delay,
   filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -66,10 +65,6 @@ export class SigninComponent implements OnInit {
   readonly hasFailover$ = this.signinStore.hasFailover$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsManager.isConnected$;
-  readonly isConnectedDelayed$: Observable<boolean> = of(null).pipe(
-    delay(2000),
-    switchMap(() => this.isConnected$),
-  );
   readonly hasLoadingIndicator$ = combineLatest([
     this.signinStore.isLoading$,
     this.isConnected$,
