@@ -63,6 +63,19 @@
         [app]="app()"
         [isLoading]="isLoading()"
       ></ix-app-available-info-card>
+
+      <ix-app-json-details-card
+        class="app-info-card"
+        [title]="'Run As Context' | translate"
+        [jsonDetails]="app?.app_metadata?.run_as_context"
+        [isLoading$]="isLoading$"
+      ></ix-app-json-details-card>
+      <ix-app-json-details-card
+        class="app-info-card"
+        [title]="'Capabilities' | translate"
+        [jsonDetails]="app?.app_metadata?.capabilities"
+        [isLoading$]="isLoading$"
+      ></ix-app-json-details-card>
     </section>
   </div>
 </ng-template>
