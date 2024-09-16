@@ -113,13 +113,13 @@
           }
         </ng-container>
         <ng-container *ixRequiresRoles="requiredRoles">
-          @if (!isAppStopped) {
+          @if (!isAppStopped()) {
             <button
               mat-button
               matTooltipPosition="above"
               [ixTest]="[app().name, 'stop']"
               [matTooltip]="'Stop' | translate"
-              [disabled]="inProgress"
+              [disabled]="inProgress()"
               (click)="stopApp.emit(); $event.stopPropagation()"
             >
               <ix-icon name="mdi-stop"></ix-icon> {{ 'Stop' | translate }}
@@ -128,28 +128,25 @@
         </ng-container>
       </div>
 
-      <ng-container *ixRequiresRoles="requiredRoles">
-        @if (isRollbackPossible()) {
-          <button
-            mat-button
-            [ixTest]="[app().name, 'rollback']"
-            (click)="rollbackApp()"
-          >
-            {{ 'Roll Back' | translate }}
-          </button>
-        }
-      </ng-container>
-
-      <ng-container *ixRequiresRoles="requiredRoles">
+      @if (isRollbackPossible()) {
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
-          [ixTest]="[app().name, 'delete']"
-          (click)="deleteButtonPressed()"
+          [ixTest]="[app().name, 'rollback']"
+          (click)="rollbackApp()"
         >
-          {{ 'Delete' | translate }}
+          {{ 'Roll Back' | translate }}
         </button>
-      </ng-container>
+      }
+
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        [ixTest]="[app().name, 'delete']"
+        (click)="deleteButtonPressed()"
+      >
+        {{ 'Delete' | translate }}
+      </button>
     </mat-card-actions>
   }
 </mat-card>
