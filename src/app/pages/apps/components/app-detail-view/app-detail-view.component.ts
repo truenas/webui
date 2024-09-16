@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
+  ChangeDetectionStrategy, Component, OnInit,
   signal,
   input,
   computed,
@@ -10,8 +10,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { Gallery, GalleryItem, ImageItem } from 'ng-gallery';
 import {
   map, filter, switchMap,
+  tap,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
+import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
@@ -24,20 +26,19 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 })
 export class AppDetailViewComponent implements OnInit {
   readonly app = input<AvailableApp>();
-  readonly appId = input.required<string>();
-  readonly train = input.required<string>();
+  readonly appId = signal<string>('');
+  readonly train = signal<string>('');
   readonly isLoading = signal(true);
   readonly imagePlaceholder = appImagePlaceholder;
-
-  items: GalleryItem[];
+  readonly items = signal<GalleryItem[]>([]);
 
   pageTitle = computed<string>(() => {
-    return this.app()?.title || this.app?.name || this.translate.instant('...');
+    const app = this.app();
+    return app?.title || app?.name || this.translate.instant('...');
   });
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private applicationsStore: AppsStore,
     private gallery: Gallery,
@@ -45,7 +46,25 @@ export class AppDetailViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.listenForRouteChanges();
     this.setLightbox();
+  }
+
+  private listenForRouteChanges(): void {
+    // TODO: Update when `input()` will have support for router params
+    this.activatedRoute.params
+      .pipe(
+        filter((params) => {
+          return !!(params.appId as string) && !!(params.train as string);
+        }),
+        tap(() => this.isLoading.set(true)),
+        untilDestroyed(this),
+      )
+      .subscribe(({ appId, train }: AppDetailsRouteParams) => {
+        this.appId.set(appId);
+        this.train.set(train);
+        this.loadAppInfo();
+      });
   }
 
   private loadAppInfo(): void {
@@ -54,15 +73,16 @@ export class AppDetailViewComponent implements OnInit {
       filter((isLoading) => !isLoading),
       switchMap(() => {
         return this.applicationsStore.availableApps$.pipe(
-          map((apps: AvailableApp[]) => apps.find(
-            (app) => app.name === this.appId() && this.train() === app.train,
-          )),
+          map((apps: AvailableApp[]) => {
+            const appId = this.appId();
+            const train = this.train();
+            return apps.find((app) => app.name === appId && app.train === train);
+          }),
         );
       }),
     ).pipe(untilDestroyed(this)).subscribe({
       next: (app) => {
         this.isLoading.set(false);
-        this.cdr.markForCheck();
 
         if (!app) {
           this.router.navigate(['/apps/installed']);
@@ -70,13 +90,14 @@ export class AppDetailViewComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        this.cdr.markForCheck();
       },
     });
   }
 
   setLightbox(): void {
-    this.items = this.app()?.screenshots?.map((image) => new ImageItem({ src: image, thumb: image }));
-    this.gallery.ref('lightbox').load(this.items);
+    const app = this.app();
+    const images = app?.screenshots?.map((image) => new ImageItem({ src: image, thumb: image }));
+    this.items.set(images);
+    this.gallery.ref('lightbox').load(this.items());
   }
 }

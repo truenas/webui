@@ -2,15 +2,12 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { BehaviorSubject } from 'rxjs';
 import { AppJsonDetailsCardComponent } from './app-json-details-card.component';
 
 interface JsonDetails { key: string; value: string }
 
 describe('AppJsonDetailsCardComponent', () => {
   let spectator: Spectator<AppJsonDetailsCardComponent<JsonDetails>>;
-
-  const isLoading$ = new BehaviorSubject(false);
 
   const jsonDetails = [
     { key: 'description', value: 'AdGuard Home is able to bind to a privileged port.' },
@@ -29,7 +26,6 @@ describe('AppJsonDetailsCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        isLoading$,
         jsonDetails,
         title: 'Capabilities',
       },
@@ -41,8 +37,7 @@ describe('AppJsonDetailsCardComponent', () => {
   });
 
   it('renders JSON details when not loading', () => {
-    isLoading$.next(false);
-    spectator.detectChanges();
+    spectator.setInput('isLoading', false);
 
     const items = spectator.queryAll('.app-list-item');
 
@@ -62,16 +57,14 @@ describe('AppJsonDetailsCardComponent', () => {
   });
 
   it('displays skeleton loader when loading', () => {
-    isLoading$.next(true);
-    spectator.detectChanges();
+    spectator.setInput('isLoading', true);
 
     expect(spectator.query('ngx-skeleton-loader')).toBeTruthy();
     expect(spectator.query('.app-list-item')).toBeTruthy();
   });
 
   it('hides skeleton loader when not loading', () => {
-    isLoading$.next(false);
-    spectator.detectChanges();
+    spectator.setInput('isLoading', false);
 
     expect(spectator.query('ngx-skeleton-loader')).toBeFalsy();
     expect(spectator.query('.app-list-item')).toBeTruthy();

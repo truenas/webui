@@ -46,7 +46,7 @@ export class AppDetailsHeaderComponent {
 
   description = computed<string>(() => {
     const splitText = this.app()?.app_readme?.split('</h1>');
-    const readyHtml = splitText[1] || splitText[0];
+    const readyHtml = splitText?.[1] || splitText?.[0];
     return readyHtml?.replace(/<[^>]*>/g, '').trim();
   });
 
