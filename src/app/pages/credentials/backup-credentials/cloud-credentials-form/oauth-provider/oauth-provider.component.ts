@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -19,8 +19,7 @@ export interface OauthProviderData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OauthProviderComponent {
-  @Input() oauthUrl: string;
-
+  readonly oauthUrl = input<string>();
   readonly authenticated = output<Record<string, unknown>>();
 
   form = this.formBuilder.group({

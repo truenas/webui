@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -26,8 +26,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryProvider {
-  @Input() hasSignedBy = false;
-  @Input() hasLifetime = false;
+  hasSignedBy = input(false);
+  hasLifetime = input(false);
 
   form = this.formBuilder.group({
     signedby: [null as number],
@@ -75,7 +75,7 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
 
     const summary: SummarySection = [];
 
-    if (this.hasSignedBy) {
+    if (this.hasSignedBy()) {
       summary.push(
         { label: this.translate.instant('Signing Certificate Authority'), value: signingAuthority?.label || '' },
       );
@@ -89,7 +89,7 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
       { label: this.translate.instant('Digest Algorithm'), value: values.digest_algorithm },
     );
 
-    if (this.hasLifetime) {
+    if (this.hasLifetime()) {
       summary.push({ label: this.translate.instant('Lifetime'), value: String(values.lifetime) });
     }
 
@@ -108,11 +108,11 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
       payload.ec_curve = this.form.value.ec_curve;
     }
 
-    if (this.hasSignedBy) {
+    if (this.hasSignedBy()) {
       payload.signedby = this.form.value.signedby;
     }
 
-    if (this.hasLifetime) {
+    if (this.hasLifetime()) {
       payload.lifetime = this.form.value.lifetime;
     }
 
@@ -120,7 +120,7 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
   }
 
   private setSignedByValidator(): void {
-    if (this.hasSignedBy) {
+    if (this.hasSignedBy()) {
       this.form.controls.signedby.addValidators(Validators.required);
     } else {
       this.form.controls.signedby.clearValidators();
@@ -131,7 +131,7 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
     this.systemGeneralService.getUnsignedCas()
       .pipe(idNameArrayToOptions(), untilDestroyed(this))
       .subscribe((options) => {
-        if (this.hasSignedBy && options.length) {
+        if (this.hasSignedBy() && options.length) {
           this.form.patchValue({ signedby: options[0].value });
         }
         this.signingAuthorities = options;
