@@ -25,10 +25,13 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       IxFormsModule,
       ReactiveFormsModule,
     ],
-    declarations: [],
     providers: [
       mockAuth(),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
+      }),
       mockWebSocket([
         mockJob('cloud_backup.restore'),
       ]),
