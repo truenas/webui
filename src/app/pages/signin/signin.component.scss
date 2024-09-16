@@ -87,6 +87,24 @@
   }
 }
 
+.logo-with-animation-wrapper {
+  align-items: center;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+
+  > div {
+    animation: loading 2s linear infinite;
+    height: 65px;
+    opacity: 0.3;
+    width: 300px;
+
+    ix-icon {
+      fill: var(--fg1);
+    }
+  }
+}
+
 @media (max-width: 600px) {
   .page-wrap {
     bottom: 0;
