@@ -3898,7 +3898,7 @@
   "Storage Class": "Classe di Archiviazione",
   "Storage Dashboard": "Dashboard di Archiviazione",
   "Storage Settings": "Impostazioni di Archiviazione",
-  "Storage URL": "URL di Archiviazione"
+  "Storage URL": "URL di Archiviazione",
   "Storage location for the original  snapshots that will be replicated.": "Posizione di archiviazione per gli snapshot originali che verranno replicati.",
   "Storage location for the replicated  snapshots.": "Posizione di archiviazione per gli snapshot replicati.",
   "Store Encryption key in Sending TrueNAS database": "Memorizza la chiave di crittografia nel database TrueNAS di invio",
