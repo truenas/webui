@@ -27,7 +27,7 @@
 </nav>
 <router-outlet mat-tab-nav-panel>
   <mat-tab-nav-panel #tabPanel>
-    @switch (activeTab) {
+    @switch (activeTab()) {
       @case ('configuration') {
         <ix-target-global-configuration
           [ixUiSearch]="searchableElements.elements.configuration"

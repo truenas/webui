@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +17,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-// TODO: Missing tests
 @UntilDestroy()
 @Component({
   selector: 'ix-service-extra-actions',
@@ -23,25 +24,19 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceExtraActionsComponent {
-  @Input() service: Service;
-  @Input() requiredRoles: Role[];
-
-  configServiceLabel = this.translate.instant('Config Service');
+  readonly service = input.required<Service>();
+  readonly requiredRoles = input<Role[]>();
+  readonly configServiceLabel = this.translate.instant('Config Service');
   readonly serviceNames = serviceNames;
-
-  get serviceStateLabel(): string {
-    return this.service.state === ServiceStatus.Running
+  readonly serviceStateLabel = computed<string>(() => {
+    return this.service().state === ServiceStatus.Running
       ? this.translate.instant('Turn Off Service')
       : this.translate.instant('Turn On Service');
-  }
-
-  get hasSessions(): boolean {
-    return this.service.service === ServiceName.Cifs || this.service.service === ServiceName.Nfs;
-  }
-
-  get hasLogs(): boolean {
-    return this.service.service === ServiceName.Cifs;
-  }
+  });
+  readonly hasSessions = computed<boolean>(() => {
+    return [ServiceName.Nfs, ServiceName.Cifs].includes(this.service().service);
+  });
+  readonly hasLogs = computed<boolean>(() => this.service().service === ServiceName.Cifs);
 
   constructor(
     private translate: TranslateService,

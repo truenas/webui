@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, computed, input, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -22,7 +22,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortalWizardStepComponent implements OnInit {
-  @Input() form: IscsiWizardComponent['form']['controls']['portal'];
+  form = input<IscsiWizardComponent['form']['controls']['portal']>();
 
   readonly helptextSharingIscsi = helptextSharingIscsi;
 
@@ -65,13 +65,15 @@ export class PortalWizardStepComponent implements OnInit {
     untilDestroyed(this),
   );
 
-  get isNewPortal(): boolean {
-    return this.form.controls.portal.enabled && this.form.value.portal === newOption;
-  }
+  readonly isNewPortal = computed<boolean>(() => {
+    const form = this.form();
+    return form.controls.portal.enabled && form.value.portal === newOption;
+  });
 
-  get isNewAuthgroup(): boolean {
-    return this.form.controls.discovery_authgroup.enabled && this.form.value.discovery_authgroup === newOption;
-  }
+  readonly isNewAuthgroup = computed<boolean>(() => {
+    const form = this.form();
+    return form.controls.discovery_authgroup.enabled && form.value.discovery_authgroup === newOption;
+  });
 
   constructor(
     private iscsiService: IscsiService,
@@ -81,46 +83,46 @@ export class PortalWizardStepComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.form.controls.portal.valueChanges.pipe(untilDestroyed(this)).subscribe((portal) => {
+    this.form().controls.portal.valueChanges.pipe(untilDestroyed(this)).subscribe((portal) => {
       if (portal === newOption) {
-        this.form.controls.discovery_authmethod.enable();
-        this.form.controls.discovery_authgroup.enable();
-        this.form.controls.listen.enable();
-        this.form.controls.listen.addValidators(Validators.required);
+        this.form().controls.discovery_authmethod.enable();
+        this.form().controls.discovery_authgroup.enable();
+        this.form().controls.listen.enable();
+        this.form().controls.listen.addValidators(Validators.required);
       } else {
-        this.form.controls.discovery_authmethod.disable();
-        this.form.controls.discovery_authgroup.disable();
-        this.form.controls.listen.disable();
-        this.form.controls.listen.removeValidators(Validators.required);
-        this.form.controls.tag.disable();
-        this.form.controls.user.disable();
-        this.form.controls.secret.disable();
-        this.form.controls.secret_confirm.disable();
+        this.form().controls.discovery_authmethod.disable();
+        this.form().controls.discovery_authgroup.disable();
+        this.form().controls.listen.disable();
+        this.form().controls.listen.removeValidators(Validators.required);
+        this.form().controls.tag.disable();
+        this.form().controls.user.disable();
+        this.form().controls.secret.disable();
+        this.form().controls.secret_confirm.disable();
       }
     });
 
-    this.form.controls.discovery_authgroup.valueChanges.pipe(untilDestroyed(this)).subscribe((authgroup) => {
+    this.form().controls.discovery_authgroup.valueChanges.pipe(untilDestroyed(this)).subscribe((authgroup) => {
       if (authgroup === newOption) {
-        this.form.controls.tag.enable();
-        this.form.controls.user.enable();
-        this.form.controls.secret.enable();
-        this.form.controls.secret_confirm.enable();
+        this.form().controls.tag.enable();
+        this.form().controls.user.enable();
+        this.form().controls.secret.enable();
+        this.form().controls.secret_confirm.enable();
       } else {
-        this.form.controls.tag.disable();
-        this.form.controls.user.disable();
-        this.form.controls.secret.disable();
-        this.form.controls.secret_confirm.disable();
+        this.form().controls.tag.disable();
+        this.form().controls.user.disable();
+        this.form().controls.secret.disable();
+        this.form().controls.secret_confirm.disable();
       }
     });
   }
 
   addAddress(): void {
-    this.form.controls.listen.push(
+    this.form().controls.listen.push(
       this.fb.control('', [Validators.required, ipValidator('all')]),
     );
   }
 
   removeAddress(index: number): void {
-    this.form.controls.listen.removeAt(index);
+    this.form().controls.listen.removeAt(index);
   }
 }
