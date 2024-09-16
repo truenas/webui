@@ -1,8 +1,6 @@
 import {
-  Directive, ElementRef, Inject, OnChanges, OnDestroy, OnInit,
+  Directive, ElementRef, HostListener, Inject, OnChanges, OnDestroy, OnInit,
 } from '@angular/core';
-// eslint-disable-next-line no-restricted-imports
-import { MediaObserver } from '@ngbracket/ngx-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -39,12 +37,10 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     private element: ElementRef<HTMLElement>,
     private layoutService: LayoutService,
     private store$: Store<AppsState>,
-    private mediaObserver: MediaObserver,
   ) {}
 
   ngOnInit(): void {
     this.listenForConsoleFooterChanges();
-    this.listenForScreenSizeChanges();
 
     this.element.nativeElement.style.height = this.heightCssValue;
     this.window.addEventListener('scroll', this.onScrollHandler, true);
@@ -59,6 +55,12 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy(): void {
     this.window.removeEventListener('scroll', this.onScrollHandler, true);
+  }
+
+  @HostListener('window:resize')
+  listenForScreenSizeChanges(): void {
+    this.heightBaseOffset = this.getBaseOffset();
+    this.scrollBreakingPoint = this.getScrollBreakingPoint();
   }
 
   onScroll(): void {
@@ -118,15 +120,6 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
       .pipe(waitForAdvancedConfig, untilDestroyed(this))
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
-      });
-  }
-
-  private listenForScreenSizeChanges(): void {
-    this.mediaObserver.asObservable()
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.heightBaseOffset = this.getBaseOffset();
-        this.scrollBreakingPoint = this.getScrollBreakingPoint();
       });
   }
 }

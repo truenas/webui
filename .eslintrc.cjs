@@ -303,10 +303,6 @@ module.exports = {
               "importNames": ["CommonModule"],
               "message": "Import individual constituents instead."
             },
-            {
-              "name": "@ngbracket/ngx-layout",
-              "message": "Do not use this package. Use native CSS instead."
-            }
           ],
           "patterns": [{
             "group": [ "../**"],
