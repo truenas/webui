@@ -1,27 +1,24 @@
 :host,
 :host-context(mat-dialog-container .ix-form-container) :host {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: flex-end;
   margin: 0;
-
-  ::ng-deep > * {
-    margin: 0 0 0 8px;
-  }
 }
 
 :host-context(.ix-form-container) :host {
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: flex-start;
   margin: 0 10px;
-
-  ::ng-deep > * {
-    margin: 0 8px 0 0;
-  }
 }
 
 :host-context(mat-vertical-stepper) :host {
+  flex-wrap: wrap;
   justify-content: flex-start;
 
   ::ng-deep > * {
-    margin: 0 8px 0 0;
+    gap: 8px;
   }
 }
