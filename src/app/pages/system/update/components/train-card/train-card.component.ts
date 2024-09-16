@@ -80,7 +80,7 @@ export class TrainCardComponent implements OnInit {
         }
 
         this.trains = Object.entries(trains.trains).map(([name, train]) => ({
-          label: `${name} - ${train.description}`,
+          label: train.description,
           value: name,
         }));
         if (this.trains.length > 0) {

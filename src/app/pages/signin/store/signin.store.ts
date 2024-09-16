@@ -94,6 +94,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.loadFailoverStatus(),
       this.updateService.hardRefreshIfNeeded(),
     ])),
+    tap(() => this.setLoadingState(false)),
     switchMap(() => this.handleLoginWithToken()),
   ));
 
@@ -196,7 +197,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     return this.ws.call('failover.status').pipe(
       switchMap((status) => {
         this.setFailoverStatus(status);
-        this.setLoadingState(false);
 
         if (status === FailoverStatus.Single) {
           return of(null);
