@@ -20,6 +20,8 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 import {
   TrueCommandStatusComponent,
 } from 'app/pages/signin/true-command-status/true-command-status.component';
+import { AuthService } from 'app/services/auth/auth.service';
+import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 describe('SigninComponent', () => {
@@ -35,6 +37,8 @@ describe('SigninComponent', () => {
   const canLogin$ = new BehaviorSubject<boolean>(undefined);
   const isConnected$ = new BehaviorSubject<boolean>(undefined);
   const loginBanner$ = new BehaviorSubject<string>(undefined);
+  const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(undefined);
+  const isConnectedDelayed$ = new BehaviorSubject<boolean>(null);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -67,6 +71,12 @@ describe('SigninComponent', () => {
       mockProvider(DialogService, {
         fullScreenDialog: jest.fn(),
       }),
+      mockProvider(AuthService, {
+        hasAuthToken: true,
+      }),
+      mockProvider(TokenLastUsedService, {
+        isTokenWithinTimeline$,
+      }),
       mockProvider(WebSocketConnectionService, {
         isConnected$,
       }),
@@ -81,6 +91,8 @@ describe('SigninComponent', () => {
     canLogin$.next(true);
     isConnected$.next(true);
     loginBanner$.next('');
+    isTokenWithinTimeline$.next(false);
+    spectator.component.isConnectedDelayed$ = isConnectedDelayed$;
   });
 
   it('initializes SigninStore on component init', () => {
@@ -90,6 +102,8 @@ describe('SigninComponent', () => {
   describe('disconnected', () => {
     it('shows DisconnectedMessageComponent when there is no websocket connection', () => {
       isConnected$.next(false);
+      isConnectedDelayed$.next(false);
+
       spectator.detectChanges();
 
       expect(spectator.query(DisconnectedMessageComponent)).toExist();
@@ -130,6 +144,27 @@ describe('SigninComponent', () => {
       expect(failoverStatus.disabledReasons).toEqual([FailoverDisabledReason.NoPong]);
       expect(failoverStatus.status).toEqual(FailoverStatus.Error);
       expect(failoverStatus.failoverIps).toEqual(['123.44.1.22', '123.44.1.34']);
+    });
+
+    it('shows the logo when waiting for connection status', () => {
+      isConnectedDelayed$.next(null);
+      spectator.detectChanges();
+
+      const logo = spectator.query('.logo-wrapper ix-icon');
+      expect(logo).toExist();
+    });
+
+    it('shows "Logging in..." message when user is authenticated and token is within the timeline', () => {
+      isConnected$.next(true);
+      isConnectedDelayed$.next(true);
+
+      isTokenWithinTimeline$.next(true);
+
+      spectator.detectChanges();
+
+      const loggingInMessage = spectator.query('.logging-in');
+      expect(loggingInMessage).toExist();
+      expect(loggingInMessage).toHaveText('Logging in...');
     });
 
     it('checks login banner and shows full dialog if set', () => {
