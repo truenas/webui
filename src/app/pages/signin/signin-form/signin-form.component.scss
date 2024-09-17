@@ -11,3 +11,10 @@
     display: inline-block;
   }
 }
+
+input,
+button {
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
