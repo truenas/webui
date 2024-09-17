@@ -12,7 +12,7 @@ export function formatData(data: ReportingData): ReportingData {
     formattedData.name as ReportingGraphName === ReportingGraphName.NetworkInterface
     && formattedData.aggregations
   ) {
-    delete data.aggregations.min;
+    delete formattedData.aggregations.min;
   }
 
   if (formattedData.name as ReportingGraphName === ReportingGraphName.Cpu) {
