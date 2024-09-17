@@ -5,7 +5,7 @@ import {
 import { MatList, MatListItem } from '@angular/material/list';
 import { RouterLinkActive, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
@@ -16,13 +16,13 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatList,
-    CommonDirectivesModule,
     MatListItem,
     RouterLinkActive,
     TestIdModule,
     RouterLink,
     AsyncPipe,
     TranslateModule,
+    HasAccessDirective,
   ],
 })
 export class SecondaryMenuComponent {

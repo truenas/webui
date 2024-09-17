@@ -2,30 +2,35 @@ import {
   TiB, GiB, MiB, KiB,
 } from 'app/constants/bytes.constant';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
+import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reporting.interface';
 
-// TODO: Messy. Nuke.
 export function formatData(data: ReportingData): ReportingData {
-  if (data.name === (ReportingGraphName.NetworkInterface as string) && data.aggregations) {
-    delete data.aggregations.min; // Will always be showing bogus small values
+  const formattedData: ReportingData = { ...data };
+
+  if (
+    formattedData.name as ReportingGraphName === ReportingGraphName.NetworkInterface
+    && formattedData.aggregations
+  ) {
+    delete formattedData.aggregations.min;
   }
 
-  const shouldBeReversed = data.name === (ReportingGraphName.Cpu as string);
-  if (shouldBeReversed) {
-    data.legend = data.legend.reverse();
-    (data.data as number[][]).forEach((row, i) => {
-      // Keep date column in first position and reverse everything else.
-      (data.data as number[][])[i] = [
-        row[0],
-        ...row.slice(1).reverse(),
-      ];
-    });
-    data.aggregations.min = data.aggregations.min.slice().reverse();
-    data.aggregations.max = data.aggregations.max.slice().reverse();
-    data.aggregations.mean = data.aggregations.mean.slice().reverse();
+  if (formattedData.name as ReportingGraphName === ReportingGraphName.Cpu) {
+    formattedData.legend = [...formattedData.legend].reverse();
+
+    formattedData.data = (formattedData.data as number[][]).map((row) => [
+      row[0],
+      ...row.slice(1).reverse(),
+    ]);
+
+    if (formattedData.aggregations) {
+      formattedData.aggregations.min = [...formattedData.aggregations.min].reverse();
+      formattedData.aggregations.max = [...formattedData.aggregations.max].reverse();
+      formattedData.aggregations.mean = [...formattedData.aggregations.mean].reverse();
+    }
   }
 
-  return data;
+  return formattedData;
 }
 
 export const maxDecimals = (input: number, max = 2): number => {
@@ -40,136 +45,99 @@ export const maxDecimals = (input: number, max = 2): number => {
   return prepareInput < 1000 ? Number(prepareInput.toString().slice(0, 4)) : Math.round(prepareInput);
 };
 
-export function inferUnits(label: string): string {
-  // Figures out from the label what the unit is
-  let units = label;
-  if (label.includes('%') || label.toLowerCase().includes('percentage')) {
-    units = '%';
-  } else if (label.includes('°') || label.toLowerCase().includes('celsius')) {
-    units = '°';
-  } else if (label.toLowerCase().includes('mebibytes')) {
-    units = 'mebibytes';
-  } else if (label.toLowerCase().includes('kibibytes')) {
-    units = 'kibibytes';
-  } else if (label.toLowerCase().includes('kilobits')) {
-    units = 'kilobits';
-  } else if (label.toLowerCase().includes('bytes')) {
-    units = 'bytes';
-  } else if (label.toLowerCase().includes('bits')) {
-    units = 'bits';
-  }
+export function inferUnits(label: string): string | undefined {
+  const lowerLabel = label.toLowerCase();
 
-  if (typeof units === 'undefined') {
-    console.warn('Could not infer units from ' + label);
-  }
+  if (label.includes('%') || lowerLabel.includes('percentage')) return '%';
+  if (label.includes('°') || lowerLabel.includes('celsius')) return '°';
+  if (lowerLabel.includes('mebibytes')) return 'mebibytes';
+  if (lowerLabel.includes('kibibytes')) return 'kibibytes';
+  if (lowerLabel.includes('kilobits')) return 'kilobits';
+  if (lowerLabel.includes('bytes')) return 'bytes';
+  if (lowerLabel.includes('bits')) return 'bits';
 
-  return units;
+  console.warn('Could not infer units from ' + label);
+  return label;
 }
 
 export function convertKmgt(input: number, units: string): { value: number; prefix: string; shortName: string } {
-  let prefix = '';
-  let shortName = '';
-  let output: number = input;
+  const unitsMap = [
+    { threshold: TiB, prefix: 'Tebi', shortName: 'TiB' },
+    { threshold: GiB, prefix: 'Gibi', shortName: 'GiB' },
+    { threshold: MiB, prefix: 'Mebi', shortName: 'MiB' },
+    { threshold: KiB, prefix: 'Kibi', shortName: 'KiB' },
+  ];
 
-  if (input > TiB) {
-    prefix = 'Tebi';
-    shortName = ' TiB';
-    output = input / TiB;
-  } else if (input < TiB && input > GiB) {
-    prefix = 'Gibi';
-    shortName = ' GiB';
-    output = input / GiB;
-  } else if (input < GiB && input > MiB) {
-    prefix = 'Mebi';
-    shortName = ' MiB';
-    output = input / MiB;
-  } else if (input < MiB && input > KiB) {
-    prefix = 'Kibi';
-    shortName = ' KiB';
-    output = input / KiB;
-  } else {
-    prefix = '';
-    shortName = ' B';
+  for (const unit of unitsMap) {
+    if (input >= unit.threshold) {
+      const value = input / unit.threshold;
+      let { shortName } = unit;
+      if (units === 'bits') {
+        shortName = shortName.replace('i', '');
+      }
+      return { value, prefix: unit.prefix, shortName };
+    }
   }
 
-  if (units === 'bits') {
-    shortName = shortName.replace(/i/, '').trim();
-    shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substring(1).toLowerCase()}`;
-  }
-
-  return { value: output, prefix, shortName };
+  return { value: input, prefix: '', shortName: 'B' };
 }
 
-export function convertByKilobits(input: number): { value: number; suffix: string; shortName: string } {
-  if (typeof input !== 'number') { return input; }
-  let output = input;
-  let suffix = '';
+export function convertByKilobits(input: number): { value: number; suffix: string } {
+  let value = input;
+  let suffix = 'b';
 
-  if (input >= 1000000) {
-    output = input / 1000000;
-    suffix = ' Mb';
-  } else if (input < 1000000 && input >= 1000) {
-    output = input / 1000;
-    suffix = ' kb';
-  } else {
-    suffix = ' b';
+  if (input >= 1_000_000) {
+    value = input / 1_000_000;
+    suffix = 'Mb';
+  } else if (input >= 1_000) {
+    value = input / 1_000;
+    suffix = 'kb';
   }
 
-  return { value: output, suffix, shortName: '' };
+  return { value, suffix };
 }
 
-export function convertByThousands(input: number): { value: number; suffix: string; shortName: string } {
-  if (typeof input !== 'number') { return input; }
-  let output = input;
+export function convertByThousands(input: number): { value: number; suffix: string } {
+  let value = input;
   let suffix = '';
 
-  if (input >= 1000000) {
-    output = input / 1000000;
+  if (input >= 1_000_000) {
+    value = input / 1_000_000;
     suffix = 'm';
-  } else if (input < 1000000 && input >= 1000) {
-    output = input / 1000;
+  } else if (input >= 1_000) {
+    value = input / 1_000;
     suffix = 'k';
   }
 
-  return { value: output, suffix, shortName: '' };
+  return { value, suffix };
 }
 
-export function formatValue(value: number, units: string): string | number {
-  const day = 60 * 60 * 24;
-  let output: string | number = value;
-  if (typeof value !== 'number') { return value; }
+export function formatValue(value: number, units: string): string {
+  const dayInSeconds = 60 * 60 * 24;
+  const days = value / dayInSeconds;
+  const mebibytes = convertKmgt(value * MiB, 'bytes');
+  const kibibytes = convertKmgt(value * KiB, 'bytes');
+  const kilobits = convertByKilobits(value * 1000);
+  const bytes = convertKmgt(value, units);
+  const thousands = convertByThousands(value);
 
-  let converted;
+  if (typeof value !== 'number') return String(value);
+
   switch (units.toLowerCase()) {
     case 'seconds':
-      converted = { value: value / day, shortName: ' days' };
-      output = maxDecimals(converted.value, 1).toString() + converted.shortName;
-      break;
+      return `${maxDecimals(days, 1)} days`;
     case 'mebibytes':
-      converted = convertKmgt(value * MiB, 'bytes');
-      output = maxDecimals(converted.value).toString() + converted.shortName;
-      break;
+      return `${maxDecimals(mebibytes.value)} ${mebibytes.shortName}`;
     case 'kibibytes':
-      converted = convertKmgt(value * KiB, 'bytes');
-      output = maxDecimals(converted.value).toString() + converted.shortName;
-      break;
+      return `${maxDecimals(kibibytes.value)} ${kibibytes.shortName}`;
     case 'kilobits':
-      converted = convertByKilobits(output * 1000);
-      output = typeof output === 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;
-      break;
+      return `${maxDecimals(kilobits.value)} ${kilobits.suffix}`;
     case 'bits':
     case 'bytes':
-      converted = convertKmgt(value, units);
-      output = maxDecimals(converted.value).toString() + converted.shortName;
-      break;
-    case '%':
-    case '°':
+      return `${maxDecimals(bytes.value)} ${bytes.shortName}`;
     default:
-      converted = convertByThousands(output);
-      return typeof output === 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;
+      return `${maxDecimals(thousands.value)}${thousands.suffix}`;
   }
-
-  return output;
 }
 
 export function convertAggregations(input: ReportingData, labelY?: string): ReportingData {
@@ -198,84 +166,37 @@ export function convertAggregations(input: ReportingData, labelY?: string): Repo
 }
 
 export function optimizeLegend(input: ReportingData): ReportingData {
-  const output = input;
-  // Do stuff
+  const output = { ...input, legend: [...input.legend] };
+
   if (output.legend.includes('time')) {
-    // remove `time` legend item
-    output.legend.splice(0, 1);
+    output.legend.shift();
   }
-  switch (input.name) {
-    case 'upsbatterycharge':
-      output.legend = ['Percent Charge'];
-      break;
-    case 'upsremainingbattery':
-      output.legend = ['Time remaining (Minutes)'];
-      break;
-    case 'load':
-      output.legend = output.legend.map((label) => label.replace(/load_/, ''));
-      break;
-    case 'disktemp':
-      output.legend = ['temperature'];
-      break;
-    case 'memory':
-      output.legend = output.legend.map((label) => label.replace(/memory-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'swap':
-      output.legend = output.legend.map((label) => label.replace(/swap-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'interface':
-      output.legend = output.legend.map((label) => label.replace(/if_/, ''));
-      output.legend = output.legend.map((label) => label.replace(/octets_/, 'octets '));
-      break;
-    case 'nfsstat':
-      output.legend = output.legend.map((label) => label.replace(/nfsstat-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'nfsstatbytes':
-      output.legend = output.legend.map((label) => label.replace(/nfsstat-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_bytes_value/, ''));
-      break;
-    case 'df':
-      output.legend = output.legend.map((label) => label.replace(/df_complex-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'processes':
-      output.legend = output.legend.map((label) => label.replace(/ps_state-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'uptime':
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'ctl':
-    case 'disk':
-      output.legend = output.legend.map((label) => label.replace(/disk_octets_/, ''));
-      break;
-    case 'diskgeombusy':
-      output.legend = output.legend.map(() => 'busy');
-      break;
-    case 'diskgeomlatency':
-      output.legend = output.legend.map((label) => label.replace(/geom_latency-/, ''));
-      output.legend = output.legend.map((label) => {
-        const spl = label.split('_');
-        return spl[1];
-      });
-      break;
-    case 'diskgeomopsrwd':
-      output.legend = output.legend.map((label) => label.replace(/geom_ops_rwd-/, ''));
-      output.legend = output.legend.map((label) => {
-        const spl = label.split('_');
-        return spl[1];
-      });
-      break;
-    case 'diskgeomqueue':
-      output.legend = output.legend.map((label) => label.replace(/geom_queue-/, ''));
-      output.legend = output.legend.map((label) => {
-        const spl = label.split('_');
-        return spl[1];
-      });
-      break;
+
+  const replacements: Record<string, (label: string) => string> = {
+    upsbatterycharge: () => 'Percent Charge',
+    upsremainingbattery: () => 'Time remaining (Minutes)',
+    load: (label) => label.replace(/load_/, ''),
+    disktemp: () => 'Temperature',
+    memory: (label) => label.replace(/memory-|_value/g, ''),
+    swap: (label) => label.replace(/swap-|_value/g, ''),
+    interface: (label) => label.replace(/if_|octets_/g, (match) => (match === 'octets_' ? 'octets ' : '')),
+    nfsstat: (label) => label.replace(/nfsstat-|_value/g, ''),
+    nfsstatbytes: (label) => label.replace(/nfsstat-|_bytes_value/g, ''),
+    df: (label) => label.replace(/df_complex-|_value/g, ''),
+    processes: (label) => label.replace(/ps_state-|_value/g, ''),
+    uptime: (label) => label.replace(/_value/g, ''),
+    ctl: (label) => label.replace(/disk_octets_/, ''),
+    disk: (label) => label.replace(/disk_octets_/, ''),
+    diskgeombusy: () => 'Busy',
+    diskgeomlatency: (label) => label.replace(/geom_latency-/, ''),
+    diskgeomopsrwd: (label) => label.replace(/geom_ops_rwd-/, ''),
+    diskgeomqueue: (label) => label.replace(/geom_queue-/, ''),
+  };
+
+  if (replacements[output.name]) {
+    const replaceFn = replacements[output.name];
+    output.legend = output.legend.map((value) => toHumanReadableKey(replaceFn(value)));
   }
+
   return output;
 }

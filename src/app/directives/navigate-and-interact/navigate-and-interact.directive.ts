@@ -7,6 +7,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 @UntilDestroy()
 @Directive({
   selector: '[ixNavigateAndInteract]',
+  standalone: true,
 })
 export class NavigateAndInteractDirective {
   readonly navigateRoute = input.required<string[]>();

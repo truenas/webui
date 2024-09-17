@@ -11,6 +11,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 @UntilDestroy()
 @Directive({
   selector: '[ixRequiresRoles]',
+  standalone: true,
 })
 export class RequiresRolesDirective extends HasAccessDirective {
   private previousRoles: Role[] = [];

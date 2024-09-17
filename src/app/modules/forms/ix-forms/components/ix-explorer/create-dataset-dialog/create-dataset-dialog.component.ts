@@ -14,7 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -47,9 +47,9 @@ import { WebSocketService } from 'app/services/ws.service';
     MatButton,
     MatDialogClose,
     TestIdModule,
-    CommonDirectivesModule,
     AsyncPipe,
     TranslateModule,
+    RequiresRolesDirective,
   ],
 })
 export class CreateDatasetDialogComponent implements OnInit {

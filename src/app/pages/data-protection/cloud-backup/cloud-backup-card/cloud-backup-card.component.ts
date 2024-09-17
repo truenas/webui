@@ -10,6 +10,7 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -152,11 +153,13 @@ export class CloudBackupCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowJob(row, { ...row.job, state: JobState.Running })),
+      tapOnce(() => {
+        this.snackbar.success(this.translate.instant('Cloud Backup «{name}» has started.', { name: row.description }));
+      }),
       switchMap(() => this.ws.job('cloud_backup.sync', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
-        this.snackbar.success(this.translate.instant('Cloud Backup «{name}» has started.', { name: row.description }));
         this.updateRowJob(row, job);
         this.cdr.markForCheck();
       },

@@ -11,7 +11,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -60,7 +61,6 @@ import { routing } from './vm.routing';
 @NgModule({
   imports: [
     AppLoaderModule,
-    CommonDirectivesModule,
     EntityModule,
     IxIconModule,
     IxTableModule,
@@ -95,6 +95,8 @@ import { routing } from './vm.routing';
     IxRadioGroupComponent,
     PageHeaderModule,
     AsyncPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     VmSerialShellComponent,

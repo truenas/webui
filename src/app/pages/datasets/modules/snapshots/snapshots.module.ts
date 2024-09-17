@@ -18,7 +18,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -62,7 +62,6 @@ const components = [
 @NgModule({
   providers: [],
   imports: [
-    CommonDirectivesModule,
     EffectsModule.forFeature([SnapshotEffects]),
     EntityModule,
     IxIconModule,
@@ -99,6 +98,7 @@ const components = [
     IxSlideToggleComponent,
     PageHeaderModule,
     AsyncPipe,
+    RequiresRolesDirective,
   ],
   declarations: [
     ...components,

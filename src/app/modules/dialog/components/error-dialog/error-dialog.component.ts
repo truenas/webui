@@ -1,11 +1,19 @@
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, Component, ElementRef, ViewChild,
 } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { Job } from 'app/interfaces/job.interface';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -16,6 +24,18 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './error-dialog.component.html',
   styleUrls: ['./error-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    IxIconModule,
+    CdkScrollable,
+    MatDialogContent,
+    CopyButtonComponent,
+    MatDialogActions,
+    MatButton,
+    TestIdModule,
+    TranslateModule,
+  ],
 })
 export class ErrorDialogComponent {
   @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef;

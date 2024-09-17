@@ -59,6 +59,7 @@ describe('GlobalSearchComponent', () => {
         closeAll: jest.fn(),
       }),
       mockProvider(SidenavService, {
+        isMobile: () => false,
         closeSecondaryMenu: jest.fn(),
       }),
       mockProvider(DialogService, {

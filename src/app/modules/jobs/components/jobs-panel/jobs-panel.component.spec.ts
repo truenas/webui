@@ -10,6 +10,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { LetDirective } from 'app/directives/app-let.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -86,6 +87,7 @@ describe('JobsPanelComponent', () => {
         },
       }),
       EffectsModule.forRoot([JobEffects]),
+      LetDirective,
     ],
     declarations: [
       JobItemComponent,

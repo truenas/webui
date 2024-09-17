@@ -1,7 +1,4 @@
 <p class="failover-status-message">{{ statusMessage() | translate }}</p>
-@if (!disabledReasons()) {
-  <ngx-skeleton-loader></ngx-skeleton-loader>
-}
 @if (areReasonsShown()) {
   <div class="failover-reasons">
     @for (reason of disabledReasons(); track reason) {
