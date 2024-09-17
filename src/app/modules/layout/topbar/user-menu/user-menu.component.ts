@@ -11,7 +11,7 @@ import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -34,7 +34,6 @@ import { AuthService } from 'app/services/auth/auth.service';
     MatIconButton,
     TestIdModule,
     MatTooltip,
-    CommonDirectivesModule,
     MatMenuTrigger,
     IxIconModule,
     MatMenu,
@@ -43,6 +42,7 @@ import { AuthService } from 'app/services/auth/auth.service';
     MatDivider,
     AsyncPipe,
     TranslateModule,
+    UiSearchDirective,
   ],
 })
 export class UserMenuComponent {

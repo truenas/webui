@@ -8,7 +8,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -53,7 +54,6 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     MatDividerModule,
     MatProgressBarModule,
     TestIdModule,
-    CommonDirectivesModule,
     IxTableModule,
     IxIconModule,
     PageHeaderModule,
@@ -70,6 +70,8 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     IxChipsComponent,
     PercentPipe,
     AsyncPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     DiskBulkEditComponent,

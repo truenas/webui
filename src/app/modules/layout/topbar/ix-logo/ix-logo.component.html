@@ -4,7 +4,8 @@
   ixTest="ixsystems"
 >
   <ix-icon
-    [class]="['ix-logo', screenSize$ | async, logoIcon$ | async]"
+    [class]="['ix-logo', logoIcon$ | async]"
+    [class.xs]="isXsScreen$ | async"
     [name]="logoIcon$ | async"
   ></ix-icon>
 </a>

@@ -1,7 +1,6 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-// eslint-disable-next-line no-restricted-imports
-import { MediaObserver } from '@ngbracket/ngx-layout';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -22,27 +21,27 @@ import { ThemeService } from 'app/services/theme/theme.service';
 })
 export class IxLogoComponent {
   constructor(
-    private mediaObserver: MediaObserver,
     private themeService: ThemeService,
+    private breakpointObserver: BreakpointObserver,
   ) {}
 
-  screenSize$ = this.mediaObserver.asObservable().pipe(
-    map((changes) => changes[0].mqAlias),
+  readonly isXsScreen$ = this.breakpointObserver.observe(Breakpoints.XSmall).pipe(
+    map((result) => result.matches),
   );
 
   logoIcon$ = combineLatest([
     this.themeService.activeTheme$,
-    this.screenSize$,
+    this.isXsScreen$,
   ]).pipe(
-    map(([activeTheme, screenSize]) => {
+    map(([activeTheme, isXsScreen]) => {
       const isBlueTheme = activeTheme === 'ix-blue' || activeTheme === 'midnight';
-      if (isBlueTheme && screenSize === 'xs') {
+      if (isBlueTheme && isXsScreen) {
         return 'ix:logo_mark';
       }
-      if (!isBlueTheme && screenSize === 'xs') {
+      if (!isBlueTheme && isXsScreen) {
         return 'ix:logo_mark_rgb';
       }
-      if (isBlueTheme && screenSize !== 'xs') {
+      if (isBlueTheme && !isXsScreen) {
         return 'ix:logo_full';
       }
       return 'ix:logo_full_rgb';

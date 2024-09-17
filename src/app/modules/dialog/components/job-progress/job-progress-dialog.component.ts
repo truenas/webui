@@ -1,11 +1,20 @@
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { DecimalPipe } from '@angular/common';
 import {
   AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, output,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
+} from '@angular/material/dialog';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -41,6 +50,21 @@ export interface JobProgressDialogConfig<Result> {
   templateUrl: './job-progress-dialog.component.html',
   styleUrls: ['./job-progress-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatProgressBar,
+    MatDialogActions,
+    MatButton,
+    TestIdModule,
+    MatIconButton,
+    MatDialogClose,
+    IxIconModule,
+    TranslateModule,
+    DecimalPipe,
+  ],
 })
 export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
   readonly jobSuccess = output<Job<T>>();

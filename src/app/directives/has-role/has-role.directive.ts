@@ -8,7 +8,10 @@ import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
-@Directive({ selector: '[ixHasRole]' })
+@Directive({
+  selector: '[ixHasRole]',
+  standalone: true,
+})
 export class HasRoleDirective {
   @Input() set ixHasRole(roles: Role[]) {
     this.authService.hasRole(roles).pipe(

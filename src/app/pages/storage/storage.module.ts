@@ -22,7 +22,8 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -85,7 +86,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatDividerModule,
     MatDialogModule,
     MatInputModule,
-    CommonDirectivesModule,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
     EntityModule,
@@ -107,6 +107,8 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     AsyncPipe,
     DecimalPipe,
     PercentPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     PoolsDashboardComponent,

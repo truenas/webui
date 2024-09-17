@@ -1,27 +1,23 @@
-import { MatDialog } from '@angular/material/dialog';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { WINDOW } from 'app/helpers/window.helper';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { TokenLifetimeService } from './token-lifetime.service'; // Adjust the import path
 
-describe('TokenLifetimeService', () => {
-  let spectator: SpectatorService<TokenLifetimeService>;
+describe('TokenLastUsedService', () => {
+  let spectator: SpectatorService<TokenLastUsedService>;
   const mockLocalStorage = {
     getItem: jest.fn(),
     setItem: jest.fn(),
   };
   const createService = createServiceFactory({
-    service: TokenLifetimeService,
+    service: TokenLastUsedService,
     providers: [
-      mockProvider(MatDialog, {
-        open: jest.fn(),
-        afterOpened: new Subject(),
-      }),
       mockProvider(DialogService),
       mockProvider(AuthService, {
         clearAuthToken: jest.fn(),
@@ -48,7 +44,9 @@ describe('TokenLifetimeService', () => {
     it('should return false if tokenLastUsed is not set', () => {
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(null));
 
-      expect(spectator.service.isTokenWithinTimeline).toBe(false);
+      spectator.service.isTokenWithinTimeline$.subscribe((value) => {
+        expect(value).toBe(false);
+      });
     });
 
     it('should return true if tokenLastUsed is within 5 minutes', () => {
@@ -56,7 +54,9 @@ describe('TokenLifetimeService', () => {
       const tokenLastUsed = new Date(now.getTime() - 4 * oneMinuteMillis).toISOString();
       mockLocalStorage.getItem.mockReturnValue(tokenLastUsed);
 
-      expect(spectator.service.isTokenWithinTimeline).toBe(true);
+      spectator.service.isTokenWithinTimeline$.subscribe((value) => {
+        expect(value).toBe(true);
+      });
     });
 
     it('should return false if tokenLastUsed is older than 5 minutes', () => {
@@ -64,21 +64,23 @@ describe('TokenLifetimeService', () => {
       const tokenLastUsed = new Date(now.getTime() - 20 * oneMinuteMillis).toISOString();
       mockLocalStorage.getItem.mockReturnValue(tokenLastUsed);
 
-      expect(spectator.service.isTokenWithinTimeline).toBe(false);
+      spectator.service.isTokenWithinTimeline$.subscribe((value) => {
+        expect(value).toBe(false);
+      });
     });
   });
 
   describe('setupTokenLastUsedValue', () => {
     it('should update tokenLastUsed in localStorage on user and WebSocket activity', () => {
-      const user$ = spectator.inject(AuthService).user$ as Subject<unknown>;
+      const user$ = spectator.inject(AuthService).user$ as Subject<LoggedInUser>;
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
       const ws$ = new Subject();
 
       jest.spyOn(spectator.inject(WebSocketService), 'getWebSocketStream$').mockReturnValue(ws$);
 
-      spectator.service.setupTokenLastUsedValue();
+      spectator.service.setupTokenLastUsedValue(of({} as LoggedInUser));
 
-      user$.next({});
+      user$.next({} as LoggedInUser);
       expect(updateTokenLastUsedSpy).toHaveBeenCalled();
 
       ws$.next({});
