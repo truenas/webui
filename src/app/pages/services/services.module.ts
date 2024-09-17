@@ -43,6 +43,9 @@ import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/s
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import {
+  ServiceStateColumnComponent,
+} from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServicesComponent } from './services.component';
@@ -97,6 +100,7 @@ import { routing } from './services.routing';
     ServiceSmbComponent,
     ServiceSnmpComponent,
     AddSpnDialogComponent,
+    ServiceStateColumnComponent,
   ],
 })
 export class ServicesModule {
