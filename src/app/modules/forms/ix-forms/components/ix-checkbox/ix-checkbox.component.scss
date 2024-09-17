@@ -9,6 +9,13 @@
 
   mat-checkbox {
     max-width: 93%;
+
+    &::ng-deep {
+      label {
+        line-height: normal;
+        max-width: 90%;
+      }
+    }
   }
 
   mat-hint {
