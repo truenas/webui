@@ -1,11 +1,11 @@
 :host {
   display: block;
+  margin-top: 10px;
   text-align: center;
 }
 
 p {
-  margin-bottom: 0.4rem;
-  margin-top: 0.4rem;
+  margin: 0.4rem;
 }
 
 ngx-skeleton-loader {
@@ -13,4 +13,11 @@ ngx-skeleton-loader {
   flex: 0;
   height: 20px;
   width: 80%;
+
+  &::ng-deep {
+    span.loader {
+      height: 22px;
+      margin: 0;
+    }
+  }
 }
