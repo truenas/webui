@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, OnInit,
   signal,
-  input,
   computed,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,7 +24,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDetailViewComponent implements OnInit {
-  readonly app = input<AvailableApp>();
+  readonly app = signal<AvailableApp>(null);
   readonly appId = signal<string>('');
   readonly train = signal<string>('');
   readonly isLoading = signal(true);
@@ -54,13 +53,11 @@ export class AppDetailViewComponent implements OnInit {
     // TODO: Update when `input()` will have support for router params
     this.activatedRoute.params
       .pipe(
-        filter((params) => {
-          return !!(params.appId as string) && !!(params.train as string);
-        }),
+        filter(({ appId, train }: AppDetailsRouteParams) => Boolean(appId && train)),
         tap(() => this.isLoading.set(true)),
         untilDestroyed(this),
       )
-      .subscribe(({ appId, train }: AppDetailsRouteParams) => {
+      .subscribe(({ appId, train }) => {
         this.appId.set(appId);
         this.train.set(train);
         this.loadAppInfo();
@@ -86,6 +83,8 @@ export class AppDetailViewComponent implements OnInit {
 
         if (!app) {
           this.router.navigate(['/apps/installed']);
+        } else {
+          this.app.set(app);
         }
       },
       error: () => {

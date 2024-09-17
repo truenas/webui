@@ -56,7 +56,7 @@ describe('AppDetailsHeaderComponent', () => {
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(),
+          afterClosed: () => of(true),
         })),
       }),
       mockProvider(Router),

@@ -54,7 +54,7 @@ export class AppDetailsHeaderComponent {
     this.installedAppsStore.installedApps$.pipe(
       map((apps) => {
         return apps.filter((app) => {
-          return app.metadata.name === this.app().name
+          return app.name === this.app().name
             && app.metadata.train === this.app().train;
         });
       }),
