@@ -32,7 +32,14 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { NgxOrderedListboxModule } from 'app/modules/lists/ordered-list/ordered-list.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -76,7 +83,6 @@ import { routing } from './network.routing';
     MatDialogModule,
     TestIdModule,
     NgxOrderedListboxModule,
-    IxTableModule,
     MatTooltipModule,
     AppLoaderModule,
     InterfaceStatusIconComponent,
@@ -98,6 +104,12 @@ import { routing } from './network.routing';
     AsyncPipe,
     RequiresRolesDirective,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableCellDirective,
+    IxTableEmptyDirective,
+    IxTablePagerShowMoreComponent,
   ],
   declarations: [
     DefaultGatewayDialogComponent,

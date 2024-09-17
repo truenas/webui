@@ -19,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -98,7 +97,6 @@ describe('CloudSyncTaskCardComponent', () => {
     component: CloudSyncTaskCardComponent,
     imports: [
       AppLoaderModule,
-      IxTableModule,
     ],
     providers: [
       mockAuth(),

@@ -7,7 +7,10 @@ import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
 
@@ -63,8 +66,9 @@ describe('SmbLockListComponent', () => {
     component: SmbLockListComponent,
     imports: [
       AppLoaderModule,
-      IxTableModule,
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
+      IxTableDetailsRowDirective,
     ],
     providers: [
       mockWebSocket([

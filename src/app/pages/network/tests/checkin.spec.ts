@@ -26,7 +26,7 @@ import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-sli
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/network/components/ipmi-card/ipmi-card.component';
@@ -53,10 +53,10 @@ describe('NetworkComponent', () => {
     component: NetworkComponent,
     imports: [
       ReactiveFormsModule,
-      IxTableModule,
       FormsModule,
       MatInputModule,
       IxIpInputWithNetmaskComponent,
+      IxTableCellDirective,
     ],
     declarations: [
       InterfacesCardComponent,

@@ -53,7 +53,21 @@ import {
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import {
+  IxTableDetailsRowComponent,
+} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
@@ -196,7 +210,6 @@ import { routing } from './system.routing';
     MatSlideToggleModule,
     AppLoaderModule,
     TestIdModule,
-    IxTableModule,
     OauthButtonModule,
     UnusedDiskSelectComponent,
     SearchInput1Component,
@@ -230,6 +243,15 @@ import { routing } from './system.routing';
     KeyValuePipe,
     RequiresRolesDirective,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerShowMoreComponent,
+    IxTableDetailsRowDirective,
+    IxTableDetailsRowComponent,
+    IxTablePagerComponent,
+    IxTableColumnsSelectorComponent,
   ],
   declarations: [
     AdvancedSettingsComponent,

@@ -10,7 +10,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { StaticRoutesCardComponent } from 'app/pages/network/components/static-routes-card/static-routes-card.component';
@@ -31,7 +33,7 @@ describe('StaticRoutesCardComponent', () => {
   const createComponent = createComponentFactory({
     component: StaticRoutesCardComponent,
     imports: [
-      IxTableModule,
+      IxTablePagerShowMoreComponent,
     ],
     providers: [
       mockWebSocket([

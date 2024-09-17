@@ -1,12 +1,20 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
+import { TranslateModule } from '@ngx-translate/core';
 import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @Component({
   selector: 'ix-cell-checkbox',
   templateUrl: './ix-cell-checkbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCheckbox,
+    TestIdModule,
+    TranslateModule,
+  ],
 })
 export class IxCellCheckboxComponent<T> extends ColumnComponent<T> {
   onRowCheck: (row: T, checked: boolean) => void;

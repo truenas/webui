@@ -11,7 +11,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
@@ -51,7 +50,6 @@ describe('CronCardComponent', () => {
     component: CronCardComponent,
     imports: [
       AppLoaderModule,
-      IxTableModule,
     ],
     providers: [
       provideMockStore({

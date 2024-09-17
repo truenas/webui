@@ -4,7 +4,6 @@ import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { IxCellToggleComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 
 interface TestTableData { booleanField: boolean }
 
@@ -15,7 +14,6 @@ describe('IxCellToggleComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellToggleComponent<TestTableData>,
     detectChanges: false,
-    imports: [IxTableModule],
   });
 
   beforeEach(() => {

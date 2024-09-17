@@ -12,7 +12,12 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -31,7 +36,6 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     IxIconModule,
     ReactiveFormsModule,
     MatSelectModule,
-    IxTableModule,
     AppLoaderModule,
     SearchInputModule,
     MatTooltipModule,
@@ -43,6 +47,12 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     AsyncPipe,
     IxDetailsHeightDirective,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableBodyComponent,
+    IxTableCellDirective,
+    IxTablePagerComponent,
+    IxTableHeadComponent,
   ],
   exports: [],
   declarations: [

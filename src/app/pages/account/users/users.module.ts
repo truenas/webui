@@ -42,7 +42,15 @@ import {
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import {
+  IxTableExpandableRowComponent,
+} from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { UserEffects } from 'app/pages/account/users/store/user.effects';
@@ -82,7 +90,6 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     TranslateModule,
     TranslateModule,
     TestIdModule,
-    IxTableModule,
     SearchInput1Component,
     IxModalHeaderComponent,
     IxFieldsetComponent,
@@ -101,6 +108,13 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     AsyncPipe,
     RequiresRolesDirective,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableDetailsRowDirective,
+    IxTablePagerComponent,
+    IxTableExpandableRowComponent,
   ],
   declarations: [
     UserListComponent,

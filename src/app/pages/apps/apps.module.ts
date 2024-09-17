@@ -45,7 +45,11 @@ import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonl
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -178,7 +182,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     GalleryModule,
     LightboxModule,
     MarkdownModule,
-    IxTableModule,
     SearchInput1Component,
     EmptyComponent,
     MatSort,
@@ -213,6 +216,11 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     UiSearchDirective,
     RequiresRolesDirective,
     LetDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerComponent,
   ],
 })
 export class AppsModule { }

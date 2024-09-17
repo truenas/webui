@@ -1,7 +1,6 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { IxCellSizeComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 
 interface TestTableData { numberField: number }
 
@@ -11,7 +10,6 @@ describe('IxCellSizeComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellSizeComponent<TestTableData>,
     detectChanges: false,
-    imports: [IxTableModule],
   });
 
   beforeEach(() => {

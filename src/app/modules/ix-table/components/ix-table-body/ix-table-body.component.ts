@@ -1,4 +1,7 @@
 import {
+  NgStyle, NgClass, NgTemplateOutlet, AsyncPipe,
+} from '@angular/common';
+import {
   AfterViewInit,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
@@ -9,11 +12,19 @@ import {
   QueryList,
   TemplateRef, output,
 } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTableBodyCellDirective } from 'app/modules/ix-table/directives/ix-body-cell.directive';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +32,21 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
   templateUrl: './ix-table-body.component.html',
   styleUrls: ['ix-table-body.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TestIdModule,
+    UiSearchDirective,
+    NgStyle,
+    NgClass,
+    NgTemplateOutlet,
+    IxTableBodyCellDirective,
+    MatIconButton,
+    MatTooltip,
+    IxIconModule,
+    MatProgressSpinner,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];

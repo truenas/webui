@@ -13,7 +13,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
@@ -52,9 +54,9 @@ describe('AccessCardComponent', () => {
     component: AccessCardComponent,
     imports: [
       AppLoaderModule,
-      IxTableModule,
       FakeFormatDateTimePipe,
       YesNoPipe,
+      IxTablePagerShowMoreComponent,
     ],
     providers: [
       mockProvider(LocaleService, {
