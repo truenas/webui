@@ -57,7 +57,6 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   getJob: (row: T) => Job;
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
   job = signal<Job>(null);
-  jobUpdates$: Observable<Job<ApiJobResponse<ApiJobMethod>>>;
   state = signal<JobState>(null);
 
   ngOnInit(): void {
@@ -70,11 +69,19 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     }
     if (!this.job()) {
       this.state.set(this.value as JobState);
-      return;
     }
-    const jobId = this.getJob(this.row()).id;
-    this.jobUpdates$ = this.store$.select(selectJob(jobId)).pipe(
-      tap((job) => {
+  }
+
+  private showNoLogsWarning(): Observable<boolean> {
+    return this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
+  }
+
+  getJobUpdates(jobId: number): Observable<Job<ApiJobResponse<ApiJobMethod>>> {
+    return this.store$.select(selectJob(jobId)).pipe(
+      tap((job: Job) => {
+        if (!job) {
+          return;
+        }
         this.job.set(job);
         this.state.set(job.state);
       }),
@@ -102,7 +109,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     } as RowState['state'];
 
     if (!state.state) {
-      this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
+      this.showNoLogsWarning();
       return;
     }
 
@@ -135,12 +142,17 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
       return;
     }
 
-    this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
+    this.showNoLogsWarning();
   }
 
   showJobDialog(): void {
+    const jobId = this.getJob(this.row())?.id;
+    if (!jobId) {
+      this.showNoLogsWarning();
+      return;
+    }
     this.dialogService.jobDialog(
-      this.jobUpdates$.pipe(observeJob()),
+      this.getJobUpdates(jobId).pipe(observeJob()),
       {
         title: this.translate.instant('Task is running'),
         canMinimize: true,

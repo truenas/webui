@@ -42,6 +42,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -133,6 +134,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatButtonModule,
     MatDialogModule,
     IxIconModule,
+    JobsModule,
     TestIdModule,
     MatStepperModule,
     MatToolbarModule,
