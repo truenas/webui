@@ -18,7 +18,8 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -52,7 +53,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
 @NgModule({
   providers: [],
   imports: [
-    CommonDirectivesModule,
     EffectsModule.forFeature([GroupEffects]),
     EntityModule,
     MatButtonModule,
@@ -90,6 +90,8 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     ReadOnlyComponent,
     PageHeaderModule,
     AsyncPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     GroupListComponent,

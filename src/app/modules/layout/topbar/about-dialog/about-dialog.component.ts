@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { LetDirective } from 'app/directives/app-let.directive';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -20,13 +20,13 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   imports: [
     IxIconModule,
     MatDialogContent,
-    CommonDirectivesModule,
     MatDialogActions,
     CopyrightLineComponent,
     MatButton,
     TestIdModule,
     TranslateModule,
     MapValuePipe,
+    LetDirective,
   ],
 })
 export class AboutDialogComponent {

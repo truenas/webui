@@ -3,55 +3,74 @@
 
 <div class="page-wrap login-form">
   <div class="session-form-hold">
-    <mat-progress-bar
-      value="0"
-      class="session-progress"
-      [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
-    ></mat-progress-bar>
-    <mat-card>
-      <mat-card-content>
-        @if (isConnected$ | async) {
-          <div>
-            <div class="logo-wrapper">
-              <ix-icon name="ix:logo_truenas_scale_full" class="logo"></ix-icon>
-            </div>
+    @if ((isConnected$ | async) || (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null)) {
+      <mat-progress-bar
+        value="0"
+        class="session-progress"
+        [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
+      ></mat-progress-bar>
+    }
 
-            <div class="card-bottom">
-              @if (canLogin$ | async) {
-                <div class="form-container">
-                  @if (wasAdminSet$ | async) {
-                    <ix-signin-form></ix-signin-form>
-                  } @else {
-                    <ix-set-admin-password-form></ix-set-admin-password-form>
-                  }
-                </div>
-              }
-
-              @if (failover$ | async; as failover) {
-                @if (hasFailover$ | async) {
-                  <ix-failover-status
-                    class="failover-status"
-                    [status]="failover.status"
-                    [failoverIps]="failover.ips"
-                    [disabledReasons]="failover.disabledReasons"
-                  ></ix-failover-status>
-                }
-              }
-
-              <ix-true-command-status></ix-true-command-status>
-
-              <div class="ix-logo">
-                <img src="assets/images/ix_logo_full.png" height="40" width="80" alt="iX Systems">
-              </div>
-              <ix-copyright-line class="copyright" [withIxLogo]="false"></ix-copyright-line>
-            </div>
-          </div>
-        } @else {
+    @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
+      <mat-card>
+        <mat-card-content>
           <ix-disconnected-message
             [hasFailover]="hasFailover$ | async"
           ></ix-disconnected-message>
+        </mat-card-content>
+      </mat-card>
+    } @else if (isConnected$ | async) {
+        @if (hasAuthToken && (isTokenWithinTimeline$ | async)) {
+          <mat-card>
+            <mat-card-content>
+              <h3 class="logging-in">{{ 'Logging in...' | translate }}</h3>
+            </mat-card-content>
+          </mat-card>
+        } @else {
+          <mat-card>
+            <mat-card-content>
+              <div>
+                <div class="logo-wrapper">
+                  <ix-icon name="ix:logo_truenas_scale_full" class="logo"></ix-icon>
+                </div>
+
+                <div class="card-bottom">
+                  <div class="form-container">
+                    @if (wasAdminSet$ | async) {
+                      <ix-signin-form [disabled]="!(canLogin$ | async)"></ix-signin-form>
+                    } @else {
+                      <ix-set-admin-password-form></ix-set-admin-password-form>
+                    }
+                  </div>
+
+                  @if (failover$ | async; as failover) {
+                    @if (hasFailover$ | async) {
+                      <ix-failover-status
+                        class="failover-status"
+                        [status]="failover.status"
+                        [failoverIps]="failover.ips"
+                        [disabledReasons]="failover.disabledReasons"
+                      ></ix-failover-status>
+                    }
+                  }
+
+                  <ix-true-command-status></ix-true-command-status>
+
+                  <div class="ix-logo">
+                    <img src="assets/images/ix_logo_full.png" height="40" width="80" alt="iX Systems">
+                  </div>
+                  <ix-copyright-line class="copyright" [withIxLogo]="false"></ix-copyright-line>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
         }
-      </mat-card-content>
-    </mat-card>
+    } @else {
+      <div class="logo-with-animation-wrapper">
+        <div>
+          <ix-icon name="ix:logo_truenas_scale_full"></ix-icon>
+        </div>
+      </div>
+    }
   </div>
 </div>

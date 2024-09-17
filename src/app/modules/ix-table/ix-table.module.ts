@@ -12,7 +12,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableEmptyRowComponent } from 'app/modules/ix-table/components/ix-empty-row/ix-empty-row.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -88,7 +89,6 @@ const components = [
     MatSelectModule,
     MatSlideToggleModule,
     TranslateModule,
-    CommonDirectivesModule,
     TestIdModule,
     IxDateComponent,
     MatMenuModule,
@@ -103,6 +103,8 @@ const components = [
     NgStyle,
     NgClass,
     NgTemplateOutlet,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     ...components,

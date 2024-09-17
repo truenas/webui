@@ -11,7 +11,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
@@ -65,7 +66,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxIconModule,
     MatMenuModule,
     MatCardModule,
-    CommonDirectivesModule,
     MatButtonToggleModule,
     MatSlideToggleModule,
     TestIdModule,
@@ -84,6 +84,8 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     AsyncPipe,
     KeyValuePipe,
     NgTemplateOutlet,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     LineChartComponent,

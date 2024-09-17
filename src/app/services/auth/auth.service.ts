@@ -29,6 +29,7 @@ import {
 import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppsState } from 'app/store';
@@ -51,6 +52,10 @@ export class AuthService {
   private latestTokenGenerated$ = new ReplaySubject<string>(1);
   get authToken$(): Observable<string> {
     return this.latestTokenGenerated$.asObservable().pipe(filter((token) => !!token));
+  }
+
+  get hasAuthToken(): boolean {
+    return this.token && this.token !== 'null';
   }
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -87,12 +92,11 @@ export class AuthService {
     private wsManager: WebSocketConnectionService,
     private store$: Store<AppsState>,
     private ws: WebSocketService,
+    private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.setupAuthenticationUpdate();
-
     this.setupWsConnectionUpdate();
-
     this.setupTokenUpdate();
   }
 
@@ -118,7 +122,7 @@ export class AuthService {
    */
   clearAuthToken(): void {
     this.window.sessionStorage.removeItem('loginBannerDismissed');
-    this.window.localStorage.removeItem('tokenLastUsed');
+    this.tokenLastUsedService.clearTokenLastUsed();
     this.latestTokenGenerated$.next(null);
     this.latestTokenGenerated$.complete();
     this.latestTokenGenerated$ = new ReplaySubject<string>(1);

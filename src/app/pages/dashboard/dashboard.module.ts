@@ -10,9 +10,15 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
+import { Ng2FittextModule } from 'ng2-fittext';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import {
+  DisableFocusableElementsDirective,
+} from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
+import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
@@ -112,7 +118,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     TranslateModule,
     AppLoaderModule,
     NgComponentOutlet,
-    CommonDirectivesModule,
     TestIdModule,
     PageHeaderModule,
     routing,
@@ -157,6 +162,11 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     AsyncPipe,
     NgClass,
     NgTemplateOutlet,
+    DisableFocusableElementsDirective,
+    NewFeatureIndicatorDirective,
+    UiSearchDirective,
+    RequiresRolesDirective,
+    Ng2FittextModule,
     KeyValuePipe,
     AppCardLogoComponent,
     AppStateCellComponent,

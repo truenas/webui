@@ -23,6 +23,7 @@ import {
 import {
   AppDetailsSimilarComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
+import { AppJsonDetailsCardComponent } from 'app/pages/apps/components/app-detail-view/app-json-details-card/app-json-details-card.component';
 import {
   AppResourcesCardComponent,
 } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
@@ -67,6 +68,7 @@ describe('AppDetailViewComponent', () => {
         AppAvailableInfoCardComponent,
         AppCardLogoComponent,
         AppDetailsSimilarComponent,
+        AppJsonDetailsCardComponent,
       ),
     ],
     providers: [

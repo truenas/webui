@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { LetDirective } from 'app/directives/app-let.directive';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
@@ -24,7 +24,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     StoreModule.forFeature(jobStateKey, jobReducer),
     EffectsModule.forFeature([JobEffects]),
-    CommonDirectivesModule,
     RouterModule,
     TranslateModule,
     MatProgressBarModule,
@@ -38,6 +37,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MapValuePipe,
     DecimalPipe,
     AsyncPipe,
+    LetDirective,
   ],
   declarations: [JobItemComponent, JobsPanelComponent],
   exports: [JobItemComponent, JobsPanelComponent],

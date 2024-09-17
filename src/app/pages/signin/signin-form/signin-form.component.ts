@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, Inject, input, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
@@ -13,7 +14,7 @@ import {
   distinctUntilChanged, EMPTY, firstValueFrom, switchMap,
 } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { AutofocusDirective } from 'app/directives/autofocus/autofocus.directive';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -34,16 +35,18 @@ import { WebSocketService } from 'app/services/ws.service';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    CommonDirectivesModule,
     InsecureConnectionComponent,
     MatButton,
     TestIdModule,
     AsyncPipe,
     TranslateModule,
     IxInputComponent,
+    AutofocusDirective,
   ],
 })
 export class SigninFormComponent implements OnInit {
+  disabled = input.required<boolean>();
+
   hasTwoFactor = false;
   showSecurityWarning = false;
 
@@ -57,7 +60,8 @@ export class SigninFormComponent implements OnInit {
     otp: ['', Validators.required],
   });
 
-  protected isLoading$ = this.signinStore.isLoading$;
+  protected isLoading = toSignal(this.signinStore.isLoading$);
+  readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
 
   constructor(
     private formBuilder: FormBuilder,
@@ -69,11 +73,19 @@ export class SigninFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {
+    effect(() => {
+      if (this.isFormDisabled()) {
+        this.form.disable();
+      } else {
+        this.form.enable();
+      }
+    });
+
     if (this.window.location.protocol !== 'https:') {
       this.showSecurityWarning = true;
     }
 
-    this.isLoading$.pipe(
+    this.signinStore.isLoading$.pipe(
       filter((isLoading) => !isLoading),
       take(1),
       untilDestroyed(this),
