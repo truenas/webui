@@ -12,7 +12,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -164,7 +165,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CloudCredentialsCardComponent,
   ],
   imports: [
-    CommonDirectivesModule,
     EntityModule,
     IxDynamicFormModule,
     IxIconModule,
@@ -203,6 +203,8 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     WithManageCertificatesLinkComponent,
     IxFileInputComponent,
     AsyncPipe,
+    UiSearchDirective,
+    RequiresRolesDirective,
   ],
 })
 export class CredentialsModule { }

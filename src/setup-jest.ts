@@ -36,7 +36,8 @@ import {
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
 import { EmptyWebsocketService } from 'app/core/testing/utils/empty-ws.service';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
@@ -129,9 +130,10 @@ defineGlobalsInjections({
     IxCheckboxListComponent,
     FormActionsComponent,
     RouterModule.forRoot([]),
-    CommonDirectivesModule,
     SnackbarModule,
     TestIdModule,
+    UiSearchDirective,
+    RequiresRolesDirective,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {

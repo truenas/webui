@@ -8,7 +8,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -30,7 +32,6 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
   ],
   imports: [
     ReactiveFormsModule,
-    CommonDirectivesModule,
     TranslateModule,
     IxIconModule,
     MatBadgeModule,
@@ -42,6 +43,9 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
     IxInputComponent,
     IxCheckboxComponent,
     NgClass,
+    RequiresRolesDirective,
+    FormActionsComponent,
+    UiSearchDirective,
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),

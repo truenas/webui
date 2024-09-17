@@ -2,9 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatDialogTitle } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -15,6 +20,14 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './error-template.component.html',
   styleUrls: ['./error-template.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    IxIconModule,
+    MatButton,
+    TestIdModule,
+    TranslateModule,
+  ],
 })
 export class ErrorTemplateComponent {
   @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef<HTMLElement>;

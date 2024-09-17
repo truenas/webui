@@ -12,7 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
@@ -59,7 +60,6 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     GlobalSearchModule,
     RouterLink,
     IxLogoComponent,
-    CommonDirectivesModule,
     TruecommandModule,
     FailoverUpgradeIndicatorComponent,
     CheckinIndicatorComponent,
@@ -72,6 +72,8 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     PowerMenuComponent,
     AsyncPipe,
     TranslateModule,
+    LetDirective,
+    UiSearchDirective,
   ],
 })
 export class TopbarComponent implements OnInit {
