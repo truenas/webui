@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { firstValueFrom, of } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -16,7 +16,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { TokenLifetimeService } from 'app/services/token-lifetime.service';
+import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -25,8 +25,9 @@ describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
   let websocket: MockWebSocketService;
   let authService: AuthService;
-  let tokenLifetimeService: TokenLifetimeService;
   const testScheduler = getTestScheduler();
+
+  const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
 
   const createService = createServiceFactory({
     service: SigninStore,
@@ -42,6 +43,9 @@ describe('SigninStore', () => {
       mockProvider(WebSocketConnectionService, {
         isConnected$: of(true),
         websocket$: of(),
+      }),
+      mockProvider(TokenLastUsedService, {
+        isTokenWithinTimeline$,
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),
@@ -69,17 +73,12 @@ describe('SigninStore', () => {
     spectator = createService();
     websocket = spectator.inject(MockWebSocketService);
     authService = spectator.inject(AuthService);
-    tokenLifetimeService = spectator.inject(TokenLifetimeService);
 
     Object.defineProperty(authService, 'authToken$', {
       value: of('EXISTING_TOKEN'),
     });
     Object.defineProperty(authService, 'user$', {
       get: () => of({ twofactor_auth_configured: false }),
-    });
-    Object.defineProperty(tokenLifetimeService, 'isTokenWithinTimeline', {
-      get: () => true,
-      configurable: true,
     });
     jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
     jest.spyOn(authService, 'clearAuthToken').mockReturnValue(null);
@@ -189,8 +188,7 @@ describe('SigninStore', () => {
     });
 
     it('should not call "loginWithToken" if token is not within timeline and clear auth token', () => {
-      jest.spyOn(tokenLifetimeService, 'isTokenWithinTimeline', 'get').mockReturnValue(false);
-
+      isTokenWithinTimeline$.next(false);
       spectator.service.init();
 
       expect(authService.clearAuthToken).toHaveBeenCalled();

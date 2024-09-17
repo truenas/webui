@@ -7,7 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -42,7 +42,6 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     EntityModule,
     ReactiveFormsModule,
     MatDialogModule,
-    CommonDirectivesModule,
     TestIdModule,
     IxIconModule,
     IxCheckboxComponent,
@@ -55,6 +54,7 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     IxSelectComponent,
     FormActionsComponent,
     AsyncPipe,
+    RequiresRolesDirective,
   ],
   exports: [
     ZfsEncryptionCardComponent,

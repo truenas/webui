@@ -1,4 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
+import { Ng2FittextModule } from 'ng2-fittext';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 
@@ -11,6 +13,9 @@ describe('WidgetDatapointComponent', () => {
 
   const createComponent = createComponentFactory({
     component: WidgetDatapointComponent,
+    imports: [
+      MockModule(Ng2FittextModule),
+    ],
   });
 
   function setupTest(props: {

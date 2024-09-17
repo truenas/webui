@@ -45,7 +45,11 @@ describe('SigninFormComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        disabled: false,
+      },
+    });
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);

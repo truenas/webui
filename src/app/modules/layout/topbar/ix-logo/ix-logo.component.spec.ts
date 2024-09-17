@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-restricted-imports
-import { MediaObserver } from '@ngbracket/ngx-layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -18,10 +17,10 @@ describe('IxLogoComponent', () => {
       mockProvider(ThemeService, {
         activeTheme$: of('ix-dark'),
       }),
-      mockProvider(MediaObserver, {
-        asObservable: () => of([{
-          mqAlias: 'sm',
-        }]),
+      mockProvider(BreakpointObserver, {
+        observe: () => of({
+          matches: false,
+        }),
       }),
     ],
   });

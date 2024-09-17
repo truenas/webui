@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -25,11 +26,12 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TestIdModule,
     MatTooltip,
     MatMenuTrigger,
-    CommonDirectivesModule,
     IxIconModule,
     MatMenu,
     MatMenuItem,
     TranslateModule,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
 })
 export class PowerMenuComponent {

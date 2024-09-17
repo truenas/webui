@@ -14,7 +14,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
@@ -116,7 +118,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
 
 @NgModule({
   imports: [
-    CommonDirectivesModule,
     RouterModule.forChild(dataProtectionRoutes),
     EntityModule,
     ReactiveFormsModule,
@@ -156,6 +157,9 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     AsyncPipe,
     NgTemplateOutlet,
     DatePipe,
+    IxDetailsHeightDirective,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     SnapshotTaskListComponent,

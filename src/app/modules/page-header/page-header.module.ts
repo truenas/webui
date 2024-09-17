@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { IfNightlyDirective } from 'app/directives/if-nightly/if-nightly.directive';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { BreadcrumbComponent } from 'app/modules/page-header/breadcrumb/breadcrumb.component';
 import {
@@ -17,11 +17,11 @@ import { NewPageBadgeComponent } from './is-new-indicator/new-page-badge.compone
   imports: [
     RouterModule,
     TranslateModule,
-    CommonDirectivesModule,
     TestIdModule,
     AppLoaderModule,
     MatButton,
     AsyncPipe,
+    IfNightlyDirective,
   ],
   declarations: [
     BreadcrumbComponent,

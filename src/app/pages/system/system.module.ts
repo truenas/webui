@@ -18,7 +18,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -170,7 +171,6 @@ import { routing } from './system.routing';
 @NgModule({
   imports: [
     AppLoaderModule,
-    CommonDirectivesModule,
     EntityModule,
     FormsModule,
     TreeModule,
@@ -228,6 +228,8 @@ import { routing } from './system.routing';
     PageHeaderModule,
     AsyncPipe,
     KeyValuePipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     AdvancedSettingsComponent,
