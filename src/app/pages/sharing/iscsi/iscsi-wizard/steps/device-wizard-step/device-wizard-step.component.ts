@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input, OnInit,
+  ChangeDetectionStrategy, Component, input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -51,14 +51,13 @@ export class DeviceWizardStepComponent implements OnInit {
       ])),
     );
 
-  readonly isDevice = computed<boolean>(() => {
-    return (this.form().controls.type.value !== IscsiExtentType.File);
-  });
+  get isDevice(): boolean {
+    return this.form().controls.type.value !== IscsiExtentType.File;
+  }
 
-  readonly isNewZvol = computed<boolean>(() => {
-    const form = this.form();
-    return form.enabled && form.value.disk === newOption;
-  });
+  get isNewZvol(): boolean {
+    return this.form().enabled && this.form().value.disk === newOption;
+  }
 
   constructor(
     private iscsiService: IscsiService,

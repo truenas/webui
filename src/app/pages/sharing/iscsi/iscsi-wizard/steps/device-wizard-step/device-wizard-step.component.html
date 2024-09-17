@@ -12,7 +12,7 @@
     [options]="typeOptions$"
     [required]="true"
   ></ix-select>
-  @if (isDevice()) {
+  @if (isDevice) {
     <ix-select
       formControlName="disk"
       [label]="helptextSharingIscsi.disk_placeholder | translate"
@@ -21,7 +21,7 @@
       [required]="true"
     ></ix-select>
   }
-  @if (isNewZvol()) {
+  @if (isNewZvol) {
     <ix-explorer
       formControlName="dataset"
       [label]="helptextSharingIscsi.dataset_placeholder | translate"
@@ -39,7 +39,7 @@
       [required]="true"
     ></ix-input>
   }
-  @if (!isDevice()) {
+  @if (!isDevice) {
     <ix-explorer
       formControlName="path"
       [label]="helptextSharingIscsi.extent_placeholder_path | translate"
