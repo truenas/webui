@@ -10,6 +10,7 @@ import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { Role } from 'app/enums/role.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/services/auth/auth.service';
+import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -44,6 +45,7 @@ export function mockAuth(
           }),
           createSpyObject(Store),
           createSpyObject(WebSocketService),
+          createSpyObject(TokenLastUsedService),
           createSpyObject(Window),
         );
 
