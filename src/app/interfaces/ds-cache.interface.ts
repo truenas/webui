@@ -25,9 +25,7 @@ export interface LoggedInUser extends DsUncachedUser {
 }
 
 export interface AuthMePrivilege {
-  roles: {
-    $set: Role[];
-  };
+  roles: { $set: Role[] } | Role[];
   web_shell: boolean;
   webui_access: boolean;
 }

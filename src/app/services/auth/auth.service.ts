@@ -27,7 +27,7 @@ import {
   ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
 import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
-import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { AuthMePrivilege, LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -318,7 +318,7 @@ export class AuthService {
     });
   }
 
-  private extractCurrentUserRoles(roles: Role[] | { $set: Role[] }): Role[] {
+  private extractCurrentUserRoles(roles: AuthMePrivilege['roles']): Role[] {
     if (Array.isArray(roles)) return roles;
     if (Array.isArray(roles?.$set)) return roles?.$set;
     return [];
