@@ -514,8 +514,6 @@
     "./src/app/modules/ix-tree/directives/tree-node-toggle.directive.ts",
     "./src/app/modules/ix-tree/flat-tree-datasource.ts",
     "./src/app/modules/ix-tree/interfaces/tree-virtual-node-data.interface.ts",
-    "./src/app/modules/ix-tree/testing/tree-node.harness.ts",
-    "./src/app/modules/ix-tree/testing/tree.harness.ts",
     "./src/app/modules/ix-tree/tree-datasource.ts",
     "./src/app/modules/ix-tree/tree-flattener.ts",
     "./src/app/modules/layout/admin-layout/admin-layout.component.const.ts",
