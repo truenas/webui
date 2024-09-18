@@ -9,6 +9,7 @@ const esmPatterns = [
   'is-cidr',
   'ip-regex',
   'cidr-regex',
+  'lodash-es'
 ];
 
 module.exports = {
@@ -20,10 +21,7 @@ module.exports = {
   coverageReporters: ['html', 'json'],
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
-  moduleNameMapper: {
-    ...pathsToModuleNameMapper(compilerOptions.paths || {}),
-    '^lodash-es$': 'lodash',
-  },
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}),
   transformIgnorePatterns: [
     `node_modules/(?!(${esmPatterns.join('|')}))`
   ],
