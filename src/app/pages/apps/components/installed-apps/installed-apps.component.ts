@@ -135,13 +135,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get activeCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state !== AppState.Stopped && this.selection.isSelected(app.id),
+      (app) => [AppState.Running, AppState.Deploying].includes(app.state) && this.selection.isSelected(app.id),
     );
   }
 
   get stoppedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === AppState.Stopped && this.selection.isSelected(app.id),
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state) && this.selection.isSelected(app.id),
     );
   }
 
