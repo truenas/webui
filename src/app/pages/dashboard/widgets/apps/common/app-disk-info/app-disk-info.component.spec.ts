@@ -46,9 +46,9 @@ describe('AppDiskInfoComponent', () => {
   });
 
   it('checks read-write rows', () => {
-    const inOutRows = spectator.queryAll('.in-out-row');
-    expect(inOutRows[0]).toHaveText('Read: 1.18 MiB');
-    expect(inOutRows[1]).toHaveText('Write: 456 b/s');
+    const readWriteRows = spectator.queryAll('.in-out-row');
+    expect(readWriteRows[0]).toHaveText('Read: 1.18 MiB');
+    expect(readWriteRows[1]).toHaveText('Write: 2.24 MiB');
   });
 
   it('should generate correct disk chart data', () => {
