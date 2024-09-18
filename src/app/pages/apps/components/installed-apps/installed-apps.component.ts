@@ -130,7 +130,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get isBulkStopDisabled(): boolean {
     return this.checkedApps.every(
-      (app) => AppState.Stopped === app.state || AppState.Crashed === app.state,
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state),
     );
   }
 
