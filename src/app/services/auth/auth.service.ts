@@ -170,7 +170,7 @@ export class AuthService {
     return this.user$.pipe(
       filter(Boolean),
       map((user) => {
-        const currentRoles = user?.privilege?.roles?.$set || [];
+        const currentRoles = this.extractCurrentUserRoles(user?.privilege?.roles);
         const neededRoles = Array.isArray(roles) ? roles : [roles];
         if (!neededRoles?.length || !currentRoles.length) {
           return false;
@@ -316,5 +316,11 @@ export class AuthService {
     this.latestTokenGenerated$.subscribe((token) => {
       this.token = token;
     });
+  }
+
+  private extractCurrentUserRoles(roles: Role[] | { $set: Role[] }): Role[] {
+    if (Array.isArray(roles)) return roles;
+    if (Array.isArray(roles?.$set)) return roles?.$set;
+    return [];
   }
 }
