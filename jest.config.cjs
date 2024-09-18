@@ -4,6 +4,13 @@ const { compilerOptions } = require('./tsconfig');
 // Deliberately set to not UTC.
 process.env.TZ = 'Europe/Kiev';
 
+const esmPatterns = [
+  '.*\\.mjs$',
+  'is-cidr',
+  'ip-regex',
+  'cidr-regex',
+];
+
 module.exports = {
   preset: 'jest-preset-angular',
   globalSetup: 'jest-preset-angular/global-setup',
@@ -17,5 +24,8 @@ module.exports = {
     ...pathsToModuleNameMapper(compilerOptions.paths || {}),
     '^lodash-es$': 'lodash',
   },
+  transformIgnorePatterns: [
+    `node_modules/(?!(${esmPatterns.join('|')}))`
+  ],
   clearMocks: true,
 };

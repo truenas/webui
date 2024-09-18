@@ -1,4 +1,4 @@
-import Cron from 'croner';
+import { Cron } from 'croner';
 import {
   addDays, addMinutes,
   endOfMonth,
@@ -35,7 +35,7 @@ export class CronSchedulePreview {
     const endDate = endOfMonth(startDate);
 
     for (let i = 0; i < limit;) {
-      const exampleDate = this.cron.next(previousDate);
+      const exampleDate = this.cron.nextRun(previousDate);
       previousDate = exampleDate;
 
       if (!exampleDate || !isBefore(exampleDate, endDate)) {
@@ -64,7 +64,7 @@ export class CronSchedulePreview {
     const startingMonth = getMonth(previousDate);
 
     do {
-      const nextRun = this.cron.next(subMinutes(previousDate, 1));
+      const nextRun = this.cron.nextRun(subMinutes(previousDate, 1));
 
       if (!nextRun || getMonth(nextRun) !== startingMonth) {
         break;

@@ -31,7 +31,7 @@ export class VmGpuService {
       switchMap((allGpus) => {
         const previousVmPciDevices = vm.devices.filter((device) => {
           return device.dtype === VmDeviceType.Pci;
-        }) as VmPciPassthroughDevice[];
+        });
         const previousSlots = previousVmPciDevices.map((device) => device.attributes.pptdev);
         const previousGpus = allGpus.filter(byVmPciSlots(previousSlots));
 
