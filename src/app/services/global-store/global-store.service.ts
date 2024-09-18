@@ -7,7 +7,7 @@ import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/ap
 import { ApiEventMethod, ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
-interface GlobalStoreMembers<
+export interface GlobalStoreMembers<
   M1 extends ApiCallMethod,
   M2 extends ApiEventMethod,
   M3 extends ApiCallAndSubscribeMethod,
@@ -33,38 +33,44 @@ export function globalStore<
     private subscribeResult$ = new BehaviorSubject<ApiEventTyped<M2>>(undefined);
     private callAndSubscribeResult$ = new BehaviorSubject<ApiCallAndSubscribeResponse<M3>[]>(undefined);
 
-    call = this.callResult$.pipe(
-      switchMap((callResult) => {
-        if (callResult === undefined) {
-          return this.ws
-            .call(method as M1, params as ApiCallParams<M1>)
-            .pipe(tap((result) => this.callResult$.next(result)));
-        }
-        return of(callResult);
-      }),
-    );
+    get call(): Observable<ApiCallResponse<M1>> {
+      return this.callResult$.pipe(
+        switchMap((callResult) => {
+          if (callResult === undefined) {
+            return this.ws
+              .call(method as M1, params as ApiCallParams<M1>)
+              .pipe(tap((result) => this.callResult$.next(result)));
+          }
+          return of(callResult);
+        }),
+      );
+    }
 
-    subscribe = this.subscribeResult$.pipe(
-      switchMap((subscribeResult) => {
-        if (subscribeResult === undefined) {
-          return this.ws
-            .subscribe(method as M2)
-            .pipe(tap((result) => this.subscribeResult$.next(result)));
-        }
-        return of(subscribeResult);
-      }),
-    );
+    get subscribe(): Observable<ApiEventTyped<M2>> {
+      return this.subscribeResult$.pipe(
+        switchMap((subscribeResult) => {
+          if (subscribeResult === undefined) {
+            return this.ws
+              .subscribe(method as M2)
+              .pipe(tap((result) => this.subscribeResult$.next(result)));
+          }
+          return of(subscribeResult);
+        }),
+      );
+    }
 
-    callAndSubscribe = this.callAndSubscribeResult$.pipe(
-      switchMap((callAndSubscribeResult) => {
-        if (callAndSubscribeResult === undefined) {
-          return this.ws
-            .callAndSubscribe(method as M3, params as ApiCallParams<M3>)
-            .pipe(tap((result) => this.callAndSubscribeResult$.next(result)));
-        }
-        return of(callAndSubscribeResult);
-      }),
-    );
+    get callAndSubscribe(): Observable<ApiCallAndSubscribeResponse<M3>[]> {
+      return this.callAndSubscribeResult$.pipe(
+        switchMap((callAndSubscribeResult) => {
+          if (callAndSubscribeResult === undefined) {
+            return this.ws
+              .callAndSubscribe(method as M3, params as ApiCallParams<M3>)
+              .pipe(tap((result) => this.callAndSubscribeResult$.next(result)));
+          }
+          return of(callAndSubscribeResult);
+        }),
+      );
+    }
 
     invalidate(): void {
       this.callResult$.next(undefined);

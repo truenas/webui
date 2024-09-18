@@ -20,8 +20,6 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppsState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-export const poolStore = globalStore('pool.query');
-
 /**
  * This service provides data for widgets.
  *
@@ -34,6 +32,9 @@ export const poolStore = globalStore('pool.query');
   providedIn: 'root',
 })
 export class WidgetResourcesService {
+  poolStore = globalStore('pool.query');
+  appStore = globalStore('app.query');
+
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
 
@@ -68,9 +69,9 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly installedApps$ = this.ws.call('app.query').pipe(toLoadingState());
+  readonly installedApps$ = inject(this.appStore).call.pipe(toLoadingState());
 
-  readonly pools$ = inject(poolStore).callAndSubscribe.pipe(
+  readonly pools$ = inject(this.poolStore).callAndSubscribe.pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
