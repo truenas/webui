@@ -98,7 +98,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.updateService.hardRefreshIfNeeded(),
       ]).pipe(
         tap(() => this.setLoadingState(false)),
-    switchMap(() => this.authService.loginWithToken()),
+        switchMap(() => this.authService.loginWithToken()),
         tap((loginResult) => {
           if (loginResult !== LoginResult.Success) {
             this.authService.clearAuthToken();
