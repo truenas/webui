@@ -18,6 +18,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-card-info/app-card-info.component';
 import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/common/app-controls/app-controls.component';
 import { AppCpuInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-cpu-info/app-cpu-info.component';
+import { AppDiskInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-disk-info/app-disk-info.component';
 import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-memory-info/app-memory-info.component';
 import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-network-info/app-network-info.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -58,6 +59,7 @@ describe('WidgetAppComponent', () => {
         AppCpuInfoComponent,
         AppMemoryInfoComponent,
         AppNetworkInfoComponent,
+        AppDiskInfoComponent,
       ),
     ],
     providers: [
@@ -104,5 +106,6 @@ describe('WidgetAppComponent', () => {
     expect(spectator.query(AppCpuInfoComponent)).toBeTruthy();
     expect(spectator.query(AppMemoryInfoComponent)).toBeTruthy();
     expect(spectator.query(AppNetworkInfoComponent)).toBeTruthy();
+    expect(spectator.query(AppDiskInfoComponent)).toBeTruthy();
   });
 });
