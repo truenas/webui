@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { chain } from 'lodash-es';
+import { uniq } from 'lodash-es';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
@@ -26,17 +26,17 @@ export class PoolsLegendComponent {
   readonly legend = computed(() => {
     const poolColors = this.poolColors();
 
-    return chain(this.slots())
-      .map((slot) => slot.pool_info?.pool_name || null)
-      .uniq()
-      .map((poolName) => {
-        if (poolName === null) {
-          return [this.translate.instant('Unassigned'), unassignedColor] as [string, string];
-        }
+    const slots = this.slots();
 
-        return [poolName, poolColors[poolName]] as [string, string];
-      })
-      .value();
+    const poolsFromSlots = slots.map((slot) => slot.pool_info?.pool_name || null);
+    const uniqPools = uniq(poolsFromSlots);
+    return uniqPools.map((poolName) => {
+      if (poolName === null) {
+        return [this.translate.instant('Unassigned'), unassignedColor] as [string, string];
+      }
+
+      return [poolName, poolColors[poolName]] as [string, string];
+    });
   });
 
   constructor(
