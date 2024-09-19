@@ -138,15 +138,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return !this.checkedApps.some((app) => app.upgrade_available);
   }
 
-  get startedCheckedApps(): App[] {
+  get activeCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === AppState.Running && this.selection.isSelected(app.id),
+      (app) => [AppState.Running, AppState.Deploying].includes(app.state) && this.selection.isSelected(app.id),
     );
   }
 
   get stoppedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === AppState.Stopped && this.selection.isSelected(app.id),
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state) && this.selection.isSelected(app.id),
     );
   }
 
@@ -356,7 +356,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   onBulkStop(): void {
-    this.startedCheckedApps.forEach((app) => this.stop(app.name));
+    this.activeCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     this.toggleAppsChecked(false);
   }
