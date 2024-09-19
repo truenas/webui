@@ -62,7 +62,7 @@ export class AppDiskInfoComponent {
   ) {
     effect(() => {
       const diskStats = this.stats()?.value?.blkio;
-      if (Object.keys(diskStats).length) {
+      if (diskStats) {
         this.cachedDiskStats.update((cachedStats) => {
           return [...cachedStats, [diskStats.read, diskStats.write]].slice(-60);
         });
