@@ -1,45 +1,45 @@
-@if (service) {
+@if (service()) {
   <div>
     <button
       mat-icon-button
       [attr.aria-label]="'Table Actions of Expandable Table' | translate"
-      [ixTest]="[service?.id, 'actions-menu']"
+      [ixTest]="[service().id, 'actions-menu']"
       [matMenuTriggerFor]="rowActions"
     >
       <ix-icon name="more_vert"></ix-icon>
     </button>
     <mat-menu #rowActions="matMenu">
       <button
-        *ixRequiresRoles="requiredRoles"
+        *ixRequiresRoles="requiredRoles()"
         mat-menu-item
-        [ixTest]="[service?.service, 'actions-menu', serviceStateLabel]"
-        (click)="changeServiceState(service)"
+        [ixTest]="[service().service, 'actions-menu', serviceStateLabel()]"
+        (click)="changeServiceState(service())"
       >
-        {{ serviceStateLabel | translate }}
+        {{ serviceStateLabel() | translate }}
       </button>
 
       <button
         mat-menu-item
-        [ixTest]="[service?.service, 'actions-menu', configServiceLabel]"
-        (click)="configureService(service)"
+        [ixTest]="[service().service, 'actions-menu', configServiceLabel]"
+        (click)="configureService(service())"
       >
         {{ configServiceLabel | translate }}
       </button>
 
-      @if (hasSessions) {
+      @if (hasSessions()) {
         <button
           mat-menu-item
-          [ixTest]="[service?.service, 'actions-menu', 'sessions']"
-          (click)="viewSessions(service.service)"
+          [ixTest]="[service().service, 'actions-menu', 'sessions']"
+          (click)="viewSessions(service().service)"
         >
-          {{ '{name} Sessions' | translate: { name: serviceNames.get(service.service) } }}
+          {{ '{name} Sessions' | translate: { name: serviceNames.get(service().service) } }}
         </button>
       }
 
-      @if (hasLogs) {
+      @if (hasLogs()) {
         <button
           mat-menu-item
-          [ixTest]="[service?.service, 'actions-menu', 'logs']"
+          [ixTest]="[service().service, 'actions-menu', 'logs']"
           (click)="viewLogs()"
         >
           {{ 'Audit Logs' | translate }}

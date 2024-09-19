@@ -1,22 +1,22 @@
 <ix-page-header
-  [pageTitle]="pageTitle"
-  [loading]="isLoading$ | async"
+  [pageTitle]="pageTitle()"
+  [loading]="isLoading()"
 ></ix-page-header>
 
 <div class="flex-container">
   <div class="app-wrapper">
     <section>
       <ix-app-details-header
-        [app]="app"
-        [isLoading$]="isLoading$"
+        [app]="app()"
+        [isLoading]="isLoading()"
       ></ix-app-details-header>
     </section>
 
-    @if ((isLoading$ | async) || app?.screenshots?.length) {
+    @if (isLoading() || app()?.screenshots?.length) {
       <section>
         <h2>{{ 'Screenshots' | translate }}</h2>
         <div>
-          @if (isLoading$ | async) {
+          @if (isLoading()) {
             <div class="screenshots-loader">
               <ngx-skeleton-loader class="screenshot-loader"></ngx-skeleton-loader>
               <ngx-skeleton-loader class="screenshot-loader"></ngx-skeleton-loader>
@@ -24,7 +24,7 @@
             </div>
           } @else {
             <div class="screenshots" gallerize>
-              @for (image of app.screenshots; track image) {
+              @for (image of app().screenshots; track image) {
                 <div class="screenshot">
                   <img class="screenshot-image" [src]="image" [src-fallback]="imagePlaceholder" />
                 </div>
@@ -39,9 +39,9 @@
       <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
     </div>
 
-    @if (app) {
+    @if (app()) {
       <section>
-        <ix-app-details-similar [app]="app"></ix-app-details-similar>
+        <ix-app-details-similar [app]="app()"></ix-app-details-similar>
       </section>
     }
   </div>
@@ -56,25 +56,27 @@
     <section class="app-info-cards">
       <ix-app-resources-card
         class="app-info-card"
-        [isLoading]="isLoading$ | async"
+        [isLoading]="isLoading()"
       ></ix-app-resources-card>
+
       <ix-app-available-info-card
         class="app-info-card"
-        [app]="app"
-        [isLoading$]="isLoading$"
+        [app]="app()"
+        [isLoading]="isLoading()"
       ></ix-app-available-info-card>
 
       <ix-app-json-details-card
         class="app-info-card"
         [title]="'Run As Context' | translate"
-        [jsonDetails]="app?.app_metadata?.run_as_context"
-        [isLoading$]="isLoading$"
+        [jsonDetails]="app()?.app_metadata?.run_as_context"
+        [isLoading]="isLoading()"
       ></ix-app-json-details-card>
+
       <ix-app-json-details-card
         class="app-info-card"
         [title]="'Capabilities' | translate"
-        [jsonDetails]="app?.app_metadata?.capabilities"
-        [isLoading$]="isLoading$"
+        [jsonDetails]="app()?.app_metadata?.capabilities"
+        [isLoading]="isLoading()"
       ></ix-app-json-details-card>
     </section>
   </div>

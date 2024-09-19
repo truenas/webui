@@ -66,6 +66,7 @@ import { AppCpuInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app
 import { AppDiskInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-disk-info/app-disk-info.component';
 import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-memory-info/app-memory-info.component';
 import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-network-info/app-network-info.component';
+import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
 import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-empty/backup-task-empty.component';
 import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
@@ -173,6 +174,7 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     AppCardLogoComponent,
     AppStateCellComponent,
     AppUpdateCellComponent,
+    AppVersionPipe,
   ],
 })
 export class DashboardModule {

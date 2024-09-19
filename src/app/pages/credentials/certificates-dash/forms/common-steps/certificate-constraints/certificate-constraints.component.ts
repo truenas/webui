@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -37,7 +37,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateConstraintsComponent implements OnInit, SummaryProvider {
-  @Input() hasAuthorityKeyIdentifier = false;
+  hasAuthorityKeyIdentifier = input(false);
 
   form = this.formBuilder.group({
     BasicConstraints: this.formBuilder.group({
@@ -110,7 +110,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
           extension_critical: basicConstraints.BasicConstraints.includes(BasicConstraint.ExtensionCritical),
           path_length: basicConstraints.path_length,
         },
-        AuthorityKeyIdentifier: this.hasAuthorityKeyIdentifier
+        AuthorityKeyIdentifier: this.hasAuthorityKeyIdentifier()
           ? {
             enabled: authorityKeyIdentifier.enabled,
             authority_cert_issuer: authorityKeyIdentifier.AuthorityKeyIdentifier
@@ -226,7 +226,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
   }
 
   private getAuthorityKeyIdentifierSummary(): SummaryItem[] {
-    if (!this.hasExtension('AuthorityKeyIdentifier') || !this.hasAuthorityKeyIdentifier) {
+    if (!this.hasExtension('AuthorityKeyIdentifier') || !this.hasAuthorityKeyIdentifier()) {
       return [];
     }
 

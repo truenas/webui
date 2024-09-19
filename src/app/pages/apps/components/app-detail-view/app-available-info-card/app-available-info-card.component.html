@@ -2,7 +2,7 @@
 
 <div class="app-list-item">
   <span class="label">{{ 'Version' | translate }}:</span>
-  @if (isLoading$() | async) {
+  @if (isLoading()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
     {{ app()?.latest_app_version | orNotAvailable }}
@@ -10,7 +10,7 @@
 </div>
 <div class="app-list-item sources">
   <span class="label">{{ 'Source' | translate }}:</span>
-  @if (isLoading$() | async) {
+  @if (isLoading()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
     <div>
@@ -33,7 +33,7 @@
 </div>
 <div class="app-list-item">
   <span class="label">{{ 'Last App Update' }}:</span>
-  @if (isLoading$() | async) {
+  @if (isLoading()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
     @if (app()?.last_update) {

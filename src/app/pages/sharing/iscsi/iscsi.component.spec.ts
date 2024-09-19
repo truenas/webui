@@ -31,7 +31,7 @@ describe('IscsiComponent', () => {
   });
 
   it('should have correct initial activeTab', () => {
-    expect(spectator.component.activeTab).toBe('configuration');
+    expect(spectator.component.activeTab()).toBe('configuration');
   });
 
   it('should have correct navLinks', () => {

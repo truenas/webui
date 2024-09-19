@@ -6,13 +6,17 @@ import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
+import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { AppCardInfoComponent } from './app-card-info.component';
 
 describe('AppCardInfoComponent', () => {
   let spectator: Spectator<AppCardInfoComponent>;
   const createComponent = createComponentFactory({
     component: AppCardInfoComponent,
-    declarations: [MockComponents(AppStateCellComponent, AppUpdateCellComponent)],
+    declarations: [
+      MockComponents(AppStateCellComponent, AppUpdateCellComponent),
+    ],
+    imports: [AppVersionPipe],
   });
 
   beforeEach(() => {
@@ -24,7 +28,7 @@ describe('AppCardInfoComponent', () => {
           value: {
             name: 'TestApp',
             metadata: {
-              app_version: '1.0.0',
+              app_version: 'v1.0.0',
             },
           },
         } as LoadingState<App>,
