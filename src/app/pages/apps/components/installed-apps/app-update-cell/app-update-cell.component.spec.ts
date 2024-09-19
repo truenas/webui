@@ -2,6 +2,7 @@ import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { App } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
+import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 
 describe('AppUpdateCellComponent', () => {
   let spectator: SpectatorHost<AppUpdateCellComponent>;
@@ -10,6 +11,7 @@ describe('AppUpdateCellComponent', () => {
     component: AppUpdateCellComponent,
     imports: [
       MapValuePipe,
+      AppVersionPipe,
     ],
   });
 

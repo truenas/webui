@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -11,7 +11,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
 })
 export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   requiredRoles: Role[];
-  onRowToggle: (row: T, checked: boolean) => void;
+  onRowToggle: (row: T, checked: boolean, toggle: MatSlideToggle) => void;
   dynamicRequiredRoles: (row: T) => Observable<Role[]>;
 
   get checked(): boolean {
@@ -19,7 +19,7 @@ export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   }
 
   onSlideToggleChanged(event: MatSlideToggleChange): void {
-    this.onRowToggle(this.row(), event.checked);
+    this.onRowToggle(this.row(), event.checked, event.source);
   }
 }
 

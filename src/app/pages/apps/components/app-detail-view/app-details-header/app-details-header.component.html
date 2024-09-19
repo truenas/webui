@@ -1,27 +1,27 @@
 <div class="app">
-  @if (app?.installed) {
+  @if (app()?.installed) {
     <a
       class="installed-badge"
       [matTooltip]="'An instance of this app already installed. Click the badge to see installed apps.' | translate"
-      [ixTest]="[app?.name, 'installed-badge']"
+      [ixTest]="[app()?.name, 'installed-badge']"
       (click)="navigateToAllInstalledPage()"
     >
       {{ 'Installed' | translate }}
     </a>
   }
   <div class="app-image-holder">
-    <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
+    <ix-app-card-logo [url]="app()?.icon_url"></ix-app-card-logo>
   </div>
-  @if (!!(dockerStore.selectedPool$ | async)) {
+  @if (selectedPool()) {
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
       color="primary"
-      [ixTest]="[app?.name, 'install']"
-      [disabled]="!app"
+      [ixTest]="[app()?.name, 'install']"
+      [disabled]="!app()"
       (click)="navigateToInstallPage()"
     >
-      @if (app?.installed) {
+      @if (app()?.installed) {
         {{ 'Install Another Instance' | translate }}
       } @else {
         {{ 'Install' | translate }}
@@ -43,19 +43,19 @@
 <div class="app-info">
   <div class="app-list-item">
     <span class="label">{{ 'App Version' | translate }}:</span>
-    @if (isLoading$ | async) {
+    @if (isLoading()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      {{ app?.latest_app_version | orNotAvailable }}
+      {{ app()?.latest_app_version | orNotAvailable }}
     }
   </div>
   <div class="app-list-item">
     <span class="label">{{ 'Keywords' | translate }}:</span>
-    @if (isLoading$ | async) {
+    @if (isLoading()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @if (app?.tags) {
-        {{ app?.tags.join(', ') }}
+      @if (app()?.tags?.length) {
+        {{ app()?.tags.join(', ') }}
       } @else {
         {{ 'N/A' | translate }}
       }
@@ -63,24 +63,24 @@
   </div>
   <div class="app-list-item">
     <span class="label">{{ 'Train' | translate }}:</span>
-    @if (isLoading$ | async) {
+    @if (isLoading()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      {{ app?.train | orNotAvailable }}
+      {{ app()?.train | orNotAvailable }}
     }
   </div>
   <div class="app-list-item">
     <span class="label">{{ 'Homepage' | translate }}:</span>
-    @if (isLoading$ | async) {
+    @if (isLoading()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @if (app?.home) {
+      @if (app()?.home) {
         <a
           ixTest="homepage"
           target="_blank"
-          [href]="app.home"
-          [title]="app.home"
-        >{{ app.home | cleanLink }}</a>
+          [href]="app().home"
+          [title]="app().home"
+        >{{ app().home | cleanLink }}</a>
       } @else {
         {{ 'N/A' | translate }}
       }
@@ -89,10 +89,10 @@
 </div>
 
 <div class="app-description">
-  @if (isLoading$ | async) {
+  @if (isLoading()) {
     <ngx-skeleton-loader count="2"></ngx-skeleton-loader>
-  } @else if (description) {
-    <div class="description-wrapper">{{ description }}</div>
+  } @else if (description()) {
+    <div class="description-wrapper">{{ description() }}</div>
   }
 </div>
 

@@ -1,3 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 export enum IscsiAuthMethod {
   None = 'NONE',
   Chap = 'CHAP',
@@ -30,3 +32,10 @@ export enum IscsiExtentUsefor {
   Legacyos = 'legacyos',
   Modernos = 'modernos',
 }
+
+export const iscsiExtentUseforMap = new Map([
+  [IscsiExtentUsefor.Vmware, T('VMware: Extent block size 512b, TPC enabled, no Xen compat mode, SSD speed')],
+  [IscsiExtentUsefor.Xen, T('Xen: Extent block size 512b, TPC enabled, Xen compat mode enabled, SSD speed')],
+  [IscsiExtentUsefor.Legacyos, T('Legacy OS: Extent block size 512b, TPC enabled, no Xen compat mode, SSD speed')],
+  [IscsiExtentUsefor.Modernos, T('Modern OS: Extent block size 4k, TPC enabled, no Xen compat mode, SSD speed')],
+]);
