@@ -1,5 +1,5 @@
 <ix-page-header>
-  <mat-button-toggle-group [value]="activeNfsType" (change)="nfsTypeChanged($event)">
+  <mat-button-toggle-group [value]="activeNfsType()" (change)="nfsTypeChanged($event)">
     <mat-button-toggle [value]="NfsType.Nfs3">NFS 3</mat-button-toggle>
     <mat-button-toggle [value]="NfsType.Nfs4">NFS 4</mat-button-toggle>
   </mat-button-toggle-group>
@@ -9,13 +9,13 @@
     (search)="onListFiltered($event)"
   ></ix-search-input1>
 
-  @if (activeNfsType === NfsType.Nfs3) {
+  @if (activeNfsType() === NfsType.Nfs3) {
     <ng-container
       *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
     ></ng-container>
   }
 
-  @if (activeNfsType === NfsType.Nfs4) {
+  @if (activeNfsType() === NfsType.Nfs4) {
     <ng-container
       *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
     ></ng-container>
@@ -26,13 +26,13 @@
   </button>
 </ix-page-header>
 
-@if (activeNfsType === NfsType.Nfs3) {
+@if (activeNfsType() === NfsType.Nfs3) {
   <ng-container
     *ngTemplateOutlet="nfsTable; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
   ></ng-container>
 }
 
-@if (activeNfsType === NfsType.Nfs4) {
+@if (activeNfsType() === NfsType.Nfs4) {
   <ng-container
     *ngTemplateOutlet="nfsTable; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
   ></ng-container>

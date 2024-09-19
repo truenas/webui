@@ -1,10 +1,10 @@
 <div #section class="content-wrapper" (window:resize)="onResize()">
   <ng-content></ng-content>
 </div>
-@if (isCollapsed && showButton) {
+@if (isCollapsed() && showButton()) {
   <div class="gradient"></div>
 }
-@if (showButton) {
+@if (showButton()) {
   <div class="more-less">
     <button
       type="button"
@@ -12,7 +12,7 @@
       ixTest="show-more-less"
       (click)="changeCollapsed()"
     >
-      {{ isCollapsed ? ('View More' | translate) : ('Collapse' | translate) }}
+      {{ isCollapsed() ? ('View More' | translate) : ('Collapse' | translate) }}
     </button>
   </div>
 }

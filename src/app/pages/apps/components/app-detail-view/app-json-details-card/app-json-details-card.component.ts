@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, Component,
-  Input,
+  input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
 import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 
 @UntilDestroy()
@@ -14,9 +13,9 @@ import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.he
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppJsonDetailsCardComponent<T> {
-  @Input() isLoading$: Observable<boolean>;
-  @Input() jsonDetails: T[];
-  @Input() title: string;
+  readonly isLoading = input<boolean>();
+  readonly jsonDetails = input<T[]>();
+  readonly title = input<string>();
 
   getKeys(item: T): string[] {
     return Object.keys(item);

@@ -1,6 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, Input, ViewContainerRef,
+  ChangeDetectionStrategy, Component, computed, input, ViewContainerRef,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -25,10 +26,11 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDetailsHeaderComponent {
-  @Input() app: AvailableApp;
-  @Input() isLoading$: Observable<boolean>;
-  protected requiredRoles = [Role.AppsWrite];
+  readonly app = input.required<AvailableApp>();
+  readonly isLoading = input<boolean>();
+  protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly dockerUpdateRequiredRoles = [Role.DockerWrite];
+  protected readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
 
   constructor(
     protected dockerStore: DockerStore,
@@ -42,18 +44,18 @@ export class AppDetailsHeaderComponent {
     private viewContainerRef: ViewContainerRef,
   ) { }
 
-  get description(): string {
-    const splitText = this.app?.app_readme?.split('</h1>');
-    const readyHtml = splitText[1] || splitText[0];
+  description = computed<string>(() => {
+    const splitText = this.app()?.app_readme?.split('</h1>');
+    const readyHtml = splitText?.[1] || splitText?.[0];
     return readyHtml?.replace(/<[^>]*>/g, '').trim();
-  }
+  });
 
   navigateToAllInstalledPage(): void {
     this.installedAppsStore.installedApps$.pipe(
       map((apps) => {
         return apps.filter((app) => {
-          return app.metadata.name === this.app.name
-            && app.metadata.train === this.app.train;
+          return app.name === this.app().name
+            && app.metadata.train === this.app().train;
         });
       }),
       untilDestroyed(this),
@@ -95,15 +97,17 @@ export class AppDetailsHeaderComponent {
   navigateToInstallPage(): void {
     this.showAgreementWarning().pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.router.navigate(['/apps', 'available', this.app.train, this.app.name, 'install']);
+        this.router.navigate(['/apps', 'available', this.app().train, this.app().name, 'install']);
       },
     });
   }
 
   showChoosePoolModal(): void {
-    const dialog = this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.navigateToInstallPage();
-    });
+    this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.navigateToInstallPage();
+      });
   }
 }

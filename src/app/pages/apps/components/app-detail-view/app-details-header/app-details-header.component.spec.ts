@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -44,6 +45,7 @@ describe('AppDetailsHeaderComponent', () => {
       ViewContainerRef,
       CleanLinkPipe,
       OrNotAvailablePipe,
+      NgxSkeletonLoaderModule,
     ],
     declarations: [
       MockComponent(AppCardLogoComponent),
@@ -54,7 +56,7 @@ describe('AppDetailsHeaderComponent', () => {
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(),
+          afterClosed: () => of(true),
         })),
       }),
       mockProvider(Router),
@@ -71,8 +73,8 @@ describe('AppDetailsHeaderComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: {
-          isLoading$: of(false),
           app: application,
+          isLoading: false,
         },
         providers: [
           mockProvider(DockerStore, {
@@ -99,8 +101,8 @@ describe('AppDetailsHeaderComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: {
-          isLoading$: of(false),
           app: application,
+          isLoading: false,
         },
         providers: [
           mockProvider(DockerStore, {
