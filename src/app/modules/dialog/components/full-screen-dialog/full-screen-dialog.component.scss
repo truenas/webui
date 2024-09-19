@@ -15,18 +15,22 @@
   align-items: center;
   display: flex;
   flex-direction: column;
+  height: 80%;
   justify-content: center;
   margin-bottom: 16px;
-  width: 50%;
+  width: 80%;
 
   .title {
     font-size: xx-large;
   }
 
   .message {
+    display: block;
+    font-family: var(--font-family-body);
+    max-height: 80%;
+    overflow: auto;
+
     &.pre {
-      display: block;
-      font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
       unicode-bidi: isolate;
       white-space: pre;
     }
