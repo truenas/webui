@@ -243,7 +243,7 @@ class common_Input():
 
 class dashboard:
     title = '//h1[contains(.,"Dashboard")]'
-    system_Info_Card_Title = '//span[text()="System Information"]'
+    system_Info_Card_Title = '//h3[text()="System Information"]'
     help_Card_Title = '//*[text()="TrueNAS Help"]'
     system_Information_Standby_Title = '//span[contains(.,"System Information Standby")]'
 
@@ -425,6 +425,7 @@ class groups:
 class interface:
     title = '//h3[contains(text(),"Edit Interface")]'
     dhcp_Checkbox = '//mat-checkbox[contains(.,"DHCP")]'
+    autoconfigure_IPv6 = '//mat-checkbox[@data-test="checkbox-ipv-6-auto"]'
     critical_Checkbox = '//mat-checkbox[contains(.,"Critical")]'
     failover_Group_Select = '//ix-select[@formcontrolname="failover_group"]//mat-select'
     failover_Group_Option = '//mat-option[@id="mat-option-1"]'
@@ -444,7 +445,7 @@ class iscsi:
     protals_Tab = '//a[@data-test="link-portals"]'
     targets_Tab = '//a[@data-test="link-targets"]'
     extents_Tab = '//a[@data-test="link-extents"]'
-    iscsitest1_Text = '//div[contains(.,"iscsitest1")]'
+    iscsitest1_Text = '//span[contains(text(),"iscsitest1")]'
 
 
 class iscsi_Wizard:
@@ -471,7 +472,7 @@ class iscsi_Wizard:
     portal_Next_Button = '(//button[@data-test="button-next"])[2]'
     initiator_Title = '//mat-step-header[contains(.,"Initiator") and @tabindex="0"]'
     initiator_Input = '//input[@data-test="input-initiators"]'
-    initiator_Next_Button = '(//button[@data-test="button-save"])[2]'
+    initiator_Next_Button = '//button[@data-test="button-save"]'
     confirm_Options_Title = '//mat-step-header[contains(.,"Confirm Options") and @tabindex="0"]'
     iscsi_Summary = '//div[contains(text(),"iSCSI Summary")]'
     summary_Name = '//div[contains(text(),"Name: iscsitest1")]'
@@ -627,8 +628,8 @@ class side_Menu:
     shares = menu_Anchor('Shares')
     network = menu_Anchor('Network')
     credentials = menu_Anchor('Credentials')
-    local_User = submenu_Anchor('Local Users')
-    local_Group = submenu_Anchor('Local Groups')
+    local_User = submenu_Anchor('Users')
+    local_Group = submenu_Anchor('Groups')
     certificates = submenu_Anchor('Certificates')
     directory_Services = submenu_Anchor('Directory Services')
     apps = menu_Anchor('Apps')

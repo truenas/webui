@@ -11,7 +11,8 @@ from function import (
     is_element_present,
     wait_on_element_disappear,
     ssh_cmd,
-    service_Start
+    service_Start,
+    reboot
 )
 from pytest_bdd import (
     given,
@@ -32,7 +33,7 @@ def test_verify_active_directory_works_after_failover_with_new_system_dataset(dr
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_vip, request):
     """the browser is open, navigate to "{nas_url}"."""
-    depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
+    depends(request, ['Setup_SSH'], scope='session')
     if nas_vip not in driver.current_url:
         driver.get(f"http://{nas_vip}/ui/sessions/signin")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -151,10 +152,10 @@ def click_advanced_and_input_the_computer_account_ou_truenas_servers(driver, ca_
 
 
 @then(parsers.parse('change netbios to "{hostname}" and check the Enable box then click SAVE'))
-def change_netbios_to_hostname_and_check_the_enable_box_then_click_save(driver, hostname):
+def change_netbios_to_hostname_and_check_the_enable_box_then_click_save(driver, nas_hostname):
     """change netbios to "{hostname}" and check the Enable box then click SAVE."""
     driver.find_element_by_xpath(xpaths.active_Directory.netbios_Name_Input).clear()
-    driver.find_element_by_xpath(xpaths.active_Directory.netbios_Name_Input).send_keys(hostname)
+    driver.find_element_by_xpath(xpaths.active_Directory.netbios_Name_Input).send_keys(nas_hostname)
     assert wait_on_element(driver, 7, xpaths.active_Directory.enable_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.active_Directory.enable_Checkbox).click()
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
@@ -202,17 +203,16 @@ def verify_that_the_trust_secret_succeeded(driver):
 @then('after, go to the Dashboard')
 def after_go_to_the_dashboard(driver):
     """after, go to the Dashboard."""
-    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
+    rsc.Click_On_Element(driver, xpaths.side_Menu.dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     time.sleep(20)
 
 
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
-def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
+def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver, nas_ip, root_password):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
-    rsc.Trigger_Failover(driver)
-
-    rsc.Confirm_Failover(driver)
+    reboot(nas_ip, ('root', root_password))
+    time.sleep(10)
 
 
 @then('wait for the login page to appear')

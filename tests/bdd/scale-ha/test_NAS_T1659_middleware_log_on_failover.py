@@ -2,10 +2,12 @@
 
 import reusableSeleniumCode as rsc
 import xpaths
+import time
 from function import (
     ssh_cmd,
     post,
-    wait_on_element
+    wait_on_element,
+    reboot
 )
 from pytest_bdd import (
     given,
@@ -53,13 +55,14 @@ def on_the_dashboard_verify_the_middleware_logs_exist(driver, nas_vip):
 @then('click Initiate Failover on the standby controller')
 def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     """on the Dashboard, click Initiate Failover on the standby controller."""
-    rsc.Trigger_Failover(driver)
+    assert wait_on_element(driver, 20, xpaths.toolbar.ha_Enabled)
 
 
 @then('on the Initiate Failover box, check the Confirm checkbox, then click Failover')
-def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver):
+def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver, nas_ip, root_password):
     """on the Initiate Failover box, check the Confirm checkbox, then click Failover."""
-    rsc.Confirm_Failover(driver)
+    reboot(nas_ip, ('root', root_password))
+    time.sleep(10)
 
 
 @then(parsers.parse('wait for the login to appear and HA to be enabled, login with {user} and {password}'))

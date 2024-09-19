@@ -14,11 +14,11 @@ from pytest_bdd import (
 )
 from function import (
     wait_on_element,
-    attribute_value_exist,
     wait_on_element_disappear,
     wait_for_attribute_value,
     run_cmd,
-    post
+    post,
+    reboot
 )
 from pytest_dependency import depends
 
@@ -149,16 +149,17 @@ def verify_that_the_file_is_on_host(driver, nas_vip):
 @then('go to the Dashboard and click Initiate Failover on the System Information standby controller')
 def go_to_the_dashboard_and_click_initiate_failover_on_the_system_information_standby_controller(driver):
     """go to the Dashboard and click Initiate Failover on the System Information standby controller."""
-    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
+    rsc.Click_On_Element(driver, xpaths.side_Menu.dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.toolbar.ha_Enabled)
     time.sleep(10)
-    rsc.Trigger_Failover(driver)
 
 
 @then('on the Initiate Failover box check the Confirm checkbox, then click Failover')
-def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver):
+def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver, nas_ip):
     """on the Initiate Failover box check the Confirm checkbox, then click Failover."""
-    rsc.Confirm_Failover(driver)
+    reboot(nas_ip, ('root', root_password))
+    time.sleep(10)
 
 
 @then('wait for the login to appear and HA to be enable')

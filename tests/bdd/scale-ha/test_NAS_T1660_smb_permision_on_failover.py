@@ -10,7 +10,8 @@ from function import (
     attribute_value_exist,
     run_cmd,
     ssh_cmd,
-    post
+    post,
+    reboot
 )
 from pytest_bdd import (
     given,
@@ -241,17 +242,15 @@ def create_a_file_with_root_in_mntdozersmb2_get_the_file_from_the_smbtest2_share
 @then('on the Dashboard, click Initiate Failover on the standby controller')
 def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     """on the Dashboard, click Initiate Failover on the standby controller."""
-    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
+    rsc.Click_On_Element(driver, xpaths.side_Menu.dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-
-    rsc.Trigger_Failover(driver)
-
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
 
 @then('on the Initiate Failover box, check the Confirm checkbox, then click Failover')
-def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver):
+def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver, nas_ip, root_password):
     """on the Initiate Failover box, check the Confirm checkbox, then click Failover."""
-    rsc.Confirm_Failover(driver)
-
+    reboot(nas_ip, ('root', root_password))
+    time.sleep(10)
 
 @then(parsers.parse('wait for the login to appear and HA to be enabled, login with {user} and {password}'))
 def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_password(driver, user, password):

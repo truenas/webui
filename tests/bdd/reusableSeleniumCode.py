@@ -92,7 +92,6 @@ def Go_To_Service(driver):
 
 def HA_Login_Status_Enable(driver):
     wait_on_element(driver, 180, xpaths.login.user_Input)
-    driver.refresh()
     assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 
 
@@ -139,7 +138,7 @@ def Login_If_Not_On_Dashboard(driver, user, password):
         assert wait_on_element(driver, 5, xpaths.login.signin_Button, 'clickable')
         driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
+        Click_On_Element(driver, xpaths.side_Menu.dashboard)
 
 
 def Restart_SMB_Service(driver):

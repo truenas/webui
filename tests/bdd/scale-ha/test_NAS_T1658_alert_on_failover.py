@@ -2,11 +2,13 @@
 
 import pytest
 import reusableSeleniumCode as rsc
+import time
 import xpaths
 from function import (
     wait_on_element,
     ssh_cmd,
-    get
+    get,
+    reboot
 )
 from pytest_dependency import depends
 from pytest_bdd import (
@@ -16,11 +18,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-
-
-@pytest.fixture(scope='module')
-def notification():
-    return {}
 
 
 @scenario('features/NAS-T1658.feature', 'Verify that a degraded pool alert is kept after failover')
@@ -42,7 +39,7 @@ def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas
 
 
 @when('on the Dashboard, look at the number of alerts')
-def on_the_dashboard_look_at_the_number_of_alerts(driver, notification):
+def on_the_dashboard_look_at_the_number_of_alerts(driver):
     """on the Dashboard, look at the number of alerts."""
     rsc.Verify_The_Dashboard(driver)
 
@@ -66,7 +63,7 @@ def degraded_the_tank_pool_to_create_an_alert_and_verify_that_the_pool_is_degrad
 
 
 @then('wait for the alert to appear and verify the volume and the state is degraded')
-def wait_for_the_alert_to_appear_and_verify_the_volume_and_the_state_is_degraded(driver, notification):
+def wait_for_the_alert_to_appear_and_verify_the_volume_and_the_state_is_degraded(driver):
     """wait for the alert to appear and verify the volume and the state is degraded."""
     assert wait_on_element(driver, 7, xpaths.toolbar.notification)
 
@@ -78,13 +75,12 @@ def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     """on the Dashboard, click Initiate Failover on the standby controller."""
     rsc.Verify_The_Dashboard(driver)
 
-    rsc.Trigger_Failover(driver)
-
 
 @then('on the Initiate Failover box, check the Confirm checkbox, then click Failover')
-def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver):
+def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(driver, nas_ip, root_password):
     """on the Initiate Failover box, check the Confirm checkbox, then click Failover."""
-    rsc.Confirm_Failover(driver)
+    reboot(nas_ip, ('root', root_password))
+    time.sleep(10)
 
 
 @then(parsers.parse('wait for the login to appear and HA to be enabled, login with {user} and {password}'))
@@ -96,7 +92,7 @@ def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_passwo
 
 
 @then('on the Dashboard, verify the alert exists after failover with the right volume and state')
-def on_the_dashboard_verify_the_alert_exists_after_failover_with_the_right_volume_and_state(driver, notification):
+def on_the_dashboard_verify_the_alert_exists_after_failover_with_the_right_volume_and_state(driver):
     """on the Dashboard, verify the alert exists after failover with the right volume and state."""
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
@@ -119,14 +115,13 @@ def fix_the_degraded_pool_and_verify_that_the_pool_is_fixed(nas_vip):
 
 
 @then('then wait for the alert to disappear and trigger failover again')
-def then_wait_for_the_alert_to_disappear_and_trigger_failover_again(driver, notification):
+def then_wait_for_the_alert_to_disappear_and_trigger_failover_again(driver, nas_ip, root_password):
     """then wait for the alert to disappear and trigger failover again."""
 
     rsc.Verify_Degraded_Alert_Is_Gone(driver)
 
-    rsc.Trigger_Failover(driver)
-
-    rsc.Confirm_Failover(driver)
+    reboot(nas_ip, ('root', root_password))
+    time.sleep(10)
 
 
 @then('on the Dashboard, verify that there is no degraded pool alert')

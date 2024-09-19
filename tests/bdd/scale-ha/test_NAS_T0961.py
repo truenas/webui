@@ -9,7 +9,8 @@ from function import (
     wait_on_element,
     wait_on_element_disappear,
     get,
-    create_Pool
+    create_Pool,
+    reboot
 )
 from pytest_bdd import (
     given,
@@ -198,7 +199,7 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
 @then('navigate to the dashboard')
 def navigate_to_dashboard(driver):
     """navigate to The dashboard."""
-    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
+    rsc.Click_On_Element(driver, xpaths.side_Menu.dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
@@ -220,19 +221,18 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(nas_vip):
 
 
 @then('press Initiate Failover and confirm')
-def press_initiate_failover_and_confirm(driver):
+def press_initiate_failover_and_confirm(driver, nas_ip):
     """press Initiate Failover and confirm."""
     time.sleep(20)
-    rsc.Trigger_Failover(driver)
-
-    rsc.Confirm_Failover(driver)
+    reboot(nas_ip, (ADMIN_USER, ADMIN_PASSWORD))
+    time.sleep(10)
 
 
 @then('wait for the login and the HA enabled status than verify the system dataset and login')
 def wait_for_the_login_and_the_ha_enabled_status_than_verify_the_system_dataset_and_login(driver, nas_vip):
     """wait for the login and the HA enabled status than verify the system dataset and login."""
     wait_on_element(driver, 180, xpaths.login.user_Input)
-    driver.refresh()
+
     # Do not assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable) we need to verify the system dataset.
     wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 

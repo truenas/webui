@@ -42,6 +42,13 @@ def get_config_value(key: str) -> str:
 def nas_hostname():
     return hostname
 
+@pytest.fixture
+def nas_hostname_c1():
+    return f'{hostname}-c1'
+
+@pytest.fixture
+def nas_hostname_c2():
+    return f'{hostname}-c2'
 
 @pytest.fixture
 def nas_ip():
@@ -160,9 +167,9 @@ def disable_active_directory():
         else os.environ.get("nas_vip")
     )
     if 'ad_user' in os.environ and 'ad_password' in os.environ:
-        results = get(ip, '/activedirectory/get_state/', ('root', os.environ.get("nas_password")))
+        results = get(ip, '/directoryservices/status/', ('root', os.environ.get("nas_password")))
         assert results.status_code == 200, results.text
-        if results.json() != 'DISABLED':
+        if results.json()['status'] != 'DISABLED' and results.json()['type'] == 'ACTIVEDIRECTORY':
             payload = {
                 "username": os.environ.get("ad_user"),
                 "password": os.environ.get("ad_password")
