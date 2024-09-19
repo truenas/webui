@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { formatRelative } from 'date-fns';
-import { Observable } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 
 @UntilDestroy()
@@ -15,9 +14,8 @@ import { AvailableApp } from 'app/interfaces/available-app.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppAvailableInfoCardComponent {
-  readonly isLoading$ = input.required<Observable<boolean>>();
+  readonly isLoading = input<boolean>(true);
   readonly app = input<AvailableApp>();
-
   readonly relativeDate = computed(() => {
     return formatRelative(new Date(this.app().last_update.$date), new Date());
   });

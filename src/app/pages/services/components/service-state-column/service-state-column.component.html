@@ -1,0 +1,12 @@
+<!-- TODO: This is essentially ix-cell-toggle, but it's hard to reuse the component here. -->
+@if (service()) {
+  <mat-slide-toggle
+    *ixRequiresRoles="requiredRoles()"
+    color="primary"
+    [aria-label]="isRunning() ? ('Stop service' | translate) : ('Start service' | translate)"
+    [ixTest]="['service', 'running', service().name, 'toggle']"
+    [checked]="isRunning()"
+    (change)="onSlideToggleChanged($event)"
+    (click)="$event.stopPropagation()"
+  ></mat-slide-toggle>
+}

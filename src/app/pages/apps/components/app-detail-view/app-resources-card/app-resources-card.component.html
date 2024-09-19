@@ -5,7 +5,7 @@
   @if (isLoading()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
-    <div>{{ "{cpuPercentage}% Avg. Usage" | translate: { cpuPercentage } }}</div>
+    <div>{{ "{cpuPercentage}% Avg. Usage" | translate: { cpuPercentage: cpuPercentage() } }}</div>
   }
 </div>
 <div class="app-list-item">
@@ -13,8 +13,8 @@
   @if (isLoading()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
-    @if (memoryUsed && memoryTotal) {
-      {{ memoryUsed | ixFileSize }} / {{ memoryTotal | ixFileSize }}
+    @if (memoryUsed() && memoryTotal()) {
+      {{ memoryUsed() | ixFileSize }} / {{ memoryTotal() | ixFileSize }}
     } @else {
       {{ 'N/A' | translate }}
     }

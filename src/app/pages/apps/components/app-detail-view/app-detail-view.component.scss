@@ -134,6 +134,8 @@
 }
 
 .screenshot-loader {
+  flex: 1;
+
   ::ng-deep span {
     height: 160px;
   }
