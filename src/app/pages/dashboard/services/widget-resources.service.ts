@@ -4,7 +4,7 @@ import { subHours, subMinutes } from 'date-fns';
 import {
   Observable, Subject, catchError, combineLatestWith, debounceTime,
   filter,
-  forkJoin, map, of, repeat, shareReplay, switchMap, take, timer,
+  forkJoin, map, of, repeat, shareReplay, switchMap, take, throttleTime, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -160,8 +160,8 @@ export class WidgetResourcesService {
     return this.ws.subscribe('app.stats').pipe(
       filter(() => Boolean(appName)),
       map((event) => event.fields.find((stats) => stats.app_name === appName)),
+      throttleTime(500),
       toLoadingState(),
-      shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
 

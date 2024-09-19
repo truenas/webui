@@ -117,9 +117,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get checkedApps(): App[] {
-    return this.checkedAppsNames
-      .map((name) => this.dataSource.find((app) => app.name === name))
-      .filter(Boolean);
+    return this.checkedAppsNames.map((name) => this.dataSource.find((app) => app.name === name));
   }
 
   get isBulkStartDisabled(): boolean {
