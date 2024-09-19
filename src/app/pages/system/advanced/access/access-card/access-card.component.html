@@ -26,10 +26,10 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.tokenLifetime">
-        <span class="label">{{ 'Token Lifetime' | translate }}:</span>
-        <span *ixWithLoadingState="tokenLifetime$ as tokenLifetime" class="value">
-          {{ asDuration(tokenLifetime) }}
+      <mat-list-item [ixUiSearch]="searchableElements.elements.sessionTimeout">
+        <span class="label">{{ 'Session Timeout' | translate }}:</span>
+        <span *ixWithLoadingState="sessionTimeout$ as sessionTimeout" class="value">
+          {{ asDuration(sessionTimeout) }}
         </span>
       </mat-list-item>
       @if (isEnterprise) {

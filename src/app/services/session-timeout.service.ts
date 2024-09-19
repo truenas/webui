@@ -23,7 +23,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 @Injectable({
   providedIn: 'root',
 })
-export class TokenLifetimeService {
+export class SessionTimeoutService {
   protected actionWaitTimeout: Timeout;
   protected terminateCancelTimeout: Timeout;
   private resumeBound;
