@@ -9,7 +9,12 @@ const esmPatterns = [
   'is-cidr',
   'ip-regex',
   'cidr-regex',
-  'lodash-es'
+  'lodash-es',
+  'internmap',
+  'd3',
+  'delaunator',
+  'cheerio',
+  'robust-predicates',
 ];
 
 module.exports = {

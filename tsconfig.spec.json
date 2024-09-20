@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "esModuleInterop": true,
-    "target": "ES2016",
+    "target": "ES2018",
     "module": "CommonJs",
     "types": [
       "jest",
