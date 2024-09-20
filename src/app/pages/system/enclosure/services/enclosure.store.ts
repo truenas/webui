@@ -5,7 +5,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { produce } from 'immer';
 import { chain } from 'lodash-es';
 import { Observable, switchMap, tap } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { debounceTime, finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
@@ -125,6 +125,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   listenForDiskUpdates(): Observable<unknown> {
     return this.ws.subscribe('disk.query').pipe(
+      debounceTime(1 * 1000),
       tap(() => this.update()),
     );
   }
