@@ -1,0 +1,38 @@
+<div class="chart-info">
+  <h4>{{ 'Block I/O' | translate }}</h4>
+  <div class="in-out">
+    <div class="in-out-row">
+      <span>{{ 'Read' | translate }}:</span>
+      <span *ixWithLoadingState="stats() as stats">
+        {{ stats.blkio.read | ixFileSize }}
+      </span>
+    </div>
+    <div class="in-out-row">
+      <span>{{ 'Write' | translate }}:</span>
+      <span *ixWithLoadingState="stats() as stats">
+        {{ stats.blkio.write | ixFileSize }}
+      </span>
+    </div>
+  </div>
+  <small>{{ '1m Average' | translate }}</small>
+</div>
+<div class="chart-graph">
+  @if (stats().isLoading) {
+    <ngx-skeleton-loader
+      class="skeleton"
+      [theme]="{
+        width: '292px',
+        height: '92px',
+        background: 'var(--alt-bg2)',
+        opacity: 0.25,
+        margin: 0,
+      }"
+    ></ngx-skeleton-loader>
+  } @else {
+    <ix-network-chart
+      [showLegend]="false"
+      [data]="diskChartData()"
+      [aspectRatio]="3"
+    ></ix-network-chart>
+  }
+</div>
