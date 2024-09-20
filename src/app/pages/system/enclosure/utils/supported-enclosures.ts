@@ -32,6 +32,10 @@ const eS60G2 = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/es60g2/es60g2-top.svg',
 };
 
+const eS60G3 = {
+  [EnclosureSide.Top]: 'assets/images/new-hardware/es60g3/es60g3-top.svg',
+};
+
 const eS102G2 = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/es102g2/es102g2-top.svg',
 };
@@ -126,6 +130,7 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.Es24F]: eS24F,
   [EnclosureModel.Es24N]: eS24N,
   [EnclosureModel.Es60G2]: eS60G2,
+  [EnclosureModel.Es60G3]: eS60G3,
   [EnclosureModel.Es102G2]: eS102G2,
   [EnclosureModel.F60]: fSeries,
   [EnclosureModel.F100]: fSeries,

@@ -7,6 +7,7 @@ export enum EnclosureModel {
 
   Es60 = 'ES60',
   Es60G2 = 'ES60G2',
+  Es60G3 = 'ES60G3',
 
   Es102 = 'ES102',
   Es102G2 = 'ES102G2',
