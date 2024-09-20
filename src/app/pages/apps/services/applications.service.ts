@@ -114,8 +114,9 @@ export class ApplicationsService {
           filter((job) => job.state === JobState.Success),
           switchMap(() => this.startApplication(app.name)),
         );
+      case AppState.Crashed:
       case AppState.Stopped:
-        return this.startApplication(app.name).pipe();
+        return this.startApplication(app.name);
       case AppState.Deploying:
       default:
         return EMPTY;

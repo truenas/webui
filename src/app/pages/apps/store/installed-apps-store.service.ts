@@ -3,7 +3,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, Subscription, catchError, combineLatest, filter, of, switchMap, tap,
+  Observable, Subscription, catchError, filter, of, switchMap, tap,
+  withLatestFrom,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -52,11 +53,6 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         });
       }),
       switchMap(() => this.loadInstalledApps()),
-      tap(() => {
-        this.patchState({
-          isLoading: false,
-        });
-      }),
       catchError((error: unknown) => {
         this.handleError(error);
         return EMPTY;
@@ -155,13 +151,9 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   }
 
   private loadInstalledApps(): Observable<unknown> {
-    return combineLatest([
-      this.dockerStore.isLoading$,
-      this.dockerStore.isDockerStarted$,
-    ]).pipe(
-      filter(([loading, isDockerStarted]) => {
-        return !loading && isDockerStarted !== null;
-      }),
+    return this.dockerStore.isLoading$.pipe(
+      withLatestFrom(this.dockerStore.isDockerStarted$),
+      filter(([loading, isDockerStarted]) => !loading && isDockerStarted !== null),
       tap(([, isDockerStarted]) => {
         if (isDockerStarted) {
           this.appsStats.subscribeToUpdates();
@@ -181,6 +173,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
           }),
         );
       }),
+      tap(() => this.patchState({ isLoading: false })),
       untilDestroyed(this),
     );
   }

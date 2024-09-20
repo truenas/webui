@@ -1,8 +1,8 @@
+import { Signal, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -11,7 +11,7 @@ import { FilterSelectListComponent } from 'app/pages/apps/modules/custom-forms/c
 describe('FilterSelectListComponent', () => {
   let spectator: SpectatorHost<FilterSelectListComponent>;
   let control: FormControl<string | string[]>;
-  const options$: Observable<Option[]> = of([
+  const options: Signal<Option[]> = signal([
     { label: 'label1', value: 'value1' },
     { label: 'label2', value: 'value2' },
     { label: 'label3', value: 'value3' },
@@ -33,18 +33,18 @@ describe('FilterSelectListComponent', () => {
       spectator = createHost(
         `<ix-filter-select-list
           [formControl]="control"
-          [options]="options$"
+          [options]="options()"
           [label]="label"
         ></ix-filter-select-list>`,
         {
           hostProps: {
             control,
-            options$,
+            options,
             label: undefined,
           },
         },
       );
-      spectator.fixture.detectChanges();
+      spectator.detectComponentChanges();
     });
 
     it('renders a label', () => {
@@ -104,8 +104,8 @@ describe('FilterSelectListComponent', () => {
     beforeEach(() => {
       control = new FormControl([]);
       spectator = createHost(
-        '<ix-filter-select-list [formControl]="control" [options]="options$" [multiple]="isMultiple"></ix-filter-select-list>',
-        { hostProps: { control, options$, isMultiple: true } },
+        '<ix-filter-select-list [formControl]="control" [options]="options()" [multiple]="isMultiple"></ix-filter-select-list>',
+        { hostProps: { control, options, isMultiple: true } },
       );
       spectator.fixture.detectChanges();
     });

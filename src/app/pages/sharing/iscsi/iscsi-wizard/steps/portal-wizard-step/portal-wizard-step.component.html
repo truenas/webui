@@ -1,4 +1,4 @@
-<ng-container [formGroup]="form">
+<ng-container [formGroup]="form()">
   <ix-select
     formControlName="portal"
     [label]="helptextSharingIscsi.portal_placeholder | translate"
@@ -50,14 +50,14 @@
     }
     <ix-list
       formArrayName="listen"
-      [empty]="form.controls.listen.controls.length === 0"
+      [empty]="form().controls.listen.controls.length === 0"
       [label]="helptextSharingIscsi.portal_form_placeholder_ip | translate"
       [tooltip]="helptextSharingIscsi.portal_form_tooltip_ip | translate"
       [required]="true"
-      [formArray]="form.get('listen')"
+      [formArray]="form().get('listen')"
       (add)="addAddress()"
       >
-      @for (network of form.controls.listen.controls; track network; let i = $index) {
+      @for (network of form().controls.listen.controls; track network; let i = $index) {
         <ix-list-item
           [label]="helptextSharingIscsi.portal_form_placeholder_ip | translate"
           (delete)="removeAddress(i)"

@@ -116,32 +116,35 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.selection.selected;
   }
 
+  get checkedApps(): App[] {
+    return this.checkedAppsNames.map((name) => this.dataSource.find((app) => app.name === name));
+  }
+
   get isBulkStartDisabled(): boolean {
-    return this.dataSource.every((app) => [
-      AppState.Running,
-      AppState.Deploying,
-    ].includes(app.state));
+    return this.checkedApps.every(
+      (app) => [AppState.Running, AppState.Deploying].includes(app.state),
+    );
   }
 
   get isBulkStopDisabled(): boolean {
-    return this.dataSource.every((app) => AppState.Stopped === app.state);
+    return this.checkedApps.every(
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state),
+    );
   }
 
   get isBulkUpgradeDisabled(): boolean {
-    return !this.checkedAppsNames
-      .map((name) => this.dataSource.find((app) => app.name === name))
-      .some((app) => app.upgrade_available);
+    return !this.checkedApps.some((app) => app.upgrade_available);
   }
 
-  get startedCheckedApps(): App[] {
+  get activeCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === AppState.Running && this.selection.isSelected(app.id),
+      (app) => [AppState.Running, AppState.Deploying].includes(app.state) && this.selection.isSelected(app.id),
     );
   }
 
   get stoppedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === AppState.Stopped && this.selection.isSelected(app.id),
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state) && this.selection.isSelected(app.id),
     );
   }
 
@@ -351,7 +354,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   onBulkStop(): void {
-    this.startedCheckedApps.forEach((app) => this.stop(app.name));
+    this.activeCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     this.toggleAppsChecked(false);
   }

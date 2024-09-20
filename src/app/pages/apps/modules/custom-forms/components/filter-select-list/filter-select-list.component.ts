@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 
 type IxSelectListValue = string | number | (string | number)[];
@@ -16,9 +16,9 @@ type IxSelectListValue = string | number | (string | number)[];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterSelectListComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() options: Observable<Option[]>;
-  @Input() multiple: boolean;
+  label = input<string>();
+  options = input<Option[]>();
+  multiple = input<boolean>();
 
   isDisabled = false;
   value: IxSelectListValue;
@@ -52,14 +52,14 @@ export class FilterSelectListComponent implements ControlValueAccessor {
   }
 
   isChecked(value: Option['value']): boolean {
-    if (!this.multiple) {
+    if (!this.multiple()) {
       return this.value === value;
     }
     return (this.value as (number | string)[]).includes(value);
   }
 
   onItemChanged(value: Option['value']): void {
-    if (!this.multiple) {
+    if (!this.multiple()) {
       this.value = value;
     } else {
       this.value = this.value as (number | string)[];

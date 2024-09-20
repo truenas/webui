@@ -1,6 +1,6 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { BehaviorSubject } from 'rxjs';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -8,8 +8,6 @@ import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-det
 
 describe('AppAvailableInfoCardComponent', () => {
   let spectator: Spectator<AppAvailableInfoCardComponent>;
-
-  const isLoading$ = new BehaviorSubject(false);
 
   const fakeApp = {
     catalog: 'OFFICIAL',
@@ -35,14 +33,15 @@ describe('AppAvailableInfoCardComponent', () => {
     imports: [
       CleanLinkPipe,
       OrNotAvailablePipe,
+      NgxSkeletonLoaderModule,
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        isLoading$,
         app: fakeApp,
+        isLoading: false,
       },
     });
   });

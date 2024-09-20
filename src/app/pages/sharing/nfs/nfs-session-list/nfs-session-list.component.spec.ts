@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockModule } from 'ng-mocks';
@@ -64,11 +64,7 @@ describe('NfsSessionListComponent', () => {
 
   describe('NFS 3', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        props: {
-          activeNfsType: NfsType.Nfs3,
-        },
-      });
+      spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
     });
@@ -92,11 +88,8 @@ describe('NfsSessionListComponent', () => {
 
   describe('NFS 4', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        props: {
-          activeNfsType: NfsType.Nfs4,
-        },
-      });
+      spectator = createComponent();
+      spectator.component.nfsTypeChanged({ value: NfsType.Nfs4 } as MatButtonToggleChange);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
     });

@@ -93,6 +93,7 @@ import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-detai
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -216,6 +217,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     UiSearchDirective,
     RequiresRolesDirective,
     LetDirective,
+    AppVersionPipe,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,

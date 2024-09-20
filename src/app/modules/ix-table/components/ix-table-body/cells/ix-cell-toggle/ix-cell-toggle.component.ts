@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -23,7 +23,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 })
 export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   requiredRoles: Role[];
-  onRowToggle: (row: T, checked: boolean) => void;
+  onRowToggle: (row: T, checked: boolean, toggle: MatSlideToggle) => void;
   dynamicRequiredRoles: (row: T) => Observable<Role[]>;
 
   get checked(): boolean {
@@ -31,7 +31,7 @@ export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   }
 
   onSlideToggleChanged(event: MatSlideToggleChange): void {
-    this.onRowToggle(this.row(), event.checked);
+    this.onRowToggle(this.row(), event.checked, event.source);
   }
 }
 
