@@ -1,0 +1,7 @@
+yarn strict-null-checks
+yarn lint-staged
+yarn extract
+yarn extract-ui-search-elements
+yarn validate-translations
+git add src/assets/i18n
+git add src/assets/ui-searchable-elements.json
