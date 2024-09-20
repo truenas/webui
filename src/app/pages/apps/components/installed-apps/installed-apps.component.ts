@@ -118,21 +118,24 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.selection.selected;
   }
 
+  get checkedApps(): App[] {
+    return this.checkedAppsNames.map((name) => this.dataSource.find((app) => app.name === name));
+  }
+
   get isBulkStartDisabled(): boolean {
-    return this.dataSource.every((app) => [
-      CatalogAppState.Running,
-      CatalogAppState.Deploying,
-    ].includes(app.state));
+    return this.checkedApps.every(
+      (app) => [CatalogAppState.Running, CatalogAppState.Deploying].includes(app.state),
+    );
   }
 
   get isBulkStopDisabled(): boolean {
-    return this.dataSource.every((app) => CatalogAppState.Stopped === app.state);
+    return this.checkedApps.every(
+      (app) => [CatalogAppState.Stopped, CatalogAppState.Crashed].includes(app.state),
+    );
   }
 
   get isBulkUpgradeDisabled(): boolean {
-    return !this.checkedAppsNames
-      .map((name) => this.dataSource.find((app) => app.name === name))
-      .some((app) => app.upgrade_available);
+    return !this.checkedApps.some((app) => app.upgrade_available);
   }
 
   get activeCheckedApps(): App[] {
