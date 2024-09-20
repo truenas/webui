@@ -3,6 +3,7 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
 
 @Directive({
   selector: '[ix-table-cell]',
+  standalone: true,
 })
 export class IxTableCellDirective<T> {
   @Input() dataProvider: DataProvider<T>;

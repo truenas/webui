@@ -2,7 +2,6 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { IxCellScheduleComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 
 interface TestTableData { scheduleField: Schedule }
 
@@ -19,7 +18,6 @@ describe('IxCellScheduleComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellScheduleComponent<TestTableData>,
     detectChanges: false,
-    imports: [IxTableModule],
   });
 
   beforeEach(() => {

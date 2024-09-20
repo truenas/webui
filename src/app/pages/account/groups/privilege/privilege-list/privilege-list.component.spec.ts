@@ -10,7 +10,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
 import { PrivilegeListComponent } from 'app/pages/account/groups/privilege/privilege-list/privilege-list.component';
@@ -44,7 +43,6 @@ describe('PrivilegeListComponent', () => {
   const createComponent = createComponentFactory({
     component: PrivilegeListComponent,
     imports: [
-      IxTableModule,
       PageHeaderModule,
       SearchInputModule,
     ],

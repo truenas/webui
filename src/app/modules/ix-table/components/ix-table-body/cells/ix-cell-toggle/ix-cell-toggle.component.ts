@@ -1,13 +1,25 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @Component({
   selector: 'ix-cell-toggle',
   templateUrl: './ix-cell-toggle.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatSlideToggle,
+    TestIdModule,
+    RequiresRolesDirective,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   requiredRoles: Role[];

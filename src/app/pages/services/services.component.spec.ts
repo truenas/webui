@@ -17,7 +17,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -60,7 +59,6 @@ describe('ServicesComponent', () => {
       FormsModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
-      IxTableModule,
     ],
     declarations: [
       ServiceStateColumnComponent,

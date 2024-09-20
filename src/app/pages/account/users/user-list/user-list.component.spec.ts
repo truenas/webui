@@ -10,7 +10,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
@@ -74,9 +74,9 @@ describe('UserListComponent', () => {
   const createComponent = createComponentFactory({
     component: UserListComponent,
     imports: [
-      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxTableDetailsRowDirective,
     ],
     declarations: [
       MockComponent(UserDetailsRowComponent),

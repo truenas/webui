@@ -1,9 +1,15 @@
 import {
   AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
+import { MatIconButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatFormField } from '@angular/material/form-field';
+import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -11,6 +17,16 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
   templateUrl: './ix-table-pager.component.html',
   styleUrls: ['./ix-table-pager.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatFormField,
+    MatSelect,
+    TestIdModule,
+    MatOption,
+    MatIconButton,
+    IxIconModule,
+    TranslateModule,
+  ],
 })
 export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   @Input() dataProvider!: DataProvider<T>;

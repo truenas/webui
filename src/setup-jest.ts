@@ -73,6 +73,11 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxIconTestingModule } from 'app/modules/ix-icon/ix-icon-testing.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
@@ -134,6 +139,11 @@ defineGlobalsInjections({
     TestIdModule,
     UiSearchDirective,
     RequiresRolesDirective,
+    IxTableComponent,
+    IxTablePagerComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {

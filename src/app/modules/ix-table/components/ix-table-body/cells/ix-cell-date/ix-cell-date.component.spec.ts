@@ -3,7 +3,6 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { IxCellDateComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LocaleService } from 'app/services/locale.service';
 
 interface TestTableData { dateField: Date }
@@ -13,7 +12,6 @@ describe('IxCellDateComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxCellDateComponent<TestTableData>,
-    imports: [IxTableModule],
     detectChanges: false,
     providers: [
       mockProvider(LocaleService, {

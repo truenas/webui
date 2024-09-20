@@ -12,7 +12,9 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/target-list/target-list.component';
@@ -33,9 +35,9 @@ describe('TargetListComponent', () => {
   const createComponent = createComponentFactory({
     component: TargetListComponent,
     imports: [
-      IxTableModule,
       AppLoaderModule,
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockProvider(EmptyService),

@@ -18,7 +18,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -55,7 +57,7 @@ describe('SmbCardComponent', () => {
     component: SmbCardComponent,
     imports: [
       AppLoaderModule,
-      IxTableModule,
+      IxTablePagerShowMoreComponent,
     ],
     declarations: [
       MockComponents(

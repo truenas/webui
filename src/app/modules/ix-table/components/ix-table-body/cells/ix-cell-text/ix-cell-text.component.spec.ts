@@ -1,7 +1,6 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { IxCellTextComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 
 interface TestTableData { stringField: string }
 
@@ -11,7 +10,6 @@ describe('IxCellTextComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellTextComponent<TestTableData>,
     detectChanges: false,
-    imports: [IxTableModule],
   });
 
   beforeEach(() => {

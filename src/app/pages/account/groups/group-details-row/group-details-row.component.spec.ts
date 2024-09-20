@@ -11,7 +11,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableExpandableRowComponent,
+} from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import {
   DeleteGroupDialogComponent,
 } from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
@@ -36,7 +38,7 @@ describe('GroupDetailsRowComponent', () => {
   const createComponent = createRoutingFactory({
     component: GroupDetailsRowComponent,
     imports: [
-      IxTableModule,
+      IxTableExpandableRowComponent,
     ],
     declarations: [
       GroupFormComponent,

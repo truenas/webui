@@ -11,6 +11,7 @@ import { Column, ColumnComponent, ColumnKeys } from 'app/modules/ix-table/interf
 
 @Directive({
   selector: '[ix-body-cell]',
+  standalone: true,
 })
 export class IxTableBodyCellDirective<T> implements AfterViewInit, OnChanges {
   @Input() row: T;

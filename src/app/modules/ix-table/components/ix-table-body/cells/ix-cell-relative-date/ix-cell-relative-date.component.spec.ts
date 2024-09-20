@@ -5,7 +5,6 @@ import { of } from 'rxjs';
 import { oneDayMillis } from 'app/constants/time.constant';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { IxCellRelativeDateComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 
 interface TestTableData { dateField: Date }
 
@@ -14,9 +13,8 @@ describe('IxCellRelativeDateComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxCellRelativeDateComponent<TestTableData>,
-    imports: [IxTableModule],
     detectChanges: false,
-    declarations: [FakeFormatDateTimePipe],
+    imports: [FakeFormatDateTimePipe],
     providers: [
       mockProvider(Store, {
         select: () => of(),

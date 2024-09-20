@@ -11,7 +11,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -44,9 +43,6 @@ describe('CloudBackupSnapshotsComponent', () => {
 
   const createComponent = createComponentFactory({
     component: CloudBackupSnapshotsComponent,
-    imports: [
-      IxTableModule,
-    ],
     providers: [
       mockAuth(),
       mockWebSocket([

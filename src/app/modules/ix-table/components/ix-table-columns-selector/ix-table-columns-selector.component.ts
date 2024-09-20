@@ -2,10 +2,15 @@ import { SelectionModel } from '@angular/cdk/collections';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, output,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import * as _ from 'lodash-es';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -13,6 +18,16 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
   templateUrl: './ix-table-columns-selector.component.html',
   styleUrls: ['./ix-table-columns-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButton,
+    TestIdModule,
+    MatMenuTrigger,
+    IxIconModule,
+    MatMenu,
+    MatMenuItem,
+    TranslateModule,
+  ],
 })
 export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   @Input() columns: Column<T, ColumnComponent<T>>[];

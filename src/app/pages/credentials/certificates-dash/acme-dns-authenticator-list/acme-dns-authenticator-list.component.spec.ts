@@ -11,7 +11,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -31,7 +33,7 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
   const createComponent = createComponentFactory({
     component: AcmeDnsAuthenticatorListComponent,
     imports: [
-      IxTableModule,
+      IxTablePagerShowMoreComponent,
     ],
     providers: [
       mockWebSocket([

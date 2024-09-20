@@ -12,7 +12,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -58,7 +60,7 @@ describe('CloudCredentialsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudCredentialsCardComponent,
     imports: [
-      IxTableModule,
+      IxTablePagerShowMoreComponent,
     ],
     providers: [
       mockWebSocket([

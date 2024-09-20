@@ -17,7 +17,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxEmptyRowHarness } from 'app/modules/ix-table/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer';
 import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -70,13 +71,14 @@ describe('JobsListComponent', () => {
   const createComponent = createComponentFactory({
     component: JobsListComponent,
     imports: [
-      IxTableModule,
       MatTabsModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
       MatButtonToggleGroup,
       MatButtonToggle,
       CopyButtonComponent,
+      IxTableCellDirective,
+      IxTableDetailsRowDirective,
     ],
     declarations: [
       JobNameComponent,
