@@ -133,4 +133,35 @@ describe('IxCellStateButtonComponent', () => {
       helptextGlobal.noLogDialog.message,
     );
   });
+
+  describe('when job is running', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      spectator.component.propertyName = 'state';
+      spectator.component.setRow({
+        state: JobState.Running,
+        job: { id: 123456, logs_excerpt: 'completed', state: JobState.Running },
+        warnings: [{}, {}],
+      } as TestTableData);
+      spectator.component.getJob = (row) => row.job;
+      spectator.component.uniqueRowTag = () => '';
+      spectator.component.ariaLabels = () => ['Label 1', 'Label 2'];
+      spectator.component.job.set({
+        id: 123456,
+        logs_excerpt: 'completed',
+        state: JobState.Success,
+      } as Job);
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('calls warning for no logs if job doesnt exist', async () => {
+      const button = await loader.getHarness(MatButtonHarness);
+
+      await button.click();
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    });
+  });
 });
