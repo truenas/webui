@@ -33,7 +33,7 @@
           class="sort"
           [formControl]="form.controls.sort"
           [label]="'Sort' | translate"
-          [options]="sortOptions$"
+          [options]="sortOptions$ | async"
         ></ix-filter-select-list>
         <div class="categories">
           <ix-chips

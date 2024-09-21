@@ -32,7 +32,11 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -92,7 +96,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     EmptyComponent,
     SearchInput1Component,
     CdkTreeNodePadding,
-    IxTableModule,
     MatButton,
     MatIconButton,
     FileSizePipe,
@@ -113,6 +116,11 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxDetailsHeightDirective,
     RequiresRolesDirective,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerComponent,
+    IxTableEmptyDirective,
   ],
   declarations: [
     DatasetsManagementComponent,

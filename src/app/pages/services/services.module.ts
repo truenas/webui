@@ -33,7 +33,10 @@ import {
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -43,6 +46,9 @@ import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/s
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import {
+  ServiceStateColumnComponent,
+} from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServicesComponent } from './services.component';
@@ -68,7 +74,6 @@ import { routing } from './services.routing';
     MatDialogModule,
     TestIdModule,
     SearchInput1Component,
-    IxTableModule,
     TooltipComponent,
     IxModalHeaderComponent,
     IxFieldsetComponent,
@@ -86,6 +91,10 @@ import { routing } from './services.routing';
     AsyncPipe,
     RequiresRolesDirective,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableEmptyDirective,
+    IxTableBodyComponent,
   ],
   declarations: [
     ServicesComponent,
@@ -97,6 +106,7 @@ import { routing } from './services.routing';
     ServiceSmbComponent,
     ServiceSnmpComponent,
     AddSpnDialogComponent,
+    ServiceStateColumnComponent,
   ],
 })
 export class ServicesModule {

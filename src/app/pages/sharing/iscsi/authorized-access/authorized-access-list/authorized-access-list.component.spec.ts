@@ -13,7 +13,9 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -36,8 +38,8 @@ describe('AuthorizedAccessListComponent', () => {
   const createComponent = createComponentFactory({
     component: AuthorizedAccessListComponent,
     imports: [
-      IxTableModule,
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockAuth(),

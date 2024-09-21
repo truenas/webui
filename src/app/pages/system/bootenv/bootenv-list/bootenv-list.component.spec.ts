@@ -10,7 +10,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
@@ -28,7 +27,6 @@ describe('BootEnvironmentListComponent', () => {
   const createComponent = createComponentFactory({
     component: BootEnvironmentListComponent,
     imports: [
-      IxTableModule,
       AppLoaderModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,

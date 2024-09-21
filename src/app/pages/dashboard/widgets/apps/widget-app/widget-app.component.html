@@ -18,8 +18,7 @@
         </div>
         <div class="app-stats-row">
           <ix-app-memory-info class="slot square" [stats]="stats() | async"></ix-app-memory-info>
-          <!-- TODO: Replace ix-app-network-info with ix-app-disk-info when it is available -->
-          <ix-app-network-info class="slot rectangle" [stats]="stats() | async"></ix-app-network-info>
+          <ix-app-disk-info class="slot rectangle" [stats]="stats() | async"></ix-app-disk-info>
         </div>
       </div>
     </div>

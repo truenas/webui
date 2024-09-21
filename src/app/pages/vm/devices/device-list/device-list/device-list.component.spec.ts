@@ -12,7 +12,8 @@ import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
@@ -45,9 +46,10 @@ describe('DeviceListComponent', () => {
   const createComponent = createRoutingFactory({
     component: DeviceListComponent,
     imports: [
-      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxTableDetailsRowDirective,
+      IxTableCellDirective,
     ],
     params: {
       pk: 76,

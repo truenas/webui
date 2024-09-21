@@ -61,6 +61,11 @@ export const mockEs60G2 = makeEnclosure({
   model: EnclosureModel.Es60G2,
 });
 
+export const mockEs60G3 = makeEnclosure({
+  ...mockEs60,
+  model: EnclosureModel.Es60G3,
+});
+
 export const mockEs102 = makeEnclosure({
   model: EnclosureModel.Es102,
   controller: false,

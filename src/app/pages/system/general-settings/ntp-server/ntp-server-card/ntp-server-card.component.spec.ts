@@ -9,7 +9,6 @@ import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -54,9 +53,6 @@ describe('NtpServerCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NtpServerCardComponent,
-    imports: [
-      IxTableModule,
-    ],
     providers: [
       mockAuth(),
       mockWebSocket([

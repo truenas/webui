@@ -102,6 +102,8 @@ describe('IscsiWizardComponent', () => {
   });
 
   it('creates objects when wizard is submitted', fakeAsync(async () => {
+    spectator.tick(100);
+
     await form.fillForm({
       Name: 'test-name',
       Device: 'Create New',

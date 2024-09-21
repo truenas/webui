@@ -1,10 +1,13 @@
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, effect, inject, OnInit, signal,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, EMPTY, Observable, tap,
 } from 'rxjs';
@@ -15,8 +18,10 @@ import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directo
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface RowState {
@@ -34,6 +39,15 @@ interface RowState {
   templateUrl: './ix-cell-state-button.component.html',
   styleUrls: ['./ix-cell-state-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButton,
+    TestIdModule,
+    NgClass,
+    MatTooltip,
+    IxIconModule,
+    TranslateModule,
+  ],
 })
 export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements OnInit {
   matDialog: MatDialog = inject(MatDialog);

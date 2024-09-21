@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { IxCellToggleComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 
 interface TestTableData { booleanField: boolean }
 
@@ -15,7 +15,6 @@ describe('IxCellToggleComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellToggleComponent<TestTableData>,
     detectChanges: false,
-    imports: [IxTableModule],
   });
 
   beforeEach(() => {
@@ -38,7 +37,8 @@ describe('IxCellToggleComponent', () => {
     await toggle.toggle();
     expect(await toggle.isChecked()).toBe(false);
 
-    expect(spectator.component.onRowToggle).toHaveBeenCalledWith({ booleanField: true }, false);
+    expect(spectator.component.onRowToggle)
+      .toHaveBeenCalledWith({ booleanField: true }, false, expect.any(MatSlideToggle));
   });
 
   it('gets aria label correctly', async () => {
