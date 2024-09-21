@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -121,5 +122,17 @@ describe('IxCellStateButtonComponent', () => {
   it('gets aria label correctly', () => {
     const button = spectator.query('button');
     expect(button.getAttribute('aria-label')).toBe('Label 1 Label 2');
+  });
+
+  it('calls warning for no logs if job doesnt exist', async () => {
+    spectator.component.getJob = () => undefined;
+    spectator.component.ngOnInit();
+    const button = await loader.getHarness(MatButtonHarness);
+
+    await button.click();
+    expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
+      helptextGlobal.noLogDialog.title,
+      helptextGlobal.noLogDialog.message,
+    );
   });
 });
