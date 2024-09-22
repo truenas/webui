@@ -54,6 +54,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -146,6 +147,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     IxIconModule,
     TestIdModule,
     MatStepperModule,
+    JobsModule,
     MatToolbarModule,
     MatTooltipModule,
     MatDividerModule,
