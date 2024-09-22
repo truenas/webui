@@ -1,5 +1,5 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { AppMetadata } from 'app/interfaces/app.interface';
+import { AppMetadata, Capability, AppRunAsContext } from 'app/interfaces/app.interface';
 
 export interface AvailableApp {
   healthy: boolean;
@@ -10,6 +10,8 @@ export interface AvailableApp {
   description: string;
   app_readme: string;
   app_metadata: AppMetadata;
+  capabilities: Capability[];
+  run_as_context: AppRunAsContext[];
   location: string;
   healthy_error: string;
   latest_version: string;
