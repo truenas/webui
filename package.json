@@ -17,7 +17,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",
-    "test:pr": "yarn run check-env && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2 ix-cell-state-button.component.spec.ts",
+    "test:pr": "yarn run check-env && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
     "test:changed": "node scripts/test_changed.js",
     "lint": "ng lint && stylelint 'src/**/*.scss'",
     "lint:fix": "ng lint --fix && stylelint --fix 'src/**/*.scss'",
