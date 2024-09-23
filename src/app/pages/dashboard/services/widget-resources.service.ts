@@ -15,7 +15,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
-import { globalStore } from 'app/services/global-store/global-store.service';
+import { appStore, poolStore } from 'app/services/global-store/stores.constant';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppsState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -32,9 +32,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   providedIn: 'root',
 })
 export class WidgetResourcesService {
-  poolStore = globalStore('pool.query');
-  appStore = globalStore('app.query');
-
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
 
@@ -69,9 +66,9 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly installedApps$ = inject(this.appStore).call.pipe(toLoadingState());
+  readonly installedApps$ = inject(appStore).call.pipe(toLoadingState());
 
-  readonly pools$ = inject(this.poolStore).callAndSubscribe.pipe(
+  readonly pools$ = inject(poolStore).callAndSubscribe.pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
