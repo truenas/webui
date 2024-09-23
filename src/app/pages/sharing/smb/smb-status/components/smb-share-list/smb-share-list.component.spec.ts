@@ -7,7 +7,9 @@ import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { SmbShareInfo } from 'app/interfaces/smb-status.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SmbShareListComponent } from './smb-share-list.component';
 
@@ -36,7 +38,11 @@ describe('SmbShareListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SmbShareListComponent,
-    imports: [AppLoaderModule, IxTableModule, SearchInput1Component],
+    imports: [
+      AppLoaderModule,
+      SearchInput1Component,
+      IxTableColumnsSelectorComponent,
+    ],
     providers: [mockWebSocket([mockCall('smb.status', shares)])],
   });
 

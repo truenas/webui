@@ -33,7 +33,6 @@ describe('TrainCardComponent', () => {
           selected: 'some train',
         } as SystemUpdateTrains)),
         trainValue$: new BehaviorSubject('train1'),
-        autoCheckValue$: new BehaviorSubject(false),
         fullTrainList$: new BehaviorSubject(undefined),
         selectedTrain$: new BehaviorSubject(undefined),
         currentTrainDescription$: new BehaviorSubject<string>(''),
@@ -69,6 +68,6 @@ describe('TrainCardComponent', () => {
       'Check for Updates Daily and Download if Available': true,
     });
 
-    expect(spectator.inject(TrainService).toggleAutoCheck).toHaveBeenCalled();
+    expect(spectator.inject(TrainService).toggleAutoCheck).toHaveBeenCalledWith(true);
   });
 });

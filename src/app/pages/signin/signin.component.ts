@@ -7,9 +7,12 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { combineLatest } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { combineLatest, Observable, of } from 'rxjs';
 import {
+  delay,
   filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -23,6 +26,8 @@ import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-passwo
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { TrueCommandStatusComponent } from 'app/pages/signin/true-command-status/true-command-status.component';
+import { AuthService } from 'app/services/auth/auth.service';
+import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
@@ -35,6 +40,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
   imports: [
     MatFormField,
     MatInput,
+    MatProgressSpinner,
     TestIdModule,
     MatProgressBar,
     MatCard,
@@ -46,24 +52,40 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
     TrueCommandStatusComponent,
     DisconnectedMessageComponent,
     AsyncPipe,
+    TranslateModule,
     CopyrightLineComponent,
   ],
   providers: [SigninStore],
 })
 export class SigninComponent implements OnInit {
+  protected hasAuthToken = this.authService.hasAuthToken;
+  protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
+
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly failover$ = this.signinStore.failover$;
   readonly hasFailover$ = this.signinStore.hasFailover$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsManager.isConnected$;
-  readonly hasLoadingIndicator$ = combineLatest([this.signinStore.isLoading$, this.isConnected$]).pipe(
-    map(([isLoading, isConnected]) => isLoading || !isConnected),
+  isConnectedDelayed$: Observable<boolean> = of(null).pipe(
+    delay(1000),
+    switchMap(() => this.isConnected$),
+  );
+  readonly hasLoadingIndicator$ = combineLatest([
+    this.signinStore.isLoading$,
+    this.isConnected$,
+    this.isTokenWithinTimeline$,
+  ]).pipe(
+    map(([isLoading, isConnected, isTokenWithinTimeline]) => {
+      return isLoading || !isConnected || (isTokenWithinTimeline && this.hasAuthToken);
+    }),
   );
 
   constructor(
     private wsManager: WebSocketConnectionService,
     private signinStore: SigninStore,
     private dialog: DialogService,
+    private authService: AuthService,
+    private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -77,7 +99,7 @@ export class SigninComponent implements OnInit {
     this.signinStore.loginBanner$.pipe(
       filter(Boolean),
       filter(() => this.window.sessionStorage.getItem('loginBannerDismissed') !== 'true'),
-      switchMap((text) => this.dialog.fullScreenDialog(null, text, true, true).pipe(take(1))),
+      switchMap((text) => this.dialog.fullScreenDialog(null, text, true, false).pipe(take(1))),
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {

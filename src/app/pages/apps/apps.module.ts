@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe, KeyValuePipe, NgTemplateOutlet, TitleCasePipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +21,10 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -39,7 +44,11 @@ import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonl
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -58,6 +67,7 @@ import {
 import {
   AppDetailsSimilarComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
+import { AppJsonDetailsCardComponent } from 'app/pages/apps/components/app-detail-view/app-json-details-card/app-json-details-card.component';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
@@ -82,6 +92,7 @@ import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-detai
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -117,6 +128,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     AppNotesCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
+    AppJsonDetailsCardComponent,
     ContainerShellComponent,
     ContainerLogsComponent,
     LogsDetailsDialogComponent,
@@ -141,7 +153,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     VolumeMountsDialogComponent,
   ],
   imports: [
-    CommonModule,
     AppsRoutingModule,
     IxCodeEditorComponent,
     PageHeaderModule,
@@ -162,7 +173,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     LazyLoadImageModule,
     TestIdModule,
     AppLoaderModule,
-    CommonDirectivesModule,
     MatExpansionModule,
     TerminalModule,
     MatTooltipModule,
@@ -171,7 +181,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     GalleryModule,
     LightboxModule,
     MarkdownModule,
-    IxTableModule,
     SearchInput1Component,
     EmptyComponent,
     MatSort,
@@ -197,6 +206,21 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     IxCheckboxListComponent,
     IxCheckboxComponent,
     ReadOnlyComponent,
+    AsyncPipe,
+    KeyValuePipe,
+    TitleCasePipe,
+    NgTemplateOutlet,
+    DecimalPipe,
+    IxDetailsHeightDirective,
+    UiSearchDirective,
+    RequiresRolesDirective,
+    LetDirective,
+    AppVersionPipe,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerComponent,
   ],
 })
 export class AppsModule { }

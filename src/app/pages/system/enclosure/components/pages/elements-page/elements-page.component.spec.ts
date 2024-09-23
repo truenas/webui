@@ -10,7 +10,6 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import {
   EnclosureHeaderComponent,
 } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
@@ -22,9 +21,6 @@ describe('ElementsComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createRoutingFactory({
     component: ElementsPageComponent,
-    imports: [
-      IxTableModule,
-    ],
     params: {
       view: 'Voltage Sensor',
     },

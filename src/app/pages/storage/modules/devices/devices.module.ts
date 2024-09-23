@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe, NgClass, NgTemplateOutlet, UpperCasePipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +10,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -51,7 +56,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
 
 @NgModule({
   imports: [
-    CommonModule,
     TreeModule,
     MatButtonModule,
     MatCardModule,
@@ -67,7 +71,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     RouterModule.forChild(routes),
     TranslateModule,
     AppLoaderModule,
-    CommonDirectivesModule,
     TestIdModule,
     MatTooltipModule,
     SearchInput1Component,
@@ -80,6 +83,15 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     IxInputComponent,
     IxCheckboxComponent,
     PageHeaderModule,
+    NgClass,
+    DecimalPipe,
+    AsyncPipe,
+    NgTemplateOutlet,
+    UpperCasePipe,
+    IxDetailsHeightDirective,
+    HasRoleDirective,
+    RequiresRolesDirective,
+    LetDirective,
   ],
   declarations: [
     DevicesComponent,

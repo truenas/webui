@@ -54,7 +54,7 @@ export class VmwareSnapshotListComponent implements OnInit {
       propertyName: 'state',
     }),
   ], {
-    rowTestId: (row) => 'vmware-snapshot-' + row.hostname,
+    uniqueRowTag: (row) => 'vmware-snapshot-' + row.hostname,
     ariaLabels: (row) => [row.hostname, this.translate.instant('VMware Snapshot')],
   });
 

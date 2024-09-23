@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +12,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -31,7 +32,10 @@ import {
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -41,6 +45,9 @@ import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/s
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import {
+  ServiceStateColumnComponent,
+} from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServicesComponent } from './services.component';
@@ -48,11 +55,9 @@ import { routing } from './services.routing';
 
 @NgModule({
   imports: [
-    CommonModule,
     FormsModule,
     routing,
     TranslateModule,
-    CommonDirectivesModule,
     IxIconModule,
     MatTooltipModule,
     MatSlideToggleModule,
@@ -67,7 +72,6 @@ import { routing } from './services.routing';
     MatDialogModule,
     TestIdModule,
     SearchInput1Component,
-    IxTableModule,
     TooltipComponent,
     IxModalHeaderComponent,
     IxFieldsetComponent,
@@ -82,6 +86,13 @@ import { routing } from './services.routing';
     FormActionsComponent,
     IxChipsComponent,
     PageHeaderModule,
+    AsyncPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableEmptyDirective,
+    IxTableBodyComponent,
   ],
   declarations: [
     ServicesComponent,
@@ -93,6 +104,7 @@ import { routing } from './services.routing';
     ServiceSmbComponent,
     ServiceSnmpComponent,
     AddSpnDialogComponent,
+    ServiceStateColumnComponent,
   ],
 })
 export class ServicesModule {

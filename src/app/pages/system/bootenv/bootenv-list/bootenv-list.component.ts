@@ -156,7 +156,7 @@ export class BootEnvironmentListComponent implements OnInit {
       cssClass: 'actions-column',
     }),
   ], {
-    rowTestId: (row) => `bootenv-${row.name}`,
+    uniqueRowTag: (row) => `bootenv-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Boot Environment')],
   });
 

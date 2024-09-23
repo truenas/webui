@@ -87,7 +87,7 @@ export class AuthorizedAccessListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'iscsi-authorized-access-' + row.user + '-' + row.peeruser,
+    uniqueRowTag: (row) => 'iscsi-authorized-access-' + row.user + '-' + row.peeruser,
     ariaLabels: (row) => [row.user, this.translate.instant('Authorized Access')],
   });
 

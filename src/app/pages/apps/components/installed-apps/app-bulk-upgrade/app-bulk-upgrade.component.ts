@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Inject,
+  signal,
   TrackByFunction,
   ViewChild,
 } from '@angular/core';
@@ -33,6 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AppBulkUpgradeComponent {
   @ViewChild(MatAccordion) accordion: MatAccordion;
+  expandedItems = signal<string[]>([]);
 
   form = this.formBuilder.group<Record<string, string>>({});
   bulkItems = new Map<string, BulkListItem<App>>();
@@ -68,11 +70,16 @@ export class AppBulkUpgradeComponent {
   }
 
   onExpand(row: KeyValue<string, BulkListItem<App>>): void {
+    this.expandedItems.set([...this.expandedItems(), row.key]);
     if (this.upgradeSummaryMap.has(row.key)) {
       return;
     }
 
     this.getUpgradeSummary(row.value.item.name);
+  }
+
+  isItemExpanded(row: KeyValue<string, BulkListItem<App>>): boolean {
+    return this.expandedItems().includes(row.key);
   }
 
   getUpgradeSummary(name: string, version?: string): void {
@@ -106,7 +113,11 @@ export class AppBulkUpgradeComponent {
   onSubmit(): void {
     const payload: AppUpgradeParams[] = Object.entries(this.form.value).map(([name, version]) => {
       this.bulkItems.set(name, { ...this.bulkItems.get(name), state: BulkListItemState.Running });
-      return [name, { app_version: version }];
+      const params: AppUpgradeParams = [name];
+      if (this.expandedItems().includes(name)) {
+        params.push({ app_version: version });
+      }
+      return params;
     });
 
     this.ws

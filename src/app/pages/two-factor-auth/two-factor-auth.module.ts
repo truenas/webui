@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,7 +10,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
 import { QrCodeModule } from 'ng-qrcode';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -21,7 +21,6 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
 @NgModule({
   imports: [
     ReactiveFormsModule,
-    CommonModule,
     AppLoaderModule,
     MatCardModule,
     MatProgressBarModule,
@@ -33,9 +32,10 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
     TranslateModule,
     TestIdModule,
     QrCodeModule,
-    CommonDirectivesModule,
     routing,
     IxWarningComponent,
+    AsyncPipe,
+    UiSearchDirective,
   ],
   declarations: [
     TwoFactorComponent,

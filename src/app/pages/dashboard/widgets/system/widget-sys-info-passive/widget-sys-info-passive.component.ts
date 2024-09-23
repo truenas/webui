@@ -60,10 +60,9 @@ export class WidgetSysInfoPassiveComponent {
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
   datetime = computed(() => {
-    const [dateValue, timeValue] = this.localeService.getDateAndTime();
-    const extractedDate = this.localeService.getDateFromString(`${dateValue} ${timeValue}`, this.systemInfo().timezone);
-
-    return extractedDate.getTime() + (this.realElapsedSeconds() * 1000);
+    this.realElapsedSeconds();
+    const [, timeValue] = this.localeService.getDateAndTime();
+    return `${timeValue.split(':')[0]}:${timeValue.split(':')[1]}`;
   });
   isLoaded = computed(() => this.systemInfo());
 

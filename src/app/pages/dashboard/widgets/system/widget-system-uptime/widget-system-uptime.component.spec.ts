@@ -57,7 +57,7 @@ describe('WidgetSystemUptimeComponent', () => {
     it('renders System Uptime for the current system', () => {
       const widget = spectator.query(MockComponent(WidgetDatapointComponent));
       expect(widget).toBeTruthy();
-      expect(widget.text).toBe('23 hours 12 minutes as of 2024-03-15 10:34:11');
+      expect(widget.text).toBe('23 hours 12 minutes as of 10:34');
       expect(widget.label).toBe('System Uptime');
     });
 
@@ -76,7 +76,7 @@ describe('WidgetSystemUptimeComponent', () => {
       const updatedDatetime = spectator.component.datetime();
 
       expect(updatedUptime).toBeGreaterThan(initialUptime);
-      expect(updatedDatetime).toBeGreaterThan(initialDatetime);
+      expect(updatedDatetime).toBe(initialDatetime);
 
       jest.useRealTimers();
     });

@@ -1,16 +1,21 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
 import { isValid } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'ix-cell-relative-date',
   templateUrl: './ix-cell-relative-date.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatTooltip, TestIdModule],
+  providers: [FormatDateTimePipe],
 })
 export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {
   translate: TranslateService;

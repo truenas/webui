@@ -1,7 +1,6 @@
 import {
   Component, ChangeDetectionStrategy, computed, input,
 } from '@angular/core';
-import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -18,7 +17,7 @@ export class WidgetAppInfoComponent implements WidgetComponent<WidgetAppSettings
   settings = input.required<WidgetAppSettings>();
 
   appName = computed(() => this.settings().appName);
-  app = computed(() => this.resources.getApp(this.appName()).pipe(toLoadingState()));
+  app = computed(() => this.resources.getApp(this.appName()));
   job = computed(() => this.resources.getAppStatusUpdates(this.appName()));
 
   constructor(private resources: WidgetResourcesService) {}

@@ -1,4 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {
+  AsyncPipe, DecimalPipe, PercentPipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,7 +22,8 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -68,7 +71,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatTooltipModule,
     MatButtonModule,
     RouterModule,
-    CommonModule,
     MatPaginatorModule,
     IxIconModule,
     MatProgressSpinnerModule,
@@ -83,7 +85,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatDividerModule,
     MatDialogModule,
     MatInputModule,
-    CommonDirectivesModule,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
     TestIdModule,
@@ -101,6 +102,11 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     IxModalHeaderComponent,
     IxInputComponent,
     PageHeaderModule,
+    AsyncPipe,
+    DecimalPipe,
+    PercentPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
   ],
   declarations: [
     PoolsDashboardComponent,

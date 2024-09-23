@@ -4,9 +4,12 @@ import {
   ChangeDetectorRef, Component, HostBinding, input, OnInit,
   signal,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -14,6 +17,12 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
   templateUrl: './ix-table-pager-show-more.component.html',
   styleUrls: ['./ix-table-pager-show-more.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButton,
+    TestIdModule,
+    TranslateModule,
+  ],
 })
 export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChecked {
   dataProvider = input.required<DataProvider<T>>();

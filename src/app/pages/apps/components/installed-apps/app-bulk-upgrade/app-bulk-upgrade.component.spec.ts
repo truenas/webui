@@ -9,6 +9,7 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { LetDirective } from 'app/directives/app-let.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
@@ -80,6 +81,7 @@ describe('AppBulkUpgradeComponent', () => {
       AppLoaderModule,
       ReactiveFormsModule,
       ImgFallbackModule,
+      LetDirective,
     ],
     declarations: [
       BulkListItemComponent,
@@ -114,9 +116,12 @@ describe('AppBulkUpgradeComponent', () => {
   });
 
   it('checks for the correct payload and success toast', async () => {
+    const expandHeader = spectator.query('mat-expansion-panel-header');
+    expandHeader.dispatchEvent(new Event('click'));
+    spectator.detectChanges();
     const jobArguments: CoreBulkQuery = ['app.upgrade', [
-      ['test-app-one', { app_version: '1.0.8' }],
-      ['test-app-two', { app_version: '1.6.34' }],
+      ['test-app-one', { app_version: '15.3.36' }],
+      ['test-app-two'],
     ]];
 
     const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));

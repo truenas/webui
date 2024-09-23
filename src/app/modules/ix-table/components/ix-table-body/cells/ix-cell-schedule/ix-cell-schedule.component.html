@@ -1,3 +1,3 @@
 <span
-  [ixTest]="[title, rowTestId(row), 'row-schedule']"
+  [ixTest]="[title, uniqueRowTag(row()), 'row-schedule']"
 >{{ value | scheduleToCrontab }}</span>

@@ -1,9 +1,8 @@
-import { CommonModule } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
@@ -13,15 +12,14 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @NgModule({
   imports: [
-    CommonModule,
     TranslateModule,
-    CommonDirectivesModule,
     MatButtonModule,
     TestIdModule,
     MatDialogModule,
     ToolbarSliderComponent,
     TooltipComponent,
     PageHeaderModule,
+    NgStyle,
   ],
   declarations: [
     TerminalComponent,

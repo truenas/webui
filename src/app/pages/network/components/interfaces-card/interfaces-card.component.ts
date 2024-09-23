@@ -26,7 +26,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/network/components/interfaces-card/interfaces-card.elements';
 import {
-  IpAddressesCellComponent,
+  ipAddressesColumn,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -65,11 +65,10 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
-    {
-      type: IpAddressesCellComponent,
+    ipAddressesColumn({
       title: this.translate.instant('IP Addresses'),
       sortBy: (row) => row.aliases.map((alias) => alias.address).join(', '),
-    },
+    }),
     actionsColumn({
       actions: [
         {
@@ -98,7 +97,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       ],
     }),
   ], {
-    rowTestId: (row) => 'interface-' + row.name,
+    uniqueRowTag: (row) => 'interface-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Interface')],
   });
 

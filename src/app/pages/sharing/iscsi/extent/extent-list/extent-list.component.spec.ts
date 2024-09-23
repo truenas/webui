@@ -13,7 +13,9 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import { DeleteExtentDialogComponent } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
@@ -39,7 +41,11 @@ describe('ExtentListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: ExtentListComponent,
-    imports: [IxTableModule, AppLoaderModule, SearchInput1Component],
+    imports: [
+      AppLoaderModule,
+      SearchInput1Component,
+      IxTableColumnsSelectorComponent,
+    ],
     providers: [
       mockProvider(EmptyService),
       mockWebSocket([

@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockModule } from 'ng-mocks';
@@ -8,7 +8,9 @@ import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { NfsSessionListComponent } from './nfs-session-list.component';
@@ -47,10 +49,10 @@ describe('NfsSessionListComponent', () => {
     component: NfsSessionListComponent,
     imports: [
       AppLoaderModule,
-      IxTableModule,
       MatButtonToggleModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockWebSocket([
@@ -62,11 +64,7 @@ describe('NfsSessionListComponent', () => {
 
   describe('NFS 3', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        props: {
-          activeNfsType: NfsType.Nfs3,
-        },
-      });
+      spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
     });
@@ -90,11 +88,8 @@ describe('NfsSessionListComponent', () => {
 
   describe('NFS 4', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        props: {
-          activeNfsType: NfsType.Nfs4,
-        },
-      });
+      spectator = createComponent();
+      spectator.component.nfsTypeChanged({ value: NfsType.Nfs4 } as MatButtonToggleChange);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
     });

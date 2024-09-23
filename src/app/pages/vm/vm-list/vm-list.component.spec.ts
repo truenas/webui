@@ -11,7 +11,10 @@ import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -53,10 +56,11 @@ describe('VmListComponent', () => {
     component: VmListComponent,
     imports: [
       AppLoaderModule,
-      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
       FileSizePipe,
+      IxTableDetailsRowDirective,
     ],
     declarations: [],
     providers: [

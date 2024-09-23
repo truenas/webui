@@ -1,10 +1,15 @@
+import { NgClass, NgStyle } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTableHeaderCellDirective } from 'app/modules/ix-table/directives/ix-header-cell.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
 @Component({
@@ -12,6 +17,15 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-c
   templateUrl: './ix-table-head.component.html',
   styleUrls: ['ix-table-head.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TestIdModule,
+    NgClass,
+    MatTooltip,
+    NgStyle,
+    IxTableHeaderCellDirective,
+    IxIconModule,
+  ],
 })
 export class IxTableHeadComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];

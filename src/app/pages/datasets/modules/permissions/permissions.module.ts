@@ -1,5 +1,5 @@
 import { CdkAccordionModule } from '@angular/cdk/accordion';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,7 +10,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -71,7 +71,6 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    CommonModule,
     TranslateModule,
     MatCardModule,
     IxIconModule,
@@ -82,7 +81,6 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     MatDialogModule,
     NgxSkeletonLoaderModule,
     TestIdModule,
-    CommonDirectivesModule,
     EmptyComponent,
     CastPipe,
     IxSelectComponent,
@@ -94,6 +92,9 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     IxCheckboxComponent,
     IxInputComponent,
     IxPermissionsComponent,
+    AsyncPipe,
+    NgClass,
+    RequiresRolesDirective,
   ],
   declarations: [
     AclEditorListComponent,

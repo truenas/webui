@@ -28,13 +28,13 @@
   </mat-card-header>
   <mat-card-content>
     <div class="info-container">
-      <a class="app-logo" [ixTest]="[app().name, 'image-details']" [routerLink]="appDetailsRouterUrl">
+      <a class="app-logo" [ixTest]="[app().name, 'image-details']" [routerLink]="appDetailsRouterUrl()">
         <img [src]="app()?.metadata?.icon" [src-fallback]="imagePlaceholder" />
       </a>
       <div class="details-list">
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
-          <a class="value" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl">
+          <a class="value" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
             {{ app()?.name | orNotAvailable }}
           </a>
         </div>
@@ -42,7 +42,7 @@
           <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
             @if (!isCustomApp()) {
-              {{ app()?.metadata?.app_version | orNotAvailable }}
+              {{ app()?.metadata?.app_version | appVersion | orNotAvailable }}
             } @else if (app().human_version) {
               <!-- Show docker image tag as version for custom apps -->
               {{ app().human_version?.split(':')?.[1]?.split('_')?.[0] }}
@@ -99,13 +99,13 @@
     <mat-card-actions>
       <div class="cell cell-action cell-status-actions">
         <ng-container *ixRequiresRoles="requiredRoles">
-          @if (isAppStopped) {
+          @if (isAppStopped()) {
             <button
               mat-button
               matTooltipPosition="above"
               [ixTest]="[app().name, 'start']"
               [matTooltip]="'Start' | translate"
-              [disabled]="inProgress"
+              [disabled]="inProgress()"
               (click)="startApp.emit(); $event.stopPropagation()"
             >
               <ix-icon name="mdi-play"></ix-icon> {{ 'Start' | translate }}
@@ -113,13 +113,13 @@
           }
         </ng-container>
         <ng-container *ixRequiresRoles="requiredRoles">
-          @if (!isAppStopped) {
+          @if (!isAppStopped()) {
             <button
               mat-button
               matTooltipPosition="above"
               [ixTest]="[app().name, 'stop']"
               [matTooltip]="'Stop' | translate"
-              [disabled]="isStartingOrStopping"
+              [disabled]="inProgress()"
               (click)="stopApp.emit(); $event.stopPropagation()"
             >
               <ix-icon name="mdi-stop"></ix-icon> {{ 'Stop' | translate }}
@@ -128,32 +128,25 @@
         </ng-container>
       </div>
 
-      <ng-container *ixRequiresRoles="requiredRoles">
-        @if (isRollbackPossible()) {
-          <button
-            mat-button
-            [ixTest]="[app().name, 'rollback']"
-            (click)="rollbackApp()"
-          >
-            {{ 'Roll Back' | translate }}
-          </button>
-        }
-      </ng-container>
-
-      <ng-container *ixRequiresRoles="requiredRoles">
+      @if (isRollbackPossible()) {
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
-          [ixTest]="[app().name, 'delete']"
-          (click)="deleteButtonPressed()"
+          [ixTest]="[app().name, 'rollback']"
+          (click)="rollbackApp()"
         >
-          {{ 'Delete' | translate }}
+          {{ 'Roll Back' | translate }}
         </button>
-      </ng-container>
+      }
+
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        [ixTest]="[app().name, 'delete']"
+        (click)="deleteButtonPressed()"
+      >
+        {{ 'Delete' | translate }}
+      </button>
     </mat-card-actions>
   }
 </mat-card>
-
-<ng-template #notAvailable>
-  {{ 'N/A' | translate }}
-</ng-template>

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,7 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
@@ -33,7 +33,6 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
 
 @NgModule({
   imports: [
-    CommonModule,
     MatDividerModule,
     TranslateModule,
     MatCardModule,
@@ -41,7 +40,6 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     MatButtonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    CommonDirectivesModule,
     TestIdModule,
     IxIconModule,
     IxCheckboxComponent,
@@ -53,6 +51,8 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     IxTextareaComponent,
     IxSelectComponent,
     FormActionsComponent,
+    AsyncPipe,
+    RequiresRolesDirective,
   ],
   exports: [
     ZfsEncryptionCardComponent,

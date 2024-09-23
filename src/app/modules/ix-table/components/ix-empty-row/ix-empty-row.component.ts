@@ -1,16 +1,29 @@
-import { TemplatePortal } from '@angular/cdk/portal';
+import { TemplatePortal, CdkPortalOutlet } from '@angular/cdk/portal';
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, TemplateRef, ViewChild, ViewContainerRef,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { MatButton } from '@angular/material/button';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @Component({
   selector: 'ix-empty-row',
   templateUrl: './ix-empty-row.component.html',
   styleUrls: ['./ix-empty-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CdkPortalOutlet,
+    MatProgressSpinner,
+    IxIconModule,
+    MatButton,
+    TestIdModule,
+    TranslateModule,
+  ],
 })
 export class IxTableEmptyRowComponent implements AfterViewInit {
   @Input() conf: EmptyConfig = {

@@ -7,7 +7,9 @@ import { shownNewIndicatorKeysUpdated } from 'app/store/preferences/preferences.
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class NewFeatureIndicatorService {
   onShown = new EventEmitter<NewFeatureIndicator>();
   private shownIndicatorKeys: string[] = [];

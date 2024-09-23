@@ -1,5 +1,5 @@
 import { CdkTreeNodePadding } from '@angular/cdk/tree';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, PercentPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -13,7 +13,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -29,7 +31,11 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -65,8 +71,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
 
 @NgModule({
   imports: [
-    CommonModule,
-    CommonDirectivesModule,
     BaseChartDirective,
     routing,
     TranslateModule,
@@ -89,7 +93,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     EmptyComponent,
     SearchInput1Component,
     CdkTreeNodePadding,
-    IxTableModule,
     MatButton,
     MatIconButton,
     FileSizePipe,
@@ -105,6 +108,16 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxTextareaComponent,
     PageHeaderModule,
     IxWarningComponent,
+    AsyncPipe,
+    PercentPipe,
+    IxDetailsHeightDirective,
+    RequiresRolesDirective,
+    UiSearchDirective,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerComponent,
+    IxTableEmptyDirective,
   ],
   declarations: [
     DatasetsManagementComponent,

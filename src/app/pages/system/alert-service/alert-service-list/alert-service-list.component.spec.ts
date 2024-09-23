@@ -11,7 +11,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -39,8 +41,8 @@ describe('AlertServiceListComponent', () => {
   const createComponent = createComponentFactory({
     component: AlertServiceListComponent,
     imports: [
-      IxTableModule,
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockAuth(),

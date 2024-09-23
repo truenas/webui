@@ -1,5 +1,4 @@
 import { A11yModule } from '@angular/cdk/a11y';
-import { CommonModule } from '@angular/common';
 import { ElementRef, Renderer2 } from '@angular/core';
 import {
   fakeAsync, discardPeriodicTasks, tick,
@@ -19,7 +18,6 @@ describe('IxSlideIn2Component', () => {
   const createComponent = createComponentFactory({
     component: IxSlideIn2Component,
     imports: [
-      CommonModule,
       A11yModule,
     ],
     declarations: [

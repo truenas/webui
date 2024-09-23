@@ -1,4 +1,6 @@
-import { CommonModule, NgComponentOutlet } from '@angular/common';
+import {
+  AsyncPipe, KeyValuePipe, NgClass, NgComponentOutlet, NgTemplateOutlet, PercentPipe, TitleCasePipe,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,9 +10,15 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
+import { Ng2FittextModule } from 'ng2-fittext';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import {
+  DisableFocusableElementsDirective,
+} from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
+import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
@@ -34,6 +42,9 @@ import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-da
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
+import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
+import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
   WidgetGroupControlsComponent,
@@ -49,6 +60,13 @@ import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.constant';
+import { AppCardInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-card-info/app-card-info.component';
+import { AppControlsComponent } from 'app/pages/dashboard/widgets/apps/common/app-controls/app-controls.component';
+import { AppCpuInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-cpu-info/app-cpu-info.component';
+import { AppDiskInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-disk-info/app-disk-info.component';
+import { AppMemoryInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-memory-info/app-memory-info.component';
+import { AppNetworkInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-network-info/app-network-info.component';
+import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
 import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-empty/backup-task-empty.component';
 import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
@@ -86,6 +104,12 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     DisksWithZfsErrorsComponent,
     PoolStatusComponent,
     LastScanErrorsComponent,
+    AppCardInfoComponent,
+    AppControlsComponent,
+    AppCpuInfoComponent,
+    AppMemoryInfoComponent,
+    AppNetworkInfoComponent,
+    AppDiskInfoComponent,
     ...widgetComponents,
   ],
   providers: [
@@ -97,13 +121,11 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     TranslateModule,
     AppLoaderModule,
     NgComponentOutlet,
-    CommonDirectivesModule,
     TestIdModule,
     PageHeaderModule,
     routing,
     MatCard,
     IxIconModule,
-    CommonModule,
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,
@@ -138,6 +160,21 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     IxModalHeader2Component,
     IxInputComponent,
     CopyrightLineComponent,
+    TitleCasePipe,
+    PercentPipe,
+    AsyncPipe,
+    NgClass,
+    NgTemplateOutlet,
+    DisableFocusableElementsDirective,
+    NewFeatureIndicatorDirective,
+    UiSearchDirective,
+    RequiresRolesDirective,
+    Ng2FittextModule,
+    KeyValuePipe,
+    AppCardLogoComponent,
+    AppStateCellComponent,
+    AppUpdateCellComponent,
+    AppVersionPipe,
   ],
 })
 export class DashboardModule {

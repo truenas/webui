@@ -46,7 +46,7 @@
             <div class="container-state">
               {{ container.state | mapValue: appContainerStateLabels | translate  }}
             </div>
-            @if (app().state === CatalogAppState.Running || app().state === CatalogAppState.Deploying) {
+            @if (app().state === AppState.Running || app().state === AppState.Deploying) {
               <div class="container-action">
                 @if (container.state === AppContainerState.Running) {
                   <button
@@ -71,7 +71,6 @@
                 >
                   <ix-icon name="mdi-folder-outline"></ix-icon>
                 </button>
-
 
                 <button
                   mat-icon-button

@@ -67,7 +67,7 @@ export class TrainCardComponent implements OnInit {
       this.trainService.getTrains(),
     ]).pipe(untilDestroyed(this)).subscribe({
       next: ([isAutoDownloadOn, trains]) => {
-        this.trainService.autoCheckValue$.next(isAutoDownloadOn);
+        this.form.controls.auto_check.patchValue(isAutoDownloadOn);
         this.checkable = true;
         this.cdr.markForCheck();
         this.trainService.fullTrainList$.next(trains.trains);
@@ -80,7 +80,7 @@ export class TrainCardComponent implements OnInit {
         }
 
         this.trains = Object.entries(trains.trains).map(([name, train]) => ({
-          label: `${name} - ${train.description}`,
+          label: train.description,
           value: name,
         }));
         if (this.trains.length > 0) {
@@ -118,10 +118,6 @@ export class TrainCardComponent implements OnInit {
       this.form.controls.train.patchValue(trainValue);
     });
 
-    this.trainService.autoCheckValue$.pipe(untilDestroyed(this)).subscribe((autoCheckValue) => {
-      this.form.controls.auto_check.patchValue(autoCheckValue);
-    });
-
     this.form.controls.train.valueChanges.pipe(pairwise(), untilDestroyed(this)).subscribe(([prevTrain, newTrain]) => {
       this.trainService.onTrainChanged(newTrain, prevTrain);
     });
@@ -130,7 +126,7 @@ export class TrainCardComponent implements OnInit {
       filterAsync(() => this.authService.hasRole(Role.FullAdmin)),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.trainService.toggleAutoCheck();
+      this.trainService.toggleAutoCheck(this.form.controls.auto_check.value);
     });
   }
 }

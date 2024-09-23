@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -17,11 +17,10 @@ import { createTable } from 'app/modules/ix-table/utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbOpenFilesComponent implements OnChanges {
-  @Input() lock: SmbLockInfo;
-
-  get files(): SmbOpenInfo[] {
-    return Object.values(this.lock?.opens || []);
-  }
+  lock = input<SmbLockInfo>();
+  files = computed<SmbOpenInfo[]>(() => {
+    return Object.values(this.lock()?.opens || []);
+  });
 
   dataProvider: AsyncDataProvider<SmbOpenInfo>;
   columns = createTable<SmbOpenInfo>([
@@ -41,7 +40,7 @@ export class SmbOpenFilesComponent implements OnChanges {
     }),
     textColumn({ title: this.translate.instant('Opened at'), propertyName: 'opened_at' }),
   ], {
-    rowTestId: (row) => 'smb-open-file-' + row.username + '-' + row.uid,
+    uniqueRowTag: (row) => 'smb-open-file-' + row.username + '-' + row.uid,
     ariaLabels: (row) => [row.username, this.translate.instant('SMB Open File')],
   });
 
@@ -51,7 +50,7 @@ export class SmbOpenFilesComponent implements OnChanges {
   ) {}
 
   createProvider(): void {
-    this.dataProvider = new AsyncDataProvider(of(this.files));
+    this.dataProvider = new AsyncDataProvider(of(this.files()));
     this.dataProvider.load();
   }
 

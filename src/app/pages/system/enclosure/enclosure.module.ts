@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +8,8 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -20,7 +21,11 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -110,7 +115,6 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
   imports: [
     routing,
     TestIdModule,
-    CommonModule,
     MatCardModule,
     MatButtonModule,
     TranslateModule,
@@ -118,8 +122,6 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    IxTableModule,
-    CommonDirectivesModule,
     SearchInput1Component,
     MatTooltip,
     ReactiveFormsModule,
@@ -139,6 +141,15 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     IxFieldsetComponent,
     IxModalHeaderComponent,
     PageHeaderModule,
+    DecimalPipe,
+    AsyncPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableEmptyDirective,
+    IxTablePagerComponent,
   ],
   declarations: [
     EnclosureDashboardComponent,

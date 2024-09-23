@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -11,7 +11,8 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
@@ -23,7 +24,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
-    CommonModule,
     StoreModule.forFeature(alertStateKey, alertReducer),
     EffectsModule.forFeature([AlertEffects]),
     TranslateModule,
@@ -35,10 +35,12 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatProgressBarModule,
     MatListModule,
     MatTooltipModule,
-    CommonDirectivesModule,
     MatRippleModule,
     TestIdModule,
     FormatDateTimePipe,
+    AsyncPipe,
+    NavigateAndInteractDirective,
+    LetDirective,
   ],
   declarations: [
     AlertsPanelComponent,

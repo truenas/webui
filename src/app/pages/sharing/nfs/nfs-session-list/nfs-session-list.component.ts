@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,7 +11,7 @@ import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.inte
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 import { WebSocketService } from 'app/services/ws.service';
@@ -22,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsSessionListComponent implements OnInit {
-  @Input() activeNfsType: NfsType;
+  protected readonly activeNfsType = signal<NfsType>(NfsType.Nfs3);
   protected readonly searchableElements = nfsSessionListElements;
 
   filterString = '';
@@ -39,7 +40,7 @@ export class NfsSessionListComponent implements OnInit {
       propertyName: 'export',
     }),
   ], {
-    rowTestId: (row) => 'nfs3-session-' + row.export + '-' + row.ip,
+    uniqueRowTag: (row) => 'nfs3-session-' + row.export + '-' + row.ip,
     ariaLabels: (row) => [row.ip, this.translate.instant('NFS3 Session')],
   });
 
@@ -91,7 +92,7 @@ export class NfsSessionListComponent implements OnInit {
       hidden: true,
     }),
   ], {
-    rowTestId: (row) => 'nfs4-session-' + row.address + '-' + row.clientid,
+    uniqueRowTag: (row) => 'nfs4-session-' + row.address + '-' + row.clientid,
     ariaLabels: (row) => [row.name, this.translate.instant('NFS4 Session')],
   });
 
@@ -128,10 +129,6 @@ export class NfsSessionListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this.activeNfsType) {
-      this.activeNfsType = NfsType.Nfs3;
-    }
-
     this.loadData();
 
     combineLatest([this.nfs3DataProvider.emptyType$, this.nfs4DataProvider.emptyType$])
@@ -141,21 +138,21 @@ export class NfsSessionListComponent implements OnInit {
   }
 
   nfsTypeChanged(changedValue: MatButtonToggleChange): void {
-    if (this.activeNfsType === changedValue.value) {
+    if (this.activeNfsType() === changedValue.value) {
       return;
     }
 
-    if (this.activeNfsType === NfsType.Nfs3 && changedValue.value === NfsType.Nfs4) {
-      this.activeNfsType = NfsType.Nfs4;
+    if (this.activeNfsType() === NfsType.Nfs3 && changedValue.value === NfsType.Nfs4) {
+      this.activeNfsType.set(NfsType.Nfs4);
       this.loadData();
     } else {
-      this.activeNfsType = NfsType.Nfs3;
+      this.activeNfsType.set(NfsType.Nfs3);
       this.loadData();
     }
   }
 
   loadData(): void {
-    if (this.activeNfsType === NfsType.Nfs3) {
+    if (this.activeNfsType() === NfsType.Nfs3) {
       this.nfs3DataProvider.load();
     } else {
       this.nfs4DataProvider.load();
@@ -165,7 +162,7 @@ export class NfsSessionListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query?.toString()?.toLowerCase();
 
-    if (this.activeNfsType === NfsType.Nfs3) {
+    if (this.activeNfsType() === NfsType.Nfs3) {
       this.filterNfs3Data();
     } else {
       this.filterNfs4Data();
@@ -173,7 +170,7 @@ export class NfsSessionListComponent implements OnInit {
   }
 
   columnsChange(columns: unknown): void {
-    if (this.activeNfsType === NfsType.Nfs3) {
+    if (this.activeNfsType() === NfsType.Nfs3) {
       this.nfs3Columns = [...columns as Column<Nfs3Session, ColumnComponent<Nfs3Session>>[]];
     } else {
       this.nfs4Columns = [...columns as Column<Nfs4Session['info'], ColumnComponent<Nfs4Session['info']>>[]];

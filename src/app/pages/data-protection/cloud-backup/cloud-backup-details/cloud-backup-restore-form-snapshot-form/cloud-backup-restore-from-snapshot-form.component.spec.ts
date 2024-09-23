@@ -6,10 +6,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { SnapshotIncludeExclude } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -23,10 +23,13 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     imports: [
       ReactiveFormsModule,
     ],
-    declarations: [],
     providers: [
       mockAuth(),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
+      }),
       mockWebSocket([
         mockJob('cloud_backup.restore'),
       ]),
@@ -42,7 +45,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         provide: SLIDE_IN_DATA,
         useValue: {
           snapshot: { id: 1 },
-          backup: { id: 1, path: '/mnt/backup/path' },
+          backup: { id: 1, path: '/mnt/dozer' },
         },
       },
     ],
@@ -56,7 +59,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
     it('submits backup restore from snapshot with `Include Everything`', async () => {
       spectator.component.form.patchValue({
-        target: '/mnt/my pool',
+        target: '/mnt/bulldozer',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -65,20 +68,18 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        '/mnt/backup/path',
-        '/mnt/my pool',
+        '/mnt/dozer',
+        '/mnt/bulldozer',
         {},
       ]);
     });
 
     it('submits backup restore from snapshot with `Select paths to exclude`', async () => {
-      spectator.component.form.patchValue({
-        target: '/mnt/my pool',
-        includeExclude: SnapshotIncludeExclude.ExcludePaths,
-      });
-
-      spectator.component.form.patchValue({
-        excludedPaths: ['/mnt/another'],
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
+        'Include/Exclude': 'Select paths to exclude',
+        'Excluded Paths': '/mnt/dozer/another',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -87,25 +88,23 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        '/mnt/backup/path',
-        '/mnt/my pool',
+        '/mnt/dozer',
+        '/mnt/bulldozer',
         {
           exclude: [
-            '/mnt/another',
+            '/another',
           ],
         },
       ]);
     });
 
     it('submits backup restore from snapshot with `Include from subfolder`', async () => {
-      spectator.component.form.patchValue({
-        target: '/mnt/my pool',
-        includeExclude: SnapshotIncludeExclude.IncludeFromSubFolder,
-      });
-
-      spectator.component.form.patchValue({
-        subFolder: '/test',
-        includedPaths: ['/test/first'],
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
+        'Include/Exclude': 'Include from subfolder',
+        Subfolder: '/mnt/dozer',
+        'Included Paths': '/mnt/dozer/a',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -114,24 +113,47 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        '/test',
-        '/mnt/my pool',
+        '/mnt/dozer',
+        '/mnt/bulldozer',
         {
           include: [
-            '/test/first',
+            '/a',
+          ],
+        },
+      ]);
+    });
+
+    it('submits backup restore from snapshot with `Include from subfolder` matches paths', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
+        'Include/Exclude': 'Include from subfolder',
+        Subfolder: '/mnt/dozer/a',
+        'Included Paths': '/mnt/dozer/a',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        '/mnt/dozer/a',
+        '/mnt/bulldozer',
+        {
+          include: [
+            '/',
           ],
         },
       ]);
     });
 
     it('submits backup restore from snapshot with `Exclude by pattern`', async () => {
-      spectator.component.form.patchValue({
-        target: '/mnt/my pool',
-        includeExclude: SnapshotIncludeExclude.ExcludeByPattern,
-      });
-
-      spectator.component.form.patchValue({
-        excludePattern: 'pattern',
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
+        'Include/Exclude': 'Exclude by pattern',
+        Pattern: 'pattern',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -140,8 +162,8 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        '/mnt/backup/path',
-        '/mnt/my pool',
+        '/mnt/dozer',
+        '/mnt/bulldozer',
         {
           exclude: [
             'pattern',

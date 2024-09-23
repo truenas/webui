@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, Observable, combineLatest, filter, tap,
+  BehaviorSubject, Observable, combineLatest,
 } from 'rxjs';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
@@ -28,7 +28,6 @@ export class TrainService {
   trainVersion$ = new BehaviorSubject<string>(null);
 
   trainValue$ = new BehaviorSubject<string>('');
-  autoCheckValue$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private updateService: UpdateService,
@@ -87,12 +86,8 @@ export class TrainService {
       });
   }
 
-  toggleAutoCheck(): void {
-    this.autoCheckValue$.pipe(
-      tap((autoCheckValue) => this.ws.call('update.set_auto_download', [autoCheckValue])),
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
+  toggleAutoCheck(autoCheck: boolean): void {
+    this.ws.call('update.set_auto_download', [autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
       this.check();
     });
   }

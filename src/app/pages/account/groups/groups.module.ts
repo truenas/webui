@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,7 +18,8 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -32,7 +33,15 @@ import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonl
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import {
+  IxTableExpandableRowComponent,
+} from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -51,8 +60,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
 @NgModule({
   providers: [],
   imports: [
-    CommonDirectivesModule,
-    CommonModule,
     EffectsModule.forFeature([GroupEffects]),
     MatButtonModule,
     IxIconModule,
@@ -76,7 +83,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     DualListModule,
     MatSlideToggleModule,
     TestIdModule,
-    IxTableModule,
     SearchInputModule,
     SearchInput1Component,
     IxFieldsetComponent,
@@ -88,6 +94,16 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     IxSelectComponent,
     ReadOnlyComponent,
     PageHeaderModule,
+    AsyncPipe,
+    RequiresRolesDirective,
+    UiSearchDirective,
+    IxTableDetailsRowDirective,
+    IxTablePagerComponent,
+    IxTableBodyComponent,
+    IxTableHeadComponent,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableExpandableRowComponent,
   ],
   declarations: [
     GroupListComponent,

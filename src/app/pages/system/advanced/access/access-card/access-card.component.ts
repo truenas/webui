@@ -42,7 +42,7 @@ import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-co
 export class AccessCardComponent implements OnInit {
   protected readonly searchableElements = accessCardElements;
   readonly requiredRoles = [Role.AuthSessionsWrite];
-  readonly tokenLifetime$ = this.store$.pipe(
+  readonly sessionTimeout$ = this.store$.pipe(
     waitForPreferences,
     map((preferences) => {
       return preferences.lifetime ? preferences.lifetime : defaultPreferences.lifetime;
@@ -88,7 +88,7 @@ export class AccessCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'session-' + this.getUsername(row) + '-' + row.origin,
+    uniqueRowTag: (row) => 'session-' + this.getUsername(row) + '-' + row.origin,
     ariaLabels: (row) => [this.getUsername(row), this.translate.instant('Session')],
   });
 
@@ -172,8 +172,8 @@ export class AccessCardComponent implements OnInit {
     });
   }
 
-  asDuration(tokenLifetime: number): string {
-    const duration = intervalToDuration({ start: 0, end: tokenLifetime * 1000 });
+  asDuration(sessionTimeout: number): string {
+    const duration = intervalToDuration({ start: 0, end: sessionTimeout * 1000 });
     return formatDuration(duration, {
       format: ['days', 'hours', 'minutes', 'seconds'],
     });

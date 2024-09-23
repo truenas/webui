@@ -15,7 +15,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
@@ -48,11 +51,12 @@ describe('RsyncTaskListComponent', () => {
       },
       user: 'bob',
       job: {
+        id: 1,
         state: JobState.Running,
       } as Job,
     },
     {
-      id: 1,
+      id: 2,
       enabled: false,
       desc: 'Second task',
       direction: Direction.Push,
@@ -68,6 +72,7 @@ describe('RsyncTaskListComponent', () => {
       },
       user: 'peter',
       job: {
+        id: 2,
         state: JobState.Finished,
       } as Job,
     },
@@ -76,9 +81,9 @@ describe('RsyncTaskListComponent', () => {
   const createComponent = createComponentFactory({
     component: RsyncTaskListComponent,
     imports: [
-      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockProvider(IxChainedSlideInService, {
@@ -111,6 +116,19 @@ describe('RsyncTaskListComponent', () => {
           {
             selector: selectPreferences,
             value: {},
+          },
+          {
+            selector: selectJobs,
+            value: [
+              {
+                id: 1,
+                state: JobState.Running,
+              },
+              {
+                id: 2,
+                state: JobState.Finished,
+              },
+            ],
           },
         ],
       }),

@@ -10,7 +10,9 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SmartTestResultListComponent } from 'app/pages/storage/modules/disks/components/smart-test-result-list/smart-test-result-list.component';
@@ -43,7 +45,7 @@ describe('SmartTestResultListComponent', () => {
       remaining: null,
     },
     {
-      num: 1,
+      num: 3,
       description: 'Background short',
       status_verbose: 'Completed',
       segment_number: null,
@@ -75,7 +77,7 @@ describe('SmartTestResultListComponent', () => {
       remaining: null,
     },
     {
-      num: 1,
+      num: 3,
       description: 'Background short',
       status_verbose: 'Completed',
       segment_number: null,
@@ -92,9 +94,9 @@ describe('SmartTestResultListComponent', () => {
     component: SmartTestResultListComponent,
     imports: [
       AppLoaderModule,
-      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockAuth(),

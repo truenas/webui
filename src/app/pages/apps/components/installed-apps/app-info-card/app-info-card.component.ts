@@ -38,37 +38,23 @@ export class AppInfoCardComponent {
   readonly app = input<App>();
   readonly startApp = output();
   readonly stopApp = output();
-
-  readonly imagePlaceholder = appImagePlaceholder;
-  readonly isEmpty = isEmpty;
-
+  protected readonly isCustomApp = computed(() => this.app()?.metadata?.name === customApp);
+  protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly hasUpdates = computed(() => this.app()?.upgrade_available);
+  protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
+  protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
+  protected readonly imagePlaceholder = appImagePlaceholder;
+  protected readonly isEmpty = isEmpty;
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
-
   protected rollbackUpdateButtonSetEffect = effect(() => {
     const app = this.app();
-    this.hasUpdates.set(app?.upgrade_available);
     this.isRollbackPossible.set(false);
     this.updateRollbackSetup(app.name);
   }, { allowSignalWrites: true });
-
-  get inProgress(): boolean {
-    return [AppState.Deploying].includes(this.app().state) || this.isStartingOrStopping;
-  }
-
-  get isAppStopped(): boolean {
-    return this.app().state === AppState.Stopped;
-  }
-
-  get isStartingOrStopping(): boolean {
-    return [AppState.Deploying, AppState.Stopping].includes(this.app().state);
-  }
-
-  get appDetailsRouterUrl(): string[] {
+  protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
     return ['/apps', 'available', app.metadata.train, app.id];
-  }
-
-  protected readonly requiredRoles = [Role.AppsWrite];
+  });
 
   constructor(
     private ws: WebSocketService,
@@ -82,13 +68,6 @@ export class AppInfoCardComponent {
     private router: Router,
     private installedAppsStore: InstalledAppsStore,
   ) {}
-
-  protected hasUpdates = signal(false);
-
-  protected isCustomApp = computed(() => {
-    const app = this.app();
-    return app?.metadata?.name === customApp;
-  });
 
   portalLink(app: App, name = 'web_portal'): void {
     this.redirect.openWindow(app.portals[name]);
@@ -161,9 +140,11 @@ export class AppInfoCardComponent {
   }
 
   rollbackApp(): void {
-    this.matDialog.open(AppRollbackModalComponent, { data: this.app() }).afterClosed().pipe(
-      untilDestroyed(this),
-    ).subscribe();
+    this.matDialog
+      .open(AppRollbackModalComponent, { data: this.app() })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe();
   }
 
   private updateRollbackSetup(appName: string): void {

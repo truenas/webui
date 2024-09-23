@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -13,7 +12,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatButtonModule,
     MatSnackBarModule,
     TranslateModule,
-    CommonModule,
     MatSnackBarModule,
     TestIdModule,
   ],

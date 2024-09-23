@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -15,7 +14,6 @@ import { WithLoadingStateLoaderComponent } from './directives/with-loading-state
 
 @NgModule({
   imports: [
-    CommonModule,
     MatDialogModule,
     IxIconModule,
     MatProgressSpinnerModule,

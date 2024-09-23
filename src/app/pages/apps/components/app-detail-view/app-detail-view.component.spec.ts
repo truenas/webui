@@ -23,6 +23,7 @@ import {
 import {
   AppDetailsSimilarComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
+import { AppJsonDetailsCardComponent } from 'app/pages/apps/components/app-detail-view/app-json-details-card/app-json-details-card.component';
 import {
   AppResourcesCardComponent,
 } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
@@ -34,7 +35,6 @@ import { AuthService } from 'app/services/auth/auth.service';
 
 const appsResponse = [{
   name: 'webdav',
-  catalog: 'TRUENAS',
   train: 'community',
   description: 'webdav',
   app_readme: '<h1>WebDAV</h1>\n<p> When application ...</p>',
@@ -67,6 +67,7 @@ describe('AppDetailViewComponent', () => {
         AppAvailableInfoCardComponent,
         AppCardLogoComponent,
         AppDetailsSimilarComponent,
+        AppJsonDetailsCardComponent,
       ),
     ],
     providers: [
@@ -91,7 +92,7 @@ describe('AppDetailViewComponent', () => {
       }),
       mockProvider(AppsStatsService),
     ],
-    params: { appId: 'webdav', catalog: 'TRUENAS', train: 'community' },
+    params: { appId: 'webdav', train: 'community' },
   });
 
   beforeEach(() => {
@@ -102,6 +103,9 @@ describe('AppDetailViewComponent', () => {
   it('redirect to install app when Install button is pressed', async () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
     await saveButton.click();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'community', 'webdav', 'install']);
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([
+      '/apps', 'available', 'community', 'webdav', 'install',
+    ]);
   });
 });

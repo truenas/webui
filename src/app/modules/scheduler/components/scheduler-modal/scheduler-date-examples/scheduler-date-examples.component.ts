@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import { slice } from 'lodash-es';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { LocaleService } from 'app/services/locale.service';
 
@@ -27,4 +28,5 @@ export class SchedulerDateExamplesComponent {
       this.localeService.timezone,
     );
   });
+  protected readonly slice = slice;
 }

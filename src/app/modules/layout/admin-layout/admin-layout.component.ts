@@ -36,10 +36,10 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { LanguageService } from 'app/services/language.service';
 import { SentryService } from 'app/services/sentry.service';
+import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { TokenLifetimeService } from 'app/services/token-lifetime.service';
 import { AppsState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -124,14 +124,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private sidenavService: SidenavService,
     private store$: Store<AppsState>,
     private languageService: LanguageService,
-    private tokenLifetimeService: TokenLifetimeService,
+    private sessionTimeoutService: SessionTimeoutService,
     private sentryService: SentryService,
   ) {}
 
   ngOnInit(): void {
     performance.mark('Admin Init');
     performance.measure('Login', 'Login Start', 'Admin Init');
-    this.tokenLifetimeService.start();
+    this.sessionTimeoutService.start();
     this.themeService.loadTheme$.next('');
     this.sentryService.init();
     this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
@@ -145,7 +145,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.tokenLifetimeService.stop();
+    this.sessionTimeoutService.stop();
   }
 
   listenForSidenavChanges(): void {

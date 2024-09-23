@@ -24,7 +24,9 @@ import {
 } from 'rxjs';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
@@ -34,6 +36,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
@@ -113,32 +116,35 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return this.selection.selected;
   }
 
+  get checkedApps(): App[] {
+    return this.checkedAppsNames.map((name) => this.dataSource.find((app) => app.name === name));
+  }
+
   get isBulkStartDisabled(): boolean {
-    return this.dataSource.every((app) => [
-      AppState.Running,
-      AppState.Deploying,
-    ].includes(app.state));
+    return this.checkedApps.every(
+      (app) => [AppState.Running, AppState.Deploying].includes(app.state),
+    );
   }
 
   get isBulkStopDisabled(): boolean {
-    return this.dataSource.every((app) => AppState.Stopped === app.state);
+    return this.checkedApps.every(
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state),
+    );
   }
 
   get isBulkUpgradeDisabled(): boolean {
-    return !this.checkedAppsNames
-      .map((name) => this.dataSource.find((app) => app.name === name))
-      .some((app) => app.upgrade_available);
+    return !this.checkedApps.some((app) => app.upgrade_available);
   }
 
-  get startedCheckedApps(): App[] {
+  get activeCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === AppState.Running && this.selection.isSelected(app.id),
+      (app) => [AppState.Running, AppState.Deploying].includes(app.state) && this.selection.isSelected(app.id),
     );
   }
 
   get stoppedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => app.state === AppState.Stopped && this.selection.isSelected(app.id),
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state) && this.selection.isSelected(app.id),
     );
   }
 
@@ -161,6 +167,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private store$: Store<AppsState>,
     private location: Location,
     private appsStats: AppsStatsService,
+    private loader: AppLoaderService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -314,8 +321,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   stop(name: string): void {
     this.appService.stopApplication(name)
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(
+        tapOnce(() => this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }))),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
+        if (job.state !== JobState.Running) {
+          this.loader.close();
+        }
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
@@ -340,7 +354,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   onBulkStop(): void {
-    this.startedCheckedApps.forEach((app) => this.stop(app.name));
+    this.activeCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     this.toggleAppsChecked(false);
   }

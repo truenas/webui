@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonDirectivesModule } from 'app/directives/common-directives.module';
+import { LetDirective } from 'app/directives/app-let.directive';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
@@ -22,10 +22,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
-    CommonModule,
     StoreModule.forFeature(jobStateKey, jobReducer),
     EffectsModule.forFeature([JobEffects]),
-    CommonDirectivesModule,
     RouterModule,
     TranslateModule,
     MatProgressBarModule,
@@ -37,6 +35,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TestIdModule,
     FormatDateTimePipe,
     MapValuePipe,
+    DecimalPipe,
+    AsyncPipe,
+    LetDirective,
   ],
   declarations: [JobItemComponent, JobsPanelComponent],
   exports: [JobItemComponent, JobsPanelComponent],

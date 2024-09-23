@@ -1,11 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockDirective } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
+import {
+  DisableFocusableElementsDirective,
+} from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
+import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -35,12 +40,17 @@ describe('DashboardComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DashboardComponent,
+    imports: [
+      NgTemplateOutlet,
+    ],
     declarations: [
       WidgetGroupControlsComponent,
       MockComponent(PageHeaderComponent),
       MockComponent(NgxSkeletonLoaderComponent),
       MockComponent(WidgetGroupComponent),
       MockDirective(IxDropGridDirective),
+      NewFeatureIndicatorDirective,
+      DisableFocusableElementsDirective,
     ],
     providers: [
       mockProvider(DialogService, {

@@ -17,7 +17,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
@@ -55,7 +55,6 @@ describe('CloudBackupListComponent', () => {
     component: CloudBackupListComponent,
     imports: [
       AppLoaderModule,
-      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -91,6 +90,15 @@ describe('CloudBackupListComponent', () => {
           {
             selector: selectAdvancedConfig,
             value: {},
+          },
+          {
+            selector: selectJobs,
+            value: [{
+              state: JobState.Finished,
+              time_finished: {
+                $date: new Date().getTime() - 50000,
+              },
+            }],
           },
         ],
       }),

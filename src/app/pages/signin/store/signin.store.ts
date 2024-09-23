@@ -10,7 +10,7 @@ import {
   combineLatest, EMPTY, forkJoin, Observable, of, Subscription, from,
 } from 'rxjs';
 import {
-  catchError, distinctUntilChanged, filter, map, switchMap, tap,
+  catchError, distinctUntilChanged, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -20,7 +20,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { TokenLifetimeService } from 'app/services/token-lifetime.service';
+import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -69,7 +69,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   constructor(
     private ws: WebSocketService,
     private translate: TranslateService,
-    private tokenLifetimeService: TokenLifetimeService,
+    private tokenLastUsedService: TokenLastUsedService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private router: Router,
@@ -94,6 +94,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.loadFailoverStatus(),
       this.updateService.hardRefreshIfNeeded(),
     ])),
+    tap(() => this.setLoadingState(false)),
     switchMap(() => this.handleLoginWithToken()),
   ));
 
@@ -196,7 +197,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     return this.ws.call('failover.status').pipe(
       switchMap((status) => {
         this.setFailoverStatus(status);
-        this.setLoadingState(false);
 
         if (status === FailoverStatus.Single) {
           return of(null);
@@ -238,10 +238,8 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private handleLoginWithToken(): Observable<LoginResult> {
-    return of(null).pipe(
-      filter(() => {
-        const isTokenWithinTimeline = this.tokenLifetimeService.isTokenWithinTimeline;
-
+    return this.tokenLastUsedService.isTokenWithinTimeline$.pipe(take(1)).pipe(
+      filter((isTokenWithinTimeline) => {
         if (!isTokenWithinTimeline) {
           this.authService.clearAuthToken();
         }

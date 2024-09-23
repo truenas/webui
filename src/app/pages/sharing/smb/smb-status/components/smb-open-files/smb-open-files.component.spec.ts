@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { SmbOpenFilesComponent } from './smb-open-files.component';
 
 const locks = [
@@ -56,7 +55,6 @@ describe('SmbOpenFilesComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SmbOpenFilesComponent,
-    imports: [IxTableModule],
     providers: [],
   });
 

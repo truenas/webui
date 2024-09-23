@@ -10,7 +10,9 @@ import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { ScrubListComponent } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
@@ -59,8 +61,8 @@ describe('ScrubListComponent', () => {
   const createComponent = createComponentFactory({
     component: ScrubListComponent,
     imports: [
-      IxTableModule,
       MockModule(PageHeaderModule),
+      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockAuth(),
