@@ -46,7 +46,7 @@ describe('SetAdminPasswordFormComponent', () => {
   });
 
   it('shows truenas_admin in readonly Username field', async () => {
-    const username = await form.getControl<IxInputHarness>('Username');
+    const username = await form.getControl('Username') as IxInputHarness;
 
     expect(await username.getValue()).toBe('truenas_admin');
     expect(await username.isReadonly()).toBe(true);

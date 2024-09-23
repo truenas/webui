@@ -26,9 +26,9 @@ export class IxFormHarness extends ComponentHarness {
     return indexControlsByLabel(controls);
   }
 
-  async getControl<T extends SupportedFormControlHarness = SupportedFormControlHarness>(label: string): Promise<T> {
+  async getControl(label: string): Promise<SupportedFormControlHarness> {
     const controlsDict = await this.getControlHarnessesDict();
-    return controlsDict[label] as T;
+    return controlsDict[label];
   }
 
   async getValues(): Promise<Record<string, IxFormBasicValueType>> {
