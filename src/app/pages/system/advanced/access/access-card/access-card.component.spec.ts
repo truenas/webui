@@ -109,9 +109,9 @@ describe('AccessCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows current token lifetime', async () => {
+  it('shows current Session Timeout', async () => {
     const lifetime = (await loader.getAllHarnesses(MatListItemHarness))[0];
-    expect(await lifetime.getFullText()).toBe('Token Lifetime: 24 days 20 hours 31 minutes 22 seconds');
+    expect(await lifetime.getFullText()).toBe('Session Timeout: 24 days 20 hours 31 minutes 22 seconds');
   });
 
   it('shows whether DS users are allowed access to WebUI', async () => {
