@@ -70,7 +70,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   selectedDataset$ = this.datasetStore.selectedDataset$;
   @HostBinding('class.details-overlay') showMobileDetails = false;
   isMobileView = false;
-  systemDataset: string;
+  systemDataset = toSignal(this.ws.call('systemdataset.config').pipe(map((config) => config.pool)));
   isLoading = true;
   subscription = new Subscription();
   ixTreeHeaderWidth: number | null = null;
@@ -154,7 +154,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
-    this.loadSystemDatasetConfig();
     this.setupTree();
     this.listenForRouteChanges();
     this.listenForLoading();
@@ -183,21 +182,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  loadSystemDatasetConfig(): void {
-    this.ws
-      .call('systemdataset.config')
-      .pipe(
-        map((config) => config.pool),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (systemDataset) => {
-          this.systemDataset = systemDataset;
-        },
-        error: this.handleError,
-      });
-  }
-
   listenForLoading(): void {
     this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.isLoading = isLoading;
@@ -214,7 +198,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   };
 
   isSystemDataset(dataset: DatasetDetails): boolean {
-    return dataset.name.split('/').length === 1 && this.systemDataset === dataset.name;
+    return dataset.name.split('/').length === 1 && this.systemDataset() === dataset.name;
   }
 
   treeHeaderScrolled(): void {
