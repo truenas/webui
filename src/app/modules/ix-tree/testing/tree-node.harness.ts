@@ -1,5 +1,4 @@
-import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
-import { ComponentHarnessConstructor, ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { ComponentHarnessConstructor, HarnessPredicate } from '@angular/cdk/testing';
 import { MatTreeNodeHarness, TreeNodeHarnessFilters } from '@angular/material/tree/testing';
 
 function getNodePredicate<T extends TreeNodeHarness>(
