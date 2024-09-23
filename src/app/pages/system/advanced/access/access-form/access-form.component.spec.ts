@@ -79,7 +79,7 @@ describe('AccessFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      'Token Lifetime': '300',
+      'Session Timeout': '300',
       'Login Banner': 'test',
       'Allow Directory Service users to access WebUI': true,
     });
@@ -91,7 +91,7 @@ describe('AccessFormComponent', () => {
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Token Lifetime': '60',
+      'Session Timeout': '60',
       'Login Banner': '',
       'Allow Directory Service users to access WebUI': false,
     });
