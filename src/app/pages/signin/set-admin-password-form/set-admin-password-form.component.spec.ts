@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   SetAdminPasswordFormComponent,
@@ -45,26 +45,11 @@ describe('SetAdminPasswordFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('sets new root password when form is submitted', async () => {
-    const usernameRadio = await loader.getHarness(IxRadioGroupHarness);
-    await usernameRadio.setValue('Root user (not recommended)');
+  it('shows truenas_admin in readonly Username field', async () => {
+    const username = await form.getControl<IxInputHarness>('Username');
 
-    await form.fillForm({
-      Password: '12345678',
-      'Reenter Password': '12345678',
-    });
-
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
-    await submitButton.click();
-
-    const websocket = spectator.inject(WebSocketService);
-    const authService = spectator.inject(AuthService);
-    expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['root', '12345678']);
-    expect(authService.login).toHaveBeenCalledWith('root', '12345678');
-
-    const signinStore = spectator.inject(SigninStore);
-    expect(signinStore.setLoadingState).toHaveBeenCalledWith(true);
-    expect(signinStore.handleSuccessfulLogin).toHaveBeenCalled();
+    expect(await username.getValue()).toBe('truenas_admin');
+    expect(await username.isReadonly()).toBe(true);
   });
 
   it('sets new admin password when form is submitted', async () => {
