@@ -21,9 +21,9 @@ import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
