@@ -4,7 +4,6 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { createTable } from 'app/modules/ix-table/utils';
 
 interface TestTableData {
@@ -39,7 +38,6 @@ describe('IxTableHeadComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxTableHeadComponent<TestTableData>,
-    imports: [IxTableModule],
   });
 
   beforeEach(() => {

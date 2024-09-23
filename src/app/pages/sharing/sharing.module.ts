@@ -40,7 +40,17 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -107,7 +117,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     TestIdModule,
     MatStepperModule,
     DualListModule,
-    IxTableModule,
     MatToolbarModule,
     MatExpansionModule,
     MatButtonToggleModule,
@@ -132,6 +141,13 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     NgClass,
     RequiresRolesDirective,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableEmptyDirective,
+    IxTableBodyComponent,
+    IxTablePagerShowMoreComponent,
+    IxTablePagerComponent,
+    IxTableColumnsSelectorComponent,
   ],
   declarations: [
     NfsListComponent,

@@ -12,7 +12,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { CertificateAuthorityAddComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
 import { CertificateAuthorityEditComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
@@ -40,8 +43,9 @@ describe('CertificateAuthorityListComponent', () => {
   const createComponent = createComponentFactory({
     component: CertificateAuthorityListComponent,
     imports: [
-      IxTableModule,
       FormatDateTimePipe,
+      IxTableCellDirective,
+      IxTablePagerShowMoreComponent,
     ],
     providers: [
       mockWebSocket([

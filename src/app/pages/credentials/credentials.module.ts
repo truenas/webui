@@ -38,7 +38,14 @@ import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -168,7 +175,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     EntityModule,
     IxDynamicFormModule,
     IxIconModule,
-    IxTableModule,
     MatButtonModule,
     MatButtonModule,
     MatCardModule,
@@ -205,6 +211,12 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     AsyncPipe,
     UiSearchDirective,
     RequiresRolesDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerShowMoreComponent,
+    IxTableCellDirective,
   ],
 })
 export class CredentialsModule { }

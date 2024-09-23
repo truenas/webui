@@ -41,7 +41,20 @@ import {
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import {
+  IxTableDetailsRowComponent,
+} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -125,7 +138,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatTooltipModule,
     MatCardModule,
     TranslateModule,
-    IxTableModule,
     CloudCredentialsSelectModule,
     SshCredentialsSelectModule,
     PageHeaderModule,
@@ -135,6 +147,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     IxIconModule,
     TestIdModule,
     MatStepperModule,
+    JobsModule,
     MatToolbarModule,
     MatTooltipModule,
     MatDividerModule,
@@ -160,6 +173,15 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     IxDetailsHeightDirective,
     RequiresRolesDirective,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerComponent,
+    IxTableDetailsRowComponent,
+    IxTableDetailsRowDirective,
+    IxTableColumnsSelectorComponent,
+    IxTableCellDirective,
   ],
   declarations: [
     SnapshotTaskListComponent,

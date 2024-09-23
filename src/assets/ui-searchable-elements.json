@@ -3242,7 +3242,7 @@
       "System",
       "Advanced Settings",
       "Access",
-      "Token Lifetime"
+      "Session Timeout"
     ],
     "synonyms": [
       "Session Token Lifetime"
@@ -3254,7 +3254,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "token-lifetime",
+    "anchor": "session-timeout",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -15,7 +15,9 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -36,9 +38,9 @@ describe('InitiatorListComponent', () => {
   const createComponent = createRoutingFactory({
     component: InitiatorListComponent,
     imports: [
-      IxTableModule,
       AppLoaderModule,
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockAuth(),

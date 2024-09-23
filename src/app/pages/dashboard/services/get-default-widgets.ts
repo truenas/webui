@@ -17,15 +17,16 @@ const defaultWidgets: WidgetGroup[] = [
   {
     layout: WidgetGroupLayout.Halves,
     slots: [
-      { type: WidgetType.CpuModelWidget },
       { type: WidgetType.CpuUsageBar },
+      { type: WidgetType.CpuTemperatureBar },
     ],
   },
   {
-    layout: WidgetGroupLayout.Halves,
+    layout: WidgetGroupLayout.QuartersAndHalf,
     slots: [
+      { type: WidgetType.CpuUsageGauge },
+      { type: WidgetType.CpuModelWidget },
       { type: WidgetType.CpuUsageRecent },
-      { type: WidgetType.CpuTemperatureBar },
     ],
   },
   {

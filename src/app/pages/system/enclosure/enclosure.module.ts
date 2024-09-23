@@ -21,7 +21,11 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -118,7 +122,6 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    IxTableModule,
     SearchInput1Component,
     MatTooltip,
     ReactiveFormsModule,
@@ -142,6 +145,11 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     AsyncPipe,
     RequiresRolesDirective,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableEmptyDirective,
+    IxTablePagerComponent,
   ],
   declarations: [
     EnclosureDashboardComponent,

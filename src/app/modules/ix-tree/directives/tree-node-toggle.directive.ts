@@ -5,6 +5,11 @@ import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 @Directive({
   selector: '[treeNodeToggle]',
   providers: [{ provide: CdkTreeNodeToggle, useExisting: TreeNodeToggleDirective }],
+  host: {
+    '(click)': 'toggleWithAlt($event); $event.stopPropagation();',
+    '(keydown.Enter)': 'toggleWithAlt($event); $event.preventDefault();',
+    '(keydown.Space)': 'toggleWithAlt($event); $event.preventDefault();',
+  },
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['recursive: treeNodeToggleRecursive'],
 })
@@ -19,26 +24,15 @@ export class TreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
   }
 
   /**
-   * Toggle tree node state on click.
-   * Supports recursive expanding/collapsing on alt+click
-   * @param event
+   * This adds support for toggling all descendants when alt key is pressed.
+   * Original `_toggle()` of the base class is also called.
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  override _toggle(event: PointerEvent): void {
-    if (this.recursive || event.altKey) {
-      this._tree.treeControl.toggleDescendants(this._treeNode.data);
-    } else {
+  toggleWithAlt(event: PointerEvent): void {
+    if (event.altKey) {
+      // Original `_toggle()` will open the tree, so we close it.
       this._tree.treeControl.toggle(this._treeNode.data);
+      // And reopen again with descendants.
+      this._tree.treeControl.toggleDescendants(this._treeNode.data);
     }
-
-    event.stopPropagation();
-  }
-
-  get isExpanded(): boolean {
-    return this._treeNode.isExpanded;
-  }
-
-  get level(): number {
-    return this._treeNode.level;
   }
 }

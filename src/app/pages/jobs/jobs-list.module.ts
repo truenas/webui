@@ -17,7 +17,13 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -35,7 +41,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     MatProgressSpinnerModule,
     MatTabsModule,
     MatCardModule,
-    IxTableModule,
     TranslateModule,
     ReactiveFormsModule,
     routing,
@@ -51,6 +56,13 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     DecimalPipe,
     JsonPipe,
     UiSearchDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableCellDirective,
+    IxTableDetailsRowDirective,
+    IxTablePagerComponent,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent, JobNameComponent],
 })

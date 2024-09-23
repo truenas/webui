@@ -15,7 +15,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import {
+  IxTableColumnsSelectorComponent,
+} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
@@ -79,9 +81,9 @@ describe('RsyncTaskListComponent', () => {
   const createComponent = createComponentFactory({
     component: RsyncTaskListComponent,
     imports: [
-      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockProvider(IxChainedSlideInService, {

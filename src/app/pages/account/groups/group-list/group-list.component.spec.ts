@@ -10,7 +10,7 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
@@ -49,9 +49,9 @@ describe('GroupListComponent', () => {
   const createComponent = createComponentFactory({
     component: GroupListComponent,
     imports: [
-      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxTableDetailsRowDirective,
     ],
     declarations: [
       MockComponent(GroupDetailsRowComponent),

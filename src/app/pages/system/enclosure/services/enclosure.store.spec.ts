@@ -1,3 +1,4 @@
+import { fakeAsync, tick } from '@angular/core/testing';
 import {
   createServiceFactory,
   mockProvider,
@@ -79,7 +80,7 @@ describe('EnclosureStore', () => {
   });
 
   describe('listenForDiskUpdates', () => {
-    it('updates dashboard information when disks are changed', () => {
+    it('updates dashboard information when disks are changed', fakeAsync(() => {
       jest.spyOn(spectator.service, 'patchState').mockImplementation();
       spectator.service.listenForDiskUpdates().subscribe();
 
@@ -88,11 +89,12 @@ describe('EnclosureStore', () => {
         collection: 'disk.query',
       });
 
+      tick(1 * 1000);
       expect(spectator.inject(WebSocketService).subscribe).toHaveBeenCalledWith('disk.query');
       expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('webui.enclosure.dashboard');
 
       expect(spectator.service.patchState).toHaveBeenLastCalledWith({ enclosures });
-    });
+    }));
   });
 
   describe('selectEnclosure', () => {

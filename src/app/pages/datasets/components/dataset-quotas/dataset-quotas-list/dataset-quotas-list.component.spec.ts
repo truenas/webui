@@ -17,7 +17,6 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
@@ -53,7 +52,6 @@ describe('DatasetQuotasListComponent', () => {
   const createComponent = createComponentFactory({
     component: DatasetQuotasListComponent,
     imports: [
-      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],

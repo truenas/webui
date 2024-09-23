@@ -4,7 +4,6 @@ import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { IxCellCheckboxComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
-import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 
 interface TestTableData { booleanField: boolean }
 
@@ -15,7 +14,6 @@ describe('IxCellCheckboxComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellCheckboxComponent<TestTableData>,
     detectChanges: false,
-    imports: [IxTableModule],
   });
 
   beforeEach(() => {
