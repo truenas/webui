@@ -303,6 +303,16 @@ module.exports = {
               "importNames": ["CommonModule"],
               "message": "Import individual constituents instead."
             },
+            {
+              "name": "lodash-es",
+              "importNames": ["chain"],
+              "message": "Use standalone methods to get results instead of using 'chain' for chaining."
+            },
+            {
+              "name": "lodash",
+              "importNames": ["chain"],
+              "message": "Use standalone methods to get results instead of using 'chain' for chaining."
+            }
           ],
           "patterns": [{
             "group": [ "../**"],
