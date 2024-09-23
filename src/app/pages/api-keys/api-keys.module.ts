@@ -10,7 +10,6 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -34,7 +33,6 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     CommonModule,
     ReactiveFormsModule,
     ClipboardModule,
-    EntityModule,
     CommonDirectivesModule,
     MatButtonModule,
     MatCardModule,

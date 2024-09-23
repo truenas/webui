@@ -16,7 +16,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -82,9 +81,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     EncryptionModule,
     ReactiveFormsModule,
     TreeModule,
-    EntityModule,
     MatDialogModule,
-    EntityModule,
     NgxSkeletonLoaderModule,
     AppLoaderModule,
     SnapshotsModule,

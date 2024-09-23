@@ -8,6 +8,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, filter, tap, combineLatest, map, switchMap,
+  take,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -279,6 +280,7 @@ export class UpdateActionsCardComponent implements OnInit {
     let job$: Observable<Job>;
     if (this.isHaLicensed) {
       job$ = this.trainService.trainValue$.pipe(
+        take(1),
         switchMap((trainValue) => this.ws.call('update.set_train', [trainValue])),
         switchMap(() => this.ws.job('failover.upgrade', [{ resume }])),
       );

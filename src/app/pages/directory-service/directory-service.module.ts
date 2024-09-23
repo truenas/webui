@@ -10,7 +10,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -49,7 +48,6 @@ import { LdapComponent } from './components/ldap/ldap.component';
 @NgModule({
   imports: [
     CommonModule,
-    EntityModule,
     ReactiveFormsModule,
     routing,
     MatListModule,

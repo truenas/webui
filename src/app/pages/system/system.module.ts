@@ -19,7 +19,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import {
   UnusedDiskSelectComponent,
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
@@ -170,7 +169,6 @@ import { routing } from './system.routing';
     AppLoaderModule,
     CommonDirectivesModule,
     CommonModule,
-    EntityModule,
     FormsModule,
     TreeModule,
     SchedulerModule,

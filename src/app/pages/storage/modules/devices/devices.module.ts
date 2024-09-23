@@ -10,7 +10,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -53,7 +52,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
 @NgModule({
   imports: [
     CommonModule,
-    EntityModule,
     TreeModule,
     MatButtonModule,
     MatCardModule,

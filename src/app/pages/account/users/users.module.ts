@@ -21,7 +21,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -59,7 +58,6 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     CommonDirectivesModule,
     CommonModule,
     EffectsModule.forFeature([UserEffects]),
-    EntityModule,
     MatButtonModule,
     IxIconModule,
     MatListModule,

@@ -22,7 +22,6 @@ import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -87,7 +86,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     CommonDirectivesModule,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
-    EntityModule,
     TestIdModule,
     AppLoaderModule,
     EmptyComponent,

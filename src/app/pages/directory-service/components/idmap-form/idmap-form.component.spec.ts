@@ -16,7 +16,6 @@ import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOptions, IdmapBackendParameter } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
@@ -52,7 +51,6 @@ describe('IdmapFormComponent', () => {
     component: IdmapFormComponent,
     imports: [
       ReactiveFormsModule,
-      EntityModule,
     ],
     declarations: [
       MockComponent(WithManageCertificatesLinkComponent),

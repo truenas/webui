@@ -15,7 +15,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -166,7 +165,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
   imports: [
     CommonDirectivesModule,
     CommonModule,
-    EntityModule,
     IxDynamicFormModule,
     IxIconModule,
     IxTableModule,

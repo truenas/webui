@@ -21,7 +21,6 @@ import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -150,7 +149,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     TranslateModule,
     IxDynamicFormModule,
     ReactiveFormsModule,
-    EntityModule,
     MatCardModule,
     MatSelectModule,
     MatCheckboxModule,

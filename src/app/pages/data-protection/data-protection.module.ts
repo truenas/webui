@@ -13,7 +13,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -117,7 +116,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     CommonModule,
     CommonDirectivesModule,
     RouterModule.forChild(dataProtectionRoutes),
-    EntityModule,
     ReactiveFormsModule,
     MatProgressBarModule,
     MatTooltipModule,

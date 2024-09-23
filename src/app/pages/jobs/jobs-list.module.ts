@@ -12,7 +12,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -26,7 +25,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 
 @NgModule({
   imports: [
-    EntityModule,
     CommonModule,
     IxIconModule,
     MatTooltipModule,

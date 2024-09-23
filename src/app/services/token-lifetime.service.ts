@@ -14,9 +14,9 @@ import { oneMinuteMillis } from 'app/constants/time.constant';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
+import { JobProgressDialogComponent } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { SessionExpiringDialogComponent } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppsState } from 'app/store';
@@ -63,9 +63,9 @@ export class TokenLifetimeService {
     this.resumeBound = this.resume.bind(this);
 
     this.matDialog.afterOpened.pipe(untilDestroyed(this)).subscribe((dialog) => {
-      if (dialog.componentInstance instanceof EntityJobComponent) {
+      if (dialog.componentInstance instanceof JobProgressDialogComponent) {
         this.stop();
-        dialog.componentInstance.dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+        dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
           this.start();
         });
       }
