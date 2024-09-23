@@ -16,7 +16,6 @@ import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { WebSocketService } from 'app/services/ws.service';
@@ -78,7 +77,6 @@ describe('AppBulkUpgradeComponent', () => {
   const createComponent = createComponentFactory({
     component: AppBulkUpgradeComponent,
     imports: [
-      AppLoaderModule,
       ReactiveFormsModule,
       ImgFallbackModule,
       LetDirective,

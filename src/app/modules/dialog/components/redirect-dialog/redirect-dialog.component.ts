@@ -7,7 +7,7 @@ import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   RedirectDialogData,
 } from './redirect-dialog-data.interface';
@@ -22,10 +22,10 @@ import {
     MatDialogTitle,
     CdkScrollable,
     MatDialogContent,
-    TestIdModule,
     MatDialogActions,
     MatButton,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class RedirectDialogComponent {

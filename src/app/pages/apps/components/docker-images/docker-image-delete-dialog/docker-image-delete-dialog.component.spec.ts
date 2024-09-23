@@ -14,7 +14,6 @@ import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interf
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
@@ -43,7 +42,6 @@ describe('DockerImageDeleteDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: DockerImageDeleteDialogComponent,
     imports: [
-      AppLoaderModule,
       ReactiveFormsModule,
     ],
     declarations: [

@@ -32,7 +32,8 @@ import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/compone
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +44,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     IxLabelComponent,
-    TestIdModule,
     MatInput,
     MatButton,
     IxIconComponent,
@@ -53,6 +53,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatHint,
     TranslateModule,
     RequiresRolesDirective,
+    TestDirective,
+    TestOverrideDirective,
   ],
 })
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {

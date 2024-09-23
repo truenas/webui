@@ -10,7 +10,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @UntilDestroy()
@@ -24,12 +24,12 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
     MatNavList,
     MatListItem,
     RouterLinkActive,
-    TestIdModule,
     RouterLink,
     MatTooltip,
     IxIconComponent,
     AsyncPipe,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class NavigationComponent {

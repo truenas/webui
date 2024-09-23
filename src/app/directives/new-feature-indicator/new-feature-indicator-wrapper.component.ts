@@ -10,7 +10,7 @@ import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-fe
 import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-new-feature-indicator-wrapper',
@@ -28,10 +28,10 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     NgxPopperjsModule,
-    TestIdModule,
     NgTemplateOutlet,
     IxIconComponent,
     CastPipe,
+    TestDirective,
   ],
 })
 export class NewFeatureIndicatorWrapperComponent {

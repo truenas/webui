@@ -18,7 +18,6 @@ import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ExportDisconnectModalComponent } from './export-disconnect-modal.component';
@@ -66,7 +65,6 @@ describe('ExportDisconnectModalComponent', () => {
       component: ExportDisconnectModalComponent,
       imports: [
         ReactiveFormsModule,
-        AppLoaderModule,
       ],
       providers: [
         mockWebSocket([

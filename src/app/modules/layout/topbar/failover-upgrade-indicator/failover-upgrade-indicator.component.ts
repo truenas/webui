@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 import { updatePendingIndicatorPressed } from 'app/store/ha-upgrade/ha-upgrade.actions';
 
@@ -18,12 +18,12 @@ import { updatePendingIndicatorPressed } from 'app/store/ha-upgrade/ha-upgrade.a
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
     IxIconComponent,
     AsyncPipe,
     TranslateModule,
     RequiresRolesDirective,
+    TestDirective,
   ],
 })
 export class FailoverUpgradeIndicatorComponent {

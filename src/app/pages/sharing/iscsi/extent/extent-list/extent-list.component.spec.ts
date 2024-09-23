@@ -16,7 +16,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import { DeleteExtentDialogComponent } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 import { ExtentListComponent } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.component';
@@ -42,7 +41,6 @@ describe('ExtentListComponent', () => {
   const createComponent = createComponentFactory({
     component: ExtentListComponent,
     imports: [
-      AppLoaderModule,
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
     ],

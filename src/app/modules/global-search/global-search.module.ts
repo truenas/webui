@@ -13,7 +13,7 @@ import { GlobalSearchResultsComponent } from 'app/modules/global-search/componen
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { KeyboardShortcutComponent } from 'app/modules/keyboard-shortcut/keyboard-shortcut.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @NgModule({
   declarations: [
@@ -24,7 +24,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     IxIconComponent,
     MatInputModule,
-    TestIdModule,
     TranslateModule,
     MatDialogModule,
     ReactiveFormsModule,
@@ -34,6 +33,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     EmptyComponent,
     MatButtonModule,
     KeyboardShortcutComponent,
+    TestDirective,
   ],
   exports: [GlobalSearchComponent, GlobalSearchTriggerComponent],
 })

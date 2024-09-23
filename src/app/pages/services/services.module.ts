@@ -38,7 +38,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
@@ -72,7 +72,6 @@ import { routing } from './services.routing';
     MatCheckboxModule,
     MatButtonModule,
     MatDialogModule,
-    TestIdModule,
     SearchInput1Component,
     TooltipComponent,
     IxModalHeaderComponent,
@@ -95,6 +94,7 @@ import { routing } from './services.routing';
     IxTableHeadComponent,
     IxTableEmptyDirective,
     IxTableBodyComponent,
+    TestDirective,
   ],
   declarations: [
     ServicesComponent,

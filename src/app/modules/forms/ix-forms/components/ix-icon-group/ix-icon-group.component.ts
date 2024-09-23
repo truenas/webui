@@ -9,7 +9,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IconGroupOption } from 'app/modules/forms/ix-forms/components/ix-icon-group/icon-group-option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -21,10 +21,10 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     IxLabelComponent,
     MatIconButton,
-    TestIdModule,
     IxIconComponent,
     IxErrorsComponent,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxIconGroupComponent implements ControlValueAccessor {

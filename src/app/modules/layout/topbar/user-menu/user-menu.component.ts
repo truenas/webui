@@ -20,7 +20,7 @@ import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { userMenuElements } from 'app/modules/layout/topbar/user-menu/user-menu.elements';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -32,7 +32,6 @@ import { AuthService } from 'app/services/auth/auth.service';
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
     MatMenuTrigger,
     IxIconComponent,
@@ -43,6 +42,7 @@ import { AuthService } from 'app/services/auth/auth.service';
     AsyncPipe,
     TranslateModule,
     UiSearchDirective,
+    TestDirective,
   ],
 })
 export class UserMenuComponent {

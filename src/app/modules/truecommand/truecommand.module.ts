@@ -14,7 +14,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruecommandConnectModalComponent } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
@@ -39,13 +39,13 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
     MatButtonModule,
     MatTooltipModule,
     MatDialogModule,
-    TestIdModule,
     IxInputComponent,
     IxCheckboxComponent,
     NgClass,
     RequiresRolesDirective,
     FormActionsComponent,
     UiSearchDirective,
+    TestDirective,
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),

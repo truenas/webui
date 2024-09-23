@@ -8,7 +8,7 @@ import { MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/mat
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -23,9 +23,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatDialogActions,
     MatButton,
     MatDialogClose,
-    TestIdModule,
     AsyncPipe,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class ConsolePanelDialogComponent implements OnInit {

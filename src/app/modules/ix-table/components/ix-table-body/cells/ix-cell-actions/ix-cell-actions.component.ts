@@ -7,7 +7,7 @@ import { Role } from 'app/enums/role.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-cell-actions',
@@ -19,9 +19,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatTooltip,
     RequiresRolesDirective,
     MatIconButton,
-    TestIdModule,
     IxIconComponent,
     AsyncPipe,
+    TestDirective,
   ],
 })
 export class IxCellActionsComponent<T> extends ColumnComponent<T> {

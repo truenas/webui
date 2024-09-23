@@ -16,7 +16,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,11 +34,11 @@ const adminUsername = 'truenas_admin';
     FormsModule,
     ReactiveFormsModule,
     MatButton,
-    TestIdModule,
     AsyncPipe,
     TranslateModule,
     IxInputComponent,
     IxRadioGroupComponent,
+    TestDirective,
   ],
 })
 export class SetAdminPasswordFormComponent {

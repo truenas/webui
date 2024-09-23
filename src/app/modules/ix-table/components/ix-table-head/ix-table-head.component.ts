@@ -9,7 +9,7 @@ import { IxTableHeaderCellDirective } from 'app/modules/ix-table/directives/ix-h
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -19,12 +19,12 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    TestIdModule,
     NgClass,
     MatTooltip,
     NgStyle,
     IxTableHeaderCellDirective,
     IxIconComponent,
+    TestDirective,
   ],
 })
 export class IxTableHeadComponent<T> implements AfterViewInit {

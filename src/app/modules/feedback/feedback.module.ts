@@ -26,20 +26,18 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @NgModule({
   imports: [
-    AppLoaderModule,
     IxIconComponent,
     RouterModule,
     MatButtonModule,
     MatDialogModule,
     MatTooltipModule,
     ReactiveFormsModule,
-    TestIdModule,
     TranslateModule,
     OauthButtonModule,
     NgxSkeletonLoaderModule,
@@ -54,6 +52,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxChipsComponent,
     IxSelectComponent,
     AsyncPipe,
+    FakeProgressBarComponent,
+    TestDirective,
   ],
   declarations: [
     FeedbackDialogComponent,

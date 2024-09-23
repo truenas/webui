@@ -8,7 +8,7 @@ import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { ErrorTemplateComponent } from 'app/modules/dialog/components/multi-error-dialog/error-template/error-template.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-multi-error-dialog',
@@ -24,8 +24,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatDivider,
     MatDialogActions,
     MatButton,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class MultiErrorDialogComponent {

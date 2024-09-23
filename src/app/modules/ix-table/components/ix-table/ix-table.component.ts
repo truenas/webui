@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-table',
@@ -7,6 +7,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   styleUrls: ['./ix-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [TestIdModule],
+  imports: [
+    TestDirective,
+  ],
 })
 export class IxTableComponent {}

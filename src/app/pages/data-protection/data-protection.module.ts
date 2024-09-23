@@ -54,10 +54,9 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import {
   CloudBackupFormComponent,
@@ -145,9 +144,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatButtonModule,
     MatDialogModule,
     IxIconComponent,
-    TestIdModule,
     MatStepperModule,
-    JobsModule,
     MatToolbarModule,
     MatTooltipModule,
     MatDividerModule,
@@ -182,6 +179,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     IxTableDetailsRowDirective,
     IxTableColumnsSelectorComponent,
     IxTableCellDirective,
+    TestDirective,
   ],
   declarations: [
     SnapshotTaskListComponent,

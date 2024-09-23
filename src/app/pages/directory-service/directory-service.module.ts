@@ -34,7 +34,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
@@ -65,7 +65,6 @@ import { LdapComponent } from './components/ldap/ldap.component';
     TranslateModule,
     CdkAccordionModule,
     MatDialogModule,
-    TestIdModule,
     SearchInput1Component,
     EmptyComponent,
     IxChipsComponent,
@@ -87,6 +86,7 @@ import { LdapComponent } from './components/ldap/ldap.component';
     IxTableBodyComponent,
     IxTablePagerComponent,
     IxTableEmptyDirective,
+    TestDirective,
   ],
   declarations: [
     LdapComponent,

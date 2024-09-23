@@ -26,7 +26,7 @@ import {
   SchedulerPreviewColumnComponent,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-preview-column/scheduler-preview-column.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @NgModule({
@@ -42,7 +42,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     MatDialogModule,
     MatButtonModule,
     MatCheckboxModule,
-    TestIdModule,
     TooltipComponent,
     CastPipe,
     IxSelectComponent,
@@ -51,6 +50,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     IxErrorsComponent,
     SlicePipe,
     AsyncPipe,
+    TestDirective,
   ],
   exports: [
     SchedulerComponent,

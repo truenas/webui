@@ -13,7 +13,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -31,9 +31,9 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogActions,
     MatButton,
     MatDialogClose,
-    TestIdModule,
     DecimalPipe,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class ResilverProgressDialogComponent implements OnInit {

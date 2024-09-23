@@ -9,7 +9,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -21,11 +21,11 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     MatFormField,
     MatSelect,
-    TestIdModule,
     MatOption,
     MatIconButton,
     IxIconComponent,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {

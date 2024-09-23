@@ -20,7 +20,6 @@ import {
   IxTableDetailsRowComponent,
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -58,7 +57,6 @@ describe('CronListComponent', () => {
   const createComponent = createComponentFactory({
     component: CronListComponent,
     imports: [
-      AppLoaderModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
       IxTableColumnsSelectorComponent,

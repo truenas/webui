@@ -23,7 +23,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ApiKeyFormDialogComponent,
 } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
@@ -47,7 +47,6 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     MatTooltipModule,
     MatDialogModule,
     TranslateModule,
-    TestIdModule,
     routing,
     SearchInput1Component,
     IxInputComponent,
@@ -62,6 +61,7 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTablePagerComponent,
+    TestDirective,
   ],
   declarations: [
     ApiKeyListComponent,

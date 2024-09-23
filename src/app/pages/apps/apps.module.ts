@@ -51,7 +51,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -60,7 +60,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
 import {
   AppDetailsHeaderComponent,
@@ -173,8 +173,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     NgxSkeletonLoaderModule,
     IxIconComponent,
     LazyLoadImageModule,
-    TestIdModule,
-    AppLoaderModule,
     MatExpansionModule,
     TerminalModule,
     MatTooltipModule,
@@ -223,6 +221,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTablePagerComponent,
+    FakeProgressBarComponent,
+    TestDirective,
   ],
 })
 export class AppsModule { }

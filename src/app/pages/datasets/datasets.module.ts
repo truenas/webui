@@ -38,11 +38,11 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
@@ -90,9 +90,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatDialogModule,
     EntityModule,
     NgxSkeletonLoaderModule,
-    AppLoaderModule,
     SnapshotsModule,
-    TestIdModule,
     EmptyComponent,
     SearchInput1Component,
     CdkTreeNodePadding,
@@ -121,6 +119,8 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxTableBodyComponent,
     IxTablePagerComponent,
     IxTableEmptyDirective,
+    FakeProgressBarComponent,
+    TestDirective,
   ],
   declarations: [
     DatasetsManagementComponent,

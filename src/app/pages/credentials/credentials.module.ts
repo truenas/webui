@@ -48,7 +48,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   CloudCredentialsFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
@@ -188,7 +188,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     ReactiveFormsModule,
     RouterModule,
     routing,
-    TestIdModule,
     TranslateModule,
     OauthButtonModule,
     CloudSyncProviderDescriptionComponent,
@@ -217,6 +216,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     IxTableBodyComponent,
     IxTablePagerShowMoreComponent,
     IxTableCellDirective,
+    TestDirective,
   ],
 })
 export class CredentialsModule { }

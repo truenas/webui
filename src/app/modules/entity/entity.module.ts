@@ -7,18 +7,18 @@ import { MatSliderModule } from '@angular/material/slider';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @NgModule({
   imports: [
     MatDialogModule,
     MatProgressBarModule,
     MatButtonModule,
-    TestIdModule,
     IxIconComponent,
     TranslateModule,
     MatSliderModule,
     DecimalPipe,
+    TestDirective,
   ],
   declarations: [
     EntityJobComponent,

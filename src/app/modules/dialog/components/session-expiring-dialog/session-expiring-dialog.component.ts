@@ -10,7 +10,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
 import { ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-session-expiring-dialog',
@@ -24,9 +24,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    TestIdModule,
     TranslateModule,
     NavigateAndInteractDirective,
+    TestDirective,
   ],
 })
 export class SessionExpiringDialogComponent {

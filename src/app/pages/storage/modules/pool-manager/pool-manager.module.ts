@@ -28,11 +28,12 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
@@ -90,8 +91,6 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     DndModule,
     RouterModule.forChild(routes),
     TranslateModule,
-    TestIdModule,
-    AppLoaderModule,
     NgxSkeletonLoaderModule,
     MatCheckboxModule,
     MatListModule,
@@ -112,6 +111,13 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     NgClass,
     RequiresRolesDirective,
     StepActivationDirective,
+    FakeProgressBarComponent,
+    TestDirective,
+    TestOverrideDirective,
+    TestOverrideDirective,
+    TestOverrideDirective,
+    TestOverrideDirective,
+    TestOverrideDirective,
   ],
   declarations: [
     PoolManagerComponent,

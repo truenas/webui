@@ -3,7 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-cell-date',
@@ -12,8 +12,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     IxDateComponent,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxCellDateComponent<T> extends ColumnComponent<T> {

@@ -78,10 +78,10 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -136,7 +136,6 @@ defineGlobalsInjections({
     FormActionsComponent,
     RouterModule.forRoot([]),
     SnackbarModule,
-    TestIdModule,
     UiSearchDirective,
     RequiresRolesDirective,
     IxTableComponent,
@@ -144,6 +143,8 @@ defineGlobalsInjections({
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
+    TestDirective,
+    TestOverrideDirective,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
@@ -162,7 +163,6 @@ defineGlobalsInjections({
     }),
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
-    AppLoaderModule,
   ],
   providers: [
     MockProvider(HighContrastModeDetector),

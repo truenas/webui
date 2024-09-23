@@ -15,7 +15,7 @@ import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -26,10 +26,10 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
     IxIconComponent,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {

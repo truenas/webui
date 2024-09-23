@@ -18,7 +18,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -38,7 +37,6 @@ describe('InitiatorListComponent', () => {
   const createComponent = createRoutingFactory({
     component: InitiatorListComponent,
     imports: [
-      AppLoaderModule,
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
     ],

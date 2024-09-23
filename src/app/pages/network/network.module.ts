@@ -41,10 +41,13 @@ import {
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { NgxOrderedListboxModule } from 'app/modules/lists/ordered-list/ordered-list.module';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import {
+  WithLoadingStateDirective,
+} from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
   DefaultGatewayDialogComponent,
@@ -81,10 +84,8 @@ import { routing } from './network.routing';
     MatToolbarModule,
     TranslateModule,
     MatDialogModule,
-    TestIdModule,
     NgxOrderedListboxModule,
     MatTooltipModule,
-    AppLoaderModule,
     InterfaceStatusIconComponent,
     EmptyComponent,
     CastPipe,
@@ -110,6 +111,9 @@ import { routing } from './network.routing';
     IxTableCellDirective,
     IxTableEmptyDirective,
     IxTablePagerShowMoreComponent,
+    FakeProgressBarComponent,
+    TestDirective,
+    WithLoadingStateDirective,
   ],
   declarations: [
     DefaultGatewayDialogComponent,

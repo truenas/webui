@@ -8,7 +8,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @NgModule({
   declarations: [OrderedListboxComponent],
@@ -17,11 +17,11 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatListModule,
     IxIconComponent,
     DragDropModule,
-    TestIdModule,
     MatSlideToggleModule,
     TranslateModule,
     IxLabelComponent,
     IxErrorsComponent,
+    TestDirective,
   ],
   exports: [OrderedListboxComponent],
 })

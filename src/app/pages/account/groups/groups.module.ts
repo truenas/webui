@@ -45,7 +45,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
@@ -84,7 +84,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     TranslateModule,
     DualListModule,
     MatSlideToggleModule,
-    TestIdModule,
     SearchInputModule,
     SearchInput1Component,
     IxFieldsetComponent,
@@ -106,6 +105,7 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableExpandableRowComponent,
+    TestDirective,
   ],
   declarations: [
     GroupListComponent,

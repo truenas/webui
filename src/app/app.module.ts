@@ -30,7 +30,6 @@ import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/m
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { FeedbackModule } from 'app/modules/feedback/feedback.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
@@ -39,7 +38,6 @@ import { WebSocketService } from 'app/services/ws.service';
 import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
-import { AppLoaderModule } from './modules/loader/app-loader.module';
 import { AuthGuardService } from './services/auth/auth-guard.service';
 
 @NgModule({
@@ -52,7 +50,6 @@ import { AuthGuardService } from './services/auth/auth-guard.service';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    AppLoaderModule,
     MatNativeDateModule,
     MatNativeDateModule,
     TranslateModule.forRoot({
@@ -107,7 +104,6 @@ import { AuthGuardService } from './services/auth/auth-guard.service';
       },
     }),
     MatButtonModule,
-    TestIdModule,
     MarkdownModule.forRoot({ loader: HttpClient }),
     FeedbackModule,
   ],

@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-tooltip',
@@ -17,8 +17,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     NgxPopperjsModule,
     TranslateModule,
     IxIconComponent,
-    TestIdModule,
     CastPipe,
+    TestDirective,
   ],
 })
 export class TooltipComponent {

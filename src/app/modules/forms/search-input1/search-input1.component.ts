@@ -14,7 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 /**
  * @deprecated Try ix-basic-search instead.
@@ -30,7 +30,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxIconComponent,
     TranslateModule,
     MatInputModule,
-    TestIdModule,
+    TestDirective,
   ],
 })
 export class SearchInput1Component implements OnInit, OnChanges {

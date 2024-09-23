@@ -18,9 +18,9 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
 import { routing } from './audit.routing';
 import { EventDataDetailsCardComponent } from './components/event-data-details-card/event-data-details-card.component';
@@ -30,13 +30,11 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
 @NgModule({
   imports: [
     MatButtonModule,
-    TestIdModule,
     TranslateModule,
     MatCardModule,
     IxIconComponent,
     ReactiveFormsModule,
     MatSelectModule,
-    AppLoaderModule,
     SearchInputModule,
     MatTooltipModule,
     routing,
@@ -53,6 +51,8 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     IxTableCellDirective,
     IxTablePagerComponent,
     IxTableHeadComponent,
+    FakeProgressBarComponent,
+    TestDirective,
   ],
   exports: [],
   declarations: [

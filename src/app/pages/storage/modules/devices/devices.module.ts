@@ -23,12 +23,15 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import {
+  WithLoadingStateDirective,
+} from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DevicesComponent } from 'app/pages/storage/modules/devices/components/devices/devices.component';
 import {
   DiskDetailsPanelComponent,
@@ -72,8 +75,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     ReactiveFormsModule,
     RouterModule.forChild(routes),
     TranslateModule,
-    AppLoaderModule,
-    TestIdModule,
     MatTooltipModule,
     SearchInput1Component,
     UnusedDiskSelectComponent,
@@ -94,6 +95,19 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     HasRoleDirective,
     RequiresRolesDirective,
     LetDirective,
+    FakeProgressBarComponent,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    WithLoadingStateDirective,
+    TestDirective,
+    WithLoadingStateDirective,
   ],
   declarations: [
     DevicesComponent,

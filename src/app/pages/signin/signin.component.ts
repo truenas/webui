@@ -19,7 +19,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
 import { FailoverStatusComponent } from 'app/pages/signin/failover-status/failover-status.component';
 import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -41,7 +41,6 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
     MatFormField,
     MatInput,
     MatProgressSpinner,
-    TestIdModule,
     MatProgressBar,
     MatCard,
     MatCardContent,
@@ -54,6 +53,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
     AsyncPipe,
     TranslateModule,
     CopyrightLineComponent,
+    TestDirective,
   ],
   providers: [SigninStore],
 })

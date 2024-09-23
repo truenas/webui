@@ -18,7 +18,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
 @UntilDestroy()
 @Component({
@@ -29,10 +29,10 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     IxLabelComponent,
-    TestIdModule,
     IxErrorsComponent,
     MatHint,
     AsyncPipe,
+    TestOverrideDirective,
   ],
 })
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {

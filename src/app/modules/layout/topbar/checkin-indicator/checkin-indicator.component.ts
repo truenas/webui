@@ -11,7 +11,7 @@ import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-l
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsState } from 'app/store';
 import { checkinIndicatorPressed } from 'app/store/network-interfaces/network-interfaces.actions';
 import {
@@ -27,11 +27,11 @@ import {
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
     IxIconComponent,
     AsyncPipe,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class CheckinIndicatorComponent implements OnInit {

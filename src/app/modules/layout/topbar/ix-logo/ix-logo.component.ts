@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
@@ -14,9 +14,9 @@ import { ThemeService } from 'app/services/theme/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    TestIdModule,
     IxIconComponent,
     AsyncPipe,
+    TestDirective,
   ],
 })
 export class IxLogoComponent {

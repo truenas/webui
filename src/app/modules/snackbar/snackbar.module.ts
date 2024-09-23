@@ -4,7 +4,7 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig, MatSnackBarModule } f
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @NgModule({
   imports: [
@@ -13,7 +13,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatSnackBarModule,
     TranslateModule,
     MatSnackBarModule,
-    TestIdModule,
+    TestDirective,
   ],
   exports: [],
   declarations: [

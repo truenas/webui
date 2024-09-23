@@ -25,7 +25,7 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   AclEditorListComponent,
 } from 'app/pages/datasets/modules/permissions/components/acl-editor-list/acl-editor-list.component';
@@ -80,7 +80,6 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     MatButtonModule,
     MatDialogModule,
     NgxSkeletonLoaderModule,
-    TestIdModule,
     EmptyComponent,
     CastPipe,
     IxSelectComponent,
@@ -95,6 +94,7 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     AsyncPipe,
     NgClass,
     RequiresRolesDirective,
+    TestDirective,
   ],
   declarations: [
     AclEditorListComponent,

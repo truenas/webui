@@ -13,7 +13,7 @@ import { Role } from 'app/enums/role.enum';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
@@ -26,13 +26,13 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
     IxIconComponent,
     ReadOnlyComponent,
     MatProgressBar,
     AsyncPipe,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxModalHeader2Component implements AfterViewInit {

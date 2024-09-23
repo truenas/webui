@@ -8,7 +8,7 @@ import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
@@ -23,10 +23,10 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     MatDialogActions,
     CopyrightLineComponent,
     MatButton,
-    TestIdModule,
     TranslateModule,
     MapValuePipe,
     LetDirective,
+    TestDirective,
   ],
 })
 export class AboutDialogComponent {

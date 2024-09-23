@@ -52,7 +52,8 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UserEffects } from 'app/pages/account/users/store/user.effects';
 import { userReducer } from 'app/pages/account/users/store/user.reducer';
 import { userStateKey } from 'app/pages/account/users/store/user.selectors';
@@ -89,7 +90,6 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     StoreModule.forFeature(userStateKey, userReducer),
     TranslateModule,
     TranslateModule,
-    TestIdModule,
     SearchInput1Component,
     IxModalHeaderComponent,
     IxFieldsetComponent,
@@ -115,6 +115,8 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     IxTableDetailsRowDirective,
     IxTablePagerComponent,
     IxTableExpandableRowComponent,
+    TestOverrideDirective,
+    TestDirective,
   ],
   declarations: [
     UserListComponent,

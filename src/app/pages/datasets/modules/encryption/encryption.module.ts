@@ -19,7 +19,7 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import {
   EncryptionOptionsDialogComponent,
@@ -42,7 +42,6 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     EntityModule,
     ReactiveFormsModule,
     MatDialogModule,
-    TestIdModule,
     IxIconComponent,
     IxCheckboxComponent,
     IxRadioGroupComponent,
@@ -55,6 +54,7 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     FormActionsComponent,
     AsyncPipe,
     RequiresRolesDirective,
+    TestDirective,
   ],
   exports: [
     ZfsEncryptionCardComponent,

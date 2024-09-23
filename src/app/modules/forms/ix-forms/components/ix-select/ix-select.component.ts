@@ -17,7 +17,8 @@ import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.inter
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 export type IxSelectValue = SelectOptionValueType;
@@ -31,7 +32,6 @@ export type IxSelectValue = SelectOptionValueType;
   standalone: true,
   imports: [
     IxLabelComponent,
-    TestIdModule,
     MatSelect,
     FormsModule,
     MatSelectTrigger,
@@ -44,6 +44,8 @@ export type IxSelectValue = SelectOptionValueType;
     MatHint,
     AsyncPipe,
     TranslateModule,
+    TestDirective,
+    TestOverrideDirective,
   ],
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {

@@ -34,12 +34,12 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
@@ -61,7 +61,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     ScrollingModule,
     MatButtonModule,
     IxDateComponent,
-    AppLoaderModule,
     MatToolbarModule,
     TranslateModule,
     EntityModule,
@@ -71,7 +70,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     MatCardModule,
     MatButtonToggleModule,
     MatSlideToggleModule,
-    TestIdModule,
     MatDialogModule,
     EmptyComponent,
     SearchInput1Component,
@@ -94,6 +92,8 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTablePagerComponent,
+    FakeProgressBarComponent,
+    TestDirective,
   ],
   declarations: [
     LineChartComponent,

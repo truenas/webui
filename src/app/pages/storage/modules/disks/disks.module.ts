@@ -38,7 +38,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DiskBulkEditComponent,
 } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -64,7 +64,6 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     MatCardModule,
     MatDividerModule,
     MatProgressBarModule,
-    TestIdModule,
     IxIconComponent,
     PageHeaderModule,
     SearchInput1Component,
@@ -90,6 +89,14 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     IxTableDetailsRowComponent,
     IxTablePagerComponent,
     IxTableColumnsSelectorComponent,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
   ],
   declarations: [
     DiskBulkEditComponent,

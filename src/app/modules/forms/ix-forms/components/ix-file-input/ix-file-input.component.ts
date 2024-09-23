@@ -11,7 +11,8 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -22,11 +23,12 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     IxLabelComponent,
-    TestIdModule,
     MatTooltip,
     IxIconComponent,
     IxErrorsComponent,
     TranslateModule,
+    TestDirective,
+    TestOverrideDirective,
   ],
 })
 export class IxFileInputComponent implements ControlValueAccessor {

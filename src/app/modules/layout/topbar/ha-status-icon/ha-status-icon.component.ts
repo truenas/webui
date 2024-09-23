@@ -15,7 +15,7 @@ import {
   HaStatusPopoverComponent,
 } from 'app/modules/layout/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -27,11 +27,11 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
     IxIconComponent,
     AsyncPipe,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class HaStatusIconComponent implements OnInit {

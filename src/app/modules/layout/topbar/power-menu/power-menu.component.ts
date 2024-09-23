@@ -13,7 +13,7 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { powerMenuElements } from 'app/modules/layout/topbar/power-menu/power-menu.elements';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -23,7 +23,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
     MatMenuTrigger,
     IxIconComponent,
@@ -32,6 +31,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TranslateModule,
     RequiresRolesDirective,
     UiSearchDirective,
+    TestDirective,
   ],
 })
 export class PowerMenuComponent {

@@ -9,7 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -25,8 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogTitle,
     IxIconComponent,
     MatButton,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class ErrorTemplateComponent {

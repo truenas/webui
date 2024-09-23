@@ -17,7 +17,7 @@ import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
 import { jobsElements } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.elements';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -29,7 +29,6 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatBadge,
     MatTooltip,
     IxIconComponent,
@@ -37,6 +36,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
     TranslateModule,
     LetDirective,
     UiSearchDirective,
+    TestDirective,
   ],
 })
 export class JobsIndicatorComponent implements OnInit {

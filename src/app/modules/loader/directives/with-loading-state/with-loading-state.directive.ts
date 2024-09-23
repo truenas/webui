@@ -21,6 +21,7 @@ import {
  */
 @Directive({
   selector: '[ixWithLoadingState]',
+  standalone: true,
 })
 export class WithLoadingStateDirective<V = unknown> implements OnDestroy {
   renderSubscription: Subscription;

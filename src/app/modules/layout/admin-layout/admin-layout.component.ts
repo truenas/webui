@@ -33,7 +33,7 @@ import { SecondaryMenuComponent } from 'app/modules/layout/secondary-menu/second
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LanguageService } from 'app/services/language.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
@@ -56,7 +56,6 @@ import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system
     MatSidenav,
     NgClass,
     RouterLink,
-    TestIdModule,
     IxIconComponent,
     NavigationComponent,
     SecondaryMenuComponent,
@@ -74,6 +73,7 @@ import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system
     LowerCasePipe,
     TranslateModule,
     MapValuePipe,
+    TestDirective,
   ],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {

@@ -13,14 +13,13 @@ import { AdvancedSearchAutocompleteService } from 'app/modules/forms/search-inpu
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
 import { QueryToApiService } from 'app/modules/forms/search-input/services/query-to-api/query-to-api.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SearchInputComponent } from './components/search-input/search-input.component';
 
 @NgModule({
   imports: [
     IxIconComponent,
     MatInputModule,
-    TestIdModule,
     TranslateModule,
     ReactiveFormsModule,
     FormsModule,
@@ -29,6 +28,7 @@ import { SearchInputComponent } from './components/search-input/search-input.com
     MatCardModule,
     MatTooltipModule,
     AsyncPipe,
+    TestDirective,
   ],
   exports: [
     SearchInputComponent,

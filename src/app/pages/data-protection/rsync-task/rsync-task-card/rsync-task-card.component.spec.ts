@@ -16,7 +16,6 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -71,7 +70,6 @@ describe('RsyncTaskCardComponent', () => {
   const createComponent = createComponentFactory({
     component: RsyncTaskCardComponent,
     imports: [
-      AppLoaderModule,
     ],
     providers: [
       mockAuth(),

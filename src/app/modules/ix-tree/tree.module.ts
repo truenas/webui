@@ -16,7 +16,7 @@ import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-d
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { TreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-virtual-scroll-node-outlet.directive';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 const components = [
   NestedTreeNodeComponent,
@@ -38,9 +38,9 @@ const components = [
     MatTreeModule,
     ScrollingModule,
     TranslateModule,
-    TestIdModule,
     AngularResizeEventModule,
     AsyncPipe,
+    TestDirective,
   ],
   declarations: [
     ...components,
