@@ -104,6 +104,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   filterOptions(filterValue: string): void {
     this.loading = true;
     this.cdr.markForCheck();
+
     this.comboboxProviderHandler?.fetch(filterValue).pipe(
       catchError(() => {
         this.hasErrorInOptions = true;
@@ -111,31 +112,25 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((options: Option[]) => {
-      this.loading = false;
-      this.cdr.markForCheck();
-
       this.options = options;
+
       const selectedOptionFromLabel = this.options.find((option: Option) => option.label === filterValue);
       if (selectedOptionFromLabel) {
         this.selectedOption = selectedOptionFromLabel;
         this.value = selectedOptionFromLabel.value;
         this.onChange(this.value);
-      }
-      if (!this.selectedOption && this.value !== null && this.value !== '') {
-        const setOption = this.options.find((option: Option) => option.value === this.value);
-        if (setOption) {
-          this.selectedOption = { ...setOption };
-          if (this.selectedOption) {
-            this.filterChanged$.next('');
-          }
-        } else {
-          this.selectedOption = { label: this.value as string, value: this.value };
-          if (this.selectedOption.value) {
-            this.filterChanged$.next('');
-          }
+      } else if (this.value !== null) {
+        const selectedOptionFromValue = this.options.find((option: Option) => option.value === this.value);
+        this.selectedOption = selectedOptionFromValue
+          ? { ...selectedOptionFromValue }
+          : { label: this.value as string, value: this.value };
+
+        if (this.selectedOption.value) {
+          this.filterChanged$.next('');
         }
       }
 
+      this.loading = false;
       this.cdr.markForCheck();
     });
   }
