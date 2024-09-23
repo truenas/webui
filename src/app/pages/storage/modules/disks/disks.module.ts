@@ -23,7 +23,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import {
@@ -65,7 +65,7 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     MatDividerModule,
     MatProgressBarModule,
     TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     PageHeaderModule,
     SearchInput1Component,
     UnusedDiskSelectComponent,

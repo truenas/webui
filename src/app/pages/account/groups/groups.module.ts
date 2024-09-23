@@ -33,7 +33,7 @@ import {
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import {
@@ -64,7 +64,7 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     EffectsModule.forFeature([GroupEffects]),
     EntityModule,
     MatButtonModule,
-    IxIconModule,
+    IxIconComponent,
     MatListModule,
     MatMenuModule,
     MatRippleModule,

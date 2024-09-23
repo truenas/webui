@@ -5,7 +5,7 @@ import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 export interface GeneralDialogConfig {
@@ -33,7 +33,7 @@ export interface GeneralDialogConfig {
   standalone: true,
   imports: [
     MatDialogTitle,
-    IxIconModule,
+    IxIconComponent,
     CdkScrollable,
     MatDialogContent,
     MatDialogActions,

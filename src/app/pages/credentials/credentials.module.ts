@@ -37,7 +37,7 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -174,7 +174,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
   imports: [
     EntityModule,
     IxDynamicFormModule,
-    IxIconModule,
+    IxIconComponent,
     MatButtonModule,
     MatButtonModule,
     MatCardModule,

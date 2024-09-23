@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
@@ -28,7 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
     MatIconButton,
     TestIdModule,
     MatTooltip,
-    IxIconModule,
+    IxIconComponent,
     TranslateModule,
   ],
 })

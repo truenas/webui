@@ -12,7 +12,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
@@ -38,7 +38,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    IxIconModule,
+    IxIconComponent,
     MatDialogModule,
     MatButtonModule,
     MatCheckboxModule,

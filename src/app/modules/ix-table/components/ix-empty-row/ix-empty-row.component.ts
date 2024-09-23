@@ -7,7 +7,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @Component({
@@ -19,7 +19,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     CdkPortalOutlet,
     MatProgressSpinner,
-    IxIconModule,
+    IxIconComponent,
     MatButton,
     TestIdModule,
     TranslateModule,

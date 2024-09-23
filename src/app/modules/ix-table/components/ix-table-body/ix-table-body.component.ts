@@ -18,7 +18,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableBodyCellDirective } from 'app/modules/ix-table/directives/ix-body-cell.directive';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
@@ -42,7 +42,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxTableBodyCellDirective,
     MatIconButton,
     MatTooltip,
-    IxIconModule,
+    IxIconComponent,
     MatProgressSpinner,
     TranslateModule,
     AsyncPipe,

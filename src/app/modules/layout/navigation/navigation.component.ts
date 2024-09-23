@@ -9,7 +9,7 @@ import { RouterLinkActive, RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
@@ -27,7 +27,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
     TestIdModule,
     RouterLink,
     MatTooltip,
-    IxIconModule,
+    IxIconComponent,
     AsyncPipe,
     TranslateModule,
   ],

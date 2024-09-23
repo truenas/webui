@@ -4,7 +4,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppLoaderComponent } from 'app/modules/loader/components/app-loader/app-loader.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -15,7 +15,7 @@ import { WithLoadingStateLoaderComponent } from './directives/with-loading-state
 @NgModule({
   imports: [
     MatDialogModule,
-    IxIconModule,
+    IxIconComponent,
     MatProgressSpinnerModule,
     TranslateModule,
     MatProgressBarModule,

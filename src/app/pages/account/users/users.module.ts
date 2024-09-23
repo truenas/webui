@@ -41,7 +41,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import {
@@ -68,7 +68,7 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     EffectsModule.forFeature([UserEffects]),
     EntityModule,
     MatButtonModule,
-    IxIconModule,
+    IxIconComponent,
     MatListModule,
     MatMenuModule,
     MatRippleModule,

@@ -26,7 +26,7 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -78,14 +78,14 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
 
 @NgModule({
   imports: [
-    IxIconModule,
+    IxIconComponent,
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
     MatStepperModule,
     MatDividerModule,
     TreeModule,
-    IxIconModule,
+    IxIconComponent,
     ReactiveFormsModule,
     DndModule,
     RouterModule.forChild(routes),

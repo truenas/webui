@@ -11,7 +11,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -33,7 +33,7 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     TestIdModule,
     TranslateModule,
     MatCardModule,
-    IxIconModule,
+    IxIconComponent,
     ReactiveFormsModule,
     MatSelectModule,
     AppLoaderModule,

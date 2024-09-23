@@ -10,7 +10,7 @@ import { filter } from 'rxjs/operators';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsState } from 'app/store';
 import { checkinIndicatorPressed } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -29,7 +29,7 @@ import {
     MatIconButton,
     TestIdModule,
     MatTooltip,
-    IxIconModule,
+    IxIconComponent,
     AsyncPipe,
     TranslateModule,
   ],

@@ -10,7 +10,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { LetDirective } from 'app/directives/app-let.directive';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
@@ -27,7 +27,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     RouterModule,
     TranslateModule,
     MatProgressBarModule,
-    IxIconModule,
+    IxIconComponent,
     MatButtonModule,
     MatTooltipModule,
     MatDialogModule,

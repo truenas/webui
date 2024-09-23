@@ -31,7 +31,7 @@ import {
   IxModalHeaderComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -74,7 +74,7 @@ import { routing } from './network.routing';
     routing,
     MatCardModule,
     MatListModule,
-    IxIconModule,
+    IxIconComponent,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

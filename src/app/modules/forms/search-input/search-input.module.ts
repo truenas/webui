@@ -12,13 +12,13 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AdvancedSearchAutocompleteService } from 'app/modules/forms/search-input/services/advanced-search-autocomplete.service';
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
 import { QueryToApiService } from 'app/modules/forms/search-input/services/query-to-api/query-to-api.service';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { SearchInputComponent } from './components/search-input/search-input.component';
 
 @NgModule({
   imports: [
-    IxIconModule,
+    IxIconComponent,
     MatInputModule,
     TestIdModule,
     TranslateModule,

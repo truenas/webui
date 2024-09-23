@@ -33,7 +33,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -125,7 +125,7 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     PageHeaderModule,
     routing,
     MatCard,
-    IxIconModule,
+    IxIconComponent,
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,

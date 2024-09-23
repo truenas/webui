@@ -23,7 +23,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
@@ -73,7 +73,7 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     ReactiveFormsModule,
     TranslateModule,
     MatCardModule,
-    IxIconModule,
+    IxIconComponent,
     MatProgressSpinnerModule,
     CdkAccordionModule,
     MatTooltipModule,

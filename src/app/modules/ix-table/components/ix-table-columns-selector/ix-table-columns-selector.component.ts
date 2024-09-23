@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import * as _ from 'lodash-es';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
@@ -23,7 +23,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatButton,
     TestIdModule,
     MatMenuTrigger,
-    IxIconModule,
+    IxIconComponent,
     MatMenu,
     MatMenuItem,
     TranslateModule,

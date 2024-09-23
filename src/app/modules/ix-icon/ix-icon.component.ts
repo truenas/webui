@@ -14,6 +14,7 @@ import {
 import {
   MatIcon, MatIconDefaultOptions, MatIconLocation, MatIconRegistry, MAT_ICON_DEFAULT_OPTIONS, MAT_ICON_LOCATION,
 } from '@angular/material/icon';
+import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon.service';
 
 /**
  * IxIcon component extends MatIcon
@@ -37,6 +38,13 @@ import {
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: MatIconRegistry,
+      useClass: IxIconRegistry,
+    },
+  ],
+  standalone: true,
 })
 export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
   readonly name = input<string>();

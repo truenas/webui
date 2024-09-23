@@ -17,7 +17,7 @@ import {
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
@@ -45,7 +45,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
     MatProgressBar,
     MatCard,
     MatCardContent,
-    IxIconModule,
+    IxIconComponent,
     SigninFormComponent,
     SetAdminPasswordFormComponent,
     FailoverStatusComponent,

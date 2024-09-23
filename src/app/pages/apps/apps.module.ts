@@ -44,7 +44,7 @@ import {
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -171,7 +171,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatMenuModule,
     ImgFallbackModule,
     NgxSkeletonLoaderModule,
-    IxIconModule,
+    IxIconComponent,
     LazyLoadImageModule,
     TestIdModule,
     AppLoaderModule,

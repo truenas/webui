@@ -72,7 +72,7 @@ import {
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxIconTestingModule } from 'app/modules/ix-icon/ix-icon-testing.module';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -96,7 +96,7 @@ defineGlobalsInjections({
     MatCheckboxModule,
     MatSlideToggleModule,
     MatMenuModule,
-    IxIconModule,
+    IxIconComponent,
     IxIconTestingModule,
     MatDatepickerModule,
     MatNativeDateModule,

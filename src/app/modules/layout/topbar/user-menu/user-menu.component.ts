@@ -14,7 +14,7 @@ import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
 import {
   ChangePasswordDialogComponent,
@@ -35,7 +35,7 @@ import { AuthService } from 'app/services/auth/auth.service';
     TestIdModule,
     MatTooltip,
     MatMenuTrigger,
-    IxIconModule,
+    IxIconComponent,
     MatMenu,
     MatMenuItem,
     RouterLink,

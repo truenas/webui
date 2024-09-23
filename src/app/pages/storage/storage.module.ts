@@ -36,7 +36,7 @@ import {
   IxModalHeaderComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -73,7 +73,7 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatButtonModule,
     RouterModule,
     MatPaginatorModule,
-    IxIconModule,
+    IxIconComponent,
     MatProgressSpinnerModule,
     MatToolbarModule,
     BaseChartDirective,

@@ -11,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { DirectoryServiceState, directoryServiceStateLabels } from 'app/enums/directory-service-state.enum';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogContent,
     MatIconButton,
     TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     MatDialogClose,
     MatProgressSpinner,
     RouterLink,

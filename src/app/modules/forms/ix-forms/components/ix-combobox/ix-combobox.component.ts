@@ -29,7 +29,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider, IxComboboxProviderManager } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @UntilDestroy()
@@ -45,7 +45,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatInput,
     MatAutocompleteTrigger,
     MatProgressSpinner,
-    IxIconModule,
+    IxIconComponent,
     MatAutocomplete,
     MatOption,
     IxErrorsComponent,

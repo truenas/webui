@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @Component({
@@ -16,7 +16,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     MatIconButton,
     TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     TranslateModule,
   ],
 })

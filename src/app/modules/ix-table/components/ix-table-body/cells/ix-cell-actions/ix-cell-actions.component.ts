@@ -4,7 +4,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -20,7 +20,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     RequiresRolesDirective,
     MatIconButton,
     TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     AsyncPipe,
   ],
 })

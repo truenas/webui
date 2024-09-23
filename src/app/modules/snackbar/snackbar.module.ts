@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
-    IxIconModule,
+    IxIconComponent,
     MatButtonModule,
     MatSnackBarModule,
     TranslateModule,

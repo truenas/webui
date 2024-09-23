@@ -25,7 +25,7 @@ import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { IxChainedSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-chained-slide-in/ix-chained-slide-in.component';
 import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ConsoleFooterComponent } from 'app/modules/layout/console-footer/console-footer.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { NavigationComponent } from 'app/modules/layout/navigation/navigation.component';
@@ -57,7 +57,7 @@ import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system
     NgClass,
     RouterLink,
     TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     NavigationComponent,
     SecondaryMenuComponent,
     MatTooltip,

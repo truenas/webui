@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   HaStatusPopoverComponent,
 } from 'app/modules/layout/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
@@ -29,7 +29,7 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
     MatIconButton,
     TestIdModule,
     MatTooltip,
-    IxIconModule,
+    IxIconComponent,
     AsyncPipe,
     TranslateModule,
   ],

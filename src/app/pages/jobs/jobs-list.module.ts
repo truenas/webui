@@ -16,7 +16,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -35,7 +35,7 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 @NgModule({
   imports: [
     EntityModule,
-    IxIconModule,
+    IxIconComponent,
     MatTooltipModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,

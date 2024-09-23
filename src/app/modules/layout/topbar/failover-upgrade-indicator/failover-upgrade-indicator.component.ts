@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 import { updatePendingIndicatorPressed } from 'app/store/ha-upgrade/ha-upgrade.actions';
@@ -20,7 +20,7 @@ import { updatePendingIndicatorPressed } from 'app/store/ha-upgrade/ha-upgrade.a
     MatIconButton,
     TestIdModule,
     MatTooltip,
-    IxIconModule,
+    IxIconComponent,
     AsyncPipe,
     TranslateModule,
     RequiresRolesDirective,

@@ -21,7 +21,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -62,7 +62,7 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
-    IxIconModule,
+    IxIconComponent,
     NgxSkeletonLoaderModule.forRoot({
       theme: {
         'background-color': 'var(--alt-bg2)',

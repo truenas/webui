@@ -20,7 +20,7 @@ import {
   IxModalHeaderComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -118,7 +118,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MatCardModule,
     MatButtonModule,
     TranslateModule,
-    IxIconModule,
+    IxIconComponent,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
