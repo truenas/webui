@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import { uniq } from 'lodash-es';
 import { OperatorFunction } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -28,7 +28,7 @@ export function singleArrayToOptions(): OperatorFunction<(string | number)[], Op
 
 export function redundantListToUniqueOptions(): OperatorFunction<string[], Option[]> {
   return map((redundantArray) => {
-    return _.uniq(redundantArray).map((item: string) => ({ label: item, value: item }));
+    return uniq(redundantArray).map((item: string) => ({ label: item, value: item }));
   });
 }
 

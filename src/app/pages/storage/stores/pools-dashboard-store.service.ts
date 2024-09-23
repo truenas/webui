@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
-import * as _ from 'lodash-es';
+import { keyBy, sortBy } from 'lodash-es';
 import {
   combineLatest, forkJoin, Observable, of, tap,
 } from 'rxjs';
@@ -93,8 +93,8 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       ({ pools, rootDatasets }) => {
         this.patchState({
           arePoolsLoading: false,
-          pools: _.sortBy(pools, (pool) => pool.name),
-          rootDatasets: _.keyBy(rootDatasets, (dataset) => dataset.id),
+          pools: sortBy(pools, (pool) => pool.name),
+          rootDatasets: keyBy(rootDatasets, (dataset) => dataset.id),
         });
       },
       (error: unknown) => {

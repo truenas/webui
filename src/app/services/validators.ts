@@ -1,7 +1,7 @@
 import {
   FormControl, FormGroup, UntypedFormControl, ValidatorFn,
 } from '@angular/forms';
-import * as _ from 'lodash-es';
+import { isEmpty, isNumber, toNumber } from 'lodash-es';
 
 export function greaterThanFg(
   controlName: string,
@@ -25,10 +25,10 @@ export function greaterThanFg(
       const otherValueExists = otherControl.value !== null && otherControl.value !== undefined && otherControl.value !== '';
       const subjectValueExists = subjectControl.value !== null && subjectControl.value !== undefined && subjectControl.value !== '';
       if (otherValueExists && subjectValueExists) {
-        if (!_.isNumber(otherControl.value) || !_.isNumber(subjectControl.value)) {
+        if (!isNumber(otherControl.value) || !isNumber(subjectControl.value)) {
           throw new Error('greaterThanValidator(): Comparates are not all numeric');
         }
-        if (_.toNumber(otherControl.value) >= _.toNumber(subjectControl.value)) {
+        if (toNumber(otherControl.value) >= toNumber(subjectControl.value)) {
           errFields.push(name);
         }
       }
@@ -43,7 +43,7 @@ export function greaterThanFg(
     }
     let prevErrors = { ...fg.get(controlName).errors };
     delete prevErrors.greaterThan;
-    if (_.isEmpty(prevErrors)) {
+    if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
     fg.get(controlName).setErrors(prevErrors);

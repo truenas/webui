@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { sortBy, startsWith } from 'lodash-es';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
@@ -42,7 +42,7 @@ export class ExtentFormComponent implements OnInit {
   }
 
   get isAvailableThreshold(): boolean {
-    return _.startsWith(this.form.controls.disk.value, 'zvol');
+    return startsWith(this.form.controls.disk.value, 'zvol');
   }
 
   get title(): string {
@@ -94,7 +94,7 @@ export class ExtentFormComponent implements OnInit {
         options.push(extentDiskBeingEdited);
       }
 
-      return _.sortBy(options, ['label']);
+      return sortBy(options, ['label']);
     }),
   );
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
@@ -177,7 +177,7 @@ export class ExtentFormComponent implements OnInit {
   }
 
   private setExtentDisk(): void {
-    if (!_.startsWith(this.editingExtent.path, 'zvol')) {
+    if (!startsWith(this.editingExtent.path, 'zvol')) {
       return;
     }
 

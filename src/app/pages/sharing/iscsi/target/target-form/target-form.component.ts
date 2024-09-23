@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
@@ -70,7 +70,7 @@ export class TargetFormComponent implements OnInit {
   readonly auths$ = this.iscsiService.getAuth().pipe(
     map((auths) => {
       const opts: Option[] = [];
-      const tags = _.uniq(auths.map((item) => item.tag));
+      const tags = uniq(auths.map((item) => item.tag));
       tags.forEach((tag) => {
         opts.push({ label: String(tag), value: tag });
       });

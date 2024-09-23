@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { deburr, some, toLower } from 'lodash-es';
 import {
   EMPTY, Observable, combineLatest, map,
 } from 'rxjs';
@@ -191,10 +191,10 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
   }
 
   private doesAppContainString = (searchQuery: string, app: AvailableApp): boolean => {
-    const normalize = (str: string): string => _.toLower(_.deburr(str));
+    const normalize = (str: string): string => toLower(deburr(str));
     const isStringsArray = (arr: unknown[]): boolean => arr.every((i) => typeof i === 'string');
     const search = normalize(searchQuery);
-    return _.some(app, (value) => {
+    return some(app, (value) => {
       if (typeof value === 'string') {
         return normalize(value).includes(search);
       }

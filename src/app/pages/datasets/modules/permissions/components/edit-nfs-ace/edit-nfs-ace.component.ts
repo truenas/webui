@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { fromPairs } from 'lodash-es';
 import { of } from 'rxjs';
 import {
   NfsAclTag, nfsAclTagLabels, NfsAclType,
@@ -152,7 +152,7 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
         ace.perms = { BASIC: formValues.basicPermission } as BasicNfsPermissions;
       }
     } else if (Array.isArray(formValues.advancedPermissions)) {
-      ace.perms = _.fromPairs(formValues.advancedPermissions.map((key) => [key, true])) as AdvancedNfsPermissions;
+      ace.perms = fromPairs(formValues.advancedPermissions.map((key) => [key, true])) as AdvancedNfsPermissions;
     }
 
     if (formValues.flagsType === NfsFormFlagsType.Basic) {
@@ -162,7 +162,7 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
         ace.flags = { BASIC: formValues.basicFlag } as BasicNfsFlags;
       }
     } else if (Array.isArray(formValues.advancedFlags)) {
-      ace.flags = _.fromPairs(formValues.advancedFlags.map((key) => [key, true])) as AdvancedNfsFlags;
+      ace.flags = fromPairs(formValues.advancedFlags.map((key) => [key, true])) as AdvancedNfsFlags;
     }
 
     return ace;

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { merge } from 'lodash-es';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
@@ -140,7 +140,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
     const steps = this.isImport ? this.getImportCaSteps() : this.getNewCaSteps();
 
     const values = steps.map((step) => step.getPayload());
-    return _.merge({}, ...values);
+    return merge({}, ...values);
   }
 
   private setDefaultConstraints(): void {

@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { isArray, isPlainObject, unset } from 'lodash-es';
 import {
   BehaviorSubject, Observable, of, Subject, Subscription, timer,
 } from 'rxjs';
@@ -202,12 +202,12 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         }
       });
     }
-    if (_.isPlainObject(data)) {
+    if (isPlainObject(data)) {
       Object.keys(data).forEach((key) => {
         this.getFieldsHiddenOnForm((data as Record<string, unknown>)[key], deleteField$, path ? path + '.' + key : key);
       });
     }
-    if (_.isArray(data)) {
+    if (isArray(data)) {
       for (let i = 0; i < data.length; i++) {
         this.getFieldsHiddenOnForm(data[i], deleteField$, `${path}.${i}`);
       }
@@ -220,7 +220,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     deleteField$.pipe(untilDestroyed(this)).subscribe({
       next: (fieldToBeDeleted) => {
         const keys = fieldToBeDeleted.split('.');
-        _.unset(data, keys);
+        unset(data, keys);
       },
       complete: () => this.saveData(data),
     });

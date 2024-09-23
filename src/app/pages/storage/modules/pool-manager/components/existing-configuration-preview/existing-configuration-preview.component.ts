@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import {
   CreateVdevLayout, TopologyItemType, VdevType, vdevTypeLabels,
 } from 'app/enums/v-dev-type.enum';
@@ -62,12 +62,12 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
 
   parseTopology(topology: PoolTopology): PoolManagerTopology {
     const poolManagerTopology: PoolManagerTopology = {
-      data: _.cloneDeep(defaultCategory),
-      log: _.cloneDeep(defaultCategory),
-      spare: _.cloneDeep(defaultCategory),
-      cache: _.cloneDeep(defaultCategory),
-      dedup: _.cloneDeep(defaultCategory),
-      special: _.cloneDeep(defaultCategory),
+      data: cloneDeep(defaultCategory),
+      log: cloneDeep(defaultCategory),
+      spare: cloneDeep(defaultCategory),
+      cache: cloneDeep(defaultCategory),
+      dedup: cloneDeep(defaultCategory),
+      special: cloneDeep(defaultCategory),
     };
 
     let vdevTypes = Object.entries(VdevType);
@@ -97,19 +97,19 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
 
         if (firstVdevType === TopologyItemType.Stripe) {
           const vdevDisk = this.disks.find((disk) => disk.devname === vdev.disk);
-          allCategoryVdevsDisks.push(_.cloneDeep(vdevDisk));
-          poolManagerTopology[value].vdevs.push([_.cloneDeep(vdevDisk)]);
+          allCategoryVdevsDisks.push(cloneDeep(vdevDisk));
+          poolManagerTopology[value].vdevs.push([cloneDeep(vdevDisk)]);
         } else {
           const vdevDisks = [];
           for (const vdevDisk of vdev.children) {
             const fullDisk = this.disks.find((disk) => disk.devname === vdevDisk.disk);
-            allCategoryVdevsDisks.push(_.cloneDeep(fullDisk));
-            vdevDisks.push(_.cloneDeep(fullDisk));
+            allCategoryVdevsDisks.push(cloneDeep(fullDisk));
+            vdevDisks.push(cloneDeep(fullDisk));
           }
           poolManagerTopology[value].vdevs.push(vdevDisks);
         }
       }
-      const firstDisk = _.cloneDeep(allCategoryVdevsDisks[0]);
+      const firstDisk = cloneDeep(allCategoryVdevsDisks[0]);
       poolManagerTopology[value].hasCustomDiskSelection = poolManagerTopology[value].hasCustomDiskSelection
         || allCategoryVdevsDisks.some((disk) => disk.size !== firstDisk.size || disk.type !== firstDisk.type);
       if (!poolManagerTopology[value].hasCustomDiskSelection) {

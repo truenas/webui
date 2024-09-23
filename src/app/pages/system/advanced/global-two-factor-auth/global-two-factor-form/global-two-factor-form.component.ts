@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { isEqual } from 'lodash-es';
 import {
   EMPTY, catchError, filter, of, switchMap, tap,
 } from 'rxjs';
@@ -95,7 +95,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.authService.globalTwoFactorConfigUpdated();
-        if (!_.isEqual(this.twoFactorConfig, payload) && payload.enabled) {
+        if (!isEqual(this.twoFactorConfig, payload) && payload.enabled) {
           this.router.navigate(['/two-factor-auth']);
         }
         this.cdr.markForCheck();

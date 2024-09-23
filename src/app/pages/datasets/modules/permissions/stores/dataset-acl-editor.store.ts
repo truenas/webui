@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
-import { omit } from 'lodash-es';
+import { union, without, omit } from 'lodash-es';
 import {
   EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
@@ -96,7 +95,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       selectedAceIndex = Math.max(0, selectedAceIndex - 1);
     }
 
-    const newAcesWithError = _.without(state.acesWithError, indexToRemove).map((aceWithErrorIndex) => {
+    const newAcesWithError = without(state.acesWithError, indexToRemove).map((aceWithErrorIndex) => {
       if (aceWithErrorIndex <= indexToRemove) {
         return aceWithErrorIndex;
       }
@@ -165,8 +164,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     return {
       ...state,
       acesWithError: isValid
-        ? _.without(state.acesWithError, state.selectedAceIndex)
-        : _.union(state.acesWithError, [state.selectedAceIndex]),
+        ? without(state.acesWithError, state.selectedAceIndex)
+        : union(state.acesWithError, [state.selectedAceIndex]),
     };
   });
 
@@ -270,7 +269,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     const markAceAsHavingErrors = (aceIndex: number): void => {
       this.patchState((state) => ({
         ...state,
-        acesWithError: _.union(state.acesWithError, [aceIndex]),
+        acesWithError: union(state.acesWithError, [aceIndex]),
       }));
     };
 

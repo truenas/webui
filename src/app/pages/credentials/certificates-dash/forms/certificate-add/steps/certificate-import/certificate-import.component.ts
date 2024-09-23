@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { pick } from 'lodash-es';
 import { of } from 'rxjs';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -103,7 +103,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
       };
     }
 
-    return _.pick(values, ['certificate', 'privatekey', 'passphrase']);
+    return pick(values, ['certificate', 'privatekey', 'passphrase']);
   }
 
   private loadCsrs(): void {

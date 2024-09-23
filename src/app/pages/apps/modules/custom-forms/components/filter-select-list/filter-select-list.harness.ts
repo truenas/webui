@@ -1,6 +1,6 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ComponentHarness } from '@angular/cdk/testing';
-import * as _ from 'lodash-es';
+import { isString } from 'lodash-es';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -35,7 +35,7 @@ export class IxFilterSelectListHarness extends ComponentHarness implements IxFor
   }
 
   async setValue(value: string[] | string): Promise<void> {
-    if (_.isString(value)) {
+    if (isString(value)) {
       value = [value];
     }
     const items = await this.getItems();

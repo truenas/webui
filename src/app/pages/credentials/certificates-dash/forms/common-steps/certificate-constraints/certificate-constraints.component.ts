@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { omit } from 'lodash-es';
 import { of } from 'rxjs';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -151,7 +151,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
           enabled: basicConstraints.enabled,
           path_length: basicConstraints.path_length || null,
           BasicConstraints: extensionsToSelectValues(
-            _.omit(basicConstraints, ['enabled', 'path_length']),
+            omit(basicConstraints, ['enabled', 'path_length']),
           ) as BasicConstraint[],
         },
       });
@@ -161,7 +161,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
         AuthorityKeyIdentifier: {
           enabled: authorityKeyIdentifier.enabled,
           AuthorityKeyIdentifier: extensionsToSelectValues(
-            _.omit(authorityKeyIdentifier, ['enabled']),
+            omit(authorityKeyIdentifier, ['enabled']),
           ) as AuthorityKeyIdentifier[],
         },
       });
@@ -179,7 +179,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
       this.form.patchValue({
         KeyUsage: {
           enabled: keyUsage.enabled,
-          KeyUsage: extensionsToSelectValues(_.omit(keyUsage, ['enabled'])),
+          KeyUsage: extensionsToSelectValues(omit(keyUsage, ['enabled'])),
         },
       });
     }

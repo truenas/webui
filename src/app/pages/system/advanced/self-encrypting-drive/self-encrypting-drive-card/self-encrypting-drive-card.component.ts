@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import * as _ from 'lodash-es';
+import { isEqual } from 'lodash-es';
 import { Subject, combineLatest } from 'rxjs';
 import {
   distinctUntilChanged,
@@ -37,7 +37,7 @@ export class SelfEncryptingDriveCardComponent {
     switchMap(() => {
       const updatedSedUser$ = this.store$.pipe(
         waitForAdvancedConfig,
-        distinctUntilChanged((previous, current) => _.isEqual(previous.sed_user, current.sed_user)),
+        distinctUntilChanged((previous, current) => isEqual(previous.sed_user, current.sed_user)),
         map((config) => config.sed_user),
       );
       const updatedSedPassword$ = this.ws.call('system.advanced.sed_global_password').pipe(

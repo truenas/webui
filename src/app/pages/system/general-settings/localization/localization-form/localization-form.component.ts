@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import * as _ from 'lodash-es';
+import { sortBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -86,7 +86,7 @@ export class LocalizationFormComponent implements OnInit {
     label: helptext.stg_timezone.placeholder,
     tooltip: helptext.stg_timezone.tooltip,
     provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
-      (tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
+      (tzChoices) => sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
     ))),
   };
 

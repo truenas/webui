@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { chain } from 'lodash-es';
+import { uniq } from 'lodash-es';
 import { enclosureDiskStatusLabels } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { getDiskStatusColor } from 'app/pages/system/enclosure/utils/disk-status-tint.utils';
@@ -17,11 +17,9 @@ export class StatusesLegendComponent {
   readonly slots = input.required<DashboardEnclosureSlot[]>();
 
   protected readonly legend = computed(() => {
-    const statuses = chain(this.slots())
-      .filter((slot) => Boolean(slot.pool_info))
-      .map((slot) => slot.pool_info.disk_status)
-      .uniq()
-      .value();
+    const slots = this.slots();
+    const slotsWithPool = slots.filter((slot) => Boolean(slot.pool_info));
+    const statuses = uniq(slotsWithPool.map((slot) => slot.pool_info.disk_status));
 
     return statuses.map((status) => {
       const statusLabel = enclosureDiskStatusLabels.has(status) ? enclosureDiskStatusLabels.get(status) : status;

@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { pick } from 'lodash-es';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
@@ -60,6 +60,6 @@ export class CaImportComponent implements SummaryProvider {
   getPayload(): Omit<CaImportComponent['form']['value'], 'passphrase2'> {
     const values = this.form.value;
 
-    return _.pick(values, ['certificate', 'privatekey', 'passphrase']);
+    return pick(values, ['certificate', 'privatekey', 'passphrase']);
   }
 }

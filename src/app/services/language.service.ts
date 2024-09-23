@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { find } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -404,7 +404,7 @@ export class LanguageService {
    * @return Observable that completes when translations have been loaded.
    */
   setLanguage(lang: string): Observable<boolean> {
-    if (_.find(this.availableLangs, { code: lang })) {
+    if (find(this.availableLangs, { code: lang })) {
       this.currentLanguage = lang;
     } else {
       this.currentLanguage = 'en';

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { pick } from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
@@ -160,17 +160,17 @@ export class VmWizardComponent implements OnInit {
 
   private createVm(): Observable<VirtualMachine> {
     const vmPayload = {
-      ..._.pick(this.osForm, [
+      ...pick(this.osForm, [
         'name', 'description', 'time', 'hyperv_enlightenments', 'bootloader', 'shutdown_timeout', 'autostart',
       ]),
-      ..._.pick(this.cpuAndMemoryForm, [
+      ...pick(this.cpuAndMemoryForm, [
         'cpu_mode', 'vcpus', 'cores', 'threads', 'cpuset', 'nodeset', 'pin_vcpus',
       ]),
       cpu_model: this.cpuAndMemoryForm.cpu_model || null,
       // Middleware expects values in MiBs
       memory: this.cpuAndMemoryForm.memory / MiB,
       min_memory: this.cpuAndMemoryForm.min_memory ? this.cpuAndMemoryForm.min_memory / MiB : null,
-      ..._.pick(this.gpuForm, [
+      ...pick(this.gpuForm, [
         'ensure_display_device', 'hide_from_msr',
       ]),
     } as VirtualMachineUpdate;
