@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash-es';
+import { cloneDeep, concat } from 'lodash-es';
 import {
   EMPTY, Observable, catchError, combineLatest, map, of, switchMap, tap,
 } from 'rxjs';
@@ -86,21 +86,21 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   private sortPresets(presets: AclTemplateByPath[]): AclTemplateByPath[] {
-    return _.concat(
+    return concat(
       presets.filter((preset) => this.isCurrentAclType(preset.acltype)).sort((a, b) => (a.name < b.name ? -1 : 1)),
       presets.filter((preset) => !this.isCurrentAclType(preset.acltype)).sort((a, b) => (a.name < b.name ? -1 : 1)),
     );
   }
 
   onSubmit(): void {
-    this.loadIds(_.cloneDeep(this.acl)).pipe(
+    this.loadIds(cloneDeep(this.acl)).pipe(
       switchMap((newAcl) => {
         const payload: AclTemplateCreateParams = {
           name: this.form.value.presetName,
           acltype: this.acl.acltype,
           acl: newAcl.acl.map((acl) => {
             delete acl.who;
-            return _.cloneDeep(acl);
+            return cloneDeep(acl);
           }) as NfsAclItem[] | PosixAclItem[],
         };
 
@@ -157,7 +157,7 @@ export class SaveAsPresetModalComponent implements OnInit {
 
     const result$ = combineLatest(requests$).pipe(
       map(() => {
-        const newAcl = _.cloneDeep(acl);
+        const newAcl = cloneDeep(acl);
         const newAces = [];
         for (const ace of newAcl.acl) {
           if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {

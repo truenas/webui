@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
@@ -14,7 +14,7 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
   }
 
   get avoidCountRowsRequest(): boolean {
-    return this.totalRows && !this.isLastOffset && _.isEqual(this.lastParams, this.params[0]);
+    return this.totalRows && !this.isLastOffset && isEqual(this.lastParams, this.params[0]);
   }
 
   constructor(ws: WebSocketService) {

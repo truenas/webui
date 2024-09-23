@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
   inject,
 } from '@angular/core';
-import * as _ from 'lodash-es';
+import { uniq } from 'lodash-es';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -39,7 +39,7 @@ export class IpAddressesCellComponent<T> extends ColumnComponent<T> {
       addresses.push(...virtualAddresses);
     }
 
-    return _.uniq(addresses);
+    return uniq(addresses);
   }
 
   private aliasesToAddress(aliases: NetworkInterfaceAlias[]): string[] {

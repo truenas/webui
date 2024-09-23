@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash-es';
+import { replace } from 'lodash-es';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
@@ -91,8 +91,8 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
     });
 
     this.failure.pipe(untilDestroyed(this)).subscribe((job) => {
-      let error = _.replace(job.error, '<', '< ');
-      error = _.replace(error, '>', ' >');
+      let error = replace(job.error, '<', '< ');
+      error = replace(error, '>', ' >');
 
       this.description = '<b>Error:</b> ' + error;
     });

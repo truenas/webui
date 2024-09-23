@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { isObject } from 'lodash-es';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
@@ -157,7 +157,7 @@ export class SupportCardComponent implements OnInit {
 
     request$.pipe(
       switchMap((result) => {
-        const attachDebug = (_.isObject(result) && result.sendInitialDebug) || false;
+        const attachDebug = (isObject(result) && result.sendInitialDebug) || false;
 
         return this.ws.job('truenas.set_production', [event.checked, attachDebug]).pipe(this.loader.withLoader());
       }),

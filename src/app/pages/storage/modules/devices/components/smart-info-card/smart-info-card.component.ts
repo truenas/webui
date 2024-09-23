@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { uniqBy } from 'lodash-es';
 import {
   Observable,
 } from 'rxjs';
@@ -93,7 +93,7 @@ export class SmartInfoCardComponent implements OnChanges {
           ...result,
           description: this.normalizeDescription(result.description),
         }));
-        const lastResultsInCategories = _.uniqBy(normalizedResults, (result) => result.description);
+        const lastResultsInCategories = uniqBy(normalizedResults, (result) => result.description);
         return lastResultsInCategories.slice(0, this.maxResultCategories);
       }),
     );

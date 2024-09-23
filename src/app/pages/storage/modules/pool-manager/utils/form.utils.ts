@@ -1,5 +1,5 @@
 import { FormControl } from '@angular/forms';
-import * as _ from 'lodash-es';
+import { isEqual } from 'lodash-es';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
@@ -30,5 +30,5 @@ export function hasDeepChanges<T>(
   key: keyof T,
 ): boolean {
   return changes[key]?.currentValue
-    && !_.isEqual(changes[key].currentValue, changes[key].previousValue);
+    && !isEqual(changes[key].currentValue, changes[key].previousValue);
 }

@@ -9,7 +9,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { isEqual } from 'lodash-es';
 import {
   distinctUntilChanged, EMPTY, firstValueFrom, switchMap,
 } from 'rxjs';
@@ -99,7 +99,7 @@ export class SigninFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.form.valueChanges.pipe(
-      distinctUntilChanged(_.isEqual),
+      distinctUntilChanged(isEqual),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

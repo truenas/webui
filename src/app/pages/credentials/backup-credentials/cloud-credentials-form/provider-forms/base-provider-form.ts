@@ -1,5 +1,5 @@
 import { FormGroup } from '@angular/forms';
-import * as _ from 'lodash-es';
+import { isNull, omitBy } from 'lodash-es';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
@@ -23,7 +23,7 @@ export abstract class BaseProviderFormComponent<T = CloudCredential['attributes'
   }
 
   getSubmitAttributes(): T {
-    const nonNullAttributes = _.omitBy(this.form.value, _.isNull);
+    const nonNullAttributes = omitBy(this.form.value, isNull);
     return nonNullAttributes as T;
   }
 

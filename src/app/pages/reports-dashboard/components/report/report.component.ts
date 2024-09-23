@@ -13,7 +13,7 @@ import { UUID } from 'angular2-uuid';
 import {
   add, isToday, sub,
 } from 'date-fns';
-import * as _ from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import {
   BehaviorSubject, Subscription, timer,
 } from 'rxjs';
@@ -461,7 +461,7 @@ export class ReportComponent implements OnInit, OnChanges {
       untilDestroyed(this),
     ).subscribe({
       next: (event) => {
-        this.data = formatData(_.cloneDeep(event));
+        this.data = formatData(cloneDeep(event));
         this.cdr.markForCheck();
       },
       error: (err: WebSocketError) => {

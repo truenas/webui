@@ -1,5 +1,5 @@
 import { FormGroup, UntypedFormControl, ValidatorFn } from '@angular/forms';
-import * as _ from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 
 export function matchOthersFgValidator(
   controlName: string,
@@ -34,7 +34,7 @@ export function matchOthersFgValidator(
     }
     let prevErrors = { ...fg.get(controlName).errors };
     delete prevErrors.matchOther;
-    if (_.isEmpty(prevErrors)) {
+    if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
     fg.get(controlName).setErrors(prevErrors);
@@ -75,7 +75,7 @@ export function doesNotEqualFgValidator(
     }
     let prevErrors = { ...fg.get(controlName).errors };
     delete prevErrors.matchesOther;
-    if (_.isEmpty(prevErrors)) {
+    if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
     fg.get(controlName).setErrors(prevErrors);

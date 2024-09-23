@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { merge } from 'lodash-es';
 import {
   catchError, EMPTY, forkJoin, map, Observable, of, switchMap, tap,
 } from 'rxjs';
@@ -165,7 +165,7 @@ export class ReplicationWizardComponent {
     const steps = this.getSteps();
 
     const values = steps.map((step) => step.getPayload());
-    const payload = _.merge({}, ...values) as ReplicationWizardData;
+    const payload = merge({}, ...values) as ReplicationWizardData;
     payload.source_datasets = payload.source_datasets.map((item) => item.replace(`${mntPath}/`, ''));
     payload.target_dataset = payload.target_dataset.replace(`${mntPath}/`, '');
     return payload;

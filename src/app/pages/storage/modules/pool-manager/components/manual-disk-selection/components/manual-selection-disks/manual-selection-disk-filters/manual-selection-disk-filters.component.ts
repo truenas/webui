@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash-es';
+import { uniq } from 'lodash-es';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -39,7 +39,7 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
     map((disks) => {
       const diskSizes = disks.sort((a, b) => a.size - b.size).map((disk) => disk.size);
       const sizeLabels = diskSizes.map((size) => buildNormalizedFileSize(size));
-      const uniqueLabels = _.uniq(sizeLabels);
+      const uniqueLabels = uniq(sizeLabels);
       return uniqueLabels.map((size: string) => ({ label: size, value: size }));
     }),
   );

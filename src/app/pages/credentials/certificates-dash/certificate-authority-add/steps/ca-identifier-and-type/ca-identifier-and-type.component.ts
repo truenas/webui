@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { pick } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -106,7 +106,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   }
 
   getPayload(): Pick<CaIdentifierAndTypeComponent['form']['value'], 'name' | 'create_type' | 'add_to_trusted_store'> {
-    return _.pick(this.form.value, ['name', 'create_type', 'add_to_trusted_store']);
+    return pick(this.form.value, ['name', 'create_type', 'add_to_trusted_store']);
   }
 
   private emitEventOnProfileChange(): void {

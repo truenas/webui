@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash-es';
+import { range } from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -193,7 +193,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
     let nextOptions: Option[] = [];
     if ((groupSize + hotSpares) <= maxPossibleWidth && dataDevices) {
-      nextOptions = _.range(groupSize + hotSpares, maxPossibleWidth).map((item) => {
+      nextOptions = range(groupSize + hotSpares, maxPossibleWidth).map((item) => {
         const disks = item + 1;
         return {
           label: String(disks),

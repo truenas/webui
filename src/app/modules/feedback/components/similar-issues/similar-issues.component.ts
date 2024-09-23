@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash-es';
+import { sortBy, uniqBy } from 'lodash-es';
 import {
   BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, pairwise, switchMap,
 } from 'rxjs';
@@ -64,7 +64,7 @@ export class SimilarIssuesComponent {
     this.isLoading$.next(true);
     return this.feedbackService.getSimilarIssues(query).pipe(
       switchMap((newIssues) => {
-        const combinedUniqueIssues = _.sortBy(_.uniqBy([
+        const combinedUniqueIssues = sortBy(uniqBy([
           ...this.similarIssues$.value,
           ...newIssues,
         ], 'id'), { summaryText: query });

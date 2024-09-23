@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as _ from 'lodash-es';
+import { differenceBy } from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
@@ -53,7 +53,7 @@ export class VmGpuService {
   }
 
   private subtractGpus(gpus: Device[], gpusToSubtract: Device[]): Device[] {
-    return _.differenceBy(gpus, gpusToSubtract, (gpu) => gpu.addr.pci_slot);
+    return differenceBy(gpus, gpusToSubtract, (gpu) => gpu.addr.pci_slot);
   }
 
   private addGpus(vm: VirtualMachine, previousSlots: string[], gpusToAdd: Device[]): Observable<unknown>[] {
