@@ -1,10 +1,14 @@
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, Inject, OnDestroy, OnInit,
+  signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
 import {
@@ -15,6 +19,7 @@ import {
 import {
   AuditEvent, AuditService, auditEventLabels, auditServiceLabels,
 } from 'app/enums/audit.enum';
+import { ControllerType } from 'app/enums/controller-type.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
@@ -45,6 +50,8 @@ import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provi
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppsState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -55,8 +62,11 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AuditComponent implements OnInit, OnDestroy {
   protected readonly searchableElements = auditElements;
+  protected readonly controllerType = signal<ControllerType>(ControllerType.Active);
 
   protected dataProvider: AuditApiDataProvider;
+  protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  protected readonly ControllerType = ControllerType;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
   showMobileDetails = false;
   isMobileView = false;
@@ -97,7 +107,7 @@ export class AuditComponent implements OnInit, OnDestroy {
       getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
   ], {
-    uniqueRowTag: (row) => 'audit-' + row.service + '-' + row.username + '-' + row.event,
+    uniqueRowTag: (row) => `audit-${row.service}-${row.username}-${row.event}-${row.audit_id}`,
     ariaLabels: (row) => [row.service, row.username, row.event, this.translate.instant('Audit Entry')],
   });
 
@@ -120,8 +130,16 @@ export class AuditComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private activatedRoute: ActivatedRoute,
     private urlOptionsService: UrlOptionsService,
+    private store$: Store<AppsState>,
     @Inject(WINDOW) private window: Window,
-  ) {}
+  ) {
+    effect(() => {
+      this.dataProvider.selectedControllerType = this.controllerType();
+      this.dataProvider.isHaLicensed = this.isHaLicensed();
+
+      this.dataProvider.load();
+    });
+  }
 
   ngOnInit(): void {
     this.dataProvider = new AuditApiDataProvider(this.ws);
@@ -218,6 +236,18 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView ? 15 : 35));
+  }
+
+  controllerTypeChanged(changedValue: MatButtonToggleChange): void {
+    if (this.controllerType() === changedValue.value) {
+      return;
+    }
+
+    if (this.controllerType() === ControllerType.Active && changedValue.value === ControllerType.Standby) {
+      this.controllerType.set(ControllerType.Standby);
+    } else {
+      this.controllerType.set(ControllerType.Active);
+    }
   }
 
   private initMobileView(): void {

@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { ControllerType } from 'app/enums/controller-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -11,6 +13,7 @@ import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 describe('ExportButtonComponent', () => {
   const jobMethod: ApiJobMethod = 'audit.export';
@@ -28,6 +31,14 @@ describe('ExportButtonComponent', () => {
       ]),
       mockProvider(DownloadService, {
         downloadUrl: jest.fn(),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectIsHaLicensed,
+            value: true,
+          },
+        ],
       }),
     ],
   });
@@ -69,6 +80,7 @@ describe('ExportButtonComponent', () => {
       isBasicQuery: true,
       query: 'search query',
     });
+    spectator.setInput('controllerType', ControllerType.Standby);
     spectator.detectChanges();
 
     const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As CSV' }));
@@ -78,6 +90,7 @@ describe('ExportButtonComponent', () => {
       export_format: 'CSV',
       'query-filters': [['event', '~', '(?i)search query']],
       'query-options': { order_by: ['-service'] },
+      remote_controller: true,
     }]);
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [jobMethod, [{}], '/path/data.csv']);
     expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenLastCalledWith(

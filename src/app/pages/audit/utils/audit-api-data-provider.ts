@@ -1,5 +1,6 @@
 import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
+import { ControllerType } from 'app/enums/controller-type.enum';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -8,6 +9,8 @@ import { WebSocketService } from 'app/services/ws.service';
 
 export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
   lastParams: AuditQueryParams;
+  isHaLicensed: boolean;
+  selectedControllerType: ControllerType;
 
   get isLastOffset(): boolean {
     return Boolean((this.totalRows / this.pagination.pageNumber) < this.pagination.pageSize);
@@ -35,6 +38,10 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
       },
     ] as ApiCallParams<'audit.query'>;
 
+    if (this.isHaLicensed && this.selectedControllerType) {
+      params[0].remote_controller = this.selectedControllerType === ControllerType.Standby;
+    }
+
     return this.ws.call(this.method, params) as unknown as Observable<number>;
   }
 
@@ -45,11 +52,17 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
       ...this.sortingStrategy.getParams(this.sorting),
     };
 
-    return [
+    const apiCallParams: ApiCallParams<'audit.query'> = [
       {
         'query-filters': queryFilters,
         'query-options': queryOptions,
       },
     ];
+
+    if (this.isHaLicensed && this.selectedControllerType) {
+      apiCallParams[0].remote_controller = this.selectedControllerType === ControllerType.Standby;
+    }
+
+    return apiCallParams;
   }
 }

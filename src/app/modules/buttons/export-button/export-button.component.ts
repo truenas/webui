@@ -1,11 +1,14 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, EMPTY, switchMap } from 'rxjs';
+import { ControllerType } from 'app/enums/controller-type.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiCallDirectory } from 'app/interfaces/api/api-call-directory.interface';
@@ -20,6 +23,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppsState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -44,9 +49,12 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   @Input() fileType = 'csv';
   @Input() fileMimeType = 'text/csv';
   @Input() addReportNameArgument = false;
+  @Input() controllerType: ControllerType;
   @Input() downloadMethod?: keyof ApiCallDirectory;
 
   isLoading = false;
+
+  protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
   constructor(
     private ws: WebSocketService,
@@ -54,6 +62,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private download: DownloadService,
+    private store$: Store<AppsState>,
   ) {}
 
   onExport(): void {
@@ -100,11 +109,19 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
     queryFilters: QueryFilters<T>,
     queryOptions: QueryOptions<T>,
   ): ApiJobParams<M> {
-    return [{
+    const options = {
       'query-filters': queryFilters,
       'query-options': queryOptions,
       export_format: ExportFormat.Csv,
-    }] as unknown as ApiJobParams<M>;
+      remote_controller: this.controllerType === ControllerType.Standby,
+    };
+    const params = [options] as ApiJobParams<M>;
+
+    if (!this.isHaLicensed() || !this.controllerType) {
+      delete options.remote_controller;
+    }
+
+    return params;
   }
 
   private getQueryFilters(searchQuery: SearchQuery<T>): QueryFilters<T> {
