@@ -1,6 +1,4 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -11,14 +9,11 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import {
-  commonDeclarations,
+  commonDeclarations, commonImports,
   commonProviders,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/common.utils';
 import {
@@ -34,11 +29,7 @@ describe('PoolManagerComponent – step changing', () => {
   const createComponent = createComponentFactory({
     component: PoolManagerComponent,
     imports: [
-      ReactiveFormsModule,
-      MatStepperModule,
-      FileSizePipe,
-      MapValuePipe,
-      CastPipe,
+      ...commonImports,
     ],
     declarations: [
       ...commonDeclarations,

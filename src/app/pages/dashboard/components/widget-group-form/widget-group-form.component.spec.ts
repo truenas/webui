@@ -32,7 +32,6 @@ describe('WidgetGroupFormComponent', () => {
   const createComponent = createComponentFactory({
     component: WidgetGroupFormComponent,
     imports: [
-      TestIdModule,
       ReactiveFormsModule,
     ],
     declarations: [

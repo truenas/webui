@@ -1,6 +1,6 @@
 import { MatInputModule } from '@angular/material/input';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents, MockModule } from 'ng-mocks';
+import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -44,7 +44,7 @@ describe('SigninComponent', () => {
     component: SigninComponent,
     imports: [
       MatInputModule,
-      MockModule(IxIconComponent),
+      MockComponents(IxIconComponent),
     ],
     declarations: [
       MockComponents(
