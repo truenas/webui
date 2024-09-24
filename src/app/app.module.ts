@@ -3,6 +3,7 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,6 +30,7 @@ import { createTranslateLoader } from 'app/core/classes/icu-translations-loader'
 import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { FeedbackModule } from 'app/modules/feedback/feedback.module';
+import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -121,6 +123,10 @@ import { AuthGuardService } from './services/auth/auth-guard.service';
     {
       provide: WINDOW,
       useFactory: getWindow,
+    },
+    {
+      provide: MatIconRegistry,
+      useClass: IxIconRegistry,
     },
     {
       provide: WebSocketService,
