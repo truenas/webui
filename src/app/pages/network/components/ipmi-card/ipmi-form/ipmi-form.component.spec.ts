@@ -44,7 +44,6 @@ describe('IpmiFormComponent', () => {
               reasons: [],
             },
             isHaLicensed: true,
-            isUpgradePending: false,
           },
         },
       }),

@@ -26,7 +26,6 @@ import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-ind
 import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
-import { FailoverUpgradeIndicatorComponent } from 'app/modules/layout/topbar/failover-upgrade-indicator/failover-upgrade-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
 import { IxLogoComponent } from 'app/modules/layout/topbar/ix-logo/ix-logo.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
@@ -61,7 +60,6 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     RouterLink,
     IxLogoComponent,
     TruecommandModule,
-    FailoverUpgradeIndicatorComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
     HaStatusIconComponent,

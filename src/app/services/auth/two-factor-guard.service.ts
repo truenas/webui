@@ -3,7 +3,6 @@ import {
   ActivatedRouteSnapshot, RouterStateSnapshot, Router, CanActivateChild,
 } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, switchMap, take, forkJoin,
@@ -12,8 +11,6 @@ import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { AppsState } from 'app/store';
-import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Injectable()
@@ -23,7 +20,6 @@ export class TwoFactorGuardService implements CanActivateChild {
     private authService: AuthService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private store$: Store<AppsState>,
     private appLoader: AppLoaderService,
   ) { }
 
@@ -61,25 +57,15 @@ export class TwoFactorGuardService implements CanActivateChild {
   }
 
   private showTwoFactorWarning(): Observable<boolean> {
-    this.appLoader.open('Checking for pending upgrade');
-    return this.store$.select(selectIsUpgradePending).pipe(
-      take(1),
-      switchMap((isUpgradePending) => {
-        if (isUpgradePending) {
-          this.appLoader.close();
-          return of(true);
-        }
-        return this.dialogService.fullScreenDialog(
-          this.translate.instant('Two-Factor Authentication Setup Warning!'),
-          this.translate.instant('Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication on the next page. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.'),
-          true,
-        ).pipe(
-          switchMap(() => {
-            this.appLoader.close();
-            this.router.navigate(['/two-factor-auth']);
-            return of(false);
-          }),
-        );
+    return this.dialogService.fullScreenDialog(
+      this.translate.instant('Two-Factor Authentication Setup Warning!'),
+      this.translate.instant('Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication on the next page. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.'),
+      true,
+    ).pipe(
+      switchMap(() => {
+        this.appLoader.close();
+        this.router.navigate(['/two-factor-auth']);
+        return of(false);
       }),
     );
   }

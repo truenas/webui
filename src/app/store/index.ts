@@ -5,7 +5,6 @@ import { HaFipsEffects } from 'app/store/ha-fips/ha-fips.effects';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
 import { haInfoReducer, HaInfoState } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
-import { HaUpgradeEffects } from 'app/store/ha-upgrade/ha-upgrade.effects';
 import { NetworkInterfacesEffects } from 'app/store/network-interfaces/network-interfaces.effects';
 import {
   networkInterfacesReducer,
@@ -51,7 +50,6 @@ export const rootEffects = [
   SystemInfoEffects,
   HaInfoEffects,
   EulaEffects,
-  HaUpgradeEffects,
   ServicesEffects,
   NetworkInterfacesEffects,
   HaFipsEffects,

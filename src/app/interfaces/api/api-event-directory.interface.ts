@@ -9,6 +9,7 @@ import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-re
 import { Group } from 'app/interfaces/group.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -28,12 +29,14 @@ export interface ApiEventDirectory {
   'disk.query': { response: Disk };
   'docker.state': { response: DockerStatusData };
   'failover.disabled.reasons': { response: FailoverDisabledReasonEvent };
+  'failover.reboot.info': { response: FailoverRebootInfo };
   'failover.status': { response: { status: FailoverStatus } };
   'group.query': { response: Group };
   'pool.query': { response: Pool };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'service.query': { response: Service };
   'smart.test.progress': { response: SmartTestProgressUpdate };
+  'system.reboot.info': { response: SystemRebootInfo };
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
   'vm.query': { response: VirtualMachine };

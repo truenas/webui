@@ -685,7 +685,6 @@
     "./src/app/services/url-validation.service.ts",
     "./src/app/store/admin-panel/admin.actions.ts",
     "./src/app/store/ha-info/ha-info.actions.ts",
-    "./src/app/store/ha-upgrade/ha-upgrade.actions.ts",
     "./src/app/store/network-interfaces/network-interfaces.actions.ts",
     "./src/app/store/preferences/default-preferences.constant.ts",
     "./src/app/store/preferences/preferences.actions.ts",

@@ -110,7 +110,6 @@ export interface ApiJobDirectory {
   // Failover
   'failover.reboot.other_node': { params: void; response: void };
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
-  'failover.upgrade_finish': { params: void; response: boolean };
 
   // Filesystem
   'filesystem.put': { params: FilesystemPutParams; response: boolean };

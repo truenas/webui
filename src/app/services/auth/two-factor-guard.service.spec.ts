@@ -1,12 +1,10 @@
 import { Router, RouterStateSnapshot } from '@angular/router';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
-import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 
 describe('TwoFactorGuardService', () => {
   let spectator: SpectatorService<TwoFactorGuardService>;
@@ -28,14 +26,6 @@ describe('TwoFactorGuardService', () => {
       }),
       mockProvider(DialogService, {
         fullScreenDialog: jest.fn(() => of(true)),
-      }),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectIsUpgradePending,
-            value: false,
-          },
-        ],
       }),
     ],
   });
@@ -92,17 +82,5 @@ describe('TwoFactorGuardService', () => {
 
     expect(spectator.inject(DialogService).fullScreenDialog).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/two-factor-auth']);
-  });
-
-  it('allows route access when upgrade is pending', async () => {
-    isAuthenticated$.next(true);
-    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
-    userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
-
-    const mockStore$ = spectator.inject(MockStore);
-    mockStore$.overrideSelector(selectIsUpgradePending, true);
-
-    const isAllowed = await firstValueFrom(spectator.service.canActivateChild(null, { url: '/dashboard' } as RouterStateSnapshot));
-    expect(isAllowed).toBe(true);
   });
 });
