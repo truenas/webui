@@ -6,37 +6,32 @@ import { EMPTY } from 'rxjs';
 import {
   filter, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { failoverAllowedReasons, FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { failoverAllowedReasons } from 'app/enums/failover-disabled-reason.enum';
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { AuthService } from 'app/services/auth/auth.service';
 import { FipsService } from 'app/services/fips.service';
-import { haStatusLoaded } from 'app/store/ha-info/ha-info.actions';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { rebootInfoLoaded } from 'app/store/reboot-info/reboot-info.actions';
 
 @UntilDestroy()
 @Injectable()
 export class HaFipsEffects {
   checkIfRebootRequired$ = createEffect(() => this.actions$.pipe(
-    ofType(haStatusLoaded),
+    ofType(rebootInfoLoaded),
     withLatestFrom(this.store$.select(selectIsHaLicensed)),
     filter(([, isHa]) => isHa),
+    withLatestFrom(this.store$.select(selectHaStatus)),
+    filter(([, haStatus]) => haStatus?.reasons?.every((reason) => failoverAllowedReasons.includes(reason))),
     filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
-    switchMap(([{ haStatus }]) => {
-      // Indicative of a machine that hasn't finished booting.
-      const hasOtherReasons = haStatus.reasons.some((reason) => !failoverAllowedReasons.includes(reason));
-
-      if (hasOtherReasons) {
-        return EMPTY;
-      }
-
-      const needsToReloadSelf = haStatus.reasons.includes(FailoverDisabledReason.LocalFipsRebootRequired);
+    switchMap(([[{ thisNodeInfo, otherNodeInfo }]]) => {
+      const needsToReloadSelf = thisNodeInfo.reboot_required_reasons?.length;
 
       if (needsToReloadSelf) {
         return this.fips.promptForFailover();
       }
 
-      const needsToReloadRemote = haStatus.reasons.includes(FailoverDisabledReason.RemoteFipsRebootRequired);
+      const needsToReloadRemote = otherNodeInfo.reboot_required_reasons?.length;
       if (needsToReloadRemote) {
         return this.fips.promptForRemoteRestart();
       }

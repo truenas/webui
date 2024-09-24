@@ -14,6 +14,7 @@ import { networkInterfacesKey } from 'app/store/network-interfaces/network-inter
 import { PreferencesEffects } from 'app/store/preferences/preferences.effects';
 import { preferencesReducer, PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { preferencesStateKey } from 'app/store/preferences/preferences.selectors';
+import { RebootInfoEffects } from 'app/store/reboot-info/reboot-info.effects';
 import { CustomRouterState } from 'app/store/router/custom-router-serializer';
 import { ServicesEffects } from 'app/store/services/services.effects';
 import { servicesReducer, ServicesState } from 'app/store/services/services.reducer';
@@ -53,4 +54,5 @@ export const rootEffects = [
   ServicesEffects,
   NetworkInterfacesEffects,
   HaFipsEffects,
+  RebootInfoEffects,
 ];
