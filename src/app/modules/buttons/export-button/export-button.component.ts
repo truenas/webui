@@ -109,19 +109,14 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
     queryFilters: QueryFilters<T>,
     queryOptions: QueryOptions<T>,
   ): ApiJobParams<M> {
-    const options = {
+    return [{
       'query-filters': queryFilters,
       'query-options': queryOptions,
       export_format: ExportFormat.Csv,
-      remote_controller: this.controllerType === ControllerType.Standby,
-    };
-    const params = [options] as ApiJobParams<M>;
-
-    if (!this.isHaLicensed() || !this.controllerType) {
-      delete options.remote_controller;
-    }
-
-    return params;
+      ...(this.isHaLicensed() && this.controllerType && {
+        remote_controller: this.controllerType === ControllerType.Standby,
+      }),
+    }] as ApiJobParams<M>;
   }
 
   private getQueryFilters(searchQuery: SearchQuery<T>): QueryFilters<T> {
@@ -133,18 +128,13 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   }
 
   private getQueryOptions(sorting: TableSort<T>): QueryOptions<T> {
-    if (!sorting) {
+    if (!sorting?.propertyName || !sorting?.direction) {
       return {};
     }
 
-    if (sorting.propertyName === null || sorting.direction === null) {
-      return {};
-    }
-
+    const orderPrefix = sorting.direction === SortDirection.Desc ? '-' : '';
     return {
-      order_by: [
-        ((sorting.direction === SortDirection.Desc ? '-' : '') + (sorting.propertyName as string)) as PropertyPath<T>,
-      ],
+      order_by: [`${orderPrefix}${sorting.propertyName as string}` as PropertyPath<T>],
     };
   }
 }

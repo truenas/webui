@@ -31,37 +31,30 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
 
     this.lastParams = this.params[0];
 
-    const params = [
-      {
-        'query-filters': this.params[0] || [],
-        'query-options': { count: true },
-      },
-    ] as ApiCallParams<'audit.query'>;
-
-    if (this.isHaLicensed && this.selectedControllerType) {
-      params[0].remote_controller = this.selectedControllerType === ControllerType.Standby;
-    }
+    const params: ApiCallParams<'audit.query'> = [{
+      'query-filters': (this.params[0] || []) as QueryFilters<AuditEntry>,
+      'query-options': { count: true },
+      ...(this.isHaLicensed && this.selectedControllerType && {
+        remote_controller: this.selectedControllerType === ControllerType.Standby,
+      }),
+    }];
 
     return this.ws.call(this.method, params) as unknown as Observable<number>;
   }
 
   protected override prepareParams(params: ApiCallParams<'audit.query'>): ApiCallParams<'audit.query'> {
-    const queryFilters = (params[0] || []) as QueryFilters<AuditEntry>;
-    const queryOptions = {
-      ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
-      ...this.sortingStrategy.getParams(this.sorting),
-    };
+    const [queryFilters = []] = params as [QueryFilters<AuditEntry>];
 
-    const apiCallParams: ApiCallParams<'audit.query'> = [
-      {
-        'query-filters': queryFilters,
-        'query-options': queryOptions,
+    const apiCallParams: ApiCallParams<'audit.query'> = [{
+      'query-filters': queryFilters,
+      'query-options': {
+        ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
+        ...this.sortingStrategy.getParams(this.sorting),
       },
-    ];
-
-    if (this.isHaLicensed && this.selectedControllerType) {
-      apiCallParams[0].remote_controller = this.selectedControllerType === ControllerType.Standby;
-    }
+      ...(this.isHaLicensed && this.selectedControllerType && {
+        remote_controller: this.selectedControllerType === ControllerType.Standby,
+      }),
+    }];
 
     return apiCallParams;
   }
