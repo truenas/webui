@@ -5,7 +5,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { remove } from 'lodash-es';
 import {
   Observable, combineLatest, of,
 } from 'rxjs';
@@ -240,7 +239,7 @@ export class GroupFormComponent implements OnInit {
     this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
       let forbiddenNames = groups.map((group) => group.group);
       if (currentName) {
-        forbiddenNames = remove(forbiddenNames, currentName);
+        forbiddenNames = forbiddenNames.filter((name) => name !== currentName);
       }
       this.form.controls.name.addValidators(forbiddenValues(forbiddenNames));
     });
