@@ -70,7 +70,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
         state.searchQuery.length ? [] : recommendedApps,
         state.searchQuery.length ? [] : latestApps,
         appsCategories,
-        state,
+        state.filter.categories,
       );
     }),
   );
@@ -94,7 +94,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
         recommendedApps,
         latestApps,
         appsCategories,
-        state,
+        state.filter.categories,
       );
     }),
   );
@@ -140,14 +140,12 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
 
     let request$: Observable<AvailableApp[]> = this.appsService.getAvailableApps({
       ...filter,
-      sort: AppsFiltersSort.Name,
       categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.Recommended)),
     });
 
     if (filter.categories.some((category) => category.includes(AppExtraCategory.NewAndUpdated))) {
       request$ = this.appsService.getLatestApps({
         ...filter,
-        sort: AppsFiltersSort.Name,
         categories: filter.categories.filter((category) => !category.includes(AppExtraCategory.NewAndUpdated)),
       });
     }
@@ -256,28 +254,28 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     recommendedApps: AvailableApp[],
     latestApps: AvailableApp[],
     categories: string[],
-    state: AppsFilterState,
+    categoriesFilter: string[],
   ): AppsByCategory[] {
     const appsByCategory: AppsByCategory[] = [];
 
-    const hasCategoriesFilter = state.filter.categories.length > 0;
+    const hasCategoriesFilter = categoriesFilter.length > 0;
 
     const availableCategories = hasCategoriesFilter
-      ? categories.filter((category) => state.filter.categories.includes(category))
+      ? categories.filter((category) => categoriesFilter.includes(category))
       : categories;
 
-    const filterAndSortApps = (apps: AvailableApp[]): AvailableApp[] => apps.filter((app) => {
+    const filterAppsByNameAndTrain = (apps: AvailableApp[]): AvailableApp[] => apps.filter((app) => {
       return filteredApps.some((filteredApp) => filteredApp.train === app.train && filteredApp.name === app.name);
-    }).toSorted((a, b) => a.name.localeCompare(b.name));
+    });
 
-    const filteredRecommendedApps = filterAndSortApps(recommendedApps).map(
+    const filteredRecommendedApps = filterAppsByNameAndTrain(recommendedApps).map(
       (app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] }),
     );
-    const filteredLatestApps = filterAndSortApps(latestApps).map(
+    const filteredLatestApps = filterAppsByNameAndTrain(latestApps).map(
       (app) => ({ ...app, categories: [...app.categories, AppExtraCategory.NewAndUpdated] }),
     );
 
-    if (state.filter.categories.includes(AppExtraCategory.NewAndUpdated) || !hasCategoriesFilter) {
+    if (categoriesFilter.includes(AppExtraCategory.NewAndUpdated) || !hasCategoriesFilter) {
       appsByCategory.push({
         title: this.translate.instant(appExtraCategoryLabels.get(AppExtraCategory.NewAndUpdated)),
         apps: hasCategoriesFilter ? filteredLatestApps : filteredLatestApps.slice(0, this.appsPerCategory),
@@ -286,7 +284,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       });
     }
 
-    if (state.filter.categories.includes(AppExtraCategory.Recommended) || !hasCategoriesFilter) {
+    if (categoriesFilter.includes(AppExtraCategory.Recommended) || !hasCategoriesFilter) {
       appsByCategory.push({
         title: this.translate.instant(appExtraCategoryLabels.get(AppExtraCategory.Recommended)),
         apps: hasCategoriesFilter ? filteredRecommendedApps : filteredRecommendedApps.slice(0, this.appsPerCategory),
