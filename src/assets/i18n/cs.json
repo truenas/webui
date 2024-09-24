@@ -4028,6 +4028,7 @@
   "Who this ACL entry applies to, shown as a <a href=\"https://docs.microsoft.com/en-us/windows/win32/secauthz/security-identifiers\" target=\"_blank\">Windows Security Identifier</a>. Either a <i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL.": "",
   "Who this ACL entry applies to, shown as a user name. Requires adding the user <i>Domain</i>.": "",
   "Xen: Extent block size 512b, TPC enabled, Xen compat mode enabled, SSD speed": "",
+  "ZFS Errors": "",
   "iXsystems does not audit or otherwise validate the contents of third-party applications catalogs.     It is incumbent on the user to verify that the new catalog is from a trusted source and that the third-party     properly audits its chart contents. Failure to exercise due diligence may expose the user and their data to     some or all of the following:<br/>    <ul>\n      <li>Malicious software</li>\n      <li>Broken services on TrueNAS host</li>\n      <li>Service disruption on TrueNAS host</li>\n      <li>Broken filesystem permissions on Host or within application</li>\n      <li>Unexpected deletion of user data</li>\n      <li>Unsafe service configuration in application</li>\n      <li>Degradation of TrueNAS host performance and stability</li>\n    </ul>": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",
