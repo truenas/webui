@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map, startWith } from 'rxjs';
+import { map, startWith } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -26,8 +26,6 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
   });
 
   protected installedApps$ = this.resources.installedApps$.pipe(
-    filter((state) => !!state.value && !state.isLoading),
-    map((state) => state.value),
     startWith([]),
     idNameArrayToOptions(),
   );
