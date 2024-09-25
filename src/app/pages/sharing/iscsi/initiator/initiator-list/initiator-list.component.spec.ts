@@ -18,6 +18,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -39,6 +40,7 @@ describe('InitiatorListComponent', () => {
     imports: [
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
+      FakeProgressBarComponent,
     ],
     providers: [
       mockAuth(),
