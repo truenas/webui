@@ -17,6 +17,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
+import { RebootDialogComponent } from 'app/modules/dialog/components/reboot-dialog/reboot-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchModule } from 'app/modules/global-search/global-search.module';
@@ -38,7 +39,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -82,6 +85,8 @@ export class TopbarComponent implements OnInit {
   updateIsRunning = false;
   systemWillRestart = false;
   updateNotificationSent = false;
+  bootInfoNotificationSent = false;
+  hasRebootRequiredReasons = false;
   tooltips = helptextTopbar.mat_tooltips;
   protected searchableElements = toolBarElements;
 
@@ -94,6 +99,7 @@ export class TopbarComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private matDialog: MatDialog,
     private store$: Store<AlertSlice>,
+    private appStore$: Store<AppsState>,
     private cdr: ChangeDetectorRef,
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
@@ -147,6 +153,18 @@ export class TopbarComponent implements OnInit {
 
       this.cdr.markForCheck();
     });
+
+    this.appStore$.select(selectRebootInfo).pipe(untilDestroyed(this)).subscribe((state) => {
+      this.hasRebootRequiredReasons = !!state.thisNodeInfo?.reboot_required_reasons?.length
+        || !!state.otherNodeInfo?.reboot_required_reasons?.length;
+
+      if (!this.bootInfoNotificationSent && this.hasRebootRequiredReasons) {
+        this.showRebootInfoDialog();
+        this.bootInfoNotificationSent = true;
+      }
+
+      this.cdr.markForCheck();
+    });
   }
 
   onAlertIndicatorPressed(): void {
@@ -178,6 +196,15 @@ export class TopbarComponent implements OnInit {
       position: topbarDialogPosition,
     });
     this.updateDialog.componentInstance.setMessage({ title, message });
+  }
+
+  showRebootInfoDialog(): void {
+    this.matDialog.open(RebootDialogComponent, {
+      width: '400px',
+      hasBackdrop: true,
+      panelClass: 'topbar-panel',
+      position: topbarDialogPosition,
+    });
   }
 
   onFeedbackIndicatorPressed(): void {

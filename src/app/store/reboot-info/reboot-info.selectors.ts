@@ -5,6 +5,11 @@ export const rebootInfoStateKey = 'rebootInfo';
 
 export const selectRebootInfoState = createFeatureSelector<RebootInfoState>(rebootInfoStateKey);
 
+export const selectRebootInfo = createSelector(
+  selectRebootInfoState,
+  (state) => state,
+);
+
 export const selectThisNodeInfo = createSelector(
   selectRebootInfoState,
   (state) => state?.thisNodeInfo,

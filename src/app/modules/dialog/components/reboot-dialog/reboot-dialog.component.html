@@ -1,0 +1,42 @@
+<div class="dialog-content" mat-dialog-content>
+  <h3 mat-dialog-title class="dialog-title">
+    {{ 'Reboot Info' | translate }}
+  </h3>
+
+  <ng-container
+    *appLet="thisNodeInfo$ | async as nodeInfo"
+    [ngTemplateOutlet]="reasonsTemplate"
+    [ngTemplateOutletContext]="{
+      $implicit: {
+        reasons: nodeInfo?.reboot_required_reasons,
+        message: 'The local node must be rebooted because' | translate,
+      }
+    }"
+  ></ng-container>
+  
+  <ng-container
+    *appLet="otherNodeInfo$ | async as nodeInfo"
+    [ngTemplateOutlet]="reasonsTemplate"
+    [ngTemplateOutletContext]="{
+      $implicit: {
+        reasons: nodeInfo?.reboot_required_reasons,
+        message: 'The remote node must be rebooted because' | translate,
+      }
+    }"
+  ></ng-container>
+</div>
+
+<ng-template #reasonsTemplate let-props>
+  @if (typeReasons(props.reasons); as reasons) {
+    <div class="reasons">
+      <p class="dialog-message">
+        <span>{{ props.message }}:</span>
+      </p>
+      @for (reason of reasons; track reason) {
+        <li>
+          {{ reason.reason }}
+        </li>
+      }
+    </div>
+  }
+</ng-template>

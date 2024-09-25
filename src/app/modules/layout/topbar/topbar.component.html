@@ -39,6 +39,18 @@
 
         <ix-truecommand-button></ix-truecommand-button>
 
+        @if (hasRebootRequiredReasons) {
+          <button
+            mat-icon-button
+            class="topbar-button-right"
+            ixTest="reboot-info"
+            [matTooltip]="tooltips.reboot_info | translate"
+            (click)="showRebootInfoDialog()"
+          >
+          <ix-icon class="movement" name="update"></ix-icon>
+          </button>
+        }
+
         <!-- finish update -->
         @if (updateIsRunning) {
           <button
