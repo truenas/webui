@@ -1201,6 +1201,7 @@
   "Xen: Extent block size 512b, TPC enabled, Xen compat mode enabled, SSD speed": "",
   "You can search both for local groups as well as groups from Active Directory. Press ENTER to separate entries.": "",
   "Your dashboard is currently empty!": "",
+  "ZFS Errors": "",
   "ZFS Replication to another TrueNAS": "",
   "ZFS Reports": "",
   "ZFS Stats": "",
