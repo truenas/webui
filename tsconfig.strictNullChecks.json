@@ -412,7 +412,6 @@
     "./src/app/modules/dialog/components/redirect-dialog/redirect-dialog.component.ts",
     "./src/app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component.ts",
     "./src/app/modules/empty/empty.service.ts",
-    "./src/app/modules/entity/entity-job/entity-job-config.interface.ts",
     "./src/app/modules/forms/toolbar-slider/toolbar-slider.component.ts",
     "./src/app/modules/feedback/interfaces/feedback.interface.ts",
     "./src/app/modules/feedback/interfaces/file-ticket.interface.ts",
