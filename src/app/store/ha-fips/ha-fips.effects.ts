@@ -25,13 +25,13 @@ export class HaFipsEffects {
     filter(([, haStatus]) => haStatus?.reasons?.every((reason) => failoverAllowedReasons.includes(reason))),
     filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
     switchMap(([[{ thisNodeInfo, otherNodeInfo }]]) => {
-      const needsToReloadSelf = thisNodeInfo.reboot_required_reasons?.length;
+      const needsToReloadSelf = thisNodeInfo?.reboot_required_reasons?.length;
 
       if (needsToReloadSelf) {
         return this.fips.promptForFailover();
       }
 
-      const needsToReloadRemote = otherNodeInfo.reboot_required_reasons?.length;
+      const needsToReloadRemote = otherNodeInfo?.reboot_required_reasons?.length;
       if (needsToReloadRemote) {
         return this.fips.promptForRemoteRestart();
       }
