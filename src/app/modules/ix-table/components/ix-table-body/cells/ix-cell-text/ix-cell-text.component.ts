@@ -4,7 +4,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-cell-text',
@@ -13,8 +13,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatTooltip,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxCellTextComponent<T> extends ColumnComponent<T> {}

@@ -14,7 +14,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -65,7 +64,6 @@ describe('SnapshotTaskCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SnapshotTaskCardComponent,
     imports: [
-      AppLoaderModule,
     ],
     providers: [
       mockAuth(),

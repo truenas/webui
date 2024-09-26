@@ -11,7 +11,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { NfsSessionListComponent } from './nfs-session-list.component';
 
@@ -48,7 +47,6 @@ describe('NfsSessionListComponent', () => {
   const createComponent = createComponentFactory({
     component: NfsSessionListComponent,
     imports: [
-      AppLoaderModule,
       MatButtonToggleModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,

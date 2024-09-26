@@ -7,7 +7,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
 import { FailoverComponent } from 'app/pages/system-tasks/failover/failover.component';
@@ -18,7 +18,7 @@ import { systemTasksRoutes } from 'app/pages/system-tasks/system-tasks.routing';
 @NgModule({
   imports: [
     MatListModule,
-    IxIconModule,
+    IxIconComponent,
     MatButtonModule,
     MatCardModule,
     MatMenuModule,

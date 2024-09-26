@@ -7,7 +7,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 
@@ -20,7 +19,6 @@ describe.skip('ShellDetailsDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: ShellDetailsDialogComponent,
     imports: [
-      AppLoaderModule,
       ReactiveFormsModule,
     ],
     providers: [

@@ -8,7 +8,7 @@ import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @NgModule({
@@ -16,12 +16,12 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     EntityModule,
     TranslateModule,
     MatButtonModule,
-    TestIdModule,
     MatDialogModule,
     ToolbarSliderComponent,
     TooltipComponent,
     PageHeaderModule,
     NgStyle,
+    TestDirective,
   ],
   declarations: [
     TerminalComponent,

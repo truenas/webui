@@ -14,7 +14,6 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -40,7 +39,6 @@ describe('BootenvStatsDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: BootenvStatsDialogComponent,
     imports: [
-      AppLoaderModule,
       ReactiveFormsModule,
       MapValuePipe,
       FileSizePipe,

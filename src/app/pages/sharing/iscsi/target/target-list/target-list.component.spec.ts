@@ -15,7 +15,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/target-list/target-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -35,9 +35,9 @@ describe('TargetListComponent', () => {
   const createComponent = createComponentFactory({
     component: TargetListComponent,
     imports: [
-      AppLoaderModule,
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
+      FakeProgressBarComponent,
     ],
     providers: [
       mockProvider(EmptyService),

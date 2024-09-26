@@ -9,7 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { appStateIcons, appStateLabels } from 'app/enums/app-state.enum';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 @Component({
@@ -18,7 +18,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   styleUrls: ['./app-state-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [TranslateModule, MapValuePipe, MatTooltipModule, IxIconModule],
+  imports: [TranslateModule, MapValuePipe, MatTooltipModule, IxIconComponent],
 })
 export class AppStateCellComponent {
   app = input.required<App>();

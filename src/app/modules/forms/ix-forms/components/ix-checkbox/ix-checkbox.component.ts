@@ -11,7 +11,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @UntilDestroy()
@@ -23,11 +23,11 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   standalone: true,
   imports: [
     MatCheckbox,
-    TestIdModule,
     TooltipComponent,
     IxWarningComponent,
     IxErrorsComponent,
     MatHint,
+    TestDirective,
   ],
 })
 export class IxCheckboxComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {

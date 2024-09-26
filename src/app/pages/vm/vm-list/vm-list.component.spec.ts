@@ -15,7 +15,6 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
@@ -55,7 +54,6 @@ describe('VmListComponent', () => {
   const createComponent = createComponentFactory({
     component: VmListComponent,
     imports: [
-      AppLoaderModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
       IxTableColumnsSelectorComponent,

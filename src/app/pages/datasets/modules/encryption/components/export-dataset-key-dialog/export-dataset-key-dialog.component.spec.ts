@@ -7,7 +7,6 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ExportDatasetKeyDialogComponent } from './export-dataset-key-dialog.component';
@@ -18,7 +17,6 @@ describe('ExportDatasetKeyDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: ExportDatasetKeyDialogComponent,
     imports: [
-      AppLoaderModule,
     ],
     providers: [
       mockWebSocket([

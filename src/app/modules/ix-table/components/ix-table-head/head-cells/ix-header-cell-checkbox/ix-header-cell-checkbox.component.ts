@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -15,9 +15,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatCheckbox,
-    TestIdModule,
     TranslateModule,
     AsyncPipe,
+    TestDirective,
   ],
 })
 export class IxHeaderCellCheckboxComponent<T> extends ColumnComponent<T> {

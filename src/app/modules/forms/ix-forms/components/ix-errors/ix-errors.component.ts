@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 type SomeError = Record<string, unknown>;
 
@@ -25,7 +25,7 @@ export const ixManualValidateError = 'ixManualValidateError';
   standalone: true,
   imports: [
     MatError,
-    IxIconModule,
+    IxIconComponent,
     MatTooltip,
     TranslateModule,
   ],
