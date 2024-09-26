@@ -120,7 +120,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         this.handleAddedOrUpdatedEvent(apiEvent);
         break;
       default:
-        console.error('Unknown API event type (installed-apps-store.service):', apiEvent.msg);
+        console.error('Unknown API event type');
         break;
     }
   }
