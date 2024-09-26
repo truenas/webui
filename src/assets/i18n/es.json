@@ -4502,6 +4502,7 @@
   "You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.": "",
   "Your dashboard is currently empty!": "",
   "ZFS Encryption": "",
+  "ZFS Errors": "",
   "ZFS Filesystem": "",
   "ZFS Health": "",
   "ZFS Info": "",

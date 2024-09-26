@@ -77,6 +77,7 @@
   "We encountered an issue while applying the new network changes.  Unfortunately, we were unable to reconnect to the system after the changes were implemented.  As a result, we have restored the previous network configuration to ensure continued connectivity.": "",
   "We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and reload the page.": "",
   "You have successfully added credentials.": "",
+  "ZFS Errors": "",
   "was successfully attached.": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{coreCount, plural, one {# core} other {# cores} }": "",

@@ -4133,6 +4133,7 @@
   "Your dashboard is currently empty!": "",
   "ZFS": "",
   "ZFS Encryption": "",
+  "ZFS Errors": "",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "",
   "ZFS Replication to another TrueNAS": "",
