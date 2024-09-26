@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
-import * as _ from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
@@ -42,25 +42,25 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
     state: ManualDiskSelectionState,
     vdevUpdate: { disk: DetailsDisk; vdev: ManualSelectionVdev },
   ) => {
-    let vdevs = _.cloneDeep(state.vdevs);
+    let vdevs = cloneDeep(state.vdevs);
     if (!vdevs.length) {
-      vdevs = [_.cloneDeep(vdevUpdate.vdev)];
+      vdevs = [cloneDeep(vdevUpdate.vdev)];
     }
     for (const vdev of vdevs) {
       const diskAlreadyExists = vdev.disks.some(
         (vdevDisk) => vdevDisk.identifier === vdevUpdate.disk.identifier,
       );
       if (vdev.uuid === vdevUpdate.vdev.uuid && !diskAlreadyExists) {
-        const newDisk = _.cloneDeep(vdevUpdate.disk) as ManualSelectionDisk;
+        const newDisk = cloneDeep(vdevUpdate.disk) as ManualSelectionDisk;
         newDisk.vdevUuid = vdev.uuid;
         vdev.disks.push(newDisk);
       }
     }
-    const inventory = _.cloneDeep(state.inventory).filter(
+    const inventory = cloneDeep(state.inventory).filter(
       (unusedDisk) => unusedDisk.identifier !== vdevUpdate.disk.identifier,
     );
     return {
-      ...(_.cloneDeep(state)),
+      ...(cloneDeep(state)),
       vdevs,
       inventory,
     };
@@ -70,12 +70,12 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
     state: ManualDiskSelectionState,
     disk: ManualSelectionDisk,
   ) => {
-    const vdevs = _.cloneDeep(state.vdevs).map((vdev) => {
+    const vdevs = cloneDeep(state.vdevs).map((vdev) => {
       if (vdev.uuid !== disk.vdevUuid) {
         return vdev;
       }
 
-      const newVdev = _.cloneDeep(vdev);
+      const newVdev = cloneDeep(vdev);
       newVdev.disks = newVdev.disks.filter((vdevDisk) => {
         return vdevDisk.identifier !== disk.identifier;
       });
@@ -83,22 +83,22 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
       return newVdev;
     });
 
-    const inventory = _.cloneDeep(state.inventory);
+    const inventory = cloneDeep(state.inventory);
     const isDiskAlreadyInInventory = inventory.some((unusedDisk) => unusedDisk.identifier === disk.identifier);
     if (!isDiskAlreadyInInventory) {
-      const newDisk = _.cloneDeep(disk);
+      const newDisk = cloneDeep(disk);
       newDisk.vdevUuid = null;
       inventory.push(newDisk);
     }
     return {
-      ...(_.cloneDeep(state)),
+      ...(cloneDeep(state)),
       vdevs,
       inventory,
     };
   });
 
   addVdev = this.updater((state: ManualDiskSelectionState) => {
-    const newState = _.cloneDeep(state);
+    const newState = cloneDeep(state);
     return {
       ...newState,
       vdevs: [
@@ -113,18 +113,18 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
   });
 
   removeVdev = this.updater((state: ManualDiskSelectionState, vdevToRemove: ManualSelectionVdev) => {
-    const vdevs = _.cloneDeep(state.vdevs).filter((vdev) => vdev.uuid !== vdevToRemove.uuid);
-    const inventory = _.cloneDeep(state.inventory);
+    const vdevs = cloneDeep(state.vdevs).filter((vdev) => vdev.uuid !== vdevToRemove.uuid);
+    const inventory = cloneDeep(state.inventory);
     for (const disk of vdevToRemove.disks) {
       const isDiskAlreadyInInventory = inventory.some((unusedDisk) => unusedDisk.identifier === disk.identifier);
       if (!isDiskAlreadyInInventory) {
-        const newDisk = _.cloneDeep(disk);
+        const newDisk = cloneDeep(disk);
         newDisk.vdevUuid = null;
         inventory.push(newDisk);
       }
     }
     return {
-      ...(_.cloneDeep(state)),
+      ...(cloneDeep(state)),
       vdevs,
       inventory,
     };

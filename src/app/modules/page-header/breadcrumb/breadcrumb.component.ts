@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { chain } from 'lodash-es';
+import { uniqBy } from 'lodash-es';
 import { filter } from 'rxjs/operators';
 import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 
@@ -39,22 +39,20 @@ export class BreadcrumbComponent implements OnInit {
   }
 
   private getBreadcrumbs(): RoutePart[] {
-    return chain(this.routePartsService.routeParts)
-      .sort((a, b) => a.ngUrl.length - b.ngUrl.length)
-      .uniqBy('url')
-      .filter((routePart) => {
-        routePart.ngUrl = routePart.ngUrl.filter((item) => item !== '');
-        if (routePart.url === this.router.url) {
-          return false;
-        }
-        return Boolean(routePart.breadcrumb);
-      })
-      .map((routePart) => {
-        if (noLinksRoutes.some((url) => routePart.url === url)) {
-          return { ...routePart, url: null };
-        }
-        return routePart;
-      })
-      .value();
+    const sortedRoutes = this.routePartsService.routeParts.sort((a, b) => a.ngUrl.length - b.ngUrl.length);
+    const uniqRoutesList = uniqBy(sortedRoutes, 'url');
+    const validRoutesBeforeCurrent = uniqRoutesList.filter((routePart) => {
+      routePart.ngUrl = routePart.ngUrl.filter((item) => item !== '');
+      if (routePart.url === this.router.url) {
+        return false;
+      }
+      return Boolean(routePart.breadcrumb);
+    });
+    return validRoutesBeforeCurrent.map((routePart) => {
+      if (noLinksRoutes.some((url) => routePart.url === url)) {
+        return { ...routePart, url: null };
+      }
+      return routePart;
+    });
   }
 }

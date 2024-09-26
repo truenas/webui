@@ -5,7 +5,7 @@ import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { isObject } from 'lodash-es';
 import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -158,7 +158,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   handleDisconnectJobFailure(failureData: Job): void {
     if (failureData.error) {
       if (
-        _.isObject(failureData.exc_info.extra)
+        isObject(failureData.exc_info.extra)
         && !Array.isArray(failureData.exc_info.extra)
         && failureData.exc_info.extra.code === 'control_services'
       ) {
@@ -185,7 +185,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     const stopMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.stopServices);
     const restartMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.restartServices);
     let conditionalErrMessage = '';
-    if (_.isObject(failureData.exc_info.extra) && !Array.isArray(failureData.exc_info.extra)) {
+    if (isObject(failureData.exc_info.extra) && !Array.isArray(failureData.exc_info.extra)) {
       if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
         conditionalErrMessage += '<div class="warning-box">' + stopMsg;
         (failureData.exc_info.extra.stop_services as string[]).forEach((item) => {

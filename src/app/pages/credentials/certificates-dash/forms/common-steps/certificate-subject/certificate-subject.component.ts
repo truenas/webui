@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { pickBy } from 'lodash-es';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
@@ -67,6 +67,6 @@ export class CertificateSubjectComponent implements SummaryProvider {
 
   getPayload(): CertificateSubjectComponent['form']['value'] {
     // Filter out empty values
-    return _.pickBy(this.form.value, Boolean);
+    return pickBy(this.form.value, Boolean);
   }
 }

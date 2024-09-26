@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import * as _ from 'lodash-es';
+import { isObject } from 'lodash-es';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 
@@ -21,7 +21,7 @@ export class CertificateDetailsComponent {
 
   issuer = computed<string>(() => {
     const certificate = this.certificate();
-    return _.isObject(certificate.issuer) ? certificate.issuer.name : certificate.issuer;
+    return isObject(certificate.issuer) ? certificate.issuer.name : certificate.issuer;
   });
 
   signedCertificates = computed<number>(() => {

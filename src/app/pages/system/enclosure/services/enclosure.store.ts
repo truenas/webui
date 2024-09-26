@@ -3,7 +3,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { produce } from 'immer';
-import { chain } from 'lodash-es';
+import {
+  filter, flatMap, fromPairs, map, uniq,
+} from 'lodash-es';
 import { Observable, switchMap, tap } from 'rxjs';
 import { debounceTime, finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
@@ -64,18 +66,22 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly enclosures = computed(() => this.stateAsSignal().enclosures);
 
   readonly poolColors = computed<Record<string, string>>(() => {
-    const poolNames = chain(this.enclosures())
-      .flatMap((enclosure) => Object.values(enclosure.elements[EnclosureElementType.ArrayDeviceSlot]))
-      .filter((slot) => Boolean(slot.pool_info?.pool_name))
-      .map((slot) => slot.pool_info.pool_name)
-      .uniq();
+    const enclosures = this.enclosures();
+    const extractedEnclosuresObjects = flatMap(
+      enclosures,
+      (enclosure) => Object.values(enclosure.elements[EnclosureElementType.ArrayDeviceSlot]),
+    );
+    const enclosuresWithPools = filter(
+      extractedEnclosuresObjects,
+      (slot) => Boolean(slot.pool_info?.pool_name),
+    );
+    const poolNames = map(enclosuresWithPools, (slot) => slot.pool_info.pool_name);
+    const uniqPoolNames = uniq(poolNames);
+    const poolNamesWithColorsByIndex = map(uniqPoolNames, (poolName, index) => {
+      return [poolName, this.theme.getRgbBackgroundColorByIndex(index)];
+    });
 
-    return poolNames
-      .map((poolName, index) => {
-        return [poolName, this.theme.getRgbBackgroundColorByIndex(index)];
-      })
-      .fromPairs()
-      .value();
+    return fromPairs(poolNamesWithColorsByIndex);
   });
 
   readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));

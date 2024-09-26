@@ -8,10 +8,8 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
-import { RadioOption } from 'app/interfaces/option.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -59,11 +57,6 @@ export class SetAdminPasswordFormComponent {
       ),
     ],
   });
-
-  readonly usernameOptions$: Observable<RadioOption[]> = of([
-    { label: `${this.translate.instant('Administrative user')} (${adminUsername})`, value: adminUsername },
-    { label: this.translate.instant('Root user (not recommended)'), value: 'root' },
-  ]);
 
   constructor(
     private formBuilder: FormBuilder,

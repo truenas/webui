@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { chain } from 'lodash-es';
+import { uniq } from 'lodash-es';
 import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
@@ -15,12 +15,10 @@ export class MiniDisksOverviewComponent {
   readonly slots = input.required<DashboardEnclosureSlot[]>();
 
   protected readonly totalPools = computed(() => {
-    return chain(this.slots())
-      .map((slot) => slot.pool_info?.pool_name)
-      .filter((slot) => slot !== undefined)
-      .uniq()
-      .value()
-      .length;
+    const slots = this.slots();
+    const slotsWithValidPools = slots.map((slot) => slot.pool_info?.pool_name);
+    const validSlots = slotsWithValidPools.filter((slot) => slot !== undefined);
+    return uniq(validSlots).length;
   });
 
   protected readonly totalDisks = computed(() => {

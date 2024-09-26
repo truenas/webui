@@ -4,7 +4,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash-es';
+import { unionBy } from 'lodash-es';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
@@ -118,7 +118,7 @@ export class InitiatorFormComponent implements OnInit {
   getConnectedInitiators(): void {
     this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
       next: (sessions) => {
-        this.connectedInitiators = _.unionBy(sessions, (item) => item.initiator && item.initiator_addr);
+        this.connectedInitiators = unionBy(sessions, (item) => item.initiator && item.initiator_addr);
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {

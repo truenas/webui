@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import { shuffle } from 'lodash-es';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
@@ -16,7 +16,7 @@ function makeDisk(enclosure: string, slot: number): DetailsDisk {
   } as DetailsDisk;
 }
 
-export const generateVdevDisks = _.shuffle([
+export const generateVdevDisks = shuffle([
   makeDisk('1', 1),
   makeDisk('1', 2),
   makeDisk('1', 3),

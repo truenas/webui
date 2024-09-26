@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { merge } from 'lodash-es';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
@@ -125,6 +125,6 @@ export class CertificateAddComponent {
     const steps = this.isImport ? this.getImportCertificateSteps() : this.getNewCertificateSteps();
 
     const values = steps.map((step) => step.getPayload());
-    return _.merge({}, ...values);
+    return merge({}, ...values);
   }
 }

@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -87,7 +87,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   }
 
   private setInitialState(): void {
-    this.columns = _.cloneDeep(this.defaultColumns);
+    this.columns = cloneDeep(this.defaultColumns);
     this.hiddenColumns.select(...this.columns);
 
     this.defaultColumns.forEach((column, index) => {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { uniqBy } from 'lodash-es';
 import { combineLatest, map, Observable } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
@@ -62,7 +62,7 @@ export class PoolManagerValidationService {
           errors.push(...this.validateNewPoolVdevs(topology));
         }
 
-        return _.uniqBy(errors, 'text')
+        return uniqBy(errors, 'text')
           .sort((a, b) => {
             const warningSeverity = PoolCreationSeverity.Warning;
             // eslint-disable-next-line no-nested-ternary

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { find } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -36,10 +36,10 @@ export class DatasetService {
               return;
             }
 
-            let parent = _.find(nodes, { name: pathSegments[0] });
+            let parent = find(nodes, { name: pathSegments[0] });
             let i = 1;
-            while (_.find(parent.children, { name: pathSegments[i] })) {
-              parent = _.find(parent.children, { name: pathSegments[i++] });
+            while (find(parent.children, { name: pathSegments[i] })) {
+              parent = find(parent.children, { name: pathSegments[i++] });
             }
 
             parent.children.push({

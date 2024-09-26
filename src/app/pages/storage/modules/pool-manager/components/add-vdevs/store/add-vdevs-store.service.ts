@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
-import * as _ from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import {
   combineLatest, filter, switchMap, tap,
 } from 'rxjs';
@@ -65,7 +65,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
       tapResponse(
         (pools) => {
           this.patchState({
-            pool: _.cloneDeep(pools[0]),
+            pool: cloneDeep(pools[0]),
             isLoading: false,
           });
         },

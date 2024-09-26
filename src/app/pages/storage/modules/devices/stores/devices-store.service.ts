@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VdevType } from 'app/enums/v-dev-type.enum';
@@ -88,7 +88,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
                 this.patchState({
                   isLoading: false,
                   error: null,
-                  diskDictionary: _.keyBy(disks, (disk) => disk.devname),
+                  diskDictionary: keyBy(disks, (disk) => disk.devname),
                   nodes: this.createDataNodes(pools[0].topology),
                 });
               }),

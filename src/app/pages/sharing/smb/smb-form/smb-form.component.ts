@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { isEqual } from 'lodash-es';
 import { noop, Observable, of } from 'rxjs';
 import {
   debounceTime,
@@ -112,8 +112,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   hasHostAllowDenyChanged(hostsallow: string[], hostsdeny: string[]): boolean {
     return (
-      !_.isEqual(this.existingSmbShare?.hostsallow, hostsallow)
-      || !_.isEqual(this.existingSmbShare?.hostsdeny, hostsdeny)
+      !isEqual(this.existingSmbShare?.hostsallow, hostsallow)
+      || !isEqual(this.existingSmbShare?.hostsdeny, hostsdeny)
     );
   }
 

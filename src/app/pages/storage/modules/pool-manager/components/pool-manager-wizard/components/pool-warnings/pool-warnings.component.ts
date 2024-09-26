@@ -5,7 +5,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { uniq } from 'lodash-es';
 import {
   of, Observable, combineLatest, startWith,
 } from 'rxjs';
@@ -85,7 +85,7 @@ export class PoolWarningsComponent implements OnInit {
 
   private setExportedPoolOptions(): void {
     const exportedPools = this.disksWithExportedPools.map((disk) => disk.exported_zpool);
-    const options = _.uniq(exportedPools).map((pool) => {
+    const options = uniq(exportedPools).map((pool) => {
       this.poolAndDisks.set(pool, this.getDiskNamesByPool(pool));
       return { label: pool, value: pool };
     });

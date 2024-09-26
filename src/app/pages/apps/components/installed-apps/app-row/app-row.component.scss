@@ -1,4 +1,5 @@
 @import 'scss-imports/variables';
+@import 'mixins/text';
 
 :host {
   align-items: center;
@@ -102,6 +103,10 @@
       display: inline-flex;
       margin: 1px;
       padding-right: 15px;
+    }
+
+    .app-name {
+      @include line-clamp(2);
     }
   }
 

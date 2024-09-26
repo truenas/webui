@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
-import * as _ from 'lodash-es';
+import { differenceBy, isEqual, without } from 'lodash-es';
 import {
   combineLatest,
   forkJoin, Observable, of, Subject,
@@ -205,7 +205,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.topology$,
     (allowedDisks, topology) => {
       const usedDisks = topologyToDisks(topology);
-      return _.differenceBy(allowedDisks, usedDisks, (disk) => disk.devname);
+      return differenceBy(allowedDisks, usedDisks, (disk) => disk.devname);
     },
   );
 
@@ -221,7 +221,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
           }
           return topologyCategoryToDisks(category);
         });
-        return _.differenceBy(allowedDisks, disksUsedInOtherCategories, (disk) => disk.devname);
+        return differenceBy(allowedDisks, disksUsedInOtherCategories, (disk) => disk.devname);
       },
     );
   }
@@ -368,9 +368,9 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.patchState((state) => {
       const topology = state.topology[type];
       const wasCategoryChanged = !Object.entries(update)
-        .every(([key, value]) => _.isEqual(topology[key as keyof typeof topology], value));
+        .every(([key, value]) => isEqual(topology[key as keyof typeof topology], value));
       const categorySequence = wasCategoryChanged
-        ? _.without(state.categorySequence, type).concat([type])
+        ? without(state.categorySequence, type).concat([type])
         : state.categorySequence;
 
       return {
@@ -429,7 +429,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       ])),
       switchMap(([state, inventoryForStep]: [PoolManagerState, DetailsDisk[]]) => {
         const usedDisks = topologyCategoryToDisks(state.topology[type]);
-        const inventory = _.differenceBy(inventoryForStep, usedDisks, (disk: DetailsDisk) => disk.devname);
+        const inventory = differenceBy(inventoryForStep, usedDisks, (disk: DetailsDisk) => disk.devname);
         const isVdevsLimitedToOne = type === VdevType.Spare || type === VdevType.Cache || type === VdevType.Log;
         return this.matDialog.open(ManualDiskSelectionComponent, {
           data: {

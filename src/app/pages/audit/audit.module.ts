@@ -2,6 +2,7 @@ import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -51,6 +52,7 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     IxTableCellDirective,
     IxTablePagerComponent,
     IxTableHeadComponent,
+    MatButtonToggleModule,
     FakeProgressBarComponent,
     TestDirective,
   ],

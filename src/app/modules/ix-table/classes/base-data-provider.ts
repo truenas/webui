@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import * as _ from 'lodash-es';
+import { orderBy, sortBy } from 'lodash-es';
 import {
   BehaviorSubject, Observable, Subscription, map,
 } from 'rxjs';
@@ -85,16 +85,15 @@ export function sort<T>(rows: T[], sorting: TableSort<T>): T[] {
   const sorted = rows;
   const direction = sorting.direction;
   const propertyName = sorting.propertyName;
-  const sortBy = sorting.sortBy;
 
   if (direction === null || propertyName === null) {
     return sorted;
   }
-  if (sortBy) {
-    return direction === SortDirection.Desc ? _.sortBy(sorted, sortBy).reverse() : _.sortBy(sorted, sortBy);
+  if (sorting.sortBy) {
+    return direction === SortDirection.Desc ? sortBy(sorted, sorting.sortBy).reverse() : sortBy(sorted, sorting.sortBy);
   }
 
-  return _.orderBy(sorted, propertyName, direction);
+  return orderBy(sorted, propertyName, direction);
 }
 
 export function paginate<T>(rows: T[], pagination: TablePagination): T[] {
