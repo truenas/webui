@@ -6,7 +6,6 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
 import {
   from, Observable, of, Subscription,
 } from 'rxjs';
@@ -457,7 +456,7 @@ export class UserFormComponent implements OnInit {
     this.store$.select(selectUsers).pipe(untilDestroyed(this)).subscribe((users) => {
       let forbiddenNames = users.map((user) => user.username);
       if (currentName) {
-        forbiddenNames = _.remove(forbiddenNames, currentName);
+        forbiddenNames = forbiddenNames.filter((name) => name !== currentName);
       }
       this.form.controls.username.addValidators(forbiddenValues(forbiddenNames));
     });

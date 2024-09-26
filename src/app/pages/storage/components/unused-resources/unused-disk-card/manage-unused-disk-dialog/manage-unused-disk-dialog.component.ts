@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { groupBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
@@ -74,7 +74,7 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
         exportedPool: disk.exported_zpool,
       };
     });
-    const groupDisks = _.groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
+    const groupDisks = groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
       return diskDetailsWithPoolName.detailedDisk + diskDetailsWithPoolName.exportedPool;
     });
     return Object.keys(groupDisks).map((format: string) => {
@@ -94,7 +94,7 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
         exportedPool: disk.exported_zpool,
       };
     });
-    const groupDisks = _.groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
+    const groupDisks = groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
       return diskDetailsWithPoolName.detailedDisk + diskDetailsWithPoolName.exportedPool;
     });
     return Object.keys(groupDisks).map((format: string) => {

@@ -29,7 +29,9 @@ describe('DatasetsManagementComponent', () => {
     imports: [TreeModule, SearchInput1Component, EmptyComponent],
     providers: [
       mockAuth(),
-      mockWebSocket([mockCall('systemdataset.config', {} as SystemDatasetConfig)]),
+      mockWebSocket([
+        mockCall('systemdataset.config', { pool: 'Second Dataset' } as SystemDatasetConfig),
+      ]),
       mockProvider(DatasetTreeStore, {
         datasets$,
         error$,

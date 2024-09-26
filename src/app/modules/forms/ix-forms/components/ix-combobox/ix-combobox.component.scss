@@ -86,6 +86,8 @@ mat-option.combobox-mat-options {
 }
 
 .mat-mdc-select-arrow {
+  align-items: center;
+  display: flex;
   opacity: 1;
   padding: 13px 2px;
 }

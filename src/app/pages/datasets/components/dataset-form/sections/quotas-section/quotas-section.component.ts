@@ -4,7 +4,7 @@ import {
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { pickBy } from 'lodash-es';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -66,7 +66,7 @@ export class QuotasSectionComponent implements OnInit {
 
   getPayload(): Partial<DatasetCreate> {
     const values = this.form.value;
-    const payload: Partial<DatasetCreate> = _.pickBy(values, (value, key) => {
+    const payload: Partial<DatasetCreate> = pickBy(values, (value, key) => {
       return [
         'refquota',
         'refreservation',

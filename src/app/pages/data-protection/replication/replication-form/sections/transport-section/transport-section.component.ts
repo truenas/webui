@@ -4,7 +4,7 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { isNull, omitBy } from 'lodash-es';
 import { of } from 'rxjs';
 import { CompressionType, compressionTypeNames } from 'app/enums/compression-type.enum';
 import { NetcatMode, netcatModeNames } from 'app/enums/netcat-mode.enum';
@@ -108,13 +108,13 @@ export class TransportSectionComponent implements OnChanges {
 
     if (this.isSsh) {
       return {
-        ..._.omitBy({
+        ...omitBy({
           ssh_credentials: values.ssh_credentials,
           compression: values.compression === CompressionType.Disabled ? null : values.compression,
           speed_limit: values.speed_limit,
           large_block: values.large_block,
           compressed: values.compressed,
-        }, _.isNull),
+        }, isNull),
         netcat_active_side: null,
         netcat_active_side_listen_address: null,
         netcat_active_side_port_min: null,
@@ -124,7 +124,7 @@ export class TransportSectionComponent implements OnChanges {
     }
 
     return {
-      ..._.omitBy({
+      ...omitBy({
         ssh_credentials: values.ssh_credentials,
         large_block: values.large_block,
         compressed: values.compressed,
@@ -133,7 +133,7 @@ export class TransportSectionComponent implements OnChanges {
         netcat_active_side_port_min: values.netcat_active_side_port_min,
         netcat_active_side_port_max: values.netcat_active_side_port_max,
         netcat_passive_side_connect_address: values.netcat_passive_side_connect_address,
-      }, _.isNull),
+      }, isNull),
       speed_limit: null,
     };
   }

@@ -7,7 +7,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { find, findIndex, isArray } from 'lodash-es';
 import { Observable, forkJoin, of } from 'rxjs';
 import {
   filter, map, pairwise, startWith, tap,
@@ -356,7 +356,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   loadBucketOptions(): void {
-    const targetCredentials = _.find(this.credentialsList, { id: this.form.controls.credentials.value });
+    const targetCredentials = find(this.credentialsList, { id: this.form.controls.credentials.value });
 
     this.cloudCredentialService.getBuckets(targetCredentials.id)
       .pipe(untilDestroyed(this))
@@ -451,8 +451,8 @@ export class CloudSyncFormComponent implements OnInit {
 
     if (credentials) {
       this.enableRemoteExplorer();
-      const targetCredentials = _.find(this.credentialsList, { id: credentials });
-      const targetProvider = _.find(this.providersList, { name: targetCredentials?.provider });
+      const targetCredentials = find(this.credentialsList, { id: credentials });
+      const targetProvider = find(this.providersList, { name: targetCredentials?.provider });
       if (targetProvider?.buckets) {
         this.isLoading = true;
         if (targetCredentials.provider === CloudSyncProviderName.MicrosoftAzure
@@ -483,12 +483,12 @@ export class CloudSyncFormComponent implements OnInit {
         this.form.controls.bucket_policy_only.disable();
       }
 
-      const schemaFound = _.find(this.providersList, { name: targetCredentials?.provider });
+      const schemaFound = find(this.providersList, { name: targetCredentials?.provider });
       const taskSchema = schemaFound ? schemaFound.task_schema : [];
 
       const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
       for (const i of taskSchemas) {
-        const toBeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
+        const toBeDisable = !(findIndex(taskSchema, { property: i }) > -1);
         if (i === 'task_encryption' || i === 'fast_list' || i === 'chunk_size' || i === 'storage_class') {
           if (toBeDisable) {
             this.form.controls[i].disable();
@@ -606,9 +606,9 @@ export class CloudSyncFormComponent implements OnInit {
     });
 
     if (formValue.direction === Direction.Pull) {
-      value.path = _.isArray(formValue.path_destination) ? formValue.path_destination[0] : formValue.path_destination;
+      value.path = isArray(formValue.path_destination) ? formValue.path_destination[0] : formValue.path_destination;
 
-      if (!formValue.folder_source.length || !_.isArray(formValue.folder_source)) {
+      if (!formValue.folder_source.length || !isArray(formValue.folder_source)) {
         attributes.folder = '/';
       } else if (formValue.folder_source.length === 1) {
         attributes.folder = formValue.folder_source[0];
@@ -622,10 +622,10 @@ export class CloudSyncFormComponent implements OnInit {
         attributes.folder = directory.slice(0, directory.length - 1).join('/');
       }
     } else {
-      attributes.folder = _.isArray(formValue.folder_destination)
+      attributes.folder = isArray(formValue.folder_destination)
         ? formValue.folder_destination[0] : formValue.folder_destination;
 
-      if (!formValue.path_source.length || !_.isArray(formValue.path_source)) {
+      if (!formValue.path_source.length || !isArray(formValue.path_source)) {
         value.path = '/';
       } else if (formValue.path_source.length === 1) {
         value.path = formValue.path_source[0];

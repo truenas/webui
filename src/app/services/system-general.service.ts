@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import * as _ from 'lodash-es';
+import { sortBy } from 'lodash-es';
 import {
   Subject, Observable,
 } from 'rxjs';
@@ -117,7 +117,7 @@ export class SystemGeneralService {
           : `${key} (${languageList[key]})`,
         value: key,
       }));
-      options = _.sortBy(
+      options = sortBy(
         options,
         sortLanguagesByName ? 'label' : 'value',
       );

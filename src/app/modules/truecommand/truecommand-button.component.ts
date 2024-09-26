@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash-es';
+import { isObject } from 'lodash-es';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -93,7 +93,7 @@ export class TruecommandButtonComponent implements OnInit {
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((dialogResult: TruecommandSignupModalResult) => {
-        if (_.isObject(dialogResult) && dialogResult?.deregistered) {
+        if (isObject(dialogResult) && dialogResult?.deregistered) {
           this.tcStatusDialogRef.close(true);
         }
       });

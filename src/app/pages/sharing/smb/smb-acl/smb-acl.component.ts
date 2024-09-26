@@ -4,7 +4,7 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { isNumber } from 'lodash-es';
 import {
   concatMap, firstValueFrom, forkJoin, mergeMap, Observable, of, from,
 } from 'rxjs';
@@ -191,7 +191,7 @@ export class SmbAclComponent implements OnInit {
         result.ae_who_sid = 'S-1-1-0';
       } else {
         let id: number;
-        if (_.isNumber(whoIdOrName)) {
+        if (isNumber(whoIdOrName)) {
           id = Number(whoIdOrName);
         } else if (ace.ae_who === NfsAclTag.UserGroup) {
           id = (await firstValueFrom(this.userService.getGroupByName(whoIdOrName.toString())))

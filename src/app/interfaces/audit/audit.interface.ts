@@ -9,6 +9,7 @@ export interface AuditQueryParams {
   services?: AuditService[];
   'query-filters'?: QueryFilters<AuditEntry>;
   'query-options'?: QueryOptions<AuditEntry>;
+  remote_controller?: boolean;
 }
 
 export interface BaseAuditEntry {

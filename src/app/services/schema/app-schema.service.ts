@@ -4,7 +4,7 @@ import {
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { parseString } from 'cron-parser';
-import * as _ from 'lodash-es';
+import { isArray, isEqual, isPlainObject } from 'lodash-es';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounceTime, take } from 'rxjs/operators';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
@@ -323,9 +323,9 @@ export class AppSchemaService {
 
       if (valueConfig && this.checkIsValidSchedule(valueConfig as Schedule)) {
         newConfig[keyConfig] = scheduleToCrontab(valueConfig as Schedule);
-      } else if (_.isArray(valueConfig)) {
+      } else if (isArray(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromArray(restoreKeysPayload);
-      } else if (_.isPlainObject(valueConfig)) {
+      } else if (isPlainObject(valueConfig)) {
         newConfig = this.createHierarchicalObjectFromPlainObject(restoreKeysPayload);
       } else {
         newConfig[keyConfig] = valueConfig;
@@ -387,7 +387,7 @@ export class AppSchemaService {
     } = payload;
 
     newConfig[keyConfig] = (valueConfig as ChartFormValue[]).map((valueItem, idxItem) => {
-      if (_.isPlainObject(valueItem)) {
+      if (isPlainObject(valueItem)) {
         return this.restoreKeysFromFormGroup(
           valueItem as HierarchicalObjectMap<ChartFormValue>,
           formConfig.controls[idxItem] as FormGroup,
@@ -572,7 +572,7 @@ export class AppSchemaService {
       schema, isNew, subscription, formGroup, isParentImmutable, chartSchemaNode,
     } = payload;
 
-    if (!_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
+    if (!isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
       const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
       if (!formField.hidden$) {
         formField.hidden$ = new BehaviorSubject<boolean>(false);
@@ -594,7 +594,7 @@ export class AppSchemaService {
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);
           }
-          if (_.isEqual(value, relation.operatorValue) && formGroup.controls[relation.fieldName].status !== 'DISABLED') {
+          if (isEqual(value, relation.operatorValue) && formGroup.controls[relation.fieldName].status !== 'DISABLED') {
             formField.hidden$.next(false);
             if (!isNew && (isParentImmutable || !!schema.immutable)) {
               formField.disable();
@@ -615,7 +615,7 @@ export class AppSchemaService {
       schema, isNew, subscription, formGroup, isParentImmutable, chartSchemaNode,
     } = payload;
 
-    if (_.isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
+    if (isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
       const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
       if (!formField.hidden$) {
         formField.hidden$ = new BehaviorSubject<boolean>(false);
@@ -637,7 +637,7 @@ export class AppSchemaService {
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);
           }
-          if (!_.isEqual(value, relation.operatorValue) && formGroup.controls[relation.fieldName].status !== 'DISABLED') {
+          if (!isEqual(value, relation.operatorValue) && formGroup.controls[relation.fieldName].status !== 'DISABLED') {
             formField.hidden$.next(false);
             if (!isNew && (isParentImmutable || !!schema.immutable)) {
               formField.disable();

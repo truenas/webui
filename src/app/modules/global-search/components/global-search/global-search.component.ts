@@ -8,7 +8,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import * as _ from 'lodash-es';
+import { isEqual } from 'lodash-es';
 import {
   tap, debounceTime, filter, switchMap,
   combineLatestWith,
@@ -183,7 +183,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       combineLatestWith(this.searchDirectives.directiveAdded$.pipe(filter(Boolean))),
       filter(([config]) => !!this.searchDirectives.get(config)),
-      distinctUntilChanged(([prevConfig], [nextConfig]) => _.isEqual(prevConfig, nextConfig)),
+      distinctUntilChanged(([prevConfig], [nextConfig]) => isEqual(prevConfig, nextConfig)),
       untilDestroyed(this),
     ).subscribe(([config]) => {
       this.resetInput();

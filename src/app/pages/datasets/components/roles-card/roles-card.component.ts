@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash-es';
+import { uniq } from 'lodash-es';
 import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -32,11 +32,11 @@ export class RolesCardComponent {
   });
 
   readonly appNames = computed(() => {
-    return _.uniq(this.dataset().apps.map((app) => app.name)).join(', ');
+    return uniq(this.dataset().apps.map((app) => app.name)).join(', ');
   });
 
   readonly vmNames = computed(() => {
-    return _.uniq(this.dataset().vms.map((app) => app.name)).join(', ');
+    return uniq(this.dataset().vms.map((app) => app.name)).join(', ');
   });
 
   readonly isSystemDataset = computed(() => {

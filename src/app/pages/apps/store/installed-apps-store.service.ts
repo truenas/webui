@@ -153,14 +153,11 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   private loadInstalledApps(): Observable<unknown> {
     return this.dockerStore.isLoading$.pipe(
       withLatestFrom(this.dockerStore.isDockerStarted$),
-      filter(([loading, isDockerStarted]) => !loading && isDockerStarted !== null),
-      tap(([, isDockerStarted]) => {
-        if (isDockerStarted) {
-          this.appsStats.subscribeToUpdates();
-          this.subscribeToInstalledAppsUpdates();
-        }
-      }),
+      filter(([isLoading, isDockerStarted]) => !isLoading && isDockerStarted !== null),
       switchMap(([, isDockerStarted]) => {
+        this.appsStats.subscribeToUpdates();
+        this.subscribeToInstalledAppsUpdates();
+
         if (!isDockerStarted) {
           return of([]);
         }

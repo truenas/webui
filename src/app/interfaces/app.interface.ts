@@ -238,12 +238,12 @@ interface HostMount {
   hostPath: string;
 }
 
-interface Capability {
+export interface Capability {
   name: string;
   description: string;
 }
 
-interface AppRunAsContext {
+export interface AppRunAsContext {
   description: string;
   gid: number;
   group_name: string;

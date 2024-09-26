@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { subHours, subMinutes } from 'date-fns';
 import {
@@ -17,6 +17,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
+import { poolStore } from 'app/services/global-store/stores.constant';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppsState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -67,9 +68,11 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly installedApps$ = this.ws.call('app.query').pipe(toLoadingState());
+  readonly installedApps$ = this.ws.callAndSubscribe('app.query').pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
-  readonly pools$ = this.ws.callAndSubscribe('pool.query').pipe(
+  readonly pools$ = inject(poolStore).callAndSubscribe.pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
@@ -144,12 +147,13 @@ export class WidgetResourcesService {
   }
 
   getApp(appName: string): Observable<LoadingState<App>> {
-    return this.ws.callAndSubscribe('app.query', [[['name', '=', appName]]]).pipe(
+    return this.installedApps$.pipe(
       map((apps) => {
-        if (apps.length === 0) {
+        const app = apps.find((installedApp) => installedApp.name === appName);
+        if (!app) {
           throw new Error(`App «${appName}» not found. Configure widget to choose another app.`);
         }
-        return apps[0];
+        return app;
       }),
       toLoadingState(),
       shareReplay({ bufferSize: 1, refCount: true }),

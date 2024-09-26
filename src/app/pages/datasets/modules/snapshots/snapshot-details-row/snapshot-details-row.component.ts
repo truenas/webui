@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 import {
   filter, switchMap, tap, map,
 } from 'rxjs/operators';
@@ -81,7 +81,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (snapshot) => {
           this.snapshotInfo = snapshot;
-          this.holdControl.setValue(!_.isEmpty(snapshot.holds), { emitEvent: false });
+          this.holdControl.setValue(!isEmpty(snapshot.holds), { emitEvent: false });
           this.isLoading = false;
           this.cdr.markForCheck();
         },

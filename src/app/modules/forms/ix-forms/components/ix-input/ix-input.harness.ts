@@ -56,4 +56,8 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
   async isDisabled(): Promise<boolean> {
     return (await this.getMatInputHarness()).isDisabled();
   }
+
+  async isReadonly(): Promise<boolean> {
+    return (await this.getMatInputHarness()).isReadonly();
+  }
 }
