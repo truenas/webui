@@ -33,6 +33,11 @@
   .details-item {
     a.value {
       margin-left: 0;
+
+      &.app-name {
+        white-space: normal;
+        word-break: break-word;
+      }
     }
 
     &.sources {

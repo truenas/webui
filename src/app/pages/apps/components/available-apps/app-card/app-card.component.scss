@@ -1,3 +1,5 @@
+@import 'mixins/text';
+
 :host {
   background-color: var(--bg2);
   color: var(--fg2);
@@ -71,17 +73,10 @@
   }
 
   .description {
-    -webkit-box-orient: vertical;
-    /* stylelint-disable-next-line */
-    display: -webkit-inline-box;
+    @include line-clamp(4);
     font-size: 1.2em;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
     line-height: 1.2em;
     margin-bottom: 0;
-    overflow: hidden;
-    white-space: normal;
-    word-break: break-word;
   }
 
   .meta {
