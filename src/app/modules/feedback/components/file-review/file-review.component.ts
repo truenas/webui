@@ -13,6 +13,7 @@ import { FeedbackService } from 'app/modules/feedback/services/feedback.service'
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 export const maxRatingValue = 5;
 export const maxFileSizeBytes = 5 * MiB;
@@ -29,6 +30,8 @@ export class FileReviewComponent {
   @Input() isLoading: boolean;
   @Output() isLoadingChange = new EventEmitter<boolean>();
 
+  protected isEnterprise$ = this.systemGeneralService.isEnterprise$;
+
   protected form = this.formBuilder.group({
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: ['', [Validators.maxLength(4067)]],
@@ -39,6 +42,7 @@ export class FileReviewComponent {
   });
 
   protected readonly messagePlaceholder = helptext.review.message.placeholder;
+  protected readonly voteForNewFeaturesText = helptext.review.vote_for_new_features;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
   constructor(
@@ -46,6 +50,7 @@ export class FileReviewComponent {
     private errorHandler: ErrorHandlerService,
     private imageValidator: ImageValidatorService,
     private feedbackService: FeedbackService,
+    private systemGeneralService: SystemGeneralService,
   ) {}
 
   onSubmit(): void {

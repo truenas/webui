@@ -39,6 +39,10 @@
       ></ix-file-input>
     }
   </form>
+
+  @if (!(isEnterprise$ | async)) {
+    <p [innerHTML]="voteForNewFeaturesText"></p>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions>
