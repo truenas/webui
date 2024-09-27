@@ -1195,6 +1195,7 @@
   "You can search both for local groups as well as groups from Active Directory. Press ENTER to separate entries.": "",
   "You have successfully added credentials.": "",
   "Your dashboard is currently empty!": "",
+  "ZFS Errors": "",
   "ZFS Replication to another TrueNAS": "",
   "ZFS Reports": "",
   "ZFS Stats": "",

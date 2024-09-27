@@ -4896,6 +4896,7 @@
   "Your dashboard is currently empty!": "",
   "ZFS": "",
   "ZFS Encryption": "",
+  "ZFS Errors": "",
   "ZFS Health": "",
   "ZFS Info": "",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",

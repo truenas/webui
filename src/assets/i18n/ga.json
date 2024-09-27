@@ -78,6 +78,7 @@
   "We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and reload the page.": "",
   "You can also vote for new features <a target=\"_blank\" href=\"https://forums.truenas.com/feature-requests\">on our forum.</a>": "",
   "You have successfully added credentials.": "",
+  "ZFS Errors": "",
   "was successfully attached.": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{coreCount, plural, one {# core} other {# cores} }": "",
