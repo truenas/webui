@@ -12,8 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -27,14 +27,14 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     MatDialogTitle,
-    IxIconModule,
+    IxIconComponent,
     CdkScrollable,
     MatDialogContent,
     CopyButtonComponent,
     MatDialogActions,
     MatButton,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class ErrorDialogComponent {

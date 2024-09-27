@@ -72,16 +72,19 @@ import {
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxIconTestingModule } from 'app/modules/ix-icon/ix-icon-testing.module';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import {
+  WithLoadingStateDirective,
+} from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -96,7 +99,7 @@ defineGlobalsInjections({
     MatCheckboxModule,
     MatSlideToggleModule,
     MatMenuModule,
-    IxIconModule,
+    IxIconComponent,
     IxIconTestingModule,
     MatDatepickerModule,
     MatNativeDateModule,
@@ -136,7 +139,6 @@ defineGlobalsInjections({
     FormActionsComponent,
     RouterModule.forRoot([]),
     SnackbarModule,
-    TestIdModule,
     UiSearchDirective,
     RequiresRolesDirective,
     IxTableComponent,
@@ -144,6 +146,9 @@ defineGlobalsInjections({
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
+    TestDirective,
+    TestOverrideDirective,
+    WithLoadingStateDirective,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
@@ -162,7 +167,6 @@ defineGlobalsInjections({
     }),
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
-    AppLoaderModule,
   ],
   providers: [
     MockProvider(HighContrastModeDetector),

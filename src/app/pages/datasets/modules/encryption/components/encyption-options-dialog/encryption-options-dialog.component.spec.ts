@@ -12,7 +12,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { EncryptionOptionsDialogComponent } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
@@ -28,7 +27,6 @@ describe('EncryptionOptionsDialogComponent', () => {
     component: EncryptionOptionsDialogComponent,
     imports: [
       ReactiveFormsModule,
-      AppLoaderModule,
       SnackbarModule,
     ],
     providers: [

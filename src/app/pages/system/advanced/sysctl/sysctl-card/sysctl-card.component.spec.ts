@@ -11,7 +11,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -43,7 +42,6 @@ describe('SysctlCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SysctlCardComponent,
     imports: [
-      AppLoaderModule,
     ],
     providers: [
       mockWebSocket([

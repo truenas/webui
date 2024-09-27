@@ -14,6 +14,7 @@ describe('SysInfoComponent', () => {
   const licenseInfo = {
     customer_name: 'iXsystems Inc.',
     features: ['DEDUP', 'FIBRECHANNEL', 'VM'],
+    model: 'M60',
     contract_type: 'GOLD',
     expiration_date: '2022-06-10',
     daysLeftinContract: -4,
@@ -67,7 +68,7 @@ describe('SysInfoComponent', () => {
     expect(sysInfoBlock).not.toBeTruthy();
     expect(infoRows).toEqual({
       'Customer Name:': licenseInfo.customer_name,
-      'Model:': systemInfo.model,
+      'Model:': licenseInfo.model,
       'Licensed Serials:': licenseInfo.system_serial,
       'System Serial:': systemInfo.system_serial,
       'Features:': licenseInfo.features.join(', '),

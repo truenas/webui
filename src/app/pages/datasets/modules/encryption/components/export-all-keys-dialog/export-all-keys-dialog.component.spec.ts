@@ -8,7 +8,6 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -19,7 +18,6 @@ describe('ExportAllKeysDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: ExportAllKeysDialogComponent,
     imports: [
-      AppLoaderModule,
     ],
     providers: [
       mockWebSocket([

@@ -10,7 +10,6 @@ import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-we
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
@@ -29,7 +28,6 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: SnapshotBatchDeleteDialogComponent,
     imports: [
-      AppLoaderModule,
       ReactiveFormsModule,
     ],
     providers: [

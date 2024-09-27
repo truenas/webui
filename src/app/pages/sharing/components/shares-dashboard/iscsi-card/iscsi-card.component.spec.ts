@@ -21,7 +21,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -55,7 +54,6 @@ describe('IscsiCardComponent', () => {
   const createComponent = createComponentFactory({
     component: IscsiCardComponent,
     imports: [
-      AppLoaderModule,
       IxTablePagerShowMoreComponent,
     ],
     declarations: [

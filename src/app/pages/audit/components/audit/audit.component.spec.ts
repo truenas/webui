@@ -1,9 +1,11 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
+import { ControllerType } from 'app/enums/controller-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
@@ -17,6 +19,7 @@ import { AuditComponent } from 'app/pages/audit/components/audit/audit.component
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AuditComponent', () => {
@@ -63,6 +66,7 @@ describe('AuditComponent', () => {
     imports: [
       SearchInputModule,
       IxTableCellDirective,
+      MatButtonToggleModule,
     ],
     declarations: [
       MockComponents(
@@ -89,6 +93,10 @@ describe('AuditComponent', () => {
       ]),
       provideMockStore({
         selectors: [
+          {
+            selector: selectIsHaLicensed,
+            value: true,
+          },
           {
             selector: selectAdvancedConfig,
             value: {
@@ -140,6 +148,21 @@ describe('AuditComponent', () => {
       [{
         'query-filters': [['OR', [['event', '~', '(?i)search'], ['username', '~', '(?i)search'], ['service', '~', '(?i)search']]]],
         'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+        remote_controller: false,
+      }],
+    );
+  });
+
+  it('runs search when controller type is changed', () => {
+    spectator.component.controllerTypeChanged({ value: ControllerType.Standby } as MatButtonToggleChange);
+    spectator.detectChanges();
+
+    expect(websocket.call).toHaveBeenLastCalledWith(
+      'audit.query',
+      [{
+        'query-filters': [],
+        'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+        remote_controller: true,
       }],
     );
   });
@@ -160,6 +183,7 @@ describe('AuditComponent', () => {
       [{
         'query-filters': [['event', '=', 'Authentication'], ['username', '~', 'bob']],
         'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+        remote_controller: false,
       }],
     );
   });

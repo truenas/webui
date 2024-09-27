@@ -11,6 +11,7 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -38,6 +39,7 @@ describe('ReportingExportersListComponent', () => {
     component: ReportingExporterListComponent,
     imports: [
       SearchInput1Component,
+      FakeProgressBarComponent,
     ],
     providers: [
       mockWebSocket([

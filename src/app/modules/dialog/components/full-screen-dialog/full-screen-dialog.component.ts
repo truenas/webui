@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-full-screen-dialog',
@@ -12,8 +12,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatButton,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class FullScreenDialogComponent {

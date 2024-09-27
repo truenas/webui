@@ -33,7 +33,7 @@ import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -43,7 +43,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotListComponent } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
@@ -69,7 +69,7 @@ const components = [
   imports: [
     EffectsModule.forFeature([SnapshotEffects]),
     EntityModule,
-    IxIconModule,
+    IxIconComponent,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
@@ -88,7 +88,6 @@ const components = [
     routing,
     SearchInput1Component,
     StoreModule.forFeature(snapshotStateKey, snapshotReducer),
-    TestIdModule,
     TranslateModule,
     FileSizePipe,
     FormatDateTimePipe,
@@ -109,6 +108,7 @@ const components = [
     IxTableBodyComponent,
     IxTableDetailsRowDirective,
     IxTablePagerComponent,
+    TestDirective,
   ],
   declarations: [
     ...components,

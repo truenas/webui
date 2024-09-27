@@ -21,7 +21,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
@@ -56,7 +55,6 @@ describe('SmbCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbCardComponent,
     imports: [
-      AppLoaderModule,
       IxTablePagerShowMoreComponent,
     ],
     declarations: [

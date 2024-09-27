@@ -7,8 +7,8 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-empty-row',
@@ -19,10 +19,10 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     CdkPortalOutlet,
     MatProgressSpinner,
-    IxIconModule,
+    IxIconComponent,
     MatButton,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxTableEmptyRowComponent implements AfterViewInit {

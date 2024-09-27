@@ -40,6 +40,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
   readonly name = input<string>();

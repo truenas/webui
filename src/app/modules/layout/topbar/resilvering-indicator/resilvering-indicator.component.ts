@@ -8,11 +8,11 @@ import { map } from 'rxjs/operators';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   ResilverProgressDialogComponent,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Component({
@@ -23,11 +23,11 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
-    IxIconModule,
+    IxIconComponent,
     AsyncPipe,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class ResilveringIndicatorComponent {

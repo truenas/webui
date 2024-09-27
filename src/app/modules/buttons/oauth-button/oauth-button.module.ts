@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/components/oauth-button/oauth-button.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @NgModule({
   declarations: [
@@ -11,7 +11,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     TranslateModule,
     MatButtonModule,
-    TestIdModule,
+    TestDirective,
   ],
   exports: [
     OauthButtonComponent,

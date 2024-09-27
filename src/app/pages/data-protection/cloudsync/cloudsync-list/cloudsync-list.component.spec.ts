@@ -23,7 +23,6 @@ import {
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -92,7 +91,6 @@ describe('CloudSyncListComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudSyncListComponent,
     imports: [
-      AppLoaderModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
       IxTableColumnsSelectorComponent,

@@ -3,8 +3,8 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
@@ -14,9 +14,9 @@ import { ThemeService } from 'app/services/theme/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     AsyncPipe,
+    TestDirective,
   ],
 })
 export class IxLogoComponent {

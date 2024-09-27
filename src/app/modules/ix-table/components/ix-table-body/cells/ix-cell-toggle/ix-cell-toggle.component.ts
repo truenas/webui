@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-cell-toggle',
@@ -15,10 +15,10 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatSlideToggle,
-    TestIdModule,
     RequiresRolesDirective,
     TranslateModule,
     AsyncPipe,
+    TestDirective,
   ],
 })
 export class IxCellToggleComponent<T> extends ColumnComponent<T> {

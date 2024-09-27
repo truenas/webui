@@ -13,7 +13,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -31,8 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
     FormActionsComponent,
     MatButton,
     MatDialogClose,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class ChangePasswordDialogComponent {

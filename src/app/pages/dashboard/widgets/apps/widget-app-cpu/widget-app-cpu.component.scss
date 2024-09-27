@@ -1,3 +1,17 @@
+:host ::ng-deep ix-with-loading-state-error {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  font-size: 20px;
+  font-weight: bold;
+  height: 100%;
+  padding: 16px;
+  place-content: center center;
+  text-align: center;
+  width: 100%;
+}
+
 .card {
   height: 100%;
 

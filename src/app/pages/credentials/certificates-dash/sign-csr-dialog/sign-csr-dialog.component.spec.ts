@@ -10,7 +10,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SignCsrDialogComponent } from './sign-csr-dialog.component';
@@ -22,7 +21,6 @@ describe('SignCsrDialogComponent', () => {
     component: SignCsrDialogComponent,
     imports: [
       ReactiveFormsModule,
-      AppLoaderModule,
     ],
     providers: [
       mockWebSocket([

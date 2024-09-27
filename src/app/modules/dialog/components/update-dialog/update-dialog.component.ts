@@ -6,7 +6,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { LetDirective } from 'app/directives/app-let.directive';
-import { JobsModule } from 'app/modules/jobs/jobs.module';
+import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsState } from 'app/modules/jobs/store/job.reducer';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 
@@ -21,10 +21,10 @@ import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
     CdkScrollable,
     MatDialogContent,
     MatDialogTitle,
-    JobsModule,
     TranslateModule,
     AsyncPipe,
     LetDirective,
+    JobItemComponent,
   ],
 })
 export class UpdateDialogComponent {

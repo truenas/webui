@@ -16,7 +16,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
@@ -53,7 +52,6 @@ describe('AccessCardComponent', () => {
   const createComponent = createComponentFactory({
     component: AccessCardComponent,
     imports: [
-      AppLoaderModule,
       FakeFormatDateTimePipe,
       YesNoPipe,
       IxTablePagerShowMoreComponent,

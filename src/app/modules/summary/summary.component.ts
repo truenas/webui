@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { SummarySection } from 'app/modules/summary/summary.interface';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-summary',
@@ -12,8 +12,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class SummaryComponent {
