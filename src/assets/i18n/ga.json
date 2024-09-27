@@ -76,6 +76,7 @@
   "Waiting for standby controller": "",
   "We encountered an issue while applying the new network changes.  Unfortunately, we were unable to reconnect to the system after the changes were implemented.  As a result, we have restored the previous network configuration to ensure continued connectivity.": "",
   "We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and reload the page.": "",
+  "You can also vote for new features <a target=\"_blank\" href=\"https://forums.truenas.com/feature-requests\">on our forum.</a>": "",
   "You have successfully added credentials.": "",
   "was successfully attached.": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",

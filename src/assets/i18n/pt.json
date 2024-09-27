@@ -3043,6 +3043,7 @@
   "Yandex": "",
   "Yandex  <a href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/\"  target=\"_blank\">Access Token</a>.": "",
   "You are trying to open:<br>\n{url}<br><br>\nBecause HTTP to HTTPS redirect is enabled in settings your browser will force HTTPS connection for this URL.<br>\nThis may create issues if app does not support secure connections.<br>\n<br>\nYou can try opening app url in an incognito mode.<br>\nAlternatively you can disable redirect in Settings, clear browser cache and try again.": "",
+  "You can also vote for new features <a target=\"_blank\" href=\"https://forums.truenas.com/feature-requests\">on our forum.</a>": "",
   "You can search both for local groups as well as groups from Active Directory. Press ENTER to separate entries.": "",
   "You can search both for local users as well as users from Active Directory.Press ENTER to separate entries.": "",
   "You have left the domain.": "",
