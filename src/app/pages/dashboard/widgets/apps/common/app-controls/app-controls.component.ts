@@ -34,7 +34,7 @@ export class AppControlsComponent {
   onRestartApp(app: App): void {
     this.isRestarting.set(true);
     this.snackbar.success(this.translate.instant('App is restarting'));
-    this.appService.restartApplication(app)
+    this.appService.restartApplication(app.name)
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
