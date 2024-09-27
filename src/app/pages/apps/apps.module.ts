@@ -52,14 +52,14 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { TerminalModule } from 'app/modules/terminal/terminal.module';
+import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
 import {
@@ -156,7 +156,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
   imports: [
     AppsRoutingModule,
     IxCodeEditorComponent,
-    PageHeaderModule,
     MatButtonModule,
     TranslateModule,
     IxDynamicFormModule,
@@ -174,7 +173,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     IxIconComponent,
     LazyLoadImageModule,
     MatExpansionModule,
-    TerminalModule,
     MatTooltipModule,
     MatMenuModule,
     CustomFormsModule,
@@ -223,6 +221,8 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     IxTablePagerComponent,
     FakeProgressBarComponent,
     TestDirective,
+    PageHeaderComponent,
+    TerminalComponent,
   ],
 })
 export class AppsModule { }

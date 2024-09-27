@@ -74,7 +74,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
@@ -237,7 +237,6 @@ import { routing } from './system.routing';
     IxListComponent,
     IxListItemComponent,
     IxExplorerComponent,
-    PageHeaderModule,
     AsyncPipe,
     KeyValuePipe,
     RequiresRolesDirective,
@@ -306,6 +305,7 @@ import { routing } from './system.routing';
     WithLoadingStateDirective,
     TestOverrideDirective,
     TestOverrideDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     AdvancedSettingsComponent,

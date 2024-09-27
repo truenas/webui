@@ -40,7 +40,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -103,7 +103,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     IxSelectComponent,
     IxModalHeaderComponent,
     IxInputComponent,
-    PageHeaderModule,
     AsyncPipe,
     DecimalPipe,
     PercentPipe,
@@ -132,6 +131,7 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     TestDirective,
     TestDirective,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     PoolsDashboardComponent,

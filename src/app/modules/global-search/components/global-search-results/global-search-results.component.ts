@@ -1,8 +1,11 @@
 import {
   ChangeDetectionStrategy, Component, Inject, Input, OnChanges, output, TrackByFunction,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { findIndex, isEqual } from 'lodash-es';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -13,6 +16,8 @@ import { processHierarchy } from 'app/modules/global-search/helpers/process-hier
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -21,6 +26,14 @@ import { AuthService } from 'app/services/auth/auth.service';
   templateUrl: './global-search-results.component.html',
   styleUrls: ['./global-search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    TestDirective,
+    IxIconComponent,
+    MatButton,
+    TranslateModule,
+  ],
 })
 export class GlobalSearchResultsComponent implements OnChanges {
   @Input() searchTerm = '';

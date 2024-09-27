@@ -11,6 +11,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -90,7 +92,13 @@ import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { routing } from 'app/pages/credentials/credentials.routing';
+import { GroupEffects } from 'app/pages/credentials/groups/store/group.effects';
+import { groupReducer } from 'app/pages/credentials/groups/store/group.reducer';
+import { groupStateKey } from 'app/pages/credentials/groups/store/group.selectors';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
+import { UserEffects } from 'app/pages/credentials/users/store/user.effects';
+import { userReducer } from 'app/pages/credentials/users/store/user.reducer';
+import { userStateKey } from 'app/pages/credentials/users/store/user.selectors';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
 import { CloudCredentialsCardComponent } from './backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
@@ -217,6 +225,9 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     IxTablePagerShowMoreComponent,
     IxTableCellDirective,
     TestDirective,
+    EffectsModule.forFeature([UserEffects, GroupEffects]),
+    StoreModule.forFeature(groupStateKey, groupReducer),
+    StoreModule.forFeature(userStateKey, userReducer),
   ],
 })
 export class CredentialsModule { }

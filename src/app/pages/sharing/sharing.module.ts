@@ -54,7 +54,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
@@ -134,7 +134,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     IxComboboxComponent,
     IxIpInputWithNetmaskComponent,
     IxErrorsComponent,
-    PageHeaderModule,
     AsyncPipe,
     LowerCasePipe,
     NgClass,
@@ -151,6 +150,7 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     TestDirective,
     NgTemplateOutlet,
     IxTableDetailsRowDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     NfsListComponent,

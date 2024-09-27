@@ -35,7 +35,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -81,7 +81,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxCheckboxComponent,
     FormActionsComponent,
     IxSlideToggleComponent,
-    PageHeaderModule,
     AsyncPipe,
     KeyValuePipe,
     NgTemplateOutlet,
@@ -94,6 +93,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxTablePagerComponent,
     FakeProgressBarComponent,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     LineChartComponent,

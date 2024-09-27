@@ -46,10 +46,10 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
-import { TerminalModule } from 'app/modules/terminal/terminal.module';
+import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
@@ -87,7 +87,6 @@ import { routing } from './vm.routing';
     MatTooltipModule,
     ReactiveFormsModule,
     routing,
-    TerminalModule,
     TranslateModule,
     SearchInput1Component,
     SummaryComponent,
@@ -104,7 +103,6 @@ import { routing } from './vm.routing';
     IxErrorsComponent,
     IxFileInputComponent,
     IxRadioGroupComponent,
-    PageHeaderModule,
     AsyncPipe,
     RequiresRolesDirective,
     UiSearchDirective,
@@ -119,6 +117,8 @@ import { routing } from './vm.routing';
     IxTableColumnsSelectorComponent,
     TestDirective,
     WithLoadingStateDirective,
+    TerminalComponent,
+    PageHeaderComponent,
   ],
   declarations: [
     VmSerialShellComponent,
