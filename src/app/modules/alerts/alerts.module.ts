@@ -18,9 +18,9 @@ import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { alertReducer } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @NgModule({
   imports: [
@@ -29,18 +29,18 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TranslateModule,
     MatButtonModule,
     MatMenuModule,
-    IxIconModule,
+    IxIconComponent,
     RouterModule,
     MatCheckboxModule,
     MatProgressBarModule,
     MatListModule,
     MatTooltipModule,
     MatRippleModule,
-    TestIdModule,
     FormatDateTimePipe,
     AsyncPipe,
     NavigateAndInteractDirective,
     LetDirective,
+    TestDirective,
   ],
   declarations: [
     AlertsPanelComponent,

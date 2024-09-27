@@ -13,6 +13,7 @@ import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-we
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
@@ -98,6 +99,7 @@ describe('PoolManagerWizardComponent', () => {
     component: PoolManagerWizardComponent,
     imports: [
       MatStepperModule,
+      FakeProgressBarComponent,
     ],
     declarations: [
       MockComponents(

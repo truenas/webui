@@ -19,7 +19,7 @@ import { GlobalSearchSection } from 'app/modules/global-search/enums/global-sear
 import * as focusHelper from 'app/modules/global-search/helpers/focus-helper';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
@@ -43,7 +43,7 @@ describe('GlobalSearchComponent', () => {
       RouterTestingModule,
       MatDialogModule,
       TranslateModule.forRoot(),
-      IxIconModule,
+      IxIconComponent,
       A11yModule,
       EmptyComponent,
     ],

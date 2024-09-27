@@ -18,10 +18,10 @@ import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directo
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface RowState {
@@ -42,11 +42,11 @@ interface RowState {
   standalone: true,
   imports: [
     MatButton,
-    TestIdModule,
     NgClass,
     MatTooltip,
-    IxIconModule,
+    IxIconComponent,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements OnInit {

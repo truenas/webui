@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input, model,
 } from '@angular/core';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-toolbar-slider',
@@ -13,7 +13,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     MatSlider,
     MatSliderThumb,
-    TestIdModule,
+    TestDirective,
   ],
 })
 export class ToolbarSliderComponent {

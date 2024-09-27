@@ -5,8 +5,8 @@ import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-info-dialog',
@@ -16,13 +16,13 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatDialogTitle,
-    IxIconModule,
+    IxIconComponent,
     CdkScrollable,
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class InfoDialogComponent {

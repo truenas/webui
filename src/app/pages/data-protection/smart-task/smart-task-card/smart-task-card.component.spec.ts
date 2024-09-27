@@ -15,7 +15,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SmartTaskCardComponent } from 'app/pages/data-protection/smart-task/smart-task-card/smart-task-card.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -75,7 +74,6 @@ describe('SmartTaskCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SmartTaskCardComponent,
     imports: [
-      AppLoaderModule,
     ],
     providers: [
       mockAuth(),

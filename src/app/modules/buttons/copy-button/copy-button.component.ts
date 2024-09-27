@@ -5,9 +5,9 @@ import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-copy-button',
@@ -18,12 +18,12 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     MatIconButton,
     MatTooltip,
-    TestIdModule,
     TranslateModule,
-    IxIconModule,
+    IxIconComponent,
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
+    TestDirective,
   ],
 })
 export class CopyButtonComponent {

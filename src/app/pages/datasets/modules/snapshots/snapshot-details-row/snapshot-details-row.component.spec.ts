@@ -10,7 +10,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
@@ -28,7 +27,6 @@ describe('SnapshotDetailsRowComponent', () => {
   const createComponent = createRoutingFactory({
     component: SnapshotDetailsRowComponent,
     imports: [
-      AppLoaderModule,
       ReactiveFormsModule,
       FileSizePipe,
       FormatDateTimePipe,

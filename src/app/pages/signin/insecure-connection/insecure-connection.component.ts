@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @Component({
   selector: 'ix-insecure-connection',
@@ -9,7 +9,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
   styleUrls: ['./insecure-connection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [IxIconModule, TranslateModule],
+  imports: [IxIconComponent, TranslateModule],
 })
 export class InsecureConnectionComponent {
   connectionText = '';

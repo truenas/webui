@@ -24,20 +24,16 @@ describe('WidgetAppSettingsComponent', () => {
         updateSettings: jest.fn(),
       }),
       mockProvider(WidgetResourcesService, {
-        installedApps$: of({
-          isLoading: false,
-          error: null,
-          value: [{
-            id: 1,
-            name: 'App 1',
-          }, {
-            id: 2,
-            name: 'App 2',
-          }, {
-            id: 3,
-            name: 'App 3',
-          }],
-        }),
+        installedApps$: of([{
+          id: 1,
+          name: 'App 1',
+        }, {
+          id: 2,
+          name: 'App 2',
+        }, {
+          id: 3,
+          name: 'App 3',
+        }]),
       }),
     ],
   });

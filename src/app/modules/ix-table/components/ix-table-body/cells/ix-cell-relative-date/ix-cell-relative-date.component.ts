@@ -6,7 +6,7 @@ import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LocaleService } from 'app/services/locale.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { LocaleService } from 'app/services/locale.service';
   templateUrl: './ix-cell-relative-date.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatTooltip, TestIdModule],
+  imports: [MatTooltip, TestDirective],
   providers: [FormatDateTimePipe],
 })
 export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {

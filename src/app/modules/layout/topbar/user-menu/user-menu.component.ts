@@ -14,13 +14,13 @@ import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { userMenuElements } from 'app/modules/layout/topbar/user-menu/user-menu.elements';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -32,10 +32,9 @@ import { AuthService } from 'app/services/auth/auth.service';
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
     MatMenuTrigger,
-    IxIconModule,
+    IxIconComponent,
     MatMenu,
     MatMenuItem,
     RouterLink,
@@ -43,6 +42,7 @@ import { AuthService } from 'app/services/auth/auth.service';
     AsyncPipe,
     TranslateModule,
     UiSearchDirective,
+    TestDirective,
   ],
 })
 export class UserMenuComponent {

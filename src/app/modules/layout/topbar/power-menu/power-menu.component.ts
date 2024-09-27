@@ -11,9 +11,9 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { powerMenuElements } from 'app/modules/layout/topbar/power-menu/power-menu.elements';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -23,15 +23,15 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
     MatTooltip,
     MatMenuTrigger,
-    IxIconModule,
+    IxIconComponent,
     MatMenu,
     MatMenuItem,
     TranslateModule,
     RequiresRolesDirective,
     UiSearchDirective,
+    TestDirective,
   ],
 })
 export class PowerMenuComponent {

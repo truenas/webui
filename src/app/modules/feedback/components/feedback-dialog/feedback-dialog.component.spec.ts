@@ -16,6 +16,7 @@ import {
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -32,6 +33,7 @@ describe('FeedbackDialogComponent', () => {
     imports: [
       ReactiveFormsModule,
       CastPipe,
+      FakeProgressBarComponent,
     ],
     declarations: [
       MockComponents(

@@ -286,7 +286,7 @@ module.exports = {
             {
               "name": "@angular/material/icon",
               "importNames": ["MatIconModule"],
-              "message": "Use IxIconModule instead."
+              "message": "Use IxIconComponent instead."
             },
             {
               "name": "@angular/core",

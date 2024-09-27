@@ -3,19 +3,19 @@ import { NgTemplateOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @NgModule({
   declarations: [DualListboxComponent],
   imports: [
     MatButtonModule,
     MatListModule,
-    IxIconModule,
+    IxIconComponent,
     DragDropModule,
-    TestIdModule,
     NgTemplateOutlet,
+    TestDirective,
   ],
   exports: [DualListboxComponent],
 })

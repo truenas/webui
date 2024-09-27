@@ -6,7 +6,6 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 import { VmService } from './vm.service';
@@ -15,7 +14,6 @@ describe('VmService', () => {
   let spectator: SpectatorService<VmService>;
   const createService = createServiceFactory({
     service: VmService,
-    imports: [AppLoaderModule],
     providers: [
       mockWebSocket([
         mockCall('core.download'),

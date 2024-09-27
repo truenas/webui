@@ -19,7 +19,6 @@ import {
   IxTableDetailsRowComponent,
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
@@ -63,7 +62,6 @@ describe('SnapshotTaskListComponent', () => {
   const createComponent = createComponentFactory({
     component: SnapshotTaskListComponent,
     imports: [
-      AppLoaderModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
       IxTableColumnsSelectorComponent,

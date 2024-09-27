@@ -11,7 +11,6 @@ import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ch
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { WidgetEditorGroupComponent } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-slot-form/widget-group-slot-form.component';
@@ -33,7 +32,6 @@ describe('WidgetGroupFormComponent', () => {
   const createComponent = createComponentFactory({
     component: WidgetGroupFormComponent,
     imports: [
-      TestIdModule,
       ReactiveFormsModule,
     ],
     declarations: [

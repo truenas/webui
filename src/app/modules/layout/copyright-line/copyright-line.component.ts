@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { map, startWith } from 'rxjs';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsState } from 'app/store';
 import { selectBuildYear, selectProductType } from 'app/store/system-info/system-info.selectors';
 
@@ -15,7 +15,7 @@ import { selectBuildYear, selectProductType } from 'app/store/system-info/system
   styleUrls: ['./copyright-line.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [TestIdModule],
+  imports: [TestDirective],
 })
 export class CopyrightLineComponent {
   readonly withIxLogo = input(false);

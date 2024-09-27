@@ -18,8 +18,8 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import {
   EncryptionOptionsDialogComponent,
@@ -42,8 +42,7 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     EntityModule,
     ReactiveFormsModule,
     MatDialogModule,
-    TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     IxCheckboxComponent,
     IxRadioGroupComponent,
     IxFileInputComponent,
@@ -55,6 +54,7 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     FormActionsComponent,
     AsyncPipe,
     RequiresRolesDirective,
+    TestDirective,
   ],
   exports: [
     ZfsEncryptionCardComponent,

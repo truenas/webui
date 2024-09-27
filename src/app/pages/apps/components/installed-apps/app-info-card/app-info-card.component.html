@@ -34,7 +34,7 @@
       <div class="details-list">
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
-          <a class="value" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
+          <a class="value app-name" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
             {{ app()?.name | orNotAvailable }}
           </a>
         </div>

@@ -13,8 +13,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 /**
  * @deprecated Try ix-basic-search instead.
@@ -27,10 +27,10 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxIconModule,
+    IxIconComponent,
     TranslateModule,
     MatInputModule,
-    TestIdModule,
+    TestDirective,
   ],
 })
 export class SearchInput1Component implements OnInit, OnChanges {

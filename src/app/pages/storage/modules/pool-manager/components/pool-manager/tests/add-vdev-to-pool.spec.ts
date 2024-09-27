@@ -1,6 +1,4 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatStepperModule } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -13,15 +11,11 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
-import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { existingPool, existingPoolDisks } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/add-vdev-to-pool-data';
 import {
-  commonDeclarations,
+  commonDeclarations, commonImports,
   commonProviders,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/common.utils';
 import {
@@ -37,12 +31,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
   const createComponent = createComponentFactory({
     component: AddVdevsComponent,
     imports: [
-      ReactiveFormsModule,
-      MatStepperModule,
-      FileSizePipe,
-      MapValuePipe,
-      CastPipe,
-      IxWarningComponent,
+      ...commonImports,
     ],
     declarations: [
       ...commonDeclarations,

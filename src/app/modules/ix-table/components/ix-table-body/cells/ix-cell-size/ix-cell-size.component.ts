@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-cell-size',
   templateUrl: './ix-cell-size.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [TestIdModule, FileSizePipe],
+  imports: [FileSizePipe, TestDirective],
 })
 export class IxCellSizeComponent<T> extends ColumnComponent<T> {
   get size(): number {

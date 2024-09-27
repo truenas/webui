@@ -32,7 +32,6 @@ import {
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
@@ -118,7 +117,6 @@ describe('ReplicationListComponent', () => {
   const createComponent = createComponentFactory({
     component: ReplicationListComponent,
     imports: [
-      AppLoaderModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
       IxTableDetailsRowDirective,

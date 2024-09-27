@@ -9,7 +9,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ManageDiskSedDialogComponent } from './manage-disk-sed-dialog.component';
@@ -22,7 +21,6 @@ describe('ManageDiskSedDialogComponent', () => {
     component: ManageDiskSedDialogComponent,
     imports: [
       ReactiveFormsModule,
-      AppLoaderModule,
     ],
     providers: [
       mockAuth(),

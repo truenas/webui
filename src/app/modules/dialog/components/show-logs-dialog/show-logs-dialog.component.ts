@@ -10,7 +10,7 @@ import { catchError, EMPTY, switchMap } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -28,8 +28,8 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogActions,
     MatButton,
     MatDialogClose,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class ShowLogsDialogComponent {

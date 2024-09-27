@@ -16,6 +16,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -40,6 +41,7 @@ describe('AuthorizedAccessListComponent', () => {
     imports: [
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
+      FakeProgressBarComponent,
     ],
     providers: [
       mockAuth(),

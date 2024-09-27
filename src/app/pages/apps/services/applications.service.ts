@@ -79,7 +79,7 @@ export class ApplicationsService {
     }]);
   }
 
-  getInstalledAppsUpdates(): Observable<ApiEvent> {
+  getInstalledAppsUpdates(): Observable<ApiEvent<App>> {
     return this.ws.subscribe('app.query');
   }
 
