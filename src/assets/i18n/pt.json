@@ -3050,6 +3050,7 @@
   "You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.": "",
   "Your dashboard is currently empty!": "",
   "ZFS": "",
+  "ZFS Errors": "",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "",
   "ZFS Replication to another TrueNAS": "",
