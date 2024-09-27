@@ -11,6 +11,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ServiceRow } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { convertStringToId } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -32,6 +33,10 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   });
 
   protected readonly isRunning = computed(() => this.service().state === ServiceStatus.Running);
+
+  get testIdServiceName(): string {
+    return convertStringToId(this.service().name).replace(/\./g, '');
+  }
 
   private servicesService = inject(ServicesService);
   private ws = inject(WebSocketService);
