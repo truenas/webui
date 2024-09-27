@@ -21,10 +21,10 @@ export class TopologyItemIconComponent {
     }
     if (isVdev(this.topologyItem())) {
       if (this.disk().type === DiskType.Hdd) {
-        return 'ix:hdd_mirror';
+        return 'ix:hdd-mirror';
       }
       if (this.disk().type === DiskType.Ssd) {
-        return 'ix:ssd_mirror';
+        return 'ix:ssd-mirror';
       }
     } else {
       if (this.disk().type === DiskType.Hdd) {

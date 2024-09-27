@@ -36,15 +36,15 @@ export class IxLogoComponent {
     map(([activeTheme, isXsScreen]) => {
       const isBlueTheme = activeTheme === 'ix-blue' || activeTheme === 'midnight';
       if (isBlueTheme && isXsScreen) {
-        return 'ix:logo_mark';
+        return 'ix:ix-logo-mark';
       }
       if (!isBlueTheme && isXsScreen) {
-        return 'ix:logo_mark_rgb';
+        return 'ix:ix-logo-mark-color';
       }
       if (isBlueTheme && !isXsScreen) {
-        return 'ix:logo_full';
+        return 'ix:ix-logo';
       }
-      return 'ix:logo_full_rgb';
+      return 'ix:ix-logo-color';
     }),
   );
 }

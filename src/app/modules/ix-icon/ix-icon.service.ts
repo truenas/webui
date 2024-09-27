@@ -5,8 +5,8 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ixSvgIcons } from 'app/modules/ix-icon/ix-icon.constants';
 
+// TODO: Nuke.
 @Injectable({ providedIn: 'root' })
 export class IxIconRegistry extends MatIconRegistry {
   constructor(
@@ -17,8 +17,6 @@ export class IxIconRegistry extends MatIconRegistry {
   ) {
     super(httpClient, sanitizer, document, errorHandler);
 
-    for (const [name, path] of Object.entries(ixSvgIcons)) {
-      this.addSvgIconInNamespace('ix', name, this.sanitizer.bypassSecurityTrustResourceUrl(path));
-    }
+    this.addSvgIconSet(this.sanitizer.bypassSecurityTrustResourceUrl('assets/icons/sprite.svg'));
   }
 }

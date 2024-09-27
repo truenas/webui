@@ -32,6 +32,6 @@ describe('IxLogoComponent', () => {
   it('shows a logo that takes user to ixsystems website', () => {
     expect(spectator.query('a')).toHaveAttribute('href', 'https://www.ixsystems.com');
     const icon = spectator.query(IxIconComponent);
-    expect(icon.name).toBe('ix:logo_full_rgb');
+    expect(icon.name).toBe('ix:ix-logo-color');
   });
 });

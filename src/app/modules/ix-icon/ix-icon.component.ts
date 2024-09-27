@@ -14,14 +14,17 @@ import {
 import {
   MatIcon, MatIconDefaultOptions, MatIconLocation, MatIconRegistry, MAT_ICON_DEFAULT_OPTIONS, MAT_ICON_LOCATION,
 } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 
 /**
  * IxIcon component extends MatIcon
- * It provides single interface to access all icons in the app
- * Examples:
- *     `<ix-icon name="left-arrow"></ix-icon>
- *     <ix-icon name="mdi-left-arrow"></ix-icon>
- *     <ix-icon name="ix:left-arrow"></ix-icon>`
+ * It provides single interface to access all icons in the app.
+ * You can use:
+ * - Google's material icons `<ix-icon name="left-arrow"></ix-icon>`
+ * - material design icons (https://pictogrammers.com/library/mdi/) `<ix-icon name="mdi-left-arrow"></ix-icon>`
+ * - custom icons `<ix-icon name="ix-left-arrow"></ix-icon>`
+ *
+ * More information on how icon sprite works is available in the assets/icons/README.md.
  */
 @Component({
   selector: 'ix-icon',
@@ -72,12 +75,12 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
-    iconRegistry: MatIconRegistry,
+    private iconRegistry: MatIconRegistry,
     @Attribute('aria-hidden') ariaHidden: string,
     @Inject(MAT_ICON_LOCATION) location: MatIconLocation,
     readonly errorHandler: ErrorHandler,
-    @Optional() @Inject(MAT_ICON_DEFAULT_OPTIONS)
-    defaults?: MatIconDefaultOptions,
+    private sanitizer: DomSanitizer,
+    @Optional() @Inject(MAT_ICON_DEFAULT_OPTIONS) defaults?: MatIconDefaultOptions,
   ) {
     super(elementRef, iconRegistry, ariaHidden, location, errorHandler, defaults);
   }
@@ -88,6 +91,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
 
   override ngOnInit(): void {
     this.updateIcon(this.iconName);
+    this.iconRegistry.addSvgIconSet(this.sanitizer.bypassSecurityTrustResourceUrl('assets/icons/sprite.svg'));
     super.ngOnInit();
   }
 
@@ -96,29 +100,9 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
   }
 
   private updateIcon(iconName: string | undefined): void {
-    switch (true) {
-      case ((!iconName)):
-        this.svgIcon = '';
-        this.fontSet = '';
-        this.fontIcon = '';
-        this.iconLigature = '';
-        break;
-      case (iconName?.startsWith('ix:')):
-        this.fontIcon = '';
-        this.fontSet = '';
-        this.svgIcon = iconName;
-        break;
-      case (iconName?.startsWith('mdi')):
-        this.svgIcon = '';
-        this.iconLigature = '';
-        this.fontSet = 'mdi-set';
-        this.fontIcon = iconName;
-        break;
-      default:
-        this.fontSet = '';
-        this.svgIcon = '';
-        this.fontIcon = iconName;
-        this.iconLigature = iconName;
+    if (!iconName) {
+      return;
     }
+    this.svgIcon = iconName;
   }
 }

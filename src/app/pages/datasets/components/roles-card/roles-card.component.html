@@ -23,7 +23,7 @@
     }
     @if (isSystemDataset()) {
       <div class="details-item">
-        <ix-icon class="icon" name="ix:logo_truenas_scale_mark"></ix-icon>
+        <ix-icon class="icon" name="ix-truenas-logo-mark"></ix-icon>
         <div class="label">{{ 'System Dataset' | translate }}:</div>
         <div class="system-dataset value">
           {{ 'This dataset is used by the system' | translate }}
@@ -56,7 +56,7 @@
     }
     @if (dataset().smb_shares?.length) {
       <div class="details-item">
-        <ix-icon name="ix:smb_share" class="icon"></ix-icon>
+        <ix-icon name="ix-smb-share" class="icon"></ix-icon>
         <div class="label">{{ 'Share Attached' | translate }}:</div>
         <div class="smb-shares value">
           {{ 'Dataset is shared via SMB as {shares}' | translate: { shares: smbShareNames() } }}
@@ -68,7 +68,7 @@
     }
     @if (dataset().nfs_shares?.length) {
       <div class="details-item">
-        <ix-icon name="ix:nfs_share" class="icon"></ix-icon>
+        <ix-icon name="ix-nfs-share" class="icon"></ix-icon>
         <div class="label">{{ 'Share Attached' | translate }}:</div>
         <div class="nfs-shares value">
           {{ 'Dataset is shared via NFS' | translate }}
@@ -84,7 +84,7 @@
     }
     @if (dataset().iscsi_shares?.length) {
       <div class="details-item">
-        <ix-icon name="ix:iscsi_share" class="icon"></ix-icon>
+        <ix-icon name="ix-iscsi-share" class="icon"></ix-icon>
         <div class="label">{{ 'Share Attached' | translate }}:</div>
         <div class="iscsi-shares value">
           {{ 'Dataset is shared via iSCSI' | translate }}

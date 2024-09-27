@@ -37,13 +37,13 @@ describe('TopologyItemIconComponent', () => {
     spectator = createComponent({
       props: { disk: diskHdd, topologyItem: vdevMirror },
     });
-    expect(spectator.query(IxIconComponent).svgIcon).toBe('ix:hdd_mirror');
+    expect(spectator.query(IxIconComponent).svgIcon).toBe('ix:hdd-mirror');
   });
 
   it('shows ssd mirror icon', () => {
     spectator = createComponent({
       props: { disk: diskSsd, topologyItem: vdevMirror },
     });
-    expect(spectator.query(IxIconComponent).svgIcon).toBe('ix:ssd_mirror');
+    expect(spectator.query(IxIconComponent).svgIcon).toBe('ix:ssd-mirror');
   });
 });
