@@ -19,7 +19,7 @@ import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -37,11 +37,11 @@ import { WebSocketService } from 'app/services/ws.service';
     ReactiveFormsModule,
     InsecureConnectionComponent,
     MatButton,
-    TestIdModule,
     AsyncPipe,
     TranslateModule,
     IxInputComponent,
     AutofocusDirective,
+    TestDirective,
   ],
 })
 export class SigninFormComponent implements OnInit {

@@ -28,7 +28,7 @@ import {
   IxModalHeaderComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import {
@@ -42,12 +42,14 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import {
+  WithLoadingStateDirective,
+} from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
@@ -71,8 +73,7 @@ import { routing } from './vm.routing';
 
 @NgModule({
   imports: [
-    AppLoaderModule,
-    IxIconModule,
+    IxIconComponent,
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
@@ -85,7 +86,6 @@ import { routing } from './vm.routing';
     ReactiveFormsModule,
     routing,
     TerminalModule,
-    TestIdModule,
     TranslateModule,
     SearchInput1Component,
     SummaryComponent,
@@ -115,6 +115,8 @@ import { routing } from './vm.routing';
     IxTableDetailsRowDirective,
     IxTableDetailsRowComponent,
     IxTableColumnsSelectorComponent,
+    TestDirective,
+    WithLoadingStateDirective,
   ],
   declarations: [
     VmSerialShellComponent,

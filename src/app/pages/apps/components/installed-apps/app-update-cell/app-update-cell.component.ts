@@ -7,7 +7,7 @@ import {
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { App } from 'app/interfaces/app.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 
@@ -17,7 +17,7 @@ import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/ap
   styleUrls: ['./app-update-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [TranslateModule, MapValuePipe, MatTooltipModule, IxIconModule, AppVersionPipe],
+  imports: [TranslateModule, MapValuePipe, MatTooltipModule, IxIconComponent, AppVersionPipe],
 })
 export class AppUpdateCellComponent {
   app = input.required<App>();

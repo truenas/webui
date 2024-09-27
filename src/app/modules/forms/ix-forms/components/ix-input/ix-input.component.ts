@@ -28,8 +28,9 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -40,8 +41,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     IxLabelComponent,
-    TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     MatInput,
     MatAutocompleteTrigger,
     MatIconButton,
@@ -52,6 +52,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxErrorsComponent,
     MatHint,
     TranslateModule,
+    TestOverrideDirective,
+    TestDirective,
   ],
 })
 export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges, AfterViewInit, OnDestroy {

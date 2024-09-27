@@ -5,7 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { GroupsModule } from './groups/groups.module';
 import { UsersModule } from './users/users.module';
 
@@ -15,7 +15,7 @@ import { UsersModule } from './users/users.module';
     TranslateModule,
     MatSortModule,
     MatCardModule,
-    IxIconModule,
+    IxIconComponent,
     MatListModule,
     MatProgressSpinnerModule,
     UsersModule,

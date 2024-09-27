@@ -30,18 +30,18 @@ import {
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
@@ -74,7 +74,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     BaseChartDirective,
     routing,
     TranslateModule,
-    IxIconModule,
+    IxIconComponent,
     MatCardModule,
     MatTooltipModule,
     MatSortModule,
@@ -87,9 +87,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     TreeModule,
     MatDialogModule,
     NgxSkeletonLoaderModule,
-    AppLoaderModule,
     SnapshotsModule,
-    TestIdModule,
     EmptyComponent,
     SearchInput1Component,
     CdkTreeNodePadding,
@@ -118,6 +116,8 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxTableBodyComponent,
     IxTablePagerComponent,
     IxTableEmptyDirective,
+    FakeProgressBarComponent,
+    TestDirective,
   ],
   declarations: [
     DatasetsManagementComponent,

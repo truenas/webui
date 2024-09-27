@@ -19,6 +19,7 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
  */
 @Directive({
   selector: '[ixTest]',
+  standalone: true,
 })
 export class TestDirective {
   @Input('ixTest') description: number | string | (string | number)[];

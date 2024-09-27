@@ -25,7 +25,7 @@ import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { IxChainedSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-chained-slide-in/ix-chained-slide-in.component';
 import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ConsoleFooterComponent } from 'app/modules/layout/console-footer/console-footer.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { NavigationComponent } from 'app/modules/layout/navigation/navigation.component';
@@ -33,7 +33,7 @@ import { SecondaryMenuComponent } from 'app/modules/layout/secondary-menu/second
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LanguageService } from 'app/services/language.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
@@ -56,8 +56,7 @@ import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system
     MatSidenav,
     NgClass,
     RouterLink,
-    TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     NavigationComponent,
     SecondaryMenuComponent,
     MatTooltip,
@@ -74,6 +73,7 @@ import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system
     LowerCasePipe,
     TranslateModule,
     MapValuePipe,
+    TestDirective,
   ],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {

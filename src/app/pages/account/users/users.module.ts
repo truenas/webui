@@ -40,7 +40,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import {
@@ -51,7 +51,8 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UserEffects } from 'app/pages/account/users/store/user.effects';
 import { userReducer } from 'app/pages/account/users/store/user.reducer';
 import { userStateKey } from 'app/pages/account/users/store/user.selectors';
@@ -66,7 +67,7 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
   imports: [
     EffectsModule.forFeature([UserEffects]),
     MatButtonModule,
-    IxIconModule,
+    IxIconComponent,
     MatListModule,
     MatMenuModule,
     MatRippleModule,
@@ -87,7 +88,6 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     StoreModule.forFeature(userStateKey, userReducer),
     TranslateModule,
     TranslateModule,
-    TestIdModule,
     SearchInput1Component,
     IxModalHeaderComponent,
     IxFieldsetComponent,
@@ -113,6 +113,8 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
     IxTableDetailsRowDirective,
     IxTablePagerComponent,
     IxTableExpandableRowComponent,
+    TestOverrideDirective,
+    TestDirective,
   ],
   declarations: [
     UserListComponent,

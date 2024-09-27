@@ -51,7 +51,7 @@ import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import {
@@ -68,9 +68,11 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import {
+  WithLoadingStateDirective,
+} from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -78,7 +80,8 @@ import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-da
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
@@ -183,13 +186,11 @@ import { routing } from './system.routing';
 
 @NgModule({
   imports: [
-    AppLoaderModule,
     FormsModule,
     TreeModule,
     SchedulerModule,
-    JobsModule,
     MatCardModule,
-    IxIconModule,
+    IxIconComponent,
     MatSelectModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
@@ -206,8 +207,6 @@ import { routing } from './system.routing';
     MatDialogModule,
     MatExpansionModule,
     MatSlideToggleModule,
-    AppLoaderModule,
-    TestIdModule,
     OauthButtonModule,
     UnusedDiskSelectComponent,
     SearchInput1Component,
@@ -250,6 +249,61 @@ import { routing } from './system.routing';
     IxTableDetailsRowComponent,
     IxTablePagerComponent,
     IxTableColumnsSelectorComponent,
+    FakeProgressBarComponent,
+    TestDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    WithLoadingStateDirective,
+    TestOverrideDirective,
+    TestOverrideDirective,
   ],
   declarations: [
     AdvancedSettingsComponent,

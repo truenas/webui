@@ -1,12 +1,19 @@
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
+import { MatStepperModule } from '@angular/material/stepper';
 import { createSpyObject, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { EMPTY, of } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   AddVdevsStore,
 } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -84,6 +91,16 @@ import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
+
+export const commonImports = [
+  ReactiveFormsModule,
+  MatStepperModule,
+  FileSizePipe,
+  MapValuePipe,
+  CastPipe,
+  IxWarningComponent,
+  FakeProgressBarComponent,
+];
 
 export const commonDeclarations = [
   ConfigurationPreviewComponent,

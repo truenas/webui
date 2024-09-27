@@ -4,8 +4,8 @@ import {
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-list-item',
@@ -15,9 +15,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatIconButton,
-    TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxListItemComponent {

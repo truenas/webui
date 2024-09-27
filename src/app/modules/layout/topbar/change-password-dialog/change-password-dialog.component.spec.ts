@@ -10,7 +10,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChangePasswordDialogComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ChangePasswordDialogComponent', () => {
@@ -21,7 +20,6 @@ describe('ChangePasswordDialogComponent', () => {
     component: ChangePasswordDialogComponent,
     imports: [
       ReactiveFormsModule,
-      AppLoaderModule,
     ],
     providers: [
       mockWebSocket([

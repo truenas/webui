@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -22,10 +22,10 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     IxLabelComponent,
     MatCheckbox,
-    TestIdModule,
     IxErrorsComponent,
     AsyncPipe,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxCheckboxListComponent implements ControlValueAccessor {

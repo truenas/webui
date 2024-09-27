@@ -1,9 +1,6 @@
 import { createDirectiveFactory, SpectatorDirective } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import {
-  WithLoadingStateErrorComponent,
-} from 'app/modules/loader/directives/with-loading-state/with-loading-state-error/with-loading-state-error.component';
-import {
   WithLoadingStateLoaderComponent,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state-loader/with-loading-state-loader.component';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
@@ -12,10 +9,6 @@ describe('WithLoadingStateDirective', () => {
   let spectator: SpectatorDirective<WithLoadingStateDirective>;
   const createDirective = createDirectiveFactory({
     directive: WithLoadingStateDirective,
-    declarations: [
-      WithLoadingStateLoaderComponent,
-      WithLoadingStateErrorComponent,
-    ],
   });
 
   describe('when loading state is an observable', () => {

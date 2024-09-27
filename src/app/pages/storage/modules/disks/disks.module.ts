@@ -22,7 +22,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import {
@@ -37,7 +37,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DiskBulkEditComponent,
 } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -62,8 +62,7 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     MatCardModule,
     MatDividerModule,
     MatProgressBarModule,
-    TestIdModule,
-    IxIconModule,
+    IxIconComponent,
     PageHeaderModule,
     SearchInput1Component,
     UnusedDiskSelectComponent,
@@ -88,6 +87,14 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     IxTableDetailsRowComponent,
     IxTablePagerComponent,
     IxTableColumnsSelectorComponent,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
   ],
   declarations: [
     DiskBulkEditComponent,

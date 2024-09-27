@@ -19,7 +19,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,10 +34,10 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestIdModule,
     MatProgressBar,
     MatButton,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class ExportButtonComponent<T, M extends ApiJobMethod> {

@@ -68,88 +68,6 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     });
   }
 
-  private handleRemovedApps(updatedAppName: string, allApps: AvailableApp[]): AvailableApp[] {
-    return allApps.map((app) => {
-      if (app.name === updatedAppName) {
-        return { ...app, installed: false } as AvailableApp;
-      }
-      return app;
-    });
-  }
-
-  private subscribeToInstalledAppsUpdates(): void {
-    if (this.installedAppsSubscription) {
-      return;
-    }
-
-    // TODO: Messy. Refactor.
-    this.installedAppsSubscription = this.appsService.getInstalledAppsUpdates().pipe(
-      tap(() => this.patchState({ isLoading: true })),
-      tap((apiEvent: ApiEvent<App>) => {
-        if (apiEvent.msg === IncomingApiMessageType.Removed) {
-          this.patchState((state: InstalledAppsState): InstalledAppsState => {
-            return {
-              ...state,
-              installedApps: state.installedApps.filter((app) => app.name !== apiEvent.id.toString()),
-            };
-          });
-          this.appsStore.patchState((state) => {
-            return {
-              ...state,
-              availableApps: this.handleRemovedApps(apiEvent.id as string, state.availableApps),
-              recommendedApps: this.handleRemovedApps(apiEvent.id as string, state.recommendedApps),
-              latestApps: this.handleRemovedApps(apiEvent.id as string, state.latestApps),
-            };
-          });
-        }
-      }),
-      filter((apiEvent) => {
-        if (apiEvent.msg === IncomingApiMessageType.Removed) {
-          this.patchState({ isLoading: false });
-        }
-        return apiEvent.msg !== IncomingApiMessageType.Removed;
-      }),
-      tap((apiEvent) => {
-        const app = apiEvent.fields;
-        if (!app) {
-          return;
-        }
-        this.patchState((state: InstalledAppsState): InstalledAppsState => {
-          if (apiEvent.msg === IncomingApiMessageType.Added) {
-            return {
-              ...state,
-              installedApps: [...state.installedApps, app],
-            };
-          }
-          return {
-            ...state,
-            installedApps: state.installedApps.map((installedApp) => {
-              if (installedApp.name === apiEvent.id) {
-                return { ...installedApp, ...app };
-              }
-              return installedApp;
-            }),
-          };
-        });
-
-        const updateApps = (appsToUpdate: AvailableApp[]): AvailableApp[] => appsToUpdate.map((availableApp) => {
-          return availableApp.name === app.id ? { ...availableApp, installed: true } : availableApp;
-        });
-
-        this.appsStore.patchState((state) => {
-          return {
-            ...state,
-            availableApps: updateApps(state.availableApps),
-            recommendedApps: updateApps(state.recommendedApps),
-            latestApps: updateApps(state.latestApps),
-          };
-        });
-      }),
-      tap(() => this.patchState({ isLoading: false })),
-      untilDestroyed(this),
-    ).subscribe();
-  }
-
   private loadInstalledApps(): Observable<unknown> {
     return this.dockerStore.isLoading$.pipe(
       withLatestFrom(this.dockerStore.isDockerStarted$),
@@ -173,5 +91,90 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       tap(() => this.patchState({ isLoading: false })),
       untilDestroyed(this),
     );
+  }
+
+  private subscribeToInstalledAppsUpdates(): void {
+    if (this.installedAppsSubscription) {
+      return;
+    }
+
+    this.installedAppsSubscription = this.appsService.getInstalledAppsUpdates().pipe(
+      tap((apiEvent: ApiEvent<App>) => {
+        this.handleApiEvent(apiEvent);
+        this.patchState({ isLoading: false });
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  private handleApiEvent(apiEvent: ApiEvent<App>): void {
+    switch (apiEvent.msg) {
+      case IncomingApiMessageType.Removed:
+        this.handleRemovedEvent(apiEvent);
+        break;
+      case IncomingApiMessageType.Added:
+      case IncomingApiMessageType.Changed:
+        this.handleAddedOrUpdatedEvent(apiEvent);
+        break;
+      default:
+        console.error('Unknown API event type');
+        break;
+    }
+  }
+
+  private handleRemovedEvent(apiEvent: ApiEvent<App>): void {
+    const appId = apiEvent.id.toString();
+
+    this.patchState((state: InstalledAppsState): InstalledAppsState => ({
+      ...state,
+      installedApps: state.installedApps.filter((app) => app.name !== appId),
+    }));
+
+    const updateApps = (updatedAppName: string, allApps: AvailableApp[]): AvailableApp[] => {
+      return allApps.map((app) => {
+        if (app.name === updatedAppName) {
+          return { ...app, installed: false };
+        }
+        return app;
+      });
+    };
+
+    this.appsStore.patchState((state) => ({
+      ...state,
+      availableApps: updateApps(appId, state.availableApps),
+      recommendedApps: updateApps(appId, state.recommendedApps),
+      latestApps: updateApps(appId, state.latestApps),
+    }));
+  }
+
+  private handleAddedOrUpdatedEvent(apiEvent: ApiEvent<App>): void {
+    const app = apiEvent.fields;
+    if (!app) {
+      return;
+    }
+
+    this.patchState((state: InstalledAppsState): InstalledAppsState => {
+      if (apiEvent.msg === IncomingApiMessageType.Added) {
+        return { ...state, installedApps: [...state.installedApps, app] };
+      }
+
+      return {
+        ...state,
+        installedApps: state.installedApps.map(
+          (installedApp) => (installedApp.name === apiEvent.id ? { ...installedApp, ...app } : installedApp),
+        ),
+      };
+    });
+
+    const updateApps = (apps: AvailableApp[]): AvailableApp[] => apps.map(
+      (availableApp) => (availableApp.name === app.id ? { ...availableApp, installed: true } : availableApp),
+    );
+
+    this.appsStore.patchState((state) => ({
+      ...state,
+      availableApps: updateApps(state.availableApps),
+      recommendedApps: updateApps(state.recommendedApps),
+      latestApps: updateApps(state.latestApps),
+    }));
   }
 }

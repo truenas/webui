@@ -35,13 +35,15 @@ import {
   IxModalHeaderComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import {
+  WithLoadingStateDirective,
+} from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/gauge-chart/gauge-chart.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
@@ -72,7 +74,7 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatButtonModule,
     RouterModule,
     MatPaginatorModule,
-    IxIconModule,
+    IxIconComponent,
     MatProgressSpinnerModule,
     MatToolbarModule,
     BaseChartDirective,
@@ -87,8 +89,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatInputModule,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
-    TestIdModule,
-    AppLoaderModule,
     EmptyComponent,
     FileSizePipe,
     FormatDateTimePipe,
@@ -107,6 +107,29 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     PercentPipe,
     RequiresRolesDirective,
     UiSearchDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    WithLoadingStateDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
+    TestDirective,
   ],
   declarations: [
     PoolsDashboardComponent,

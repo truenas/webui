@@ -16,9 +16,9 @@ import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ServicesState } from 'app/store/services/services.reducer';
@@ -36,7 +36,6 @@ export interface StartServiceDialogResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    AppLoaderModule,
     MatDialogTitle,
     CdkScrollable,
     MatDialogContent,
@@ -45,8 +44,9 @@ export interface StartServiceDialogResult {
     FormActionsComponent,
     MatDialogActions,
     MatButton,
-    TestIdModule,
     TranslateModule,
+    FakeProgressBarComponent,
+    TestDirective,
   ],
 })
 export class StartServiceDialogComponent implements OnInit {

@@ -32,7 +32,7 @@ import {
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import {
@@ -44,7 +44,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
@@ -62,7 +62,7 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
   imports: [
     EffectsModule.forFeature([GroupEffects]),
     MatButtonModule,
-    IxIconModule,
+    IxIconComponent,
     MatListModule,
     MatMenuModule,
     MatRippleModule,
@@ -82,7 +82,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     TranslateModule,
     DualListModule,
     MatSlideToggleModule,
-    TestIdModule,
     SearchInputModule,
     SearchInput1Component,
     IxFieldsetComponent,
@@ -104,6 +103,7 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableExpandableRowComponent,
+    TestDirective,
   ],
   declarations: [
     GroupListComponent,

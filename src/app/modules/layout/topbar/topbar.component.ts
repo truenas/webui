@@ -20,7 +20,7 @@ import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchModule } from 'app/modules/global-search/global-search.module';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
 import {
@@ -35,7 +35,7 @@ import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilve
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -54,9 +54,8 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     MatToolbar,
     MatToolbarRow,
     MatIconButton,
-    TestIdModule,
     MatTooltip,
-    IxIconModule,
+    IxIconComponent,
     GlobalSearchModule,
     RouterLink,
     IxLogoComponent,
@@ -74,6 +73,7 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     TranslateModule,
     LetDirective,
     UiSearchDirective,
+    TestDirective,
   ],
 })
 export class TopbarComponent implements OnInit {

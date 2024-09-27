@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-list',
@@ -22,9 +22,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     IxLabelComponent,
     MatButton,
-    TestIdModule,
     IxErrorsComponent,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxListComponent implements AfterViewInit {

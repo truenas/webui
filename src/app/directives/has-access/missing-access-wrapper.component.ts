@@ -5,7 +5,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @Component({
   selector: 'ix-missing-access-wrapper',
@@ -17,8 +17,8 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
     DisableFocusableElementsDirective,
     MatTooltip,
     NgTemplateOutlet,
-    IxIconModule,
     TranslateModule,
+    IxIconComponent,
   ],
 })
 export class MissingAccessWrapperComponent {

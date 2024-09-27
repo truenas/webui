@@ -15,7 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -25,7 +25,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 import { routing } from 'app/pages/jobs/jobs-list.routing';
@@ -33,7 +33,7 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 
 @NgModule({
   imports: [
-    IxIconModule,
+    IxIconComponent,
     MatTooltipModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
@@ -44,7 +44,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     routing,
     MatSortModule,
     MatButtonToggleModule,
-    TestIdModule,
     SearchInput1Component,
     MapValuePipe,
     CopyButtonComponent,
@@ -61,6 +60,7 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     IxTableCellDirective,
     IxTableDetailsRowDirective,
     IxTablePagerComponent,
+    TestDirective,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent, JobNameComponent],
 })

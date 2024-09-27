@@ -15,7 +15,6 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   CloudBackupCardComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-card/cloud-backup-card.component';
@@ -50,7 +49,6 @@ describe('CloudBackupCardComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudBackupCardComponent,
     imports: [
-      AppLoaderModule,
     ],
     providers: [
       mockAuth(),

@@ -12,7 +12,7 @@ import {
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-confirm-dialog',
@@ -25,13 +25,13 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     CdkScrollable,
     MatDialogContent,
     MatCheckbox,
-    TestIdModule,
     ReactiveFormsModule,
     FormsModule,
     FormActionsComponent,
     MatDialogActions,
     MatButton,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class ConfirmDialogComponent {

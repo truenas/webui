@@ -22,7 +22,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -46,10 +46,10 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogActions,
     MatButton,
     MatDialogClose,
-    TestIdModule,
     AsyncPipe,
     TranslateModule,
     RequiresRolesDirective,
+    TestDirective,
   ],
 })
 export class CreateDatasetDialogComponent implements OnInit {
