@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @Component({
@@ -18,7 +18,7 @@ import { AuthService } from 'app/services/auth/auth.service';
   standalone: true,
   imports: [
     ReadOnlyComponent,
-    IxIconModule,
+    IxIconComponent,
     MatProgressBar,
     AsyncPipe,
     TranslateModule,

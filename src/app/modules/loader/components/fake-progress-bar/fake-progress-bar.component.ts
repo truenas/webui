@@ -9,6 +9,7 @@ import {
   OnChanges,
   OnDestroy,
 } from '@angular/core';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { interval, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -29,6 +30,8 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
       ]),
     ]),
   ],
+  standalone: true,
+  imports: [MatProgressBar],
 })
 export class FakeProgressBarComponent implements OnChanges, OnDestroy {
   @Input() loading: boolean;

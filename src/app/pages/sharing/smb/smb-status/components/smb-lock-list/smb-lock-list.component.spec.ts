@@ -11,7 +11,6 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
 
 describe('SmbLockListComponent', () => {
@@ -65,7 +64,6 @@ describe('SmbLockListComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbLockListComponent,
     imports: [
-      AppLoaderModule,
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
       IxTableDetailsRowDirective,

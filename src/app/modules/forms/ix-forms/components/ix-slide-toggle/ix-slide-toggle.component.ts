@@ -7,7 +7,7 @@ import {
 import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @UntilDestroy()
@@ -19,9 +19,9 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   standalone: true,
   imports: [
     MatSlideToggle,
-    TestIdModule,
     TooltipComponent,
     IxErrorsComponent,
+    TestDirective,
   ],
 })
 export class IxSlideToggleComponent implements ControlValueAccessor {

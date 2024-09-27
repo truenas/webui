@@ -1,5 +1,5 @@
 import {
-  AsyncPipe, LowerCasePipe, NgClass,
+  AsyncPipe, LowerCasePipe, NgClass, NgTemplateOutlet,
 } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -39,7 +39,7 @@ import {
   IxModalHeaderComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import {
@@ -50,12 +50,13 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
@@ -105,16 +106,14 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     MatProgressBarModule,
     MatTabsModule,
     MatCardModule,
-    IxIconModule,
+    IxIconComponent,
     MatListModule,
     MatDialogModule,
     MatMenuModule,
     MatFormFieldModule,
     MatTooltipModule,
-    AppLoaderModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    TestIdModule,
     MatStepperModule,
     DualListModule,
     MatToolbarModule,
@@ -148,6 +147,10 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     IxTablePagerShowMoreComponent,
     IxTablePagerComponent,
     IxTableColumnsSelectorComponent,
+    FakeProgressBarComponent,
+    TestDirective,
+    NgTemplateOutlet,
+    IxTableDetailsRowDirective,
   ],
   declarations: [
     NfsListComponent,

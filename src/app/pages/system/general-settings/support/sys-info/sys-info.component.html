@@ -36,7 +36,7 @@
     </div>
     <div class="sys-info-row">
       <span class="label">{{ 'Model' | translate }}:</span>
-      <span class="value">{{ systemInfo().model }}</span>
+      <span class="value">{{ licenseInfo().model || systemInfo().model }}</span>
     </div>
     @if (systemInfo().system_serial) {
       <div class="sys-info-row">

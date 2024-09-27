@@ -13,8 +13,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -58,12 +58,13 @@ export interface JobProgressDialogConfig<Result> {
     MatProgressBar,
     MatDialogActions,
     MatButton,
-    TestIdModule,
     MatIconButton,
     MatDialogClose,
-    IxIconModule,
+    IxIconComponent,
     TranslateModule,
     DecimalPipe,
+    TestDirective,
+    TestDirective,
   ],
 })
 export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {

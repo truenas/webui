@@ -14,7 +14,7 @@ import { TopologyItem } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
 import { BootenvNodeItemComponent } from './bootenv-node-item/bootenv-node-item.component';
@@ -64,8 +64,8 @@ describe('BootStatusListComponent', () => {
   const createComponent = createComponentFactory({
     component: BootStatusListComponent,
     imports: [
-      AppLoaderModule,
       TreeModule,
+      FakeProgressBarComponent,
     ],
     providers: [
       mockAuth(),

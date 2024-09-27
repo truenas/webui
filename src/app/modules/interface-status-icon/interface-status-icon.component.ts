@@ -14,7 +14,6 @@ import { LinkState } from 'app/enums/network-interface.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +24,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
   standalone: true,
   imports: [
     MatTooltipModule,
-    IxIconModule,
+    IxIconComponent,
   ],
 })
 export class InterfaceStatusIconComponent {

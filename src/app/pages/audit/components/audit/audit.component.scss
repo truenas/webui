@@ -8,6 +8,14 @@
 }
 
 :host ::ng-deep {
+  .header-container .title-container .actions-container {
+    gap: 0 16px;
+
+    p {
+      margin: 0;
+    }
+  }
+
   ix-empty-row {
     height: 100%;
   }

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-cell-yesno',
@@ -10,9 +10,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    TestIdModule,
     TranslateModule,
     YesNoPipe,
+    TestDirective,
   ],
 })
 export class IxCellYesNoComponent<T> extends ColumnComponent<T> {}

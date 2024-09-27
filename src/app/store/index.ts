@@ -1,5 +1,8 @@
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap } from '@ngrx/store';
+import { JobEffects } from 'app/modules/jobs/store/job.effects';
+import { jobReducer, JobsState } from 'app/modules/jobs/store/job.reducer';
+import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
 import { EulaEffects } from 'app/store/eula/eula.effects';
 import { HaFipsEffects } from 'app/store/ha-fips/ha-fips.effects';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
@@ -36,6 +39,7 @@ export interface AppsState {
   [servicesStateKey]: ServicesState;
   [networkInterfacesKey]: NetworkInterfacesState;
   [rebootInfoStateKey]: RebootInfoState;
+  [jobStateKey]: JobsState;
   router: RouterReducerState<CustomRouterState>;
 }
 
@@ -47,6 +51,7 @@ export const rootReducers: ActionReducerMap<AppsState> = {
   [servicesStateKey]: servicesReducer,
   [networkInterfacesKey]: networkInterfacesReducer,
   [rebootInfoStateKey]: rebootInfoReducer,
+  [jobStateKey]: jobReducer,
   router: routerReducer,
 };
 export const rootEffects = [
@@ -59,4 +64,5 @@ export const rootEffects = [
   NetworkInterfacesEffects,
   HaFipsEffects,
   RebootInfoEffects,
+  JobEffects,
 ];

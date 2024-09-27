@@ -1,4 +1,12 @@
 <ix-page-header>
+  @if (isHaLicensed()) {
+    <p>{{ 'Controller' | translate }}</p>
+    <mat-button-toggle-group [value]="controllerType()" (change)="controllerTypeChanged($event)">
+      <mat-button-toggle [value]="ControllerType.Active">{{ 'Active' | translate }}</mat-button-toggle>
+      <mat-button-toggle [value]="ControllerType.Standby">{{ 'Standby' | translate }}</mat-button-toggle>
+    </mat-button-toggle-group>
+  }
+
   <a ixTest="audit-settings" mat-button fragment="audit-card" [routerLink]="['/system/advanced']">
     {{ 'Audit Settings' | translate }}
   </a>
@@ -106,6 +114,7 @@
       [searchQuery]="searchQuery"
       [sorting]="dataProvider.sorting"
       [defaultFilters]="basicQueryFilters"
+      [controllerType]="controllerType()"
     ></ix-export-button>
   }
 </ng-template>

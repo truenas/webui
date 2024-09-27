@@ -10,7 +10,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SmbShareListComponent } from './smb-share-list.component';
 
 describe('SmbShareListComponent', () => {
@@ -39,7 +38,6 @@ describe('SmbShareListComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbShareListComponent,
     imports: [
-      AppLoaderModule,
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
     ],

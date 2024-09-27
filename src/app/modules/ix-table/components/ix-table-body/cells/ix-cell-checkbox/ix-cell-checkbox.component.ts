@@ -3,7 +3,7 @@ import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-cell-checkbox',
@@ -12,8 +12,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   standalone: true,
   imports: [
     MatCheckbox,
-    TestIdModule,
     TranslateModule,
+    TestDirective,
   ],
 })
 export class IxCellCheckboxComponent<T> extends ColumnComponent<T> {

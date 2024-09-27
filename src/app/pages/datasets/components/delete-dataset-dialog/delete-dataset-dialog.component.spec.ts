@@ -14,7 +14,6 @@ import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { WebSocketService } from 'app/services/ws.service';
 import { DeleteDatasetDialogComponent } from './delete-dataset-dialog.component';
 
@@ -25,7 +24,6 @@ describe('DeleteDatasetDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: DeleteDatasetDialogComponent,
     imports: [
-      AppLoaderModule,
       ReactiveFormsModule,
     ],
     providers: [

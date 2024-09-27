@@ -8,7 +8,8 @@ import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NetworkService } from 'app/services/network.service';
 
 @Component({
@@ -19,12 +20,13 @@ import { NetworkService } from 'app/services/network.service';
   standalone: true,
   imports: [
     IxLabelComponent,
-    TestIdModule,
     MatInput,
     MatSelect,
     MatOption,
     IxErrorsComponent,
     TranslateModule,
+    TestDirective,
+    TestOverrideDirective,
   ],
 })
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {

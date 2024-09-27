@@ -8,6 +8,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
@@ -21,6 +22,7 @@ describe('IpmiEventsDialogComponent', () => {
     declarations: [
       FakeFormatDateTimePipe,
       EmptyComponent,
+      FakeProgressBarComponent,
     ],
     providers: [
       mockWebSocket([

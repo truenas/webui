@@ -1,16 +1,24 @@
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy,
 } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { LetDirective } from 'app/directives/app-let.directive';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { abortJobPressed, jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import {
   JobSlice,
@@ -21,6 +29,7 @@ import {
   selectJobsPanelSlice,
   selectJob,
 } from 'app/modules/jobs/store/job.selectors';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -29,6 +38,21 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   templateUrl: './jobs-panel.component.html',
   styleUrls: ['./jobs-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CdkScrollable,
+    MatDialogContent,
+    MatTooltip,
+    IxIconComponent,
+    MatProgressBar,
+    LetDirective,
+    JobItemComponent,
+    MatDialogActions,
+    MatButton,
+    TranslateModule,
+    AsyncPipe,
+    TestDirective,
+  ],
 })
 export class JobsPanelComponent {
   isLoading$ = this.store$.select(selectJobState).pipe(map((state) => state.isLoading));

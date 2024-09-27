@@ -12,7 +12,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
@@ -27,7 +26,6 @@ describe('SaveConfigDialogComponent', () => {
     component: SaveConfigDialogComponent,
     imports: [
       ReactiveFormsModule,
-      AppLoaderModule,
     ],
     providers: [
       mockAuth(),

@@ -7,7 +7,7 @@ import { RouterLinkActive, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-secondary-menu',
@@ -18,11 +18,11 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatList,
     MatListItem,
     RouterLinkActive,
-    TestIdModule,
     RouterLink,
     AsyncPipe,
     TranslateModule,
     HasAccessDirective,
+    TestDirective,
   ],
 })
 export class SecondaryMenuComponent {

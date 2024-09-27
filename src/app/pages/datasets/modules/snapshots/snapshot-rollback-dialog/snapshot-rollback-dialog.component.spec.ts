@@ -9,7 +9,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots//testing/snapshot-fake-datasource';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
@@ -21,7 +20,6 @@ describe('SnapshotRollbackDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: SnapshotRollbackDialogComponent,
     imports: [
-      AppLoaderModule,
       ReactiveFormsModule,
     ],
     declarations: [
