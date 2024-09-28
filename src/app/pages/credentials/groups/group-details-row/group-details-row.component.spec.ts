@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
@@ -39,9 +40,7 @@ describe('GroupDetailsRowComponent', () => {
     component: GroupDetailsRowComponent,
     imports: [
       IxTableExpandableRowComponent,
-    ],
-    declarations: [
-      GroupFormComponent,
+      MockComponent(GroupFormComponent),
     ],
     providers: [
       mockProvider(IxSlideInService),
