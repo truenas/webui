@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
@@ -6,26 +5,29 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, noop, Observable, of,
+  BehaviorSubject, finalize, noop, Observable, of,
 } from 'rxjs';
 import {
-  filter, take, tap,
+  filter, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { UploadOptions, UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppsState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -71,6 +73,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppsState>,
     private cdr: ChangeDetectorRef,
+    private upload: UploadService,
   ) {
     this.authService.authToken$.pipe(
       tap((token) => {
@@ -149,20 +152,28 @@ export class ManualUpdateFormComponent implements OnInit {
       });
   }
 
+  // TODO: Same code as in update-actions-card
   showRunningUpdate(jobId: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
-    if (this.isHaLicensed) {
-      dialogRef.componentInstance.disableProgressValue(true);
-    }
-    dialogRef.componentInstance.jobId = jobId;
-    dialogRef.componentInstance.wsshow();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.dialogService.error(this.errorHandler.parseError(err));
-    });
-    this.cdr.markForCheck();
+    const job$ = this.store$.pipe(
+      select(selectJob(jobId)),
+      observeJob(),
+    ) as Observable<Job<ApiJobMethod>>;
+
+    this.dialogService.jobDialog(
+      job$,
+      {
+        title: this.translate.instant('Update'),
+        canMinimize: true,
+      },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+      });
   }
 
   onSubmit(): void {
@@ -181,56 +192,33 @@ export class ManualUpdateFormComponent implements OnInit {
     if (!files.length) {
       return;
     }
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.manual_update_action },
-      disableClose: true,
-    });
-    if (this.isHaLicensed) {
-      dialogRef.componentInstance.disableProgressValue(true);
-    }
 
-    dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
-
-    const formData: FormData = this.generateFormData(files, fileLocation);
-
-    dialogRef.componentInstance.wspostWithProgressUpdates(this.apiEndPoint, formData);
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close(false);
-      this.handleUpdateSuccess();
-    });
-
-    dialogRef.componentInstance.prefailure.pipe(
-      tap(() => dialogRef.close(false)),
-      untilDestroyed(this),
-    ).subscribe((error) => this.handleUpdatePreFailure(error));
-
-    dialogRef.componentInstance.failure.pipe(
-      take(1),
-      tap(() => dialogRef.close(false)),
-      untilDestroyed(this),
-    ).subscribe((error) => this.handleUpdateFailure(error));
-
-    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading$.next(false);
-      this.cdr.markForCheck();
-    });
-    this.cdr.markForCheck();
-  }
-
-  generateFormData(files: FileList, fileLocation: string): FormData {
-    const formData = new FormData();
-    if (this.isHaLicensed) {
-      formData.append('data', JSON.stringify({
+    const params: UploadOptions = this.isHaLicensed
+      ? {
         method: 'failover.upgrade',
-      }));
-    } else {
-      formData.append('data', JSON.stringify({
+        file: files[0],
+      }
+      : {
         method: 'update.file',
         params: [{ destination: fileLocation }],
-      }));
-    }
-    formData.append('file', files[0]);
-    return formData;
+        file: files[0],
+      };
+
+    const job$ = this.upload.uploadAsJob(params);
+    this.dialogService
+      .jobDialog(job$, { title: this.translate.instant(helptext.manual_update_action) })
+      .afterClosed()
+      .pipe(
+        finalize(() => {
+          this.isFormLoading$.next(false);
+          this.cdr.markForCheck();
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: () => this.handleUpdateSuccess(),
+        error: (job: Job) => this.handleUpdateFailure(job),
+      });
   }
 
   finishNonHaUpdate(): void {
@@ -269,15 +257,6 @@ export class ManualUpdateFormComponent implements OnInit {
     }
   }
 
-  handleUpdatePreFailure(prefailure: HttpErrorResponse): void {
-    this.isFormLoading$.next(false);
-    this.dialogService.error({
-      title: helptext.manual_update_error_dialog.message,
-      message: `${prefailure.status.toString()} ${prefailure.statusText}`,
-    });
-    this.cdr.markForCheck();
-  }
-
   handleUpdateFailure = (failure: Job): void => {
     this.isFormLoading$.next(false);
     this.cdr.markForCheck();
@@ -298,33 +277,17 @@ export class ManualUpdateFormComponent implements OnInit {
   };
 
   private resumeUpdateAfterFailure(): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.manual_update_action },
-      disableClose: true,
-    });
-    if (this.isHaLicensed) {
-      dialogRef.componentInstance.setCall('failover.upgrade', [{ resume: true, resume_manual: true }]);
-      dialogRef.componentInstance.disableProgressValue(true);
-    } else {
-      dialogRef.componentInstance.setCall('update.file', [{ resume: true }]);
-    }
+    const job$: Observable<Job> = this.isHaLicensed
+      ? this.ws.job('failover.upgrade', [{ resume: true, resume_manual: true }])
+      : this.ws.job('update.file', [{ resume: true }]);
 
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close(false);
-      this.handleUpdateSuccess();
-    });
-
-    dialogRef.componentInstance.prefailure.pipe(
-      tap(() => dialogRef.close(false)),
-      untilDestroyed(this),
-    ).subscribe((error) => this.handleUpdatePreFailure(error));
-
-    dialogRef.componentInstance.failure.pipe(
-      take(1),
-      tap(() => dialogRef.close(false)),
-      untilDestroyed(this),
-    ).subscribe((error) => this.handleUpdateFailure(error));
-
-    dialogRef.componentInstance.submit();
+    this.dialogService
+      .jobDialog(job$, { title: helptext.manual_update_action })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => this.handleUpdateSuccess(),
+        error: (job: Job) => this.handleUpdateFailure(job),
+      });
   }
 }

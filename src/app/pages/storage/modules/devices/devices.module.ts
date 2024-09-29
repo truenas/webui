@@ -15,7 +15,6 @@ import { IxDetailsHeightDirective } from 'app/directives/details-height/details-
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -60,7 +59,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
 
 @NgModule({
   imports: [
-    EntityModule,
     TreeModule,
     MatButtonModule,
     MatCardModule,
