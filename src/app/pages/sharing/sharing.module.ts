@@ -20,7 +20,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -101,7 +100,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
   imports: [
     ReactiveFormsModule,
     routing,
-    EntityModule,
     TranslateModule,
     MatProgressBarModule,
     MatTabsModule,

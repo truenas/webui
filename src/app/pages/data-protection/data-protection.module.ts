@@ -17,7 +17,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -131,7 +130,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
 @NgModule({
   imports: [
     RouterModule.forChild(dataProtectionRoutes),
-    EntityModule,
     ReactiveFormsModule,
     MatProgressBarModule,
     MatTooltipModule,

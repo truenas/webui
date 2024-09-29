@@ -14,7 +14,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -34,7 +33,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 
 @NgModule({
   imports: [
-    EntityModule,
     IxIconComponent,
     MatTooltipModule,
     MatProgressBarModule,

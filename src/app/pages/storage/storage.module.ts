@@ -25,7 +25,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -90,7 +89,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatInputModule,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
-    EntityModule,
     EmptyComponent,
     FileSizePipe,
     FormatDateTimePipe,

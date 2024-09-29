@@ -19,7 +19,6 @@ import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -68,7 +67,6 @@ const components = [
   providers: [],
   imports: [
     EffectsModule.forFeature([SnapshotEffects]),
-    EntityModule,
     IxIconComponent,
     MatButtonModule,
     MatCardModule,
