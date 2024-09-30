@@ -433,6 +433,28 @@
   {
     "hierarchy": [
       "Applications",
+      "Discover",
+      "Custom App via YAML"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "APPS_WRITE"
+    ],
+    "visibleTokens": [
+      "APPS"
+    ],
+    "anchorRouterLink": [
+      "/apps",
+      "available"
+    ],
+    "routerLink": null,
+    "anchor": "custom-app-yaml",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
       "Installed",
       "Settings"
     ],

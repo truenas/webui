@@ -1,19 +1,21 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
+import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-// TODO: https://ixsystems.atlassian.net/browse/NAS-129579
-describe.skip('CustomAppButtonComponent', () => {
+describe('CustomAppButtonComponent', () => {
   let spectator: SpectatorRouting<CustomAppButtonComponent>;
   let loader: HarnessLoader;
   let button: MatButtonHarness;
@@ -26,6 +28,12 @@ describe.skip('CustomAppButtonComponent', () => {
       mockAuth(),
       mockProvider(DockerStore, {
         selectedPool$: of('selected pool'),
+      }),
+      mockProvider(IxSlideInService, {
+        onClose$: new Subject<unknown>(),
+        open: jest.fn(() => {
+          return { slideInClosed$: of(true) };
+        }),
       }),
     ],
   });
@@ -57,5 +65,15 @@ describe.skip('CustomAppButtonComponent', () => {
     spectator.detectChanges();
 
     expect(button.isDisabled()).toBeTruthy();
+  });
+
+  it('checks menu and CustomAppForm to install via YAML', async () => {
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.open();
+
+    const installButton = await menu.getItems({ text: /Install via YAML$/ });
+    await installButton[0].click();
+
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CustomAppFormComponent, { wide: true });
   });
 });
