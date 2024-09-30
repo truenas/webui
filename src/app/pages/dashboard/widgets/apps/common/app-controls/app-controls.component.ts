@@ -1,12 +1,15 @@
 import {
   Component, ChangeDetectionStrategy, input,
-  signal,
+  computed,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { AppState } from 'app/enums/app-state.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { App } from 'app/interfaces/app.interface';
+import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -21,7 +24,9 @@ import { RedirectService } from 'app/services/redirect.service';
 export class AppControlsComponent {
   app = input.required<LoadingState<App>>();
 
-  protected isRestarting = signal<boolean>(false);
+  protected isRestarting = computed(() => {
+    return mapLoadedValue(this.app(), (app) => app.state === AppState.Deploying);
+  });
 
   constructor(
     private translate: TranslateService,
@@ -32,15 +37,13 @@ export class AppControlsComponent {
   ) {}
 
   onRestartApp(app: App): void {
-    this.isRestarting.set(true);
-    this.snackbar.success(this.translate.instant('App is restarting'));
     this.appService.restartApplication(app.name)
-      .pipe(untilDestroyed(this))
+      .pipe(
+        tapOnce(() => this.snackbar.success(this.translate.instant('App is restarting'))),
+        untilDestroyed(this),
+      )
       .subscribe({
-        complete: () => {
-          this.isRestarting.set(false);
-          this.snackbar.success(this.translate.instant('App is restarted'));
-        },
+        complete: () => this.snackbar.success(this.translate.instant('App is restarted')),
       });
   }
 

@@ -22,6 +22,7 @@ export class AppRowComponent {
 
   readonly startApp = output();
   readonly stopApp = output();
+  readonly restartApp = output();
   readonly clickStatus = output();
   readonly selectionChange = output();
 
@@ -58,6 +59,10 @@ export class AppRowComponent {
 
   stop(): void {
     this.stopApp.emit();
+  }
+
+  restart(): void {
+    this.restartApp.emit();
   }
 
   statusPressed(): void {

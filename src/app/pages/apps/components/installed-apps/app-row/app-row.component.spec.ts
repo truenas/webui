@@ -101,8 +101,10 @@ describe('AppRowComponent', () => {
 
       const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop' }));
       const startIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-play' }));
+      const restartIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-restart' }));
 
       expect(stopIcon).toExist();
+      expect(restartIcon).toExist();
       expect(startIcon).not.toExist();
     });
 
@@ -114,7 +116,9 @@ describe('AppRowComponent', () => {
 
       const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop' }));
       const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play' }));
+      const restartIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-restart' }));
 
+      expect(restartIcon).not.toExist();
       expect(stopIcon).not.toExist();
       expect(startIcon).toExist();
     });

@@ -311,7 +311,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   start(name: string): void {
     this.appService.startApplication(name)
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(
+        tapOnce(() => this.loader.open(this.translate.instant('Starting "{app}"', { app: name }))),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
@@ -330,6 +334,20 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         if (job.state !== JobState.Running) {
           this.loader.close();
         }
+        this.appJobs.set(name, job);
+        this.sortChanged(this.sortingInfo);
+        this.cdr.markForCheck();
+      });
+  }
+
+  restart(name: string): void {
+    this.appService.restartApplication(name)
+      .pipe(
+        tapOnce(() => this.loader.open(this.translate.instant('Restarting "{app}"', { app: name }))),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
