@@ -31,3 +31,23 @@
 .show-results-content {
   padding: 0 24px 24px;
 }
+
+.list-item {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.link {
+  color: var(--primary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.green-icon {
+  color: var(--green);
+}
+
+.red-icon {
+  color: var(--red);
+}

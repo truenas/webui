@@ -5,7 +5,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -80,6 +82,8 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     PercentPipe,
     AsyncPipe,
     RequiresRolesDirective,
+    MatExpansionModule,
+    MatProgressSpinnerModule,
     UiSearchDirective,
     IxTableComponent,
     IxTableEmptyDirective,
@@ -89,13 +93,6 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     IxTableDetailsRowComponent,
     IxTablePagerComponent,
     IxTableColumnsSelectorComponent,
-    TestDirective,
-    TestDirective,
-    TestDirective,
-    TestDirective,
-    TestDirective,
-    TestDirective,
-    TestDirective,
     TestDirective,
   ],
   declarations: [
