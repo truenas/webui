@@ -52,7 +52,11 @@ export class SmartTestResultListComponent implements OnInit {
       title: this.translate.instant('Remaining'),
       propertyName: 'remaining',
       getValue: (row) => {
-        return row.remaining || row.status_verbose;
+        if (typeof row.remaining === 'number' && row.remaining >= 0) {
+          return `${row.remaining}%`;
+        }
+
+        return this.translate.instant(row.status_verbose);
       },
     }),
     textColumn({
