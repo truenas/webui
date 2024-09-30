@@ -56,7 +56,7 @@ export class SmartTestResultListComponent implements OnInit {
           return `${row.remaining}%`;
         }
 
-        return this.translate.instant(row.status_verbose);
+        return row.status_verbose ? this.translate.instant(row.status_verbose) : '0%';
       },
     }),
     textColumn({
