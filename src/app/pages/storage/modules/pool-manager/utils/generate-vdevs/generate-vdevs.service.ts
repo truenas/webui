@@ -121,6 +121,7 @@ export class GenerateVdevsService {
     if (suitableDisks.length < disksNeeded) {
       return [];
     }
+    suitableDisks.sort((a, b) => a.size - b.size);
 
     let pickedDisks: DetailsDisk[];
     if (maximizeDispersal) {
