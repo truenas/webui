@@ -10,6 +10,10 @@ export const customAppButtonElements = {
       hierarchy: [T('Custom App')],
       anchor: 'custom-app',
     },
+    customAppYaml: {
+      hierarchy: [T('Custom App via YAML')],
+      anchor: 'custom-app-yaml',
+    },
   },
   visibleTokens: [GlobalSearchVisibleToken.Apps],
 } satisfies UiSearchableElement;

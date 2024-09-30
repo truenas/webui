@@ -1,16 +1,33 @@
   <div
+    class="custom-app-wrapper"
     [matTooltip]="'Setup Pool To Create Custom App' | translate"
     [matTooltipDisabled]="!(customAppDisabled$ | async)"
   >
-    <a
+    <button
       *ixRequiresRoles="requiredRoles"
       mat-button
       color="primary"
       ixTest="custom-app"
       [disabled]="customAppDisabled$ | async"
       [ixUiSearch]="searchableElements.elements.customApp"
-      (click)="navigateToCustomAppCreation()"
+      (click)="openAppWizardCreation()"
+    >{{ 'Custom App' | translate }}</button>
+
+    <button
+      mat-icon-button
+      ixTest="custom-app-menu"
+      [matMenuTriggerFor]="customAppMenu"
     >
-      {{ 'Custom App' | translate }}
-    </a>
+      <ix-icon name="more_vert"></ix-icon>
+    </button>
+    <mat-menu #customAppMenu="matMenu">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-menu-item
+        ixTest="custom-app-yaml"
+        [disabled]="customAppDisabled$ | async"
+        [ixUiSearch]="searchableElements.elements.customAppYaml"
+        (click)="openCustomAppYamlCreation()"
+      >{{ 'Install via YAML' | translate}}</button>
+    </mat-menu>
   </div>
