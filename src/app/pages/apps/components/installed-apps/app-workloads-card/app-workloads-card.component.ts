@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy, Component, input, computed,
-  Inject,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -8,7 +7,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import {
   App, AppContainerDetails, AppContainerState, appContainerStateLabels,
 } from 'app/interfaces/app.interface';
@@ -39,7 +37,6 @@ export class AppWorkloadsCardComponent {
     private matDialog: MatDialog,
     private router: Router,
     private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   protected readonly hostPorts = computed(() => {
@@ -58,13 +55,6 @@ export class AppWorkloadsCardComponent {
 
     return hostPorts;
   });
-
-  getHostIp(hostIp: string): string {
-    if (hostIp === '0.0.0.0') {
-      return this.window.location.hostname;
-    }
-    return hostIp;
-  }
 
   volumeButtonPressed(containerDetails: AppContainerDetails): void {
     this.matDialog.open(VolumeMountsDialogComponent, {
