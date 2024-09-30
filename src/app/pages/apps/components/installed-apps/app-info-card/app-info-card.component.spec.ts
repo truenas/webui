@@ -12,6 +12,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockJob, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -205,6 +206,40 @@ describe('AppInfoCardComponent', () => {
     await buttons[1].click();
 
     expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith(app.portals['Web UI']);
+  });
+
+  it('opens a URL with the current host and port when the portal hostname is 0.0.0.0', async () => {
+    spectator.setInput('app', {
+      ...app,
+      portals: {
+        'Web UI': 'http://0.0.0.0:8000/ui?q=ui#yes',
+        'Admin Panel': 'http://0.0.0.0:8000',
+      },
+    });
+
+    const window = spectator.inject<Window>(WINDOW);
+    const originalLocation = window.location;
+    delete window.location;
+    window.location = {
+      protocol: 'http:',
+      hostname: 'my-custom-host.com',
+      port: '3000',
+      href: '',
+    } as Location;
+
+    const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
+
+    expect(buttons).toHaveLength(2);
+    expect(await buttons[0].getText()).toBe('Admin Panel');
+    expect(await buttons[1].getText()).toBe('Web UI');
+
+    await buttons[0].click();
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://my-custom-host.com:8000/');
+
+    await buttons[1].click();
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://my-custom-host.com:8000/ui?q=ui#yes');
+
+    window.location = originalLocation;
   });
 
   it('opens rollback app dialog when Roll Back button is pressed', async () => {
