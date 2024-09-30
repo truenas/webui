@@ -194,7 +194,7 @@ export class ManualTestDialogComponent {
           } else {
             isProgressing = false;
           }
-        } else if (testProgress != null) {
+        } else {
           isProgressing = false;
         }
         if (isNoSubMsg || !isProgressing) {
