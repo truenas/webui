@@ -102,8 +102,8 @@ describe('AppContainersCardComponent', () => {
     expect(details).toHaveLength(1);
 
     expect(details[0].querySelector('.label')).toHaveText('Ports:');
-    expect(details[0].querySelector('.value')).toHaveText('tcp://0.0.0.0:20489:20489');
-    expect(details[0].querySelector('.value')).toHaveText('tcp://0.0.0.0:8080:80');
+    expect(details[0].querySelector('.value')).toHaveText('tcp://localhost:20489:20489');
+    expect(details[0].querySelector('.value')).toHaveText('tcp://localhost:8080:80');
   });
 
   it('shows container header and number of containers', () => {

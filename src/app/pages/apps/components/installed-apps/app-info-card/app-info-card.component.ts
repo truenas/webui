@@ -71,19 +71,8 @@ export class AppInfoCardComponent {
     @Inject(WINDOW) private window: Window,
   ) {}
 
-  portalLink(app: App, name = 'web_portal'): void {
-    const portalUrl = new URL(app.portals[name]);
-
-    if (portalUrl.hostname === '0.0.0.0') {
-      const {
-        port, pathname, search, hash,
-      } = portalUrl;
-      const { protocol, hostname } = this.window.location;
-      const currentHostUrl = `${protocol}//${hostname}:${port}${pathname}${search}${hash}`;
-      this.redirect.openWindow(currentHostUrl);
-    } else {
-      this.redirect.openWindow(portalUrl.href);
-    }
+  openPortalLink(app: App, name = 'web_portal'): void {
+    this.redirect.openWindow(this.getPortalLink(app, name));
   }
 
   updateButtonPressed(): void {
@@ -165,5 +154,17 @@ export class AppInfoCardComponent {
       tap((versions) => this.isRollbackPossible.set(versions.length > 0)),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  private getPortalLink(app: App, name = 'web_portal'): string {
+    const portalUrl = new URL(app.portals[name]);
+
+    if (portalUrl.hostname === '0.0.0.0') {
+      const {
+        port, pathname, search, hash,
+      } = portalUrl;
+      return `${this.window.location.protocol}//${this.window.location.hostname}:${port}${pathname}${search}${hash}`;
+    }
+    return portalUrl.href;
   }
 }

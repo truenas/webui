@@ -12,7 +12,6 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockJob, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
-import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -217,16 +216,6 @@ describe('AppInfoCardComponent', () => {
       },
     });
 
-    const window = spectator.inject<Window>(WINDOW);
-    const originalLocation = window.location;
-    delete window.location;
-    window.location = {
-      protocol: 'http:',
-      hostname: 'my-custom-host.com',
-      port: '3000',
-      href: '',
-    } as Location;
-
     const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
 
     expect(buttons).toHaveLength(2);
@@ -234,12 +223,10 @@ describe('AppInfoCardComponent', () => {
     expect(await buttons[1].getText()).toBe('Web UI');
 
     await buttons[0].click();
-    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://my-custom-host.com:8000/');
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/');
 
     await buttons[1].click();
-    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://my-custom-host.com:8000/ui?q=ui#yes');
-
-    window.location = originalLocation;
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');
   });
 
   it('opens rollback app dialog when Roll Back button is pressed', async () => {
