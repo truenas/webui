@@ -43,6 +43,7 @@ describe('SmbFormComponent', () => {
     purpose: SmbPresetType.MultiUserTimeMachine,
     path: '/mnt/pool123/ds222',
     path_suffix: '%U',
+    auxsmbconf: 'Aux SMB Conf',
     home: false,
     name: 'ds222',
     comment: '',
@@ -94,6 +95,7 @@ describe('SmbFormComponent', () => {
     durablehandle: 'Enable SMB2/3 Durable Handles',
     fsrvp: 'Enable FSRVP',
     path_suffix: 'Path Suffix',
+    auxsmbconf: 'Additional Parameters String',
     watch_list: 'Watch List',
     ignore_list: 'Ignore List',
   };
@@ -108,6 +110,7 @@ describe('SmbFormComponent', () => {
       verbose_name: 'Multi-user time machine',
       cluster: false,
       params: {
+        auxsmbconf: 'Aux SMB Conf',
         path_suffix: '%U',
         timemachine: true,
       },
@@ -116,6 +119,7 @@ describe('SmbFormComponent', () => {
       verbose_name: 'Private SMB Datasets and Shares',
       cluster: false,
       params: {
+        auxsmbconf: 'Aux SMB Conf',
         path_suffix: '%U',
       },
     },
