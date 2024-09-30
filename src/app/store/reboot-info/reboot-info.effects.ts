@@ -31,7 +31,7 @@ export class RebootInfoEffects {
     ofType(failoverLicensedStatusLoaded),
     mergeMap(({ isHaLicensed }) => {
       if (isHaLicensed) {
-        this.ws.subscribe('failover.reboot.info').pipe(
+        return this.ws.subscribe('failover.reboot.info').pipe(
           map((event) => rebootInfoLoaded({
             thisNodeInfo: event.fields?.this_node,
             otherNodeInfo: event.fields?.other_node,
