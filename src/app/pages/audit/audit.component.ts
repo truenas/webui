@@ -101,15 +101,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     IxTableEmptyDirective,
     MatButton,
     TranslateModule,
-    TranslateModule,
-    TranslateModule,
-    TranslateModule,
-    TranslateModule,
     AsyncPipe,
-    AsyncPipe,
-    AsyncPipe,
-    AsyncPipe,
-
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
