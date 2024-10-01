@@ -36,6 +36,7 @@
   display: flex;
   flex-direction: row;
   gap: 5px;
+  margin-bottom: 5px;
 }
 
 .link {
@@ -50,4 +51,22 @@
 
 .red-icon {
   color: var(--red);
+}
+
+.spinner-container {
+  display: inline-block;
+  position: relative;
+}
+
+.spinner-value {
+  font-size: 10px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.disk-name {
+  align-items: center;
+  display: flex;
 }

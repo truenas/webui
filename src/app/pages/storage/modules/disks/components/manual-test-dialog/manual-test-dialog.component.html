@@ -7,12 +7,16 @@
   >
     <div class="disks-list">
       @if (selectedDisksWithSmartSupport.length) {
-        <div class="prompt">{{ 'Run manual test on disks:' }}</div>
+        @if (isSubmitted()) {
+          <div class="prompt">{{ 'Running manual test(s) on disk(s):' }}</div>
+        } @else {
+          <div class="prompt">{{ 'Run manual test(s) on disk(s):' }}</div>
+        }
         <ul class="disks">
           @for (disk of selectedDisksWithSmartSupport; track disk) {
             <li>
               <div class="list-item">
-                <span>{{ disk.name }} ({{ disk.serial }})</span>
+                <span class="disk-name"><h4>{{ disk.name }} ({{ disk.serial }})</h4></span>
                 @if (hasStartedTests()) {
                   @if (isTestDone(disk.name)) {
                     @if (hasErrorTest(disk.name)) {
@@ -33,16 +37,19 @@
                     }
                   } @else {
                     @if (getTestProgress(disk.name)) {
-                      <mat-spinner
-                        color="primary" 
-                        mode="determinate" 
-                        [diameter]="20" 
-                        [value]="getTestProgress(disk.name)"
-                      ></mat-spinner>
+                      <div class="spinner-container">
+                        <mat-spinner
+                          color="primary" 
+                          mode="determinate" 
+                          [diameter]="30" 
+                          [value]="getTestProgress(disk.name)"
+                        ></mat-spinner>
+                        <div class="spinner-value">{{ getTestProgress(disk.name).toString() + '%' }}</div>
+                      </div>
                     } @else {
                       <mat-spinner
                         color="primary" 
-                        [diameter]="20" 
+                        [diameter]="30" 
                       ></mat-spinner>
                     }
                   }
