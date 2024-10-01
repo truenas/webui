@@ -52,6 +52,7 @@ export class ManualTestDialogComponent {
   });
 
   testProgress = signal<TestProgress[]>([]);
+  isSubmitted = signal<boolean>(false);
 
   testTypes$ = of([
     {
@@ -98,6 +99,7 @@ export class ManualTestDialogComponent {
   }
 
   onSubmit(): void {
+    this.isSubmitted.set(true);
     const params = this.selectedDisksWithSmartSupport.map((disk) => ({
       identifier: disk.identifier,
       type: this.form.value.type,

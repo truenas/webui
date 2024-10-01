@@ -76,22 +76,34 @@
         [options]="testTypes$"
       ></ix-select>
     }
-
     <ix-form-actions>
-      <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-        {{ 'Cancel' | translate }}
-      </button>
 
-      <button
-        *ixRequiresRoles="[Role.FullAdmin]"
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="start-test"
-        [disabled]="form.invalid || !selectedDisksWithSmartSupport.length"
-      >
-        {{ 'Start' | translate }}
-      </button>
+      @if (!isSubmitted()) {
+        <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+          {{ 'Cancel' | translate }}
+        </button>
+
+        <button
+          *ixRequiresRoles="[Role.FullAdmin]"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="start-test"
+          [disabled]="form.invalid || !selectedDisksWithSmartSupport.length"
+        >
+          {{ 'Start' | translate }}
+        </button>
+      } @else {
+        <button
+          mat-button
+          type="button"
+          ixTest="minimize"
+          [matDialogClose]="false"
+        > 
+          {{ 'Close' | translate }}
+        </button>
+      }
+      
     </ix-form-actions>
   </form>
 
