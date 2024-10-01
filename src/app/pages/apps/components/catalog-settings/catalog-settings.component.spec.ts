@@ -112,12 +112,12 @@ describe('CatalogEditFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('shows Install NDIVIA Drivers checkbox when lacksNvidiaDrivers is true', async () => {
+      it('shows Install NVIDIA Drivers checkbox when lacksNvidiaDrivers is true', async () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
         expect(values).toEqual({
-          'Install NDIVIA Drivers': false,
+          'Install NVIDIA Drivers': false,
           'Preferred Trains': ['test'],
         });
       });
@@ -126,7 +126,7 @@ describe('CatalogEditFormComponent', () => {
         const form = await loader.getHarness(IxFormHarness);
         await form.fillForm({
           'Preferred Trains': ['stable'],
-          'Install NDIVIA Drivers': true,
+          'Install NVIDIA Drivers': true,
         });
 
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -154,12 +154,12 @@ describe('CatalogEditFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('shows Install NDIVIA Drivers checkbox when docker.lacks_nvidia_drivers is true OR when it is checked (so the user can uncheck it)', async () => {
+      it('shows Install NVIDIA Drivers checkbox when docker.lacks_nvidia_drivers is true OR when it is checked (so the user can uncheck it)', async () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
         expect(values).toEqual({
-          'Install NDIVIA Drivers': true,
+          'Install NVIDIA Drivers': true,
           'Preferred Trains': ['test'],
         });
       });
