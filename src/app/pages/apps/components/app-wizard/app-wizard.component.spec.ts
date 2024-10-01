@@ -148,9 +148,9 @@ const appVersion121 = {
         label: 'Liveness Probe',
         schema: {
           attrs: [],
-          default: null,
+          default: false,
           hidden: true,
-          type: 'dict',
+          type: 'boolean',
         },
         variable: 'livenessProbe',
       },
@@ -460,7 +460,7 @@ describe('AppWizardComponent', () => {
           catalog_app: 'ipfs',
           train: 'stable',
           values: {
-            livenessProbe: {},
+            livenessProbe: false,
             release_name: 'appname',
             service: {
               apiPort: 9599,
