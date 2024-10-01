@@ -3,7 +3,6 @@ import {
   input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 
 @UntilDestroy()
 @Component({
@@ -19,10 +18,6 @@ export class AppJsonDetailsCardComponent<T> {
 
   getKeys(item: T): string[] {
     return Object.keys(item);
-  }
-
-  getHumanReadableKey(key: string): string {
-    return toHumanReadableKey(key);
   }
 
   getValueByKey(item: T, key: string): string {

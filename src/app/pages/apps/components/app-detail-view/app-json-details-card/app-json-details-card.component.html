@@ -9,7 +9,7 @@
     <div class="app-list-wrapper">
       @for(key of getKeys(item); track key) {
         <div class="app-list-item">
-          <span class="label">{{ getHumanReadableKey(key) | translate }}:</span>
+          <span class="label">{{ key | humanReadableKey | translate }}:</span>
           <div>{{ getValueByKey(item, key) | translate }}</div>
         </div>
       }

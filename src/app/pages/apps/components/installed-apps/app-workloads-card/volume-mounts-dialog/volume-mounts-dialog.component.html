@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>
   <span class="title">
-    {{ '{service} Volume Mounts' | translate: { service: containerDetails.service_name } }}
+    {{ '{service} Volume Mounts' | translate: { service: containerDetails.service_name | humanReadableKey } }}
   </span>
 
   <button

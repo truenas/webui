@@ -55,6 +55,7 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { HumanReadableKeyPipe } from 'app/modules/pipes/human-readable-key/human-readable-key.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -221,6 +222,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     IxTablePagerComponent,
     FakeProgressBarComponent,
     TestDirective,
+    HumanReadableKeyPipe,
   ],
 })
 export class AppsModule { }
