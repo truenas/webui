@@ -68,7 +68,6 @@ const appVersion121 = {
         schema: {
           default: 'OnFailure',
           enum: [],
-          hidden: true,
           show_if: [
             ['workloadType', '!=', 'Deployment'],
           ],
@@ -148,9 +147,9 @@ const appVersion121 = {
         label: 'Liveness Probe',
         schema: {
           attrs: [],
-          default: null,
+          default: false,
           hidden: true,
-          type: 'dict',
+          type: 'boolean',
         },
         variable: 'livenessProbe',
       },
@@ -206,15 +205,27 @@ const appVersion120 = {
         name: 'Networking',
       },
     ],
-    questions: [{
-      group: 'Networking',
-      label: 'Provide access to node network namespace for the workload Another Version',
-      schema: {
-        default: true,
-        type: 'boolean',
+    questions: [
+      {
+        group: 'Networking',
+        label: 'Provide access to node network namespace for the workload Another Version',
+        schema: {
+          default: true,
+          type: 'boolean',
+        },
+        variable: 'hostNetworkDifferentVersion',
       },
-      variable: 'hostNetworkDifferentVersion',
-    }],
+      {
+        group: 'Networking',
+        label: 'Provide access hidden',
+        schema: {
+          default: true,
+          type: 'boolean',
+          hidden: true,
+        },
+        variable: 'hostNetworkDifferentVersionHidden',
+      },
+    ],
   },
 } as CatalogAppVersion;
 
@@ -415,8 +426,7 @@ describe('AppWizardComponent', () => {
       });
     });
 
-    // TODO:
-    it.skip('creating when form is submitted', async () => {
+    it('creating when form is submitted', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         'Application Name': 'appname',
@@ -444,11 +454,11 @@ describe('AppWizardComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
         'app.create',
         [{
-          catalog: 'TRUENAS',
-          item: 'ipfs',
-          release_name: 'appname',
+          app_name: 'appname',
+          catalog_app: 'ipfs',
           train: 'stable',
           values: {
+            livenessProbe: false,
             release_name: 'appname',
             service: {
               apiPort: 9599,
@@ -456,6 +466,7 @@ describe('AppWizardComponent', () => {
               swarmPort: 9401,
             },
             updateStrategy: 'Recreate',
+            workloadType: 'Deployment',
           },
           version: '1.2.1',
         }],
@@ -477,6 +488,32 @@ describe('AppWizardComponent', () => {
         Version: '1.2.0',
         'Provide access to node network namespace for the workload Another Version': true,
       });
+    });
+
+    it('submits form with hidden: true values as well since they should be a part of a request', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      await form.fillForm({
+        Version: '1.2.0',
+      });
+
+      spectator.component.onSubmit();
+
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+        'app.create',
+        [{
+          app_name: 'ipfs',
+          catalog_app: 'ipfs',
+          train: 'stable',
+          values: {
+            hostNetworkDifferentVersion: true,
+            hostNetworkDifferentVersionHidden: true,
+            release_name: 'ipfs',
+          },
+          version: '1.2.0',
+        }],
+      );
     });
 
     it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
