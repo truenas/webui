@@ -383,11 +383,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.dialogService.confirm({
       title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Remove iX Volumes'),
     })
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
+      .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
+      .subscribe(({ secondaryCheckbox }) => {
         this.dialogService.jobDialog(
-          this.ws.job('core.bulk', ['app.delete', checkedNames.map((item) => [item])]),
+          this.ws.job('core.bulk', ['app.delete', checkedNames.map(
+            (item) => [item, { remove_images: true, remove_ix_volumes: secondaryCheckbox }],
+          )]),
           { title: helptextApps.apps.delete_dialog.job },
         )
           .afterClosed()

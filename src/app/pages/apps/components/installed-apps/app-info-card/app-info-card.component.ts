@@ -130,14 +130,16 @@ export class AppInfoCardComponent {
     this.dialogService.confirm({
       title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Remove iX Volumes'),
     })
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.executeDelete(name));
+      .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
+      .subscribe(({ secondaryCheckbox }) => this.executeDelete(name, secondaryCheckbox));
   }
 
-  executeDelete(name: string): void {
+  executeDelete(name: string, removeIxVolumes = false): void {
     this.dialogService.jobDialog(
-      this.ws.job('app.delete', [name, { remove_images: true }]),
+      this.ws.job('app.delete', [name, { remove_images: true, remove_ix_volumes: removeIxVolumes }]),
       { title: helptextApps.apps.delete_dialog.job },
     )
       .afterClosed()

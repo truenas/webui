@@ -3082,6 +3082,7 @@
   "Remove device {name}?": "",
   "Remove file": "",
   "Remove file?": "",
+  "Remove iX Volumes": "",
   "Remove preset": "",
   "Remove the ACL and permissions from child datasets of the current dataset": "",
   "Remove the existing API key and generate a new random key. A dialog shows the new key and has an option to copy the key. Back up and secure the API key! The key string is displayed only one time, at creation.": "",
