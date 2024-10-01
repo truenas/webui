@@ -26,7 +26,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -83,7 +83,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     FormActionsComponent,
     IxInputComponent,
     IxCheckboxComponent,
-    PageHeaderModule,
     NgClass,
     DecimalPipe,
     AsyncPipe,
@@ -106,6 +105,7 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     WithLoadingStateDirective,
     TestDirective,
     WithLoadingStateDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     DevicesComponent,

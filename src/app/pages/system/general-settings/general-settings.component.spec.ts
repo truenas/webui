@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents, MockModule } from 'ng-mocks';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { MockComponent, MockComponents } from 'ng-mocks';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
@@ -16,7 +16,7 @@ describe('GeneralSettingsComponent', () => {
   const createComponent = createComponentFactory({
     component: GeneralSettingsComponent,
     imports: [
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
     ],
     declarations: [
       MockComponents(

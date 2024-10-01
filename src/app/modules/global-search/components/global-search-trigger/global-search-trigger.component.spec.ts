@@ -1,5 +1,6 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
+import { MatInput } from '@angular/material/input';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -17,9 +18,10 @@ describe('GlobalSearchTriggerComponent', () => {
   const createComponent = createComponentFactory({
     component: GlobalSearchTriggerComponent,
     detectChanges: false,
-    declarations: [
+    imports: [
       MockComponent(KeyboardShortcutComponent),
       MockComponent(GlobalSearchComponent),
+      MatInput,
     ],
     providers: [
       mockProvider(UiSearchProvider, {

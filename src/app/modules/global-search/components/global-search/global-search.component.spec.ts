@@ -35,7 +35,6 @@ describe('GlobalSearchComponent', () => {
 
   const createComponent = createComponentFactory({
     component: GlobalSearchComponent,
-    declarations: [GlobalSearchResultsComponent],
     imports: [
       FormsModule,
       ReactiveFormsModule,
@@ -46,6 +45,7 @@ describe('GlobalSearchComponent', () => {
       IxIconComponent,
       A11yModule,
       EmptyComponent,
+      GlobalSearchResultsComponent,
     ],
     providers: [
       mockAuth(),

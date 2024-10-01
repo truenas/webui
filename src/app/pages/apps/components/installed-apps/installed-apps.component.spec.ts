@@ -5,7 +5,7 @@ import {
   Spectator, createComponentFactory, mockProvider,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockDeclaration, MockModule } from 'ng-mocks';
+import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -15,7 +15,7 @@ import { App } from 'app/interfaces/app.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
@@ -46,7 +46,7 @@ describe('InstalledAppsComponent', () => {
     imports: [
       ReactiveFormsModule,
       MatTableModule,
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
       FakeProgressBarComponent,
     ],
     declarations: [

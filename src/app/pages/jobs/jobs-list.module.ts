@@ -23,7 +23,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
@@ -48,7 +48,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     MapValuePipe,
     CopyButtonComponent,
     MatIconButton,
-    PageHeaderModule,
     AsyncPipe,
     DecimalPipe,
     JsonPipe,
@@ -61,6 +60,7 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     IxTableDetailsRowDirective,
     IxTablePagerComponent,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent, JobNameComponent],
 })

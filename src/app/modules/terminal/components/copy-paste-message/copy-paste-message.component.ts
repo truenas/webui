@@ -1,12 +1,27 @@
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
+import { MatButton } from '@angular/material/button';
+import {
+  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
+} from '@angular/material/dialog';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { helptextShell } from 'app/helptext/shell/shell';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-copy-paste-message',
   templateUrl: './copy-paste-message.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatDialogActions,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class CopyPasteMessageComponent {
   title = helptextShell.dialog_title;
