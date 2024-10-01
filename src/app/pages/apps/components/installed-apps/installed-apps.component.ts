@@ -348,6 +348,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
+        if (job.state !== JobState.Running) {
+          this.loader.close();
+        }
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();

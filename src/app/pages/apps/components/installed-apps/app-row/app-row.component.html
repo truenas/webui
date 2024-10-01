@@ -79,7 +79,6 @@
       [ixTest]="[app().name, 'restart']"
       [attr.aria-label]="'Restart App' | translate"
       [matTooltip]="'Restart App' | translate"
-      [disabled]="!inProgress()"
       (click)="restart()"
     >
       <ix-icon name="mdi-restart"></ix-icon>
