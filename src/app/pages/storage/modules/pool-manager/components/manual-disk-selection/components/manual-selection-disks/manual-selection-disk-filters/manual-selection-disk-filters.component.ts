@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import {
   ManualDiskSelectionStore,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
@@ -56,4 +57,6 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
         this.filtersUpdated.emit(value);
       });
   }
+
+  protected readonly iconMarker = iconMarker;
 }

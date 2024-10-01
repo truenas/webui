@@ -20,11 +20,11 @@ export const routes: Routes = [{
     }, {
       path: 'kerberosrealms',
       component: KerberosRealmsListComponent,
-      data: { title: T('Kerberos Realms'), breadcrumb: null, icon: 'apps' },
+      data: { title: T('Kerberos Realms'), breadcrumb: null },
     }, {
       path: 'kerberoskeytabs',
       component: KerberosKeytabsListComponent,
-      data: { title: T('Kerberos Keytab'), breadcrumb: null, icon: 'apps' },
+      data: { title: T('Kerberos Keytab'), breadcrumb: null },
     }],
 }];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

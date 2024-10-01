@@ -25,6 +25,7 @@ import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { IxChainedSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-chained-slide-in/ix-chained-slide-in.component';
 import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ConsoleFooterComponent } from 'app/modules/layout/console-footer/console-footer.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -165,4 +166,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   onAlertsPanelClosed(): void {
     this.store$.dispatch(alertPanelClosed());
   }
+
+  protected readonly iconMarker = iconMarker;
 }

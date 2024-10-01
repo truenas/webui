@@ -19,10 +19,11 @@ tr {
       display: flex;
     }
 
-    ix-icon {
+    .sort-icon {
       font-size: 14px;
       height: 14px;
       margin-left: 4px;
+      vertical-align: middle;
       width: 14px;
     }
   }

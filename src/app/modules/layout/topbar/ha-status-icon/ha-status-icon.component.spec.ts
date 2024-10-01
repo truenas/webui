@@ -45,7 +45,7 @@ describe('HaStatusIconComponent', () => {
   });
 
   it('shows an icon when HA is enabled', () => {
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix:ha-enabled');
+    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix-ha-enabled');
   });
 
   it('shows a reconnecting icon when HA disabled reason is NoSystemReady', () => {
@@ -56,7 +56,7 @@ describe('HaStatusIconComponent', () => {
     mockStore$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix:ha-reconnecting');
+    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix-ha-reconnecting');
   });
 
   it('shows an HA disabled icon when HA is disabled', () => {
@@ -67,7 +67,7 @@ describe('HaStatusIconComponent', () => {
     mockStore$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix:ha-disabled');
+    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix-ha-disabled');
   });
 
   it('opens status popover when icon is clicked', () => {

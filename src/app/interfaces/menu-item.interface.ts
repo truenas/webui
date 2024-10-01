@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 
 export enum MenuItemType {
   Link = 'link',
@@ -9,7 +10,7 @@ export interface MenuItem {
   type: MenuItemType;
   name?: string; // Used as display text for item and title for separator type
   state?: string;
-  icon?: string;
+  icon?: MarkedIcon;
   tooltip?: string;
   sub?: SubMenuItem[];
   isVisible$?: Observable<boolean>;

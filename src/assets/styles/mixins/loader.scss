@@ -1,9 +1,10 @@
 @import 'scss-imports/variables';
 
+// TODO: Reload image again. Consider using one from ix-icon sprite.
 @mixin background-logo-loader($zoom: 1) {
   &::after {
     animation: loading 2s linear infinite;
-    background: transparent url('/src/assets/icons/custom/truenas-logo.svg') no-repeat center center;
+    background: transparent url('assets/icons/custom/truenas-logo.svg') no-repeat center center;
     color: var(--fg2);
     content: '';
     filter: invert(1);

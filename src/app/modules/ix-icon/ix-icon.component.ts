@@ -3,18 +3,17 @@ import {
   Attribute,
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  ErrorHandler,
-  Inject, input,
+  ElementRef, HostBinding,
+  Inject, Input, input,
   OnChanges,
   OnInit,
   Optional,
-  ViewEncapsulation,
 } from '@angular/core';
 import {
-  MatIcon, MatIconDefaultOptions, MatIconLocation, MatIconRegistry, MAT_ICON_DEFAULT_OPTIONS, MAT_ICON_LOCATION,
+  MatIcon, MatIconDefaultOptions, MatIconLocation, MAT_ICON_DEFAULT_OPTIONS, MAT_ICON_LOCATION,
 } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
+import { IconErrorHandlerService } from 'app/modules/ix-icon/icon-error-handler.service';
+import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 
 /**
  * IxIcon component extends MatIcon
@@ -22,7 +21,7 @@ import { DomSanitizer } from '@angular/platform-browser';
  * You can use:
  * - Google's material icons `<ix-icon name="left-arrow"></ix-icon>`
  * - material design icons (https://pictogrammers.com/library/mdi/) `<ix-icon name="mdi-left-arrow"></ix-icon>`
- * - custom icons `<ix-icon name="ix-left-arrow"></ix-icon>`
+ * - custom icons `<ix-icon name="ix-left-arrow"></ix-icon>` added to `src/assets/icons/custom`.
  *
  * More information on how icon sprite works is available in the assets/icons/README.md.
  */
@@ -37,12 +36,17 @@ import { DomSanitizer } from '@angular/platform-browser';
   },
   styleUrls: ['./ix-icon.component.scss'],
   templateUrl: 'ix-icon.component.html',
-  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
+  /**
+   * Do not apply ordinary 24px size to the icon.
+   */
+  @Input()
+  @HostBinding('class.full-size')
+  fullSize = false;
+
   readonly name = input<string>();
 
   override _elementRef: ElementRef<HTMLElement>;
@@ -76,11 +80,10 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
-    private iconRegistry: MatIconRegistry,
+    private iconRegistry: IxIconRegistry,
     @Attribute('aria-hidden') ariaHidden: string,
     @Inject(MAT_ICON_LOCATION) location: MatIconLocation,
-    readonly errorHandler: ErrorHandler,
-    private sanitizer: DomSanitizer,
+    readonly errorHandler: IconErrorHandlerService,
     @Optional() @Inject(MAT_ICON_DEFAULT_OPTIONS) defaults?: MatIconDefaultOptions,
   ) {
     super(elementRef, iconRegistry, ariaHidden, location, errorHandler, defaults);
@@ -92,7 +95,6 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
 
   override ngOnInit(): void {
     this.updateIcon(this.iconName);
-    this.iconRegistry.addSvgIconSet(this.sanitizer.bypassSecurityTrustResourceUrl('assets/icons/sprite.svg'));
     super.ngOnInit();
   }
 

@@ -1,5 +1,7 @@
+import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
+
 export interface IconGroupOption {
-  icon: string;
+  icon: MarkedIcon;
   label: string;
   value: string;
 }

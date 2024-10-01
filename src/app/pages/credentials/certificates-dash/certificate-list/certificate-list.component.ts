@@ -17,6 +17,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -67,30 +68,30 @@ export class CertificateListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'block',
+          iconName: iconMarker('block'),
           tooltip: this.translate.instant('Revoked'),
           hidden: (row) => of(!row.revoked),
           onClick: () => {},
         },
         {
-          iconName: 'mdi-undo',
+          iconName: iconMarker('mdi-undo'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Revoke'),
           hidden: (row) => of(!row.can_be_revoked),
           onClick: (row) => this.doRevoke(row),
         },
         {
-          iconName: 'mdi-download',
+          iconName: iconMarker('mdi-download'),
           tooltip: this.translate.instant('Download'),
           onClick: (row) => this.doDownload(row),
         },
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),

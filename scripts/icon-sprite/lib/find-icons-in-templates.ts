@@ -2,7 +2,7 @@ import fs from 'fs';
 import * as cheerio from 'cheerio';
 import glob from 'glob';
 
-export function findUsedIconNames(path: string): Set<string> {
+export function findIconsInTemplates(path: string): Set<string> {
   const iconNames = new Set<string>();
 
   const templates = glob.sync(`${path}/**/*.html`);

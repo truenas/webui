@@ -3,17 +3,17 @@
     <ix-input
       ixAutofocus
       formControlName="username"
-      prefixIcon="person"
       autocomplete="username"
       class="username-input"
+      [prefixIcon]="iconMarker('person')"
       [label]="'Username' | translate"
     ></ix-input>
 
     <ix-input
       formControlName="password"
       type="password"
-      prefixIcon="lock"
       autocomplete="current-password"
+      [prefixIcon]="iconMarker('lock')"
       [label]="'Password' | translate"
     ></ix-input>
 
@@ -41,8 +41,8 @@
   @if (hasTwoFactor) {
     <ix-input
       formControlName="otp"
-      prefixIcon="phonelink"
       autocomplete="one-time-code"
+      [prefixIcon]="iconMarker('phonelink')"
       [label]="'Two-Factor Authentication Code' | translate"
       [required]="true"
     ></ix-input>

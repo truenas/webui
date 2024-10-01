@@ -30,7 +30,7 @@ import { createTranslateLoader } from 'app/core/classes/icu-translations-loader'
 import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { FeedbackModule } from 'app/modules/feedback/feedback.module';
-import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon.service';
+import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';

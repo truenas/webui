@@ -76,6 +76,7 @@ export class InterfaceStatusIconComponent {
     const [inIcon, outIcon] = this.stateIcon._elementRef.nativeElement.querySelectorAll('.arrow');
     const targetIconEl = type === 'sent' ? inIcon : outIcon;
     if (!targetIconEl) {
+      console.error('Failed to find target icon element.');
       return;
     }
 

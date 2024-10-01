@@ -2,7 +2,7 @@
   <form [formGroup]="filterForm">
     <ix-input
       formControlName="search"
-      prefixIcon="search"
+      [prefixIcon]="iconMarker('search')"
       [placeholder]="'Search' | translate"
     ></ix-input>
     <div class="select-container">

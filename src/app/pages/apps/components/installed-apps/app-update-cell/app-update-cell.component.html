@@ -1,11 +1,11 @@
-@if(showIcon()) {
+@if (showIcon() && hasUpdate()) {
+  <span>{{ 'Update available' | translate }}</span>
   <ix-icon
+    class="icon"
     matTooltipPosition="above"
-    [name]="hasUpdate() ? 'mdi-alert-circle' : 'mdi-check-circle'"
-    [matTooltip]="hasUpdate()
-      ? ('{version} is available!' | translate: { version: app().metadata.app_version | appVersion })
-      : ('Up to date' | translate)
-    "
+    name="mdi-alert-circle"
+    [matTooltip]="'{version} is available!' | translate: { version: app().metadata.app_version | appVersion }"
   ></ix-icon>
+} @else {
+  <span>{{ 'Up to date' | translate }}</span>
 }
-<span>{{ hasUpdate() ? ('Update available' | translate) : ('Up to date' | translate) }}</span>

@@ -23,7 +23,7 @@
   .icon-div {
     text-align: center;
 
-    .mat-icon {
+    .icon {
       align-items: center;
       color: var(--fg2);
       display: inline-flex;
@@ -60,7 +60,7 @@
       margin: 16px;
     }
 
-    .icon-div .mat-icon {
+    .icon-div .icon {
       color: var(--red);
       opacity: 1;
     }
@@ -68,7 +68,7 @@
 
   &.large {
     .icon-div {
-      .mat-icon {
+      .icon {
         align-items: center;
         display: inline-flex;
         font-size: 150px;

@@ -3,6 +3,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -36,15 +37,15 @@ export class IxLogoComponent {
     map(([activeTheme, isXsScreen]) => {
       const isBlueTheme = activeTheme === 'ix-blue' || activeTheme === 'midnight';
       if (isBlueTheme && isXsScreen) {
-        return 'ix:ix-logo-mark';
+        return iconMarker('ix-ix-logo-mark');
       }
       if (!isBlueTheme && isXsScreen) {
-        return 'ix:ix-logo-mark-color';
+        return iconMarker('ix-ix-logo-mark-color');
       }
       if (isBlueTheme && !isXsScreen) {
-        return 'ix:ix-logo';
+        return iconMarker('ix-ix-logo');
       }
-      return 'ix:ix-logo-color';
+      return iconMarker('ix-ix-logo-color');
     }),
   );
 }

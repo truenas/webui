@@ -23,7 +23,7 @@
     }
     @if (isSystemDataset()) {
       <div class="details-item">
-        <ix-icon class="icon" name="ix-truenas-logo-mark"></ix-icon>
+        <ix-icon class="icon" name="ix-truenas-logo-mark" [fullSize]="true"></ix-icon>
         <div class="label">{{ 'System Dataset' | translate }}:</div>
         <div class="system-dataset value">
           {{ 'This dataset is used by the system' | translate }}

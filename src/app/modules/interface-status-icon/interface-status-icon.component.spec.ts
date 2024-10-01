@@ -32,13 +32,13 @@ describe('InterfaceStatusIconComponent', () => {
     it('shows disabled icon when link state is not Up', () => {
       setupTest({ link_state: LinkState.Down } as NetworkInterfaceUpdate);
 
-      expect(icon.name).toBe('ix:network-upload-download-disabled');
+      expect(icon.name).toBe('ix-network-upload-download-disabled');
     });
 
     it('shows disabled icon when link state is not available', () => {
       setupTest({ } as NetworkInterfaceUpdate);
 
-      expect(icon.name).toBe('ix:network-upload-download-disabled');
+      expect(icon.name).toBe('ix-network-upload-download-disabled');
     });
   });
 
@@ -53,7 +53,7 @@ describe('InterfaceStatusIconComponent', () => {
     });
 
     it('shows enabled icon when link state is Up', () => {
-      expect(icon.name).toBe('ix:network-upload-download');
+      expect(icon.name).toBe('ix-network-upload-download');
     });
 
     it('shows sent and received rate in icon tooltip', () => {

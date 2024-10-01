@@ -13,16 +13,17 @@ import {
   dismissAlertPressed,
   reopenAlertPressed,
 } from 'app/modules/alerts/store/alert.actions';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AppsState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
-enum AlertIcon {
-  Error = 'cancel',
-  Warning = 'error',
-  Info = 'info',
-  NotificationsActive = 'notifications_active',
-  CheckCircle = 'check_circle',
-}
+const alertIcons = {
+  error: iconMarker('cancel'),
+  warning: iconMarker('error'),
+  info: iconMarker('info'),
+  notificationsActive: iconMarker('notifications_active'),
+  checkCircle: iconMarker('check_circle'),
+};
 
 enum AlertLevelColor {
   Warn = 'warn',
@@ -77,19 +78,19 @@ export class AlertComponent implements OnChanges {
     switch (true) {
       case this.alert().dismissed:
         this.alertLevelColor = undefined;
-        this.icon = AlertIcon.CheckCircle;
+        this.icon = alertIcons.checkCircle;
         this.iconTooltip = this.translate.instant('Dismissed');
         break;
       case [AlertLevel.Error, AlertLevel.Critical].includes(this.alert().level):
         this.alertLevelColor = AlertLevelColor.Error;
-        this.icon = AlertIcon.Error;
+        this.icon = alertIcons.error;
         break;
       case this.alert().level === AlertLevel.Warning:
         this.alertLevelColor = AlertLevelColor.Warn;
-        this.icon = AlertIcon.Warning;
+        this.icon = alertIcons.warning;
         break;
       case this.alert().one_shot:
-        this.icon = AlertIcon.NotificationsActive;
+        this.icon = alertIcons.notificationsActive;
         this.iconTooltip = this.translate.instant(
           "This is a ONE-SHOT {alertLevel} alert, it won't be dismissed automatically",
           { alertLevel: this.levelLabel() },
@@ -98,7 +99,7 @@ export class AlertComponent implements OnChanges {
         break;
       default:
         this.alertLevelColor = AlertLevelColor.Primary;
-        this.icon = AlertIcon.Info;
+        this.icon = alertIcons.info;
     }
   }
 }

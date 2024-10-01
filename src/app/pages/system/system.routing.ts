@@ -30,7 +30,7 @@ const routes: Routes = [
       redirectTo: 'general',
     }, {
       path: 'general',
-      data: { title: T('General Settings'), breadcrumb: null, icon: 'build' },
+      data: { title: T('General Settings'), breadcrumb: null },
       children: [{
         path: '',
         component: GeneralSettingsComponent,
@@ -39,18 +39,17 @@ const routes: Routes = [
     }, {
       path: 'advanced',
       component: AdvancedSettingsComponent,
-      data: { title: T('Advanced Settings'), breadcrumb: null, icon: 'settings' },
+      data: { title: T('Advanced Settings'), breadcrumb: null },
     }, {
       path: 'viewenclosure',
       data: {
         title: T('View Enclosure'),
         breadcrumb: null,
-        icon: 'settings',
       },
       loadChildren: () => import('./enclosure/enclosure.module').then((module) => module.EnclosureModule),
     }, {
       path: 'boot',
-      data: { title: T('Boot'), breadcrumb: T('Boot'), icon: 'replay' },
+      data: { title: T('Boot'), breadcrumb: T('Boot') },
       children: [{
         path: '',
         component: BootEnvironmentListComponent,
@@ -63,7 +62,7 @@ const routes: Routes = [
       ],
     }, {
       path: 'tunable',
-      data: { title: T('Tunables'), breadcrumb: null, icon: 'settings_overscan' },
+      data: { title: T('Tunables'), breadcrumb: null },
       children: [{
         path: '',
         component: TunableListComponent,
@@ -71,7 +70,7 @@ const routes: Routes = [
       }],
     }, {
       path: 'sysctl',
-      data: { title: T('Sysctl'), breadcrumb: null, icon: 'settings_overscan' },
+      data: { title: T('Sysctl'), breadcrumb: null },
       children: [{
         path: '',
         component: TunableListComponent,
@@ -80,7 +79,7 @@ const routes: Routes = [
     },
     {
       path: 'update',
-      data: { title: T('Update'), breadcrumb: T('Update'), icon: 'update' },
+      data: { title: T('Update'), breadcrumb: T('Update') },
       children: [
         {
           path: '',
@@ -100,26 +99,26 @@ const routes: Routes = [
       ],
     }, {
       path: 'alert-settings',
-      data: { title: T('Alert Settings'), breadcrumb: T('Alert Settings'), icon: 'notifications_active' },
+      data: { title: T('Alert Settings'), breadcrumb: T('Alert Settings') },
       children: [
         {
           path: 'services',
-          data: { title: T('Alert Services'), breadcrumb: null, icon: 'notifications_active' },
+          data: { title: T('Alert Services'), breadcrumb: null },
           component: AlertServiceListComponent,
         },
         {
           path: '',
-          data: { title: T('Alert Settings'), breadcrumb: null, icon: 'notifications_active' },
+          data: { title: T('Alert Settings'), breadcrumb: null },
           component: AlertSettingsComponent,
         },
       ],
     }, {
       path: 'failover',
       component: FailoverSettingsComponent,
-      data: { title: T('Failover'), breadcrumb: null, icon: 'device_hub' },
+      data: { title: T('Failover'), breadcrumb: null },
     }, {
       path: 'support',
-      data: { title: T('Support'), breadcrumb: T('Support'), icon: 'perm_phone_msg' },
+      data: { title: T('Support'), breadcrumb: T('Support') },
       children: [
         {
           path: '',
@@ -141,11 +140,11 @@ const routes: Routes = [
       data: { title: T('Shell'), breadcrumb: null },
     }, {
       path: 'cron',
-      data: { title: T('Cron Jobs'), breadcrumb: null, icon: 'event_note' },
+      data: { title: T('Cron Jobs'), breadcrumb: null },
       component: CronListComponent,
     }, {
       path: 'initshutdown',
-      data: { title: T('Init/Shutdown Scripts'), breadcrumb: null, icon: 'event_note' },
+      data: { title: T('Init/Shutdown Scripts'), breadcrumb: null },
       component: InitShutdownListComponent,
     }],
   },

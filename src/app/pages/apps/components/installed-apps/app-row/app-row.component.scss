@@ -110,22 +110,6 @@
     }
   }
 
-  .cell-update {
-    ::ng-deep ix-app-update-cell {
-      flex-direction: row-reverse;
-
-      .mdi-check-circle {
-        display: none;
-      }
-
-      .mdi-alert-circle {
-        color: var(--yellow);
-        font-size: 18px;
-        line-height: 1;
-      }
-    }
-  }
-
   .cell-action {
     justify-content: center;
   }

@@ -11,7 +11,7 @@ export const routes: Routes = [
       {
         path: '',
         component: NetworkComponent,
-        data: { title: T('Network'), breadcrumb: null, icon: 'settings' },
+        data: { title: T('Network'), breadcrumb: null },
       },
     ],
   },

@@ -28,8 +28,7 @@ describe('DatasetIconComponent', () => {
       name: 'root',
     } as DatasetDetails);
 
-    expect(await ixIcon.getNamespace()).toBe('ix');
-    expect(await ixIcon.getName()).toBe('dataset_root');
+    expect(await ixIcon.getName()).toBe('ix-dataset-root');
   });
 
   it('shows an icon for an ordinary datasets', async () => {
