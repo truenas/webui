@@ -49,7 +49,11 @@ describe('FilesystemService', () => {
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
         'filesystem.listdir',
-        ['/mnt/parent', [], { order_by: ['name'], limit: 1000 }],
+        ['/mnt/parent', [], {
+          select: ['attributes', 'is_ctldir', 'name', 'path', 'type'],
+          order_by: ['name'],
+          limit: 1000,
+        }],
       );
       expect(childNodes).toEqual([
         {
