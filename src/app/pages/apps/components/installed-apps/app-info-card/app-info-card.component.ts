@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, effect, input, output,
+  ChangeDetectionStrategy, Component, computed, effect, Inject, input, output,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -14,6 +14,7 @@ import {
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { App } from 'app/interfaces/app.interface';
@@ -67,10 +68,17 @@ export class AppInfoCardComponent {
     private translate: TranslateService,
     private router: Router,
     private installedAppsStore: InstalledAppsStore,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
-  portalLink(app: App, name = 'web_portal'): void {
-    this.redirect.openWindow(app.portals[name]);
+  openPortalLink(app: App, name = 'web_portal'): void {
+    const portalUrl = new URL(app.portals[name]);
+
+    if (portalUrl.hostname === '0.0.0.0') {
+      portalUrl.hostname = this.window.location.hostname;
+    }
+
+    this.redirect.openWindow(portalUrl.href);
   }
 
   updateButtonPressed(): void {
