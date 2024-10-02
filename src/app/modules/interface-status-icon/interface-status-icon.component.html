@@ -1,9 +1,7 @@
 @if (isLinkUp()) {
   <ix-icon
-    #stateIcon
-    name="ix-network-upload-download"
-    class="active-icon"
     [id]="elementId"
+    [name]="statusIcon()"
     [matTooltip]="tooltipText()"
   ></ix-icon>
 } @else {

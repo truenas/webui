@@ -2,23 +2,3 @@
   cursor: help;
   display: block;
 }
-
-.active-icon {
-  .arrow.active,
-  .arrow.active {
-    animation: glow-blue 2s ease-in-out alternate;
-    fill: #33a9db;
-  }
-
-  @keyframes glow-blue {
-    0% { fill: #005275; }
-    100% { fill: #66d1ff; }
-  }
-
-  @keyframes glow-blue {
-    0% { fill: #005275; }
-    20% { fill: #66d1ff; }
-    80% { fill: #66d1ff; }
-    100% { fill: #005275; }
-  }
-}

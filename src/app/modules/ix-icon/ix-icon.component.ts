@@ -80,7 +80,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
-    private iconRegistry: IxIconRegistry,
+    iconRegistry: IxIconRegistry,
     @Attribute('aria-hidden') ariaHidden: string,
     @Inject(MAT_ICON_LOCATION) location: MatIconLocation,
     readonly errorHandler: IconErrorHandlerService,

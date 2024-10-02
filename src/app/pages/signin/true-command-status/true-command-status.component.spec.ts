@@ -25,7 +25,7 @@ describe('TrueCommandStatusComponent', () => {
   });
 
   it('shows Managed by Truecommand status', () => {
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'truecommand-logo-mark-color');
+    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix-truecommand-logo-mark-color');
     expect(spectator.query('.truecommand-text')).toHaveExactText('Managed by TrueCommand');
   });
 });
