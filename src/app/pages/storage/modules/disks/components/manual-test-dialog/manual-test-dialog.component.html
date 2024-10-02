@@ -16,17 +16,10 @@
           @for (disk of selectedDisksWithSmartSupport; track disk) {
             <li>
               <div class="list-item">
-                <span class="disk-name"><h4>{{ disk.name }} ({{ disk.serial }})</h4></span>
-                @if (hasStartedTests()) {
-                  @if (isTestDone(disk.name)) {
-                    @if (hasErrorTest(disk.name)) {
-                      <ix-icon name="error" class="red-icon"></ix-icon>
-                    } @else {
-                      <ix-icon name="check_circle" class="green-icon"></ix-icon>
-                    }
-                  }
-                  @if (isTestDone(disk.name)) {
-                    @if (hasLogs(disk.name) || hasErrorTest(disk.name)) {
+                <div class="disk-title">
+                  <span class="disk-name">
+                    <h4>{{ disk.name }} ({{ disk.serial }})</h4>
+                    @if (isTestDone(disk.name) && (hasLogs(disk.name) || hasErrorTest(disk.name))) {
                       <a
                         class="link"
                         [ixTest]="[disk.name, 'view-disk-test-logs']"
@@ -35,23 +28,28 @@
                         {{ 'View logs' | translate }}
                       </a>
                     }
-                  } @else {
-                    @if (getTestProgress(disk.name)) {
-                      <div class="spinner-container">
-                        <mat-spinner
-                          color="primary" 
-                          mode="determinate" 
-                          [diameter]="30" 
-                          [value]="getTestProgress(disk.name)"
-                        ></mat-spinner>
-                        <div class="spinner-value">{{ getTestProgress(disk.name).toString() + '%' }}</div>
-                      </div>
+                  </span>
+                  @if (isTestDone(disk.name)) {
+                    @if (hasErrorTest(disk.name)) {
+                      <ix-icon name="error" class="red-icon"></ix-icon>
                     } @else {
-                      <mat-spinner
-                        color="primary" 
-                        [diameter]="30" 
-                      ></mat-spinner>
+                      <ix-icon name="check_circle" class="green-icon"></ix-icon>
                     }
+                    
+                  }
+                </div>
+                @if (isSubmitted() && !isTestDone(disk.name)) {
+                  @if (getTestProgress(disk.name)) {
+                    <mat-progress-bar
+                      color="primary" 
+                      mode="determinate" 
+                      [value]="getTestProgress(disk.name) || 0"
+                    ></mat-progress-bar>
+                  } @else {
+                    <mat-progress-bar
+                      color="primary" 
+                      mode="indeterminate"
+                    ></mat-progress-bar>
                   }
                 }
               </div>
@@ -75,7 +73,7 @@
       }
     </div>
 
-    @if (!hasStartedTests()) {
+    @if (!isSubmitted()) {
       <ix-select
         formControlName="type"
         [required]="true"
@@ -84,7 +82,6 @@
       ></ix-select>
     }
     <ix-form-actions>
-
       @if (!isSubmitted()) {
         <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
           {{ 'Cancel' | translate }}

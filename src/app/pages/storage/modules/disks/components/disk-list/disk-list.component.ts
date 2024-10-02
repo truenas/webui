@@ -192,6 +192,7 @@ export class DiskListComponent implements OnInit {
         selectedDisks: this.prepareDisks(disks),
         diskIdsWithSmart: Object.keys(this.smartDiskChoices),
       } as ManualTestDialogParams,
+      width: '450px',
     });
   }
 

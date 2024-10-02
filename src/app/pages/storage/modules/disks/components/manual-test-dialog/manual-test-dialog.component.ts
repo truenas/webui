@@ -157,7 +157,7 @@ export class ManualTestDialogComponent {
 
   protected getTestProgress(diskName: string): number {
     const runningTests = this.testProgress();
-    return runningTests.find((test) => test.diskName === diskName).progressPercentage;
+    return runningTests.find((test) => test.diskName === diskName)?.progressPercentage || null;
   }
 
   protected showLogs(diskName: string): void {

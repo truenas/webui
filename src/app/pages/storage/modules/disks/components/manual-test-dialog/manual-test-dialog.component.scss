@@ -5,7 +5,7 @@
 .disks-list {
   max-height: 50vh;
   overflow: auto;
-  width: 320px;
+  padding-right: 20px;
 }
 
 .started-tests {
@@ -34,7 +34,7 @@
 
 .list-item {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 5px;
   margin-bottom: 5px;
 }
@@ -53,20 +53,18 @@
   color: var(--red);
 }
 
-.spinner-container {
-  display: inline-block;
-  position: relative;
-}
-
-.spinner-value {
-  font-size: 10px;
-  left: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .disk-name {
   align-items: center;
   display: flex;
+
+  a {
+    margin-left: 5px;
+  }
+}
+
+.disk-title {
+  direction: row;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
 }
