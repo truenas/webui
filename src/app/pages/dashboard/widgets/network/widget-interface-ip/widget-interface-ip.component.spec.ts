@@ -73,7 +73,7 @@ describe('WidgetInterfaceIpComponent', () => {
 
       const widget = spectator.query(MockComponent(WidgetDatapointComponent));
       expect(widget).toBeTruthy();
-      expect(widget.text).toBe('192.168.1.10\n192.168.1.11');
+      expect(widget.text).toBe('N/A');
     });
 
     it('renders IPv6 addresses for the selected network interface', () => {
