@@ -32,9 +32,6 @@ import { KerberosSettingsComponent } from 'app/pages/directory-service/component
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { IdmapListComponent as IdmapListComponent_1 } from './components/idmap-list/idmap-list.component';
-import { KerberosKeytabsListComponent as KerberosKeytabsListComponent_1 } from './components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
-import { KerberosRealmsListComponent as KerberosRealmsListComponent_1 } from './components/kerberos-realms/kerberos-realms-list.component';
 import { LdapComponent } from './components/ldap/ldap.component';
 
 interface DataCard {
@@ -61,9 +58,9 @@ interface DataCard {
     MatToolbarRow,
     MatCardContent,
     CdkAccordionItem,
-    IdmapListComponent_1,
-    KerberosRealmsListComponent_1,
-    KerberosKeytabsListComponent_1,
+    IdmapListComponent,
+    KerberosRealmsListComponent,
+    KerberosKeytabsListComponent,
     MatList,
     MatListItem,
     TranslateModule,

@@ -12,6 +12,9 @@ describe('UnusedResourcesComponent', () => {
 
   const createComponent = createComponentFactory({
     component: UnusedResourcesComponent,
+    imports: [
+      UnusedDiskCardComponent,
+    ],
     providers: [
       mockAuth(),
       mockWebSocket([
@@ -24,9 +27,6 @@ describe('UnusedResourcesComponent', () => {
           ] as DetailsDisk[],
         }),
       ]),
-    ],
-    declarations: [
-      UnusedDiskCardComponent,
     ],
   });
 

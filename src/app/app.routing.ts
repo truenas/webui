@@ -69,7 +69,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'vm',
-        loadChildren: () => import('./pages/vm/vm.module').then((module) => module.VmModule),
+        loadChildren: () => import('app/pages/vm/vm.routes').then((module) => module.vmRoutes),
         data: { title: T('Virtual Machines'), breadcrumb: T('Virtual Machines') },
       },
       {
@@ -89,7 +89,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'storage',
-        loadChildren: () => import('./pages/storage/storage.module').then((module) => module.StorageModule),
+        loadChildren: () => import('./pages/storage/storage.routes').then((module) => module.storageRoutes),
         data: { title: T('Storage'), breadcrumb: T('Storage') },
       },
       {
@@ -119,7 +119,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'credentials',
-        loadChildren: () => import('./pages/credentials/credentials.module').then((module) => module.CredentialsModule),
+        loadChildren: () => import('app/pages/credentials/credentials.routes').then((module) => module.credentialsRoutes),
         data: { title: T('Credentials'), breadcrumb: T('Credentials') },
       },
       {
@@ -129,7 +129,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'system/audit',
-        loadComponent: () => import('./pages/audit/audit.component').then((module) => module.AuditComponent),
+        loadChildren: () => import('./pages/audit/audit.routes').then((module) => module.auditRoutes),
       },
     ],
   },

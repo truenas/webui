@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -20,6 +21,7 @@ describe('CpuAndMemoryStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      CdkStepper,
       mockWebSocket([
         mockCall('vm.maximum_supported_vcpus', 27),
         mockCall('vm.cpu_model_choices', {

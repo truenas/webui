@@ -1,13 +1,21 @@
+import { NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { keyBy } from 'lodash-es';
-import { DndDropEvent } from 'ngx-drag-drop';
+import { DndDropEvent, DndDropzoneDirective, DndDraggableDirective } from 'ngx-drag-drop';
 import { MiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { EnclosureWrapperComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/enclosure-wrapper/enclosure-wrapper.component';
 import {
   ManualSelectionDisk,
   ManualSelectionVdev,
@@ -23,6 +31,23 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   templateUrl: './manual-selection-vdev.component.html',
   styleUrls: ['./manual-selection-vdev.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    DndDropzoneDirective,
+    NgClass,
+    IxWarningComponent,
+    EnclosureWrapperComponent,
+    DiskIconComponent,
+    DndDraggableDirective,
+    IxIconComponent,
+    IxLabelComponent,
+    TranslateModule,
+    FileSizePipe,
+    AsyncPipe,
+    KeyValuePipe,
+  ],
 })
 export class ManualSelectionVdevComponent implements OnChanges {
   @Input() vdev: ManualSelectionVdev;

@@ -1,10 +1,9 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { PoolsDashboardComponent } from 'app/pages/storage/components/pools-dashboard/pools-dashboard.component';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
+import { PoolsDashboardComponent } from 'app/pages/storage/pools-dashboard.component';
 
-export const routes: Routes = [
+export const storageRoutes: Routes = [
   {
     path: '',
     data: { title: T('Storage') },
@@ -16,7 +15,7 @@ export const routes: Routes = [
       },
       {
         path: 'create',
-        loadChildren: () => import('./modules/pool-manager/pool-manager.module').then((module) => module.PoolManagerModule),
+        loadComponent: () => import('./modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component').then((module) => module.PoolManagerWizardComponent),
         data: { title: T('Pool Creation Wizard'), breadcrumb: T('Pool Creation Wizard') },
       },
       {
@@ -27,7 +26,7 @@ export const routes: Routes = [
       {
         path: ':poolId/devices',
         data: { title: T('Devices'), breadcrumb: T('Devices') },
-        loadChildren: () => import('./modules/devices/devices.module').then((module) => module.DevicesModule),
+        loadChildren: () => import('./modules/devices/devices.routes').then((module) => module.devicesRoutes),
       },
       {
         path: ':poolId/add-vdevs',
@@ -36,11 +35,9 @@ export const routes: Routes = [
       },
       {
         path: 'disks',
-        loadChildren: () => import('./modules/disks/disks.module').then((module) => module.DisksModule),
+        loadChildren: () => import('./modules/disks/disks.routes').then((module) => module.diskRoutes),
         data: { title: T('Disks'), breadcrumb: T('Disks') },
       },
     ],
   },
 ];
-
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

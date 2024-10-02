@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -32,12 +33,11 @@ describe('LogWizardStepComponent', () => {
 
   const createComponent = createComponentFactory({
     component: LogWizardStepComponent,
-    imports: [
-    ],
     declarations: [
       MockComponent(LayoutStepComponent),
     ],
     providers: [
+      CdkStepper,
       mockProvider(PoolManagerStore, {
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
       }),

@@ -4,6 +4,7 @@ import {
   BreakpointObserver,
 } from '@angular/cdk/layout';
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -12,11 +13,17 @@ import {
   AfterViewInit,
   Inject,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatAnchor, MatIconButton } from '@angular/material/button';
+import {
+  ActivatedRoute, Router, RouterLink, RouterLinkActive,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
@@ -26,8 +33,18 @@ import { Disk } from 'app/interfaces/disk.interface';
 import {
   isTopologyDisk, isVdev, TopologyDisk, TopologyItem,
 } from 'app/interfaces/storage.interface';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
+import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/devices/components/disk-details-panel/disk-details-panel.component';
+import { TopologyItemNodeComponent } from 'app/pages/storage/modules/devices/components/topology-item-node/topology-item-node.component';
+import { VDevGroupNodeComponent } from 'app/pages/storage/modules/devices/components/vdev-group-node/vdev-group-node.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -39,6 +56,31 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   templateUrl: './devices.component.html',
   styleUrls: ['./devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    RequiresRolesDirective,
+    MatAnchor,
+    TestDirective,
+    RouterLink,
+    LetDirective,
+    FakeProgressBarComponent,
+    SearchInput1Component,
+    TreeModule,
+    RouterLinkActive,
+    TopologyItemNodeComponent,
+    IxIconComponent,
+    VDevGroupNodeComponent,
+    MatIconButton,
+    IxDetailsHeightDirective,
+    DiskDetailsPanelComponent,
+    TranslateModule,
+    CastPipe,
+    AsyncPipe,
+  ],
+  providers: [
+    DevicesStore,
+  ],
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.FullAdmin];

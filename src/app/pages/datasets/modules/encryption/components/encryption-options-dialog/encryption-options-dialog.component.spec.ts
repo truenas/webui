@@ -13,7 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
-import { EncryptionOptionsDialogComponent } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
+import { EncryptionOptionsDialogComponent } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 

@@ -4,12 +4,15 @@ import {
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { isVdev, TopologyItem } from 'app/interfaces/storage.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @Component({
   selector: 'ix-topology-item-icon',
   templateUrl: './topology-item-icon.component.html',
   styleUrls: ['./topology-item-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [IxIconComponent],
 })
 export class TopologyItemIconComponent {
   readonly topologyItem = input.required<TopologyItem>();

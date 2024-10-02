@@ -1,17 +1,24 @@
 import {
   ChangeDetectionStrategy, Component, computed, Inject, signal,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
+} from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -27,6 +34,18 @@ export interface RaidzExtendDialogParams {
   templateUrl: './raidz-extend-dialog.component.html',
   styleUrls: ['./raidz-extend-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    ReactiveFormsModule,
+    UnusedDiskSelectComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    MatDialogClose,
+    TranslateModule,
+    FileSizePipe,
+  ],
 })
 export class RaidzExtendDialogComponent {
   form = this.formBuilder.group({

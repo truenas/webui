@@ -9,7 +9,7 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import {
   EncryptionOptionsDialogComponent,
-} from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
+} from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
 import {
   ExportDatasetKeyDialogComponent,
 } from 'app/pages/datasets/modules/encryption/components/export-dataset-key-dialog/export-dataset-key-dialog.component';

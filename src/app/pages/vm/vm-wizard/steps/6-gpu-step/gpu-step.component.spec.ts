@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -19,6 +20,7 @@ describe('GpuStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      CdkStepper,
       mockProvider(GpuService, {
         getGpuOptions: () => of([
           { label: 'GeForce GTX 1080', value: '0000:03:00.0' },

@@ -20,7 +20,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
+import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -39,7 +39,7 @@ import { WebSocketService } from 'app/services/ws.service';
     MatCardTitle,
     ReadOnlyComponent,
     MatCardContent,
-    DualListModule,
+    DualListboxComponent,
     IxIconComponent,
     MatListItemIcon,
     MatListItemLine,

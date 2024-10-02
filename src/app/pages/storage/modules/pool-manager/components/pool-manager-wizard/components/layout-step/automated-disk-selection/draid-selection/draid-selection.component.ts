@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -12,6 +13,9 @@ import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { DiskSizeSelectsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   hasDeepChanges,
@@ -33,6 +37,14 @@ const maxDisksInDraidGroup = 255;
   templateUrl: './draid-selection.component.html',
   styleUrls: ['./draid-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    DiskSizeSelectsComponent,
+    IxSelectComponent,
+    TestOverrideDirective,
+    TranslateModule,
+  ],
 })
 export class DraidSelectionComponent implements OnInit, OnChanges {
   @Input() type: VdevType;

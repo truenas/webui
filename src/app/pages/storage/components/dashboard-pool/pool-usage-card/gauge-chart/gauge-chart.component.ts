@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { ChartDataset, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -22,6 +23,8 @@ const gapRotation = 45 * 5;
   templateUrl: './gauge-chart.component.html',
   styleUrls: ['./gauge-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [BaseChartDirective],
 })
 export class GaugeChartComponent implements OnChanges, AfterViewInit {
   @Input()

@@ -3,6 +3,12 @@ import { ActionReducerMap } from '@ngrx/store';
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, JobsState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
+import { GroupEffects } from 'app/pages/credentials/groups/store/group.effects';
+import { groupReducer, GroupsState } from 'app/pages/credentials/groups/store/group.reducer';
+import { groupStateKey } from 'app/pages/credentials/groups/store/group.selectors';
+import { UserEffects } from 'app/pages/credentials/users/store/user.effects';
+import { userReducer, UsersState } from 'app/pages/credentials/users/store/user.reducer';
+import { userStateKey } from 'app/pages/credentials/users/store/user.selectors';
 import { EulaEffects } from 'app/store/eula/eula.effects';
 import { HaFipsEffects } from 'app/store/ha-fips/ha-fips.effects';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
@@ -37,6 +43,8 @@ export interface AppsState {
   [servicesStateKey]: ServicesState;
   [networkInterfacesKey]: NetworkInterfacesState;
   [jobStateKey]: JobsState;
+  [userStateKey]: UsersState;
+  [groupStateKey]: GroupsState;
   router: RouterReducerState<CustomRouterState>;
 }
 
@@ -48,6 +56,8 @@ export const rootReducers: ActionReducerMap<AppsState> = {
   [servicesStateKey]: servicesReducer,
   [networkInterfacesKey]: networkInterfacesReducer,
   [jobStateKey]: jobReducer,
+  [userStateKey]: userReducer,
+  [groupStateKey]: groupReducer,
   router: routerReducer,
 };
 export const rootEffects = [
@@ -61,4 +71,6 @@ export const rootEffects = [
   NetworkInterfacesEffects,
   HaFipsEffects,
   JobEffects,
+  UserEffects,
+  GroupEffects,
 ];

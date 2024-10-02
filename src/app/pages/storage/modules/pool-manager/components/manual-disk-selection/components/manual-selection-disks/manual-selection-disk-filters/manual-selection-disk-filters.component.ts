@@ -1,13 +1,16 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, output,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   ManualDiskSelectionStore,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
@@ -20,6 +23,13 @@ export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['fi
   templateUrl: './manual-selection-disk-filters.component.html',
   styleUrls: ['./manual-selection-disk-filters.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxInputComponent,
+    IxSelectComponent,
+    TranslateModule,
+  ],
 })
 export class ManualSelectionDiskFiltersComponent implements OnInit {
   readonly filtersUpdated = output<ManualDiskSelectionFilters>();

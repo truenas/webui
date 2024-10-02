@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -68,11 +69,10 @@ describe('ReviewWizardStepComponent', () => {
     imports: [
       FileSizePipe,
       MapValuePipe,
-    ],
-    declarations: [
       TopologyCategoryDescriptionPipe,
     ],
     providers: [
+      CdkStepper,
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
