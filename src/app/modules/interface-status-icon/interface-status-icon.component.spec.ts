@@ -49,11 +49,6 @@ describe('InterfaceStatusIconComponent', () => {
         sent_bytes_rate: 100 * kb,
         received_bytes_rate: 30 * Mb,
       } as NetworkInterfaceUpdate);
-      jest.spyOn(spectator.component, 'updateStateInfoIcon');
-    });
-
-    it('shows enabled icon when link state is Up', () => {
-      expect(icon.name).toBe('ix-network-upload-download');
     });
 
     it('shows sent and received rate in icon tooltip', () => {
@@ -62,14 +57,34 @@ describe('InterfaceStatusIconComponent', () => {
       expect(tooltip.message).toBe('Received: 240 Mb/s Sent: 800 kb/s');
     });
 
-    it('updates state icon to mark arrow or arrows as active on network traffic', () => {
-      spectator.setInput('update', {
+    it('updates state icon depending on traffic', () => {
+      setupTest({
         link_state: LinkState.Up,
-        sent_bytes_rate: 50 * kb,
-        received_bytes_rate: 10 * Mb,
-      });
-      expect(spectator.component.updateStateInfoIcon).toHaveBeenCalledWith('received');
-      expect(spectator.component.updateStateInfoIcon).toHaveBeenCalledWith('sent');
+        sent_bytes_rate: 100 * Mb,
+        received_bytes_rate: 0,
+      } as NetworkInterfaceUpdate);
+      expect(icon.name).toBe('ix-network-upload-download-up');
+
+      setupTest({
+        link_state: LinkState.Up,
+        sent_bytes_rate: 0,
+        received_bytes_rate: 100 * Mb,
+      } as NetworkInterfaceUpdate);
+      expect(icon.name).toBe('ix-network-upload-download-down');
+
+      setupTest({
+        link_state: LinkState.Up,
+        sent_bytes_rate: 0,
+        received_bytes_rate: 0,
+      } as NetworkInterfaceUpdate);
+      expect(icon.name).toBe('ix-network-upload-download');
+
+      setupTest({
+        link_state: LinkState.Up,
+        sent_bytes_rate: 100 * Mb,
+        received_bytes_rate: 100 * Mb,
+      } as NetworkInterfaceUpdate);
+      expect(icon.name).toBe('ix-network-upload-download-both');
     });
   });
 });

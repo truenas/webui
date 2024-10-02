@@ -52,7 +52,6 @@
               "optimization": true,
               "outputHashing": "all",
               "namedChunks": false,
-
               "extractLicenses": true,
               "fileReplacements": [
                 {

@@ -1,6 +1,6 @@
 @import 'scss-imports/variables';
 
-// TODO: Reload image again. Consider using one from ix-icon sprite.
+// TODO: Reloads image again. Consider using one from ix-icon sprite.
 @mixin background-logo-loader($zoom: 1) {
   &::after {
     animation: loading 2s linear infinite;
