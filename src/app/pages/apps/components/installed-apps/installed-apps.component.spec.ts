@@ -1,4 +1,7 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -12,6 +15,7 @@ import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -26,10 +30,12 @@ import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('InstalledAppsComponent', () => {
   let spectator: Spectator<InstalledAppsComponent>;
+  let loader: HarnessLoader;
 
   const app = {
     id: 'ix-test-app',
@@ -69,6 +75,12 @@ describe('InstalledAppsComponent', () => {
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([]),
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: true })),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       provideMockStore({
         selectors: [
@@ -110,6 +122,8 @@ describe('InstalledAppsComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    spectator.component.dataSource = [app];
   });
 
   it('shows a list of installed apps', () => {
@@ -134,5 +148,25 @@ describe('InstalledAppsComponent', () => {
   it('stops application', () => {
     spectator.query(AppRowComponent).stopApp.emit();
     expect(spectator.inject(ApplicationsService).stopApplication).toHaveBeenCalledWith('test-app');
+  });
+
+  it('removes selected applications', async () => {
+    spectator.component.selection.select(app.name);
+
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Select action' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete All Selected' });
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Delete',
+      message: 'Delete test-app?',
+      secondaryCheckbox: true,
+      secondaryCheckboxText: 'Remove iX Volumes',
+    });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      'core.bulk',
+      ['app.delete', [[app.name, { remove_images: true, remove_ix_volumes: true }]]],
+    );
   });
 });

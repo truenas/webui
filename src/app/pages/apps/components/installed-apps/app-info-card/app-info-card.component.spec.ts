@@ -88,7 +88,7 @@ describe('AppInfoCardComponent', () => {
         installedApps$: of([]),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: true })),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
@@ -188,10 +188,12 @@ describe('AppInfoCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete',
       message: 'Delete test-user-app-name?',
+      secondaryCheckbox: true,
+      secondaryCheckboxText: 'Remove iX Volumes',
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'app.delete',
-      [app.name, { remove_images: true }],
+      [app.name, { remove_images: true, remove_ix_volumes: true }],
     );
   });
 
