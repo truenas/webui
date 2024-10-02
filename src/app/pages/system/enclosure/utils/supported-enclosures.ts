@@ -137,6 +137,7 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.F130]: fSeries,
   [EnclosureModel.H10]: hSeries,
   [EnclosureModel.H20]: hSeries,
+  [EnclosureModel.H30]: hSeries,
   [EnclosureModel.Mini3E]: mini3e,
   [EnclosureModel.Mini3EPlus]: mini3e,
   [EnclosureModel.Mini3X]: mini3x,
