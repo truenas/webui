@@ -31,7 +31,7 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 import { NavigationComponent } from 'app/modules/layout/navigation/navigation.component';
 import { SecondaryMenuComponent } from 'app/modules/layout/secondary-menu/secondary-menu.component';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LanguageService } from 'app/services/language.service';
@@ -63,7 +63,7 @@ import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system
     CopyrightLineComponent,
     MatSidenavContent,
     TopbarComponent,
-    PageHeaderModule,
+    DefaultPageHeaderComponent,
     RouterOutlet,
     ConsoleFooterComponent,
     AlertsModule,

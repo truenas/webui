@@ -537,10 +537,12 @@ export class AppSchemaService {
     const { formGroup, chartSchemaNode } = payload;
 
     const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
-    if (!formField.hidden$) {
-      formField.hidden$ = new BehaviorSubject<boolean>(false);
-    }
-    formField.hidden$.next(true);
+
+    /**
+     * There's no need to emit it as hidden$ = true since it's static and cannot be changed.
+     * Reason: It will be removed during the "app.update" query, which is incorrect.
+     * We can just disable the field and don't emit hidden$.next(true).
+     */
     formField.disable();
   }
 

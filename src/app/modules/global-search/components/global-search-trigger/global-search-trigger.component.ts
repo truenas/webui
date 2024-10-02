@@ -8,11 +8,16 @@ import {
   HostListener,
   ViewContainerRef,
 } from '@angular/core';
+import { MatInput } from '@angular/material/input';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { delay, take } from 'rxjs';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { KeyboardShortcutComponent } from 'app/modules/keyboard-shortcut/keyboard-shortcut.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FocusService } from 'app/services/focus.service';
 
 @UntilDestroy()
@@ -21,6 +26,14 @@ import { FocusService } from 'app/services/focus.service';
   templateUrl: './global-search-trigger.component.html',
   styleUrls: ['./global-search-trigger.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxIconComponent,
+    MatInput,
+    TestDirective,
+    KeyboardShortcutComponent,
+    TranslateModule,
+  ],
 })
 export class GlobalSearchTriggerComponent implements AfterViewInit {
   protected overlayRef: OverlayRef;

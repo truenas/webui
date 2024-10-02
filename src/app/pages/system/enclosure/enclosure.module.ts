@@ -27,7 +27,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -138,7 +138,6 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     IxCheckboxComponent,
     IxFieldsetComponent,
     IxModalHeaderComponent,
-    PageHeaderModule,
     DecimalPipe,
     AsyncPipe,
     RequiresRolesDirective,
@@ -154,6 +153,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     TestDirective,
     TestDirective,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     EnclosureDashboardComponent,

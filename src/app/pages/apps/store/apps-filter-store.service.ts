@@ -57,7 +57,9 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       state,
     ]) => {
       const allApps: AvailableApp[] = state.filteredApps?.length ? [...state.filteredApps] : [...availableApps];
-      const filteredApps: AvailableApp[] = allApps.filter((app) => this.doesAppContainString(state.searchQuery, app));
+      const filteredApps: AvailableApp[] = allApps
+        .filter((app) => this.doesAppContainString(state.searchQuery, app))
+        .sort(this.sortAppsByNameAndSearchQuery);
 
       if (state.filter.sort === AppsFiltersSort.Name) {
         return this.sortAppsByName(filteredApps);
@@ -236,7 +238,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     updateDates.forEach((updateDate) => {
       const appsSortedByLastUpdateDate = filteredApps.filter(
         (app) => this.appsService.convertDateToRelativeDate(new Date(app.last_update?.$date)) === updateDate,
-      ).toSorted((a, b) => a.name.localeCompare(b.name));
+      ).sort(this.sortAppsByNameAndSearchQuery);
 
       appsByCategory.push({
         title: updateDate.toString(),
@@ -296,7 +298,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     availableCategories.forEach((category) => {
       const categorizedApps = filteredApps.filter(
         (app) => app.categories.some((appCategory) => appCategory === category),
-      ).toSorted((a, b) => a.name.localeCompare(b.name));
+      ).sort(this.sortAppsByNameAndSearchQuery);
 
       appsByCategory.push({
         title: category,
@@ -318,4 +320,18 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       };
     });
   }
+
+  private sortAppsByNameAndSearchQuery = (a: AvailableApp, b: AvailableApp): number => {
+    const searchQuery = this.state().searchQuery;
+    const aStartsWithQuery = a.name.toLocaleLowerCase().startsWith(searchQuery);
+    const bStartsWithQuery = b.name.toLocaleLowerCase().startsWith(searchQuery);
+
+    if (aStartsWithQuery && !bStartsWithQuery) {
+      return -1;
+    }
+    if (!aStartsWithQuery && bStartsWithQuery) {
+      return 1;
+    }
+    return a.name.localeCompare(b.name);
+  };
 }

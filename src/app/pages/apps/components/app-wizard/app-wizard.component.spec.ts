@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { MockComponent, MockModule } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -18,7 +18,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -68,7 +68,6 @@ const appVersion121 = {
         schema: {
           default: 'OnFailure',
           enum: [],
-          hidden: true,
           show_if: [
             ['workloadType', '!=', 'Deployment'],
           ],
@@ -148,9 +147,9 @@ const appVersion121 = {
         label: 'Liveness Probe',
         schema: {
           attrs: [],
-          default: null,
+          default: false,
           hidden: true,
-          type: 'dict',
+          type: 'boolean',
         },
         variable: 'livenessProbe',
       },
@@ -206,15 +205,27 @@ const appVersion120 = {
         name: 'Networking',
       },
     ],
-    questions: [{
-      group: 'Networking',
-      label: 'Provide access to node network namespace for the workload Another Version',
-      schema: {
-        default: true,
-        type: 'boolean',
+    questions: [
+      {
+        group: 'Networking',
+        label: 'Provide access to node network namespace for the workload Another Version',
+        schema: {
+          default: true,
+          type: 'boolean',
+        },
+        variable: 'hostNetworkDifferentVersion',
       },
-      variable: 'hostNetworkDifferentVersion',
-    }],
+      {
+        group: 'Networking',
+        label: 'Provide access hidden',
+        schema: {
+          default: true,
+          type: 'boolean',
+          hidden: true,
+        },
+        variable: 'hostNetworkDifferentVersionHidden',
+      },
+    ],
   },
 } as CatalogAppVersion;
 
@@ -265,7 +276,7 @@ describe('AppWizardComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxDynamicFormModule,
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
     ],
     declarations: [
       MockComponent(DockerHubRateInfoDialogComponent),
@@ -415,8 +426,7 @@ describe('AppWizardComponent', () => {
       });
     });
 
-    // TODO:
-    it.skip('creating when form is submitted', async () => {
+    it('creating when form is submitted', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         'Application Name': 'appname',
@@ -444,11 +454,11 @@ describe('AppWizardComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
         'app.create',
         [{
-          catalog: 'TRUENAS',
-          item: 'ipfs',
-          release_name: 'appname',
+          app_name: 'appname',
+          catalog_app: 'ipfs',
           train: 'stable',
           values: {
+            livenessProbe: false,
             release_name: 'appname',
             service: {
               apiPort: 9599,
@@ -456,6 +466,7 @@ describe('AppWizardComponent', () => {
               swarmPort: 9401,
             },
             updateStrategy: 'Recreate',
+            workloadType: 'Deployment',
           },
           version: '1.2.1',
         }],
@@ -477,6 +488,32 @@ describe('AppWizardComponent', () => {
         Version: '1.2.0',
         'Provide access to node network namespace for the workload Another Version': true,
       });
+    });
+
+    it('submits form with hidden: true values as well since they should be a part of a request', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      await form.fillForm({
+        Version: '1.2.0',
+      });
+
+      spectator.component.onSubmit();
+
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+        'app.create',
+        [{
+          app_name: 'ipfs',
+          catalog_app: 'ipfs',
+          train: 'stable',
+          values: {
+            hostNetworkDifferentVersion: true,
+            hostNetworkDifferentVersionHidden: true,
+            release_name: 'ipfs',
+          },
+          version: '1.2.0',
+        }],
+      );
     });
 
     it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {

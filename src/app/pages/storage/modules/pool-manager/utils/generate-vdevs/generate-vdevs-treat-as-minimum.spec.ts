@@ -97,8 +97,8 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
 
       expect(vdevs).toEqual({
         [VdevType.Data]: expectDisks([['enclosure1-disk1', 'enclosure1-disk2', 'enclosure1-disk3']]),
-        [VdevType.Log]: expectDisks([['enclosure2-disk1']]),
-        [VdevType.Spare]: expectDisks([['small-ssd1']]),
+        [VdevType.Log]: expectDisks([['small-ssd1']]),
+        [VdevType.Spare]: expectDisks([['small-ssd2']]),
       });
     });
   });

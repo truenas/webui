@@ -12,7 +12,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AuthService } from 'app/services/auth/auth.service';
 import { AppsState } from 'app/store';
 
-interface UploadOptions<M extends ApiJobMethod = ApiJobMethod> {
+export interface UploadOptions<M extends ApiJobMethod = ApiJobMethod> {
   file: File;
   method: M;
   params?: unknown[];

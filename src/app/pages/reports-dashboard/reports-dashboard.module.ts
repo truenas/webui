@@ -14,7 +14,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -35,7 +34,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -63,7 +62,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxDateComponent,
     MatToolbarModule,
     TranslateModule,
-    EntityModule,
     MatTooltipModule,
     IxIconComponent,
     MatMenuModule,
@@ -81,7 +79,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxCheckboxComponent,
     FormActionsComponent,
     IxSlideToggleComponent,
-    PageHeaderModule,
     AsyncPipe,
     KeyValuePipe,
     NgTemplateOutlet,
@@ -94,6 +91,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxTablePagerComponent,
     FakeProgressBarComponent,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     LineChartComponent,
