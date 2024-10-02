@@ -38,8 +38,6 @@ describe('TruecommandButtonComponent', () => {
       component: TruecommandButtonComponent,
       imports: [
         ReactiveFormsModule,
-      ],
-      declarations: [
         TruecommandStatusModalComponent,
       ],
       providers: [

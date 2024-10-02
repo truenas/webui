@@ -15,7 +15,6 @@ import { IxDetailsHeightDirective } from 'app/directives/details-height/details-
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -27,7 +26,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -60,7 +59,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
 
 @NgModule({
   imports: [
-    EntityModule,
     TreeModule,
     MatButtonModule,
     MatCardModule,
@@ -85,7 +83,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     FormActionsComponent,
     IxInputComponent,
     IxCheckboxComponent,
-    PageHeaderModule,
     NgClass,
     DecimalPipe,
     AsyncPipe,
@@ -108,6 +105,7 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     WithLoadingStateDirective,
     TestDirective,
     WithLoadingStateDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     DevicesComponent,

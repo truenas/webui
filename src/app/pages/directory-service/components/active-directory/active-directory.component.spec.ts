@@ -59,6 +59,7 @@ describe('ActiveDirectoryComponent', () => {
     component: ActiveDirectoryComponent,
     imports: [
       ReactiveFormsModule,
+      LeaveDomainDialogComponent,
     ],
     providers: [
       mockWebSocket([
@@ -90,9 +91,6 @@ describe('ActiveDirectoryComponent', () => {
       mockProvider(IxSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-    ],
-    declarations: [
-      LeaveDomainDialogComponent,
     ],
   });
 

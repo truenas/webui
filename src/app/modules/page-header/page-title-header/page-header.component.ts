@@ -1,7 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit,
 } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { BreadcrumbComponent } from 'app/modules/page-header/breadcrumb/breadcrumb.component';
+import { NewPageBadgeComponent } from 'app/modules/page-header/is-new-indicator/new-page-badge.component';
 import { LayoutService } from 'app/services/layout.service';
 import { PageTitleService } from 'app/services/page-title.service';
 
@@ -15,6 +20,14 @@ import { PageTitleService } from 'app/services/page-title.service';
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    BreadcrumbComponent,
+    NewPageBadgeComponent,
+    FakeProgressBarComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class PageHeaderComponent implements OnInit, OnDestroy {
   @Input() pageTitle: string;

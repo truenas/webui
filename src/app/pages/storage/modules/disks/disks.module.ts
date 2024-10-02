@@ -10,7 +10,6 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -36,7 +35,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -60,12 +59,10 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     MatButtonModule,
     MatDialogModule,
     RouterModule.forChild(routes),
-    EntityModule,
     MatCardModule,
     MatDividerModule,
     MatProgressBarModule,
     IxIconComponent,
-    PageHeaderModule,
     SearchInput1Component,
     UnusedDiskSelectComponent,
     FormatDateTimePipe,
@@ -97,6 +94,7 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     TestDirective,
     TestDirective,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     DiskBulkEditComponent,

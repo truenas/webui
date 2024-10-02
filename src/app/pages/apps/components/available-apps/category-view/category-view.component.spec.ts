@@ -4,10 +4,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent, MockModule } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import {
   CustomAppButtonComponent,
@@ -25,7 +25,7 @@ describe('CategoryViewComponent', () => {
   const createComponent = createRoutingFactory({
     component: CategoryViewComponent,
     imports: [
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
     ],
     declarations: [
       MockComponent(AppCardComponent),

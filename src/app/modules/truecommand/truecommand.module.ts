@@ -21,12 +21,6 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
 import { TruecommandSignupModalComponent } from './components/truecommand-signup-modal/truecommand-signup-modal.component';
 
 @NgModule({
-  declarations: [
-    TruecommandButtonComponent,
-    TruecommandStatusModalComponent,
-    TruecommandConnectModalComponent,
-    TruecommandSignupModalComponent,
-  ],
   exports: [
     TruecommandButtonComponent,
   ],
@@ -46,6 +40,10 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
     FormActionsComponent,
     UiSearchDirective,
     TestDirective,
+    TruecommandButtonComponent,
+    TruecommandStatusModalComponent,
+    TruecommandConnectModalComponent,
+    TruecommandSignupModalComponent,
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),

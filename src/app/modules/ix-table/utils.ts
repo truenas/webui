@@ -2,7 +2,7 @@ import { get } from 'lodash-es';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 
-function convertStringToId(inputString: string): string {
+export function convertStringToId(inputString: string): string {
   let result = inputString;
 
   if (!result || result.includes('undefined')) {

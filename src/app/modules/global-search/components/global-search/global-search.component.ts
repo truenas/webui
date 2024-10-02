@@ -1,3 +1,4 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { DOCUMENT } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef, ChangeDetectorRef,
@@ -5,9 +6,11 @@ import {
   AfterViewInit,
   OnDestroy,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatInput } from '@angular/material/input';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
   tap, debounceTime, filter, switchMap,
@@ -15,6 +18,7 @@ import {
   distinctUntilChanged,
 } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { extractVersion } from 'app/modules/global-search/helpers/extract-version';
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
@@ -22,6 +26,8 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FocusService } from 'app/services/focus.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -35,6 +41,16 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './global-search.component.html',
   styleUrls: ['./global-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CdkTrapFocus,
+    IxIconComponent,
+    MatInput,
+    ReactiveFormsModule,
+    TestDirective,
+    GlobalSearchResultsComponent,
+    TranslateModule,
+  ],
 })
 export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;

@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
 import { filter } from 'rxjs/operators';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 
 // TODO: Bad. Redo.
@@ -16,6 +18,12 @@ const noLinksRoutes = ['/credentials', '/reportsdashboard', '/system'];
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    RouterLink,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class BreadcrumbComponent implements OnInit {
   breadcrumbs: RoutePart[];

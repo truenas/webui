@@ -18,7 +18,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -39,7 +38,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -86,9 +85,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     EncryptionModule,
     ReactiveFormsModule,
     TreeModule,
-    EntityModule,
     MatDialogModule,
-    EntityModule,
     NgxSkeletonLoaderModule,
     SnapshotsModule,
     EmptyComponent,
@@ -107,7 +104,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxModalHeaderComponent,
     IxChipsComponent,
     IxTextareaComponent,
-    PageHeaderModule,
     IxWarningComponent,
     AsyncPipe,
     PercentPipe,
@@ -121,6 +117,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxTableEmptyDirective,
     FakeProgressBarComponent,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     DatasetsManagementComponent,

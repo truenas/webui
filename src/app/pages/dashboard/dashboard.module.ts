@@ -38,7 +38,7 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -122,7 +122,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     ReactiveFormsModule,
     TranslateModule,
     NgComponentOutlet,
-    PageHeaderModule,
     routing,
     MatCard,
     IxIconComponent,
@@ -177,6 +176,7 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     AppVersionPipe,
     TestDirective,
     WithLoadingStateDirective,
+    PageHeaderComponent,
   ],
 })
 export class DashboardModule {

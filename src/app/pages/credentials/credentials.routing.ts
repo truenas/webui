@@ -17,11 +17,11 @@ export const routes: Routes = [{
     },
     {
       path: 'users',
-      loadChildren: () => import('app/pages/account/users/users.module').then((module) => module.UsersModule),
+      loadComponent: () => import('app/pages/credentials/users/user-list/user-list.component').then((module) => module.UserListComponent),
       data: { title: T('Users'), breadcrumb: T('Users'), icon: 'group' },
     }, {
       path: 'groups',
-      loadChildren: () => import('app/pages/account/groups/groups.module').then((module) => module.GroupsModule),
+      loadComponent: () => import('app/pages/credentials/groups/group-list/group-list.component').then((module) => module.GroupListComponent),
       data: { title: T('Groups'), breadcrumb: T('Groups'), icon: 'group_work' },
     },
     // TODO: Temporary dashboards attached to accounts for now
