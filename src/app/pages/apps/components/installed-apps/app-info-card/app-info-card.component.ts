@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, effect, EventEmitter, Inject, Input, input, InputSignal, Output, output,
+  ChangeDetectionStrategy, Component, computed, effect, EventEmitter, Inject, Input, input, InputSignal, Output,
   signal,
   WritableSignal,
 } from '@angular/core';
