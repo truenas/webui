@@ -67,7 +67,7 @@ export class SmartTestResultListComponent implements OnInit {
       },
     }),
     textColumn({
-      title: this.translate.instant('Error'),
+      title: this.translate.instant('LBA of First Error'),
       propertyName: 'lba_of_first_error',
       getValue: (row) => {
         return row.lba_of_first_error || this.translate.instant('No errors');
