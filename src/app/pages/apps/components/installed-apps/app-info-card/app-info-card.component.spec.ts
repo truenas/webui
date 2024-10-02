@@ -35,13 +35,13 @@ describe('AppInfoCardComponent', () => {
     name: 'test-user-app-name',
     human_version: '1.2.3_3.2.1',
     upgrade_available: true,
+    version: '1.2.3',
     metadata: {
       name: 'ix-test-app',
       icon: '',
       sources: [
         'http://github.com/ix-test-app/ix-test-app/',
       ],
-      version: '1.2.3',
       app_version: '3.2.1',
       train: 'stable',
     },
@@ -134,6 +134,10 @@ describe('AppInfoCardComponent', () => {
       {
         label: 'App Version:',
         value: '3.2.1',
+      },
+      {
+        label: 'Version:',
+        value: 'v1.2.3',
       },
       {
         label: 'Source:',

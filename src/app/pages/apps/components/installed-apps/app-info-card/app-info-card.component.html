@@ -49,6 +49,14 @@
             }
           </div>
         </div>
+        <div class="details-item">
+          <div class="label">{{ 'Version' | translate }}:</div>
+          <div class="value">
+            @if (!isCustomApp()) {
+              {{ app()?.version | appVersion | orNotAvailable }}
+            }
+          </div>
+        </div>
         <div class="details-item sources">
           <div class="label">{{ 'Source' | translate }}:</div>
           <div class="value">

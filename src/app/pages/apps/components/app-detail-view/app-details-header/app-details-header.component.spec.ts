@@ -30,7 +30,8 @@ describe('AppDetailsHeaderComponent', () => {
   const application = {
     icon_url: 'http://github.com/truenas/icon.png',
     name: 'SETI@home',
-    latest_app_version: '1.0.0',
+    latest_app_version: '1.0.5',
+    latest_version: '1.0.0',
     tags: ['aliens', 'ufo'],
     train: 'stable',
     home: 'https://www.seti.org',
@@ -153,19 +154,23 @@ describe('AppDetailsHeaderComponent', () => {
 
     describe('other elements', () => {
       it('shows app version', () => {
-        expect(spectator.queryAll('.app-list-item')[0]).toHaveText('App Version: 1.0.0');
+        expect(spectator.queryAll('.app-list-item')[0]).toHaveText('App Version: 1.0.5');
+      });
+
+      it('shows version', () => {
+        expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Version: 1.0.0');
       });
 
       it('shows app keywords', () => {
-        expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Keywords: aliens, ufo');
+        expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Keywords: aliens, ufo');
       });
 
       it('shows app train', () => {
-        expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Train: stable');
+        expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Train: stable');
       });
 
       it('shows app homepage', () => {
-        expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Homepage:seti.org');
+        expect(spectator.queryAll('.app-list-item')[4]).toHaveText('Homepage:seti.org');
       });
 
       it('shows app description', () => {
