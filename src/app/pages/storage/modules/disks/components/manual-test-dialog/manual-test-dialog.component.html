@@ -37,21 +37,24 @@
                     }
                     
                   }
-                </div>
-                @if (isSubmitted() && !isTestDone(disk.name)) {
-                  @if (getTestProgress(disk.name)) {
-                    <mat-progress-bar
-                      color="primary" 
-                      mode="determinate" 
-                      [value]="getTestProgress(disk.name) || 0"
-                    ></mat-progress-bar>
-                  } @else {
-                    <mat-progress-bar
-                      color="primary" 
-                      mode="indeterminate"
-                    ></mat-progress-bar>
+                  @if (isSubmitted() && !isTestDone(disk.name)) {
+                    <div class="progress-bar">
+                      @if (getTestProgress(disk.name)) {
+                        <mat-progress-bar
+                          color="primary" 
+                          mode="determinate" 
+                          [value]="getTestProgress(disk.name) || 0"
+                        ></mat-progress-bar>
+                      } @else {
+                        <mat-progress-bar
+                          color="primary" 
+                          mode="indeterminate"
+                        ></mat-progress-bar>
+                      }
+                    </div>
                   }
-                }
+                </div>
+                
               </div>
             </li>
           }

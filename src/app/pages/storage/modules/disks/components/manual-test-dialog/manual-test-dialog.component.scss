@@ -56,9 +56,15 @@
 .disk-name {
   align-items: center;
   display: flex;
+  width: fit-content;
 
   a {
     margin-left: 5px;
+  }
+
+  h4 {
+    margin-right: 10px;
+    white-space: nowrap;
   }
 }
 
@@ -67,4 +73,11 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 2px;
+}
+
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
 }
