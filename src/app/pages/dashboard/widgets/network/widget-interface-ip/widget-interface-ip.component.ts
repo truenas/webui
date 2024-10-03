@@ -58,9 +58,9 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
       return this.translate.instant('Network interface {interface} not found.', { interface: interfaceId });
     }
 
-    const ipAliases = networkInterface.aliases.filter((alias) => alias.type === this.interfaceType());
+    const ipAliases = networkInterface?.state?.aliases.filter((alias) => alias.type === this.interfaceType());
 
-    if (!ipAliases.length) {
+    if (!ipAliases?.length) {
       return this.translate.instant('N/A');
     }
 

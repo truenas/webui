@@ -19,16 +19,20 @@ describe('WidgetInterfaceIpComponent', () => {
           value: [
             {
               name: 'eth0',
-              aliases: [
-                { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.1' },
-                { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.2' },
-              ],
+              state: {
+                aliases: [
+                  { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.1' },
+                  { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.2' },
+                ],
+              },
             },
             {
               name: 'eth1',
-              aliases: [
-                { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
-              ],
+              state: {
+                aliases: [
+                  { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
+                ],
+              },
             },
             {
               name: 'eth2',
@@ -73,7 +77,7 @@ describe('WidgetInterfaceIpComponent', () => {
 
       const widget = spectator.query(MockComponent(WidgetDatapointComponent));
       expect(widget).toBeTruthy();
-      expect(widget.text).toBe('N/A');
+      expect(widget.text).toBe('192.168.1.10\n192.168.1.11');
     });
 
     it('renders IPv6 addresses for the selected network interface', () => {
