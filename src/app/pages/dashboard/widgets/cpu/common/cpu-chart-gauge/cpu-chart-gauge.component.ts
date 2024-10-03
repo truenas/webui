@@ -4,7 +4,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
-import { GaugeConfig } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
+import { GaugeConfig } from 'app/modules/charts/view-chart-gauge/view-chart-gauge.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 
 @Component({

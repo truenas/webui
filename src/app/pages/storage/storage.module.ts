@@ -24,6 +24,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -45,7 +46,6 @@ import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-da
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
-import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/gauge-chart/gauge-chart.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
 import { TopologyCardComponent } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
@@ -130,11 +130,11 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     TestDirective,
     TestDirective,
     PageHeaderComponent,
+    GaugeChartComponent,
   ],
   declarations: [
     PoolsDashboardComponent,
     PoolUsageCardComponent,
-    GaugeChartComponent,
     TopologyCardComponent,
     ImportPoolComponent,
     ManageUnusedDiskDialogComponent,
