@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
@@ -52,6 +53,7 @@ export class ContainerLogsComponent implements OnInit {
     protected download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
+    private location: Location,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -73,6 +75,11 @@ export class ContainerLogsComponent implements OnInit {
     }
 
     this.logsChangedListener = this.matDialog.open(LogsDetailsDialogComponent, { width: '400px' }).afterClosed().pipe(
+      tap((value: LogsDetailsDialogComponent['form']['value'] | boolean) => {
+        if (typeof value === 'boolean' && !value) {
+          this.location.back();
+        }
+      }),
       tap((details: LogsDetailsDialogComponent['form']['value']) => {
         this.subscriptionMethod = `app.container_log_follow: ${JSON.stringify({
           app_name: this.appName,
