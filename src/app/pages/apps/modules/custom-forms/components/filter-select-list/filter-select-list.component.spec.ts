@@ -65,38 +65,30 @@ describe('FilterSelectListComponent', () => {
     });
 
     it('shows value provided in form control', () => {
-      const icons = spectator.queryAll(IxIconComponent);
-      expect(icons).toHaveLength(3);
-
       control.setValue('value1');
       spectator.detectComponentChanges();
-      expect(icons[0].name).toBe('check_circle');
-      expect(icons[1].name).not.toBe('check_circle');
-      expect(icons[2].name).not.toBe('check_circle');
+
+      let icons = spectator.queryAll('ix-icon');
+      expect(icons).toHaveLength(1);
+      expect(icons[0].parentNode).toHaveText('label1');
 
       control.setValue('value2');
       spectator.detectComponentChanges();
-      expect(icons[0].name).not.toBe('check_circle');
-      expect(icons[1].name).toBe('check_circle');
-      expect(icons[2].name).not.toBe('check_circle');
+      icons = spectator.queryAll('ix-icon');
+      expect(icons).toHaveLength(1);
+      expect(icons[0].parentNode).toHaveText('label2');
     });
 
     it('shows value when option is clicked', () => {
       const items: HTMLDivElement[] = spectator.queryAll('.item');
-      const icons = spectator.queryAll(IxIconComponent);
-      expect(icons).toHaveLength(3);
 
       items[0].click();
       spectator.detectComponentChanges();
-      expect(icons[0].name).toBe('check_circle');
-      expect(icons[1].name).not.toBe('check_circle');
-      expect(icons[2].name).not.toBe('check_circle');
+      expect(items[0]).toHaveDescendant('ix-icon[name="check_circle"]');
 
       items[2].click();
       spectator.detectComponentChanges();
-      expect(icons[0].name).not.toBe('check_circle');
-      expect(icons[1].name).not.toBe('check_circle');
-      expect(icons[2].name).toBe('check_circle');
+      expect(items[2]).toHaveDescendant('ix-icon[name="check_circle"]');
     });
   });
 
@@ -111,38 +103,32 @@ describe('FilterSelectListComponent', () => {
     });
 
     it('shows value provided in form control', () => {
-      const icons = spectator.queryAll(IxIconComponent);
-      expect(icons).toHaveLength(3);
-
       control.setValue(['value1']);
       spectator.detectComponentChanges();
-      expect(icons[0].name).toBe('check_circle');
-      expect(icons[1].name).not.toBe('check_circle');
-      expect(icons[2].name).not.toBe('check_circle');
+
+      let icons = spectator.queryAll('ix-icon');
+      expect(icons).toHaveLength(1);
+      expect(icons[0].parentNode).toHaveText('label1');
 
       control.setValue(['value1', 'value2']);
       spectator.detectComponentChanges();
-      expect(icons[0].name).toBe('check_circle');
-      expect(icons[1].name).toBe('check_circle');
-      expect(icons[2].name).not.toBe('check_circle');
+
+      icons = spectator.queryAll('ix-icon');
+      expect(icons).toHaveLength(2);
+      expect(icons[0].parentNode).toHaveText('label1');
+      expect(icons[1].parentNode).toHaveText('label2');
     });
 
     it('shows value when option is clicked', () => {
       const items: HTMLDivElement[] = spectator.queryAll('.item');
-      const icons = spectator.queryAll(IxIconComponent);
-      expect(icons).toHaveLength(3);
 
       items[0].click();
       spectator.detectComponentChanges();
-      expect(icons[0].name).toBe('check_circle');
-      expect(icons[1].name).not.toBe('check_circle');
-      expect(icons[2].name).not.toBe('check_circle');
+      expect(items[0]).toHaveDescendant('ix-icon[name="check_circle"]');
 
       items[2].click();
       spectator.detectComponentChanges();
-      expect(icons[0].name).toBe('check_circle');
-      expect(icons[1].name).not.toBe('check_circle');
-      expect(icons[2].name).toBe('check_circle');
+      expect(items[2]).toHaveDescendant('ix-icon[name="check_circle"]');
     });
   });
 });

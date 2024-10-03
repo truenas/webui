@@ -34,18 +34,17 @@ export class IxFilterSelectListHarness extends ComponentHarness implements IxFor
     return checkedValues;
   }
 
-  async setValue(value: string[] | string): Promise<void> {
-    if (isString(value)) {
-      value = [value];
+  async setValue(newValue: string[] | string): Promise<void> {
+    if (isString(newValue)) {
+      newValue = [newValue];
     }
     const items = await this.getItems();
-    const icons = await this.getIcons();
 
     for (const [idx, item] of items.entries()) {
-      if (
-        ((await icons[idx].getName()) !== 'check_circle' && value.includes(await item.text()))
-        || ((await icons[idx].getName()) === 'check_circle' && !value.includes(await item.text()))
-      ) {
+      const isChecked = await this.locatorForOptional(`.item:nth-of-type(${idx + 1}) ix-icon[name="check_circle"]`)();
+      const shouldBeChecked = newValue.includes(await item.text());
+
+      if ((shouldBeChecked && !isChecked) || (!shouldBeChecked && isChecked)) {
         await item.click();
       }
     }

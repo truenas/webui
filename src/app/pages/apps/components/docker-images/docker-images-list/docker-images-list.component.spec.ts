@@ -73,7 +73,7 @@ describe('DockerImagesListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'sha256:test1');
+    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'sha256:test1');
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerImageDeleteDialogComponent, {

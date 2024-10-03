@@ -200,7 +200,7 @@ describe('RsyncTaskListComponent', () => {
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), '/mnt/Pool1');
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), '/mnt/Pool1');
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({

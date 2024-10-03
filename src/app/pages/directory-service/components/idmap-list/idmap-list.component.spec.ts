@@ -158,12 +158,12 @@ describe('IdmapListComponent', () => {
   });
 
   it('does not show delete icon for required idmap domains', async () => {
-    const deleteButton = await table.getAllHarnessesInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    const deleteButton = await table.getAllHarnessesInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     expect(deleteButton).toHaveLength(0);
   });
 
   it('deletes a record with confirmation when delete is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 2, 6);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 2, 6);
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();

@@ -92,7 +92,7 @@ describe('PrivilegeListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'privilege2');
+    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'privilege2');
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('privilege.delete', [2]);

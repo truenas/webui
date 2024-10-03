@@ -37,7 +37,7 @@ describe('DatasetIconComponent', () => {
       type: DatasetType.Filesystem,
     } as DatasetDetails);
 
-    expect(await ixIcon.getName()).toBe('dataset');
+    expect(await ixIcon.getName()).toBe('ix-dataset');
   });
 
   it('shows an icon for a zvol', async () => {

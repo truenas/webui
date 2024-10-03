@@ -138,7 +138,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'vlan1');
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'vlan1');
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -171,7 +171,7 @@ describe('InterfacesCardComponent', () => {
     // Delete button
     const cellButtons = await table.getAllHarnessesInRow(MatButtonHarness, 'vlan1');
     const deleteButton = cellButtons[1];
-    expect(await deleteButton.hasHarness(IxIconHarness.with({ name: 'delete' }))).toBe(true);
+    expect(await deleteButton.hasHarness(IxIconHarness.with({ name: 'mdi-delete' }))).toBe(true);
     expect(await deleteButton.isDisabled()).toBe(true);
   });
 

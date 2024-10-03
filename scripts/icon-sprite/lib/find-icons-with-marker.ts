@@ -1,7 +1,7 @@
 import { execSync } from 'node:child_process';
 
 export function findIconsWithMarker(path: string): Set<string> {
-  const command = `grep -rEo "iconMarker\\\\('[^']+'" ${path} --include="*.ts" --include="*.html"`;
+  const command = `grep -rEo "iconMarker\\\\('[^']+'" --include="*.ts" --include="*.html" ${path}`;
 
   const icons = new Set<string>();
   const output = execSync(command, { encoding: 'utf-8' });
