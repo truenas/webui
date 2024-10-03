@@ -19,6 +19,7 @@ import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -106,7 +107,7 @@ export class IdmapListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             const slideInRef = this.slideInService.open(IdmapFormComponent, { data: row });
@@ -117,7 +118,7 @@ export class IdmapListComponent implements OnInit {
           },
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,

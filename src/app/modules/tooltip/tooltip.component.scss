@@ -9,8 +9,8 @@
 
 .tooltip-icon {
   cursor: pointer;
-  height: auto;
-  width: auto;
+  height: 16px;
+  width: 16px;
 }
 
 .tooltip-header {
@@ -21,13 +21,12 @@
 .close-icon {
   cursor: pointer;
   font-size: 16px;
-  height: auto;
-  left: 6px;
+  height: 16px;
+  left: 3px;
   margin: 0;
   margin-left: 16px;
   position: relative;
-  top: -10px;
-  width: auto;
+  width: 16px;
 }
 
 .title-wrapper {
@@ -48,4 +47,5 @@
 
 .tooltip-title {
   font-family: var(--font-family-body);
+  margin-top: -6px;
 }

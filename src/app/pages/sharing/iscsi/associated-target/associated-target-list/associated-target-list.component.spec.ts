@@ -98,7 +98,7 @@ describe('AssociatedTargetListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 3);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 3);
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.global.sessions');

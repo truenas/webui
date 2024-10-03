@@ -1,32 +1,34 @@
 @import 'mixins/animations';
 $size: 24px;
 
-.ix-icon {
+:host {
   align-items: center;
   display: inline-flex;
   fill: currentColor;
   flex-grow: 0;
   flex-shrink: 0;
+  height: $size;
   justify-content: center;
-
-  &:not([name^='ix:logo']):not([data-mat-icon-name^='logo_']) {
-    svg {
-      height: $size;
-      width: $size;
-    }
-  }
+  width: $size;
 
   &.mat-ligature-font::before {
     display: inline-block;
     visibility: hidden;
     width: 0;
   }
-}
 
-.mat-icon,
-.ix-icon {
   &.mdi-set {
     display: flex;
     font-size: $size;
+  }
+
+  &:where(.full-size) {
+    height: 100%;
+    width: 100%;
+  }
+
+  svg {
+    height: 100%;
+    width: 100%;
   }
 }

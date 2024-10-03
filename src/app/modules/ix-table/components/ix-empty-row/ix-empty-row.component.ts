@@ -7,6 +7,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -57,26 +58,26 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
     return this.conf.type === EmptyType.Loading;
   }
 
-  getIcon(): string {
-    let icon = 'logo';
+  getIcon(): MarkedIcon {
+    let icon = iconMarker('ix-truenas-logo');
     if (this.conf.icon) {
       icon = this.conf.icon;
     } else {
       switch (this.conf.type) {
         case EmptyType.Loading:
-          icon = 'logo';
+          icon = iconMarker('ix-truenas-logo');
           break;
         case EmptyType.FirstUse:
-          icon = 'rocket';
+          icon = iconMarker('mdi-rocket');
           break;
         case EmptyType.NoPageData:
-          icon = 'format-list-text';
+          icon = iconMarker('mdi-format-list-text');
           break;
         case EmptyType.Errors:
-          icon = 'alert-octagon';
+          icon = iconMarker('mdi-alert-octagon');
           break;
         case EmptyType.NoSearchResults:
-          icon = 'magnify-scan';
+          icon = iconMarker('mdi-magnify-scan');
           break;
       }
     }

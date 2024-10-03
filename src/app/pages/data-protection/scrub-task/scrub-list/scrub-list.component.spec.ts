@@ -155,7 +155,7 @@ describe('ScrubListComponent', () => {
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'Apps');
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'Apps');
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({

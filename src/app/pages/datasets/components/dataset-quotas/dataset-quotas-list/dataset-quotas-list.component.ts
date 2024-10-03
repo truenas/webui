@@ -23,6 +23,7 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -126,12 +127,12 @@ export class DatasetQuotasListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           hidden: (row) => of(!(row.quota > 0 || row.obj_quota > 0)),

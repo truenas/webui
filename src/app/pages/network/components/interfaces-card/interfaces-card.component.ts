@@ -25,6 +25,7 @@ import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -100,12 +101,12 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     actionsColumn({
       actions: [
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: 'refresh',
+          iconName: iconMarker('refresh'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
@@ -115,7 +116,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
           onClick: (row) => this.onReset(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
           tooltip: this.isHaEnabled ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg) : '',
           hidden: (row) => of(this.isPhysical(row)),

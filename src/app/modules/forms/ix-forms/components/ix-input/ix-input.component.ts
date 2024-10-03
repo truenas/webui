@@ -28,6 +28,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -59,7 +60,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges, AfterViewInit, OnDestroy {
   @Input() label: string;
   @Input() placeholder: string;
-  @Input() prefixIcon: string;
+  @Input() prefixIcon: MarkedIcon;
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;

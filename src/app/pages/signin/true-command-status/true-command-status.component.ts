@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -16,6 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
   imports: [
     TranslateModule,
     AsyncPipe,
+    IxIconComponent,
   ],
 })
 export class TrueCommandStatusComponent {

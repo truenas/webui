@@ -9,7 +9,7 @@
       <mat-spinner [diameter]="40"></mat-spinner>
     } @else {
       <div class="icon-div">
-        <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
+        <ix-icon [name]="getIcon()" [fullSize]="true"></ix-icon>
       </div>
       <div>
         <h3 class="empty-title">{{ conf.title | translate }}</h3>

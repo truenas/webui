@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
@@ -59,7 +60,7 @@ export class DashboardComponent implements OnInit {
   emptyDashboardConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    icon: 'view-dashboard',
+    icon: iconMarker('mdi-view-dashboard'),
     title: this.translate.instant('Your dashboard is currently empty!'),
     message: this.translate.instant('Start adding widgets to personalize it. Click on the "Configure" button to enter edit mode.'),
   };

@@ -31,7 +31,7 @@ describe('ProductImageComponent', () => {
       const icon = await loader.getHarness(IxIconHarness);
 
       expect(spectator.query('img')).not.toExist();
-      expect(await icon.getName()).toBe('logo_truenas_scale_mark');
+      expect(await icon.getName()).toBe('ix-truenas-logo-mark');
       expect(spectator.query('.product-image-text')).toHaveExactText('(Unsupported Hardware)');
     });
   });

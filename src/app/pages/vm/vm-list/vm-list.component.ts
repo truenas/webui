@@ -14,6 +14,7 @@ import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
@@ -50,7 +51,7 @@ export class VmListComponent implements OnInit {
 
   vmNotSupportedConfig: EmptyConfig = {
     large: true,
-    icon: 'laptop',
+    icon: iconMarker('laptop'),
     title: this.translate.instant('Virtualization is not supported'),
     button: null,
   };

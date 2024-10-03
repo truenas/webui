@@ -22,6 +22,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
@@ -88,7 +89,7 @@ export class DirectoryServicesComponent implements OnInit {
     title: this.translate.instant('Active Directory and LDAP are disabled.'),
     message: this.translate.instant('Only one can be active at a time.'),
     large: true,
-    icon: 'account-box',
+    icon: iconMarker('mdi-account-box'),
   };
 
   constructor(

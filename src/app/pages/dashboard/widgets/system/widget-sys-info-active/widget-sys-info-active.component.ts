@@ -5,6 +5,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -74,4 +75,6 @@ export class WidgetSysInfoActiveComponent {
     performance.measure('Dashboard Init', 'Dashboard Start', 'Dashboard End');
     return '';
   }
+
+  protected readonly iconMarker = iconMarker;
 }

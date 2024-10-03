@@ -116,7 +116,7 @@ describe('CertificateSigningRequestsListComponent', () => {
   });
 
   it('deletes the CSR when Delete is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

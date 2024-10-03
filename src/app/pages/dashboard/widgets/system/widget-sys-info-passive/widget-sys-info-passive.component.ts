@@ -11,6 +11,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -92,4 +93,6 @@ export class WidgetSysInfoPassiveComponent {
       this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
     });
   }
+
+  protected readonly iconMarker = iconMarker;
 }

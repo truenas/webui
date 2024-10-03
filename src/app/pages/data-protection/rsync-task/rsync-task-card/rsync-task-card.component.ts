@@ -14,6 +14,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -84,19 +85,19 @@ export class RsyncTaskCardComponent implements OnInit {
       cssClass: 'wide-actions',
       actions: [
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: 'play_arrow',
+          iconName: iconMarker('play_arrow'),
           tooltip: this.translate.instant('Run job'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
