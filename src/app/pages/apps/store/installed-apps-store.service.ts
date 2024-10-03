@@ -7,6 +7,7 @@ import {
   withLatestFrom,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -65,7 +66,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   readonly getStats = this.effect(() => {
     return this.installedApps$.pipe(
       filter((apps) => apps.length > 0),
-      tap(() => this.appsStats.subscribeToUpdates()),
+      tapOnce(() => this.appsStats.subscribeToUpdates()),
       catchError((error: unknown) => {
         this.handleError(error);
         return EMPTY;
