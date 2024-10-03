@@ -23,7 +23,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ShellService } from 'app/services/shell.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
@@ -80,7 +80,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     private shellService: ShellService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
   ) {}

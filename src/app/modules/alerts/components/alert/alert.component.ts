@@ -1,24 +1,23 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
-  Component, computed,
-  HostBinding, input,
-  OnChanges,
+  ChangeDetectionStrategy, Component, computed, HostBinding, input, OnChanges,
 } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import {
-  dismissAlertPressed,
-  reopenAlertPressed,
-} from 'app/modules/alerts/store/alert.actions';
+import { dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { AppsState } from 'app/store';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 const alertIcons = {
-  error: iconMarker('cancel'),
+  error: iconMarker('error'),
   warning: iconMarker('error'),
   info: iconMarker('info'),
   notificationsActive: iconMarker('notifications_active'),
@@ -38,6 +37,15 @@ enum AlertLevelColor {
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxIconComponent,
+    MatTooltip,
+    TestDirective,
+    TranslateModule,
+    FormatDateTimePipe,
+    AsyncPipe,
+  ],
 })
 export class AlertComponent implements OnChanges {
   readonly alert = input.required<Alert>();
@@ -46,7 +54,6 @@ export class AlertComponent implements OnChanges {
   alertLevelColor: AlertLevelColor;
   icon: string;
   iconTooltip: string;
-  timezone: string;
 
   timezone$ = this.store$.select(selectTimezone);
 
@@ -56,7 +63,7 @@ export class AlertComponent implements OnChanges {
   }
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}
 

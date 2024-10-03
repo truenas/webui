@@ -12,7 +12,7 @@ import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -105,7 +105,7 @@ export class CpuCoreBarComponent {
   });
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private resources: WidgetResourcesService,
     private theme: ThemeService,
   ) {}

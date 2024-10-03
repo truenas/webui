@@ -17,7 +17,7 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LocaleService } from 'app/services/locale.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectIsIxHardware, selectIsEnterprise, selectHasEnclosureSupport,
@@ -70,7 +70,7 @@ export class WidgetSysInfoPassiveComponent {
   constructor(
     private resources: WidgetResourcesService,
     private dialog: DialogService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private router: Router,
     private localeService: LocaleService,
   ) {

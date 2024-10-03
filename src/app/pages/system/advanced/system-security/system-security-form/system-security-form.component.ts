@@ -15,7 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FipsService } from 'app/services/fips.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -43,7 +43,7 @@ export class SystemSecurityFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private chainedRef: ChainedRef<SystemSecurityConfig>,
     private fips: FipsService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,

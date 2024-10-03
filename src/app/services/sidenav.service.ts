@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { take, filter, distinctUntilChanged } from 'rxjs';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { sidenavIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
@@ -62,7 +62,7 @@ export class SidenavService {
   constructor(
     private router: Router,
     private breakpointObserver: BreakpointObserver,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private actions$: Actions,
   ) {
     this.listenForScreenSizeChanges();
