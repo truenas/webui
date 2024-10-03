@@ -74,7 +74,7 @@ describe('CsrAddComponent', () => {
     ],
     providers: [
       mockWebSocket([
-        mockCall('webui.crypto.certificate_profiles', {
+        mockCall('webui.crypto.csr_profiles', {
           'HTTPS RSA Certificate': profile,
         }),
         mockCall('certificate.ec_curve_choices', {
