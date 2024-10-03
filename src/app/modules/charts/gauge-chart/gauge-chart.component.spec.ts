@@ -20,7 +20,11 @@ describe('GaugeChartComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        colorFill: '#000',
+      },
+    });
   });
 
   it('shows supplied label', () => {
