@@ -3675,6 +3675,7 @@
   "{tasks, plural, =1 {# receive task} other {# receive tasks}}": "",
   "{tasks, plural, =1 {# send task} other {# send tasks}}": "",
   "{temp}°C (Core #{core})": "",
+  "{threadCount, plural, one {# thread} other {# threads} }": "",
   "{type} VDEVs": "",
   "{type} at {location}": "",
   "{type} | {vdevWidth} wide | ": "",
