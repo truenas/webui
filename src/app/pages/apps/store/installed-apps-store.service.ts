@@ -73,7 +73,6 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       withLatestFrom(this.dockerStore.isDockerStarted$),
       filter(([isLoading, isDockerStarted]) => !isLoading && isDockerStarted !== null),
       switchMap(([, isDockerStarted]) => {
-        this.appsStats.subscribeToUpdates();
         this.subscribeToInstalledAppsUpdates();
 
         if (!isDockerStarted) {
@@ -82,6 +81,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
 
         return this.appsService.getAllApps().pipe(
           tap((installedApps) => {
+            this.appsStats.subscribeToUpdates();
             this.patchState({
               installedApps: [...installedApps],
             });
