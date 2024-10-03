@@ -15,7 +15,7 @@ export const storageRoutes: Routes = [
       },
       {
         path: 'create',
-        loadComponent: () => import('./modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component').then((module) => module.PoolManagerWizardComponent),
+        loadComponent: () => import('./modules/pool-manager/components/pool-manager/pool-manager.component').then((module) => module.PoolManagerComponent),
         data: { title: T('Pool Creation Wizard'), breadcrumb: T('Pool Creation Wizard') },
       },
       {

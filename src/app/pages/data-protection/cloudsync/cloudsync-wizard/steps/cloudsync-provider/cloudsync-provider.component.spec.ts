@@ -44,8 +44,6 @@ describe('CloudSyncProviderComponent', () => {
       ReactiveFormsModule,
       CloudSyncProviderDescriptionComponent,
       CloudCredentialsSelectModule,
-    ],
-    declarations: [
       GooglePhotosProviderFormComponent,
       StorjProviderFormComponent,
     ],

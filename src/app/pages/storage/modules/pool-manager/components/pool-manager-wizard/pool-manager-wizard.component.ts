@@ -29,12 +29,8 @@ import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
-import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import {
-  GenerateVdevsService,
-} from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -80,10 +76,6 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     AsyncPipe,
   ],
   providers: [
-    DiskStore,
-    PoolManagerStore,
-    AddVdevsStore,
-    GenerateVdevsService,
     PoolManagerValidationService,
     {
       provide: STEPPER_GLOBAL_OPTIONS,

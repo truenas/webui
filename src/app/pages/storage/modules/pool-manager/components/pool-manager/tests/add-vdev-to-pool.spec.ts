@@ -15,7 +15,7 @@ import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/compon
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { existingPool, existingPoolDisks } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/add-vdev-to-pool-data';
 import {
-  commonDeclarations, commonImports,
+  commonImports,
   commonProviders,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/common.utils';
 import {
@@ -33,10 +33,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     imports: [
       ...commonImports,
     ],
-    declarations: [
-      ...commonDeclarations,
-    ],
-    providers: [
+    componentProviders: [
       ...commonProviders,
       mockWebSocket([
         mockCall('pool.validate_name', true),
@@ -241,8 +238,8 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
 
     await wizard.clickUpdatePoolButton();
 
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.update', [
+    expect(spectator.inject(DialogService, true).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService, true).job).toHaveBeenCalledWith('pool.update', [
       1,
       {
         topology: {
