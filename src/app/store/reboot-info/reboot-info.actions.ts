@@ -4,7 +4,7 @@ import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 export const rebootInfoLoaded = createAction(
   '[Reboot Info API] Reboot Info Loaded',
   props<{
-    thisNodeInfo: SystemRebootInfo | null;
-    otherNodeInfo: SystemRebootInfo | null;
+    thisNodeRebootInfo: SystemRebootInfo | null;
+    otherNodeRebootInfo: SystemRebootInfo | null;
   }>(),
 );

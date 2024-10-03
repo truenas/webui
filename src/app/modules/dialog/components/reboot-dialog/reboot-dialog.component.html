@@ -1,42 +1,62 @@
-<div class="dialog-content" mat-dialog-content>
-  <h3 mat-dialog-title class="dialog-title">
-    {{ 'Reboot Info' | translate }}
-  </h3>
+<h3 mat-dialog-title>
+  {{ 'Reboot Required' | translate }}
+</h3>
 
-  <ng-container
-    *appLet="thisNodeInfo$ | async as nodeInfo"
-    [ngTemplateOutlet]="reasonsTemplate"
-    [ngTemplateOutletContext]="{
-      $implicit: {
-        reasons: nodeInfo?.reboot_required_reasons,
-        message: 'The local node must be rebooted because' | translate,
-      }
-    }"
-  ></ng-container>
-  
-  <ng-container
-    *appLet="otherNodeInfo$ | async as nodeInfo"
-    [ngTemplateOutlet]="reasonsTemplate"
-    [ngTemplateOutletContext]="{
-      $implicit: {
-        reasons: nodeInfo?.reboot_required_reasons,
-        message: 'The remote node must be rebooted because' | translate,
-      }
-    }"
-  ></ng-container>
-</div>
-
-<ng-template #reasonsTemplate let-props>
-  @if (typeReasons(props.reasons); as reasons) {
+<div mat-dialog-content>
+  @if(thisNodeRebootReasons().length) {
     <div class="reasons">
       <p class="dialog-message">
-        <span>{{ props.message }}:</span>
+        <span>{{ 'The local node must be rebooted because' | translate }}:</span>
       </p>
-      @for (reason of reasons; track reason) {
-        <li>
-          {{ reason.reason }}
-        </li>
+      @for (reason of thisNodeRebootReasons(); track reason) {
+        <li> {{ reason.reason }} </li>
       }
     </div>
   }
-</ng-template>
+
+  @if(otherNodeRebootReasons().length) {
+    <div class="reasons">
+      <p class="dialog-message">
+        <span>{{ 'The remote node must be rebooted because' | translate }}:</span>
+      </p>
+      @for (reason of otherNodeRebootReasons(); track reason) {
+        <li> {{ reason.reason }} </li>
+      }
+    </div>
+  }
+</div>
+
+@if(thisNodeRebootReasons().length || otherNodeRebootReasons().length) {
+  <ix-form-actions mat-dialog-actions class="form-actions">
+    <ix-checkbox
+      class="confirm"
+      [formControl]="form.controls.confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+    ></ix-checkbox>
+
+    @if(thisNodeRebootReasons().length) {
+      <button
+        mat-button
+        color="primary"
+        ixTest="reboot-local"
+        [disabled]="form.invalid"
+        (click)="rebootLocalNode()"
+      >
+        {{ 'Reboot Local' | translate }}
+      </button>
+    }
+
+    @if(otherNodeRebootReasons().length) {
+      <button
+        mat-button
+        color="primary"
+        ixTest="reboot-remote"
+        [disabled]="form.invalid"
+        (click)="rebootRemoteNode()"
+      >
+        {{ 'Reboot Remote' | translate }}
+      </button>
+    }
+  </ix-form-actions>
+}

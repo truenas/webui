@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
@@ -11,10 +11,15 @@ import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import {
+  filter, Observable, Subscription, switchMap, tap, withLatestFrom,
+} from 'rxjs';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { failoverAllowedReasons } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { RebootDialogComponent } from 'app/modules/dialog/components/reboot-dialog/reboot-dialog.component';
@@ -37,10 +42,11 @@ import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
+import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppsState } from 'app/store';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -85,16 +91,17 @@ export class TopbarComponent implements OnInit {
   updateIsRunning = false;
   systemWillRestart = false;
   updateNotificationSent = false;
-  bootInfoNotificationSent = false;
-  hasRebootRequiredReasons = false;
   tooltips = helptextTopbar.mat_tooltips;
   protected searchableElements = toolBarElements;
+
+  readonly hasRebootRequiredReasons = signal(false);
 
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   constructor(
     public themeService: ThemeService,
+    private authService: AuthService,
     private router: Router,
     private systemGeneralService: SystemGeneralService,
     private matDialog: MatDialog,
@@ -154,17 +161,7 @@ export class TopbarComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
-    this.appStore$.select(selectRebootInfo).pipe(untilDestroyed(this)).subscribe((state) => {
-      this.hasRebootRequiredReasons = !!state.thisNodeInfo?.reboot_required_reasons?.length
-        || !!state.otherNodeInfo?.reboot_required_reasons?.length;
-
-      if (!this.bootInfoNotificationSent && this.hasRebootRequiredReasons) {
-        this.showRebootInfoDialog();
-        this.bootInfoNotificationSent = true;
-      }
-
-      this.cdr.markForCheck();
-    });
+    this.checkRebootInfo().pipe(untilDestroyed(this)).subscribe();
   }
 
   onAlertIndicatorPressed(): void {
@@ -199,15 +196,27 @@ export class TopbarComponent implements OnInit {
   }
 
   showRebootInfoDialog(): void {
-    this.matDialog.open(RebootDialogComponent, {
-      width: '400px',
-      hasBackdrop: true,
-      panelClass: 'topbar-panel',
-      position: topbarDialogPosition,
-    });
+    this.checkRebootInfo().pipe(untilDestroyed(this)).subscribe();
   }
 
   onFeedbackIndicatorPressed(): void {
     this.matDialog.open(FeedbackDialogComponent);
+  }
+
+  private checkRebootInfo(): Observable<unknown> {
+    return this.appStore$.select(selectRebootInfo).pipe(
+      tap(() => this.hasRebootRequiredReasons.set(false)),
+      filter(({ thisNodeRebootInfo, otherNodeRebootInfo }) => {
+        return !!thisNodeRebootInfo?.reboot_required_reasons?.length
+          || !!otherNodeRebootInfo?.reboot_required_reasons?.length;
+      }),
+      withLatestFrom(this.store$.select(selectIsHaLicensed)),
+      filter(([, isHa]) => isHa),
+      withLatestFrom(this.store$.select(selectHaStatus)),
+      filter(([, haStatus]) => haStatus?.reasons?.every((reason) => failoverAllowedReasons.includes(reason))),
+      filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
+      tap(() => this.hasRebootRequiredReasons.set(true)),
+      switchMap(() => this.matDialog.open(RebootDialogComponent).afterClosed()),
+    );
   }
 }

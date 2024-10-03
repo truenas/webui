@@ -3,20 +3,20 @@ import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { rebootInfoLoaded } from 'app/store/reboot-info/reboot-info.actions';
 
 export interface RebootInfoState {
-  thisNodeInfo: SystemRebootInfo | null;
-  otherNodeInfo: SystemRebootInfo | null;
+  thisNodeRebootInfo: SystemRebootInfo | null;
+  otherNodeRebootInfo: SystemRebootInfo | null;
 }
 
 const initialState: RebootInfoState = {
-  thisNodeInfo: null,
-  otherNodeInfo: null,
+  thisNodeRebootInfo: null,
+  otherNodeRebootInfo: null,
 };
 
 export const rebootInfoReducer = createReducer(
   initialState,
-  on(rebootInfoLoaded, (state, { thisNodeInfo, otherNodeInfo }) => ({
+  on(rebootInfoLoaded, (state, { thisNodeRebootInfo, otherNodeRebootInfo }) => ({
     ...state,
-    thisNodeInfo,
-    otherNodeInfo,
+    thisNodeRebootInfo,
+    otherNodeRebootInfo,
   })),
 );

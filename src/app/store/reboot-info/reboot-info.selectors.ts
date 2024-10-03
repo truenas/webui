@@ -10,12 +10,12 @@ export const selectRebootInfo = createSelector(
   (state) => state,
 );
 
-export const selectThisNodeInfo = createSelector(
+export const selectThisNodeRebootInfo = createSelector(
   selectRebootInfoState,
-  (state) => state?.thisNodeInfo,
+  (state) => state?.thisNodeRebootInfo,
 );
 
-export const selectOtherNodeInfo = createSelector(
+export const selectOtherNodeRebootInfo = createSelector(
   selectRebootInfoState,
-  (state) => state?.otherNodeInfo,
+  (state) => state?.otherNodeRebootInfo,
 );

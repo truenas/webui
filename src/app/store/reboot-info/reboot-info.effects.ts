@@ -13,15 +13,15 @@ export class RebootInfoEffects {
       if (isHaLicensed) {
         return this.ws.call('failover.reboot.info').pipe(
           map((info) => rebootInfoLoaded({
-            thisNodeInfo: info.this_node,
-            otherNodeInfo: info.other_node,
+            thisNodeRebootInfo: info.this_node,
+            otherNodeRebootInfo: info.other_node,
           })),
         );
       }
       return this.ws.call('system.reboot.info').pipe(
         map((info) => rebootInfoLoaded({
-          thisNodeInfo: info,
-          otherNodeInfo: null,
+          thisNodeRebootInfo: info,
+          otherNodeRebootInfo: null,
         })),
       );
     }),
@@ -33,15 +33,15 @@ export class RebootInfoEffects {
       if (isHaLicensed) {
         return this.ws.subscribe('failover.reboot.info').pipe(
           map((event) => rebootInfoLoaded({
-            thisNodeInfo: event.fields?.this_node,
-            otherNodeInfo: event.fields?.other_node,
+            thisNodeRebootInfo: event.fields?.this_node,
+            otherNodeRebootInfo: event.fields?.other_node,
           })),
         );
       }
       return this.ws.subscribe('system.reboot.info').pipe(
         map((event) => rebootInfoLoaded({
-          thisNodeInfo: event.fields,
-          otherNodeInfo: null,
+          thisNodeRebootInfo: event.fields,
+          otherNodeRebootInfo: null,
         })),
       );
     }),

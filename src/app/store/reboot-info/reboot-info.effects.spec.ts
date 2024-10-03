@@ -10,7 +10,7 @@ import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions'
 import { rebootInfoLoaded } from 'app/store/reboot-info/reboot-info.actions';
 import { RebootInfoEffects } from 'app/store/reboot-info/reboot-info.effects';
 
-const fakeThisNodeInfo: SystemRebootInfo = {
+const fakeThisNodeRebootInfo: SystemRebootInfo = {
   boot_id: 'this-boot-id',
   reboot_required_reasons: [
     { code: 'FIPS', reason: 'Test Reason 1' },
@@ -18,7 +18,7 @@ const fakeThisNodeInfo: SystemRebootInfo = {
   ],
 };
 
-const fakeOtherNodeInfo: SystemRebootInfo = {
+const fakeOtherNodeRebootInfo: SystemRebootInfo = {
   boot_id: 'other-boot-id',
   reboot_required_reasons: [
     { code: 'FIPS', reason: 'Test Reason 3' },
@@ -34,10 +34,10 @@ describe('RebootInfoEffects', () => {
     providers: [
       provideMockActions(() => actions$),
       mockWebSocket([
-        mockCall('system.reboot.info', fakeThisNodeInfo),
+        mockCall('system.reboot.info', fakeThisNodeRebootInfo),
         mockCall('failover.reboot.info', {
-          this_node: fakeThisNodeInfo,
-          other_node: fakeOtherNodeInfo,
+          this_node: fakeThisNodeRebootInfo,
+          other_node: fakeOtherNodeRebootInfo,
         }),
       ]),
       mockAuth(),
@@ -49,13 +49,13 @@ describe('RebootInfoEffects', () => {
 
     jest.spyOn(spectator.inject(WebSocketService), 'subscribe').mockImplementation((method) => {
       if (method === 'system.reboot.info') {
-        return of({ fields: fakeThisNodeInfo } as ApiEvent<SystemRebootInfo>);
+        return of({ fields: fakeThisNodeRebootInfo } as ApiEvent<SystemRebootInfo>);
       }
       if (method === 'failover.reboot.info') {
         return of({
           fields: {
-            this_node: fakeThisNodeInfo,
-            other_node: fakeOtherNodeInfo,
+            this_node: fakeThisNodeRebootInfo,
+            other_node: fakeOtherNodeRebootInfo,
           },
         } as ApiEvent<FailoverRebootInfo>);
       }
@@ -68,8 +68,8 @@ describe('RebootInfoEffects', () => {
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
       const dispatchedAction = await firstValueFrom(spectator.service.loadRebootInfo);
       expect(dispatchedAction).toEqual(rebootInfoLoaded({
-        thisNodeInfo: fakeThisNodeInfo,
-        otherNodeInfo: fakeOtherNodeInfo,
+        thisNodeRebootInfo: fakeThisNodeRebootInfo,
+        otherNodeRebootInfo: fakeOtherNodeRebootInfo,
       }));
     });
 
@@ -77,8 +77,8 @@ describe('RebootInfoEffects', () => {
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
       const dispatchedAction = await firstValueFrom(spectator.service.loadRebootInfo);
       expect(dispatchedAction).toEqual(rebootInfoLoaded({
-        thisNodeInfo: fakeThisNodeInfo,
-        otherNodeInfo: null,
+        thisNodeRebootInfo: fakeThisNodeRebootInfo,
+        otherNodeRebootInfo: null,
       }));
     });
   });
@@ -88,8 +88,8 @@ describe('RebootInfoEffects', () => {
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
       const dispatchedAction = await firstValueFrom(spectator.service.subscribeToRebootInfo);
       expect(dispatchedAction).toEqual(rebootInfoLoaded({
-        thisNodeInfo: fakeThisNodeInfo,
-        otherNodeInfo: fakeOtherNodeInfo,
+        thisNodeRebootInfo: fakeThisNodeRebootInfo,
+        otherNodeRebootInfo: fakeOtherNodeRebootInfo,
       }));
     });
 
@@ -97,8 +97,8 @@ describe('RebootInfoEffects', () => {
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
       const dispatchedAction = await firstValueFrom(spectator.service.subscribeToRebootInfo);
       expect(dispatchedAction).toEqual(rebootInfoLoaded({
-        thisNodeInfo: fakeThisNodeInfo,
-        otherNodeInfo: null,
+        thisNodeRebootInfo: fakeThisNodeRebootInfo,
+        otherNodeRebootInfo: null,
       }));
     });
   });

@@ -3,11 +3,11 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { RebootDialogComponent } from 'app/modules/dialog/components/reboot-dialog/reboot-dialog.component';
 import {
-  selectOtherNodeInfo,
-  selectThisNodeInfo,
+  selectOtherNodeRebootInfo,
+  selectThisNodeRebootInfo,
 } from 'app/store/reboot-info/reboot-info.selectors';
 
-const fakeThisNodeInfo: SystemRebootInfo = {
+const fakeThisNodeRebootInfo: SystemRebootInfo = {
   boot_id: 'this-boot-id',
   reboot_required_reasons: [
     { code: 'FIPS', reason: 'Test Reason 1' },
@@ -15,7 +15,7 @@ const fakeThisNodeInfo: SystemRebootInfo = {
   ],
 };
 
-const fakeOtherNodeInfo: SystemRebootInfo = {
+const fakeOtherNodeRebootInfo: SystemRebootInfo = {
   boot_id: 'other-boot-id',
   reboot_required_reasons: [
     { code: 'FIPS', reason: 'Test Reason 3' },
@@ -31,12 +31,12 @@ describe('RebootDialogComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectThisNodeInfo,
-            value: fakeThisNodeInfo,
+            selector: selectThisNodeRebootInfo,
+            value: fakeThisNodeRebootInfo,
           },
           {
-            selector: selectOtherNodeInfo,
-            value: fakeOtherNodeInfo,
+            selector: selectOtherNodeRebootInfo,
+            value: fakeOtherNodeRebootInfo,
           },
         ],
       }),

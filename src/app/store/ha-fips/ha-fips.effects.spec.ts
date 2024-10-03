@@ -12,7 +12,7 @@ import { HaFipsEffects } from 'app/store/ha-fips/ha-fips.effects';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { rebootInfoLoaded } from 'app/store/reboot-info/reboot-info.actions';
 
-const fakeThisNodeInfo: SystemRebootInfo = {
+const fakeThisNodeRebootInfo: SystemRebootInfo = {
   boot_id: 'this-boot-id',
   reboot_required_reasons: [
     { code: 'FIPS', reason: 'Test Reason 1' },
@@ -20,7 +20,7 @@ const fakeThisNodeInfo: SystemRebootInfo = {
   ],
 };
 
-const fakeOtherNodeInfo: SystemRebootInfo = {
+const fakeOtherNodeRebootInfo: SystemRebootInfo = {
   boot_id: 'other-boot-id',
   reboot_required_reasons: [
     { code: 'FIPS', reason: 'Test Reason 3' },
@@ -65,21 +65,21 @@ describe('HaFipsEffects', () => {
 
   describe('checkIfRebootRequired$', () => {
     it('calls promptForFailover when this node needs to be rebooted', () => {
-      actions$.next(rebootInfoLoaded({ thisNodeInfo: fakeThisNodeInfo, otherNodeInfo: null }));
+      actions$.next(rebootInfoLoaded({ thisNodeRebootInfo: fakeThisNodeRebootInfo, otherNodeRebootInfo: null }));
 
       spectator.service.checkIfRebootRequired$.subscribe();
       expect(spectator.inject(FipsService).promptForFailover).toHaveBeenCalledWith();
     });
 
     it('calls promptForRemoteRestart when other node needs to be rebooted', () => {
-      actions$.next(rebootInfoLoaded({ thisNodeInfo: null, otherNodeInfo: fakeOtherNodeInfo }));
+      actions$.next(rebootInfoLoaded({ thisNodeRebootInfo: null, otherNodeRebootInfo: fakeOtherNodeRebootInfo }));
 
       spectator.service.checkIfRebootRequired$.subscribe();
       expect(spectator.inject(FipsService).promptForRemoteRestart).toHaveBeenCalledWith();
     });
 
     it('nothing is called when there is no reason', () => {
-      actions$.next(rebootInfoLoaded({ thisNodeInfo: null, otherNodeInfo: null }));
+      actions$.next(rebootInfoLoaded({ thisNodeRebootInfo: null, otherNodeRebootInfo: null }));
 
       spectator.service.checkIfRebootRequired$.subscribe();
       expect(spectator.inject(FipsService).promptForFailover).not.toHaveBeenCalledWith();

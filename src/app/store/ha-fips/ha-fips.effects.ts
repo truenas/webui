@@ -24,14 +24,14 @@ export class HaFipsEffects {
     withLatestFrom(this.store$.select(selectHaStatus)),
     filter(([, haStatus]) => haStatus?.reasons?.every((reason) => failoverAllowedReasons.includes(reason))),
     filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
-    switchMap(([[{ thisNodeInfo, otherNodeInfo }]]) => {
-      const needsToReloadSelf = thisNodeInfo?.reboot_required_reasons?.length;
+    switchMap(([[{ thisNodeRebootInfo, otherNodeRebootInfo }]]) => {
+      const needsToReloadSelf = thisNodeRebootInfo?.reboot_required_reasons?.length;
 
       if (needsToReloadSelf) {
         return this.fips.promptForFailover();
       }
 
-      const needsToReloadRemote = otherNodeInfo?.reboot_required_reasons?.length;
+      const needsToReloadRemote = otherNodeRebootInfo?.reboot_required_reasons?.length;
       if (needsToReloadRemote) {
         return this.fips.promptForRemoteRestart();
       }
