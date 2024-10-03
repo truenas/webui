@@ -42,6 +42,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   ) {
     super(initialState);
     this.initialize();
+    this.getStats();
   }
 
   readonly initialize = this.effect((triggers$: Observable<void>) => {
@@ -61,6 +62,18 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     );
   });
 
+  readonly getStats = this.effect(() => {
+    return this.installedApps$.pipe(
+      filter((apps) => apps.length > 0),
+      tap(() => this.appsStats.subscribeToUpdates()),
+      catchError((error: unknown) => {
+        this.handleError(error);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    );
+  });
+
   private handleError(error: unknown): void {
     this.errorHandler.showErrorModal(error);
     this.patchState({
@@ -68,7 +81,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     });
   }
 
-  private loadInstalledApps(): Observable<unknown> {
+  private loadInstalledApps(): Observable<App[]> {
     return this.dockerStore.isLoading$.pipe(
       withLatestFrom(this.dockerStore.isDockerStarted$),
       filter(([isLoading, isDockerStarted]) => !isLoading && isDockerStarted !== null),
@@ -81,7 +94,6 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
 
         return this.appsService.getAllApps().pipe(
           tap((installedApps) => {
-            this.appsStats.subscribeToUpdates();
             this.patchState({
               installedApps: [...installedApps],
             });
