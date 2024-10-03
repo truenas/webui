@@ -55,7 +55,7 @@
           [attr.aria-label]="ariaLabel(node)"
           [class.selected]="isPathSelected(node.data.path)"
           (keyup.enter)="node?.toggleSelected()"
-          (keyup.space)="node?.toggleExpanded()"
+          (keydown.space)="$event.preventDefault(); node?.toggleExpanded()"
         >
           @if (node.data.type === ExplorerNodeType.File) {
             <ix-icon name="insert_drive_file"></ix-icon>
