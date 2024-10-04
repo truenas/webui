@@ -5,7 +5,7 @@
   @if (isLoading$() | async) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
-    {{ app()?.latest_app_version | orNotAvailable }}
+    {{ app()?.latest_version | orNotAvailable }}
   }
 </div>
 <div class="app-list-item sources">
