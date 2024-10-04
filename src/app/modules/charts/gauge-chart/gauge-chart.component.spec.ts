@@ -14,7 +14,10 @@ describe('GaugeChartComponent', () => {
     ],
     providers: [
       mockProvider(ThemeService, {
-        currentTheme: () => ({}) as Theme,
+        currentTheme: () => ({
+          bg2: '#fff',
+          'alt-bg2': '#fff',
+        }) as Theme,
       }),
     ],
   });
@@ -23,6 +26,7 @@ describe('GaugeChartComponent', () => {
     spectator = createComponent({
       props: {
         colorFill: '#000',
+        colorBlank: 'var(--bg2)',
       },
     });
   });

@@ -38,6 +38,7 @@ export class GaugeChartComponent {
   colorBlank = input<string, string>('', {
     transform: (color: string) => {
       if (!this.themeService.isDarkTheme()) {
+        // TODO: Hardcoded case.
         const altBg2 = this.themeService.currentTheme()['alt-bg2'];
         return this.conversionColor(altBg2);
       }
