@@ -53,7 +53,7 @@
           <div class="label">{{ 'Version' | translate }}:</div>
           <div class="value">
             @if (!isCustomApp()) {
-              {{ app()?.version | appVersion | orNotAvailable }}
+              {{ app()?.version | orNotAvailable }}
             }
           </div>
         </div>
