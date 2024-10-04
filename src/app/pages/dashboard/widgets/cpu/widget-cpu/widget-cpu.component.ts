@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
-import { GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
+import { GaugeData } from 'app/modules/charts/view-chart-gauge/view-chart-gauge.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { CpuParams } from 'app/pages/dashboard/widgets/cpu/interfaces/cpu-params.interface';
