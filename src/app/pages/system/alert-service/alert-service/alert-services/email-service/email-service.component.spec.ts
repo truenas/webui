@@ -28,13 +28,13 @@ describe('EmailServiceComponent', () => {
 
     const values = await form.getValues();
     expect(values).toEqual({
-      Email: 'me@truenas.com',
+      'Override Admin Email': 'me@truenas.com',
     });
   });
 
   it('returns alert service form values when getSubmitAttributes is called', async () => {
     await form.fillForm({
-      Email: 'new@truenas.com',
+      'Override Admin Email': 'new@truenas.com',
     });
 
     const submittedValues = spectator.component.getSubmitAttributes();
