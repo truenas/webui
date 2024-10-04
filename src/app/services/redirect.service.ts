@@ -8,7 +8,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { RedirectDialogData } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog-data.interface';
 import { RedirectDialogComponent } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -20,7 +20,7 @@ export class RedirectService {
     protected ws: WebSocketService,
     private translate: TranslateService,
     private matDialog: MatDialog,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {}
 

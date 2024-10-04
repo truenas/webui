@@ -6,13 +6,11 @@ import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
-import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxTableExpandableRowComponent,
@@ -56,10 +54,7 @@ describe('UserDetailsRowComponent', () => {
   const createComponent = createComponentFactory({
     component: UserDetailsRowComponent,
     imports: [
-      MockModule(AlertsModule),
       IxTableExpandableRowComponent,
-    ],
-    declarations: [
       UserFormComponent,
     ],
     providers: [

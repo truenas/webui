@@ -68,7 +68,7 @@ import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provi
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -175,7 +175,7 @@ export class AuditComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private activatedRoute: ActivatedRoute,
     private urlOptionsService: UrlOptionsService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
     effect(() => {

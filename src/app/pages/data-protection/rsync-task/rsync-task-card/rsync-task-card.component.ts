@@ -30,7 +30,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -115,7 +115,7 @@ export class RsyncTaskCardComponent implements OnInit {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private taskService: TaskService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private snackbar: SnackbarService,
     protected emptyService: EmptyService,
     private chainedSlideInService: IxChainedSlideInService,

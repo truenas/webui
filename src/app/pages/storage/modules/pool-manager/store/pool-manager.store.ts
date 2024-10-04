@@ -35,7 +35,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 
 export interface PoolManagerTopologyCategory {
   layout: CreateVdevLayout;
@@ -232,7 +232,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
-    private settingsStore$: Store<AppsState>,
+    private settingsStore$: Store<AppState>,
     private matDialog: MatDialog,
   ) {
     super(initialState);

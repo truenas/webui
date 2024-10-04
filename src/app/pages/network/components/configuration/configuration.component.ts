@@ -32,7 +32,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -228,7 +228,7 @@ export class NetworkConfigurationComponent implements OnInit {
     private fb: FormBuilder,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {

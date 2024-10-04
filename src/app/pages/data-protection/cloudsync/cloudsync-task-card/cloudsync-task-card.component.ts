@@ -34,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -135,7 +135,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private slideIn: IxChainedSlideInService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
     protected emptyService: EmptyService,

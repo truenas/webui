@@ -20,7 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { AlertsModule } from 'app/modules/alerts/alerts.module';
+import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { IxChainedSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-chained-slide-in/ix-chained-slide-in.component';
@@ -41,7 +41,7 @@ import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -67,7 +67,7 @@ import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system
     DefaultPageHeaderComponent,
     RouterOutlet,
     ConsoleFooterComponent,
-    AlertsModule,
+    AlertsPanelComponent,
     IxSlideInComponent,
     IxChainedSlideInComponent,
     AsyncPipe,
@@ -123,7 +123,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private themeService: ThemeService,
     private sysGeneralService: SystemGeneralService,
     private sidenavService: SidenavService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private languageService: LanguageService,
     private sessionTimeoutService: SessionTimeoutService,
     private sentryService: SentryService,

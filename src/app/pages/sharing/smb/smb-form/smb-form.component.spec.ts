@@ -32,7 +32,7 @@ import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restar
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
 import { SmbFormComponent } from './smb-form.component';
@@ -134,8 +134,8 @@ describe('SmbFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let websocket: WebSocketService;
-  let mockStore$: MockStore<AppsState>;
-  let store$: Store<AppsState>;
+  let mockStore$: MockStore<AppState>;
+  let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
     component: SmbFormComponent,

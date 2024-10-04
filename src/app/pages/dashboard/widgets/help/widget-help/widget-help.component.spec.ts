@@ -9,13 +9,13 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetHelpComponent } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.component';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectProductType, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetHelpComponent', () => {
   let spectator: Spectator<WidgetHelpComponent>;
   let loader: HarnessLoader;
-  let store$: MockStore<AppsState>;
+  let store$: MockStore<AppState>;
 
   const createComponent = createComponentFactory({
     component: WidgetHelpComponent,

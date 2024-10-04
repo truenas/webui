@@ -22,7 +22,7 @@ import {
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 interface AllowedAddressRow {
@@ -63,7 +63,7 @@ export class AllowedAddressesCardComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private dialog: DialogService,
     private chainedSlideIns: IxChainedSlideInService,
     private errorHandler: ErrorHandlerService,

@@ -16,7 +16,7 @@ import {
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +46,7 @@ export class StorageCardComponent {
   constructor(
     private chainedSlideIns: IxChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private ws: WebSocketService,
   ) {}
 

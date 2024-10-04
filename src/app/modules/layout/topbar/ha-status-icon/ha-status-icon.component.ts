@@ -16,7 +16,7 @@ import {
 } from 'app/modules/layout/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -45,7 +45,7 @@ export class HaStatusIconComponent implements OnInit {
   private statusPanelRef: MatDialogRef<HaStatusPopoverComponent>;
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private translate: TranslateService,

@@ -1,9 +1,10 @@
-<ix-icon
-  class="alert-icon"
-  [name]="icon"
-  [color]="alertLevelColor"
-  [matTooltip]="iconTooltip"
-></ix-icon>
+<div [class]="['alert-icon', alertLevelColor]">
+  <ix-icon
+    class="alert-icon"
+    [name]="icon"
+    [matTooltip]="iconTooltip"
+  ></ix-icon>
+</div>
 
 <div class="alert-body">
   @if (!alert().dismissed) {
