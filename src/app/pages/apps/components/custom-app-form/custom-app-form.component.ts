@@ -3,6 +3,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,6 +43,7 @@ export class CustomAppFormComponent implements OnInit {
     private dialogService: DialogService,
     private appService: ApplicationsService,
     private dialogRef: IxSlideInRef<CustomAppFormComponent>,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -76,6 +78,7 @@ export class CustomAppFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.dialogRef.close();
+        this.router.navigate(['/apps/installed']);
       },
       error: (error) => {
         this.isLoading = false;
