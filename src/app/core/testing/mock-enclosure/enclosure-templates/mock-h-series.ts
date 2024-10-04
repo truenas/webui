@@ -22,3 +22,8 @@ export const mockH20 = makeEnclosure({
   ...mockH10,
   model: EnclosureModel.H20,
 });
+
+export const mockH30 = makeEnclosure({
+  ...mockH20,
+  model: EnclosureModel.H30,
+});
