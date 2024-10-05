@@ -1,23 +1,29 @@
+import { NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
 import { filter, take, tap } from 'rxjs/operators';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
+import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ShellService } from 'app/services/shell.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
@@ -27,6 +33,16 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   styleUrls: ['./terminal.component.scss'],
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ToolbarSliderComponent,
+    MatButton,
+    TestDirective,
+    TooltipComponent,
+    NgStyle,
+    TranslateModule,
+    PageHeaderComponent,
+  ],
 })
 export class TerminalComponent implements OnInit, OnDestroy {
   @Input() conf: TerminalConfiguration;
@@ -64,7 +80,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     private shellService: ShellService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
   ) {}

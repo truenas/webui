@@ -21,7 +21,7 @@ import {
   updatePendingIndicatorPressed,
   upgradePendingStateLoaded,
 } from 'app/store/ha-upgrade/ha-upgrade.actions';
-import { AppsState } from 'app/store/index';
+import { AppState } from 'app/store/index';
 
 @UntilDestroy()
 @Injectable()
@@ -67,7 +67,7 @@ export class HaUpgradeEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

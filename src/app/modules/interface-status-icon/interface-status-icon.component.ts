@@ -1,18 +1,17 @@
 import {
-  ChangeDetectionStrategy, Component, ViewChild,
+  ChangeDetectionStrategy, Component,
   computed,
-  effect,
   input,
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import { timer } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
+import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @UntilDestroy()
@@ -29,7 +28,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 })
 export class InterfaceStatusIconComponent {
   update = input<NetworkInterfaceUpdate>();
-  @ViewChild('stateIcon') stateIcon: IxIconComponent;
 
   protected elementId: string;
   private minRate = KiB;
@@ -49,40 +47,25 @@ export class InterfaceStatusIconComponent {
     return this.translate.instant('Received: {received}/s Sent: {sent}/s', { sent, received });
   });
 
+  statusIcon = computed<MarkedIcon>(() => {
+    const hasSent = this.update()?.sent_bytes_rate > this.minRate;
+    const hasReceived = this.update()?.received_bytes_rate > this.minRate;
+
+    switch (true) {
+      case hasSent && hasReceived: return iconMarker('ix-network-upload-download-both');
+      case hasSent: return iconMarker('ix-network-upload-download-up');
+      case hasReceived: return iconMarker('ix-network-upload-download-down');
+      default: return iconMarker('ix-network-upload-download');
+    }
+  });
+
   constructor(
     private translate: TranslateService,
   ) {
     this.elementId = `in-out${UUID.UUID()}`;
-
-    effect(() => {
-      if (this.update()?.sent_bytes_rate > this.minRate) {
-        this.updateStateInfoIcon('sent');
-      }
-
-      if (this.update()?.received_bytes_rate > this.minRate) {
-        this.updateStateInfoIcon('received');
-      }
-    });
   }
 
   private formatBytes(bytes: number): string {
     return buildNormalizedFileSize(bytes * 8, 'b', 10);
-  }
-
-  updateStateInfoIcon(type: 'sent' | 'received'): void {
-    if (!this.stateIcon?._elementRef?.nativeElement) {
-      return;
-    }
-    const [inIcon, outIcon] = this.stateIcon._elementRef.nativeElement.querySelectorAll('.arrow');
-    const targetIconEl = type === 'sent' ? inIcon : outIcon;
-    if (!targetIconEl) {
-      return;
-    }
-
-    targetIconEl.classList.add('active');
-
-    timer(2000).pipe(untilDestroyed(this)).subscribe(() => {
-      targetIconEl.classList.remove('active');
-    });
   }
 }

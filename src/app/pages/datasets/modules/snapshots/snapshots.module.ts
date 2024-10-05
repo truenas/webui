@@ -19,7 +19,6 @@ import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -40,7 +39,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -68,7 +67,6 @@ const components = [
   providers: [],
   imports: [
     EffectsModule.forFeature([SnapshotEffects]),
-    EntityModule,
     IxIconComponent,
     MatButtonModule,
     MatCardModule,
@@ -99,7 +97,6 @@ const components = [
     IxModalHeaderComponent,
     IxInputComponent,
     IxSlideToggleComponent,
-    PageHeaderModule,
     AsyncPipe,
     RequiresRolesDirective,
     IxTableComponent,
@@ -109,6 +106,7 @@ const components = [
     IxTableDetailsRowDirective,
     IxTablePagerComponent,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     ...components,

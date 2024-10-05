@@ -7,22 +7,35 @@ import {
   OnInit, output,
   signal,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { filter, map, throttleTime } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/network/components/interfaces-card/interfaces-card.elements';
 import {
@@ -33,7 +46,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -42,6 +55,22 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   templateUrl: './interfaces-card.component.html',
   styleUrls: ['./interfaces-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatToolbarRow,
+    MatTooltip,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    UiSearchDirective,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableCellDirective,
+    InterfaceStatusIconComponent,
+    TranslateModule,
+  ],
 })
 export class InterfacesCardComponent implements OnInit, OnChanges {
   protected readonly searchableElements = interfacesCardElements.elements;
@@ -72,12 +101,12 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     actionsColumn({
       actions: [
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: 'refresh',
+          iconName: iconMarker('refresh'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
@@ -87,7 +116,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
           onClick: (row) => this.onReset(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
           tooltip: this.isHaEnabled ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg) : '',
           hidden: (row) => of(this.isPhysical(row)),
@@ -105,7 +134,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   constructor(
     private interfacesStore$: InterfacesStore,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

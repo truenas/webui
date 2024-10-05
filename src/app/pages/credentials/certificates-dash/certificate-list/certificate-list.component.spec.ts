@@ -130,7 +130,7 @@ describe('CertificateListComponent', () => {
       afterClosed: () => of({ force: true }),
     } as MatDialogRef<unknown>);
 
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 3);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 3);
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

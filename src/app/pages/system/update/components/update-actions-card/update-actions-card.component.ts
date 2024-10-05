@@ -4,14 +4,16 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, of, filter, tap, combineLatest, map,
+  Observable, of, filter, tap, combineLatest, map, switchMap,
+  take,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
@@ -19,7 +21,7 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -33,7 +35,7 @@ import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -76,7 +78,7 @@ export class UpdateActionsCardComponent implements OnInit {
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private snackbar: SnackbarService,
     protected trainService: TrainService,
     protected updateService: UpdateService,
@@ -118,18 +120,26 @@ export class UpdateActionsCardComponent implements OnInit {
 
   // Shows an update in progress as a job dialog on the update page
   showRunningUpdate(jobId: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
-    if (this.isHaLicensed) {
-      dialogRef.componentInstance.disableProgressValue(true);
-    }
-    dialogRef.componentInstance.jobId = jobId;
-    dialogRef.componentInstance.wsshow();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.dialogService.error(this.errorHandler.parseError(err));
-    });
+    const job$ = this.store$.pipe(
+      select(selectJob(jobId)),
+      observeJob(),
+    ) as Observable<Job<ApiJobMethod>>;
+
+    this.dialogService.jobDialog(
+      job$,
+      {
+        title: this.updateTitle,
+        canMinimize: true,
+      },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+      });
   }
 
   downloadUpdate(): void {
@@ -266,38 +276,39 @@ export class UpdateActionsCardComponent implements OnInit {
     this.window.sessionStorage.removeItem('updateLastChecked');
     this.window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      dialogRef.close();
-      this.handleUpdateError(error);
-    });
-    if (!this.isHaLicensed) {
-      dialogRef.componentInstance.setCall('update.update', [{ resume, reboot: true }]);
-      dialogRef.componentInstance.submit();
+
+    let job$: Observable<Job>;
+    if (this.isHaLicensed) {
+      job$ = this.trainService.trainValue$.pipe(
+        take(1),
+        switchMap((trainValue) => this.ws.call('update.set_train', [trainValue])),
+        switchMap(() => this.ws.job('failover.upgrade', [{ resume }])),
+      );
     } else {
-      this.trainService.trainValue$.pipe(
-        tap((trainValue) => this.ws.call('update.set_train', [trainValue])),
-        untilDestroyed(this),
-      ).subscribe(() => {
-        dialogRef.componentInstance.setCall('failover.upgrade', [{ resume }]);
-        dialogRef.componentInstance.disableProgressValue(true);
-        dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      job$ = this.ws.job('update.update', [{ resume, reboot: true }]);
+    }
+
+    this.dialogService
+      .jobDialog(job$, { title: this.translate.instant(this.updateTitle) })
+      .afterClosed()
+      .pipe(
+        switchMap(() => {
           this.dialogService.closeAllDialogs();
           this.isUpdateRunning = false;
           this.sysGenService.updateDone(); // Send 'finished' signal to topbar
           this.cdr.markForCheck();
-          this.router.navigate(['/']);
-          this.dialogService.confirm({
+          return this.dialogService.confirm({
             title: helptext.ha_update.complete_title,
             message: helptext.ha_update.complete_msg,
             hideCheckbox: true,
             buttonText: helptext.ha_update.complete_action,
             hideCancel: true,
-          }).pipe(untilDestroyed(this)).subscribe();
-        });
-      });
-    }
+          });
+        }),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 
   // Continues the update (based on its type) after the Save Config dialog is closed

@@ -4,12 +4,11 @@
   display: flex;
   gap: 4px;
 
-  ix-icon {
-    display: inline-flex;
-    line-height: 1;
-  }
-
-  .mdi-alert-circle {
+  .icon {
     color: var(--yellow);
+    display: inline-flex;
+    height: 18px;
+    line-height: 1;
+    width: 18px;
   }
 }

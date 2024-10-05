@@ -13,11 +13,12 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
+import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import {
-  ItemInfo, PoolInfo, StatusIcon, StatusLevel,
+  ItemInfo, PoolInfo, statusIcons, StatusLevel,
 } from 'app/pages/dashboard/widgets/storage/interfaces/pool-info.interface';
 
 @Component({
@@ -102,14 +103,14 @@ export class WidgetStorageComponent {
 
   private getStatusItemInfo(pool: Pool): ItemInfo {
     let level = StatusLevel.Safe;
-    let icon = StatusIcon.CheckCircle;
+    let icon: MarkedIcon = statusIcons.checkCircle;
     let value: string = pool.status;
 
     switch (pool.status) {
       case PoolStatus.Online:
         if (!pool.healthy) {
           level = StatusLevel.Warn;
-          icon = StatusIcon.MdiAlert;
+          icon = statusIcons.mdiAlert;
           value = this.translate.instant('Unhealthy');
         }
         break;
@@ -122,14 +123,14 @@ export class WidgetStorageComponent {
       case PoolStatus.Offline:
       case PoolStatus.Degraded:
         level = StatusLevel.Warn;
-        icon = StatusIcon.Error;
+        icon = statusIcons.error;
         break;
 
       case PoolStatus.Faulted:
       case PoolStatus.Unavailable:
       case PoolStatus.Removed:
         level = StatusLevel.Error;
-        icon = StatusIcon.MdiCloseCircle;
+        icon = statusIcons.mdiCloseCircle;
         break;
     }
 
@@ -143,7 +144,7 @@ export class WidgetStorageComponent {
 
   private getUsedSpaceItemInfo(pool: Pool, volumes: VolumesData): ItemInfo {
     let level = StatusLevel.Safe;
-    let icon = StatusIcon.CheckCircle;
+    let icon = statusIcons.checkCircle;
     let value = volumes.get(pool.name).used_pct;
 
     if (volumes.get(pool.name)?.used === null) {
@@ -151,7 +152,7 @@ export class WidgetStorageComponent {
         label: this.translate.instant('Used Space'),
         value: this.translate.instant('Unknown'),
         level: StatusLevel.Warn,
-        icon: StatusIcon.Error,
+        icon: statusIcons.error,
       };
     }
 
@@ -167,10 +168,10 @@ export class WidgetStorageComponent {
 
     if (percent >= 90) {
       level = StatusLevel.Error;
-      icon = StatusIcon.Error;
+      icon = statusIcons.error;
     } else if (percent >= 80) {
       level = StatusLevel.Warn;
-      icon = StatusIcon.Error;
+      icon = statusIcons.error;
     }
 
     return {
@@ -183,7 +184,7 @@ export class WidgetStorageComponent {
 
   private getDiskWithErrorsItemInfo(pool: Pool): ItemInfo {
     let level = StatusLevel.Warn;
-    let icon = StatusIcon.Error;
+    let icon = statusIcons.error;
     let value = this.translate.instant('Unknown');
 
     if (pool?.topology) {
@@ -208,10 +209,10 @@ export class WidgetStorageComponent {
       if (unhealthy.length === 0) {
         value = '0';
         level = StatusLevel.Safe;
-        icon = StatusIcon.CheckCircle;
+        icon = statusIcons.checkCircle;
       } else {
         level = StatusLevel.Warn;
-        icon = StatusIcon.Error;
+        icon = statusIcons.error;
         value = unhealthy.length.toString();
       }
 
@@ -228,7 +229,7 @@ export class WidgetStorageComponent {
 
   private getScanItemInfo(pool: Pool): ItemInfo {
     let level = StatusLevel.Safe;
-    let icon = StatusIcon.CheckCircle;
+    let icon: MarkedIcon = statusIcons.checkCircle;
     let value = this.translate.instant('Never');
 
     const isScrub = pool.scan?.function === PoolScanFunction.Scrub;
@@ -241,15 +242,15 @@ export class WidgetStorageComponent {
       : this.translate.instant('Last Resilver');
 
     if (endTime && isScanInProgress) {
-      icon = StatusIcon.ArrowCircleRight;
+      icon = statusIcons.arrowCircleRight;
       level = StatusLevel.Safe;
       value = this.percentPipe.transform(pool.scan.percentage, '1.2-2');
     } else if (endTime && !isScanInProgress) {
-      icon = isScanFinished ? StatusIcon.CheckCircle : StatusIcon.Error;
+      icon = isScanFinished ? statusIcons.checkCircle : statusIcons.error;
       level = isScanFinished ? StatusLevel.Safe : StatusLevel.Warn;
       value = this.formatDateTimePipe.transform(endTime);
     } else {
-      icon = StatusIcon.Neutral;
+      icon = statusIcons.neutral;
       level = StatusLevel.Neutral;
       value = this.translate.instant('Never');
     }

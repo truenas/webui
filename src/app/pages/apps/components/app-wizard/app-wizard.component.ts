@@ -45,6 +45,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -84,12 +85,13 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   searchOptions: Option[] = [];
 
   readonly helptext = helptextApps;
+  readonly iconMarker = iconMarker;
 
   private _pageTitle$ = new BehaviorSubject<string>('...');
   pageTitle$ = this._pageTitle$.asObservable().pipe(
     filter(Boolean),
     map((name) => {
-      if (name === customApp) {
+      if (name?.toLocaleLowerCase() === customApp?.toLocaleLowerCase()) {
         return `${this.titlePrefix} ${this.translate.instant('Custom App')}`;
       }
       return `${this.titlePrefix} ${name}`;

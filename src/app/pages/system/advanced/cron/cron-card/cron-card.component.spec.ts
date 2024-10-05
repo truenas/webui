@@ -127,7 +127,7 @@ describe('CronCardComponent', () => {
   });
 
   it('deletes a cronjob with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'root');
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'root');
     await deleteIcon.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialogComponent, {

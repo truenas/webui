@@ -15,6 +15,7 @@ import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
@@ -113,40 +114,40 @@ export class BootEnvironmentListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'mdi-check-decagram',
+          iconName: iconMarker('mdi-check-decagram'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Activate'),
           hidden: (row) => of(row.active.includes('R')),
           onClick: (row) => this.doActivate(row),
         },
         {
-          iconName: 'mdi-content-copy',
+          iconName: iconMarker('mdi-content-copy'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Clone'),
           onClick: (row) => this.doClone(row),
         },
         {
-          iconName: 'mdi-rename-box',
+          iconName: iconMarker('mdi-rename-box'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Rename'),
           onClick: (row) => this.doRename(row),
         },
         {
-          iconName: 'bookmark',
+          iconName: iconMarker('bookmark'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Keep'),
           hidden: (row) => of(row.keep),
           onClick: (row) => this.toggleKeep(row),
         },
         {
-          iconName: 'bookmark_border',
+          iconName: iconMarker('bookmark_border'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Unkeep'),
           hidden: (row) => of(!row.keep),
           onClick: (row) => this.toggleKeep(row),
         },
         {
-          iconName: 'mdi-delete',
+          iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           hidden: (row) => of(![BootEnvironmentActive.Dash, BootEnvironmentActive.Empty].includes(row.active)),

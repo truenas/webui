@@ -7,7 +7,7 @@ import { map } from 'rxjs';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -25,5 +25,5 @@ export class WidgetHelpComponent {
 
   protected readonly helptext = helptextAbout;
 
-  constructor(private store$: Store<AppsState>) {}
+  constructor(private store$: Store<AppState>) {}
 }

@@ -2,16 +2,21 @@ import {
   Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
   ViewChild,
 } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatFormField, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   combineLatest, firstValueFrom, lastValueFrom, switchMap,
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -21,6 +26,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { networkElements } from 'app/pages/network/network.elements';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
@@ -30,8 +36,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { AppsState } from 'app/store/index';
+import { AppState } from 'app/store/index';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
+import { InterfacesCardComponent } from './components/interfaces-card/interfaces-card.component';
+import { IpmiCardComponent } from './components/ipmi-card/ipmi-card.component';
+import { NetworkConfigurationCardComponent } from './components/network-configuration-card/network-configuration-card.component';
+import { StaticRoutesCardComponent } from './components/static-routes-card/static-routes-card.component';
 
 @UntilDestroy()
 @Component({
@@ -39,6 +49,28 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    UiSearchDirective,
+    MatCard,
+    MatCardContent,
+    MatFormField,
+    MatInput,
+    ReactiveFormsModule,
+    TestDirective,
+    FormsModule,
+    MatError,
+    MatCardActions,
+    MatButton,
+    InterfacesCardComponent,
+    NetworkConfigurationCardComponent,
+    StaticRoutesCardComponent,
+    IpmiCardComponent,
+    TranslateModule,
+  ],
+  providers: [
+    InterfacesStore,
+  ],
 })
 export class NetworkComponent implements OnInit {
   protected readonly searchableElements = networkElements;
@@ -71,7 +103,7 @@ export class NetworkComponent implements OnInit {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
     private interfacesStore: InterfacesStore,

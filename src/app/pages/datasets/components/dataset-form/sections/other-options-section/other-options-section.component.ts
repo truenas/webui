@@ -52,7 +52,7 @@ import {
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -139,7 +139,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,

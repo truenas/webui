@@ -15,7 +15,7 @@ import { saveDebugElement } from 'app/pages/system/advanced/save-debug-button/sa
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -29,7 +29,7 @@ export class SaveDebugButtonComponent {
 
   constructor(
     private ws: WebSocketService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private datePipe: DatePipe,
     private errorHandler: ErrorHandlerService,
     private download: DownloadService,

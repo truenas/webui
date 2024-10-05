@@ -22,7 +22,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import {
   UnusedDiskSelectComponent,
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
@@ -74,7 +73,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
@@ -187,7 +186,6 @@ import { routing } from './system.routing';
 
 @NgModule({
   imports: [
-    EntityModule,
     FormsModule,
     TreeModule,
     SchedulerModule,
@@ -237,7 +235,6 @@ import { routing } from './system.routing';
     IxListComponent,
     IxListItemComponent,
     IxExplorerComponent,
-    PageHeaderModule,
     AsyncPipe,
     KeyValuePipe,
     RequiresRolesDirective,
@@ -306,6 +303,7 @@ import { routing } from './system.routing';
     WithLoadingStateDirective,
     TestOverrideDirective,
     TestOverrideDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     AdvancedSettingsComponent,

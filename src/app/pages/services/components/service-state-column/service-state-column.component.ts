@@ -3,9 +3,10 @@ import {
 } from '@angular/core';
 import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ServiceRow } from 'app/interfaces/service.interface';
@@ -14,6 +15,7 @@ import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-componen
 import { convertStringToId } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesService } from 'app/services/services.service';
@@ -24,6 +26,13 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-service-state-column',
   templateUrl: './service-state-column.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    RequiresRolesDirective,
+    MatSlideToggle,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   protected service = computed(() => this.row());

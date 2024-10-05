@@ -12,7 +12,7 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { checkinIndicatorPressed } from 'app/store/network-interfaces/network-interfaces.actions';
 import {
   selectHasPendingNetworkChanges,
@@ -42,7 +42,7 @@ export class CheckinIndicatorComponent implements OnInit {
   private isWaitingForCheckin = false;
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private dialogService: DialogService,
     private translate: TranslateService,
     private router: Router,

@@ -1,5 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { helptextGlobal } from 'app/helptext/global-helptext';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
 export const helptextTopbar = {
   ha_status: T('HA Status'),
@@ -55,7 +56,7 @@ Login or signup is required.'),
   tcDeregisterBtn: T('Deregister'),
   tcDeregisterDialog: {
     title: T('Deregister TrueCommand Cloud Service'),
-    icon: 'warning',
+    icon: iconMarker('warning'),
     message: T('Are you sure you want to deregister TrueCommand Cloud Service?'),
     confirmBtnMsg: T('Confirm'),
   },
@@ -67,7 +68,7 @@ Login or signup is required.'),
 
   stopTCConnectingDialog: {
     title: T('Stop TrueCommand Cloud Connection'),
-    icon: 'warning',
+    icon: iconMarker('warning'),
     message: T('Are you sure you want to stop connecting to the TrueCommand Cloud Service?'),
     confirmBtnMsg: T('Confirm'),
   },

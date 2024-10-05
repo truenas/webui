@@ -51,7 +51,7 @@ describe('AppAvailableInfoCardComponent', () => {
   });
 
   it('shows card details', () => {
-    expect(spectator.queryAll('.app-list-item')[0]).toHaveText('Version: 2023.5.3');
+    expect(spectator.queryAll('.app-list-item')[0]).toHaveText('Version: 1.0.9');
     expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Source:github.com/home-assistant/home-assistant');
     expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Last App Update: 05/15/2023');
 

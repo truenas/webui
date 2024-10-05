@@ -3,7 +3,7 @@
     <div [class]="['container', size()]">
       <div class="content-left fn-theme-contrast-lighter">
         <div class="product-logo-container">
-          <ix-icon [name]="isIxHardware() ? 'ix:logo_truenas_scale_full' : 'ix:logo_truenas_scale_type'"></ix-icon>
+          <ix-icon [name]="isIxHardware() ? iconMarker('ix-truenas-logo') : iconMarker('ix-truenas-logo-type')" [fullSize]="true"></ix-icon>
         </div>
 
         <ix-product-image

@@ -20,8 +20,9 @@ import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicat
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
-import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
+import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
+import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-chart-area.component';
+import { ViewChartGaugeComponent } from 'app/modules/charts/view-chart-gauge/view-chart-gauge.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -38,7 +39,7 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -79,7 +80,6 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
 import { DisksWithZfsErrorsComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/disks-with-zfs-errors/disks-with-zfs-errors.component';
 import { LastScanErrorsComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/last-scan-errors/last-scan-errors.component';
 import { PoolStatusComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/pool-status/pool-status.component';
-import { GaugeChartComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/gauge-chart/gauge-chart.component';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/pool-usage-gauge/pool-usage-gauge.component';
@@ -101,7 +101,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     BackupTaskEmptyComponent,
     BackupTaskActionsComponent,
     BackupTaskTileComponent,
-    GaugeChartComponent,
     PoolUsageGaugeComponent,
     DisksWithZfsErrorsComponent,
     PoolStatusComponent,
@@ -122,7 +121,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     ReactiveFormsModule,
     TranslateModule,
     NgComponentOutlet,
-    PageHeaderModule,
     routing,
     MatCard,
     IxIconComponent,
@@ -177,6 +175,8 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     AppVersionPipe,
     TestDirective,
     WithLoadingStateDirective,
+    PageHeaderComponent,
+    GaugeChartComponent,
   ],
 })
 export class DashboardModule {

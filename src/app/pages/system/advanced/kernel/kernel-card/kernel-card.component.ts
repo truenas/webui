@@ -11,7 +11,7 @@ import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-sett
 import { kernelCardElements } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.elements';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy(this)
@@ -40,7 +40,7 @@ export class KernelCardComponent {
   );
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private chainedSlideIns: IxChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}

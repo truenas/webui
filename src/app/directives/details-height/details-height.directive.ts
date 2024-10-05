@@ -7,7 +7,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { headerHeight, footerHeight } from 'app/modules/layout/admin-layout/admin-layout.component.const';
 import { LayoutService } from 'app/services/layout.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 /**
@@ -36,7 +36,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     @Inject(WINDOW) private window: Window,
     private element: ElementRef<HTMLElement>,
     private layoutService: LayoutService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {

@@ -10,7 +10,7 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -38,7 +38,7 @@ export class GuiCardComponent {
   readonly helptext = helptext;
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private slideInService: IxSlideInService,
   ) {}
 

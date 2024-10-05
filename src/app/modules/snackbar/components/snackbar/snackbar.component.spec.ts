@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarConfig } from './snackbar-config.interface';
 import { SnackbarComponent } from './snackbar.component';
@@ -22,7 +23,7 @@ describe('SnackbarComponent', () => {
         provide: MAT_SNACK_BAR_DATA,
         useValue: {
           message: 'Time to go to bed',
-          icon: 'error',
+          icon: iconMarker('error'),
           button: {
             title: 'Test Button',
             action: fakeAction,

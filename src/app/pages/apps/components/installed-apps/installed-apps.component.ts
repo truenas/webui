@@ -46,7 +46,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState as WebuiAppState } from 'app/store';
 
 enum SortableField {
   Application = 'application',
@@ -164,7 +164,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private dockerStore: DockerStore,
     private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
-    private store$: Store<AppsState>,
+    private store$: Store<WebuiAppState>,
     private location: Location,
     private appsStats: AppsStatsService,
     private loader: AppLoaderService,
@@ -377,11 +377,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.dialogService.confirm({
       title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Remove iX Volumes'),
     })
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
+      .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
+      .subscribe(({ secondaryCheckbox }) => {
         this.dialogService.jobDialog(
-          this.ws.job('core.bulk', ['app.delete', checkedNames.map((item) => [item])]),
+          this.ws.job('core.bulk', ['app.delete', checkedNames.map(
+            (item) => [item, { remove_images: true, remove_ix_volumes: secondaryCheckbox }],
+          )]),
           { title: helptextApps.apps.delete_dialog.job },
         )
           .afterClosed()

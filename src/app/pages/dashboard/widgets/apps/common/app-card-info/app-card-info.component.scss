@@ -22,7 +22,15 @@
     padding: 8px 12px;
 
     ix-app-update-cell {
+      flex-direction: row-reverse;
       gap: 8px;
+      margin-right: auto;
+
+      // TODO: Does not belong here. Do not reuse component.
+      ::ng-deep ix-icon {
+        height: 24px;
+        width: 24px;
+      }
     }
 
     ::ng-deep ix-with-loading-state-loader {

@@ -8,9 +8,9 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
-import { GaugeChartComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/gauge-chart/gauge-chart.component';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { PoolUsageGaugeComponent } from './pool-usage-gauge.component';
 
@@ -21,9 +21,9 @@ describe('PoolUsageGaugeComponent', () => {
     imports: [
       NgxSkeletonLoaderModule,
       FileSizePipe,
+      MockComponent(GaugeChartComponent),
     ],
     declarations: [
-      MockComponent(GaugeChartComponent),
       FakeFormatDateTimePipe,
     ],
     providers: [
@@ -129,7 +129,8 @@ describe('PoolUsageGaugeComponent', () => {
 
   it('shows chart', () => {
     expect(spectator.query(GaugeChartComponent).label).toBe('80.2%');
-    expect(Math.round(spectator.query(GaugeChartComponent).value)).toBe(80);
+    const value = spectator.query(GaugeChartComponent).value;
+    expect(value).toBeCloseTo(80, 0);
     expect(spectator.query(GaugeChartComponent).colorFill).toBe('red');
   });
 

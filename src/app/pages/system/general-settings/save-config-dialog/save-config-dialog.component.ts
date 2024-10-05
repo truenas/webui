@@ -15,7 +15,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 export interface SaveConfigDialogMessages {
@@ -50,7 +50,7 @@ export class SaveConfigDialogComponent {
 
   constructor(
     private ws: WebSocketService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private download: DownloadService,
     private loader: AppLoaderService,
     private datePipe: DatePipe,

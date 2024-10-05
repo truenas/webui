@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { MockModule } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
@@ -13,7 +13,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SmartTestResultListComponent } from 'app/pages/storage/modules/disks/components/smart-test-result-list/smart-test-result-list.component';
 
 describe('SmartTestResultListComponent', () => {
@@ -26,7 +26,7 @@ describe('SmartTestResultListComponent', () => {
     tests: [{
       num: 1,
       description: 'Background long',
-      status_verbose: 'Completed',
+      status_verbose: null,
       segment_number: null,
       lifetime: 15959,
       lba_of_first_error: null,
@@ -41,7 +41,7 @@ describe('SmartTestResultListComponent', () => {
       lifetime: 15929,
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
-      remaining: null,
+      remaining: 50,
     },
     {
       num: 3,
@@ -73,7 +73,7 @@ describe('SmartTestResultListComponent', () => {
       lifetime: 15929,
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
-      remaining: null,
+      remaining: 0.5,
     },
     {
       num: 3,
@@ -83,7 +83,7 @@ describe('SmartTestResultListComponent', () => {
       lifetime: 16939,
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
-      remaining: null,
+      remaining: 0,
     }],
   }];
 
@@ -92,7 +92,7 @@ describe('SmartTestResultListComponent', () => {
   const createComponent = createComponentFactory({
     component: SmartTestResultListComponent,
     imports: [
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
     ],
@@ -114,13 +114,13 @@ describe('SmartTestResultListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Disk', 'Description', 'Status', 'Remaining', 'Lifetime', 'Error'],
-      ['sda', 'Background long', 'SUCCESS', 'Completed', '15959', 'No errors'],
-      ['sda', 'Background short', 'SUCCESS', 'Completed', '15929', 'No errors'],
+      ['Disk', 'Description', 'Status', 'Remaining', 'Lifetime', 'LBA of First Error'],
+      ['sda', 'Background long', 'SUCCESS', '0%', '15959', 'No errors'],
+      ['sda', 'Background short', 'SUCCESS', '50%', '15929', 'No errors'],
       ['sda', 'Background short', 'SUCCESS', 'Completed', '16939', 'No errors'],
       ['sdb', 'Background long', 'SUCCESS', 'Completed', '15959', 'No errors'],
-      ['sdb', 'Background short', 'SUCCESS', 'Completed', '15929', 'No errors'],
-      ['sdb', 'Background short', 'SUCCESS', 'Completed', '16939', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', '0.5%', '15929', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', '0%', '16939', 'No errors'],
     ];
 
     const cells = await table.getCellTexts();

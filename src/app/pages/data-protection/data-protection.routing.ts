@@ -24,7 +24,7 @@ export const dataProtectionRoutes: Routes = [{
     },
     {
       path: 'cloudsync',
-      data: { title: T('Cloud Sync Tasks'), breadcrumb: null, icon: 'event_note' },
+      data: { title: T('Cloud Sync Tasks'), breadcrumb: null },
       children: [{
         path: '',
         component: CloudSyncListComponent,
@@ -37,7 +37,7 @@ export const dataProtectionRoutes: Routes = [{
     },
     {
       path: 'snapshot',
-      data: { title: T('Periodic Snapshot Tasks'), breadcrumb: null, icon: 'event_note' },
+      data: { title: T('Periodic Snapshot Tasks'), breadcrumb: null },
       children: [{
         path: '',
         component: SnapshotTaskListComponent,
@@ -46,7 +46,7 @@ export const dataProtectionRoutes: Routes = [{
     },
     {
       path: 'snapshot/:dataset',
-      data: { title: T('Periodic Snapshot Tasks'), breadcrumb: null, icon: 'event_note' },
+      data: { title: T('Periodic Snapshot Tasks'), breadcrumb: null },
       children: [{
         path: '',
         component: SnapshotTaskListComponent,
@@ -55,7 +55,7 @@ export const dataProtectionRoutes: Routes = [{
     },
     {
       path: 'replication',
-      data: { title: T('Replication Tasks'), breadcrumb: null, icon: 'event_note' },
+      data: { title: T('Replication Tasks'), breadcrumb: null },
       children: [{
         path: '',
         component: ReplicationListComponent,
@@ -73,7 +73,7 @@ export const dataProtectionRoutes: Routes = [{
     },
     {
       path: 'rsync',
-      data: { title: T('Rsync Tasks'), breadcrumb: null, icon: 'event_note' },
+      data: { title: T('Rsync Tasks'), breadcrumb: null },
       children: [{
         path: '',
         component: RsyncTaskListComponent,
@@ -86,7 +86,7 @@ export const dataProtectionRoutes: Routes = [{
     },
     {
       path: 'smart',
-      data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: null, icon: 'event_note' },
+      data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: null },
       children: [{
         path: '',
         component: SmartTaskListComponent,
@@ -95,20 +95,20 @@ export const dataProtectionRoutes: Routes = [{
     },
     {
       path: 'scrub',
-      data: { title: T('Scrub Tasks'), breadcrumb: null, icon: 'event_note' },
+      data: { title: T('Scrub Tasks'), breadcrumb: null },
       children: [{
         path: '',
         component: ScrubListComponent,
         data: { title: T('Scrub Tasks'), breadcrumb: null },
       }, {
         path: 'priority',
-        data: { title: T('Resilver Priority'), breadcrumb: null, icon: 'event_note' },
+        data: { title: T('Resilver Priority'), breadcrumb: null },
         component: ResilverConfigComponent,
       }],
     },
     {
       path: 'vmware-snapshots',
-      data: { title: T('VMware Snapshots'), breadcrumb: null, icon: 'camera_alt' },
+      data: { title: T('VMware Snapshots'), breadcrumb: null },
       children: [
         {
           path: '',

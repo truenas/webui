@@ -105,7 +105,7 @@ describe('NtpServerCardComponent', () => {
   });
 
   it('should display confirm dialog of deleting ntp server', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteIcon.click();
 
     expect(ws.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);

@@ -14,7 +14,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -24,7 +23,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
@@ -34,7 +33,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 
 @NgModule({
   imports: [
-    EntityModule,
     IxIconComponent,
     MatTooltipModule,
     MatProgressBarModule,
@@ -50,7 +48,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     MapValuePipe,
     CopyButtonComponent,
     MatIconButton,
-    PageHeaderModule,
     AsyncPipe,
     DecimalPipe,
     JsonPipe,
@@ -63,6 +60,7 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     IxTableDetailsRowDirective,
     IxTablePagerComponent,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent, JobNameComponent],
 })
