@@ -36,7 +36,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .link {
@@ -79,5 +79,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
+  width: 50%;
+}
+
+mat-progress-bar {
+  height: 2px;
 }
