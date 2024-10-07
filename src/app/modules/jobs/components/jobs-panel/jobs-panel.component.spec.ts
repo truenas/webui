@@ -127,7 +127,7 @@ describe('JobsPanelComponent', () => {
   });
 
   it('checks component header is present', () => {
-    expect(jobPanel.title).toHaveExactText('Jobs');
+    expect(jobPanel.title).toHaveExactText('Running Jobs');
     expect(jobPanel.runningBadgeCount).toHaveText('1');
     expect(jobPanel.waitingBadgeCount).toHaveText('1');
     expect(jobPanel.failedBadgeCount).toHaveText('1');
@@ -155,7 +155,7 @@ describe('JobsPanelComponent', () => {
   });
 
   it('checks redirect when "History" button is pressed', async () => {
-    const historyButton = await loader.getHarness(MatButtonHarness.with({ text: 'History' }));
+    const historyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Go to Jobs Page' }));
     await historyButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/jobs']);
