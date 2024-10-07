@@ -78,7 +78,6 @@ jobs:
     name: Collect coverage
     runs-on: ubuntu-latest
     needs: [test]
-    if: ${{ secrets.CODECOV_TOKEN }}
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
