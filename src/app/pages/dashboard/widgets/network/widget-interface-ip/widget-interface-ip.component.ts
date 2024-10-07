@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
-import uniqBy from 'lodash-es/uniqBy';
+import { uniqBy } from 'lodash';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
