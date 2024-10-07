@@ -69,7 +69,7 @@ jobs:
       - name: Save shard coverage
         run: mv coverage/webui/coverage-final.json coverage/${{matrix.shard}}.json && rm -rf coverage/webui
       - name: Upload coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
          name: coverage-artifacts
          path: coverage/
@@ -82,14 +82,15 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - name: Collect coverage from shards
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage-artifacts
           path: coverage
+          merge-multiple: true
       - name: Merge Code Coverage
         run: npx -y nyc merge coverage/ coverage/merged-coverage.json
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           name: webui
           token: ${{ env.CODECOV_TOKEN }}
