@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY,
   Observable, OperatorFunction, filter, map, pipe,
   shareReplay,
-  switchMap,
 } from 'rxjs';
 import { customApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
-import { AppState } from 'app/enums/app-state.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
   App, AppStartQueryParams, AppUpgradeParams,
@@ -107,20 +103,8 @@ export class ApplicationsService {
     return this.ws.job('app.stop', [name]);
   }
 
-  restartApplication(app: App): Observable<Job<void>> {
-    switch (app.state) {
-      case AppState.Running:
-        return this.stopApplication(app.name).pipe(
-          filter((job) => job.state === JobState.Success),
-          switchMap(() => this.startApplication(app.name)),
-        );
-      case AppState.Crashed:
-      case AppState.Stopped:
-        return this.startApplication(app.name);
-      case AppState.Deploying:
-      default:
-        return EMPTY;
-    }
+  restartApplication(name: string): Observable<Job<void>> {
+    return this.ws.job('app.redeploy', [name]);
   }
 
   convertDateToRelativeDate(date: Date): string {

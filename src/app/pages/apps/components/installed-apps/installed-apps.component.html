@@ -190,6 +190,7 @@
               [job]="appJobs.get(app.name)"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"
+              (restartApp)="restart(app.name)"
               (clickStatus)="openStatusDialog(app.name)"
               (selectionChange)="selection.toggle(app.id)"
               (click)="viewDetails(app)"

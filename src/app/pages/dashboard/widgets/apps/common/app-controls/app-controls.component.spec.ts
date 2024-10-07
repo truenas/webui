@@ -82,7 +82,7 @@ describe('AppControlsComponent', () => {
     await restartButton.click();
 
     expect(snackbarSpy).toHaveBeenCalledWith('App is restarting');
-    expect(restartSpy).toHaveBeenCalledWith(app);
+    expect(restartSpy).toHaveBeenCalledWith(app.name);
   });
 
   it('checks redirect to installed apps page', async () => {
