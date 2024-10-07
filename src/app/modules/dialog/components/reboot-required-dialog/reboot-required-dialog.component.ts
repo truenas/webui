@@ -17,9 +17,9 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-reboot-dialog',
-  templateUrl: './reboot-dialog.component.html',
-  styleUrls: ['./reboot-dialog.component.scss'],
+  selector: 'ix-reboot-required-dialog',
+  templateUrl: './reboot-required-dialog.component.html',
+  styleUrls: ['./reboot-required-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -33,7 +33,7 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
     MatButton,
   ],
 })
-export class RebootDialogComponent {
+export class RebootRequiredDialogComponent {
   thisNodeRebootReasons = toSignal(this.store$.select(selectThisNodeRebootInfo).pipe(
     map((info) => info?.reboot_required_reasons || []),
   ));

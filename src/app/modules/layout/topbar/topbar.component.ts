@@ -19,7 +19,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
-import { RebootDialogComponent } from 'app/modules/dialog/components/reboot-dialog/reboot-dialog.component';
+import { RebootRequiredDialogComponent } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchModule } from 'app/modules/global-search/global-search.module';
@@ -208,7 +208,7 @@ export class TopbarComponent implements OnInit {
           || !!otherNodeRebootInfo?.reboot_required_reasons?.length;
       }),
       tap(() => this.hasRebootRequiredReasons.set(true)),
-      switchMap(() => this.matDialog.open(RebootDialogComponent).afterClosed()),
+      switchMap(() => this.matDialog.open(RebootRequiredDialogComponent).afterClosed()),
     );
   }
 }

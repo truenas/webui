@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
-import { RebootDialogComponent } from 'app/modules/dialog/components/reboot-dialog/reboot-dialog.component';
+import { RebootRequiredDialogComponent } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
 import {
   selectOtherNodeRebootInfo,
   selectThisNodeRebootInfo,
@@ -23,10 +23,10 @@ const fakeOtherNodeRebootInfo: SystemRebootInfo = {
   ],
 };
 
-describe('RebootDialogComponent', () => {
-  let spectator: Spectator<RebootDialogComponent>;
+describe('RebootRequiredDialogComponent', () => {
+  let spectator: Spectator<RebootRequiredDialogComponent>;
   const createComponent = createComponentFactory({
-    component: RebootDialogComponent,
+    component: RebootRequiredDialogComponent,
     providers: [
       provideMockStore({
         selectors: [
