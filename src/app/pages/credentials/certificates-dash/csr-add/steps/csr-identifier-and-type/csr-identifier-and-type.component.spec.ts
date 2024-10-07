@@ -28,7 +28,7 @@ describe('CsrIdentifierAndTypeComponent', () => {
     providers: [
       CdkStepper,
       mockWebSocket([
-        mockCall('webui.crypto.certificate_profiles', {
+        mockCall('webui.crypto.csr_profiles', {
           'HTTPS ECC Certificate': httpsProfile,
           'Openvpn Client Certificate': openvpnProfile,
         }),

@@ -115,7 +115,7 @@ describe('InitShutdownCardComponent', () => {
   });
 
   it('deletes a script with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'Prepare system');
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'Prepare system');
     await deleteIcon.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);

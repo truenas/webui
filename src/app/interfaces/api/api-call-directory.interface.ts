@@ -912,6 +912,7 @@ export interface ApiCallDirectory {
 
   // WebUI Crypto
   'webui.crypto.certificate_profiles': { params: void; response: CertificateProfiles };
+  'webui.crypto.csr_profiles': { params: void; response: CertificateProfiles };
   'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
   'webui.crypto.certificateauthority_profiles': { params: void; response: CertificateProfiles };
 

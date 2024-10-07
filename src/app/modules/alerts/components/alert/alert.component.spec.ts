@@ -88,7 +88,7 @@ describe('AlertComponent', () => {
 
   it('shows an alert icon', async () => {
     const icon = await alert.getIconHarness();
-    expect(await icon.getName()).toBe('cancel');
+    expect(await icon.getName()).toBe('error');
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {

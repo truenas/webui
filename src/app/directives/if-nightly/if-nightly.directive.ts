@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -19,7 +19,7 @@ export class IfNightlyDirective implements OnInit {
     private templateRef: TemplateRef<unknown>,
     private viewContainer: ViewContainerRef,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) { }
 
   ngOnInit(): void {

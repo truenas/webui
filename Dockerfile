@@ -1,5 +1,5 @@
 ##NODE temporary builder image
-from node:20-alpine as uibuilder
+from node:20-bookworm as uibuilder
 COPY ./ /src-ui
 WORKDIR /src-ui
 RUN yarn install --frozen-lockfile

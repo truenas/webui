@@ -15,7 +15,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -39,7 +39,7 @@ export class BootenvStatsDialogComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private loader: AppLoaderService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private dialogRef: MatDialogRef<BootenvStatsDialogComponent>,
     private translate: TranslateService,
     private fb: FormBuilder,

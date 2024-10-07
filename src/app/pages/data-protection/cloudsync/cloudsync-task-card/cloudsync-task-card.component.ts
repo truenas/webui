@@ -16,6 +16,7 @@ import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -33,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -83,38 +84,38 @@ export class CloudSyncTaskCardComponent implements OnInit {
       cssClass: 'wide-actions',
       actions: [
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: 'play_arrow',
+          iconName: iconMarker('play_arrow'),
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'stop',
+          iconName: iconMarker('mdi-stop'),
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'sync',
+          iconName: iconMarker('sync'),
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'restore',
+          iconName: iconMarker('restore'),
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,
@@ -134,7 +135,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private slideIn: IxChainedSlideInService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
     protected emptyService: EmptyService,

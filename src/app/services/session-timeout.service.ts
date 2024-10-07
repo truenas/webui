@@ -16,7 +16,7 @@ import { SessionExpiringDialogComponent } from 'app/modules/dialog/components/se
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
@@ -36,7 +36,7 @@ export class SessionTimeoutService {
     private authService: AuthService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private appStore$: Store<AppsState>,
+    private appStore$: Store<AppState>,
     private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {

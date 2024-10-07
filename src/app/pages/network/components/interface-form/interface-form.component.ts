@@ -61,7 +61,7 @@ import {
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -181,7 +181,7 @@ export class InterfaceFormComponent implements OnInit {
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
     private slideInRef: IxSlideInRef<InterfaceFormComponent>,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) private existingInterface: NetworkInterface,
   ) {}
 

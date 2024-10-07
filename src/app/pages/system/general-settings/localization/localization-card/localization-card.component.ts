@@ -13,7 +13,7 @@ import { LocalizationFormComponent } from 'app/pages/system/general-settings/loc
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -43,7 +43,7 @@ export class LocalizationCardComponent {
 
   constructor(
     public localeService: LocaleService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private slideInService: IxSlideInService,
     private sysGeneralService: SystemGeneralService,
   ) {}

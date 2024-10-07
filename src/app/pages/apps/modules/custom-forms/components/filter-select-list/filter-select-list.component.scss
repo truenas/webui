@@ -9,7 +9,10 @@
 }
 
 .options {
-  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  padding: 7px 4px;
+  row-gap: 7px;
 
   .item {
     align-items: center;
@@ -18,9 +21,8 @@
     justify-content: space-between;
 
     ix-icon {
-      font-size: 15px;
-      height: 30px;
-      width: 30px;
+      height: 16px;
+      width: 16px;
     }
   }
 }

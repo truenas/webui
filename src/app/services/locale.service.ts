@@ -7,7 +7,7 @@ import { isValid, parse } from 'date-fns';
 import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { combineLatest } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -20,7 +20,7 @@ export class LocaleService {
   timeFormat = 'HH:mm:ss';
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private translate: TranslateService,
   ) {
     combineLatest([

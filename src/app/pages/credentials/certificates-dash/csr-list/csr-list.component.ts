@@ -21,6 +21,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
@@ -94,23 +95,23 @@ export class CertificateSigningRequestsListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'build',
+          iconName: iconMarker('build'),
           tooltip: this.translate.instant('Create ACME Certificate'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doCreateAcmeCert(row),
         },
         {
-          iconName: 'mdi-download',
+          iconName: iconMarker('mdi-download'),
           tooltip: this.translate.instant('Download'),
           onClick: (row) => this.doDownload(row),
         },
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),

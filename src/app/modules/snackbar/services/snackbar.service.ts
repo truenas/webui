@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 
 /**
@@ -20,7 +21,7 @@ export class SnackbarService {
       politeness: 'assertive',
       data: {
         message,
-        icon: 'check',
+        icon: iconMarker('check'),
         iconCssColor: 'var(--green)',
       },
     });

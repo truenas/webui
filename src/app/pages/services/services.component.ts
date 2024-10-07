@@ -18,6 +18,7 @@ import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -90,19 +91,19 @@ export class ServicesComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'receipt_long',
+          iconName: iconMarker('receipt_long'),
           tooltip: this.translate.instant('Audit Logs'),
           hidden: (row) => of(!this.hasLogs(row.service)),
           onClick: () => this.router.navigate([this.auditLogsUrl()]),
         },
         {
-          iconName: 'list',
+          iconName: iconMarker('list'),
           dynamicTooltip: (row) => of(this.translate.instant('{name} Sessions', { name: serviceNames.get(row.service) })),
           hidden: (row) => of(!this.hasSessions(row.service)),
           onClick: (row) => this.router.navigate(this.sessionsUrl(row.service)),
         },
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.configureService(row),
           dynamicRequiredRoles: (row) => of(this.servicesService.getRolesRequiredToManage(row.service)),

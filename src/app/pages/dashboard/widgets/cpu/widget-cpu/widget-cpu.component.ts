@@ -6,12 +6,12 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
-import { GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
+import { GaugeData } from 'app/modules/charts/view-chart-gauge/view-chart-gauge.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { CpuParams } from 'app/pages/dashboard/widgets/cpu/interfaces/cpu-params.interface';
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -77,7 +77,7 @@ export class WidgetCpuComponent {
   });
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private resources: WidgetResourcesService,
     private translate: TranslateService,
   ) {}

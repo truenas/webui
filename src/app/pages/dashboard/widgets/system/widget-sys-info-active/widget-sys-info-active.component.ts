@@ -5,12 +5,13 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LocaleService } from 'app/services/locale.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware,
@@ -56,7 +57,7 @@ export class WidgetSysInfoActiveComponent {
 
   constructor(
     private resources: WidgetResourcesService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private localeService: LocaleService,
   ) {
     this.resources.refreshSystemInfo();
@@ -74,4 +75,6 @@ export class WidgetSysInfoActiveComponent {
     performance.measure('Dashboard Init', 'Dashboard Start', 'Dashboard End');
     return '';
   }
+
+  protected readonly iconMarker = iconMarker;
 }

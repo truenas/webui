@@ -12,6 +12,7 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -87,32 +88,32 @@ export class ReplicationTaskCardComponent implements OnInit {
       cssClass: 'wide-actions',
       actions: [
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.editReplicationTask(row),
         },
         {
-          iconName: 'play_arrow',
+          iconName: iconMarker('play_arrow'),
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'restore',
+          iconName: iconMarker('restore'),
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'download',
+          iconName: iconMarker('mdi-download'),
           tooltip: this.translate.instant('Download encryption keys'),
           hidden: (row) => of(!row.has_encrypted_dataset_keys),
           onClick: (row) => this.downloadKeys(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,

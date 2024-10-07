@@ -1,5 +1,8 @@
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap } from '@ngrx/store';
+import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
+import { alertReducer, AlertsState } from 'app/modules/alerts/store/alert.reducer';
+import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, JobsState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
@@ -35,7 +38,7 @@ import { systemInfoReducer, SystemInfoState } from 'app/store/system-info/system
 import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors';
 import { servicesStateKey } from './services/services.selectors';
 
-export interface AppsState {
+export interface AppState {
   [systemConfigStateKey]: SystemConfigState;
   [preferencesStateKey]: PreferencesState;
   [systemInfoStateKey]: SystemInfoState;
@@ -43,12 +46,13 @@ export interface AppsState {
   [servicesStateKey]: ServicesState;
   [networkInterfacesKey]: NetworkInterfacesState;
   [jobStateKey]: JobsState;
+  [alertStateKey]: AlertsState;
   [userStateKey]: UsersState;
   [groupStateKey]: GroupsState;
   router: RouterReducerState<CustomRouterState>;
 }
 
-export const rootReducers: ActionReducerMap<AppsState> = {
+export const rootReducers: ActionReducerMap<AppState> = {
   [systemConfigStateKey]: systemConfigReducer,
   [preferencesStateKey]: preferencesReducer,
   [systemInfoStateKey]: systemInfoReducer,
@@ -56,6 +60,7 @@ export const rootReducers: ActionReducerMap<AppsState> = {
   [servicesStateKey]: servicesReducer,
   [networkInterfacesKey]: networkInterfacesReducer,
   [jobStateKey]: jobReducer,
+  [alertStateKey]: alertReducer,
   [userStateKey]: userReducer,
   [groupStateKey]: groupReducer,
   router: routerReducer,
@@ -71,6 +76,7 @@ export const rootEffects = [
   NetworkInterfacesEffects,
   HaFipsEffects,
   JobEffects,
+  AlertEffects,
   UserEffects,
   GroupEffects,
 ];

@@ -16,7 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -26,8 +26,8 @@ describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<TargetGlobalConfigurationComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  let mockStore$: MockStore<AppsState>;
-  let store$: Store<AppsState>;
+  let mockStore$: MockStore<AppState>;
+  let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
     component: TargetGlobalConfigurationComponent,

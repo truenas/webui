@@ -9,7 +9,7 @@ import {
   LineElement,
   PointElement,
 } from 'chart.js';
-import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
+import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-chart-area.component';
 
 describe('ViewChartAreaComponent', () => {
   let spectator: Spectator<ViewChartAreaComponent>;

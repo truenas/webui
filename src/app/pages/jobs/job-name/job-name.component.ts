@@ -9,7 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-job-name',
@@ -27,7 +27,7 @@ export class JobNameComponent {
   constructor(
     private dialogService: DialogService,
     private translate: TranslateService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) {}
 
   onAborted(): void {

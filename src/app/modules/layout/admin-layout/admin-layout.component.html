@@ -13,13 +13,15 @@
         <a routerLink="/dashboard" class="logo" ixTest="main-logo">
           <ix-icon
             class="app-logo"
-            [name]="isDefaultTheme ? 'ix:logo_truenas_scale_mark_color': 'ix:logo_truenas_scale_mark'"
+            [fullSize]="true"
+            [name]="isDefaultTheme ? 'ix-truenas-logo-mark-color': 'ix-truenas-logo-mark'"
           ></ix-icon>
         </a>
         <a routerLink="/dashboard" class="logo-text" ixTest="main-logo">
           <ix-icon
             class="app-logo-text"
-            [name]="isDefaultTheme ? 'ix:logo_truenas_scale_type_color': 'ix:logo_truenas_scale_type'"
+            [fullSize]="true"
+            [name]="isDefaultTheme ? iconMarker('ix-truenas-logo-type-color'): iconMarker('ix-truenas-logo-type')"
           ></ix-icon>
         </a>
       </div>

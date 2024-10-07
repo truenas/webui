@@ -93,7 +93,7 @@ describe('JbofListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'description 2');
+    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'description 2');
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

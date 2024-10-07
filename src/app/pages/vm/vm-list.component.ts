@@ -22,6 +22,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -98,7 +99,7 @@ export class VmListComponent implements OnInit {
 
   vmNotSupportedConfig: EmptyConfig = {
     large: true,
-    icon: 'laptop',
+    icon: iconMarker('laptop'),
     title: this.translate.instant('Virtualization is not supported'),
     button: null,
   };

@@ -14,6 +14,22 @@
   cursor: default;
   flex: 0 0 auto;
   padding-right: 12px;
+
+  &.warn {
+    color: var(--orange);
+  }
+
+  &.accent {
+    color: var(--accent);
+  }
+
+  &.primary {
+    color: var(--primary);
+  }
+
+  &.error {
+    color: var(--red);
+  }
 }
 
 .alert-message {

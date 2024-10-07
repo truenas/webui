@@ -1,7 +1,8 @@
 @if (isSystemDataset()) {
   <ix-icon
-    name="ix:logo_truenas_scale_mark"
+    name="ix-truenas-logo-mark"
     [matTooltip]="'This dataset is used by the system' | translate"
+    [fullSize]="true"
   ></ix-icon>
 }
 
@@ -35,21 +36,21 @@
 
 @if (dataset().smb_shares?.length) {
   <ix-icon
-    name="ix:smb_share"
+    name="ix-smb-share"
     [matTooltip]="'Dataset is shared via SMB' | translate"
   ></ix-icon>
 }
 
 @if (dataset().nfs_shares?.length) {
   <ix-icon
-    name="ix:nfs_share"
+    name="ix-nfs-share"
     [matTooltip]="'Dataset is shared via NFS' | translate"
   ></ix-icon>
 }
 
 @if (dataset().iscsi_shares?.length) {
   <ix-icon
-    name="ix:iscsi_share"
+    name="ix-iscsi-share"
     [matTooltip]="'Dataset is shared via iSCSI' | translate"
   ></ix-icon>
 }

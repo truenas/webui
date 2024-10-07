@@ -5,7 +5,7 @@
 >
   @if (!isLoading) {
     <div class="icon-div">
-      <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
+      <ix-icon class="icon" [name]="getIcon()" [fullSize]="true"></ix-icon>
     </div>
   }
   @if (isLoading) {

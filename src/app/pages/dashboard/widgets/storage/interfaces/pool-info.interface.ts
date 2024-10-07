@@ -1,7 +1,8 @@
 import { PoolTopology } from 'app/interfaces/pool.interface';
+import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 
 export interface ItemInfo {
-  icon: StatusIcon;
+  icon: MarkedIcon;
   level: StatusLevel;
   label: string;
   value: string;
@@ -14,14 +15,14 @@ export enum StatusLevel {
   Neutral = 'neutral',
 }
 
-export enum StatusIcon {
-  Error = 'error',
-  CheckCircle = 'check_circle',
-  MdiAlert = 'mdi-alert',
-  MdiCloseCircle = 'mdi-close-circle',
-  ArrowCircleRight = 'arrow_circle_right',
-  Neutral = 'mdi-minus-circle',
-}
+export const statusIcons = {
+  error: iconMarker('error'),
+  checkCircle: iconMarker('check_circle'),
+  mdiAlert: iconMarker('mdi-alert'),
+  mdiCloseCircle: iconMarker('mdi-close-circle'),
+  arrowCircleRight: iconMarker('arrow_circle_right'),
+  neutral: iconMarker('mdi-minus-circle'),
+};
 
 export interface PoolInfo {
   name: string;

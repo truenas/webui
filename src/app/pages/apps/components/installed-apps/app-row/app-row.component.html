@@ -76,6 +76,17 @@
     <button
       mat-icon-button
       matTooltipPosition="above"
+      [ixTest]="[app().name, 'restart']"
+      [attr.aria-label]="'Restart App' | translate"
+      [matTooltip]="'Restart App' | translate"
+      (click)="restart()"
+    >
+      <ix-icon name="mdi-restart"></ix-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      matTooltipPosition="above"
       [ixTest]="[app().name, 'stop']"
       [matTooltip]="'Stop' | translate"
       (click)="stop(); $event.stopPropagation()"
@@ -84,7 +95,6 @@
     </button>
   }
 </div>
-
 
 <div class="cell-clickable">
   <ix-icon name="mdi-chevron-right"></ix-icon>

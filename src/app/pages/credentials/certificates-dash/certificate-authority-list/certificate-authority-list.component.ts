@@ -25,6 +25,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -108,30 +109,30 @@ export class CertificateAuthorityListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'beenhere',
+          iconName: iconMarker('beenhere'),
           tooltip: this.translate.instant('Sign CSR'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doSignCsr(row),
         },
         {
-          iconName: 'mdi-undo',
+          iconName: iconMarker('mdi-undo'),
           tooltip: this.translate.instant('Revoke'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.doRevoke(row),
         },
         {
-          iconName: 'mdi-download',
+          iconName: iconMarker('mdi-download'),
           tooltip: this.translate.instant('Download'),
           onClick: (row) => this.doDownload(row),
         },
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),

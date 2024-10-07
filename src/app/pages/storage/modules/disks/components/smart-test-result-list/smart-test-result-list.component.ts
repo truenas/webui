@@ -74,7 +74,11 @@ export class SmartTestResultListComponent implements OnInit {
       title: this.translate.instant('Remaining'),
       propertyName: 'remaining',
       getValue: (row) => {
-        return row.remaining || row.status_verbose;
+        if (typeof row.remaining === 'number' && row.remaining >= 0) {
+          return `${row.remaining}%`;
+        }
+
+        return row.status_verbose ? this.translate.instant(row.status_verbose) : '0%';
       },
     }),
     textColumn({
@@ -85,7 +89,7 @@ export class SmartTestResultListComponent implements OnInit {
       },
     }),
     textColumn({
-      title: this.translate.instant('Error'),
+      title: this.translate.instant('LBA of First Error'),
       propertyName: 'lba_of_first_error',
       getValue: (row) => {
         return row.lba_of_first_error || this.translate.instant('No errors');

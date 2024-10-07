@@ -105,7 +105,7 @@ describe('CertificateAuthorityListComponent', () => {
   it('opens delete dialog when "Delete" button is pressed', async () => {
     const dialog = spectator.inject(DialogService);
     jest.spyOn(dialog, 'confirm');
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 3);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 3);
     await deleteButton.click();
 
     expect(dialog.confirm).toHaveBeenCalledWith({
@@ -114,7 +114,7 @@ describe('CertificateAuthorityListComponent', () => {
       title: 'Delete Certificate Authority',
     });
 
-    const deleteButton2 = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 2, 3);
+    const deleteButton2 = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 2, 3);
     await deleteButton2.click();
     expect(dialog.confirm).toHaveBeenCalledWith({
       buttonText: 'Close',

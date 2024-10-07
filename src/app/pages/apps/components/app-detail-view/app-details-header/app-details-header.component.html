@@ -50,6 +50,14 @@
     }
   </div>
   <div class="app-list-item">
+    <span class="label">{{ 'Version' | translate }}:</span>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      {{ app()?.latest_version | orNotAvailable }}
+    }
+  </div>
+  <div class="app-list-item">
     <span class="label">{{ 'Keywords' | translate }}:</span>
     @if (isLoading()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>

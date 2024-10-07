@@ -57,7 +57,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 
 const defaultHomePath = '/var/empty';
 
@@ -220,7 +220,7 @@ export class UserFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private storageService: StorageService,
     private downloadService: DownloadService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private dialog: DialogService,
     private userService: UserService,
     @Inject(SLIDE_IN_DATA) private editingUser: User,

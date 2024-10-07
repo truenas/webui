@@ -16,7 +16,7 @@ import {
   snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 @Injectable()
@@ -77,7 +77,7 @@ export class SnapshotEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}
 }
