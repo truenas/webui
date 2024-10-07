@@ -94,6 +94,7 @@
   "{n, plural, one {# core} other {# cores}}": "",
   "{nic} Address": "",
   "{service} Volume Mounts": "",
+  "{threadCount, plural, one {# thread} other {# threads} }": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Tá an chuma ar an scéal go bhfuil do sheisiún neamhghníomhach le níos mó ná {saolré} soicind.<br> Ar chúiseanna slándála, déanfaimid tú a logáil amach ag {time}.\n            ",
   " Est. Usable Raw Capacity": " Est. Cumas Amh Inúsáidte",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Nuair a bheidh an <b>Mód UPS</b> socraithe chun <i>daor</i> . Cuir isteach uimhir chalafoirt líonra oscailte an chórais <i>Máistir</i> UPS. Is é <i>3493</i> an calafort réamhshocraithe.",
