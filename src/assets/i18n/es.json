@@ -4542,6 +4542,7 @@
   "{tasks, plural, =1 {# receive task} other {# receive tasks}}": "",
   "{tasks, plural, =1 {# received task} other {# received tasks}} this week": "",
   "{tasks, plural, =1 {# send task} other {# send tasks}}": "",
+  "{threadCount, plural, one {# thread} other {# threads} }": "",
   "{type} | {vdevWidth} wide | ": "",
   "% of all cores": "% de todos los núcleos",
   "(24 Hours)": "(24 horas)",

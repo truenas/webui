@@ -4041,6 +4041,7 @@
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",
   "{n, plural, one {There is an active iSCSI connection.} other {There are # active iSCSI connections}}": "",
   "{nic} Address": "",
+  "{threadCount, plural, one {# thread} other {# threads} }": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Zdá se, že vaše relace byla neaktivní déle než {lifetime} sekund.<br>\n              Z bezpečnostních důvodů vás odhlásíme v {time}.\n            ",
   " Est. Usable Raw Capacity": " Odhadovaná využitelná kapacita",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Pokud je <b>UPS mód</b> ve stavu <i>slave</i>. Vložte otevřený port UPS <i>Master</i> systému. Výchozí port je <i>3493</i>.",
