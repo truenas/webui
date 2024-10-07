@@ -51,6 +51,7 @@ async function makeSprite(): Promise<void> {
     console.info(`Versioned sprite URL: ${versionedUrl}`);
   } catch (error) {
     console.error('Error when building the icon sprite:', error);
+    throw error;
   }
 }
 
