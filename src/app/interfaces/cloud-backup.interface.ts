@@ -22,8 +22,8 @@ export interface CloudBackup {
   credentials: CloudCredential;
   job: Job | null;
   locked: boolean;
-  bwlimit?: BwLimit[];
   keep_last?: number;
+  bwlimit?: BwLimit[];
 }
 
 export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'bwlimit' | 'credentials'> {
