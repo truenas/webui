@@ -4055,7 +4055,6 @@
   "Start {service} Service": "",
   "Started": "",
   "Starting": "",
-  "Starting \"{app}\"": "",
   "Starting task": "",
   "State": "",
   "Static IP addresses which SMB listens on for connections.  Leaving all unselected defaults to listening on all active interfaces.": "",

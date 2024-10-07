@@ -82,7 +82,6 @@
   "Set password for TrueNAS administrative user:": "",
   "Specifies level of authentication and cryptographic protection. SYS or none should be used if no KDC is available. If a KDC is available, e.g. Active Directory, KRB5 is recommended. If desired KRB5I (integrity protection) and/or KRB5P (privacy protection) may be included with KRB5.": "",
   "Start service": "",
-  "Starting \"{app}\"": "",
   "Stop service": "",
   "Stopping \"{app}\"": "",
   "String of additional smb4.conf parameters not covered by the system's API.": "",

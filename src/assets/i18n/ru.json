@@ -2561,7 +2561,6 @@
   "Start service": "",
   "Start session time": "",
   "Start {service} Service": "",
-  "Starting \"{app}\"": "",
   "Starting task": "",
   "Static IP addresses which SMB listens on for connections.  Leaving all unselected defaults to listening on all active interfaces.": "",
   "Static Route": "",

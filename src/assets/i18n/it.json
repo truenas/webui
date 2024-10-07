@@ -3541,7 +3541,6 @@
   "Specify whether to use the certificate for a Certificate Authority           and whether this extension is critical. Clients must recognize critical extensions           to prevent rejection. Web certificates typically require you to disable           CA and enable Critical Extension.": "",
   "Start a dry run test of this cloud sync task? The  system will connect to the cloud service provider and simulate  transferring a file. No data will be sent or received.": "",
   "Start service": "",
-  "Starting \"{app}\"": "",
   "Stop service": "",
   "Storj": "",
   "Storj iX": "",

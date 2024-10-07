@@ -79,7 +79,7 @@
       [ixTest]="[app().name, 'restart']"
       [attr.aria-label]="'Restart App' | translate"
       [matTooltip]="'Restart App' | translate"
-      (click)="restart()"
+      (click)="restart(); $event.stopPropagation()"
     >
       <ix-icon name="mdi-restart"></ix-icon>
     </button>

@@ -19,14 +19,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter,
+  combineLatest, filter, finalize,
   Observable,
 } from 'rxjs';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
@@ -312,7 +311,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   start(name: string): void {
     this.appService.startApplication(name)
       .pipe(
-        tapOnce(() => this.loader.open(this.translate.instant('Starting "{app}"', { app: name }))),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -324,26 +322,27 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   stop(name: string): void {
+    this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }));
     this.appService.stopApplication(name)
       .pipe(
-        tapOnce(() => this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }))),
+        finalize(() => this.loader.close()),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
-      .subscribe((job: Job<void, AppStartQueryParams>) => {
-        if (job.state !== JobState.Running) {
-          this.loader.close();
-        }
-        this.appJobs.set(name, job);
-        this.sortChanged(this.sortingInfo);
-        this.cdr.markForCheck();
+      .subscribe({
+        next: (job: Job<void, AppStartQueryParams>) => {
+          this.appJobs.set(name, job);
+          this.sortChanged(this.sortingInfo);
+          this.cdr.markForCheck();
+        },
       });
   }
 
   restart(name: string): void {
+    this.loader.open(this.translate.instant('Restarting "{app}"', { app: name }));
     this.appService.restartApplication(name)
       .pipe(
-        tapOnce(() => this.loader.open(this.translate.instant('Restarting "{app}"', { app: name }))),
+        finalize(() => this.loader.close()),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
