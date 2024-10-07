@@ -5,17 +5,27 @@ import {
   Component,
   ViewChild,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import {
+  MatStepper, MatStep, MatStepLabel, MatStepperPrevious, MatStepperNext,
+} from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge } from 'lodash-es';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   CaIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-identifier-and-type/ca-identifier-and-type.component';
@@ -43,6 +53,28 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './certificate-authority-add.component.html',
   styleUrls: ['./certificate-authority-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    MatStepper,
+    MatStep,
+    MatStepLabel,
+    CaIdentifierAndTypeComponent,
+    CaImportComponent,
+    CertificateOptionsComponent,
+    CertificateSubjectComponent,
+    CertificateConstraintsComponent,
+    SummaryComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperPrevious,
+    TestDirective,
+    RequiresRolesDirective,
+    MatStepperNext,
+    TranslateModule,
+  ],
 })
 export class CertificateAuthorityAddComponent implements AfterViewInit {
   @ViewChild(CaIdentifierAndTypeComponent) identifierAndType: CaIdentifierAndTypeComponent;

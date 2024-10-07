@@ -1,10 +1,11 @@
+import { KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import {
   of, Observable, combineLatest, startWith,
@@ -12,6 +13,10 @@ import {
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -23,6 +28,17 @@ import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/p
   templateUrl: './pool-warnings.component.html',
   styleUrls: ['./pool-warnings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxWarningComponent,
+    IxRadioGroupComponent,
+    IxLabelComponent,
+    MatCheckbox,
+    TestDirective,
+    TranslateModule,
+    KeyValuePipe,
+  ],
 })
 export class PoolWarningsComponent implements OnInit {
   protected form = this.formBuilder.group({

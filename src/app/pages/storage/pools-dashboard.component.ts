@@ -1,21 +1,30 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { MatButton, MatAnchor } from '@angular/material/button';
+import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
-import { storageElements } from 'app/pages/storage/components/pools-dashboard/pools-dashboard.elements';
+import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
+import { storageElements } from 'app/pages/storage/pools-dashboard.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -25,6 +34,24 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './pools-dashboard.component.html',
   styleUrls: ['./pools-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    UiSearchDirective,
+    MatAnchor,
+    RouterLink,
+    DashboardPoolComponent,
+    EmptyComponent,
+    UnusedResourcesComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
+  providers: [
+    PoolsDashboardStore,
+  ],
 })
 export class PoolsDashboardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];

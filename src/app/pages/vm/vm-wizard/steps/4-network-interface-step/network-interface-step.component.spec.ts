@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -21,6 +22,7 @@ describe('NetworkInterfaceStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      CdkStepper,
       mockWebSocket([
         mockCall('vm.random_mac', '00:00:00:00:00:01'),
         mockCall('vm.device.nic_attach_choices', {

@@ -17,11 +17,11 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { VmListComponent } from 'app/pages/vm/vm-list.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
-import { VmListComponent } from './vm-list.component';
 
 const virtualMachines = [
   {
@@ -59,8 +59,8 @@ describe('VmListComponent', () => {
       IxTableColumnsSelectorComponent,
       FileSizePipe,
       IxTableDetailsRowDirective,
+      MockComponent(VmWizardComponent),
     ],
-    declarations: [],
     providers: [
       mockAuth(),
       mockWebSocket([

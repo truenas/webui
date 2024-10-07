@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { isObject } from 'lodash-es';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -10,6 +11,8 @@ import { Certificate } from 'app/interfaces/certificate.interface';
   templateUrl: './certificate-details.component.html',
   styleUrls: ['./certificate-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [TranslateModule],
 })
 export class CertificateDetailsComponent {
   readonly certificate = input<Certificate | CertificateAuthority>();

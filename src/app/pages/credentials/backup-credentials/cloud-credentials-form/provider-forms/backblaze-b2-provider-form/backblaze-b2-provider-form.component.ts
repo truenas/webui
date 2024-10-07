@@ -1,8 +1,11 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -12,6 +15,13 @@ import {
   selector: 'ix-backblaze-b2-provider-form',
   templateUrl: './backblaze-b2-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxFieldsetComponent,
+    ReactiveFormsModule,
+    IxInputComponent,
+    TranslateModule,
+  ],
 })
 export class BackblazeB2ProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   form = this.formBuilder.group({

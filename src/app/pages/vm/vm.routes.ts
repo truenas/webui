@@ -1,11 +1,10 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { DeviceListComponent } from 'app/pages/vm/devices/device-list/device-list/device-list.component';
+import { VmListComponent } from 'app/pages/vm/vm-list.component';
 import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
-import { VmListComponent } from './vm-list/vm-list.component';
 
-export const routes: Routes = [
+export const vmRoutes: Routes = [
   {
     path: '',
     data: { title: T('Virtual Machines'), breadcrumb: null },
@@ -22,4 +21,3 @@ export const routes: Routes = [
     component: DeviceListComponent,
   },
 ];
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

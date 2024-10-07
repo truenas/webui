@@ -1,22 +1,34 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogClose } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
+import {
+  ManualDiskDragToggleStore,
+} from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 import {
   manualSelectionVdevsToVdevs,
   vdevsToManualSelectionVdevs,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/utils/vdevs-to-manual-selection-vdevs.utils';
 import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
+import { ManualSelectionDisksComponent } from './components/manual-selection-disks/manual-selection-disks.component';
+import { ManualSelectionVdevComponent } from './components/manual-selection-vdev/manual-selection-vdev.component';
 
 export interface ManualDiskSelectionParams {
   layout: CreateVdevLayout;
@@ -32,6 +44,24 @@ export interface ManualDiskSelectionParams {
   templateUrl: './manual-disk-selection.component.html',
   styleUrls: ['./manual-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    ManualSelectionDisksComponent,
+    MatDivider,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    ManualSelectionVdevComponent,
+    MatDialogClose,
+    TranslateModule,
+    AsyncPipe,
+  ],
+  providers: [
+    ManualDiskSelectionStore,
+    ManualDiskDragToggleStore,
+  ],
 })
 export class ManualDiskSelectionComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];

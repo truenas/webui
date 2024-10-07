@@ -1,5 +1,5 @@
-@import 'scss-imports/variables';
-@import 'mixins/layout';
+@import '../../../../../assets/styles/scss-imports/variables';
+@import '../../../../../assets/styles/mixins/layout';
 
 @include tree-node-with-details-container;
 
