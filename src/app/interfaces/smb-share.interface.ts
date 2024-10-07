@@ -20,6 +20,7 @@ export interface SmbShare {
   name: string;
   path: string;
   path_suffix: string;
+  auxsmbconf: string;
   purpose: SmbPresetType;
   recyclebin: boolean;
   ro: boolean;
