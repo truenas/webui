@@ -4626,6 +4626,7 @@
   "{temp}°C (All Threads)": "",
   "{temp}°C (Core #{core})": "",
   "{temp}°C ({coreCount} cores at {temp}°C)": "",
+  "{threadCount, plural, one {# thread} other {# threads} }": "",
   "{type} VDEVs": "",
   "{type} at {location}": "",
   "{type} widget does not support {size} size.": "",

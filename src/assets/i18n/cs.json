@@ -4308,6 +4308,7 @@
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# GPU} other {# GPUs}} isolated": "",
   "{nic} Address": "",
+  "{threadCount, plural, one {# thread} other {# threads} }": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Pokud je <b>UPS mód</b> ve stavu <i>slave</i>. Vložte otevřený port UPS <i>Master</i> systému. Výchozí port je <i>3493</i>.",
   "% of all cores": "% ze všech jader",
   "(Remove pool from database)": "(Odstranit pool z databáze)",

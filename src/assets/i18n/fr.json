@@ -920,6 +920,7 @@
   "{rate} RPM": "",
   "{temp}°C (All Threads)": "",
   "{temp}°C (Core #{core})": "",
+  "{threadCount, plural, one {# thread} other {# threads} }": "",
   "{type} VDEVs": "",
   "{type} | {vdevWidth} wide | ": "",
   "{usage}% (All Threads)": "",

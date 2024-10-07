@@ -68,9 +68,10 @@ describe('WidgetCpuComponent', () => {
 
   it('shows cpu stats for the system', () => {
     const stats = spectator.queryAll('.cpu-data mat-list-item');
-    expect(stats).toHaveLength(3);
+    expect(stats).toHaveLength(4);
     expect(stats[0]).toHaveText('Cores: 2 cores');
-    expect(stats[1]).toHaveText('Highest Usage: 70% (Thread #2)');
-    expect(stats[2]).toHaveText('Hottest: 83°C (2 cores at 83°C)');
+    expect(stats[1]).toHaveText('Threads: 4 threads');
+    expect(stats[2]).toHaveText('Highest Usage: 70% (Thread #2)');
+    expect(stats[3]).toHaveText('Hottest: 83°C (2 cores at 83°C)');
   });
 });
