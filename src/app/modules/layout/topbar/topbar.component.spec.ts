@@ -10,10 +10,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents, MockModule } from 'ng-mocks';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -28,7 +25,6 @@ import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { RebootInfoState } from 'app/store/reboot-info/reboot-info.reducer';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -63,7 +59,6 @@ describe('TopbarComponent', () => {
       MockModule(TruecommandModule),
     ],
     providers: [
-      mockAuth(),
       mockWebSocket([]),
       mockProvider(ThemeService),
       mockProvider(SystemGeneralService, {
@@ -73,20 +68,6 @@ describe('TopbarComponent', () => {
       mockProvider(MatDialog),
       provideMockStore({
         selectors: [
-          {
-            selector: selectIsHaLicensed,
-            value: true,
-          },
-          {
-            selector: selectHaStatus,
-            value: {
-              hasHa: true,
-              reasons: [
-                FailoverDisabledReason.LocalFipsRebootRequired,
-                FailoverDisabledReason.RemoteFipsRebootRequired,
-              ],
-            } as HaStatus,
-          },
           {
             selector: selectRebootInfo,
             value: fakeRebootInfo,

@@ -12,14 +12,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  filter, Observable, Subscription, switchMap, tap, withLatestFrom,
+  filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { failoverAllowedReasons } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { Role } from 'app/enums/role.enum';
-import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { RebootDialogComponent } from 'app/modules/dialog/components/reboot-dialog/reboot-dialog.component';
@@ -46,7 +43,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppsState } from 'app/store';
-import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -210,11 +207,6 @@ export class TopbarComponent implements OnInit {
         return !!thisNodeRebootInfo?.reboot_required_reasons?.length
           || !!otherNodeRebootInfo?.reboot_required_reasons?.length;
       }),
-      withLatestFrom(this.store$.select(selectIsHaLicensed)),
-      filter(([, isHa]) => isHa),
-      withLatestFrom(this.store$.select(selectHaStatus)),
-      filter(([, haStatus]) => haStatus?.reasons?.every((reason) => failoverAllowedReasons.includes(reason))),
-      filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
       tap(() => this.hasRebootRequiredReasons.set(true)),
       switchMap(() => this.matDialog.open(RebootDialogComponent).afterClosed()),
     );
