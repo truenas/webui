@@ -10,7 +10,9 @@ import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
+import {
+  SshCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -27,7 +29,7 @@ describe('TransportSectionComponent', () => {
     component: TransportSectionComponent,
     imports: [
       ReactiveFormsModule,
-      SshCredentialsSelectModule,
+      SshCredentialsSelectComponent,
     ],
     providers: [
       mockWebSocket([

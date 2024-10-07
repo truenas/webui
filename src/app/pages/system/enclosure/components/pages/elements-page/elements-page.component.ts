@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatCardHeader, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
@@ -7,15 +8,30 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { EnclosureElementType, enclosureElementTypeLabels } from 'app/enums/enclosure-slot-status.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EnclosureElement } from 'app/interfaces/enclosure.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { createTable } from 'app/modules/ix-table/utils';
+import { EnclosureHeaderComponent } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 @Component({
   selector: 'ix-elements-page',
   templateUrl: './elements-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCardHeader,
+    EnclosureHeaderComponent,
+    MatCardContent,
+    EmptyComponent,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+  ],
 })
 export class ElementsPageComponent {
   protected readonly currentView = toSignal(

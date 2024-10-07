@@ -11,7 +11,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import {
   EnclosureDashboardComponent,
-} from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
+} from 'app/pages/system/enclosure/enclosure-dashboard.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 describe('EnclosureDashboardComponent', () => {

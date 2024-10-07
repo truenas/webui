@@ -21,7 +21,9 @@ const initialState: ApiKeysState = {
   error: null,
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ApiKeyComponentStore extends ComponentStore<ApiKeysState> {
   constructor(
     private ws: WebSocketService,

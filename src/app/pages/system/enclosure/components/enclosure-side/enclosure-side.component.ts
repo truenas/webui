@@ -8,6 +8,8 @@ import {
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
 import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/utils/supported-enclosures';
+import { EnclosureSvgComponent } from './enclosure-svg/enclosure-svg.component';
+import { NotSupportedModelComponent } from './not-supported-model/not-supported-model.component';
 
 // TODO: It may be a good idea to make this into a separate module.
 @Component({
@@ -15,6 +17,8 @@ import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/u
   templateUrl: './enclosure-side.component.html',
   styleUrl: './enclosure-side.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [EnclosureSvgComponent, NotSupportedModelComponent],
 })
 export class EnclosureSideComponent {
   readonly enclosure = input.required<DashboardEnclosure>();

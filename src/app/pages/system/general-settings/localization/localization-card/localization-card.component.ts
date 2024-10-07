@@ -1,13 +1,22 @@
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
+import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { localizationCardElements } from 'app/pages/system/general-settings/localization/localization-card/localization-card.elements';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -21,6 +30,20 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   selector: 'ix-localization-card',
   templateUrl: './localization-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    WithLoadingStateDirective,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    MatList,
+    MatListItem,
+    TranslateModule,
+  ],
 })
 export class LocalizationCardComponent {
   protected readonly searchableElements = localizationCardElements;

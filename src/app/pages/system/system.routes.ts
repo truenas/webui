@@ -1,5 +1,4 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import { ShellComponent } from 'app/pages/shell/shell.component';
@@ -20,7 +19,7 @@ import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { UpdateComponent } from './update/update.component';
 
-const routes: Routes = [
+export const systemRoutes: Routes = [
   {
     path: '',
     data: { title: T('System') },
@@ -46,7 +45,7 @@ const routes: Routes = [
         title: T('View Enclosure'),
         breadcrumb: null,
       },
-      loadChildren: () => import('./enclosure/enclosure.module').then((module) => module.EnclosureModule),
+      loadChildren: () => import('./enclosure/enclosure.routes').then((module) => module.enclosureRoutes),
     }, {
       path: 'boot',
       data: { title: T('Boot'), breadcrumb: T('Boot') },
@@ -149,4 +148,3 @@ const routes: Routes = [
     }],
   },
 ];
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

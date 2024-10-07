@@ -14,6 +14,9 @@ import {
   EnclosureSideComponent,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
 import {
+  EnclosureSvgComponent,
+} from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
+import {
   NotSupportedModelComponent,
 } from 'app/pages/system/enclosure/components/enclosure-side/not-supported-model/not-supported-model.component';
 import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/utils/supported-enclosures';
@@ -22,6 +25,7 @@ import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/u
 @Component({
   selector: 'ix-enclosure-svg',
   template: '',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class EnclosureSvgStubComponent {
@@ -36,9 +40,17 @@ describe('EnclosureSideComponent', () => {
   let spectator: Spectator<EnclosureSideComponent>;
   const createComponent = createComponentFactory({
     component: EnclosureSideComponent,
-    declarations: [
-      MockComponent(EnclosureSvgStubComponent),
+    imports: [
       MockComponent(NotSupportedModelComponent),
+    ],
+    overrideComponents: [
+      [
+        EnclosureSideComponent,
+        {
+          remove: { imports: [EnclosureSvgComponent] },
+          add: { imports: [EnclosureSvgStubComponent] },
+        },
+      ],
     ],
   });
 

@@ -11,7 +11,7 @@ describe('ViewTrivialPermissionsComponent', () => {
   let spectator: Spectator<ViewTrivialPermissionsComponent>;
   const createComponent = createComponentFactory({
     component: ViewTrivialPermissionsComponent,
-    declarations: [
+    imports: [
       PermissionsItemComponent,
     ],
   });
