@@ -114,7 +114,8 @@ export class DiskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Disk Size'),
       propertyName: 'size',
-      getValue: (row) => (buildNormalizedFileSize(row.size)),
+      getValue: (disk) => buildNormalizedFileSize(disk.size),
+      sortBy: (disk) => disk.size,
     }),
     textColumn({
       title: this.translate.instant('Pool'),
