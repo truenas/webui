@@ -26,7 +26,8 @@ import {
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudBackupListComponent', () => {
   let spectator: Spectator<CloudBackupListComponent>;
@@ -86,7 +87,7 @@ describe('CloudBackupListComponent', () => {
             value: {},
           },
           {
-            selector: selectAdvancedConfig,
+            selector: selectPreferences,
             value: {},
           },
           {

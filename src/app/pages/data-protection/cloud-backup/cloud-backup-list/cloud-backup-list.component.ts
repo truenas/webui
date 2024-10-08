@@ -75,7 +75,7 @@ export class CloudBackupListComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (row) => row.job?.time_finished.$date,
+      getValue: (row) => row.job?.time_finished?.$date,
     }),
     actionsColumn({
       cssClass: 'wide-actions',
