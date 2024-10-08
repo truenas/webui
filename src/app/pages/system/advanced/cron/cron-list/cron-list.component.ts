@@ -8,10 +8,10 @@ import {
   filter, map, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
@@ -62,14 +62,12 @@ export class CronListComponent implements OnInit {
       propertyName: 'enabled',
       getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Next Run'),
       hidden: true,
       getValue: (task) => {
         if (task.enabled) {
-          return task.schedule
-            ? formatDistanceToNowShortened(this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)))
-            : this.translate.instant('N/A');
+          return this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule));
         }
         return this.translate.instant('Disabled');
       },

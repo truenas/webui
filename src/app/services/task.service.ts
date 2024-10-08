@@ -125,26 +125,34 @@ export class TaskService {
   }
 
   getTaskNextRun(scheduleExpression: string): string {
-    const schedule = cronParser.parseExpression(scheduleExpression, {
-      iterator: true,
-      tz: this.localeService.timezone,
-    });
+    try {
+      const schedule = cronParser.parseExpression(scheduleExpression, {
+        iterator: true,
+        tz: this.localeService.timezone,
+      });
 
-    const date = schedule?.next()?.value?.toDate();
-    if (!date) {
-      return this.translate.instant('N/A');
+      const date = schedule?.next()?.value?.toDate();
+      if (!date) {
+        return this.translate.instant('N/A');
+      }
+
+      return formatDistanceToNowShortened(date);
+    } catch {
+      return this.translate.instant('Invalid Date');
     }
-
-    return formatDistanceToNowShortened(date);
   }
 
-  getTaskNextTime(scheduleExpression: string): Date {
-    const schedule = cronParser.parseExpression(scheduleExpression, {
-      iterator: true,
-      tz: this.localeService.timezone,
-    });
+  getTaskNextTime(scheduleExpression: string): Date | string {
+    try {
+      const schedule = cronParser.parseExpression(scheduleExpression, {
+        iterator: true,
+        tz: this.localeService.timezone,
+      });
 
-    return schedule.next().value.toDate();
+      return schedule.next().value.toDate();
+    } catch {
+      return this.translate.instant('Invalid Date');
+    }
   }
 
   /**

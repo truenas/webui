@@ -2245,6 +2245,7 @@
   "Internal identifier of the certificate. Only alphanumeric characters, dash (<b>-</b>), and underline (<b>_</b>) are allowed.": "",
   "Internal identifier of the certificate. Only alphanumeric, \"_\" and \"-\" are allowed.": "",
   "Internetwork control": "",
+  "Invalid Date": "",
   "Invalid IP address": "",
   "Invalid Pod name": "",
   "Invalid cron expression": "",
