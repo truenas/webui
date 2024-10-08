@@ -79,19 +79,19 @@ describe('EnclosureSideComponent', () => {
   it('renders an svg component with correct svg url and passes input properties', () => {
     const svg = spectator.query(EnclosureSvgStubComponent);
     expect(svg).toExist();
-    expect(svg.selectedSlot).toBe(props.selectedSlot);
-    expect(svg.slotTintFn).toBe(props.slotTintFn);
-    expect(svg.enableMouseEvents).toBe(props.enableMouseEvents);
-    expect(svg.slots)
+    expect(svg.selectedSlot()).toBe(props.selectedSlot);
+    expect(svg.slotTintFn()).toBe(props.slotTintFn);
+    expect(svg.enableMouseEvents()).toBe(props.enableMouseEvents);
+    expect(svg.slots())
       .toEqual(Object.values(props.enclosure.elements[EnclosureElementType.ArrayDeviceSlot]).slice(0, 2));
-    expect(svg.svgUrl).toBe(supportedEnclosures[props.enclosure.model][props.side]);
+    expect(svg.svgUrl()).toBe(supportedEnclosures[props.enclosure.model][props.side]);
   });
 
   it('automatically selects Front or Top enclosure based on what is available when side is undefined', () => {
     spectator.setInput('side', undefined);
 
     const svg = spectator.query(EnclosureSvgStubComponent);
-    expect(svg.svgUrl).toBe(supportedEnclosures[props.enclosure.model][EnclosureSide.Front]);
+    expect(svg.svgUrl()).toBe(supportedEnclosures[props.enclosure.model][EnclosureSide.Front]);
   });
 
   it('renders Not supported model component when svg url is not available', () => {
