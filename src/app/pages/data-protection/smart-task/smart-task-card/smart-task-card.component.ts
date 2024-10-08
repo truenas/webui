@@ -58,7 +58,7 @@ export class SmartTaskCardComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_next_run),
-      getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
+      getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule),
     }),
     actionsColumn({
       actions: [

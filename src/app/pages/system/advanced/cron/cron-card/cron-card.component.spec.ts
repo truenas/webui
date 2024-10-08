@@ -80,8 +80,7 @@ describe('CronCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
-        getTaskNextRun: jest.fn(() => 'in about 10 hours'),
+        getTaskNextTime: jest.fn(() => new Date('Some Invalid Date')),
       }),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -99,7 +98,7 @@ describe('CronCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Users', 'Command', 'Description', 'Schedule', 'Enabled', 'Next Run', ''],
-      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', 'in 1 day', ''],
+      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', 'Invalid Date', ''],
     ];
 
     const cells = await table.getCellTexts();
