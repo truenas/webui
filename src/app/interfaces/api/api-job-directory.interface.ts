@@ -167,8 +167,8 @@ export interface ApiJobDirectory {
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
 
   // System
-  'system.reboot': { params: { delay?: number }; response: void };
-  'system.shutdown': { params: { delay?: number }; response: void };
+  'system.reboot': { params: { delay?: number; reason?: string }; response: void };
+  'system.shutdown': { params: { delay?: number; reason?: string }; response: void };
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
 
   // SystemDataset

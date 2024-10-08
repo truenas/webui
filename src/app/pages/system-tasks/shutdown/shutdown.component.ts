@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -20,15 +20,18 @@ export class ShutdownComponent implements OnInit {
     private wsManager: WebSocketConnectionService,
     private errorHandler: ErrorHandlerService,
     protected router: Router,
+    private route: ActivatedRoute,
     protected dialogService: DialogService,
     private location: Location,
   ) {}
 
   ngOnInit(): void {
+    const reason = this.route.snapshot.queryParamMap.get('reason');
+
     // Replace URL so that we don't shutdown again if page is refreshed.
     this.location.replaceState('/signin');
 
-    this.ws.job('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe({
+    this.ws.job('system.shutdown', { reason }).pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on shutdown
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))
