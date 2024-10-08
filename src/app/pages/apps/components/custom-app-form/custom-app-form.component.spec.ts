@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppState } from 'app/enums/app-state.enum';
+import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
@@ -16,6 +17,7 @@ import { IxCodeEditorHarness } from 'app/modules/forms/ix-forms/components/ix-co
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -34,7 +36,22 @@ const fakeApp = {
     icon: 'path-to-icon',
     train: 'stable',
   },
-} as App;
+  custom_app: true,
+  config: {
+    services: {
+      nginx: {
+        image: 'nginx:1-alpine',
+        ports: [
+          '8089:80',
+        ],
+        volumes: [
+          './html5up-stellar/:/usr/share/nginx/html',
+        ],
+      },
+    },
+    version: '3.8',
+  },
+} as unknown as App;
 
 describe('CustomAppFormComponent', () => {
   let spectator: Spectator<CustomAppFormComponent>;
@@ -58,45 +75,78 @@ describe('CustomAppFormComponent', () => {
       mockProvider(ErrorHandlerService),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: jest.fn(() => of()),
+          afterClosed: jest.fn(() => of(true)),
         })),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(IxSlideInRef, {
+        close: jest.fn(),
+      }),
       mockWebSocket([
         mockJob('app.create'),
+        mockJob('app.update'),
       ]),
       mockProvider(Router),
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
+  function setupTest(app?: App): void {
+    spectator = createComponent({
+      providers: [
+        { provide: SLIDE_IN_DATA, useValue: app || null },
+      ],
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  }
+
+  describe('create app', () => {
+    beforeEach(() => {
+      setupTest();
+    });
+
+    it('checks save and closes slide in when successfully submitted', async () => {
+      const appNameControl = await loader.getHarness(IxInputHarness);
+      await appNameControl.setValue('test');
+      const configControl = await loader.getHarness(IxCodeEditorHarness);
+      await configControl.setValue('config');
+      spectator.detectChanges();
+      const button = await loader.getHarness(MatButtonHarness);
+      await button.click();
+
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+        'app.create',
+        [{
+          custom_app: true,
+          custom_compose_config_string: 'config',
+          app_name: 'test',
+        }],
+      );
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    });
+
+    it('forbidden app names are not allowed', async () => {
+      const appNameControl = await loader.getHarness(IxInputHarness);
+      await appNameControl.setValue('test-app-one');
+      spectator.detectChanges();
+
+      const button = await loader.getHarness(MatButtonHarness);
+      expect(button.isDisabled()).toBeTruthy();
+    });
   });
 
-  it('closes slide in when successfully submitted', async () => {
-    const appNameControl = await loader.getHarness(IxInputHarness);
-    await appNameControl.setValue('test');
-    const configControl = await loader.getHarness(IxCodeEditorHarness);
-    await configControl.setValue('config');
-    spectator.detectChanges();
-    const button = await loader.getHarness(MatButtonHarness);
-    await button.click();
+  describe('edit app', () => {
+    beforeEach(() => {
+      setupTest(fakeApp);
+    });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('app.create', [{
-      custom_app: true,
-      custom_compose_config_string: 'config',
-      app_name: 'test',
-    }]);
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-  });
+    it('checks save and closes slide in when successfully submitted', async () => {
+      const button = await loader.getHarness(MatButtonHarness);
+      await button.click();
 
-  it('forbidden app names are not allowed', async () => {
-    const appNameControl = await loader.getHarness(IxInputHarness);
-    await appNameControl.setValue('test-app-one');
-    spectator.detectChanges();
-
-    const button = await loader.getHarness(MatButtonHarness);
-    expect(button.isDisabled()).toBeTruthy();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('app.update', [
+        'test-app-one',
+        { custom_compose_config_string: jsonToYaml(fakeApp.config) },
+      ]);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    });
   });
 });

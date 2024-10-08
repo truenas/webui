@@ -1,6 +1,8 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, Component,
+  Inject,
   OnInit,
+  signal,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,9 +12,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Role } from 'app/enums/role.enum';
-import { AppCreate } from 'app/interfaces/app.interface';
+import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
+import { App, AppCreate } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -25,29 +29,46 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomAppFormComponent implements OnInit {
+  protected isNew = signal(true);
   protected requiredRoles = [Role.AppsWrite];
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
   protected form = this.fb.group({
     release_name: ['', Validators.required],
     custom_compose_config_string: ['\n\n', Validators.required],
   });
-  protected isLoading = false;
-  protected tooltip = this.translate.instant('Add custom app config in Yaml format.');
+  protected isLoading = signal(false);
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
+
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private appService: ApplicationsService,
     private dialogRef: IxSlideInRef<CustomAppFormComponent>,
     private router: Router,
+    @Inject(SLIDE_IN_DATA) public data: App,
   ) {}
 
   ngOnInit(): void {
+    if (this.data) {
+      this.setAppForEdit(this.data);
+    } else {
+      this.setNewApp();
+    }
+  }
+
+  private setNewApp(): void {
     this.addForbiddenAppNamesValidator();
+  }
+
+  private setAppForEdit(app: App): void {
+    this.isNew.set(false);
+    this.form.patchValue({
+      release_name: app.id,
+      custom_compose_config_string: jsonToYaml(app.config),
+    });
   }
 
   protected addForbiddenAppNamesValidator(): void {
@@ -56,22 +77,33 @@ export class CustomAppFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
     const data = this.form.value;
+
+    const appCreate$ = this.ws.job(
+      'app.create',
+      [{
+        custom_app: true,
+        app_name: data.release_name,
+        custom_compose_config_string: data.custom_compose_config_string,
+      } as AppCreate],
+    );
+
+    const appUpdate$ = this.ws.job('app.update', [
+      data.release_name,
+      { custom_compose_config_string: data.custom_compose_config_string },
+    ]);
+
+    const job$ = this.isNew() ? appCreate$ : appUpdate$;
+
     this.dialogService.jobDialog(
-      this.ws.job(
-        'app.create',
-        [{
-          custom_app: true,
-          app_name: data.release_name,
-          custom_compose_config_string: data.custom_compose_config_string,
-        } as AppCreate],
-      ),
+      job$,
       {
         title: this.translate.instant('Custom App'),
         canMinimize: false,
-        description: this.translate.instant('Creating custom app'),
+        description: this.isNew()
+          ? this.translate.instant('Creating custom app')
+          : this.translate.instant('Updating custom app'),
       },
     ).afterClosed().pipe(
       untilDestroyed(this),
@@ -81,8 +113,7 @@ export class CustomAppFormComponent implements OnInit {
         this.router.navigate(['/apps/installed']);
       },
       error: (error) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });

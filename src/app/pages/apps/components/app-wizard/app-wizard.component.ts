@@ -4,7 +4,6 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  signal,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,10 +22,8 @@ import {
   filter, map, take, tap,
 } from 'rxjs/operators';
 import { customApp } from 'app/constants/catalog.constants';
-import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { jsonToYaml, yamlToJson } from 'app/helpers/json-to-yaml.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import {
@@ -36,7 +33,6 @@ import {
   AppCreate,
   ChartSchema,
   ChartSchemaNode,
-  AppUpdate,
 } from 'app/interfaces/app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
@@ -76,7 +72,6 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   isLoading = true;
   appsLoaded = false;
   isNew = true;
-  isCustomApp = signal(false);
   dynamicSection: DynamicWizardSchema[] = [];
   rootDynamicSection: DynamicWizardSchema[] = [];
   subscription = new Subscription();
@@ -255,15 +250,10 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       ]);
     } else {
       delete data.release_name;
-      let updateParams: AppUpdate = {};
-      if (this.isCustomApp()) {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        const custom_compose_config = yamlToJson(data.custom_compose_config as string);
-        updateParams = { custom_compose_config } as AppUpdate;
-      } else {
-        updateParams = { values: data };
-      }
-      job$ = this.ws.job('app.update', [this.config.release_name as string, updateParams]);
+      job$ = this.ws.job('app.update', [
+        this.config.release_name as string,
+        { values: data },
+      ]);
     }
 
     this.dialogService.jobDialog(job$, {
@@ -411,11 +401,11 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     this.isNew = false;
     this.config = app.config;
     this.config.release_name = app.id;
-    this.isCustomApp.set(app.custom_app);
 
     this._pageTitle$.next(app.metadata.title || app.name);
 
     this.form.addControl('release_name', new FormControl(app.name, [Validators.required]));
+
     this.rootDynamicSection.push({
       name: 'Application name',
       description: '',
@@ -431,28 +421,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       ],
     });
 
-    if (app.custom_app) {
-      const yamlConfig = jsonToYaml(app.config);
-      this.form.addControl('custom_compose_config', new FormControl(yamlConfig, [Validators.required]));
-      this.rootDynamicSection.push({
-        name: 'Compose Config',
-        description: '',
-        help: '',
-        schema: [{
-          controlName: 'custom_compose_config',
-          type: DynamicFormSchemaType.Text,
-          title: this.translate.instant('Custom Compose Config'),
-          required: true,
-          editable: true,
-          language: CodeEditorLanguage.Yaml,
-        }],
-      });
-      this.dynamicSection = [];
-      this.dynamicSection.push(...this.rootDynamicSection);
-      this.cdr.markForCheck();
-    } else {
-      this.buildDynamicForm(app.version_details.schema);
-    }
+    this.buildDynamicForm(app.version_details.schema);
   }
 
   private afterAppLoaded(): void {
