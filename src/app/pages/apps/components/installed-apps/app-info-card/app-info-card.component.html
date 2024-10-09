@@ -13,7 +13,7 @@
         {{ 'Edit' | translate }}
       </button>
 
-      @if (hasUpdates()) {
+      @if (app()?.upgrade_available) {
         <button
           *ixRequiresRoles="requiredRoles"
           id="update-app"
@@ -85,7 +85,7 @@
             {{ app()?.metadata?.train | orNotAvailable }}
           </div>
         </div>
-        @if (app()?.portals) {
+        @if ((app().portals | keyvalue).length > 0 ) {
           <div class="portals">
             @for (portal of app().portals | keyvalue; track portal.key) {
               <button
@@ -116,7 +116,7 @@
               [disabled]="inProgress()"
               (click)="startApp.emit(); $event.stopPropagation()"
             >
-              <ix-icon name="mdi-play"></ix-icon> {{ 'Start' | translate }}
+              <ix-icon name="mdi-play-circle"></ix-icon> {{ 'Start' | translate }}
             </button>
           }
         </ng-container>
@@ -130,7 +130,7 @@
               [disabled]="inProgress()"
               (click)="stopApp.emit(); $event.stopPropagation()"
             >
-              <ix-icon name="mdi-stop"></ix-icon> {{ 'Stop' | translate }}
+              <ix-icon name="mdi-stop-circle"></ix-icon> {{ 'Stop' | translate }}
             </button>
           }
         </ng-container>
