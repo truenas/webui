@@ -9,7 +9,7 @@
         class="update-all-button"
         (click)="onBulkUpgrade(true)"
       >
-        <ix-icon name="mdi-alert-circle"></ix-icon>
+        <ix-icon class="has-updates-icon" name="mdi-alert-circle"></ix-icon>
         <span>
           {{ 'Update All' | translate }}
           @if (appsUpdateAvailable) {
@@ -159,6 +159,7 @@
           <span>{{ 'Updates' | translate }}</span>
           @if (hasUpdates) {
             <ix-icon
+              class="has-updates-icon"
               name="mdi-alert-circle"
               matTooltipPosition="above"
               [matTooltip]="'Updates available' | translate"
@@ -189,6 +190,7 @@
               [job]="appJobs.get(app.name)"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"
+              (restartApp)="restart(app.name)"
               (clickStatus)="openStatusDialog(app.name)"
               (selectionChange)="selection.toggle(app.id)"
               (click)="viewDetails(app)"

@@ -1,17 +1,25 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import ipRegex from 'ip-regex';
 import { combineLatest, filter } from 'rxjs';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
   networkConfigurationCardElements,
@@ -26,6 +34,20 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   templateUrl: './network-configuration-card.component.html',
   styleUrls: ['./network-configuration-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatToolbarRow,
+    MatButton,
+    TestDirective,
+    UiSearchDirective,
+    MatCardContent,
+    MatList,
+    MatListItem,
+    IxIconComponent,
+    TranslateModule,
+    CastPipe,
+  ],
 })
 export class NetworkConfigurationCardComponent implements OnInit {
   protected readonly networkConfigurationCardElements = networkConfigurationCardElements;

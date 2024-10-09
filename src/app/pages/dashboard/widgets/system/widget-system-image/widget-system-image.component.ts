@@ -10,7 +10,7 @@ import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
 import { systemImageWidget } from 'app/pages/dashboard/widgets/system/widget-system-image/widget-system-image.definition';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware } from 'app/store/system-info/system-info.selectors';
 
@@ -36,6 +36,6 @@ export class WidgetSystemImageComponent implements WidgetComponent {
 
   constructor(
     private resources: WidgetResourcesService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) {}
 }

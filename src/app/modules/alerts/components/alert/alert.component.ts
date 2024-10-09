@@ -1,28 +1,28 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
-  Component, computed,
-  HostBinding, input,
-  OnChanges,
+  ChangeDetectionStrategy, Component, computed, HostBinding, input, OnChanges,
 } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import {
-  dismissAlertPressed,
-  reopenAlertPressed,
-} from 'app/modules/alerts/store/alert.actions';
-import { AppsState } from 'app/store';
+import { dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
-enum AlertIcon {
-  Error = 'cancel',
-  Warning = 'error',
-  Info = 'info',
-  NotificationsActive = 'notifications_active',
-  CheckCircle = 'check_circle',
-}
+const alertIcons = {
+  error: iconMarker('error'),
+  warning: iconMarker('error'),
+  info: iconMarker('info'),
+  notificationsActive: iconMarker('notifications_active'),
+  checkCircle: iconMarker('check_circle'),
+};
 
 enum AlertLevelColor {
   Warn = 'warn',
@@ -37,6 +37,15 @@ enum AlertLevelColor {
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxIconComponent,
+    MatTooltip,
+    TestDirective,
+    TranslateModule,
+    FormatDateTimePipe,
+    AsyncPipe,
+  ],
 })
 export class AlertComponent implements OnChanges {
   readonly alert = input.required<Alert>();
@@ -45,7 +54,6 @@ export class AlertComponent implements OnChanges {
   alertLevelColor: AlertLevelColor;
   icon: string;
   iconTooltip: string;
-  timezone: string;
 
   timezone$ = this.store$.select(selectTimezone);
 
@@ -55,7 +63,7 @@ export class AlertComponent implements OnChanges {
   }
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}
 
@@ -77,19 +85,19 @@ export class AlertComponent implements OnChanges {
     switch (true) {
       case this.alert().dismissed:
         this.alertLevelColor = undefined;
-        this.icon = AlertIcon.CheckCircle;
+        this.icon = alertIcons.checkCircle;
         this.iconTooltip = this.translate.instant('Dismissed');
         break;
       case [AlertLevel.Error, AlertLevel.Critical].includes(this.alert().level):
         this.alertLevelColor = AlertLevelColor.Error;
-        this.icon = AlertIcon.Error;
+        this.icon = alertIcons.error;
         break;
       case this.alert().level === AlertLevel.Warning:
         this.alertLevelColor = AlertLevelColor.Warn;
-        this.icon = AlertIcon.Warning;
+        this.icon = alertIcons.warning;
         break;
       case this.alert().one_shot:
-        this.icon = AlertIcon.NotificationsActive;
+        this.icon = alertIcons.notificationsActive;
         this.iconTooltip = this.translate.instant(
           "This is a ONE-SHOT {alertLevel} alert, it won't be dismissed automatically",
           { alertLevel: this.levelLabel() },
@@ -98,7 +106,7 @@ export class AlertComponent implements OnChanges {
         break;
       default:
         this.alertLevelColor = AlertLevelColor.Primary;
-        this.icon = AlertIcon.Info;
+        this.icon = alertIcons.info;
     }
   }
 }

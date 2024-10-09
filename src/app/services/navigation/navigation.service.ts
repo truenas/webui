@@ -7,9 +7,10 @@ import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectHasEnclosureSupport, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -26,49 +27,49 @@ export class NavigationService {
       name: T('Dashboard'),
       type: MenuItemType.Link,
       tooltip: T('Dashboard'),
-      icon: 'dashboard',
+      icon: iconMarker('dashboard'),
       state: 'dashboard',
     },
     {
       name: T('Storage'),
       type: MenuItemType.Link,
       tooltip: T('Storage'),
-      icon: 'dns',
+      icon: iconMarker('dns'),
       state: 'storage',
     },
     {
       name: T('Datasets'),
       type: MenuItemType.Link,
       tooltip: T('Datasets'),
-      icon: 'ix:dataset_root',
+      icon: iconMarker('ix-dataset-root'),
       state: 'datasets',
     },
     {
       name: T('Shares'),
       type: MenuItemType.Link,
       tooltip: T('Shares'),
-      icon: 'folder_shared',
+      icon: iconMarker('folder_shared'),
       state: 'sharing',
     },
     {
       name: T('Data Protection'),
       type: MenuItemType.Link,
       tooltip: T('Data Protection'),
-      icon: 'security',
+      icon: iconMarker('security'),
       state: 'data-protection',
     },
     {
       name: T('Network'),
       type: MenuItemType.Link,
       tooltip: T('Network'),
-      icon: 'device_hub',
+      icon: iconMarker('device_hub'),
       state: 'network',
     },
     {
       name: T('Credentials'),
       type: MenuItemType.SlideOut,
       tooltip: T('Credentials'),
-      icon: 'vpn_key',
+      icon: iconMarker('vpn_key'),
       state: 'credentials',
       sub: [
         { name: T('Users'), state: 'users' },
@@ -87,7 +88,7 @@ export class NavigationService {
       name: T('Virtualization'),
       type: MenuItemType.Link,
       tooltip: T('Virtualization'),
-      icon: 'computer',
+      icon: iconMarker('computer'),
       state: 'vm',
       isVisible$: this.hasVms$,
     },
@@ -95,7 +96,7 @@ export class NavigationService {
       name: T('Apps'),
       type: MenuItemType.Link,
       tooltip: T('Apps'),
-      icon: 'apps',
+      icon: iconMarker('apps'),
       state: 'apps',
       isVisible$: this.hasApps$,
     },
@@ -103,14 +104,14 @@ export class NavigationService {
       name: T('Reporting'),
       type: MenuItemType.Link,
       tooltip: T('Reports'),
-      icon: 'insert_chart',
+      icon: iconMarker('insert_chart'),
       state: 'reportsdashboard/cpu',
     },
     {
       name: T('System'),
       type: MenuItemType.SlideOut,
       tooltip: T('System'),
-      icon: 'settings',
+      icon: iconMarker('settings'),
       state: 'system',
       sub: [
         { name: T('Update'), state: 'update' },
@@ -132,7 +133,7 @@ export class NavigationService {
   ];
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
   ) {

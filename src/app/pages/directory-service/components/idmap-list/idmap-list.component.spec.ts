@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockModule } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -57,7 +57,7 @@ describe('IdmapListComponent', () => {
   const createComponent = createComponentFactory({
     component: IdmapListComponent,
     imports: [
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
       SearchInput1Component,
     ],
     providers: [
@@ -158,12 +158,12 @@ describe('IdmapListComponent', () => {
   });
 
   it('does not show delete icon for required idmap domains', async () => {
-    const deleteButton = await table.getAllHarnessesInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    const deleteButton = await table.getAllHarnessesInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     expect(deleteButton).toHaveLength(0);
   });
 
   it('deletes a record with confirmation when delete is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 2, 6);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 2, 6);
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();

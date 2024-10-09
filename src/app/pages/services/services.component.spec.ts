@@ -7,7 +7,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockModule } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
@@ -17,7 +17,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
@@ -57,7 +57,7 @@ describe('ServicesComponent', () => {
     component: ServicesComponent,
     imports: [
       FormsModule,
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
       SearchInput1Component,
     ],
     declarations: [

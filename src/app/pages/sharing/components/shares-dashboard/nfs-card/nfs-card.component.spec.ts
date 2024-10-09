@@ -126,7 +126,7 @@ describe('NfsCardComponent', () => {
   });
 
   it('shows confirmation to delete NFS Share when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 3);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 3);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();

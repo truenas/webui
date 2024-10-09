@@ -41,7 +41,8 @@
     text-align: center;
 
     ix-icon {
-      font-size: 48px;
+      height: 48px;
+      width: 48px;
     }
 
     &.full {
@@ -87,11 +88,14 @@
       .info-list-item {
         display: grid;
         font-size: 16px;
-        grid-template-columns: minmax(50px, 25%) minmax(100px, 75%);
+        grid-template-columns: minmax(50px, 50%) minmax(100px, 50%);
 
         span:first-child {
           font-weight: bold;
           text-align: right;
+          white-space: normal;
+          word-break: break-word;
+          word-wrap: break-word;
         }
       }
     }
@@ -127,8 +131,8 @@
     }
 
     .nic-info {
-      flex: 1 1 30%;
-      max-width: 30%;
+      flex: 1 1 35%;
+      max-width: 35%;
 
       @media (max-width: $breakpoint-xs) {
         flex: 1;
@@ -139,9 +143,9 @@
     .nic-chart {
       align-items: center;
       display: flex;
-      flex: 1 1 70%;
+      flex: 1 1 65%;
       justify-content: center;
-      max-width: 70%;
+      max-width: 65%;
 
       @media (max-width: $breakpoint-xs) {
         flex: 1;
@@ -265,7 +269,6 @@
   min-width: 20px;
   text-align: center;
   user-select: none;
-  user-select: none;
   width: 20px;
 
   @media (max-width: $breakpoint-xs) {
@@ -273,8 +276,8 @@
   }
 
   .ix-icon {
-    font-size: 16px;
-    line-height: 20px;
+    height: 16px;
+    width: 16px;
   }
 
   &.up {

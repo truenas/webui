@@ -141,7 +141,7 @@ describe('SmbListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);

@@ -1,20 +1,30 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   forkJoin,
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
@@ -37,6 +47,25 @@ interface DataCard {
   templateUrl: './directory-services.component.html',
   styleUrls: ['./directory-services.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    EmptyComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    UiSearchDirective,
+    NgTemplateOutlet,
+    MatCard,
+    MatToolbarRow,
+    MatCardContent,
+    CdkAccordionItem,
+    IdmapListComponent,
+    KerberosRealmsListComponent,
+    KerberosKeytabsListComponent,
+    MatList,
+    MatListItem,
+    TranslateModule,
+  ],
 })
 export class DirectoryServicesComponent implements OnInit {
   readonly requiredRoles = [Role.DirectoryServiceWrite];
@@ -57,7 +86,7 @@ export class DirectoryServicesComponent implements OnInit {
     title: this.translate.instant('Active Directory and LDAP are disabled.'),
     message: this.translate.instant('Only one can be active at a time.'),
     large: true,
-    icon: 'account-box',
+    icon: iconMarker('mdi-account-box'),
   };
 
   constructor(

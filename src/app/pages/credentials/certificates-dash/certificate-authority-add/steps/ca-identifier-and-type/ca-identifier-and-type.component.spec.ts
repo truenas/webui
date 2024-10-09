@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -25,6 +26,7 @@ describe('CaIdentifierAndTypeComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      CdkStepper,
       mockWebSocket([
         mockCall('webui.crypto.certificateauthority_profiles', {
           CA: caProfile,

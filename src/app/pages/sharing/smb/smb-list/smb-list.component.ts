@@ -14,6 +14,7 @@ import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -89,7 +90,7 @@ export class SmbListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (smbShare) => {
             const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: smbShare } });
@@ -99,7 +100,7 @@ export class SmbListComponent implements OnInit {
           },
         },
         {
-          iconName: 'share',
+          iconName: iconMarker('share'),
           tooltip: helptextSharingSmb.action_share_acl,
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
@@ -122,7 +123,7 @@ export class SmbListComponent implements OnInit {
           },
         },
         {
-          iconName: 'security',
+          iconName: iconMarker('security'),
           tooltip: helptextSharingSmb.action_edit_acl,
           requiredRoles: this.requiredRoles,
           disabled: (row) => of(isRootShare(row.path)),
@@ -139,7 +140,7 @@ export class SmbListComponent implements OnInit {
           },
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Unshare'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {

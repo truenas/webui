@@ -9,7 +9,7 @@
     <div class="wizard-container">
       <div class="mini-search-card">
         <ix-input
-          prefixIcon="search"
+          [prefixIcon]="iconMarker('search')"
           [formControl]="searchControl"
           [placeholder]="'Search Input Fields' | translate"
           [autocompleteOptions]="searchOptions"
@@ -45,7 +45,7 @@
       <div class="search-container">
         <div class="search-card">
           <ix-input
-            prefixIcon="search"
+            [prefixIcon]="iconMarker('search')"
             [formControl]="searchControl"
             [placeholder]="'Search Input Fields' | translate"
             [autocompleteOptions]="searchOptions"

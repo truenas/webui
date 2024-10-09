@@ -2,7 +2,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/components/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
@@ -20,10 +19,7 @@ describe('TokenProviderFormComponent', () => {
     detectChanges: false,
     imports: [
       ReactiveFormsModule,
-    ],
-    declarations: [
       OauthProviderComponent,
-      OauthButtonComponent,
     ],
     providers: [
       mockProvider(DialogService),

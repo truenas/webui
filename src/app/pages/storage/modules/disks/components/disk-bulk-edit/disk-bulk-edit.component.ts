@@ -1,8 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -11,9 +14,17 @@ import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -21,6 +32,23 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-disk-bulk-edit',
   templateUrl: 'disk-bulk-edit.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxChipsComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class DiskBulkEditComponent {
   protected readonly requiredRoles = [Role.FullAdmin];

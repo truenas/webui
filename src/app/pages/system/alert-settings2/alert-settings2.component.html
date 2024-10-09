@@ -57,7 +57,7 @@
   <div class="search-container">
     <div class="search-card">
       <ix-input
-        prefixIcon="search"
+        [prefixIcon]="iconMarker('search')"
         [formControl]="searchControl"
         [placeholder]="'Search Alert Categories' | translate"
         [autocompleteOptions]="searchOptions"

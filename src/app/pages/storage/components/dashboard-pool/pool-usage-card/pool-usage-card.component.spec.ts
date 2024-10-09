@@ -7,9 +7,9 @@ import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
-import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/gauge-chart/gauge-chart.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -21,9 +21,9 @@ describe('PoolUsageCardComponent', () => {
     imports: [
       ReactiveFormsModule,
       FileSizePipe,
+      MockComponent(GaugeChartComponent),
     ],
     declarations: [
-      MockComponent(GaugeChartComponent),
       MockComponent(PoolCardIconComponent),
     ],
     providers: [
@@ -80,7 +80,7 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('.available-caption')).toHaveText('Available: 858.01 MiB');
     expect(spectator.query('.warning-container')).not.toBeVisible();
     expect(spectator.query(GaugeChartComponent).label).toBe('79%');
-    expect(Math.round(spectator.query(GaugeChartComponent).value)).toBe(79);
+    expect(spectator.query(GaugeChartComponent).value).toBeCloseTo(79, 0);
     expect(spectator.query(GaugeChartComponent).colorFill).toBe('var(--blue)');
   });
 
@@ -100,7 +100,7 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('.warning-container')).toBeVisible();
     expect(spectator.query('.warning-container')).toHaveText('Warning: Low Capacity');
     expect(spectator.query(GaugeChartComponent).label).toBe('81%');
-    expect(Math.round(spectator.query(GaugeChartComponent).value)).toBe(81);
+    expect(spectator.query(GaugeChartComponent).value).toBeCloseTo(81, 0);
     expect(spectator.query(GaugeChartComponent).colorFill).toBe('#CE2929');
   });
 

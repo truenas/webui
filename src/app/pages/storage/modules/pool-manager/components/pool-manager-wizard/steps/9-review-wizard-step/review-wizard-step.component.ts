@@ -1,20 +1,28 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component, Input, OnInit, output,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
 import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
+import { TopologyCategoryDescriptionPipe } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import {
   PoolManagerState,
@@ -28,6 +36,19 @@ import {
   templateUrl: './review-wizard-step.component.html',
   styleUrls: ['./review-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButton,
+    MatStepperPrevious,
+    TestDirective,
+    MatStepperNext,
+    RequiresRolesDirective,
+    TranslateModule,
+    FileSizePipe,
+    MapValuePipe,
+    AsyncPipe,
+    TopologyCategoryDescriptionPipe,
+  ],
 })
 export class ReviewWizardStepComponent implements OnInit {
   @Input() isStepActive: boolean;

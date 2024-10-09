@@ -25,7 +25,8 @@ export const helptextAlertService = {
 
   AWSSNS_aws_secret_access_key_tooltip: T('Secret Access Key for the linked AWS account.'),
 
-  Mail_email_tooltip: T('Enter a valid email address to receive alerts from this system.'),
+  Mail_email_tooltip: T('Enter an email address to override the admin account’s default email. \
+ If left blank, the admin account’s email address will be used'),
 
   InfluxDB_host_tooltip: T('Enter the <a\
  href="https://docs.influxdata.com/influxdb/"\

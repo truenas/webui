@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   Subscription, debounceTime, distinctUntilChanged,
 } from 'rxjs';
@@ -11,6 +12,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ManageUnusedDiskDialogComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { UnusedDiskCardComponent } from './unused-disk-card/unused-disk-card.component';
 
 @UntilDestroy()
 @Component({
@@ -18,6 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './unused-resources.component.html',
   styleUrls: ['./unused-resources.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [UnusedDiskCardComponent, TranslateModule],
 })
 export class UnusedResourcesComponent implements OnInit {
   @Input() pools: Pool[];

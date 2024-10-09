@@ -5,6 +5,12 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  button {
+    height: inherit;
+    min-height: var(--mdc-text-button-container-height);
+    white-space: normal;
+  }
 }
 
 :host ::ng-deep {
@@ -173,7 +179,8 @@
     z-index: 2;
 
     ix-icon {
-      font-size: 48px;
+      height: 48px;
+      width: 48px;
     }
 
     &.full {

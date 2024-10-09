@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
+import { ViewChartGaugeComponent } from 'app/modules/charts/view-chart-gauge/view-chart-gauge.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { CpuChartGaugeComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-chart-gauge/cpu-chart-gauge.component';
 

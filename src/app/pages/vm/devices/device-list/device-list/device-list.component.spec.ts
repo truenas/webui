@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockModule } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -14,7 +14,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
   DeviceDeleteModalComponent,
@@ -46,7 +46,7 @@ describe('DeviceListComponent', () => {
   const createComponent = createRoutingFactory({
     component: DeviceListComponent,
     imports: [
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
       SearchInput1Component,
       IxTableDetailsRowDirective,
       IxTableCellDirective,

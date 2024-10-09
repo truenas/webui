@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
@@ -20,7 +21,7 @@ import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widg
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -59,7 +60,7 @@ export class DashboardComponent implements OnInit {
   emptyDashboardConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    icon: 'view-dashboard',
+    icon: iconMarker('mdi-view-dashboard'),
     title: this.translate.instant('Your dashboard is currently empty!'),
     message: this.translate.instant('Start adding widgets to personalize it. Click on the "Configure" button to enter edit mode.'),
   };
@@ -70,7 +71,7 @@ export class DashboardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {

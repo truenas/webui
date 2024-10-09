@@ -1,17 +1,24 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasDeepChanges, setValueIfNotSame } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { DraidSelectionComponent } from './draid-selection/draid-selection.component';
+import { NormalSelectionComponent } from './normal-selection/normal-selection.component';
 
 @UntilDestroy()
 @Component({
@@ -19,6 +26,17 @@ import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topo
   templateUrl: './automated-disk-selection.component.html',
   styleUrls: ['./automated-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxSelectComponent,
+    TestOverrideDirective,
+    ReactiveFormsModule,
+    IxInputComponent,
+    DraidSelectionComponent,
+    NormalSelectionComponent,
+    TranslateModule,
+    CastPipe,
+  ],
 })
 export class AutomatedDiskSelectionComponent implements OnChanges {
   @Input() isStepActive: boolean;

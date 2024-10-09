@@ -143,7 +143,7 @@ describe('DashboardComponent', () => {
     });
 
     it('removes a widget when delete button is pressed', async () => {
-      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'delete' }));
+      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
       await deleteIcon.click();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
@@ -175,7 +175,7 @@ describe('DashboardComponent', () => {
     });
 
     it('saves new configuration when Save is pressed', async () => {
-      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'delete' }));
+      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
       await deleteIcon.click();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -186,7 +186,7 @@ describe('DashboardComponent', () => {
     });
 
     it('reverts to loaded configuration when Cancel button is pressed', async () => {
-      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'delete' }));
+      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
       await deleteIcon.click();
 
       const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
@@ -198,7 +198,7 @@ describe('DashboardComponent', () => {
     });
 
     it('reverts to loaded configuration when Escape is pressed', async () => {
-      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'delete' }));
+      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
       await deleteIcon.click();
 
       spectator.dispatchKeyboardEvent(spectator.debugElement, 'keydown', 'Escape');

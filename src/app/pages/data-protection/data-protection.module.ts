@@ -17,7 +17,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -54,7 +53,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
@@ -131,7 +130,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
 @NgModule({
   imports: [
     RouterModule.forChild(dataProtectionRoutes),
-    EntityModule,
     ReactiveFormsModule,
     MatProgressBarModule,
     MatTooltipModule,
@@ -139,7 +137,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     TranslateModule,
     CloudCredentialsSelectModule,
     SshCredentialsSelectModule,
-    PageHeaderModule,
     SchedulerModule,
     MatButtonModule,
     MatDialogModule,
@@ -180,6 +177,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     IxTableColumnsSelectorComponent,
     IxTableCellDirective,
     TestDirective,
+    PageHeaderComponent,
   ],
   declarations: [
     SnapshotTaskListComponent,

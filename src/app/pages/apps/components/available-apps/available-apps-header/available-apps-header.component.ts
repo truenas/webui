@@ -17,6 +17,7 @@ import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -149,4 +150,6 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       categories: (this.form.value.categories || this.appsCategories),
     });
   }
+
+  protected readonly iconMarker = iconMarker;
 }

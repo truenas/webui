@@ -14,6 +14,7 @@ import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumu
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -74,26 +75,26 @@ export class SmbCardComponent implements OnInit {
       cssClass: 'wide-actions',
       actions: [
         {
-          iconName: 'share',
+          iconName: iconMarker('share'),
           tooltip: this.translate.instant('Edit Share ACL'),
           onClick: (row) => this.doShareAclEdit(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'security',
+          iconName: iconMarker('security'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => this.doFilesystemAclEdit(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           disabled: (row) => this.loadingMap$.pipe(map((ids) => ids.get(row.id))),
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,

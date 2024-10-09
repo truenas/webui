@@ -34,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -139,7 +139,7 @@ export class CloudSyncListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     protected emptyService: EmptyService,
   ) {}
 

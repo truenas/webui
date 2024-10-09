@@ -1,4 +1,5 @@
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 
 export interface EmptyConfig {
   type?: EmptyType;
@@ -6,7 +7,7 @@ export interface EmptyConfig {
   compact?: boolean;
   title: string;
   message?: string;
-  icon?: string;
+  icon?: MarkedIcon;
   button?: {
     label: string;
     action: () => void;

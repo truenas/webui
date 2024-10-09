@@ -167,7 +167,7 @@ describe('ReplicationTaskCardComponent', () => {
 
   it('downloads Encryption Keys', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'download' }), 1, 5);
+    const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-download' }), 1, 5);
     await downloadButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('core.download', [
@@ -183,7 +183,7 @@ describe('ReplicationTaskCardComponent', () => {
   });
 
   it('deletes a Replication Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

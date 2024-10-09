@@ -71,12 +71,11 @@
 }
 
 .input-container .ix-icon {
-  font-size: 1rem;
-  height: auto;
+  height: 14px;
   line-height: 1;
   max-height: 16px;
   max-width: 16px;
-  width: auto;
+  width: 14px;
 }
 
 .input-container {
@@ -86,9 +85,10 @@
   }
 
   .toggle_pw ix-icon {
-    font-size: 17px;
+    height: 18px;
     position: relative;
     top: -2px;
+    width: 18px;
   }
 }
 

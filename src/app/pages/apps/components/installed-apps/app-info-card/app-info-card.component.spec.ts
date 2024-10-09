@@ -36,13 +36,13 @@ describe('AppInfoCardComponent', () => {
     name: 'test-user-app-name',
     human_version: '1.2.3_3.2.1',
     upgrade_available: true,
+    version: '1.2.3',
     metadata: {
       name: 'ix-test-app',
       icon: '',
       sources: [
         'http://github.com/ix-test-app/ix-test-app/',
       ],
-      version: '1.2.3',
       app_version: '3.2.1',
       train: 'stable',
     },
@@ -88,7 +88,7 @@ describe('AppInfoCardComponent', () => {
         installedApps$: of([]),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: true })),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
@@ -136,6 +136,10 @@ describe('AppInfoCardComponent', () => {
       {
         label: 'App Version:',
         value: 'v3.2.1',
+      },
+      {
+        label: 'Version:',
+        value: 'v1.2.3',
       },
       {
         label: 'Source:',
@@ -188,10 +192,12 @@ describe('AppInfoCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete',
       message: 'Delete test-user-app-name?',
+      secondaryCheckbox: true,
+      secondaryCheckboxText: 'Remove iX Volumes',
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'app.delete',
-      [app.name, { remove_images: true }],
+      [app.name, { remove_images: true, remove_ix_volumes: true }],
     );
   });
 
@@ -205,6 +211,28 @@ describe('AppInfoCardComponent', () => {
     await buttons[1].click();
 
     expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith(app.portals['Web UI']);
+  });
+
+  it('opens a URL with the current host and port when the portal hostname is 0.0.0.0', async () => {
+    spectator.setInput('app', {
+      ...app,
+      portals: {
+        'Web UI': 'http://0.0.0.0:8000/ui?q=ui#yes',
+        'Admin Panel': 'http://0.0.0.0:8000',
+      },
+    });
+
+    const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
+
+    expect(buttons).toHaveLength(2);
+    expect(await buttons[0].getText()).toBe('Admin Panel');
+    expect(await buttons[1].getText()).toBe('Web UI');
+
+    await buttons[0].click();
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/');
+
+    await buttons[1].click();
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');
   });
 
   it('opens rollback app dialog when Roll Back button is pressed', async () => {

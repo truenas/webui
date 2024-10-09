@@ -121,7 +121,7 @@ describe('CloudBackupSnapshotsComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.delete_snapshot', [1, 'second']);

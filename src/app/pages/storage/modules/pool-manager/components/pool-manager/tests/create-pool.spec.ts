@@ -13,7 +13,7 @@ import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import {
-  commonDeclarations, commonImports,
+  commonImports,
   commonProviders,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/common.utils';
 import {
@@ -29,9 +29,6 @@ describe('PoolManagerComponent – create pool', () => {
     component: PoolManagerComponent,
     imports: [
       ...commonImports,
-    ],
-    declarations: [
-      ...commonDeclarations,
     ],
     providers: [
       ...commonProviders,

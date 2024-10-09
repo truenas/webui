@@ -1,10 +1,14 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -14,6 +18,14 @@ import {
   selector: 'ix-openstack-swift-provider-form',
   templateUrl: './openstack-swift-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    TranslateModule,
+  ],
 })
 export class OpenstackSwiftProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   form = this.formBuilder.group({

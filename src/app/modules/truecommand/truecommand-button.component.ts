@@ -1,16 +1,24 @@
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, Inject, OnInit,
 } from '@angular/core';
+import { MatBadge } from '@angular/material/badge';
+import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { isObject } from 'lodash-es';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TruecommandConnectModalComponent,
   TruecommandSignupModalResult,
@@ -30,6 +38,17 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./truecommand-button.component.scss'],
   templateUrl: './truecommand-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatIconButton,
+    TestDirective,
+    MatTooltip,
+    IxIconComponent,
+    MatBadge,
+    NgClass,
+    UiSearchDirective,
+    TranslateModule,
+  ],
 })
 export class TruecommandButtonComponent implements OnInit {
   readonly TrueCommandStatus = TrueCommandStatus;

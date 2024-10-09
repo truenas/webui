@@ -43,11 +43,6 @@ export const rootRouterConfig: Routes = [
         data: { title: T('Dashboard'), breadcrumb: T('Dashboard') },
       },
       {
-        path: 'credentials',
-        loadChildren: () => import('./pages/account/account.module').then((module) => module.AccountModule),
-        data: { title: T('Credentials'), breadcrumb: T('Credentials') },
-      },
-      {
         path: 'system',
         loadChildren: () => import('./pages/system/system.module').then((module) => module.SystemModule),
         data: { title: T('System'), breadcrumb: T('System') },
@@ -59,22 +54,22 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'network',
-        loadChildren: () => import('./pages/network/network.module').then((module) => module.NetworkModule),
+        loadComponent: () => import('./pages/network/network.component').then((module) => module.NetworkComponent),
         data: { title: T('Network'), breadcrumb: T('Network') },
       },
       {
         path: 'services',
-        loadChildren: () => import('./pages/services/services.module').then((module) => module.ServicesModule),
+        loadComponent: () => import('./pages/services/services.component').then((module) => module.ServicesComponent),
         data: { title: T('Services'), breadcrumb: T('Services') },
       },
       {
         path: 'directoryservice',
-        loadChildren: () => import('app/pages/directory-service/directory-service.module').then((module) => module.DirectoryServiceModule),
+        loadChildren: () => import('app/pages/directory-service/directory-service.routes').then((module) => module.routes),
         data: { title: T('Directory Services'), breadcrumb: T('Directory Services') },
       },
       {
         path: 'vm',
-        loadChildren: () => import('./pages/vm/vm.module').then((module) => module.VmModule),
+        loadChildren: () => import('app/pages/vm/vm.routes').then((module) => module.vmRoutes),
         data: { title: T('Virtual Machines'), breadcrumb: T('Virtual Machines') },
       },
       {
@@ -94,7 +89,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'storage',
-        loadChildren: () => import('./pages/storage/storage.module').then((module) => module.StorageModule),
+        loadChildren: () => import('./pages/storage/storage.routes').then((module) => module.storageRoutes),
         data: { title: T('Storage'), breadcrumb: T('Storage') },
       },
       {
@@ -104,12 +99,12 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'shell',
-        loadChildren: () => import('./pages/shell/shell.module').then((module) => module.ShellModule),
+        loadComponent: () => import('./pages/shell/shell.component').then((module) => module.ShellComponent),
         data: { title: T('Shell'), breadcrumb: T('Shell') },
       },
       {
         path: 'apikeys',
-        loadChildren: () => import('./pages/api-keys/api-keys.module').then((module) => module.ApiKeysModule),
+        loadComponent: () => import('./pages/api-keys/api-keys.component').then((module) => module.ApiKeysComponent),
         data: { title: T('API Keys'), breadcrumb: T('API Keys') },
       },
       {
@@ -124,7 +119,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'credentials',
-        loadChildren: () => import('./pages/credentials/credentials.module').then((module) => module.CredentialsModule),
+        loadChildren: () => import('app/pages/credentials/credentials.routes').then((module) => module.credentialsRoutes),
         data: { title: T('Credentials'), breadcrumb: T('Credentials') },
       },
       {
@@ -134,7 +129,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'system/audit',
-        loadChildren: () => import('./pages/audit/audit.module').then((module) => module.AuditModule),
+        loadChildren: () => import('./pages/audit/audit.routes').then((module) => module.auditRoutes),
       },
     ],
   },

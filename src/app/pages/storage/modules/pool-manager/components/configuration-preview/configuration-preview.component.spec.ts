@@ -27,8 +27,6 @@ describe('ConfigurationPreviewComponent', () => {
       FileSizePipe,
       MapValuePipe,
       CastPipe,
-    ],
-    declarations: [
       TopologyCategoryDescriptionPipe,
     ],
     providers: [

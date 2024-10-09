@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable import/no-extraneous-dependencies */
 import glob from 'glob';
 
 export function findComponentFiles(pattern: string): Promise<string[]> {

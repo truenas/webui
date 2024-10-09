@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
@@ -15,10 +17,15 @@ import {
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -27,6 +34,18 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-os-step',
   templateUrl: './os-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperNext,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class OsStepComponent implements SummaryProvider {
   form = this.formBuilder.group({

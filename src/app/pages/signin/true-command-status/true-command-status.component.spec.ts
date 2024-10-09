@@ -25,8 +25,7 @@ describe('TrueCommandStatusComponent', () => {
   });
 
   it('shows Managed by Truecommand status', () => {
-    expect(spectator.query('img')).toHaveAttribute('src', 'assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg');
-    expect(spectator.query('img')).toHaveAttribute('alt', 'TrueCommand');
+    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix-truecommand-logo-mark-color');
     expect(spectator.query('.truecommand-text')).toHaveExactText('Managed by TrueCommand');
   });
 });

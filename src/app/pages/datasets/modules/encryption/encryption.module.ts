@@ -8,7 +8,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
@@ -23,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import {
   EncryptionOptionsDialogComponent,
-} from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
+} from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import {
@@ -39,7 +38,6 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     MatCardModule,
     RouterModule,
     MatButtonModule,
-    EntityModule,
     ReactiveFormsModule,
     MatDialogModule,
     IxIconComponent,

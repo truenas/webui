@@ -1,18 +1,31 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { KeychainCredential, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
   actionsColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { sshKeypairsCardElements } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.elements';
 import {
   SshKeypairFormComponent,
@@ -28,6 +41,23 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './ssh-keypair-card.component.html',
   styleUrls: ['./ssh-keypair-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerShowMoreComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class SshKeypairCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
@@ -43,17 +73,17 @@ export class SshKeypairCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'save_alt',
+          iconName: iconMarker('save_alt'),
           tooltip: this.translate.instant('Download'),
           onClick: (row) => this.doDownload(row),
         },
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),

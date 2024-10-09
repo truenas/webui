@@ -1,11 +1,14 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { Role } from 'app/enums/role.enum';
@@ -13,11 +16,19 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -28,6 +39,23 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './service-nfs.component.html',
   styleUrls: ['./service-nfs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TooltipComponent,
+    TranslateModule,
+  ],
 })
 export class ServiceNfsComponent implements OnInit {
   isFormLoading = false;

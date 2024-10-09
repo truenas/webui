@@ -19,7 +19,7 @@ import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { poolStore } from 'app/services/global-store/stores.constant';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 /**
@@ -180,7 +180,7 @@ export class WidgetResourcesService {
 
   constructor(
     private ws: WebSocketService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) {}
 
   private parseVolumeData(datasets: Dataset[]): VolumesData {

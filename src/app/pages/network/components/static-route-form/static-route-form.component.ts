@@ -1,18 +1,26 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextStaticRoutes } from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -20,6 +28,20 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-static-route-form',
   templateUrl: './static-route-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class StaticRouteFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];

@@ -201,179 +201,6 @@
   },
   {
     "hierarchy": [
-      "Credentials",
-      "Groups",
-      "Show Built-in Groups"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "groups"
-    ],
-    "routerLink": null,
-    "anchor": "show-built-in-groups",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Groups",
-      "Add Group"
-    ],
-    "synonyms": [
-      "New Group",
-      "Create Group",
-      "Group",
-      "Add Local Group"
-    ],
-    "requiredRoles": [
-      "ACCOUNT_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "groups"
-    ],
-    "routerLink": null,
-    "anchor": "add-group",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Groups"
-    ],
-    "synonyms": [
-      "Local Groups"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "groups"
-    ],
-    "routerLink": null,
-    "anchor": "credentials-groups",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Groups",
-      "Privileges",
-      "Add Privilege"
-    ],
-    "synonyms": [
-      "New Privilege",
-      "Create Privilege",
-      "Privilege"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "groups",
-      "privileges"
-    ],
-    "routerLink": null,
-    "anchor": "add-privilege",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Groups",
-      "Privileges"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "groups",
-      "privileges"
-    ],
-    "routerLink": null,
-    "anchor": "credentials-groups-privileges",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Users",
-      "Show Built-in Users"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "users"
-    ],
-    "routerLink": null,
-    "anchor": "show-built-in-users",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Users",
-      "Add User"
-    ],
-    "synonyms": [
-      "New User",
-      "Create User",
-      "User",
-      "Add Local User"
-    ],
-    "requiredRoles": [
-      "ACCOUNT_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "users"
-    ],
-    "routerLink": null,
-    "anchor": "add-user",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Users"
-    ],
-    "synonyms": [
-      "Local Users",
-      "User List",
-      "User Management",
-      "Admins",
-      "Administrators"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "users"
-    ],
-    "routerLink": null,
-    "anchor": "credentials-users",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "API Keys"
     ],
     "synonyms": [],
@@ -427,6 +254,28 @@
     ],
     "routerLink": null,
     "anchor": "custom-app",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
+      "Discover",
+      "Custom App via YAML"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "APPS_WRITE"
+    ],
+    "visibleTokens": [
+      "APPS"
+    ],
+    "anchorRouterLink": [
+      "/apps",
+      "available"
+    ],
+    "routerLink": null,
+    "anchor": "custom-app-yaml",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -853,6 +702,113 @@
   {
     "hierarchy": [
       "Credentials",
+      "Groups",
+      "Show Built-in Groups"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups"
+    ],
+    "routerLink": null,
+    "anchor": "show-built-in-groups",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Groups",
+      "Add Group"
+    ],
+    "synonyms": [
+      "New Group",
+      "Create Group",
+      "Group",
+      "Add Local Group"
+    ],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups"
+    ],
+    "routerLink": null,
+    "anchor": "add-group",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Groups"
+    ],
+    "synonyms": [
+      "Local Groups"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups"
+    ],
+    "routerLink": null,
+    "anchor": "credentials-groups",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Groups",
+      "Privileges",
+      "Add Privilege"
+    ],
+    "synonyms": [
+      "New Privilege",
+      "Create Privilege",
+      "Privilege"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups",
+      "privileges"
+    ],
+    "routerLink": null,
+    "anchor": "add-privilege",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Groups",
+      "Privileges"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups",
+      "privileges"
+    ],
+    "routerLink": null,
+    "anchor": "credentials-groups-privileges",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
       "KMIP"
     ],
     "synonyms": [],
@@ -864,6 +820,72 @@
     ],
     "routerLink": null,
     "anchor": "credentials-kmip",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users",
+      "Show Built-in Users"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "users"
+    ],
+    "routerLink": null,
+    "anchor": "show-built-in-users",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users",
+      "Add User"
+    ],
+    "synonyms": [
+      "New User",
+      "Create User",
+      "User",
+      "Add Local User"
+    ],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "users"
+    ],
+    "routerLink": null,
+    "anchor": "add-user",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users"
+    ],
+    "synonyms": [
+      "Local Users",
+      "User List",
+      "User Management",
+      "Admins",
+      "Administrators"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "users"
+    ],
+    "routerLink": null,
+    "anchor": "credentials-users",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3087,6 +3109,25 @@
   {
     "hierarchy": [
       "Storage",
+      "Disks"
+    ],
+    "synonyms": [
+      "Manage Disks"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage",
+      "disks"
+    ],
+    "routerLink": null,
+    "anchor": "storage-disks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
       "Import Pool"
     ],
     "synonyms": [
@@ -3148,25 +3189,6 @@
     ],
     "routerLink": null,
     "anchor": "storage",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "Disks"
-    ],
-    "synonyms": [
-      "Manage Disks"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/storage",
-      "disks"
-    ],
-    "routerLink": null,
-    "anchor": "storage-disks",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -1,9 +1,9 @@
 import { MatTabsModule } from '@angular/material/tabs';
 import { Spectator } from '@ngneat/spectator';
 import { createRoutingFactory } from '@ngneat/spectator/jest';
-import { MockComponents, MockModule } from 'ng-mocks';
+import { MockComponent, MockComponents } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IscsiComponent } from './iscsi.component';
@@ -18,7 +18,7 @@ describe('IscsiComponent', () => {
     ],
     imports: [
       MatTabsModule,
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
     ],
     providers: [IscsiService, mockAuth()],
     params: {

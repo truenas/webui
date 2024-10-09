@@ -1,13 +1,17 @@
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -18,6 +22,17 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './add-spn-dialog.component.html',
   styleUrls: ['./add-spn-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    ReactiveFormsModule,
+    IxInputComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatDialogClose,
+    TranslateModule,
+  ],
 })
 export class AddSpnDialogComponent {
   readonly requiredRoles = [Role.FullAdmin];

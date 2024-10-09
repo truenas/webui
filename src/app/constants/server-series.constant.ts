@@ -48,6 +48,7 @@ export const fSeries = [
 export const hSeries = [
   EnclosureModel.H10,
   EnclosureModel.H20,
+  EnclosureModel.H30,
 ];
 
 export const serverSeries = [

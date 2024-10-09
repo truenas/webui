@@ -22,7 +22,7 @@ import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts
 import { RebootRequiredDialogComponent } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
-import { GlobalSearchModule } from 'app/modules/global-search/global-search.module';
+import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
@@ -61,7 +61,7 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     MatIconButton,
     MatTooltip,
     IxIconComponent,
-    GlobalSearchModule,
+    GlobalSearchTriggerComponent,
     RouterLink,
     IxLogoComponent,
     TruecommandModule,

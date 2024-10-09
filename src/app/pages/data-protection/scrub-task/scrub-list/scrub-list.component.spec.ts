@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockModule } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -13,7 +13,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ScrubListComponent } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -61,7 +61,7 @@ describe('ScrubListComponent', () => {
   const createComponent = createComponentFactory({
     component: ScrubListComponent,
     imports: [
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
       IxTableColumnsSelectorComponent,
     ],
     providers: [
@@ -155,7 +155,7 @@ describe('ScrubListComponent', () => {
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'Apps');
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'Apps');
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({

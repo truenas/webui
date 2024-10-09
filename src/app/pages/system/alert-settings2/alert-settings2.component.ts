@@ -9,6 +9,7 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { Role } from 'app/enums/role.enum';
 import { AlertCategory, AlertClass, AlertClasses } from 'app/interfaces/alert.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -156,4 +157,6 @@ export class AlertSettings2Component implements OnInit {
         return 'info';
     }
   }
+
+  protected readonly iconMarker = iconMarker;
 }

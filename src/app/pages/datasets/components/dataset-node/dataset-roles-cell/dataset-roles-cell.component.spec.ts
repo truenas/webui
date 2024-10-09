@@ -28,8 +28,7 @@ describe('DatasetRolesCellComponent', () => {
   it('shows "System Dataset" when dataset is marked as system', async () => {
     await setupTest({ name: 'root/dataset' } as DatasetDetails, true);
 
-    expect(await ixIcon.getNamespace()).toBe('ix');
-    expect(await ixIcon.getName()).toBe('logo_truenas_scale_mark');
+    expect(await ixIcon.getName()).toBe('ix-truenas-logo-mark');
     expect(spectator.query(MatTooltip).message).toBe('This dataset is used by the system');
   });
 
@@ -81,8 +80,7 @@ describe('DatasetRolesCellComponent', () => {
       smb_shares: [{}],
     } as DatasetDetails, false);
 
-    expect(await ixIcon.getNamespace()).toBe('ix');
-    expect(await ixIcon.getName()).toBe('smb_share');
+    expect(await ixIcon.getName()).toBe('ix-smb-share');
   });
 
   it('shows "NFS Share" icon for dataset', async () => {
@@ -91,8 +89,7 @@ describe('DatasetRolesCellComponent', () => {
       nfs_shares: [{}],
     } as DatasetDetails, false);
 
-    expect(await ixIcon.getNamespace()).toBe('ix');
-    expect(await ixIcon.getName()).toBe('nfs_share');
+    expect(await ixIcon.getName()).toBe('ix-nfs-share');
   });
 
   it('shows "iSCSI Share" icon for dataset', async () => {
@@ -101,7 +98,6 @@ describe('DatasetRolesCellComponent', () => {
       iscsi_shares: [{}],
     } as DatasetDetails, false);
 
-    expect(await ixIcon.getNamespace()).toBe('ix');
-    expect(await ixIcon.getName()).toBe('iscsi_share');
+    expect(await ixIcon.getName()).toBe('ix-iscsi-share');
   });
 });

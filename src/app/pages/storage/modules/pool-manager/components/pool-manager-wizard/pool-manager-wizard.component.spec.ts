@@ -100,8 +100,6 @@ describe('PoolManagerWizardComponent', () => {
     imports: [
       MatStepperModule,
       FakeProgressBarComponent,
-    ],
-    declarations: [
       MockComponents(
         GeneralWizardStepComponent,
         EnclosureWizardStepComponent,
@@ -114,7 +112,7 @@ describe('PoolManagerWizardComponent', () => {
         ReviewWizardStepComponent,
       ),
     ],
-    providers: [
+    componentProviders: [
       mockProvider(PoolManagerStore, {
         initialize: jest.fn(),
         hasMultipleEnclosuresAfterFirstStep$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
@@ -166,7 +164,7 @@ describe('PoolManagerWizardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     wizard = await loader.getHarness(MatStepperHarness);
-    store = spectator.inject(PoolManagerStore);
+    store = spectator.inject(PoolManagerStore, true);
   });
 
   it('initializes pool manager store on init', () => {
@@ -222,8 +220,8 @@ describe('PoolManagerWizardComponent', () => {
 
       spectator.query(ReviewWizardStepComponent).createPool.emit();
 
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.create', [{
+      expect(spectator.inject(DialogService, true).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService, true).job).toHaveBeenCalledWith('pool.create', [{
         name: 'pewl',
         allow_duplicate_serials: true,
         encryption: false,
@@ -245,8 +243,8 @@ describe('PoolManagerWizardComponent', () => {
           spares: ['sda3', 'sda4', 'sda5', 'sda6'],
         },
       }]);
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage']);
+      expect(spectator.inject(SnackbarService, true).success).toHaveBeenCalled();
+      expect(spectator.inject(Router, true).navigate).toHaveBeenCalledWith(['/storage']);
     });
 
     it('shows a DownloadKeyDialog after pool has been created if encryption was used', async () => {
@@ -258,7 +256,7 @@ describe('PoolManagerWizardComponent', () => {
       await wizard.selectStep({ label: 'Review' });
       spectator.query(ReviewWizardStepComponent).createPool.emit();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DownloadKeyDialogComponent, {
+      expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DownloadKeyDialogComponent, {
         disableClose: true,
         data: createdPool,
       });

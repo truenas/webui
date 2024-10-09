@@ -17,6 +17,7 @@ import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.inte
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
@@ -85,19 +86,19 @@ export class CloudBackupListComponent implements OnInit {
       cssClass: 'wide-actions',
       actions: [
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: 'play_arrow',
+          iconName: iconMarker('play_arrow'),
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,

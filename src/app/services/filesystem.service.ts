@@ -4,7 +4,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -40,10 +40,13 @@ export class FilesystemService {
         typeFilter.push(['is_ctldir', '=', false]);
       }
 
-      return this.ws.call(
-        'filesystem.listdir',
-        [node.data.path, typeFilter, { order_by: ['name'], limit: 1000 }],
-      ).pipe(
+      const queryOptions: QueryOptions<FileRecord> = {
+        select: ['attributes', 'is_ctldir', 'name', 'path', 'type'],
+        order_by: ['name'],
+        limit: 1000,
+      };
+
+      return this.ws.call('filesystem.listdir', [node.data.path, typeFilter, queryOptions]).pipe(
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {

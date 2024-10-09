@@ -11,8 +11,9 @@
   }
 
   ix-icon {
-    font-size: 20px;
+    height: 20px;
     margin-right: 4px;
+    width: 20px;
 
     &.running {
       color: var(--green);

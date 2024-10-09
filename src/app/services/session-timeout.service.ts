@@ -11,12 +11,12 @@ import {
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
+import { JobProgressDialogComponent } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { SessionExpiringDialogComponent } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 @UntilDestroy()
@@ -26,6 +26,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 export class SessionTimeoutService {
   protected actionWaitTimeout: Timeout;
   protected terminateCancelTimeout: Timeout;
+  // TODO: Just make resume an arrow function.
   private resumeBound;
 
   constructor(
@@ -35,16 +36,16 @@ export class SessionTimeoutService {
     private authService: AuthService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private appStore$: Store<AppsState>,
+    private appStore$: Store<AppState>,
     private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.resumeBound = this.resume.bind(this);
 
     this.matDialog.afterOpened.pipe(untilDestroyed(this)).subscribe((dialog) => {
-      if (dialog.componentInstance instanceof EntityJobComponent) {
+      if (dialog.componentInstance instanceof JobProgressDialogComponent) {
         this.stop();
-        dialog.componentInstance.dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+        dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
           this.start();
         });
       }

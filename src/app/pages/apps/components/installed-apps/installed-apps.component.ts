@@ -19,14 +19,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter,
+  combineLatest, filter, finalize,
   Observable,
 } from 'rxjs';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
@@ -46,7 +45,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState as WebuiAppState } from 'app/store';
 
 enum SortableField {
   Application = 'application',
@@ -164,7 +163,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private dockerStore: DockerStore,
     private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
-    private store$: Store<AppsState>,
+    private store$: Store<WebuiAppState>,
     private location: Location,
     private appsStats: AppsStatsService,
     private loader: AppLoaderService,
@@ -311,7 +310,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   start(name: string): void {
     this.appService.startApplication(name)
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
@@ -320,9 +322,27 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   stop(name: string): void {
+    this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }));
     this.appService.stopApplication(name)
       .pipe(
-        tapOnce(() => this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }))),
+        finalize(() => this.loader.close()),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (job: Job<void, AppStartQueryParams>) => {
+          this.appJobs.set(name, job);
+          this.sortChanged(this.sortingInfo);
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  restart(name: string): void {
+    this.loader.open(this.translate.instant('Restarting "{app}"', { app: name }));
+    this.appService.restartApplication(name)
+      .pipe(
+        finalize(() => this.loader.close()),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -377,11 +397,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.dialogService.confirm({
       title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Remove iX Volumes'),
     })
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
+      .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
+      .subscribe(({ secondaryCheckbox }) => {
         this.dialogService.jobDialog(
-          this.ws.job('core.bulk', ['app.delete', checkedNames.map((item) => [item])]),
+          this.ws.job('core.bulk', ['app.delete', checkedNames.map(
+            (item) => [item, { remove_images: true, remove_ix_volumes: secondaryCheckbox }],
+          )]),
           { title: helptextApps.apps.delete_dialog.job },
         )
           .afterClosed()

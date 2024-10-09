@@ -1,8 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -10,6 +12,10 @@ import { generateOptionsRange } from 'app/helpers/options.helper';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { DiskSizeSelectsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   hasDeepChanges,
@@ -24,6 +30,16 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   templateUrl: './normal-selection.component.html',
   styleUrls: ['./normal-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    DiskSizeSelectsComponent,
+    IxSelectComponent,
+    TestOverrideDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class NormalSelectionComponent implements OnInit, OnChanges {
   @Input() type: VdevType;

@@ -1,15 +1,22 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { VmNicType, vmNicTypeLabels } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -17,6 +24,19 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-network-interface-step',
   templateUrl: './network-interface-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxSelectComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperPrevious,
+    TestDirective,
+    MatStepperNext,
+    TranslateModule,
+  ],
 })
 export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   form = this.formBuilder.group({

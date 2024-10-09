@@ -20,12 +20,12 @@ export class DatasetIconComponent {
 
   protected iconName = computed(() => {
     if (this.isRoot()) {
-      return 'ix:dataset_root';
+      return 'ix-dataset-root';
     }
     if (this.isZvol()) {
       return 'mdi-database';
     }
 
-    return 'ix:dataset';
+    return 'ix-dataset';
   });
 }

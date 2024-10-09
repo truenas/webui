@@ -44,13 +44,13 @@ describe('CloudSyncWizardComponent', () => {
       SchedulerModule,
       CloudCredentialsSelectModule,
       CloudSyncProviderDescriptionComponent,
+      GooglePhotosProviderFormComponent,
+      StorjProviderFormComponent,
     ],
     declarations: [
       CloudSyncProviderComponent,
       CloudSyncWhatAndWhenComponent,
       TransferModeExplanationComponent,
-      GooglePhotosProviderFormComponent,
-      StorjProviderFormComponent,
     ],
     providers: [
       mockProvider(ChainedRef, chainedRef),

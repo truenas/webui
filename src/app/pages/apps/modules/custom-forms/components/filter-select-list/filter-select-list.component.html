@@ -5,7 +5,9 @@
     <div>
       <div class="item" (click)="onItemChanged(option.value)">
         {{ option.label | translate }}
-        <ix-icon [name]="isChecked(option.value) ? 'check_circle' : ''"></ix-icon>
+        @if (isChecked(option.value)) {
+          <ix-icon name="check_circle"></ix-icon>
+        }
       </div>
     </div>
   }

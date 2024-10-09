@@ -21,7 +21,7 @@ export const routes: Routes = [
       },
       {
         path: 'nfs',
-        data: { title: T('NFS'), breadcrumb: T('NFS'), icon: 'share' },
+        data: { title: T('NFS'), breadcrumb: T('NFS') },
         children: [{
           path: '',
           component: NfsListComponent,
@@ -37,7 +37,7 @@ export const routes: Routes = [
       },
       {
         path: 'smb',
-        data: { title: T('SMB'), breadcrumb: T('SMB'), icon: 'share' },
+        data: { title: T('SMB'), breadcrumb: T('SMB') },
         children: [{
           path: '',
           component: SmbListComponent,
@@ -62,7 +62,7 @@ export const routes: Routes = [
         }],
       }, {
         path: 'iscsi',
-        data: { title: T('iSCSI'), breadcrumb: null, icon: 'share' },
+        data: { title: T('iSCSI'), breadcrumb: null },
 
         children: [
           {

@@ -16,7 +16,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -49,7 +49,7 @@ export class AccessFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,

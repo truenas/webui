@@ -14,6 +14,7 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
@@ -27,7 +28,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -77,7 +78,7 @@ export class AccessCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'exit_to_app',
+          iconName: iconMarker('exit_to_app'),
           dynamicTooltip: (row) => of(row.current
             ? this.translate.instant('This session is current and cannot be terminated')
             : this.translate.instant('Terminate session')),
@@ -97,7 +98,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private chainedSlideIn: IxChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,

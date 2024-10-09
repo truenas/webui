@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -44,7 +43,6 @@ describe('DashboardPoolComponent', () => {
       MockComponent(PoolUsageCardComponent),
       MockComponent(DiskHealthCardComponent),
       MockComponent(TopologyCardComponent),
-      MockComponent(NgxSkeletonLoaderComponent),
     ],
     providers: [
       mockProvider(MatDialog, {

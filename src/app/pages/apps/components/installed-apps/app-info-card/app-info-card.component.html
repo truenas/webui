@@ -34,7 +34,7 @@
       <div class="details-list">
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
-          <a class="value app-name" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
+          <a class="value" [ixTest]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
             {{ app()?.name | orNotAvailable }}
           </a>
         </div>
@@ -46,6 +46,14 @@
             } @else if (app().human_version) {
               <!-- Show docker image tag as version for custom apps -->
               {{ app().human_version?.split(':')?.[1]?.split('_')?.[0] }}
+            }
+          </div>
+        </div>
+        <div class="details-item">
+          <div class="label">{{ 'Version' | translate }}:</div>
+          <div class="value">
+            @if (!isCustomApp()) {
+              {{ app()?.version | appVersion | orNotAvailable }}
             }
           </div>
         </div>
@@ -84,7 +92,7 @@
                 mat-button
                 class="portal-button"
                 [ixTest]="['portal', app().name, portal.key]"
-                (click)="portalLink(app(), portal.key)"
+                (click)="openPortalLink(app(), portal.key)"
               >
                 {{ portal.key }}
               </button>

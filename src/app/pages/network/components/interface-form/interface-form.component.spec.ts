@@ -66,6 +66,7 @@ describe('InterfaceFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxIpInputWithNetmaskComponent,
+      DefaultGatewayDialogComponent,
       StoreModule.forRoot({ [haInfoStateKey]: haInfoReducer }, {
         initialState: {
           [haInfoStateKey]: {
@@ -77,9 +78,6 @@ describe('InterfaceFormComponent', () => {
           },
         },
       }),
-    ],
-    declarations: [
-      DefaultGatewayDialogComponent,
     ],
     providers: [
       {

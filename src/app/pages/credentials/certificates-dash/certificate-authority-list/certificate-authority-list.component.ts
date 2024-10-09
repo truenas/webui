@@ -1,15 +1,22 @@
+import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, Component, OnInit,
   output,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isObject } from 'lodash-es';
 import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -18,13 +25,23 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
   actionsColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   CertificateAuthorityAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
@@ -46,6 +63,27 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './certificate-authority-list.component.html',
   styleUrls: ['./certificate-authority-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableCellDirective,
+    IxIconComponent,
+    MatTooltip,
+    IxTablePagerShowMoreComponent,
+    TranslateModule,
+    FormatDateTimePipe,
+    AsyncPipe,
+  ],
 })
 export class CertificateAuthorityListComponent implements OnInit {
   readonly certificateSigned = output();
@@ -71,30 +109,30 @@ export class CertificateAuthorityListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'beenhere',
+          iconName: iconMarker('beenhere'),
           tooltip: this.translate.instant('Sign CSR'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doSignCsr(row),
         },
         {
-          iconName: 'mdi-undo',
+          iconName: iconMarker('mdi-undo'),
           tooltip: this.translate.instant('Revoke'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.doRevoke(row),
         },
         {
-          iconName: 'mdi-download',
+          iconName: iconMarker('mdi-download'),
           tooltip: this.translate.instant('Download'),
           onClick: (row) => this.doDownload(row),
         },
         {
-          iconName: 'edit',
+          iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: 'delete',
+          iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),

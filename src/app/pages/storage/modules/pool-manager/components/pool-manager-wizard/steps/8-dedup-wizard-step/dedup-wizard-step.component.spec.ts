@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -7,7 +8,7 @@ import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/comp
 import { DedupWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
 import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-describe('DataWizardStepComponent', () => {
+describe('DedupWizardStepComponent', () => {
   let spectator: Spectator<DedupWizardStepComponent>;
 
   const fakeInventory = [
@@ -31,12 +32,11 @@ describe('DataWizardStepComponent', () => {
 
   const createComponent = createComponentFactory({
     component: DedupWizardStepComponent,
-    imports: [
-    ],
     declarations: [
       MockComponent(LayoutStepComponent),
     ],
     providers: [
+      CdkStepper,
       mockProvider(PoolManagerStore, {
         topology$: of({
           [VdevType.Data]: { layout: CreateVdevLayout.Raidz1 },

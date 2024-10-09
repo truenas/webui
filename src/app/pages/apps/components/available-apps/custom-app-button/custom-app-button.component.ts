@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map, tap } from 'rxjs';
+import { filter, map } from 'rxjs';
+import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { customAppButtonElements } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.elements';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
@@ -26,17 +27,21 @@ export class CustomAppButtonComponent {
   constructor(
     private dockerStore: DockerStore,
     private router: Router,
-    private ixSlideIn: IxSlideInService,
+    private slideIn: IxSlideInService,
   ) { }
 
-  navigateToCustomAppCreation(): void {
-    const ref = this.ixSlideIn.open(CustomAppFormComponent, { wide: true });
+  openAppWizardCreation(): void {
+    this.router.navigate(['/apps', 'available', customAppTrain, customApp, 'install']);
+  }
+
+  openCustomAppYamlCreation(): void {
+    const ref = this.slideIn.open(CustomAppFormComponent, { wide: true });
     ref.slideInClosed$.pipe(
-      tap(Boolean),
+      filter(Boolean),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.router.navigate(['/', 'apps']);
+        this.router.navigate(['/apps']);
       },
     });
   }

@@ -6,11 +6,14 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -18,13 +21,20 @@ import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/c
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
+import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -41,6 +51,22 @@ export interface CloudCredentialFormInput {
   selector: 'ix-cloud-credentials-form',
   templateUrl: './cloud-credentials-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    CloudSyncProviderDescriptionComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class CloudCredentialsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.CloudSyncWrite];

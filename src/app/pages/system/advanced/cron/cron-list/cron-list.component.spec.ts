@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockModule } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
@@ -20,7 +20,7 @@ import {
   IxTableDetailsRowComponent,
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
@@ -57,7 +57,7 @@ describe('CronListComponent', () => {
   const createComponent = createComponentFactory({
     component: CronListComponent,
     imports: [
-      MockModule(PageHeaderModule),
+      MockComponent(PageHeaderComponent),
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
       IxTableDetailsRowDirective,

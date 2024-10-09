@@ -1,10 +1,17 @@
-import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop, CdkDragStart, CdkDropList, CdkDrag,
+} from '@angular/cdk/drag-drop';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, ContentChild, Input, OnChanges, OnInit, output, TemplateRef,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatList, MatListItem } from '@angular/material/list';
 import { differenceBy, isEqual } from 'lodash-es';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ListSelection } from 'app/modules/lists/dual-list/models';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
   from: ListSelection<T>; to: ListSelection<T>;
@@ -20,6 +27,17 @@ const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
   styleUrls: ['./dual-list.component.scss'],
   templateUrl: 'dual-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CdkDropList,
+    MatList,
+    MatListItem,
+    CdkDrag,
+    NgTemplateOutlet,
+    MatButton,
+    TestDirective,
+    IxIconComponent,
+  ],
 })
 export class DualListboxComponent<T extends { id: string | number }> implements OnInit, OnChanges {
   @Input() key: keyof T = 'id';

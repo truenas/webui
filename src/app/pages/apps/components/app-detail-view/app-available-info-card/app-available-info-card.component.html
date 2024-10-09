@@ -5,7 +5,7 @@
   @if (isLoading()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
-    {{ app()?.latest_app_version | orNotAvailable }}
+    {{ app()?.latest_version | orNotAvailable }}
   }
 </div>
 <div class="app-list-item sources">
@@ -14,7 +14,7 @@
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
     <div>
-      @for (source of app().sources; track source; let last = $last) {
+      @for (source of app()?.sources; track source; let last = $last) {
         <a
           class="source-link"
           target="_blank"

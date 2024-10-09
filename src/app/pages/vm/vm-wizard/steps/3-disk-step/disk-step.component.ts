@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
@@ -9,8 +11,13 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -24,6 +31,19 @@ export enum NewOrExistingDisk {
   selector: 'ix-disk-step',
   templateUrl: './disk-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxRadioGroupComponent,
+    IxSelectComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperPrevious,
+    TestDirective,
+    MatStepperNext,
+    TranslateModule,
+  ],
 })
 export class DiskStepComponent implements OnInit, SummaryProvider {
   form = this.formBuilder.group({

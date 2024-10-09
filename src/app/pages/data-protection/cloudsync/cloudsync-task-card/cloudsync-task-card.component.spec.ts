@@ -221,7 +221,7 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('deletes a CloudSync Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

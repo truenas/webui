@@ -36,7 +36,7 @@ import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/u
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 @UntilDestroy()
@@ -116,7 +116,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private slideInRef: IxSlideInRef<DatasetFormComponent>,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) private slideInData: { datasetId: string; isNew?: boolean },
   ) {}
 

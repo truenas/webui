@@ -78,7 +78,7 @@ describe('WidgetGroupControlsComponent', () => {
 
     const button = spectator.query('[aria-label="Delete group"]');
     expect(button).toExist();
-    expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'delete');
+    expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'mdi-delete');
 
     spectator.click(button);
 

@@ -101,11 +101,11 @@ describe('CloudCredentialsFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       CloudSyncProviderDescriptionComponent,
+      StorjProviderFormComponent,
     ],
     declarations: [
       TokenProviderFormComponent,
       S3ProviderFormComponent,
-      StorjProviderFormComponent,
     ],
     providers: [
       mockProvider(SnackbarService),

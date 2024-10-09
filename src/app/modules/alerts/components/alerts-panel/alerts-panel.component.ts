@@ -1,10 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatRipple } from '@angular/material/core';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
+import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import {
   alertPanelClosed,
   dismissAllAlertsPressed,
@@ -16,6 +25,8 @@ import {
   selectDismissedAlerts,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -25,6 +36,22 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   templateUrl: './alerts-panel.component.html',
   styleUrls: ['./alerts-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatIconButton,
+    TestDirective,
+    MatMenuTrigger,
+    IxIconComponent,
+    MatMenu,
+    MatMenuItem,
+    NavigateAndInteractDirective,
+    MatProgressBar,
+    LetDirective,
+    AlertComponent,
+    MatRipple,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class AlertsPanelComponent implements OnInit {
   error$ = this.store$.select(selectAlertState).pipe(map((state) => state.error));

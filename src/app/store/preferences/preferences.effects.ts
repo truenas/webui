@@ -8,7 +8,7 @@ import {
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { AppsState } from 'app/store/index';
+import { AppState } from 'app/store/index';
 import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
@@ -84,7 +84,7 @@ export class PreferencesEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private authService: AuthService,
   ) {}
 }

@@ -5,13 +5,14 @@ import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface GeneralDialogConfig {
   title?: string;
   message: string;
-  icon?: string;
+  icon?: MarkedIcon;
   is_html?: boolean;
   hideCancel?: boolean;
   cancelBtnMsg?: string;
