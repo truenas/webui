@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -21,6 +21,7 @@ export class RebootComponent implements OnInit {
     protected ws: WebSocketService,
     private wsManager: WebSocketConnectionService,
     protected router: Router,
+    private route: ActivatedRoute,
     private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
@@ -30,11 +31,13 @@ export class RebootComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const reason = this.route.snapshot.queryParamMap.get('reason') || 'Unknown Reason';
+
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/signin');
 
     this.matDialog.closeAll();
-    this.ws.job('system.reboot').pipe(untilDestroyed(this)).subscribe({
+    this.ws.job('system.reboot', { reason }).pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on reboot
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))
