@@ -99,10 +99,12 @@ describe('AppRowComponent', () => {
         state: AppState.Running,
       });
 
-      const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop' }));
-      const startIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-play' }));
+      const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
+      const startIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-play-circle' }));
+      const restartIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-restart' }));
 
       expect(stopIcon).toExist();
+      expect(restartIcon).toExist();
       expect(startIcon).not.toExist();
     });
 
@@ -112,9 +114,11 @@ describe('AppRowComponent', () => {
         state: AppState.Stopped,
       });
 
-      const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop' }));
-      const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play' }));
+      const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop-circle' }));
+      const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
+      const restartIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-restart' }));
 
+      expect(restartIcon).not.toExist();
       expect(stopIcon).not.toExist();
       expect(startIcon).toExist();
     });

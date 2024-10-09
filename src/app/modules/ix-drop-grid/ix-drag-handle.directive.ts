@@ -5,5 +5,6 @@ import { ixDragHandleDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-gri
 @Directive({
   selector: '[ixDragHandle]',
   providers: [{ provide: ixDragHandleDirectiveToken, useExisting: IxDragHandleDirective }],
+  standalone: true,
 })
 export class IxDragHandleDirective extends CdkDragHandle {}

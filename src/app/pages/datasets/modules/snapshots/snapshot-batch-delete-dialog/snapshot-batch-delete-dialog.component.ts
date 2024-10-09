@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +45,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
     private websocket: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
     private dialogService: DialogService,
   ) { }

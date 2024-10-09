@@ -57,8 +57,6 @@ describe('DiskHealthCardComponent', () => {
     component: DiskHealthCardComponent,
     imports: [
       NgxSkeletonLoaderModule,
-    ],
-    declarations: [
       PoolCardIconComponent,
     ],
     providers: [

@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -38,6 +39,7 @@ describe('DataWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
+      CdkStepper,
       mockProvider(AddVdevsStore, {
         pool$: of(null),
       }),

@@ -7,7 +7,7 @@ import {
   mockEs24F, mockEs24N, mockEs60, mockEs60G2, mockEs60G3,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-expansion-shelves';
 import { mockF100, mockF130, mockF60 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-f-series';
-import { mockH10, mockH20 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-h-series';
+import { mockH10, mockH20, mockH30 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-h-series';
 import {
   mockM30, mockM40, mockM50, mockM60,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-m-series';
@@ -33,6 +33,7 @@ export const enclosureMocks: DashboardEnclosure[] = [
 
   mockH10,
   mockH20,
+  mockH30,
 
   mockM30,
   mockM40,

@@ -27,8 +27,6 @@ describe('DraidSelectionComponent', () => {
     component: DraidSelectionComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    declarations: [
       DiskSizeSelectsComponent,
     ],
     providers: [

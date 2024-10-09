@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { map, startWith } from 'rxjs';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectBuildYear, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -26,6 +26,6 @@ export class CopyrightLineComponent {
   readonly copyrightYear = toSignal(this.store$.select(selectBuildYear));
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) { }
 }

@@ -1,7 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 import { EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 
@@ -10,6 +13,12 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
   templateUrl: './disks-overview.component.html',
   styleUrls: ['./disks-overview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class DisksOverviewComponent {
   readonly selectedView = this.enclosureStore.selectedView;

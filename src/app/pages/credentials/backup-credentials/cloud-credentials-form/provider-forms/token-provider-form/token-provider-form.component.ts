@@ -1,10 +1,13 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -17,6 +20,14 @@ import {
   selector: 'ix-token-provider-form',
   templateUrl: './token-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    OauthProviderComponent,
+    IxFieldsetComponent,
+    ReactiveFormsModule,
+    IxInputComponent,
+    TranslateModule,
+  ],
 })
 export class TokenProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   @ViewChild(OauthProviderComponent, { static: false }) oauthComponent: OauthProviderComponent;

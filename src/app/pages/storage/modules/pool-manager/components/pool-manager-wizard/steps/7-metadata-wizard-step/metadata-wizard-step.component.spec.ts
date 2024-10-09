@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -8,7 +9,7 @@ import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/comp
 import { MetadataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/7-metadata-wizard-step/metadata-wizard-step.component';
 import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-describe('DataWizardStepComponent', () => {
+describe('MetadataWizardStepComponent', () => {
   let spectator: Spectator<MetadataWizardStepComponent>;
 
   const fakeInventory = [
@@ -32,12 +33,11 @@ describe('DataWizardStepComponent', () => {
 
   const createComponent = createComponentFactory({
     component: MetadataWizardStepComponent,
-    imports: [
-    ],
     declarations: [
       MockComponent(LayoutStepComponent),
     ],
     providers: [
+      CdkStepper,
       mockProvider(AddVdevsStore, {
         pool$: of(null),
         isLoading$: of(false),

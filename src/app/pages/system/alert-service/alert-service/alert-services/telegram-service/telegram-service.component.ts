@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  AbstractControl, FormBuilder, Validators,
+  AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-service/alert-services/base-alert-service-form';
 
@@ -10,6 +12,13 @@ import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-servi
   selector: 'ix-telegram-service',
   templateUrl: './telegram-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxInputComponent,
+    IxChipsComponent,
+    TranslateModule,
+  ],
 })
 export class TelegramServiceComponent extends BaseAlertServiceForm {
   form = this.formBuilder.group({

@@ -1,11 +1,14 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import { Acl, NfsAclItem, PosixAclItem } from 'app/interfaces/acl.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { PermissionsItemComponent } from 'app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component';
 import { PermissionItem } from 'app/pages/datasets/modules/permissions/interfaces/permission-item.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { nfsAceToPermissionItem } from 'app/pages/datasets/modules/permissions/utils/nfs-ace-to-permission-item.utils';
@@ -18,6 +21,13 @@ import {
   templateUrl: 'acl-editor-list.component.html',
   styleUrls: ['./acl-editor-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PermissionsItemComponent,
+    MatTooltip,
+    IxIconComponent,
+    TranslateModule,
+  ],
 })
 export class AclEditorListComponent implements OnChanges {
   @Input() acl: Acl;

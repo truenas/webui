@@ -210,7 +210,7 @@ describe('RsyncTaskListComponent', () => {
   });
 
   it('runs a task when run button is pressed', async () => {
-    const runIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'play_arrow' }), '/mnt/Pool1');
+    const runIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-play-circle' }), '/mnt/Pool1');
     await runIcon.click();
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('rsynctask.run', [1]);

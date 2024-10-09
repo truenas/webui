@@ -1,15 +1,23 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { NgClass, AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
+import { RouterLinkActive } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
-import { DndDropEvent } from 'ngx-drag-drop';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  DndDropEvent, DndDropzoneDirective, DndDraggableDirective, DndDragImageRefDirective,
+} from 'ngx-drag-drop';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
+import { TreeModule } from 'app/modules/ix-tree/tree.module';
+import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
 import {
   ManualDiskSelectionFilters,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
@@ -18,6 +26,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
 import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
+import { ManualSelectionDiskFiltersComponent } from './manual-selection-disk-filters/manual-selection-disk-filters.component';
 
 interface EnclosureDisk extends DetailsDisk {
   children: [];
@@ -39,6 +48,21 @@ const noEnclosureId = 'no-enclosure' as const;
   templateUrl: './manual-selection-disks.component.html',
   styleUrls: ['./manual-selection-disks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ManualSelectionDiskFiltersComponent,
+    DndDropzoneDirective,
+    NgClass,
+    TreeModule,
+    RouterLinkActive,
+    DndDraggableDirective,
+    DiskIconComponent,
+    DndDragImageRefDirective,
+    DiskInfoComponent,
+    IxIconComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class ManualSelectionDisksComponent implements OnInit {
   @Input() enclosures: Enclosure[] = [];

@@ -92,3 +92,6 @@ src/assets/scripts/ie-support/ie-polyfills.min.js
 # vsc history
 .history
 .history/*
+
+# jest cache
+.jest

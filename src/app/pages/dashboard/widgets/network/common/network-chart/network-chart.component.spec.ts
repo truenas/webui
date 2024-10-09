@@ -1,7 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
+import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-chart-area.component';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
 import { LocaleService } from 'app/services/locale.service';
 

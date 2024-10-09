@@ -43,14 +43,16 @@ describe('SaveConfigDialogComponent', () => {
           },
         ],
       }),
-      mockProvider(DatePipe, {
-        transform: () => '20220524160228',
-      }),
       mockProvider(DownloadService, {
         downloadUrl: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
+    ],
+    componentProviders: [
+      mockProvider(DatePipe, {
+        transform: () => '20220524160228',
+      }),
     ],
   });
 

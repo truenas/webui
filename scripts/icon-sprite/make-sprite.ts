@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import fs from 'fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,6 +18,7 @@ async function makeSprite(): Promise<void> {
 
     const srcDir = resolve(__dirname, '../../src');
     const targetPath = resolve(__dirname, '../../src/assets/icons/sprite.svg');
+    const configPath = resolve(__dirname, '../../src/assets/icons/sprite-config.json');
 
     const templateIcons = findIconsInTemplates(srcDir);
     const markerIcons = findIconsWithMarker(srcDir);
@@ -40,9 +42,15 @@ async function makeSprite(): Promise<void> {
 
     fs.writeFileSync(targetPath, buffer);
 
+    const hash = crypto.createHash('md5').update(buffer).digest('hex').slice(0, 10);
+    const versionedUrl = `assets/icons/sprite.svg?v=${hash}`;
+
+    fs.writeFileSync(configPath, JSON.stringify({ iconUrl: versionedUrl }, null, 2));
+
     console.info(`Generated icon sprite with ${allIcons.size} icons (${size.toFixed(2)} KiB).`);
-  } catch (error: unknown) {
-    console.error('Error when building the icon sprite:');
+    console.info(`Versioned sprite URL: ${versionedUrl}`);
+  } catch (error) {
+    console.error('Error when building the icon sprite:', error);
     throw error;
   }
 }

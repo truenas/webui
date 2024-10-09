@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/angular';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Injectable({
@@ -14,7 +14,7 @@ export class SentryService {
   sessionId$ = new BehaviorSubject<string>(UUID.UUID());
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) {}
 
   init(): void {

@@ -35,8 +35,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { AppsState } from 'app/store/index';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 import { InterfacesCardComponent } from './components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from './components/ipmi-card/ipmi-card.component';
@@ -103,7 +103,7 @@ export class NetworkComponent implements OnInit {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
     private interfacesStore: InterfacesStore,

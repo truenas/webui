@@ -12,7 +12,7 @@ import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modul
 import { AuthService } from 'app/services/auth/auth.service';
 import { ServicesService } from 'app/services/services.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkIfServiceIsEnabled, serviceChanged, serviceDisabled, serviceStartFailed, serviceStarted, servicesLoaded,
@@ -88,7 +88,7 @@ export class ServicesEffects {
   ));
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private actions$: Actions,
     private ws: WebSocketService,
     private matDialog: MatDialog,

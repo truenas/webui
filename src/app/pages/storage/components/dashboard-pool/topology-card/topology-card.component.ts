@@ -2,9 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import {
+  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
+} from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
@@ -17,6 +23,9 @@ import {
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { topologyCardElements } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.elements';
 import { StorageService } from 'app/services/storage.service';
 
@@ -38,6 +47,20 @@ SmartTestResult[] | EnclosureAndSlot>;
   templateUrl: './topology-card.component.html',
   styleUrls: ['./topology-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatCardHeader,
+    MatCardTitle,
+    PoolCardIconComponent,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    MatTooltip,
+    IxIconComponent,
+    TranslateModule,
+  ],
 })
 export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;

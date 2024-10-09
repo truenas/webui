@@ -23,7 +23,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
@@ -62,7 +62,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private download: DownloadService,
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
   ) {}
 
   onExport(): void {

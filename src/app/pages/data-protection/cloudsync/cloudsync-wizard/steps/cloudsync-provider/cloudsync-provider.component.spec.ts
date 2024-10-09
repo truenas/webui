@@ -7,7 +7,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
+import {
+  CloudCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -43,9 +45,7 @@ describe('CloudSyncProviderComponent', () => {
     imports: [
       ReactiveFormsModule,
       CloudSyncProviderDescriptionComponent,
-      CloudCredentialsSelectModule,
-    ],
-    declarations: [
+      CloudCredentialsSelectComponent,
       GooglePhotosProviderFormComponent,
       StorjProviderFormComponent,
     ],
