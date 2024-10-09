@@ -1,0 +1,84 @@
+<ix-modal-header
+  [title]="'Settings' | translate"
+  [loading]="isFormLoading()"
+  [requiredRoles]="requiredRoles"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset class="trains">
+        <ix-checkbox-list
+          formControlName="preferred_trains"
+          [label]="'Preferred Trains' | translate"
+          [tooltip]="tooltips.preferred_trains | translate"
+          [options]="allTrains$"
+          [inlineFields]="true"
+        ></ix-checkbox-list>
+
+        <ix-list
+          formArrayName="address_pools"
+          class="address-pools"
+          [empty]="form.controls.address_pools.controls.length === 0"
+          [label]="'Address Pools' | translate"
+          [formArray]="form.get('address_pools')"
+          (add)="addAddressPool()"
+        >
+          @for (network of form.controls.address_pools.controls; track network; let i = $index) {
+            <ix-list-item
+              [formGroupName]="i"
+              [label]="'Address Pool' | translate"
+              (delete)="removeAddressPool(i)"
+            >
+              <div class="address-pool">
+                <ix-ip-input-with-netmask
+                  class="base"
+                  formControlName="base"
+                  [label]="'Base' | translate"
+                  [required]="true"
+                ></ix-ip-input-with-netmask>
+
+                <ix-input
+                  formControlName="size"
+                  type="number"
+                  class="size"
+                  [required]="true"
+                  [label]="'Size' | translate"
+                  [tooltip]="helptext.dockerSettings.addressPoolsSize | translate"
+                ></ix-input>
+              </div>
+            </ix-list-item>
+          }
+        </ix-list>
+
+        @if (showNvidiaCheckbox()) {
+          <ix-checkbox
+            formControlName="nvidia"
+            [label]="'Install NVIDIA Drivers' | translate"
+            [tooltip]="tooltips.install_nvidia_driver| translate"
+          ></ix-checkbox>
+        }
+
+        <ix-checkbox
+          formControlName="enable_image_updates"
+          [label]="'Check for docker image updates' | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <div class="actions">
+        <ix-form-actions>
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-button
+            type="submit"
+            color="primary"
+            ixTest="save"
+            [disabled]="form.invalid || isFormLoading()"
+          >
+            {{ 'Save' | translate }}
+          </button>
+        </ix-form-actions>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
