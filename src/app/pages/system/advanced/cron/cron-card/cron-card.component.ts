@@ -76,7 +76,7 @@ export class CronCardComponent implements OnInit {
       cssClass: 'tight-actions',
       actions: [
         {
-          iconName: iconMarker('play_arrow'),
+          iconName: iconMarker('mdi-play-circle'),
           tooltip: this.translate.instant('Run job'),
           onClick: (row) => this.runNow(row),
           requiredRoles: this.requiredRoles,

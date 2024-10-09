@@ -41,7 +41,6 @@ export class AppInfoCardComponent {
   readonly stopApp = output();
   protected readonly isCustomApp = computed(() => this.app()?.metadata?.name === customApp);
   protected readonly requiredRoles = [Role.AppsWrite];
-  protected readonly hasUpdates = computed(() => this.app()?.upgrade_available);
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
   protected readonly imagePlaceholder = appImagePlaceholder;
