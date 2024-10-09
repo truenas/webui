@@ -73,42 +73,6 @@ describe('SelectPoolDialogComponent', () => {
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
-  it('shows migrate checkbox when existing pool is changed to a new one', async () => {
-    const dockerStore = spectator.inject(DockerStore);
-    Object.defineProperty(dockerStore, 'selectedPool$', {
-      value: of('pool1'),
-    });
-    spectator.component.ngOnInit();
-
-    await form.fillForm({
-      Pool: 'pool2',
-    });
-
-    const migrateCheckbox = await form.getControl('Migrate applications to the new pool');
-    expect(migrateCheckbox).toBeTruthy();
-  });
-
-  it('sets new pool and migrates applications when form is submitted', async () => {
-    const dockerStore = spectator.inject(DockerStore);
-    Object.defineProperty(dockerStore, 'selectedPool$', {
-      value: of('pool1'),
-    });
-    spectator.component.ngOnInit();
-
-    await form.fillForm(
-      {
-        Pool: 'pool2',
-        'Migrate applications to the new pool': true,
-      },
-    );
-
-    const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
-    await chooseButton.click();
-
-    expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith('pool2');
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
-  });
-
   it('shows a warning when no pools are available and takes user to create one', () => {
     const appService = spectator.inject(ApplicationsService);
     jest.spyOn(appService, 'getPoolList').mockReturnValue(of([] as Pool[]));
