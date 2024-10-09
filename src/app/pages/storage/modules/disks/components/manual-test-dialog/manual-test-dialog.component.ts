@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
   signal,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
@@ -77,11 +77,6 @@ export class ManualTestDialogComponent {
   selectedDisksWithoutSmartSupport: Disk[] = [];
   endedTests = false;
   progressTotalPercent = 0;
-
-  hasStartedTests = computed<boolean>(() => {
-    const startedTests = this.testProgress();
-    return !!startedTests.length;
-  });
 
   protected readonly Role = Role;
 
