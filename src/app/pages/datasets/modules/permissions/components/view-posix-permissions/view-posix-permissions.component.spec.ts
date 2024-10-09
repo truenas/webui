@@ -12,7 +12,7 @@ describe('ViewPosixPermissionsComponent', () => {
   let spectator: Spectator<ViewPosixPermissionsComponent>;
   const createComponent = createComponentFactory({
     component: ViewPosixPermissionsComponent,
-    declarations: [
+    imports: [
       PermissionsItemComponent,
     ],
   });

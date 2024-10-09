@@ -2,7 +2,11 @@ import {
   ChangeDetectionStrategy, Component,
   input, output, computed,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -10,6 +14,8 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
 
 @Component({
@@ -17,6 +23,18 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
   templateUrl: './bootenv-node-item.component.html',
   styleUrls: ['./bootenv-node-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxIconComponent,
+    MatTooltip,
+    MatIconButton,
+    TestDirective,
+    MatMenuTrigger,
+    MatMenu,
+    RequiresRolesDirective,
+    MatMenuItem,
+    TranslateModule,
+  ],
 })
 export class BootenvNodeItemComponent {
   readonly node = input.required<DeviceNestedDataNode>();

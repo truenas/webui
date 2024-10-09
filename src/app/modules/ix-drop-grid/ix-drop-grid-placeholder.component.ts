@@ -9,6 +9,8 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
   selector: 'ix-drop-grid-placeholder',
   template: '<div ixDropGridItem></div>',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [IxDropGridItemDirective],
 })
 export class IxDropGridPlaceholderComponent implements AfterViewInit {
   @ViewChild(IxDropGridItemDirective) itemInstance: IxDropGridItemDirective;

@@ -1,14 +1,21 @@
+import { DecimalPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input, computed,
 } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatTooltip } from '@angular/material/tooltip';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 
 @Component({
@@ -16,6 +23,17 @@ import { AppState } from 'app/store';
   templateUrl: './job-name.component.html',
   styleUrls: ['./job-name.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxIconComponent,
+    MatTooltip,
+    MatProgressSpinner,
+    MatProgressBar,
+    MatIconButton,
+    TestDirective,
+    TranslateModule,
+    DecimalPipe,
+  ],
 })
 export class JobNameComponent {
   readonly job = input.required<Job>();
