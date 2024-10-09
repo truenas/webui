@@ -51,6 +51,7 @@ import {
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
+import { IxTestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
 import { SmartTestResultListComponent } from 'app/pages/storage/modules/disks/components/smart-test-result-list/smart-test-result-list.component';
 import { routes } from 'app/pages/storage/modules/disks/disks.routing';
 
@@ -97,6 +98,7 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     DiskBulkEditComponent,
     DiskFormComponent,
     DiskListComponent,
+    IxTestProgressRowComponent,
     DiskWipeDialogComponent,
     ManualTestDialogComponent,
     SmartTestResultListComponent,
