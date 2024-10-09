@@ -26,7 +26,6 @@ import { IxDetailsHeightDirective } from 'app/directives/details-height/details-
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -116,7 +115,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   get pageTitle(): string {
     return this.poolName
-      ? this.translate.instant('{name} Devices', { name: stringToTitleCase(this.poolName) })
+      ? this.translate.instant('{name} Devices', { name: this.poolName })
       : this.translate.instant('Devices');
   }
 
