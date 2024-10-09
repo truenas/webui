@@ -5,6 +5,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { format } from 'date-fns-tz';
 import { distinctUntilChanged } from 'rxjs';
+import { invalidDate } from 'app/constants/invalid-date';
 import { WINDOW } from 'app/helpers/window.helper';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 
@@ -89,7 +90,7 @@ export class FormatDateTimePipe implements PipeTransform {
       }
       return format(localDate, `${this.dateFormat} ${this.timeFormat}`);
     } catch {
-      return 'Invalid date';
+      return invalidDate;
     }
   }
 }
