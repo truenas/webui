@@ -177,6 +177,9 @@ export const helptextSharingSmb = {
  a list of supported macros. The connectpath **must** be preset before a client connects.',
   ),
 
+  placeholder_auxsmbconf: T('Additional Parameters String'),
+  tooltip_auxsmbconf: T('String of additional smb4.conf parameters not covered by the system\'s API.'),
+
   actions_basic_mode: T('Basic Mode'),
   actions_advanced_mode: T('Advanced Mode'),
 
