@@ -19,7 +19,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, finalize,
+  combineLatest, filter,
   Observable,
 } from 'rxjs';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
@@ -324,10 +324,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   stop(name: string): void {
-    this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }));
     this.appService.stopApplication(name)
       .pipe(
-        finalize(() => this.loader.close()),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
