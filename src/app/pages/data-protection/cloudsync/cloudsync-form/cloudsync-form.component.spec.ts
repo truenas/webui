@@ -14,8 +14,8 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
-  CloudCredentialsSelectModule,
-} from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
+  CloudCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -87,7 +87,7 @@ describe('CloudSyncFormComponent', () => {
     component: CloudSyncFormComponent,
     imports: [
       SchedulerModule,
-      CloudCredentialsSelectModule,
+      CloudCredentialsSelectComponent,
       ReactiveFormsModule,
     ],
     declarations: [

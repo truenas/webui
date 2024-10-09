@@ -1,11 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { manageConfigurationElements } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.elements';
 import {
   SaveConfigDialogComponent,
@@ -20,6 +28,19 @@ import { AuthService } from 'app/services/auth/auth.service';
   selector: 'ix-manage-configuration-menu',
   templateUrl: './manage-configuration-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatMenuTrigger,
+    UiSearchDirective,
+    IxIconComponent,
+    MatMenu,
+    MatMenuItem,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class ManageConfigurationMenuComponent {
   protected readonly Role = Role;

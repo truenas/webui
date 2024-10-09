@@ -17,7 +17,9 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
+import {
+  SshCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -40,7 +42,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
     component: ReplicationWhatAndWhereComponent,
     imports: [
       ReactiveFormsModule,
-      SshCredentialsSelectModule,
+      SshCredentialsSelectComponent,
     ],
     providers: [
       mockAuth(),

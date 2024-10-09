@@ -13,7 +13,9 @@ import { KeychainCredential } from 'app/interfaces/keychain-credential.interface
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
+import {
+  SshCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -66,7 +68,7 @@ describe('RsyncTaskFormComponent', () => {
     imports: [
       SchedulerModule,
       ReactiveFormsModule,
-      SshCredentialsSelectModule,
+      SshCredentialsSelectComponent,
     ],
     providers: [
       mockProvider(LocaleService, {

@@ -1,4 +1,10 @@
-import { CdkDragEnter, CdkDropListGroup, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CDK_DRAG_CONFIG,
+  CdkDragEnter,
+  CdkDropListGroup,
+  DragDropConfig,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { DOCUMENT } from '@angular/common';
 import {
   Directive,
@@ -17,7 +23,12 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
   selector: '[ixDropGrid]',
   providers: [
     { provide: ixDropGridDirectiveToken, useExisting: this },
+    {
+      provide: CDK_DRAG_CONFIG,
+      useValue: {} as DragDropConfig,
+    },
   ],
+  standalone: true,
 })
 export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGridItemDirective> implements OnInit {
   @Input() ixDropGridModel: T[];

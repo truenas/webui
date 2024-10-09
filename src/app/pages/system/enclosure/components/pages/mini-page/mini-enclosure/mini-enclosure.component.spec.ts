@@ -9,6 +9,7 @@ import {
   DashboardEnclosureElements,
   DashboardEnclosureSlot,
 } from 'app/interfaces/enclosure.interface';
+import { EnclosureSideComponent } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
 import {
   TintingFunction,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
@@ -24,6 +25,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 @Component({
   selector: 'ix-enclosure-side',
   template: '',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class EnclosureSideStubComponent {
@@ -60,9 +62,17 @@ describe('MiniEnclosureComponent', () => {
   } as DashboardEnclosure;
   const createComponent = createComponentFactory({
     component: MiniEnclosureComponent,
-    declarations: [
-      EnclosureSideStubComponent,
+    imports: [
       MockComponent(MiniSlotStatusComponent),
+    ],
+    overrideComponents: [
+      [
+        MiniEnclosureComponent,
+        {
+          remove: { imports: [EnclosureSideComponent] },
+          add: { imports: [EnclosureSideStubComponent] },
+        },
+      ],
     ],
     providers: [
       mockProvider(EnclosureStore, {

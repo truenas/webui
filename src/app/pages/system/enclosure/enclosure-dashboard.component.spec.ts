@@ -9,9 +9,10 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
   EnclosureDashboardComponent,
-} from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
+} from 'app/pages/system/enclosure/enclosure-dashboard.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 describe('EnclosureDashboardComponent', () => {
@@ -21,6 +22,7 @@ describe('EnclosureDashboardComponent', () => {
     shallow: true,
     declarations: [
       MockComponent(EmptyComponent),
+      MockComponent(PageHeaderComponent),
     ],
     componentProviders: [
       mockProvider(EnclosureStore, {

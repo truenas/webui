@@ -1,11 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { MatAnchor } from '@angular/material/button';
+import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ViewElementsMenuComponent } from 'app/pages/system/enclosure/components/enclosure-header/view-elements-menu/view-elements-menu.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -17,6 +23,18 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./enclosure-dashboard.component.scss'],
   providers: [
     EnclosureStore,
+  ],
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    MatAnchor,
+    TestDirective,
+    RouterLink,
+    ViewElementsMenuComponent,
+    RouterOutlet,
+    EmptyComponent,
+    TranslateModule,
+    AsyncPipe,
   ],
 })
 export class EnclosureDashboardComponent {

@@ -1,7 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 
@@ -10,6 +13,12 @@ import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclos
   templateUrl: './enclosure-side-switch.component.html',
   styleUrl: './enclosure-side-switch.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class EnclosureSideSwitchComponent {
   readonly enclosure = input.required<DashboardEnclosure>();

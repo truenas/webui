@@ -134,7 +134,7 @@ export class RsyncTaskListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('play_arrow'),
+          iconName: iconMarker('mdi-play-circle'),
           tooltip: this.translate.instant('Run job'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.runNow(row),

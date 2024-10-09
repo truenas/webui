@@ -1,14 +1,23 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   Subject, map, switchMap,
 } from 'rxjs';
 import {
   filter, shareReplay, startWith, tap,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { storageCardElements } from 'app/pages/system/advanced/storage/storage-card/storage-card.elements';
 import {
@@ -24,6 +33,20 @@ import { AppState } from 'app/store';
   styleUrls: ['../../common-card.scss'],
   templateUrl: './storage-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    MatList,
+    MatListItem,
+    WithLoadingStateDirective,
+    TranslateModule,
+  ],
 })
 export class StorageCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
