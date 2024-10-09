@@ -19,12 +19,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, finalize,
+  combineLatest, filter,
   Observable,
 } from 'rxjs';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -322,10 +321,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   stop(name: string): void {
-    this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }));
     this.appService.stopApplication(name)
       .pipe(
-        finalize(() => this.loader.close()),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -339,17 +336,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   restart(name: string): void {
-    this.loader.open(this.translate.instant('Restarting "{app}"', { app: name }));
     this.appService.restartApplication(name)
       .pipe(
-        finalize(() => this.loader.close()),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
-        if (job.state !== JobState.Running) {
-          this.loader.close();
-        }
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
