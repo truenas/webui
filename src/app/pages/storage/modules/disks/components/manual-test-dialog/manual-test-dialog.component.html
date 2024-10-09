@@ -14,15 +14,15 @@
         }
         <ul class="disks">
           @for (disk of selectedDisksWithSmartSupport; track disk.name) {
-              <ix-test-progress-row
-                [diskName]="disk.name"
-                [diskIdentifier]="disk.identifier"
-                [diskSerial]="disk.serial"
-                [testType]="form.value.type"
-                [loading]="isSubmitted()"
-                [testStartError]="disk.error"
-                [testStarted]="startedTests()"
-              ></ix-test-progress-row>
+            <ix-test-progress-row
+              [diskName]="disk.name"
+              [diskIdentifier]="disk.identifier"
+              [diskSerial]="disk.serial"
+              [testType]="form.value.type"
+              [loading]="isSubmitted()"
+              [testStartError]="disk.error"
+              [testStarted]="startedTests()"
+            ></ix-test-progress-row>
           }
         </ul>
       }

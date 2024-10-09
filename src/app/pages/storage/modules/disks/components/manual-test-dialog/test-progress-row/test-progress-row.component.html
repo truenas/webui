@@ -19,7 +19,7 @@
         <ix-icon name="check_circle" class="green-icon"></ix-icon>
       }
     }
-    @if (testStarted() && !test().finished && !(test().wsError || testStartError())) {
+    @if (loading() && !test().finished && !(test().wsError || testStartError())) {
       <div class="progress-bar">
         <mat-progress-bar
           color="primary" 
