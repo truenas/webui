@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash-es';
 import {
   filter, forkJoin, map, take,
 } from 'rxjs';
@@ -260,7 +259,7 @@ export class DiskListComponent implements OnInit {
 
   private prepareDisks(disks: DiskUi[]): Disk[] {
     return disks.map((disk) => {
-      const newDisk = cloneDeep(disk);
+      const newDisk = { ...disk };
       delete newDisk.selected;
       return newDisk as Disk;
     });
