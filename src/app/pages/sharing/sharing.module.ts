@@ -51,7 +51,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
+import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -113,7 +113,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatStepperModule,
-    DualListModule,
     MatToolbarModule,
     MatExpansionModule,
     MatButtonToggleModule,
@@ -149,6 +148,7 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     NgTemplateOutlet,
     IxTableDetailsRowDirective,
     PageHeaderComponent,
+    DualListboxComponent,
   ],
   declarations: [
     NfsListComponent,

@@ -35,6 +35,16 @@
             </mat-list-item>
             <mat-list-item>
               <span class="label">
+                <strong>{{ 'Threads' | translate }}:</strong>
+              </span>
+              @if (!isLoading()) {
+                {{ '{threadCount, plural, one {# thread} other {# threads} }' | translate: { threadCount: threadCount() } }}
+              } @else {
+                <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+              }
+            </mat-list-item>
+            <mat-list-item>
+              <span class="label">
                 <strong>{{ 'Highest Usage' | translate }}:</strong>
               </span>
               @if (!isLoading()) {

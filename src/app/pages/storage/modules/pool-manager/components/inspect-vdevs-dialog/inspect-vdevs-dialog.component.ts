@@ -1,9 +1,17 @@
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatIconButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
+import { MatNavList, MatListItem } from '@angular/material/list';
+import { TranslateModule } from '@ngx-translate/core';
 import { CreateVdevLayout, VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-vdev/manual-selection-vdev.component';
 import {
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
@@ -19,6 +27,20 @@ import {
   templateUrl: './inspect-vdevs-dialog.component.html',
   styleUrls: ['./inspect-vdevs-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    MatNavList,
+    MatListItem,
+    MatDivider,
+    MatIconButton,
+    MatDialogClose,
+    TestDirective,
+    IxIconComponent,
+    ManualSelectionVdevComponent,
+    TranslateModule,
+  ],
 })
 export class InspectVdevsDialogComponent implements OnInit {
   protected presentTypes: VdevType[] = [];

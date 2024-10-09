@@ -1,10 +1,13 @@
 import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @UntilDestroy()
@@ -13,6 +16,12 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   templateUrl: './custom-layout-applied.component.html',
   styleUrls: ['./custom-layout-applied.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class CustomLayoutAppliedComponent {
   @Input() type: VdevType;

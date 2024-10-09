@@ -3109,6 +3109,25 @@
   {
     "hierarchy": [
       "Storage",
+      "Disks"
+    ],
+    "synonyms": [
+      "Manage Disks"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage",
+      "disks"
+    ],
+    "routerLink": null,
+    "anchor": "storage-disks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
       "Import Pool"
     ],
     "synonyms": [
@@ -3170,25 +3189,6 @@
     ],
     "routerLink": null,
     "anchor": "storage",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "Disks"
-    ],
-    "synonyms": [
-      "Manage Disks"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/storage",
-      "disks"
-    ],
-    "routerLink": null,
-    "anchor": "storage-disks",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -1,12 +1,11 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { BackupCredentialsComponent } from 'app/pages/credentials/backup-credentials/backup-credentials.component';
 import { CertificatesDashComponent } from 'app/pages/credentials/certificates-dash/certificates-dash.component';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
 
-export const routes: Routes = [{
+export const credentialsRoutes: Routes = [{
   path: '',
   data: { title: T('Credentials'), breadcrumb: T('Credentials') },
   children: [
@@ -19,10 +18,11 @@ export const routes: Routes = [{
       path: 'users',
       loadComponent: () => import('app/pages/credentials/users/user-list/user-list.component').then((module) => module.UserListComponent),
       data: { title: T('Users'), breadcrumb: T('Users'), icon: 'group' },
-    }, {
+    },
+    {
       path: 'groups',
-      loadComponent: () => import('app/pages/credentials/groups/group-list/group-list.component').then((module) => module.GroupListComponent),
-      data: { title: T('Groups'), breadcrumb: T('Groups'), icon: 'group_work' },
+      data: { title: T('Groups'), breadcrumb: T('Groups') },
+      loadChildren: () => import('app/pages/credentials/groups/group.routes').then((module) => module.groupRoutes),
     },
     // TODO: Temporary dashboards attached to accounts for now
     {
@@ -52,4 +52,3 @@ export const routes: Routes = [{
     },
   ],
 }];
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

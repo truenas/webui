@@ -12,7 +12,6 @@ import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
-import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { GroupMembersComponent } from 'app/pages/credentials/groups/group-members/group-members.component';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -33,9 +32,8 @@ describe('GroupMembersComponent', () => {
     component: GroupMembersComponent,
     imports: [
       ReactiveFormsModule,
-      DualListModule,
+      DualListboxComponent,
     ],
-    declarations: [DualListboxComponent],
     providers: [
       mockWebSocket([
         mockCall('group.query', fakeGroupDataSource),

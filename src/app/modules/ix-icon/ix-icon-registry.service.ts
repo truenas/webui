@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import iconConfig from 'app/../assets/icons/sprite-config.json';
 
 @Injectable({ providedIn: 'root' })
 export class IxIconRegistry extends MatIconRegistry {
@@ -16,6 +17,6 @@ export class IxIconRegistry extends MatIconRegistry {
   ) {
     super(httpClient, sanitizer, document, errorHandler);
 
-    this.addSvgIconSet(sanitizer.bypassSecurityTrustResourceUrl('assets/icons/sprite.svg'));
+    this.addSvgIconSet(sanitizer.bypassSecurityTrustResourceUrl(iconConfig.iconUrl));
   }
 }

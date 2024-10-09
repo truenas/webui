@@ -4,7 +4,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
 import { SmartTestResultListComponent } from 'app/pages/storage/modules/disks/components/smart-test-result-list/smart-test-result-list.component';
 
-export const routes: Routes = [
+export const diskRoutes: Routes = [
   {
     path: '',
     data: { title: T('Storage') },
@@ -23,4 +23,4 @@ export const routes: Routes = [
   },
 ];
 
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);
+export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(diskRoutes);

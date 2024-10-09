@@ -22,13 +22,13 @@ export class AppRowComponent {
 
   readonly startApp = output();
   readonly stopApp = output();
+  readonly restartApp = output();
   readonly clickStatus = output();
   readonly selectionChange = output();
 
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  readonly hasUpdates = computed(() => this.app().upgrade_available);
   readonly isAppStopped = computed(() => {
     return this.app().state === AppState.Stopped || this.app().state === AppState.Crashed;
   });
@@ -58,6 +58,10 @@ export class AppRowComponent {
 
   stop(): void {
     this.stopApp.emit();
+  }
+
+  restart(): void {
+    this.restartApp.emit();
   }
 
   statusPressed(): void {
