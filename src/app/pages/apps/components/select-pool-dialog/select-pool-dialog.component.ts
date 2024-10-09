@@ -50,10 +50,6 @@ export class SelectPoolDialogComponent implements OnInit {
     private dockerStore: DockerStore,
   ) { }
 
-  get canMigrateApplications(): boolean {
-    return Boolean(this.selectedPool) && this.selectedPool !== this.form.value.pool;
-  }
-
   ngOnInit(): void {
     this.loadPools();
   }
