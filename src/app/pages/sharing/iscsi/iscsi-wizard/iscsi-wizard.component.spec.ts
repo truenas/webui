@@ -44,8 +44,6 @@ describe('IscsiWizardComponent', () => {
     imports: [
       ReactiveFormsModule,
       MatStepperModule,
-    ],
-    declarations: [
       DeviceWizardStepComponent,
       PortalWizardStepComponent,
       InitiatorWizardStepComponent,

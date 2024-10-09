@@ -55,8 +55,6 @@ describe('CloudBackupListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       SearchInput1Component,
-    ],
-    declarations: [
       MockComponents(
         CloudBackupListComponent,
         CloudBackupDetailsComponent,

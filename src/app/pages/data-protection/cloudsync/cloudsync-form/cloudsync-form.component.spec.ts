@@ -89,8 +89,6 @@ describe('CloudSyncFormComponent', () => {
       SchedulerModule,
       CloudCredentialsSelectComponent,
       ReactiveFormsModule,
-    ],
-    declarations: [
       TransferModeExplanationComponent,
     ],
     providers: [

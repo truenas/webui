@@ -1,8 +1,11 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, forwardRef,
 } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatStepperModule } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, merge,
 } from 'rxjs';
@@ -12,11 +15,12 @@ import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-ta
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
-import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync-provider.component';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +28,16 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './cloudsync-wizard.component.html',
   styleUrls: ['./cloudsync-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CloudCredentialService],
+  standalone: true,
+  imports: [
+    CloudSyncProviderComponent,
+    CloudSyncWhatAndWhenComponent,
+    IxModalHeader2Component,
+    MatCardModule,
+    MatStepperModule,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class CloudSyncWizardComponent {
   @ViewChild(forwardRef(() => CloudSyncWhatAndWhenComponent)) whatAndWhen: CloudSyncWhatAndWhenComponent;
