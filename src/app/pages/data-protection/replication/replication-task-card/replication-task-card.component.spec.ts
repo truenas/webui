@@ -147,7 +147,7 @@ describe('ReplicationTaskCardComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 5);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-play-circle' }), 1, 5);
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

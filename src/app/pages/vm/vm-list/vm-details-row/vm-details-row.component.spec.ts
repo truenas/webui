@@ -10,6 +10,7 @@ import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
@@ -130,6 +131,9 @@ describe('VirtualMachineDetailsRowComponent', () => {
     spectator.setInput('vm', stoppedVirtualMachine);
 
     const startButton = await loader.getHarness(MatButtonHarness.with({ text: /Start/ }));
+    const startIcon = await startButton.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
+    expect(await startIcon.getName()).toBe('mdi-play-circle');
+
     await startButton.click();
 
     expect(spectator.inject(VmService).doStart).toHaveBeenCalledWith(stoppedVirtualMachine);
@@ -144,6 +148,10 @@ describe('VirtualMachineDetailsRowComponent', () => {
 
   it('should call service to stop the VM', async () => {
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: /Stop/ }));
+
+    const stopIcon = await stopButton.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
+    expect(await stopIcon.getName()).toBe('mdi-stop-circle');
+
     await stopButton.click();
 
     expect(spectator.inject(VmService).doStop).toHaveBeenCalledWith(virtualMachine);
