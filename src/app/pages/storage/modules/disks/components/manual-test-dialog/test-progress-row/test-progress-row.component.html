@@ -1,7 +1,7 @@
 <div class="list-item">
   <div class="disk-title">
     <span class="disk-name">
-      <h4>{{ diskName() + '(' + diskSerial() + ')' }}</h4>
+      <h4>{{ disk().name + '(' + disk().serial + ')' }}</h4>
       @if (test().wsError || testStartError()) {
         <a
           class="link"

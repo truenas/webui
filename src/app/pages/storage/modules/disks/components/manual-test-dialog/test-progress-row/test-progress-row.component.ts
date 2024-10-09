@@ -8,6 +8,7 @@ import {
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestProgressUi } from 'app/interfaces/smart-test-progress-ui.interface';
 import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -22,9 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTestProgressRowComponent implements OnInit {
-  diskName = input.required<string>();
-  diskIdentifier = input.required<string>();
-  diskSerial = input.required<string>();
+  disk = input.required<Disk>();
   testType = input.required<SmartTestType>();
   loading = input.required<boolean>();
   testStartError = input.required<string>();
@@ -50,9 +49,9 @@ export class IxTestProgressRowComponent implements OnInit {
 
   ngOnInit(): void {
     this.test.set({
-      diskName: this.diskName(),
+      diskName: this.disk().name,
       type: this.testType(),
-      diskIdentifier: this.diskIdentifier(),
+      diskIdentifier: this.disk().identifier,
       wsError: null,
       finished: false,
       progressPercentage: null,
@@ -90,7 +89,7 @@ export class IxTestProgressRowComponent implements OnInit {
   }
 
   private getTestUpdateSubscriber(): Observable<SmartTestProgressUpdate> {
-    const diskName = this.diskName();
+    const diskName = this.disk().name;
     return this.ws.subscribe(`smart.test.progress:${diskName}`).pipe(
       catchError((error: unknown) => {
         this.test.set({

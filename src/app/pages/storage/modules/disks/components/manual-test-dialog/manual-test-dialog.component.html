@@ -15,9 +15,7 @@
         <ul class="disks">
           @for (disk of selectedDisksWithSmartSupport; track disk.name) {
             <ix-test-progress-row
-              [diskName]="disk.name"
-              [diskIdentifier]="disk.identifier"
-              [diskSerial]="disk.serial"
+              [disk]="disk"
               [testType]="form.value.type"
               [loading]="isSubmitted()"
               [testStartError]="disk.error"
