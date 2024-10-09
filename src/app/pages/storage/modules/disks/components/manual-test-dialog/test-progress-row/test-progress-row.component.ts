@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, effect, input, OnInit, signal,
 } from '@angular/core';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   catchError, EMPTY, map, Observable, Subscription, takeWhile, tap,
 } from 'rxjs';
@@ -12,6 +13,8 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestProgressUi } from 'app/interfaces/smart-test-progress-ui.interface';
 import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -21,6 +24,13 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './test-progress-row.component.html',
   styleUrl: './test-progress-row.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxIconComponent,
+    MatProgressBar,
+    TranslateModule,
+    TestDirective,
+  ],
 })
 export class IxTestProgressRowComponent implements OnInit {
   disk = input.required<Disk>();

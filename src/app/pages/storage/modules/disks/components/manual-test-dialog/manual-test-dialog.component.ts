@@ -20,6 +20,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { IxTestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface ManualTestDialogParams {
@@ -47,6 +48,7 @@ export interface ManualTestDialogParams {
     TranslateModule,
     FormatDateTimePipe,
     PercentPipe,
+    IxTestProgressRowComponent,
   ],
 })
 export class ManualTestDialogComponent {
