@@ -2,7 +2,9 @@ import { Location } from '@angular/common';
 import { fakeAsync } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import {
+  Spectator, SpectatorFactory, createComponentFactory, mockProvider,
+} from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -16,42 +18,7 @@ describe('ContainerLogsComponent', () => {
   let spectator: Spectator<ContainerLogsComponent>;
 
   describe('When dialog is set a value', () => {
-    const createComponent = createComponentFactory({
-      component: ContainerLogsComponent,
-      imports: [
-        MockComponent(PageHeaderComponent),
-      ],
-      declarations: [
-        MockComponent(ToolbarSliderComponent),
-      ],
-      providers: [
-        mockProvider(MatDialog, {
-          open: jest.fn(() => ({
-            afterClosed: () => of({
-              tail_lines: 650,
-            } as LogsDetailsDialogComponent['form']['value']),
-          }) as unknown as MatDialogRef<LogsDetailsDialogComponent>),
-        }),
-        mockProvider(WebSocketService, {
-          subscribeToLogs: jest.fn(() => of({
-            fields: {
-              timestamp: '[12:34]',
-              data: 'Some logs.',
-            },
-          })),
-        }),
-        mockAuth(),
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            parent: {
-              params: of({ appId: 'ix-test-app' }),
-            },
-            params: of({ containerId: 'ix-test-container' }),
-          },
-        },
-      ],
-    });
+    const createComponent = createComponentFactoryWithDialogResponse(false);
 
     beforeEach(() => {
       spectator = createComponent();
@@ -80,7 +47,19 @@ describe('ContainerLogsComponent', () => {
   });
 
   describe('When cancel is clicked', () => {
-    const createComponent = createComponentFactory({
+    const createComponent = createComponentFactoryWithDialogResponse(true);
+
+    beforeEach(() => {
+      spectator = createComponent();
+    });
+
+    it('cancelling the dialog should call back method', fakeAsync(() => {
+      expect(spectator.inject(Location).back).toHaveBeenCalled();
+    }));
+  });
+
+  function createComponentFactoryWithDialogResponse(cancel = false): SpectatorFactory<ContainerLogsComponent> {
+    return createComponentFactory({
       component: ContainerLogsComponent,
       imports: [
         MockComponent(PageHeaderComponent),
@@ -89,12 +68,20 @@ describe('ContainerLogsComponent', () => {
         MockComponent(ToolbarSliderComponent),
       ],
       providers: [
+        mockProvider(Location),
         mockProvider(MatDialog, {
           open: jest.fn(() => ({
-            afterClosed: () => of(false),
+            afterClosed: jest.fn(() => {
+              if (cancel) {
+                return of(false);
+              }
+
+              return of({
+                tail_lines: 650,
+              } as LogsDetailsDialogComponent['form']['value']);
+            }),
           }) as unknown as MatDialogRef<LogsDetailsDialogComponent>),
         }),
-        mockProvider(Location),
         mockProvider(WebSocketService, {
           subscribeToLogs: jest.fn(() => of({
             fields: {
@@ -115,13 +102,5 @@ describe('ContainerLogsComponent', () => {
         },
       ],
     });
-
-    beforeEach(() => {
-      spectator = createComponent();
-    });
-
-    it('cancelling the dialog should call back method', fakeAsync(() => {
-      expect(spectator.inject(Location).back).toHaveBeenCalled();
-    }));
-  });
+  }
 });
