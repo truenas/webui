@@ -46,7 +46,9 @@ export class PowerMenuComponent {
   ) { }
 
   onReboot(): void {
-    this.matDialog.open(RebootOrShutdownDialogComponent).afterClosed().pipe(
+    this.matDialog.open(RebootOrShutdownDialogComponent, {
+      width: '400px',
+    }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((reason: string) => {
@@ -58,7 +60,10 @@ export class PowerMenuComponent {
   }
 
   onShutdown(): void {
-    this.matDialog.open(RebootOrShutdownDialogComponent, { data: true }).afterClosed().pipe(
+    this.matDialog.open(RebootOrShutdownDialogComponent, {
+      width: '400px',
+      data: true,
+    }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((reason: string) => {

@@ -43,7 +43,9 @@ describe('PowerMenuComponent', () => {
     const restart = await menu.getItems({ text: /Restart$/ });
     await restart[0].click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialogComponent);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialogComponent, {
+      width: '400px',
+    });
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/reboot'], {
       skipLocationChange: true,
       queryParams: { reason: 'reason' },
@@ -54,7 +56,10 @@ describe('PowerMenuComponent', () => {
     const shutdown = await menu.getItems({ text: /Shut Down$/ });
     await shutdown[0].click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialogComponent, { data: true });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialogComponent, {
+      width: '400px',
+      data: true,
+    });
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/shutdown'], {
       skipLocationChange: true,
       queryParams: { reason: 'reason' },

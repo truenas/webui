@@ -16,6 +16,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
+const customReasonValue = 'CUSTOM_REASON_VALUE';
+
 @UntilDestroy()
 @Component({
   selector: 'ix-reboot-or-shutdown-dialog',
@@ -40,11 +42,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class RebootOrShutdownDialogComponent {
   form = this.fb.group({
     confirm: [false, Validators.requiredTrue],
-    select: [true],
     reason: ['', Validators.required],
+    customReason: ['', Validators.required],
   });
 
   readonly reasonOptions$: Observable<SelectOption[]> = of([
+    {
+      label: this.translate.instant('Custom Reason'),
+      value: customReasonValue,
+    },
     {
       label: this.translate.instant('System Update'),
       tooltip: this.translate.instant('Applying important system or security updates.'),
@@ -115,12 +121,18 @@ export class RebootOrShutdownDialogComponent {
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public isShutdown = false,
   ) {
-    this.form.controls.select.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.form.controls.reason.setValue('');
+    this.form.controls.reason.valueChanges.pipe(untilDestroyed(this)).subscribe((reason) => {
+      if (reason === customReasonValue) {
+        this.form.controls.customReason.enable();
+      } else {
+        this.form.controls.customReason.disable();
+      }
     });
   }
 
   onSubmit(): void {
-    this.dialogRef.close(this.form.value.reason);
+    const formValue = this.form.value;
+    const reason = formValue.reason === customReasonValue ? formValue.customReason : formValue.reason;
+    this.dialogRef.close(reason);
   }
 }
