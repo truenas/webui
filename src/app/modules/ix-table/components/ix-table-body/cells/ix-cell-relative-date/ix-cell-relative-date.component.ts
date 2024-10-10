@@ -43,7 +43,7 @@ export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {
   }
 
   get isInvalidDate(): boolean {
-    return this.date === invalidDate;
+    return this.translate.instant(this.date) === this.translate.instant(invalidDate);
   }
 
   get date(): string {

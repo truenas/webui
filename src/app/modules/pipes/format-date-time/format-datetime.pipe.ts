@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
+import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
 import { distinctUntilChanged } from 'rxjs';
 import { invalidDate } from 'app/constants/invalid-date';
@@ -22,6 +23,7 @@ export class FormatDateTimePipe implements PipeTransform {
   constructor(
     private actions$: Actions,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.checkFormatsFromLocalStorage();
@@ -90,7 +92,7 @@ export class FormatDateTimePipe implements PipeTransform {
       }
       return format(localDate, `${this.dateFormat} ${this.timeFormat}`);
     } catch {
-      return invalidDate;
+      return this.translate.instant(invalidDate);
     }
   }
 }
