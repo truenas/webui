@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import {
@@ -8,7 +9,7 @@ import {
 } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { pick } from 'lodash-es';
+import { isEmpty, pick } from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
@@ -81,6 +82,8 @@ export class VmWizardComponent implements OnInit {
   @ViewChild(NetworkInterfaceStepComponent, { static: true }) networkInterfaceStep: NetworkInterfaceStepComponent;
   @ViewChild(InstallationMediaStepComponent, { static: true }) installationMediaStep: InstallationMediaStepComponent;
   @ViewChild(GpuStepComponent, { static: true }) gpuStep: GpuStepComponent;
+
+  private readonly gpuOptions = toSignal(this.gpuService.getGpuOptions());
 
   protected readonly requiredRoles = [Role.VmWrite];
 
@@ -285,13 +288,28 @@ export class VmWizardComponent implements OnInit {
   private getGpuRequests(vm: VirtualMachine): Observable<unknown> {
     const gpusIds = this.gpuForm.gpus as unknown as string[];
 
-    const pciIdsRequests$ = gpusIds.map((gpu) => {
-      return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
-    });
+    return this.ws.call('system.advanced.update_gpu_pci_ids', [gpusIds]).pipe(
+      switchMap(() => this.ws.call('system.advanced.get_gpu_pci_choices')),
+      map((choices) => {
+        if (isEmpty(choices)) {
+          return [];
+        }
+        const pciIds: string[] = [];
+        const gpuOptions = this.gpuOptions();
+        const selectedGpusDesc: string[] = gpuOptions.filter(
+          (gpuOption) => gpusIds.includes(gpuOption.value.toString()),
+        ).map(
+          (option) => `${option.label} [${option.value}]`,
+        );
 
-    return forkJoin(pciIdsRequests$).pipe(
+        for (const selectedGpuDesc of selectedGpusDesc) {
+          pciIds.push(choices[selectedGpuDesc]);
+        }
+
+        return pciIds.flat();
+      }),
+    ).pipe(
       defaultIfEmpty([]),
-      map((pciIds) => pciIds.flat()),
       switchMap((pciIds) => forkJoin([
         this.vmGpuService.updateVmGpus(vm, gpusIds.concat(pciIds)),
         this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
