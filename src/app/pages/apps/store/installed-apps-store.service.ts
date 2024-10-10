@@ -98,7 +98,10 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
           repeat({
             // TODO: NAS-131676. Remove this workaround after the bug is fixed.
             delay: () => this.appsService.getInstalledAppsUpdates().pipe(
-              filter((event) => event.msg === IncomingApiMessageType.Added && !('fields' in event)),
+              filter((event) => {
+                return (event.msg === IncomingApiMessageType.Added && !('fields' in event))
+                 || (event.msg === IncomingApiMessageType.Changed && event.fields.custom_app);
+              }),
               tap(() => this.patchState({ isLoading: true })),
               delay(5000),
             ),
