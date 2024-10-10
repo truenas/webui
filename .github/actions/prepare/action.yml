@@ -10,7 +10,7 @@ runs:
         node-version: '20'
         cache: 'yarn'
     - name: Cache Jest cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: jest-cache
       with:
         path: .jest/cache
