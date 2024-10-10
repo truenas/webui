@@ -7,6 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { FormChangeGuardForSlideInDirective } from 'app/directives/form-change-guard/form-change-guard-for-slide-in.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextStaticRoutes } from 'app/helptext/network/static-routes/static-routes';
@@ -41,6 +42,7 @@ import { WebSocketService } from 'app/services/ws.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    FormChangeGuardForSlideInDirective,
   ],
 })
 export class StaticRouteFormComponent implements OnInit {

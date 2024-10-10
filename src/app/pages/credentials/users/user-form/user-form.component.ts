@@ -15,6 +15,7 @@ import {
   debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { FormChangeGuardForSlideInDirective } from 'app/directives/form-change-guard/form-change-guard-for-slide-in.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -88,6 +89,7 @@ const defaultHomePath = '/var/empty';
     MatButton,
     TestDirective,
     TranslateModule,
+    FormChangeGuardForSlideInDirective,
   ],
 })
 export class UserFormComponent implements OnInit {
