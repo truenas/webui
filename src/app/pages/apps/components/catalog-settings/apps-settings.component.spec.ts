@@ -4,26 +4,40 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { Catalog } from 'app/interfaces/catalog.interface';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { DockerConfig } from 'app/enums/docker-config.interface';
+import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
+import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('CatalogEditFormComponent', () => {
-  let spectator: Spectator<CatalogSettingsComponent>;
+  let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
+  const dockerConfig = {
+    address_pools: [
+      { base: '172.17.0.0/12', size: 12 },
+    ],
+    enable_image_updates: false,
+  } as DockerConfig;
+
   const createComponent = createComponentFactory({
-    component: CatalogSettingsComponent,
+    component: AppsSettingsComponent,
     imports: [
       ReactiveFormsModule,
+      IxIpInputWithNetmaskComponent,
     ],
     providers: [
       mockWebSocket([
@@ -32,14 +46,17 @@ describe('CatalogEditFormComponent', () => {
         mockCall('catalog.config', {
           label: 'TrueNAS',
           preferred_trains: ['test'],
-        } as Catalog),
+        } as CatalogConfig),
+        mockJob('docker.update', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
       }),
-      mockProvider(AppsStore),
+      mockProvider(AppsStore, {
+        loadCatalog: jest.fn(() => of({})),
+      }),
       mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
@@ -53,6 +70,8 @@ describe('CatalogEditFormComponent', () => {
           mockProvider(DockerStore, {
             nvidiaDriversInstalled$: of(false),
             lacksNvidiaDrivers$: of(false),
+            dockerConfig$: of(dockerConfig),
+            reloadDockerConfig: jest.fn(() => of({})),
           }),
         ],
       });
@@ -74,7 +93,7 @@ describe('CatalogEditFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       const values = await form.getValues();
 
-      expect(values).toEqual({
+      expect(values).toMatchObject({
         'Preferred Trains': ['test'],
       });
     });
@@ -104,6 +123,8 @@ describe('CatalogEditFormComponent', () => {
               nvidiaDriversInstalled$: of(false),
               lacksNvidiaDrivers$: of(true),
               setDockerNvidia: jest.fn(() => of(null)),
+              dockerConfig$: of(dockerConfig),
+              reloadDockerConfig: jest.fn(() => of({})),
             }),
           ],
         });
@@ -114,7 +135,7 @@ describe('CatalogEditFormComponent', () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
-        expect(values).toEqual({
+        expect(values).toMatchObject({
           'Install NVIDIA Drivers': false,
           'Preferred Trains': ['test'],
         });
@@ -146,6 +167,8 @@ describe('CatalogEditFormComponent', () => {
             mockProvider(DockerStore, {
               nvidiaDriversInstalled$: of(true),
               lacksNvidiaDrivers$: of(false),
+              dockerConfig$: of(dockerConfig),
+              reloadDockerConfig: jest.fn(() => of({})),
             }),
           ],
         });
@@ -156,10 +179,67 @@ describe('CatalogEditFormComponent', () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
-        expect(values).toEqual({
+        expect(values).toMatchObject({
           'Install NVIDIA Drivers': true,
           'Preferred Trains': ['test'],
         });
+      });
+    });
+
+    describe('other docker settings', () => {
+      beforeEach(() => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(DockerStore, {
+              nvidiaDriversInstalled$: of(true),
+              lacksNvidiaDrivers$: of(false),
+              dockerConfig$: of(dockerConfig),
+              reloadDockerConfig: jest.fn(() => of({})),
+              setDockerNvidia: jest.fn(() => of(null)),
+            }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      });
+
+      it('shows current docker settings for address pools and image updates', async () => {
+        const form = await loader.getHarness(IxFormHarness);
+        const values = await form.getValues();
+
+        expect(values).toMatchObject({
+          'Check for docker image updates': false,
+          Base: '172.17.0.0/12',
+          Size: '12',
+        });
+      });
+
+      it('updates docker settings when form is edited', async () => {
+        const form = await loader.getHarness(IxFormHarness);
+        await form.fillForm({
+          'Check for docker image updates': true,
+        });
+
+        const addressPoolList = await loader.getHarness(IxListHarness.with({ label: 'Address Pools' }));
+
+        await addressPoolList.pressAddButton();
+
+        const newAddressPool = await addressPoolList.getLastListItem();
+        await newAddressPool.fillForm({
+          Base: '173.17.0.0/12',
+          Size: 12,
+        });
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('docker.update', [{
+          enable_image_updates: true,
+          address_pools: [
+            { base: '172.17.0.0/12', size: 12 },
+            { base: '173.17.0.0/12', size: 12 },
+          ],
+        }]);
+        expect(spectator.inject(DockerStore).reloadDockerConfig).toHaveBeenCalled();
       });
     });
   });
