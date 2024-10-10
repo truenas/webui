@@ -18,7 +18,6 @@ import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -68,7 +67,6 @@ export class IsolatedGpusFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private gpuValidator: IsolatedGpuValidatorService,
-    private gpuService: GpuService,
     private snackbar: SnackbarService,
     private chainedRef: ChainedRef<unknown>,
   ) { }
