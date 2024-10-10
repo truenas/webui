@@ -3,9 +3,10 @@
 }
 
 .disks-list {
+  margin-bottom: 20px;
   max-height: 50vh;
   overflow: auto;
-  width: 320px;
+  padding-right: 20px;
 }
 
 .started-tests {

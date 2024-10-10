@@ -1,0 +1,52 @@
+.list-item {
+  display: list-item;
+  margin-bottom: 10px;
+}
+
+.disk-title {
+  direction: row;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+  width: 100%;
+}
+
+.disk-name {
+  align-items: center;
+  display: flex;
+  width: fit-content;
+
+  a {
+    margin-left: 5px;
+  }
+
+  h4 {
+    margin-right: 10px;
+    white-space: nowrap;
+  }
+}
+
+.link {
+  color: var(--primary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.red-icon {
+  color: var(--red);
+}
+
+.green-icon {
+  color: var(--green);
+}
+
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 50%;
+}
+
+mat-progress-bar {
+  height: 2px;
+}
