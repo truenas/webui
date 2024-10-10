@@ -310,10 +310,12 @@ export class VmWizardComponent implements OnInit {
       }),
     ).pipe(
       defaultIfEmpty([]),
-      switchMap((pciIds) => forkJoin([
-        this.vmGpuService.updateVmGpus(vm, gpusIds.concat(pciIds)),
-        this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
-      ])),
+      switchMap((pciIds) => {
+        return forkJoin([
+          this.vmGpuService.updateVmGpus(vm, pciIds),
+          this.gpuService.addIsolatedGpuPciIds(pciIds),
+        ]);
+      }),
     );
   }
 

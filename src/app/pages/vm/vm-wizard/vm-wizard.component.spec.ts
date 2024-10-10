@@ -94,6 +94,10 @@ describe('VmWizardComponent', () => {
           eno2: 'eno2',
         }),
         mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
+        mockCall('system.advanced.update_gpu_pci_ids'),
+        mockCall('system.advanced.get_gpu_pci_choices', {
+          'GeForce GTX 1080 [0000:03:00.0]': '0000:03:00.0',
+        }),
       ]),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
@@ -319,8 +323,8 @@ describe('VmWizardComponent', () => {
         web: true,
       },
     }]);
-    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0', '10DE:1401']);
-    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0', '10DE:1401']);
+    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0']);
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0']);
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });
