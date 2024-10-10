@@ -2,7 +2,7 @@
   @for (column of displayedColumns; track column; let idx = $index) {
     <th
       [ngClass]="column.cssClass || ''"
-      [matTooltip]="column.title"
+      [matTooltip]="column.toolTip ? column.toolTip : column.title"
       (click)="onSort(idx)"
     >
       <div class="title-container" [ngStyle]="{ cursor: !column.disableSorting ? 'pointer' : 'auto' }">
