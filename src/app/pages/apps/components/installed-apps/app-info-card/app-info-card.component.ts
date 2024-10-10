@@ -20,12 +20,14 @@ import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -80,6 +82,7 @@ export class AppInfoCardComponent {
     private translate: TranslateService,
     private router: Router,
     private installedAppsStore: InstalledAppsStore,
+    private slideIn: IxSlideInService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -129,7 +132,11 @@ export class AppInfoCardComponent {
 
   editButtonPressed(): void {
     const app = this.app();
-    this.router.navigate(['/apps', 'installed', app.metadata.train, app.id, 'edit']);
+    if (app.custom_app) {
+      this.slideIn.open(CustomAppFormComponent, { data: app });
+    } else {
+      this.router.navigate(['/apps', 'installed', app.metadata.train, app.id, 'edit']);
+    }
   }
 
   deleteButtonPressed(): void {

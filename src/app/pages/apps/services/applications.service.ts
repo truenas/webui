@@ -3,7 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY,
   Observable, OperatorFunction, filter, map, pipe,
-  shareReplay,
   switchMap,
 } from 'rxjs';
 import { customApp } from 'app/constants/catalog.constants';
@@ -74,9 +73,7 @@ export class ApplicationsService {
   }
 
   getAllApps(): Observable<App[]> {
-    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]).pipe(
-      shareReplay({ bufferSize: 1, refCount: true }),
-    );
+    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]);
   }
 
   getApp(name: string): Observable<App[]> {
