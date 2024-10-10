@@ -46,14 +46,23 @@
             ></ix-input>
           }
           @if (form.controls.folder.enabled) {
-            <ix-explorer
-              formControlName="folder"
-              root="/"
-              [label]="helptext.folder_placeholder | translate"
-              [tooltip]="helptext.folder_tooltip | translate"
-              [nodeProvider]="bucketNodeProvider"
-              [required]="true"
-            ></ix-explorer>
+            @if (isNewBucketOptionSelected) {
+              <ix-input
+                formControlName="folder"
+                [label]="helptext.folder_placeholder | translate"
+                [tooltip]="helptext.folder_tooltip | translate"
+                [required]="true"
+              ></ix-input>
+            } @else {
+              <ix-explorer
+                formControlName="folder"
+                root="/"
+                [label]="helptext.folder_placeholder | translate"
+                [tooltip]="helptext.folder_tooltip | translate"
+                [nodeProvider]="bucketNodeProvider"
+                [required]="true"
+              ></ix-explorer>
+            }
           }
         </ix-fieldset>
         <ix-fieldset
