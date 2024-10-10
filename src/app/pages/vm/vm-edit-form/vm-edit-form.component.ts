@@ -8,7 +8,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, forkJoin, of, switchMap,
+  Observable, forkJoin, map, of, switchMap,
   tap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -106,7 +106,11 @@ export class VmEditFormComponent implements OnInit {
   cpuModeOptions$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   cpuModelOptions$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
   gpuOptions$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(
-    choicesToOptions(true),
+    map((choices) => {
+      return Object.entries(choices).map(
+        ([value, label]) => ({ value: label, label: value }),
+      );
+    }),
     tap((options) => this.gpuOptions.set(options)),
   );
 

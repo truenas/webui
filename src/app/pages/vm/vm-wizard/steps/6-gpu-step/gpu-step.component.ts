@@ -5,7 +5,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { map } from 'rxjs';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -42,7 +42,13 @@ export class GpuStepComponent implements SummaryProvider {
   });
 
   readonly helptext = helptextVmWizard;
-  readonly gpuOptions$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(choicesToOptions(true));
+  readonly gpuOptions$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(
+    map((choices) => {
+      return Object.entries(choices).map(
+        ([value, label]) => ({ value: label, label: value }),
+      );
+    }),
+  );
 
   constructor(
     private formBuilder: FormBuilder,

@@ -8,10 +8,10 @@ import { MapOption, Option } from 'app/interfaces/option.interface';
  * Convert choices to options
  * @returns Option[]
  */
-export function choicesToOptions(reverseValueAndLabels = false): OperatorFunction<Choices, Option[]> {
+export function choicesToOptions(): OperatorFunction<Choices, Option[]> {
   return map((choices) => {
     return Object.entries(choices).map(
-      ([value, label]) => (reverseValueAndLabels ? ({ label: value, value: label }) : ({ label, value })),
+      ([value, label]) => ({ label, value }),
     );
   });
 }

@@ -7,10 +7,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { take } from 'rxjs';
+import { map, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -56,7 +55,11 @@ export class IsolatedGpusFormComponent implements OnInit {
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });
-  readonly options$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(choicesToOptions(true));
+  readonly options$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(map((choices) => {
+    return Object.entries(choices).map(
+      ([value, label]) => ({ value: label, label: value }),
+    );
+  }));
 
   constructor(
     protected ws: WebSocketService,
