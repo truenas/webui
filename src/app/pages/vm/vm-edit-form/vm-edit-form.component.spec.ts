@@ -79,6 +79,11 @@ describe('VmEditFormComponent', () => {
         }),
         mockCall('vm.update'),
         mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
+        mockCall('system.advanced.update_gpu_pci_ids'),
+        mockCall('system.advanced.get_gpu_pci_choices', {
+          'GeForce [0000:02:00.0]': '0000:02:00.0',
+          'Intel Arc [0000:03:00.0]': '0000:03:00.0',
+        }),
       ]),
       mockAuth(),
       mockProvider(DialogService),
@@ -250,7 +255,7 @@ describe('VmEditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0', '10DE:1401']);
-    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0', '10DE:1401']);
+    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0']);
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0']);
   });
 });
