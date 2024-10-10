@@ -43,7 +43,8 @@ export class IxTestProgressRowComponent implements OnInit {
 
   readonly subscribeTestEffect = effect(() => {
     const testStarted = this.testStarted();
-    if (testStarted) {
+    const testStartError = this.testStartError();
+    if (testStarted && !testStartError) {
       this.subscribeToTest();
     }
   });

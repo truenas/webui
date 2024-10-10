@@ -12,12 +12,10 @@
         </a>
       }
     </span>
-    @if (test().finished) {
-      @if (test().wsError || testStartError()) {
-        <ix-icon name="error" class="red-icon"></ix-icon>
-      } @else {
-        <ix-icon name="check_circle" class="green-icon"></ix-icon>
-      }
+    @if (test().wsError || testStartError()) {
+      <ix-icon name="error" class="red-icon"></ix-icon>
+    } @else if (test().finished) {
+      <ix-icon name="check_circle" class="green-icon"></ix-icon>
     }
     @if (loading() && !test().finished && !(test().wsError || testStartError())) {
       <div class="progress-bar">
