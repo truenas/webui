@@ -34,6 +34,7 @@
       @if (shouldShowResetInput() && !isValueFromOptions(ixInput.value)) {
         <ix-icon
           name="mdi-close-circle"
+          class="reset-icon"
           (click)="resetInput()"
         ></ix-icon>
       } @else {

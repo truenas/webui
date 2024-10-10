@@ -17,8 +17,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
-import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
+import {
+  CloudCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import {
+  SshCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -135,8 +139,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatTooltipModule,
     MatCardModule,
     TranslateModule,
-    CloudCredentialsSelectModule,
-    SshCredentialsSelectModule,
     SchedulerModule,
     MatButtonModule,
     MatDialogModule,
@@ -178,6 +180,8 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     IxTableCellDirective,
     TestDirective,
     PageHeaderComponent,
+    SshCredentialsSelectComponent,
+    CloudCredentialsSelectComponent,
   ],
   declarations: [
     SnapshotTaskListComponent,

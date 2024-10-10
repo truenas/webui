@@ -70,7 +70,7 @@
       [disabled]="inProgress()"
       (click)="start(); $event.stopPropagation()"
     >
-      <ix-icon name="mdi-play"></ix-icon>
+      <ix-icon name="mdi-play-circle"></ix-icon>
     </button>
   } @else {
     <button
@@ -91,7 +91,7 @@
       [matTooltip]="'Stop' | translate"
       (click)="stop(); $event.stopPropagation()"
     >
-      <ix-icon name="mdi-stop"></ix-icon>
+      <ix-icon name="mdi-stop-circle"></ix-icon>
     </button>
   }
 </div>

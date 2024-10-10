@@ -24,9 +24,9 @@ import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
+import { JobsListComponent } from 'app/pages/jobs/jobs-list.component';
 import { DownloadService } from 'app/services/download.service';
 import { LocaleService } from 'app/services/locale.service';
-import { JobsListComponent } from './jobs-list.component';
 
 const fakeJobDataSource: Job[] = [{
   abortable: true,

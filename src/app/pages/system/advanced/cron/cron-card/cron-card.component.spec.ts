@@ -103,7 +103,7 @@ describe('CronCardComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    const runNowButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'play_arrow' }), 'root');
+    const runNowButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-play-circle' }), 'root');
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

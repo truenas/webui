@@ -30,9 +30,6 @@ describe('SaveDebugButtonComponent', () => {
           afterClosed: () => of(undefined),
         })),
       }),
-      mockProvider(DatePipe, {
-        transform: () => '20220524160228',
-      }),
       mockProvider(MatDialogRef),
       mockProvider(DownloadService, {
         downloadUrl: jest.fn(() => of('')),
@@ -52,6 +49,11 @@ describe('SaveDebugButtonComponent', () => {
         ],
       }),
       mockAuth(),
+    ],
+    componentProviders: [
+      mockProvider(DatePipe, {
+        transform: () => '20220524160228',
+      }),
     ],
   });
 

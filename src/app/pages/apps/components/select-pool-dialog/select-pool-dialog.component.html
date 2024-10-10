@@ -9,13 +9,6 @@
     [options]="pools$"
   ></ix-select>
 
-  @if (canMigrateApplications) {
-    <ix-checkbox
-      formControlName="migrateApplications"
-      [label]="'Migrate applications to the new pool' | translate"
-    ></ix-checkbox>
-  }
-
   <ix-form-actions>
     <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}

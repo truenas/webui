@@ -1,10 +1,15 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton, MatAnchor } from '@angular/material/button';
+import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
@@ -12,6 +17,14 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AclEditorListComponent } from 'app/pages/datasets/modules/permissions/components/acl-editor-list/acl-editor-list.component';
+import { EditNfsAceComponent } from 'app/pages/datasets/modules/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
+import { EditPosixAceComponent } from 'app/pages/datasets/modules/permissions/components/edit-posix-ace/edit-posix-ace.component';
 import {
   SaveAsPresetModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
@@ -27,6 +40,7 @@ import {
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
+import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-editor-save-controls.component';
 
 @UntilDestroy()
 @Component({
@@ -34,6 +48,28 @@ import { UserService } from 'app/services/user.service';
   templateUrl: 'dataset-acl-editor.component.html',
   styleUrls: ['./dataset-acl-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatProgressSpinner,
+    MatCardHeader,
+    MatCardTitle,
+    ReactiveFormsModule,
+    IxComboboxComponent,
+    IxCheckboxComponent,
+    AclEditorListComponent,
+    MatButton,
+    TestDirective,
+    IxIconComponent,
+    AclEditorSaveControlsComponent,
+    MatAnchor,
+    RouterLink,
+    RequiresRolesDirective,
+    EditNfsAceComponent,
+    EditPosixAceComponent,
+    TranslateModule,
+    CastPipe,
+  ],
 })
 export class DatasetAclEditorComponent implements OnInit {
   datasetPath: string;

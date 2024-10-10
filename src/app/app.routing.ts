@@ -44,7 +44,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'system',
-        loadChildren: () => import('./pages/system/system.module').then((module) => module.SystemModule),
+        loadChildren: () => import('./pages/system/system.routes').then((module) => module.systemRoutes),
         data: { title: T('System'), breadcrumb: T('System') },
       },
       {
@@ -124,7 +124,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'jobs',
-        loadChildren: () => import('./pages/jobs/jobs-list.module').then((module) => module.JobsListModule),
+        loadComponent: () => import('./pages/jobs/jobs-list.component').then((module) => module.JobsListComponent),
         data: { title: T('Jobs'), breadcrumb: T('Jobs') },
       },
       {
