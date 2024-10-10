@@ -120,13 +120,13 @@ describe('SmartTestResultListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Disk', 'Description', 'Status', 'Remaining', 'Lifetime', 'LBA of First Error'],
-      ['sda', 'Background long', 'SUCCESS', '0%', '15959', 'No errors'],
-      ['sda', 'Background short', 'SUCCESS', '50%', '15929', 'No errors'],
-      ['sda', 'Background short', 'SUCCESS', 'Completed', '16939', 'No errors'],
-      ['sdb', 'Background long', 'SUCCESS', 'Completed', '15959', 'No errors'],
-      ['sdb', 'Background short', 'SUCCESS', '0.5%', '15929', 'No errors'],
-      ['sdb', 'Background short', 'SUCCESS', '0%', '16939', 'No errors'],
+      ['Disk', 'Description', 'Status', 'Remaining', 'Power On Hours Ago', 'LBA of First Error'],
+      ['sda', 'Background long', 'SUCCESS', '0%', 'N/A', 'No errors'],
+      ['sda', 'Background short', 'SUCCESS', '50%', 'N/A', 'No errors'],
+      ['sda', 'Background short', 'SUCCESS', 'Completed', 'N/A', 'No errors'],
+      ['sdb', 'Background long', 'SUCCESS', 'Completed', 'N/A', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', '0.5%', 'N/A', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', '0%', 'N/A', 'No errors'],
     ];
 
     const cells = await table.getCellTexts();
