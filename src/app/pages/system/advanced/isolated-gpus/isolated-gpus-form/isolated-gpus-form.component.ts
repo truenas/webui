@@ -10,6 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -55,7 +56,7 @@ export class IsolatedGpusFormComponent implements OnInit {
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });
-  readonly options$ = this.gpuService.getGpuOptions();
+  readonly options$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(choicesToOptions(true));
 
   constructor(
     protected ws: WebSocketService,
