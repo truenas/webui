@@ -171,7 +171,7 @@ describe('VmEditFormComponent', () => {
 
       'Hide from MSR': false,
       'Ensure Display Device': true,
-      GPUs: ['GeForce'],
+      GPUs: ['GeForce [0000:02:00.0]'],
     });
   });
 
@@ -249,7 +249,7 @@ describe('VmEditFormComponent', () => {
 
   it('updates GPU devices when form is edited and saved', async () => {
     await form.fillForm({
-      GPUs: ['Intel Arc'],
+      GPUs: ['Intel Arc [0000:03:00.0]'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
