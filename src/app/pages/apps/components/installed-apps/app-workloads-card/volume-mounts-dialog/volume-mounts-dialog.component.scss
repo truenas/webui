@@ -21,12 +21,15 @@
 
   th,
   td {
+    max-width: 20vw;
+    padding: 0 8px 8px 0;
     text-align: left;
     vertical-align: top;
   }
 }
 
 .path {
+  min-width: 15vw;
   word-break: break-all;
   word-wrap: break-word;
 }

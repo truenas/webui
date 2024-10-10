@@ -58,6 +58,7 @@ export class AppWorkloadsCardComponent {
 
   volumeButtonPressed(containerDetails: AppContainerDetails): void {
     this.matDialog.open(VolumeMountsDialogComponent, {
+      minWidth: '40vw',
       data: containerDetails,
     });
   }
