@@ -286,7 +286,6 @@
     "./src/app/interfaces/cloudsync-credential.interface.ts",
     "./src/app/interfaces/cloudsync-provider.interface.ts",
     "./src/app/interfaces/config-reset-params.interface.ts",
-    "./src/app/interfaces/container-config.interface.ts",
     "./src/app/interfaces/container-image.interface.ts",
     "./src/app/interfaces/core-bulk.interface.ts",
     "./src/app/interfaces/core-download.interface.ts",
