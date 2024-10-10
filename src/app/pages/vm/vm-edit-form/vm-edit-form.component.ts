@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -8,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, forkJoin, map, of, switchMap,
+  tap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -18,6 +20,7 @@ import {
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { Option } from 'app/interfaces/option.interface';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -96,12 +99,13 @@ export class VmEditFormComponent implements OnInit {
     gpus: [[] as string[], [], [this.gpuValidator.validateGpu]],
   });
 
+  private readonly gpuOptions = signal<Option[]>([]);
   isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
   bootloaderOptions$ = this.ws.call('vm.bootloader_options').pipe(choicesToOptions());
   cpuModeOptions$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   cpuModelOptions$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
-  gpuOptions$ = this.gpuService.getGpuOptions();
+  gpuOptions$ = this.gpuService.getGpuOptions().pipe(tap((options) => this.gpuOptions.set(options)));
 
   readonly helptext = helptextVmWizard;
 
@@ -163,20 +167,30 @@ export class VmEditFormComponent implements OnInit {
     }
 
     const gpusIds = this.form.value.gpus;
-
-    const pciIdsRequests$ = gpusIds.map((gpu) => {
-      return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
-    });
-
     let updateVmRequest$: Observable<unknown>;
 
-    if (pciIdsRequests$.length) {
-      updateVmRequest$ = forkJoin(pciIdsRequests$).pipe(
-        map((pciIds) => pciIds.flat()),
+    if (gpusIds.length) {
+      updateVmRequest$ = this.ws.call('system.advanced.update_gpu_pci_ids', [gpusIds]).pipe(
+        switchMap(() => this.ws.call('system.advanced.get_gpu_pci_choices')),
+        map((choices) => {
+          const pciIds: string[] = [];
+          const gpuOptions = this.gpuOptions();
+          const selectedGpusDesc: string[] = gpuOptions.filter(
+            (gpuOption) => gpusIds.includes(gpuOption.value.toString()),
+          ).map(
+            (option) => `${option.label} [${option.value}]`,
+          );
+
+          for (const selectedGpuDesc of selectedGpusDesc) {
+            pciIds.push(choices[selectedGpuDesc]);
+          }
+
+          return pciIds.flat();
+        }),
         switchMap((pciIds) => forkJoin([
           this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
-          this.vmGpuService.updateVmGpus(this.existingVm, gpusIds.concat(pciIds)),
-          this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
+          this.vmGpuService.updateVmGpus(this.existingVm, pciIds),
+          this.gpuService.addIsolatedGpuPciIds(pciIds),
         ])),
       );
     } else {
