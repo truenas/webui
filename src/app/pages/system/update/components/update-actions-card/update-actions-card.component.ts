@@ -322,7 +322,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private saveConfigurationIfNecessary(): Observable<void> {
     if (this.wasConfigurationSaved) {
-      return of();
+      return of(null);
     }
 
     return this.matDialog.open(SaveConfigDialogComponent, {
