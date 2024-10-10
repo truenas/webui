@@ -182,6 +182,7 @@ describe('DiskListComponent', () => {
         selectedDisks: [fakeDisk],
         diskIdsWithSmart: [fakeDisk.identifier],
       },
+      width: '600px',
     });
   });
 
