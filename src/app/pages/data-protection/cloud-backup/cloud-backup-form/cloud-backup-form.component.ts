@@ -43,6 +43,10 @@ export class CloudBackupFormComponent implements OnInit {
     return !this.editingTask;
   }
 
+  get isNewBucketOptionSelected(): boolean {
+    return this.form.value.bucket === newOption;
+  }
+
   get title(): string {
     return this.isNew
       ? this.translate.instant('Add TrueCloud Backup Task')
@@ -245,7 +249,7 @@ export class CloudBackupFormComponent implements OnInit {
     this.isLoading = true;
 
     let createBucket$: Observable<unknown> = of(null);
-    if (!!this.form.value.bucket_input && this.form.value.bucket === newOption) {
+    if (!!this.form.value.bucket_input && this.isNewBucketOptionSelected) {
       createBucket$ = this.ws.call('cloudsync.create_bucket', [this.form.value.credentials, this.form.value.bucket_input]);
     }
 
@@ -279,7 +283,7 @@ export class CloudBackupFormComponent implements OnInit {
   private prepareData(formValue: FormValue): CloudBackupUpdate {
     const attributes: CloudBackupUpdate['attributes'] = {
       folder: formValue.folder,
-      bucket: this.form.value.bucket_input && this.form.value.bucket === newOption
+      bucket: this.form.value.bucket_input && this.isNewBucketOptionSelected
         ? this.form.value.bucket_input
         : formValue.bucket,
     };
