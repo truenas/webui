@@ -63,6 +63,11 @@
   @media #{$media-lt-sm} {
     display: block !important;
   }
+
+  mat-card {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
 }
 
 .card-list-item .value {

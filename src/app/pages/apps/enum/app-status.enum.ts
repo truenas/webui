@@ -6,6 +6,7 @@ export enum AppStatus {
   Deploying = 'DEPLOYING',
   Stopped = 'STOPPED',
   Stopping = 'STOPPING',
+  Crashed = 'CRASHED',
 }
 
 export const appStatusIcons = new Map<AppStatus, string>([
@@ -14,6 +15,7 @@ export const appStatusIcons = new Map<AppStatus, string>([
   [AppStatus.Deploying, 'mdi-progress-wrench'],
   [AppStatus.Stopping, 'mdi-progress-wrench'],
   [AppStatus.Stopped, 'mdi-stop-circle'],
+  [AppStatus.Crashed, 'mdi-stop-circle'],
 ]);
 
 export const appStatusLabels = new Map<AppStatus, string>([
@@ -22,4 +24,5 @@ export const appStatusLabels = new Map<AppStatus, string>([
   [AppStatus.Deploying, T('Deploying')],
   [AppStatus.Stopped, T('Stopped')],
   [AppStatus.Stopping, T('Stopping')],
+  [AppStatus.Crashed, T('Crashed')],
 ]);
