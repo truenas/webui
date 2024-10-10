@@ -9,7 +9,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
+import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -57,6 +57,6 @@ export class AppSettingsButtonComponent {
   }
 
   manageCatalog(): void {
-    this.ixSlideInService.open(CatalogSettingsComponent, { injector: this.injector });
+    this.ixSlideInService.open(AppsSettingsComponent, { injector: this.injector });
   }
 }

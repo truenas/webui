@@ -73,6 +73,7 @@ export interface App {
   portals: Record<string, string>;
   version: string;
   migrated: boolean;
+  custom_app: boolean;
   /**
    * Present with `retrieve_config` query param.
    */
@@ -132,7 +133,18 @@ export interface AppCreate {
 }
 
 export interface AppUpdate {
-  values: Record<string, ChartFormValue>;
+  /**
+   * Required when `custom_app = false`
+   */
+  values?: Record<string, ChartFormValue>;
+  /**
+   * Required attr when `custom_app = true`
+   */
+  custom_compose_config?: Record<string, unknown>;
+  /**
+   * Optional attr when `custom_app = true`
+   */
+  custom_compose_config_string?: string;
 }
 
 export interface AppUpgrade {
