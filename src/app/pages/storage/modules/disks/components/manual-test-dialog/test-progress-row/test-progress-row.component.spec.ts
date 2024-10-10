@@ -48,7 +48,7 @@ describe('IxTestProgressRowComponent', () => {
 
     it('shows disk name', () => {
       const h4 = spectator.query('h4');
-      expect(h4.textContent).toBe('sdd(serial)');
+      expect(h4.textContent).toBe('sdd (serial)');
     });
 
     it('doesnt show progress bar', () => {
@@ -83,7 +83,7 @@ describe('IxTestProgressRowComponent', () => {
 
     it('shows disk name', () => {
       const h4 = spectator.query('h4');
-      expect(h4.textContent).toBe('sdd(serial)');
+      expect(h4.textContent).toBe('sdd (serial)');
     });
 
     it('shows progress bar', () => {
