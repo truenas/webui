@@ -32,6 +32,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: null,
+      poh_ago: 0,
     },
     {
       num: 2,
@@ -42,6 +43,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: 50,
+      poh_ago: 0,
     },
     {
       num: 3,
@@ -52,6 +54,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: null,
+      poh_ago: 0,
     }],
   }, {
     disk: 'sdb',
@@ -64,6 +67,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: null,
+      poh_ago: 0,
     },
     {
       num: 2,
@@ -74,6 +78,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: 0.5,
+      poh_ago: 0,
     },
     {
       num: 3,
@@ -84,6 +89,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: 0,
+      poh_ago: 0,
     }],
   }];
 
