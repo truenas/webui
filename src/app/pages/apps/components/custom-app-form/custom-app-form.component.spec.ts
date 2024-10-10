@@ -10,7 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
-import { App } from 'app/interfaces/app.interface';
+import { App, ChartFormValue } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxCodeEditorHarness } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.harness';
@@ -50,8 +50,8 @@ const fakeApp = {
       },
     },
     version: '3.8',
-  },
-} as unknown as App;
+  } as Record<string, ChartFormValue>,
+} as App;
 
 describe('CustomAppFormComponent', () => {
   let spectator: Spectator<CustomAppFormComponent>;

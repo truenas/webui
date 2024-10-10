@@ -15,6 +15,7 @@
         formControlName="release_name"
         [required]="true"
         [label]="'Name' | translate"
+        [readonly]="!isNew()"
       ></ix-input>
       <ix-code-editor
         formControlName="custom_compose_config_string"

@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, Subscription, catchError, filter, of, switchMap, tap,
+  Observable, Subscription, catchError, delay, filter, of, repeat, switchMap, tap,
   withLatestFrom,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -94,10 +94,14 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         }
 
         return this.appsService.getAllApps().pipe(
-          tap((installedApps) => {
-            this.patchState({
-              installedApps: [...installedApps],
-            });
+          tap((installedApps) => this.patchState({ installedApps })),
+          repeat({
+            // TODO: NAS-131676. Remove this workaround after the bug is fixed.
+            delay: () => this.appsService.getInstalledAppsUpdates().pipe(
+              filter((event) => event.msg === IncomingApiMessageType.Added && !('fields' in event)),
+              tap(() => this.patchState({ isLoading: true })),
+              delay(5000),
+            ),
           }),
         );
       }),
@@ -163,6 +167,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   private handleAddedOrUpdatedEvent(apiEvent: ApiEvent<App>): void {
     const app = apiEvent.fields;
     if (!app) {
+      console.error('No app data in API event');
       return;
     }
 

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, OperatorFunction, filter, map, pipe,
-  shareReplay,
 } from 'rxjs';
 import { customApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
@@ -61,9 +60,7 @@ export class ApplicationsService {
   }
 
   getAllApps(): Observable<App[]> {
-    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]).pipe(
-      shareReplay({ bufferSize: 1, refCount: true }),
-    );
+    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]);
   }
 
   getApp(name: string): Observable<App[]> {

@@ -110,7 +110,11 @@ export class CustomAppFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.dialogRef.close();
-        this.router.navigate(['/apps/installed']);
+        if (this.isNew()) {
+          this.router.navigate(['/apps', 'installed']);
+        } else {
+          this.router.navigate(['/apps', 'installed', this.data.metadata.train, this.data.name]);
+        }
       },
       error: (error) => {
         this.isLoading.set(false);
