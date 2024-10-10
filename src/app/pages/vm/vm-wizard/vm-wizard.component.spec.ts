@@ -169,7 +169,7 @@ describe('VmWizardComponent', () => {
     await updateStepHarnesses();
 
     await form.fillForm({
-      GPUs: ['GeForce GTX 1080'],
+      GPUs: ['GeForce GTX 1080 [0000:03:00.0]'],
     });
     await nextButton.click();
   }
