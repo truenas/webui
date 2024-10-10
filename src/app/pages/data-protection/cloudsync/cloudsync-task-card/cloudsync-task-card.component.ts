@@ -89,14 +89,14 @@ export class CloudSyncTaskCardComponent implements OnInit {
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: 'play_arrow',
+          iconName: 'mdi-play-circle',
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: 'stop',
+          iconName: 'mdi-stop-circle',
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),

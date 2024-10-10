@@ -86,7 +86,7 @@ export class CloudBackupCardComponent implements OnInit {
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: 'play_arrow',
+          iconName: 'mdi-play-circle',
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),

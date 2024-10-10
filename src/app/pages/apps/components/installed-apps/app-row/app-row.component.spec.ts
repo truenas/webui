@@ -99,8 +99,8 @@ describe('AppRowComponent', () => {
     it('shows Stop button when app status is not Stopped', async () => {
       spectator.setInput('status', AppStatus.Running);
 
-      const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop' }));
-      const startIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-play' }));
+      const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
+      const startIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-play-circle' }));
 
       expect(stopIcon).toExist();
       expect(startIcon).not.toExist();
@@ -112,8 +112,8 @@ describe('AppRowComponent', () => {
         state: CatalogAppState.Stopped,
       });
 
-      const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop' }));
-      const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play' }));
+      const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop-circle' }));
+      const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
 
       expect(stopIcon).not.toExist();
       expect(startIcon).toExist();
