@@ -11,9 +11,6 @@ import { DockerConfig } from 'app/enums/docker-config.interface';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
-import {
-  IxIpInputWithNetmaskComponent,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -39,7 +36,6 @@ describe('CatalogEditFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      IxIpInputWithNetmaskComponent,
     ],
     providers: [
       mockWebSocket([
