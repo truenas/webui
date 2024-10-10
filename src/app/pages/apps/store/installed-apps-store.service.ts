@@ -103,7 +103,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
                  || (event.msg === IncomingApiMessageType.Changed && event.fields.custom_app);
               }),
               tap(() => this.patchState({ isLoading: true })),
-              delay(5000),
+              delay(2000),
             ),
           }),
         );
