@@ -1,9 +1,13 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   SetEnclosureLabelDialogComponent,
   SetEnclosureLabelDialogData,
@@ -16,6 +20,13 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   templateUrl: './enclosure-header.component.html',
   styleUrls: ['./enclosure-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class EnclosureHeaderComponent {
   readonly title = input.required<string>();

@@ -39,7 +39,9 @@ const initialState: DatasetAclEditorState = {
   acesWithError: [],
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
   constructor(
     private ws: WebSocketService,

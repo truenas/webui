@@ -16,10 +16,8 @@ describe('ViewNfsPermissionsComponent', () => {
   let spectator: Spectator<ViewNfsPermissionsComponent>;
   const createComponent = createComponentFactory({
     component: ViewNfsPermissionsComponent,
-    declarations: [
-      PermissionsItemComponent,
-    ],
     imports: [
+      PermissionsItemComponent,
       CdkAccordionModule,
     ],
   });

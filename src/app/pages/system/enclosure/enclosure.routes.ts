@@ -1,9 +1,5 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import {
-  EnclosureDashboardComponent,
-} from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import {
   JbofListComponent,
 } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
@@ -12,8 +8,11 @@ import {
   EnclosurePageComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-page.component';
 import { MiniPageComponent } from 'app/pages/system/enclosure/components/pages/mini-page/mini-page.component';
+import {
+  EnclosureDashboardComponent,
+} from 'app/pages/system/enclosure/enclosure-dashboard.component';
 
-const routes: Routes = [
+export const enclosureRoutes: Routes = [
   // Has to be above other items.
   {
     path: 'jbof',
@@ -52,5 +51,3 @@ const routes: Routes = [
     ],
   },
 ];
-
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

@@ -10,7 +10,6 @@ import {
   DatasetSync,
   DatasetType,
   DatasetVolumeBlockSize,
-  DatasetXattr,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -60,7 +59,6 @@ export interface Dataset {
   share_type: ZfsProperty<DatasetPreset, string>;
   special_small_block_size: ZfsProperty<string>;
   sync: ZfsProperty<DatasetSync, string>;
-  xattr: ZfsProperty<DatasetXattr, boolean>;
   checksum: ZfsProperty<DatasetChecksum>;
 
   // Absent if extra.retrieve_children is false
@@ -118,7 +116,6 @@ export interface DatasetCreate {
   aclmode?: AclMode;
   acltype?: DatasetAclType;
   share_type?: DatasetPreset;
-  xattr?: DatasetXattr;
   encryption_options?: {
     generate_key?: boolean;
     pbkdf2iters?: number;
@@ -159,7 +156,6 @@ export interface DatasetUpdate {
   recordsize?: WithInherit<DatasetRecordSize>;
   aclmode?: AclMode;
   acltype?: DatasetAclType;
-  xattr?: DatasetXattr;
   user_properties?: Record<string, string>;
   create_ancestors?: boolean;
   user_properties_update?: { key: string; value: string; remove?: boolean }[];

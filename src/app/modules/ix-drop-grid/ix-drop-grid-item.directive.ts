@@ -19,6 +19,7 @@ import {
     { provide: ixDropGridDirectiveToken, useValue: undefined },
     { provide: ixDropGridItemDirectiveToken, useExisting: IxDropGridItemDirective },
   ],
+  standalone: true,
 })
 export class IxDropGridItemDirective<T = unknown> extends CdkDropList<T> implements AfterViewInit {
   constructor(

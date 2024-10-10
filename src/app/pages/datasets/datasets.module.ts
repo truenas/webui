@@ -57,7 +57,9 @@ import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/rol
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { routing } from 'app/pages/datasets/datasets.routing';
 import { EncryptionModule } from 'app/pages/datasets/modules/encryption/encryption.module';
-import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
+import {
+  PermissionsCardComponent,
+} from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { SnapshotsModule } from 'app/pages/datasets/modules/snapshots/snapshots.module';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from './components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
@@ -81,7 +83,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatSlideToggleModule,
     MatRippleModule,
     MatProgressSpinnerModule,
-    PermissionsModule,
     EncryptionModule,
     ReactiveFormsModule,
     TreeModule,
@@ -118,6 +119,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     FakeProgressBarComponent,
     TestDirective,
     PageHeaderComponent,
+    PermissionsCardComponent,
   ],
   declarations: [
     DatasetsManagementComponent,

@@ -29,7 +29,6 @@ export class AppRowComponent {
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  readonly hasUpdates = computed(() => this.app().upgrade_available);
   readonly isAppStopped = computed(() => {
     return this.app().state === AppState.Stopped || this.app().state === AppState.Crashed;
   });

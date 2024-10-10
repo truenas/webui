@@ -9,7 +9,9 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
+import {
+  CloudCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -78,7 +80,7 @@ describe('CloudBackupFormComponent', () => {
     component: CloudBackupFormComponent,
     imports: [
       SchedulerModule,
-      CloudCredentialsSelectModule,
+      CloudCredentialsSelectComponent,
       ReactiveFormsModule,
     ],
     declarations: [

@@ -1,7 +1,8 @@
+import { CdkAccordion, CdkAccordionItem } from '@angular/cdk/accordion';
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   NfsAdvancedFlag, nfsAdvancedFlagLabels,
   NfsAdvancedPermission, nfsAdvancedPermissionLabels, nfsBasicFlagLabels, nfsBasicPermissionLabels,
@@ -11,6 +12,8 @@ import {
   areNfsPermissionsBasic,
   NfsAcl, NfsAclItem,
 } from 'app/interfaces/acl.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { PermissionsItemComponent } from 'app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component';
 import { PermissionItem } from 'app/pages/datasets/modules/permissions/interfaces/permission-item.interface';
 import { nfsAceToPermissionItem } from 'app/pages/datasets/modules/permissions/utils/nfs-ace-to-permission-item.utils';
 
@@ -27,6 +30,14 @@ interface PermissionDetails {
   templateUrl: 'view-nfs-permissions.component.html',
   styleUrls: ['./view-nfs-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CdkAccordion,
+    CdkAccordionItem,
+    PermissionsItemComponent,
+    IxIconComponent,
+    TranslateModule,
+  ],
 })
 export class ViewNfsPermissionsComponent implements OnChanges {
   @Input() acl: NfsAcl;

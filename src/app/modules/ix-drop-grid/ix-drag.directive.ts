@@ -32,6 +32,7 @@ import {
     { provide: ixDragParentToken, useExisting: this },
     { provide: CDK_DRAG_PARENT, useExisting: this },
   ],
+  standalone: true,
 })
 export class IxDragDirective extends CdkDrag {
   @ContentChildren(ixDragHandleDirectiveToken, { descendants: true }) _ixHandles: QueryList<IxDragHandleDirective>;
