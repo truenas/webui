@@ -28,8 +28,8 @@ export class GpuStepComponent implements SummaryProvider {
   constructor(
     private formBuilder: FormBuilder,
     private gpuValidator: IsolatedGpuValidatorService,
-    private gpuService: GpuService,
     private translate: TranslateService,
+    private gpuService: GpuService,
   ) {}
 
   getSummary(): SummarySection {
