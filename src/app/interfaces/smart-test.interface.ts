@@ -52,7 +52,7 @@ export interface SmartTestResult {
   status: SmartTestResultStatus;
   status_verbose: string;
   segment_number: number;
-  poh_ago: number;
+  power_on_hours_ago: number;
 }
 
 export interface ManualSmartTest {

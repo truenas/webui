@@ -83,10 +83,10 @@ export class SmartTestResultListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Power On Hours Ago'),
-      propertyName: 'poh_ago',
-      toolTip: '"Power On Hours" are how many hours have passed while the disk has been powered on. "Power On Hours Ago" is how many power on hours have passed since each test.',
+      propertyName: 'power_on_hours_ago',
+      headerTooltip: this.translate.instant('"Power On Hours" are how many hours have passed while the disk has been powered on. "Power On Hours Ago" is how many power on hours have passed since each test.'),
       getValue: (row) => {
-        return row.poh_ago || this.translate.instant('N/A');
+        return row.power_on_hours_ago || this.translate.instant('N/A');
       },
     }),
     textColumn({

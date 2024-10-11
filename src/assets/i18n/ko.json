@@ -3,6 +3,7 @@
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   " Est. Usable Raw Capacity": "",
   " as of {dateTime}": "",
+  "\"Power On Hours\" are how many hours have passed while the disk has been powered on. \"Power On Hours Ago\" is how many power on hours have passed since each test.": "",
   "({n, plural, =1 {# widget} other {# widgets}})": "",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "",
   "1m Average": "",

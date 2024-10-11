@@ -1,5 +1,6 @@
 {
   "": "",
+  "\"Power On Hours\" are how many hours have passed while the disk has been powered on. \"Power On Hours Ago\" is how many power on hours have passed since each test.": "",
   "({n, plural, =1 {# widget} other {# widgets}})": "",
   "...": "",
   "1m Average": "",
