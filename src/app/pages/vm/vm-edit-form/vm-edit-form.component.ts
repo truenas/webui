@@ -9,7 +9,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, forkJoin, map, of, switchMap,
-  take,
   tap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -178,12 +177,7 @@ export class VmEditFormComponent implements OnInit {
     let updateVmRequest$: Observable<unknown>;
 
     if (gpusIds.length) {
-      updateVmRequest$ = this.gpuService.getIsolatedGpuPciIds().pipe(
-        take(1),
-        switchMap((isolatedPciIds) => {
-          const gpuPciIds = new Set([...isolatedPciIds, ...gpusIds]);
-          return this.ws.call('system.advanced.update_gpu_pci_ids', [Array.from(gpuPciIds)]);
-        }),
+      updateVmRequest$ = this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
         switchMap(() => forkJoin([
           this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
           this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),

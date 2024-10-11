@@ -104,6 +104,7 @@ describe('VmWizardComponent', () => {
         getGpuOptions: () => of([
           { label: 'GeForce GTX 1080', value: '0000:03:00.0' },
         ]),
+        addIsolatedGpuPciIds: jest.fn(() => of({})),
         getIsolatedGpuPciIds: jest.fn(() => of([
           '0000:02:00.0',
         ])),
@@ -326,9 +327,8 @@ describe('VmWizardComponent', () => {
         web: true,
       },
     }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'system.advanced.update_gpu_pci_ids',
-      [['0000:02:00.0', '0000:03:00.0']],
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(
+      ['0000:03:00.0'],
     );
     expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0']);
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();

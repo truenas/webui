@@ -92,6 +92,7 @@ describe('VmEditFormComponent', () => {
           { label: 'GeForce', value: '0000:02:00.0' },
           { label: 'Intel Arc', value: '0000:03:00.0' },
         ])),
+        addIsolatedGpuPciIds: jest.fn(() => of({})),
         getIsolatedGpuPciIds: jest.fn(() => of([
           '0000:02:00.0',
         ])),
@@ -257,9 +258,8 @@ describe('VmEditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'system.advanced.update_gpu_pci_ids',
-      [['0000:02:00.0', '0000:03:00.0']],
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(
+      ['0000:03:00.0'],
     );
     expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0']);
   });
