@@ -24,8 +24,8 @@ describe('GpuStepComponent', () => {
       CdkStepper,
       mockProvider(GpuService, {
         getGpuOptions: () => of([
-          { label: 'GeForce GTX 1080', value: '0000:03:00.0' },
-          { label: 'GeForce GTX 1080 Ti', value: '0000:04:00.0' },
+          { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },
+          { label: 'GeForce GTX 1080 Ti [0000:04:00.0]', value: '0000:04:00.0' },
         ]),
       }),
       mockProvider(IsolatedGpuValidatorService, {

@@ -41,12 +41,11 @@ export class GpuService {
   }
 
   getGpuOptions(): Observable<Option[]> {
-    return this.getAllGpus().pipe(
-      map((gpus) => {
-        return gpus.map((gpu) => ({
-          label: gpu.description,
-          value: gpu.addr.pci_slot,
-        }));
+    return this.ws.call('system.advanced.get_gpu_pci_choices').pipe(
+      map((choices) => {
+        return Object.entries(choices).map(
+          ([value, label]) => ({ value: label, label: value }),
+        );
       }),
     );
   }

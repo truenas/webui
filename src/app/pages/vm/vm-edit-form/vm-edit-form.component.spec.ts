@@ -89,8 +89,8 @@ describe('VmEditFormComponent', () => {
       mockProvider(DialogService),
       mockProvider(GpuService, {
         getGpuOptions: jest.fn(() => of([
-          { label: 'GeForce', value: '0000:02:00.0' },
-          { label: 'Intel Arc', value: '0000:03:00.0' },
+          { label: 'GeForce [0000:02:00.0]', value: '0000:02:00.0' },
+          { label: 'Intel Arc [0000:03:00.0]', value: '0000:03:00.0' },
         ])),
         addIsolatedGpuPciIds: jest.fn(() => of({})),
         getIsolatedGpuPciIds: jest.fn(() => of([

@@ -102,7 +102,8 @@ describe('VmWizardComponent', () => {
       ]),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
-          { label: 'GeForce GTX 1080', value: '0000:03:00.0' },
+          { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },
+          { label: 'GeForce GTX 1070 [0000:02:00.0]', value: '0000:02:00.0' },
         ]),
         addIsolatedGpuPciIds: jest.fn(() => of({})),
         getIsolatedGpuPciIds: jest.fn(() => of([

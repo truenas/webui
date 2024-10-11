@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -8,8 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, forkJoin, map, of, switchMap,
-  tap,
+  Observable, forkJoin, of, switchMap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,7 +18,6 @@ import {
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { Option } from 'app/interfaces/option.interface';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -99,20 +96,12 @@ export class VmEditFormComponent implements OnInit {
     gpus: [[] as string[], [], [this.gpuValidator.validateGpu]],
   });
 
-  private readonly gpuOptions = signal<Option[]>([]);
   isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
   bootloaderOptions$ = this.ws.call('vm.bootloader_options').pipe(choicesToOptions());
   cpuModeOptions$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   cpuModelOptions$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
-  gpuOptions$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(
-    map((choices) => {
-      return Object.entries(choices).map(
-        ([value, label]) => ({ value: label, label: value }),
-      );
-    }),
-    tap((options) => this.gpuOptions.set(options)),
-  );
+  gpuOptions$ = this.gpuService.getGpuOptions();
 
   readonly helptext = helptextVmWizard;
 
