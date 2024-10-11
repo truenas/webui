@@ -1,0 +1,55 @@
+c071d216d051a5e7a9203089d156ad9d
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helptextGlobal = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.helptextGlobal = {
+    dockerhost: (0, ngx_translate_extract_marker_1.marker)('Docker Host'),
+    Ctrlr: (0, ngx_translate_extract_marker_1.marker)('TrueNAS Controller'),
+    sysUpdateMessage: (0, ngx_translate_extract_marker_1.marker)('A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.'),
+    sysUpdateMessagePt2: (0, ngx_translate_extract_marker_1.marker)('This system will restart when the update completes.'),
+    human_readable: {
+        input_error: (0, ngx_translate_extract_marker_1.marker)('Invalid value. Valid values are numbers followed by optional unit letters, \
+ like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>.'),
+        suggestion_tooltip: (0, ngx_translate_extract_marker_1.marker)('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB). \
+  If units are not specified, the value defaults to'),
+        suggestion_label: (0, ngx_translate_extract_marker_1.marker)('(Examples: 500 KiB, 500M, 2 TB)'),
+    },
+    noLogDialog: {
+        title: (0, ngx_translate_extract_marker_1.marker)('No Logs'),
+        message: (0, ngx_translate_extract_marker_1.marker)('No logs are available for this task.'),
+    },
+    scheduler: {
+        general: {
+            header: (0, ngx_translate_extract_marker_1.marker)('Minutes/Hours/Days'),
+            headerWithoutMinutes: (0, ngx_translate_extract_marker_1.marker)('Hours/Days'),
+            tooltip: (0, ngx_translate_extract_marker_1.marker)('The time values when the task will run. Accepts standard\
+ <a href="https://man7.org/linux/man-pages/man5/crontab.5.html" target="_blank">crontab(5)</a> values.\
+ </br></br>Symbols:</br> A comma (,) separates individual values.</br> An asterisk (*) means \
+ "match all values".</br> Hyphenated numbers (1-5) sets a range of time.</br> A slash (/)\
+ designates a step in the value: */2 means every other minute.</br></br> Example: 30-35 in Minutes, 1,14 in Hours,\
+ and */2 in Days means the task will run on 1:30 - 1:35 AM and 2:30 - 2:35 PM every other day.'),
+        },
+        minutes: {
+            header: (0, ngx_translate_extract_marker_1.marker)('Minutes'),
+            tooltip: (0, ngx_translate_extract_marker_1.marker)('Minutes when this task will run.'),
+        },
+        hours: {
+            header: (0, ngx_translate_extract_marker_1.marker)('Hours'),
+            tooltip: (0, ngx_translate_extract_marker_1.marker)('Hours when this task will run.'),
+        },
+        days: {
+            header: (0, ngx_translate_extract_marker_1.marker)('Days'),
+            tooltip: (0, ngx_translate_extract_marker_1.marker)('Days when this task will run.'),
+        },
+        orTooltip: (0, ngx_translate_extract_marker_1.marker)('When both days of month and days of week have restrictions, these restrictions work as an OR condition.'),
+    },
+    basic_options: (0, ngx_translate_extract_marker_1.marker)('Basic Options'),
+    advanced_options: (0, ngx_translate_extract_marker_1.marker)('Advanced Options'),
+    invalidInputValueWithUnit: (0, ngx_translate_extract_marker_1.marker)('Invalid value. Missing numerical value or invalid numerical value/unit.'),
+    invalidInputValueWithMin: (0, ngx_translate_extract_marker_1.marker)('Invalid value. Must be greater than or equal to '),
+    invalidInputValueWithMax: (0, ngx_translate_extract_marker_1.marker)('Invalid value. Must be less than or equal to '),
+    pasteValueStartsWithSpace: (0, ngx_translate_extract_marker_1.marker)('The pasted string starts with a space'),
+    pasteValueEndsWithSpace: (0, ngx_translate_extract_marker_1.marker)('The pasted string ends with a space'),
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L2dsb2JhbC1oZWxwdGV4dC50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSwwRkFBc0U7QUFFekQsUUFBQSxjQUFjLEdBQUc7SUFDNUIsVUFBVSxFQUFFLElBQUEscUNBQUMsRUFBQyxhQUFhLENBQUM7SUFFNUIsS0FBSyxFQUFFLElBQUEscUNBQUMsRUFBQyxvQkFBb0IsQ0FBQztJQUM5QixnQkFBZ0IsRUFBRSxJQUFBLHFDQUFDLEVBQUMsMEhBQTBILENBQUM7SUFDL0ksbUJBQW1CLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLHFEQUFxRCxDQUFDO0lBRTdFLGNBQWMsRUFBRTtRQUNkLFdBQVcsRUFBRSxJQUFBLHFDQUFDLEVBQUM7bUVBQ2dELENBQUM7UUFFaEUsa0JBQWtCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDO29EQUMwQixDQUFDO1FBRWpELGdCQUFnQixFQUFFLElBQUEscUNBQUMsRUFBQyxpQ0FBaUMsQ0FBQztLQUN2RDtJQUVELFdBQVcsRUFBRTtRQUNYLEtBQUssRUFBRSxJQUFBLHFDQUFDLEVBQUMsU0FBUyxDQUFDO1FBQ25CLE9BQU8sRUFBRSxJQUFBLHFDQUFDLEVBQUMsc0NBQXNDLENBQUM7S0FDbkQ7SUFFRCxTQUFTLEVBQUU7UUFDVCxPQUFPLEVBQUU7WUFDUCxNQUFNLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLG9CQUFvQixDQUFDO1lBQy9CLG9CQUFvQixFQUFFLElBQUEscUNBQUMsRUFBQyxZQUFZLENBQUM7WUFDckMsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQzs7Ozs7K0ZBSzhFLENBQUM7U0FDM0Y7UUFDRCxPQUFPLEVBQUU7WUFDUCxNQUFNLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFNBQVMsQ0FBQztZQUNwQixPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLGtDQUFrQyxDQUFDO1NBQy9DO1FBQ0QsS0FBSyxFQUFFO1lBQ0wsTUFBTSxFQUFFLElBQUEscUNBQUMsRUFBQyxPQUFPLENBQUM7WUFDbEIsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQyxnQ0FBZ0MsQ0FBQztTQUM3QztRQUNELElBQUksRUFBRTtZQUNKLE1BQU0sRUFBRSxJQUFBLHFDQUFDLEVBQUMsTUFBTSxDQUFDO1lBQ2pCLE9BQU8sRUFBRSxJQUFBLHFDQUFDLEVBQUMsK0JBQStCLENBQUM7U0FDNUM7UUFDRCxTQUFTLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLHlHQUF5RyxDQUFDO0tBQ3hIO0lBRUQsYUFBYSxFQUFFLElBQUEscUNBQUMsRUFBQyxlQUFlLENBQUM7SUFDakMsZ0JBQWdCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLGtCQUFrQixDQUFDO0lBRXZDLHlCQUF5QixFQUFFLElBQUEscUNBQUMsRUFBQyx5RUFBeUUsQ0FBQztJQUN2Ryx3QkFBd0IsRUFBRSxJQUFBLHFDQUFDLEVBQUMsa0RBQWtELENBQUM7SUFDL0Usd0JBQXdCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLCtDQUErQyxDQUFDO0lBRTVFLHlCQUF5QixFQUFFLElBQUEscUNBQUMsRUFBQyx1Q0FBdUMsQ0FBQztJQUNyRSx1QkFBdUIsRUFBRSxJQUFBLHFDQUFDLEVBQUMscUNBQXFDLENBQUM7Q0FDbEUsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvaGVscHRleHQvZ2xvYmFsLWhlbHB0ZXh0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IG1hcmtlciBhcyBUIH0gZnJvbSAnQGJpZXNiamVyZy9uZ3gtdHJhbnNsYXRlLWV4dHJhY3QtbWFya2VyJztcblxuZXhwb3J0IGNvbnN0IGhlbHB0ZXh0R2xvYmFsID0ge1xuICBkb2NrZXJob3N0OiBUKCdEb2NrZXIgSG9zdCcpLFxuXG4gIEN0cmxyOiBUKCdUcnVlTkFTIENvbnRyb2xsZXInKSxcbiAgc3lzVXBkYXRlTWVzc2FnZTogVCgnQSBzeXN0ZW0gdXBkYXRlIGlzIGluIHByb2dyZXNzLiBJdCBtaWdodCBoYXZlIGJlZW4gbGF1bmNoZWQgaW4gYW5vdGhlciB3aW5kb3cgb3IgYnkgYW4gZXh0ZXJuYWwgc291cmNlIGxpa2UgVHJ1ZUNvbW1hbmQuJyksXG4gIHN5c1VwZGF0ZU1lc3NhZ2VQdDI6IFQoJ1RoaXMgc3lzdGVtIHdpbGwgcmVzdGFydCB3aGVuIHRoZSB1cGRhdGUgY29tcGxldGVzLicpLFxuXG4gIGh1bWFuX3JlYWRhYmxlOiB7XG4gICAgaW5wdXRfZXJyb3I6IFQoJ0ludmFsaWQgdmFsdWUuIFZhbGlkIHZhbHVlcyBhcmUgbnVtYmVycyBmb2xsb3dlZCBieSBvcHRpb25hbCB1bml0IGxldHRlcnMsIFxcXG4gbGlrZSA8Y29kZT4yNTZrPC9jb2RlPiBvciA8Y29kZT4xIEc8L2NvZGU+IG9yIDxjb2RlPjIgTWlCPC9jb2RlPi4nKSxcblxuICAgIHN1Z2dlc3Rpb25fdG9vbHRpcDogVCgnVGhpcyBmaWVsZCBhY2NlcHRzIGh1bWFuLXJlYWRhYmxlIGlucHV0IChFeC4gNTAgR2lCLCA1MDBNLCAyIFRCKS4gXFxcbiAgSWYgdW5pdHMgYXJlIG5vdCBzcGVjaWZpZWQsIHRoZSB2YWx1ZSBkZWZhdWx0cyB0bycpLFxuXG4gICAgc3VnZ2VzdGlvbl9sYWJlbDogVCgnKEV4YW1wbGVzOiA1MDAgS2lCLCA1MDBNLCAyIFRCKScpLFxuICB9LFxuXG4gIG5vTG9nRGlhbG9nOiB7XG4gICAgdGl0bGU6IFQoJ05vIExvZ3MnKSxcbiAgICBtZXNzYWdlOiBUKCdObyBsb2dzIGFyZSBhdmFpbGFibGUgZm9yIHRoaXMgdGFzay4nKSxcbiAgfSxcblxuICBzY2hlZHVsZXI6IHtcbiAgICBnZW5lcmFsOiB7XG4gICAgICBoZWFkZXI6IFQoJ01pbnV0ZXMvSG91cnMvRGF5cycpLFxuICAgICAgaGVhZGVyV2l0aG91dE1pbnV0ZXM6IFQoJ0hvdXJzL0RheXMnKSxcbiAgICAgIHRvb2x0aXA6IFQoJ1RoZSB0aW1lIHZhbHVlcyB3aGVuIHRoZSB0YXNrIHdpbGwgcnVuLiBBY2NlcHRzIHN0YW5kYXJkXFxcbiA8YSBocmVmPVwiaHR0cHM6Ly9tYW43Lm9yZy9saW51eC9tYW4tcGFnZXMvbWFuNS9jcm9udGFiLjUuaHRtbFwiIHRhcmdldD1cIl9ibGFua1wiPmNyb250YWIoNSk8L2E+IHZhbHVlcy5cXFxuIDwvYnI+PC9icj5TeW1ib2xzOjwvYnI+IEEgY29tbWEgKCwpIHNlcGFyYXRlcyBpbmRpdmlkdWFsIHZhbHVlcy48L2JyPiBBbiBhc3RlcmlzayAoKikgbWVhbnMgXFxcbiBcIm1hdGNoIGFsbCB2YWx1ZXNcIi48L2JyPiBIeXBoZW5hdGVkIG51bWJlcnMgKDEtNSkgc2V0cyBhIHJhbmdlIG9mIHRpbWUuPC9icj4gQSBzbGFzaCAoLylcXFxuIGRlc2lnbmF0ZXMgYSBzdGVwIGluIHRoZSB2YWx1ZTogKi8yIG1lYW5zIGV2ZXJ5IG90aGVyIG1pbnV0ZS48L2JyPjwvYnI+IEV4YW1wbGU6IDMwLTM1IGluIE1pbnV0ZXMsIDEsMTQgaW4gSG91cnMsXFxcbiBhbmQgKi8yIGluIERheXMgbWVhbnMgdGhlIHRhc2sgd2lsbCBydW4gb24gMTozMCAtIDE6MzUgQU0gYW5kIDI6MzAgLSAyOjM1IFBNIGV2ZXJ5IG90aGVyIGRheS4nKSxcbiAgICB9LFxuICAgIG1pbnV0ZXM6IHtcbiAgICAgIGhlYWRlcjogVCgnTWludXRlcycpLFxuICAgICAgdG9vbHRpcDogVCgnTWludXRlcyB3aGVuIHRoaXMgdGFzayB3aWxsIHJ1bi4nKSxcbiAgICB9LFxuICAgIGhvdXJzOiB7XG4gICAgICBoZWFkZXI6IFQoJ0hvdXJzJyksXG4gICAgICB0b29sdGlwOiBUKCdIb3VycyB3aGVuIHRoaXMgdGFzayB3aWxsIHJ1bi4nKSxcbiAgICB9LFxuICAgIGRheXM6IHtcbiAgICAgIGhlYWRlcjogVCgnRGF5cycpLFxuICAgICAgdG9vbHRpcDogVCgnRGF5cyB3aGVuIHRoaXMgdGFzayB3aWxsIHJ1bi4nKSxcbiAgICB9LFxuICAgIG9yVG9vbHRpcDogVCgnV2hlbiBib3RoIGRheXMgb2YgbW9udGggYW5kIGRheXMgb2Ygd2VlayBoYXZlIHJlc3RyaWN0aW9ucywgdGhlc2UgcmVzdHJpY3Rpb25zIHdvcmsgYXMgYW4gT1IgY29uZGl0aW9uLicpLFxuICB9LFxuXG4gIGJhc2ljX29wdGlvbnM6IFQoJ0Jhc2ljIE9wdGlvbnMnKSxcbiAgYWR2YW5jZWRfb3B0aW9uczogVCgnQWR2YW5jZWQgT3B0aW9ucycpLFxuXG4gIGludmFsaWRJbnB1dFZhbHVlV2l0aFVuaXQ6IFQoJ0ludmFsaWQgdmFsdWUuIE1pc3NpbmcgbnVtZXJpY2FsIHZhbHVlIG9yIGludmFsaWQgbnVtZXJpY2FsIHZhbHVlL3VuaXQuJyksXG4gIGludmFsaWRJbnB1dFZhbHVlV2l0aE1pbjogVCgnSW52YWxpZCB2YWx1ZS4gTXVzdCBiZSBncmVhdGVyIHRoYW4gb3IgZXF1YWwgdG8gJyksXG4gIGludmFsaWRJbnB1dFZhbHVlV2l0aE1heDogVCgnSW52YWxpZCB2YWx1ZS4gTXVzdCBiZSBsZXNzIHRoYW4gb3IgZXF1YWwgdG8gJyksXG5cbiAgcGFzdGVWYWx1ZVN0YXJ0c1dpdGhTcGFjZTogVCgnVGhlIHBhc3RlZCBzdHJpbmcgc3RhcnRzIHdpdGggYSBzcGFjZScpLFxuICBwYXN0ZVZhbHVlRW5kc1dpdGhTcGFjZTogVCgnVGhlIHBhc3RlZCBzdHJpbmcgZW5kcyB3aXRoIGEgc3BhY2UnKSxcbn07XG4iXSwidmVyc2lvbiI6M30=

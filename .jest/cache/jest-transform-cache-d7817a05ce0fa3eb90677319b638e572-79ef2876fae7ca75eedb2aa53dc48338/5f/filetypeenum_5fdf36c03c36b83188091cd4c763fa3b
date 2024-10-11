@@ -1,0 +1,12 @@
+1d2f1b90100666ea0aab234931474786
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FileType = void 0;
+var FileType;
+(function (FileType) {
+    FileType["Directory"] = "DIRECTORY";
+    FileType["Symlink"] = "SYMLINK";
+    FileType["File"] = "FILE";
+    FileType["Other"] = "OTHER";
+})(FileType || (exports.FileType = FileType = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2ZpbGUtdHlwZS5lbnVtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLElBQVksUUFLWDtBQUxELFdBQVksUUFBUTtJQUNsQixtQ0FBdUIsQ0FBQTtJQUN2QiwrQkFBbUIsQ0FBQTtJQUNuQix5QkFBYSxDQUFBO0lBQ2IsMkJBQWUsQ0FBQTtBQUNqQixDQUFDLEVBTFcsUUFBUSx3QkFBUixRQUFRLFFBS25CIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9lbnVtcy9maWxlLXR5cGUuZW51bS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZW51bSBGaWxlVHlwZSB7XG4gIERpcmVjdG9yeSA9ICdESVJFQ1RPUlknLFxuICBTeW1saW5rID0gJ1NZTUxJTksnLFxuICBGaWxlID0gJ0ZJTEUnLFxuICBPdGhlciA9ICdPVEhFUicsXG59XG4iXSwidmVyc2lvbiI6M30=

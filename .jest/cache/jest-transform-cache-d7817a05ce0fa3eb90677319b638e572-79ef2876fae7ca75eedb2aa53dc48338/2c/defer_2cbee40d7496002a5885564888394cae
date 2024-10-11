@@ -1,0 +1,31 @@
+cd46f38e131c5c04249ba45a8261352a
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseDelay_js_1 = __importDefault(require("./_baseDelay.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+/**
+ * Defers invoking the `func` until the current call stack has cleared. Any
+ * additional arguments are provided to `func` when it's invoked.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to defer.
+ * @param {...*} [args] The arguments to invoke `func` with.
+ * @returns {number} Returns the timer id.
+ * @example
+ *
+ * _.defer(function(text) {
+ *   console.log(text);
+ * }, 'deferred');
+ * // => Logs 'deferred' after one millisecond.
+ */
+var defer = (0, _baseRest_js_1.default)(function (func, args) {
+    return (0, _baseDelay_js_1.default)(func, 1, args);
+});
+exports.default = defer;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2RlZmVyLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsb0VBQXdDO0FBQ3hDLGtFQUFzQztBQUV0Qzs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FpQkc7QUFDSCxJQUFJLEtBQUssR0FBRyxJQUFBLHNCQUFRLEVBQUMsVUFBUyxJQUFJLEVBQUUsSUFBSTtJQUN0QyxPQUFPLElBQUEsdUJBQVMsRUFBQyxJQUFJLEVBQUUsQ0FBQyxFQUFFLElBQUksQ0FBQyxDQUFDO0FBQ2xDLENBQUMsQ0FBQyxDQUFDO0FBRUgsa0JBQWUsS0FBSyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9kZWZlci5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZURlbGF5IGZyb20gJy4vX2Jhc2VEZWxheS5qcyc7XG5pbXBvcnQgYmFzZVJlc3QgZnJvbSAnLi9fYmFzZVJlc3QuanMnO1xuXG4vKipcbiAqIERlZmVycyBpbnZva2luZyB0aGUgYGZ1bmNgIHVudGlsIHRoZSBjdXJyZW50IGNhbGwgc3RhY2sgaGFzIGNsZWFyZWQuIEFueVxuICogYWRkaXRpb25hbCBhcmd1bWVudHMgYXJlIHByb3ZpZGVkIHRvIGBmdW5jYCB3aGVuIGl0J3MgaW52b2tlZC5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDAuMS4wXG4gKiBAY2F0ZWdvcnkgRnVuY3Rpb25cbiAqIEBwYXJhbSB7RnVuY3Rpb259IGZ1bmMgVGhlIGZ1bmN0aW9uIHRvIGRlZmVyLlxuICogQHBhcmFtIHsuLi4qfSBbYXJnc10gVGhlIGFyZ3VtZW50cyB0byBpbnZva2UgYGZ1bmNgIHdpdGguXG4gKiBAcmV0dXJucyB7bnVtYmVyfSBSZXR1cm5zIHRoZSB0aW1lciBpZC5cbiAqIEBleGFtcGxlXG4gKlxuICogXy5kZWZlcihmdW5jdGlvbih0ZXh0KSB7XG4gKiAgIGNvbnNvbGUubG9nKHRleHQpO1xuICogfSwgJ2RlZmVycmVkJyk7XG4gKiAvLyA9PiBMb2dzICdkZWZlcnJlZCcgYWZ0ZXIgb25lIG1pbGxpc2Vjb25kLlxuICovXG52YXIgZGVmZXIgPSBiYXNlUmVzdChmdW5jdGlvbihmdW5jLCBhcmdzKSB7XG4gIHJldHVybiBiYXNlRGVsYXkoZnVuYywgMSwgYXJncyk7XG59KTtcblxuZXhwb3J0IGRlZmF1bHQgZGVmZXI7XG4iXSwidmVyc2lvbiI6M30=

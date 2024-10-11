@@ -1,0 +1,2676 @@
+14d0d26aa248f6cbcc191fc91f0e7e5b
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var bugsplat_angular_tree_component_exports = {};
+__export(bugsplat_angular_tree_component_exports, {
+  KEYS: () => KEYS,
+  LoadingComponent: () => LoadingComponent,
+  TREE_ACTIONS: () => TREE_ACTIONS,
+  TreeAnimateOpenDirective: () => TreeAnimateOpenDirective,
+  TreeComponent: () => TreeComponent,
+  TreeDragDirective: () => TreeDragDirective,
+  TreeDraggedElement: () => TreeDraggedElement,
+  TreeDropDirective: () => TreeDropDirective,
+  TreeMobxAutorunDirective: () => TreeMobxAutorunDirective,
+  TreeModel: () => TreeModel,
+  TreeModule: () => TreeModule,
+  TreeNode: () => TreeNode,
+  TreeNodeCheckboxComponent: () => TreeNodeCheckboxComponent,
+  TreeNodeChildrenComponent: () => TreeNodeChildrenComponent,
+  TreeNodeCollectionComponent: () => TreeNodeCollectionComponent,
+  TreeNodeComponent: () => TreeNodeComponent,
+  TreeNodeContent: () => TreeNodeContentComponent,
+  TreeNodeDropSlot: () => TreeNodeDropSlotComponent,
+  TreeNodeExpanderComponent: () => TreeNodeExpanderComponent,
+  TreeNodeWrapperComponent: () => TreeNodeWrapperComponent,
+  TreeViewportComponent: () => TreeViewportComponent,
+  TreeVirtualScroll: () => TreeVirtualScroll
+});
+module.exports = __toCommonJS(bugsplat_angular_tree_component_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var i1 = __toESM(require("@angular/common"), 1);
+var import_common = require("@angular/common");
+var import_mobx = require("mobx");
+const _TreeMobxAutorunDirective = class _TreeMobxAutorunDirective {
+  constructor(templateRef, viewContainer) {
+    this.templateRef = templateRef;
+    this.viewContainer = viewContainer;
+    this.templateBindings = {};
+  }
+  ngOnInit() {
+    this.view = this.viewContainer.createEmbeddedView(this.templateRef);
+    if (this.dispose) {
+      this.dispose();
+    }
+    if (this.shouldDetach()) {
+      this.view.detach();
+    }
+    this.autoDetect(this.view);
+  }
+  shouldDetach() {
+    return this.treeMobxAutorun && this.treeMobxAutorun.detach;
+  }
+  autoDetect(view) {
+    this.dispose = (0, import_mobx.autorun)(() => view.detectChanges());
+  }
+  ngOnDestroy() {
+    if (this.dispose) {
+      this.dispose();
+    }
+  }
+};
+_TreeMobxAutorunDirective.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeMobxAutorunDirective, deps: [{ token: i0.TemplateRef }, { token: i0.ViewContainerRef }], target: i0.\u0275\u0275FactoryTarget.Directive });
+_TreeMobxAutorunDirective.\u0275dir = i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "18.1.1", type: _TreeMobxAutorunDirective, selector: "[treeMobxAutorun]", inputs: { treeMobxAutorun: "treeMobxAutorun" }, ngImport: i0 });
+let TreeMobxAutorunDirective = _TreeMobxAutorunDirective;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeMobxAutorunDirective, decorators: [{
+  type: import_core.Directive,
+  args: [{ selector: "[treeMobxAutorun]" }]
+}], ctorParameters: () => [{ type: i0.TemplateRef }, { type: i0.ViewContainerRef }], propDecorators: { treeMobxAutorun: [{
+  type: import_core.Input
+}] } });
+const KEYS = {
+  LEFT: 37,
+  UP: 38,
+  RIGHT: 39,
+  DOWN: 40,
+  ENTER: 13,
+  SPACE: 32,
+  CONTEXT_MENU: 32
+};
+const TREE_ACTIONS = {
+  TOGGLE_ACTIVE: (tree, node, $event) => node && node.toggleActivated(),
+  TOGGLE_ACTIVE_MULTI: (tree, node, $event) => node && node.toggleActivated(true),
+  TOGGLE_SELECTED: (tree, node, $event) => node && node.toggleSelected(),
+  ACTIVATE: (tree, node, $event) => node.setIsActive(true),
+  DEACTIVATE: (tree, node, $event) => node.setIsActive(false),
+  SELECT: (tree, node, $event) => node.setIsSelected(true),
+  DESELECT: (tree, node, $event) => node.setIsSelected(false),
+  FOCUS: (tree, node, $event) => node.focus(),
+  TOGGLE_EXPANDED: (tree, node, $event) => node.hasChildren && node.toggleExpanded(),
+  EXPAND: (tree, node, $event) => node.expand(),
+  COLLAPSE: (tree, node, $event) => node.collapse(),
+  DRILL_DOWN: (tree, node, $event) => tree.focusDrillDown(),
+  DRILL_UP: (tree, node, $event) => tree.focusDrillUp(),
+  NEXT_NODE: (tree, node, $event) => tree.focusNextNode(),
+  PREVIOUS_NODE: (tree, node, $event) => tree.focusPreviousNode(),
+  MOVE_NODE: (tree, node, $event, { from, to }) => {
+    if ($event.ctrlKey) {
+      tree.copyNode(from, to);
+    } else {
+      tree.moveNode(from, to);
+    }
+  }
+};
+const defaultActionMapping = {
+  mouse: {
+    click: TREE_ACTIONS.TOGGLE_ACTIVE,
+    dblClick: null,
+    contextMenu: null,
+    expanderClick: TREE_ACTIONS.TOGGLE_EXPANDED,
+    checkboxClick: TREE_ACTIONS.TOGGLE_SELECTED,
+    drop: TREE_ACTIONS.MOVE_NODE
+  },
+  keys: {
+    [KEYS.RIGHT]: TREE_ACTIONS.DRILL_DOWN,
+    [KEYS.LEFT]: TREE_ACTIONS.DRILL_UP,
+    [KEYS.DOWN]: TREE_ACTIONS.NEXT_NODE,
+    [KEYS.UP]: TREE_ACTIONS.PREVIOUS_NODE,
+    [KEYS.SPACE]: TREE_ACTIONS.TOGGLE_ACTIVE,
+    [KEYS.ENTER]: TREE_ACTIONS.TOGGLE_ACTIVE
+  }
+};
+class TreeOptions {
+  get hasChildrenField() {
+    return this.options.hasChildrenField || "hasChildren";
+  }
+  get childrenField() {
+    return this.options.childrenField || "children";
+  }
+  get displayField() {
+    return this.options.displayField || "name";
+  }
+  get idField() {
+    return this.options.idField || "id";
+  }
+  get isExpandedField() {
+    return this.options.isExpandedField || "isExpanded";
+  }
+  get getChildren() {
+    return this.options.getChildren;
+  }
+  get levelPadding() {
+    return this.options.levelPadding || 0;
+  }
+  get useVirtualScroll() {
+    return this.options.useVirtualScroll;
+  }
+  get animateExpand() {
+    return this.options.animateExpand;
+  }
+  get animateSpeed() {
+    return this.options.animateSpeed || 1;
+  }
+  get animateAcceleration() {
+    return this.options.animateAcceleration || 1.2;
+  }
+  get scrollOnActivate() {
+    return this.options.scrollOnActivate === void 0 ? true : this.options.scrollOnActivate;
+  }
+  get rtl() {
+    return !!this.options.rtl;
+  }
+  get rootId() {
+    return this.options.rootId;
+  }
+  get useCheckbox() {
+    return this.options.useCheckbox;
+  }
+  get useTriState() {
+    return this.options.useTriState === void 0 ? true : this.options.useTriState;
+  }
+  get scrollContainer() {
+    return this.options.scrollContainer;
+  }
+  get allowDragoverStyling() {
+    return this.options.allowDragoverStyling === void 0 ? true : this.options.allowDragoverStyling;
+  }
+  constructor(options = {}) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa;
+    this.options = options;
+    this.actionMapping = {
+      mouse: {
+        click: (_d = (_c = (_b = (_a = this.options) == null ? void 0 : _a.actionMapping) == null ? void 0 : _b.mouse) == null ? void 0 : _c.click) != null ? _d : defaultActionMapping.mouse.click,
+        dblClick: (_h = (_g = (_f = (_e = this.options) == null ? void 0 : _e.actionMapping) == null ? void 0 : _f.mouse) == null ? void 0 : _g.dblClick) != null ? _h : defaultActionMapping.mouse.dblClick,
+        contextMenu: (_l = (_k = (_j = (_i = this.options) == null ? void 0 : _i.actionMapping) == null ? void 0 : _j.mouse) == null ? void 0 : _k.contextMenu) != null ? _l : defaultActionMapping.mouse.contextMenu,
+        expanderClick: (_p = (_o = (_n = (_m = this.options) == null ? void 0 : _m.actionMapping) == null ? void 0 : _n.mouse) == null ? void 0 : _o.expanderClick) != null ? _p : defaultActionMapping.mouse.expanderClick,
+        checkboxClick: (_t = (_s = (_r = (_q = this.options) == null ? void 0 : _q.actionMapping) == null ? void 0 : _r.mouse) == null ? void 0 : _s.checkboxClick) != null ? _t : defaultActionMapping.mouse.checkboxClick,
+        drop: (_x = (_w = (_v = (_u = this.options) == null ? void 0 : _u.actionMapping) == null ? void 0 : _v.mouse) == null ? void 0 : _w.drop) != null ? _x : defaultActionMapping.mouse.drop,
+        dragStart: (_B = (_A = (_z = (_y = this.options) == null ? void 0 : _y.actionMapping) == null ? void 0 : _z.mouse) == null ? void 0 : _A.dragStart) != null ? _B : void 0,
+        drag: (_F = (_E = (_D = (_C = this.options) == null ? void 0 : _C.actionMapping) == null ? void 0 : _D.mouse) == null ? void 0 : _E.drag) != null ? _F : void 0,
+        dragEnd: (_J = (_I = (_H = (_G = this.options) == null ? void 0 : _G.actionMapping) == null ? void 0 : _H.mouse) == null ? void 0 : _I.dragEnd) != null ? _J : void 0,
+        dragOver: (_N = (_M = (_L = (_K = this.options) == null ? void 0 : _K.actionMapping) == null ? void 0 : _L.mouse) == null ? void 0 : _M.dragOver) != null ? _N : void 0,
+        dragLeave: (_R = (_Q = (_P = (_O = this.options) == null ? void 0 : _O.actionMapping) == null ? void 0 : _P.mouse) == null ? void 0 : _Q.dragLeave) != null ? _R : void 0,
+        dragEnter: (_V = (_U = (_T = (_S = this.options) == null ? void 0 : _S.actionMapping) == null ? void 0 : _T.mouse) == null ? void 0 : _U.dragEnter) != null ? _V : void 0,
+        mouseOver: (_Z = (_Y = (_X = (_W = this.options) == null ? void 0 : _W.actionMapping) == null ? void 0 : _X.mouse) == null ? void 0 : _Y.mouseOver) != null ? _Z : void 0,
+        mouseOut: (_ba = (_aa = (_$ = (__ = this.options) == null ? void 0 : __.actionMapping) == null ? void 0 : _$.mouse) == null ? void 0 : _aa.mouseOut) != null ? _ba : void 0
+      },
+      keys: {
+        [KEYS.RIGHT]: TREE_ACTIONS.DRILL_DOWN,
+        [KEYS.LEFT]: TREE_ACTIONS.DRILL_UP,
+        [KEYS.DOWN]: TREE_ACTIONS.NEXT_NODE,
+        [KEYS.UP]: TREE_ACTIONS.PREVIOUS_NODE,
+        [KEYS.SPACE]: TREE_ACTIONS.TOGGLE_ACTIVE,
+        [KEYS.ENTER]: TREE_ACTIONS.TOGGLE_ACTIVE
+      }
+    };
+    if ((_da = (_ca = this.options) == null ? void 0 : _ca.actionMapping) == null ? void 0 : _da.keys) {
+      this.actionMapping.keys = __spreadValues(__spreadValues({}, this.actionMapping.keys), this.options.actionMapping.keys);
+    }
+    if (options.rtl) {
+      this.actionMapping.keys[KEYS.RIGHT] = ((_ea = options.actionMapping) == null ? void 0 : _ea.keys[KEYS.RIGHT]) || TREE_ACTIONS.DRILL_UP;
+      this.actionMapping.keys[KEYS.LEFT] = ((_fa = options.actionMapping) == null ? void 0 : _fa.keys[KEYS.LEFT]) || TREE_ACTIONS.DRILL_DOWN;
+    }
+  }
+  getNodeClone(node) {
+    if (this.options.getNodeClone) {
+      return this.options.getNodeClone(node);
+    }
+    const nodeClone = Object.assign({}, node.data);
+    if (nodeClone.id) {
+      delete nodeClone.id;
+    }
+    return nodeClone;
+  }
+  allowDrop(element, to, $event) {
+    if (this.options.allowDrop instanceof Function) {
+      return this.options.allowDrop(element, to, $event);
+    } else {
+      return this.options.allowDrop === void 0 ? true : this.options.allowDrop;
+    }
+  }
+  allowDrag(node) {
+    if (this.options.allowDrag instanceof Function) {
+      return this.options.allowDrag(node);
+    } else {
+      return this.options.allowDrag;
+    }
+  }
+  nodeClass(node) {
+    return this.options.nodeClass ? this.options.nodeClass(node) : "";
+  }
+  nodeHeight(node) {
+    if (node.data.virtual) {
+      return 0;
+    }
+    let nodeHeight = this.options.nodeHeight || 22;
+    if (typeof nodeHeight === "function") {
+      nodeHeight = nodeHeight(node);
+    }
+    return nodeHeight + (node.index === 0 ? 2 : 1) * this.dropSlotHeight;
+  }
+  get dropSlotHeight() {
+    return typeof this.options.dropSlotHeight === "number" ? this.options.dropSlotHeight : 2;
+  }
+}
+const TREE_EVENTS = {
+  toggleExpanded: "toggleExpanded",
+  activate: "activate",
+  deactivate: "deactivate",
+  nodeActivate: "nodeActivate",
+  nodeDeactivate: "nodeDeactivate",
+  select: "select",
+  deselect: "deselect",
+  focus: "focus",
+  blur: "blur",
+  initialized: "initialized",
+  updateData: "updateData",
+  moveNode: "moveNode",
+  copyNode: "copyNode",
+  event: "event",
+  loadNodeChildren: "loadNodeChildren",
+  changeFilter: "changeFilter",
+  stateChange: "stateChange"
+};
+var __decorate$3 = function(decorators, target, key, desc) {
+  var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
+    r = Reflect.decorate(decorators, target, key, desc);
+  else
+    for (var i = decorators.length - 1; i >= 0; i--)
+      if (d = decorators[i])
+        r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+  return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata$3 = function(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
+    return Reflect.metadata(k, v);
+};
+class TreeNode {
+  get isHidden() {
+    return this.treeModel.isHidden(this);
+  }
+  get isExpanded() {
+    return this.treeModel.isExpanded(this);
+  }
+  get isActive() {
+    return this.treeModel.isActive(this);
+  }
+  get isFocused() {
+    return this.treeModel.isNodeFocused(this);
+  }
+  get isSelected() {
+    if (this.isSelectable()) {
+      return this.treeModel.isSelected(this);
+    } else {
+      return this.children.some((node) => node.isSelected);
+    }
+  }
+  get isAllSelected() {
+    if (this.isSelectable()) {
+      return this.treeModel.isSelected(this);
+    } else {
+      return this.children.every((node) => node.isAllSelected);
+    }
+  }
+  get isPartiallySelected() {
+    return this.isSelected && !this.isAllSelected;
+  }
+  get level() {
+    return this.parent ? this.parent.level + 1 : 0;
+  }
+  get path() {
+    return this.parent ? [...this.parent.path, this.id] : [];
+  }
+  get elementRef() {
+    throw `Element Ref is no longer supported since introducing virtual scroll
+
+      You may use a template to obtain a reference to the element`;
+  }
+  get originalNode() {
+    return this._originalNode;
+  }
+  constructor(data, parent, treeModel, index) {
+    this.data = data;
+    this.parent = parent;
+    this.treeModel = treeModel;
+    this.position = 0;
+    this.allowDrop = (element, $event) => {
+      return this.options.allowDrop(element, { parent: this, index: 0 }, $event);
+    };
+    this.allowDragoverStyling = () => {
+      return this.options.allowDragoverStyling;
+    };
+    if (this.id === void 0 || this.id === null) {
+      this.id = uuid();
+    }
+    this.index = index;
+    if (this.getField("children")) {
+      this._initChildren();
+    }
+    this.autoLoadChildren();
+  }
+  // helper get functions:
+  get hasChildren() {
+    return !!(this.getField("hasChildren") || this.children && this.children.length > 0);
+  }
+  get isCollapsed() {
+    return !this.isExpanded;
+  }
+  get isLeaf() {
+    return !this.hasChildren;
+  }
+  get isRoot() {
+    return this.parent.data.virtual;
+  }
+  get realParent() {
+    return this.isRoot ? null : this.parent;
+  }
+  // proxy functions:
+  get options() {
+    return this.treeModel.options;
+  }
+  fireEvent(event) {
+    this.treeModel.fireEvent(event);
+  }
+  // field accessors:
+  get displayField() {
+    return this.getField("display");
+  }
+  get id() {
+    return this.getField("id");
+  }
+  set id(value) {
+    this.setField("id", value);
+  }
+  getField(key) {
+    return this.data[this.options[`${key}Field`]];
+  }
+  setField(key, value) {
+    this.data[this.options[`${key}Field`]] = value;
+  }
+  // traversing:
+  _findAdjacentSibling(steps, skipHidden = false) {
+    const siblings = this._getParentsChildren(skipHidden);
+    const index = siblings.indexOf(this);
+    return siblings.length > index + steps ? siblings[index + steps] : null;
+  }
+  findNextSibling(skipHidden = false) {
+    return this._findAdjacentSibling(1, skipHidden);
+  }
+  findPreviousSibling(skipHidden = false) {
+    return this._findAdjacentSibling(-1, skipHidden);
+  }
+  getVisibleChildren() {
+    return this.visibleChildren;
+  }
+  get visibleChildren() {
+    return (this.children || []).filter((node) => !node.isHidden);
+  }
+  getFirstChild(skipHidden = false) {
+    let children = skipHidden ? this.visibleChildren : this.children;
+    return children != null && children.length ? children[0] : null;
+  }
+  getLastChild(skipHidden = false) {
+    let children = skipHidden ? this.visibleChildren : this.children;
+    return children != null && children.length ? children[children.length - 1] : null;
+  }
+  findNextNode(goInside = true, skipHidden = false) {
+    return goInside && this.isExpanded && this.getFirstChild(skipHidden) || this.findNextSibling(skipHidden) || this.parent && this.parent.findNextNode(false, skipHidden);
+  }
+  findPreviousNode(skipHidden = false) {
+    let previousSibling = this.findPreviousSibling(skipHidden);
+    if (!previousSibling) {
+      return this.realParent;
+    }
+    return previousSibling._getLastOpenDescendant(skipHidden);
+  }
+  _getLastOpenDescendant(skipHidden = false) {
+    const lastChild = this.getLastChild(skipHidden);
+    return this.isCollapsed || !lastChild ? this : lastChild._getLastOpenDescendant(skipHidden);
+  }
+  _getParentsChildren(skipHidden = false) {
+    const children = this.parent && (skipHidden ? this.parent.getVisibleChildren() : this.parent.children);
+    return children || [];
+  }
+  getIndexInParent(skipHidden = false) {
+    return this._getParentsChildren(skipHidden).indexOf(this);
+  }
+  isDescendantOf(node) {
+    if (this === node)
+      return true;
+    else
+      return this.parent && this.parent.isDescendantOf(node);
+  }
+  getNodePadding() {
+    return this.options.levelPadding * (this.level - 1) + "px";
+  }
+  getClass() {
+    return [this.options.nodeClass(this), `tree-node-level-${this.level}`].join(" ");
+  }
+  onDrop($event) {
+    this.mouseAction("drop", $event.event, {
+      from: $event.element,
+      to: { parent: this, index: 0, dropOnNode: true }
+    });
+  }
+  allowDrag() {
+    return this.options.allowDrag(this);
+  }
+  // helper methods:
+  loadNodeChildren() {
+    if (!this.options.getChildren) {
+      return Promise.resolve();
+    }
+    return Promise.resolve(this.options.getChildren(this)).then((children) => {
+      if (children) {
+        this.setField("children", children);
+        this._initChildren();
+        if (this.options.useTriState && this.treeModel.isSelected(this)) {
+          this.setIsSelected(true);
+        }
+        this.children.forEach((child) => {
+          if (child.getField("isExpanded") && child.hasChildren) {
+            child.expand();
+          }
+        });
+      }
+    }).then(() => {
+      this.fireEvent({
+        eventName: TREE_EVENTS.loadNodeChildren,
+        node: this
+      });
+    });
+  }
+  expand() {
+    if (!this.isExpanded) {
+      this.toggleExpanded();
+    }
+    return this;
+  }
+  collapse() {
+    if (this.isExpanded) {
+      this.toggleExpanded();
+    }
+    return this;
+  }
+  doForAll(fn) {
+    Promise.resolve(fn(this)).then(() => {
+      if (this.children) {
+        this.children.forEach((child) => child.doForAll(fn));
+      }
+    });
+  }
+  expandAll() {
+    this.doForAll((node) => node.expand());
+  }
+  collapseAll() {
+    this.doForAll((node) => node.collapse());
+  }
+  ensureVisible() {
+    if (this.realParent) {
+      this.realParent.expand();
+      this.realParent.ensureVisible();
+    }
+    return this;
+  }
+  toggleExpanded() {
+    this.setIsExpanded(!this.isExpanded);
+    return this;
+  }
+  setIsExpanded(value) {
+    if (this.hasChildren) {
+      this.treeModel.setExpandedNode(this, value);
+    }
+    return this;
+  }
+  autoLoadChildren() {
+    this.handler = (0, import_mobx.reaction)(() => this.isExpanded, (isExpanded) => {
+      if (!this.children && this.hasChildren && isExpanded) {
+        this.loadNodeChildren();
+      }
+    }, { fireImmediately: true });
+  }
+  dispose() {
+    if (this.children) {
+      this.children.forEach((child) => child.dispose());
+    }
+    if (this.handler) {
+      this.handler();
+    }
+    this.parent = null;
+    this.children = null;
+  }
+  setIsActive(value, multi = false) {
+    this.treeModel.setActiveNode(this, value, multi);
+    if (value) {
+      this.focus(this.options.scrollOnActivate);
+    }
+    return this;
+  }
+  isSelectable() {
+    return this.isLeaf || !this.children || !this.options.useTriState;
+  }
+  setIsSelected(value) {
+    if (this.isSelectable()) {
+      this.treeModel.setSelectedNode(this, value);
+    } else {
+      this.visibleChildren.forEach((child) => child.setIsSelected(value));
+    }
+    return this;
+  }
+  toggleSelected() {
+    this.setIsSelected(!this.isSelected);
+    return this;
+  }
+  toggleActivated(multi = false) {
+    this.setIsActive(!this.isActive, multi);
+    return this;
+  }
+  setActiveAndVisible(multi = false) {
+    this.setIsActive(true, multi).ensureVisible();
+    setTimeout(this.scrollIntoView.bind(this));
+    return this;
+  }
+  scrollIntoView(force = false) {
+    this.treeModel.virtualScroll.scrollIntoView(this, force);
+  }
+  focus(scroll = true) {
+    let previousNode = this.treeModel.getFocusedNode();
+    this.treeModel.setFocusedNode(this);
+    if (scroll) {
+      this.scrollIntoView();
+    }
+    if (previousNode) {
+      this.fireEvent({ eventName: TREE_EVENTS.blur, node: previousNode });
+    }
+    this.fireEvent({ eventName: TREE_EVENTS.focus, node: this });
+    return this;
+  }
+  blur() {
+    let previousNode = this.treeModel.getFocusedNode();
+    this.treeModel.setFocusedNode(null);
+    if (previousNode) {
+      this.fireEvent({ eventName: TREE_EVENTS.blur, node: this });
+    }
+    return this;
+  }
+  setIsHidden(value) {
+    this.treeModel.setIsHidden(this, value);
+  }
+  hide() {
+    this.setIsHidden(true);
+  }
+  show() {
+    this.setIsHidden(false);
+  }
+  mouseAction(actionName, $event, data = null) {
+    this.treeModel.setFocus(true);
+    const actionMapping = this.options.actionMapping.mouse;
+    const mouseAction = actionMapping[actionName];
+    if (mouseAction) {
+      mouseAction(this.treeModel, this, $event, data);
+    }
+  }
+  getSelfHeight() {
+    return this.options.nodeHeight(this);
+  }
+  _initChildren() {
+    this.children = this.getField("children").map((c, index) => new TreeNode(c, this, this.treeModel, index));
+  }
+}
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Object),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "isHidden", null);
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Object),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "isExpanded", null);
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Object),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "isActive", null);
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Object),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "isFocused", null);
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Object),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "isSelected", null);
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Object),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "isAllSelected", null);
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Object),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "isPartiallySelected", null);
+__decorate$3([
+  import_mobx.observable,
+  __metadata$3("design:type", Array)
+], TreeNode.prototype, "children", void 0);
+__decorate$3([
+  import_mobx.observable,
+  __metadata$3("design:type", Number)
+], TreeNode.prototype, "index", void 0);
+__decorate$3([
+  import_mobx.observable,
+  __metadata$3("design:type", Object)
+], TreeNode.prototype, "position", void 0);
+__decorate$3([
+  import_mobx.observable,
+  __metadata$3("design:type", Number)
+], TreeNode.prototype, "height", void 0);
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Number),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "level", null);
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Array),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "path", null);
+__decorate$3([
+  import_mobx.computed,
+  __metadata$3("design:type", Object),
+  __metadata$3("design:paramtypes", [])
+], TreeNode.prototype, "visibleChildren", null);
+__decorate$3([
+  import_mobx.action,
+  __metadata$3("design:type", Function),
+  __metadata$3("design:paramtypes", [Object]),
+  __metadata$3("design:returntype", void 0)
+], TreeNode.prototype, "setIsSelected", null);
+__decorate$3([
+  import_mobx.action,
+  __metadata$3("design:type", Function),
+  __metadata$3("design:paramtypes", []),
+  __metadata$3("design:returntype", void 0)
+], TreeNode.prototype, "_initChildren", null);
+function uuid() {
+  return Math.floor(Math.random() * 1e13);
+}
+var __decorate$2 = function(decorators, target, key, desc) {
+  var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
+    r = Reflect.decorate(decorators, target, key, desc);
+  else
+    for (var i = decorators.length - 1; i >= 0; i--)
+      if (d = decorators[i])
+        r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+  return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata$2 = function(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
+    return Reflect.metadata(k, v);
+};
+const _TreeModel = class _TreeModel {
+  constructor() {
+    this.options = new TreeOptions();
+    this.eventNames = Object.keys(TREE_EVENTS);
+    this.expandedNodeIds = {};
+    this.selectedLeafNodeIds = {};
+    this.activeNodeIds = {};
+    this.hiddenNodeIds = {};
+    this.focusedNodeId = null;
+    this.firstUpdate = true;
+    this.subscriptions = [];
+  }
+  // events
+  fireEvent(event) {
+    event.treeModel = this;
+    this.events[event.eventName].emit(event);
+    this.events.event.emit(event);
+  }
+  subscribe(eventName, fn) {
+    const subscription = this.events[eventName].subscribe(fn);
+    this.subscriptions.push(subscription);
+  }
+  // getters
+  getFocusedNode() {
+    return this.focusedNode;
+  }
+  getActiveNode() {
+    return this.activeNodes[0];
+  }
+  getActiveNodes() {
+    return this.activeNodes;
+  }
+  getVisibleRoots() {
+    return this.virtualRoot.visibleChildren;
+  }
+  getFirstRoot(skipHidden = false) {
+    const root = skipHidden ? this.getVisibleRoots() : this.roots;
+    return root != null && root.length ? root[0] : null;
+  }
+  getLastRoot(skipHidden = false) {
+    const root = skipHidden ? this.getVisibleRoots() : this.roots;
+    return root != null && root.length ? root[root.length - 1] : null;
+  }
+  get isFocused() {
+    return _TreeModel.focusedTree === this;
+  }
+  isNodeFocused(node) {
+    return this.focusedNode === node;
+  }
+  isEmptyTree() {
+    return this.roots && this.roots.length === 0;
+  }
+  get focusedNode() {
+    return this.focusedNodeId ? this.getNodeById(this.focusedNodeId) : null;
+  }
+  get expandedNodes() {
+    const nodes = Object.keys(this.expandedNodeIds).filter((id) => this.expandedNodeIds[id]).map((id) => this.getNodeById(id));
+    return nodes.filter(Boolean);
+  }
+  get activeNodes() {
+    const nodes = Object.keys(this.activeNodeIds).filter((id) => this.activeNodeIds[id]).map((id) => this.getNodeById(id));
+    return nodes.filter(Boolean);
+  }
+  get hiddenNodes() {
+    const nodes = Object.keys(this.hiddenNodeIds).filter((id) => this.hiddenNodeIds[id]).map((id) => this.getNodeById(id));
+    return nodes.filter(Boolean);
+  }
+  get selectedLeafNodes() {
+    const nodes = Object.keys(this.selectedLeafNodeIds).filter((id) => this.selectedLeafNodeIds[id]).map((id) => this.getNodeById(id));
+    return nodes.filter(Boolean);
+  }
+  // locating nodes
+  getNodeByPath(path, startNode = null) {
+    if (!path)
+      return null;
+    startNode = startNode || this.virtualRoot;
+    if (path.length === 0)
+      return startNode;
+    if (!startNode.children)
+      return null;
+    const childId = path.shift();
+    const childNode = startNode.children.find((c) => c.id === childId);
+    if (!childNode)
+      return null;
+    return this.getNodeByPath(path, childNode);
+  }
+  getNodeById(id) {
+    const idStr = id.toString();
+    return this.getNodeBy((node) => node.id.toString() === idStr);
+  }
+  getNodeBy(predicate, startNode = null) {
+    startNode = startNode || this.virtualRoot;
+    if (!startNode.children)
+      return null;
+    const found = startNode.children.find(predicate);
+    if (found) {
+      return found;
+    } else {
+      for (let child of startNode.children) {
+        const foundInChildren = this.getNodeBy(predicate, child);
+        if (foundInChildren)
+          return foundInChildren;
+      }
+    }
+  }
+  isExpanded(node) {
+    return this.expandedNodeIds[node.id];
+  }
+  isHidden(node) {
+    return this.hiddenNodeIds[node.id];
+  }
+  isActive(node) {
+    return this.activeNodeIds[node.id];
+  }
+  isSelected(node) {
+    return this.selectedLeafNodeIds[node.id];
+  }
+  ngOnDestroy() {
+    this.dispose();
+    this.unsubscribeAll();
+  }
+  dispose() {
+    if (this.virtualRoot) {
+      this.virtualRoot.dispose();
+    }
+  }
+  unsubscribeAll() {
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+    this.subscriptions = [];
+  }
+  // actions
+  setData({ nodes, options = null, events = null }) {
+    if (options) {
+      this.options = new TreeOptions(options);
+    }
+    if (events) {
+      this.events = events;
+    }
+    if (nodes) {
+      this.nodes = nodes;
+    }
+    this.update();
+  }
+  update() {
+    let virtualRootConfig = {
+      id: this.options.rootId,
+      virtual: true,
+      [this.options.childrenField]: this.nodes
+    };
+    this.dispose();
+    this.virtualRoot = new TreeNode(virtualRootConfig, null, this, 0);
+    this.roots = this.virtualRoot.children;
+    if (this.firstUpdate) {
+      if (this.roots) {
+        this.firstUpdate = false;
+        this._calculateExpandedNodes();
+      }
+    } else {
+      this.fireEvent({ eventName: TREE_EVENTS.updateData });
+    }
+  }
+  setFocusedNode(node) {
+    this.focusedNodeId = node ? node.id : null;
+  }
+  setFocus(value) {
+    _TreeModel.focusedTree = value ? this : null;
+  }
+  doForAll(fn) {
+    this.roots.forEach((root) => root.doForAll(fn));
+  }
+  focusNextNode() {
+    let previousNode = this.getFocusedNode();
+    let nextNode = previousNode ? previousNode.findNextNode(true, true) : this.getFirstRoot(true);
+    if (nextNode)
+      nextNode.focus();
+  }
+  focusPreviousNode() {
+    let previousNode = this.getFocusedNode();
+    let nextNode = previousNode ? previousNode.findPreviousNode(true) : this.getLastRoot(true);
+    if (nextNode)
+      nextNode.focus();
+  }
+  focusDrillDown() {
+    let previousNode = this.getFocusedNode();
+    if (previousNode && previousNode.isCollapsed && previousNode.hasChildren) {
+      previousNode.toggleExpanded();
+    } else {
+      let nextNode = previousNode ? previousNode.getFirstChild(true) : this.getFirstRoot(true);
+      if (nextNode)
+        nextNode.focus();
+    }
+  }
+  focusDrillUp() {
+    let previousNode = this.getFocusedNode();
+    if (!previousNode)
+      return;
+    if (previousNode.isExpanded) {
+      previousNode.toggleExpanded();
+    } else {
+      let nextNode = previousNode.realParent;
+      if (nextNode)
+        nextNode.focus();
+    }
+  }
+  setActiveNode(node, value, multi = false) {
+    if (multi) {
+      this._setActiveNodeMulti(node, value);
+    } else {
+      this._setActiveNodeSingle(node, value);
+    }
+    if (value) {
+      node.focus(this.options.scrollOnActivate);
+      this.fireEvent({ eventName: TREE_EVENTS.activate, node });
+      this.fireEvent({ eventName: TREE_EVENTS.nodeActivate, node });
+    } else {
+      this.fireEvent({ eventName: TREE_EVENTS.deactivate, node });
+      this.fireEvent({ eventName: TREE_EVENTS.nodeDeactivate, node });
+    }
+  }
+  setSelectedNode(node, value) {
+    this.selectedLeafNodeIds = Object.assign({}, this.selectedLeafNodeIds, { [node.id]: value });
+    if (value) {
+      node.focus();
+      this.fireEvent({ eventName: TREE_EVENTS.select, node });
+    } else {
+      this.fireEvent({ eventName: TREE_EVENTS.deselect, node });
+    }
+  }
+  setExpandedNode(node, value) {
+    this.expandedNodeIds = Object.assign({}, this.expandedNodeIds, { [node.id]: value });
+    this.fireEvent({ eventName: TREE_EVENTS.toggleExpanded, node, isExpanded: value });
+  }
+  expandAll() {
+    this.roots.forEach((root) => root.expandAll());
+  }
+  collapseAll() {
+    this.roots.forEach((root) => root.collapseAll());
+  }
+  setIsHidden(node, value) {
+    this.hiddenNodeIds = Object.assign({}, this.hiddenNodeIds, { [node.id]: value });
+  }
+  setHiddenNodeIds(nodeIds) {
+    this.hiddenNodeIds = nodeIds.reduce((hiddenNodeIds, id) => Object.assign(hiddenNodeIds, {
+      [id]: true
+    }), {});
+  }
+  performKeyAction(node, $event) {
+    const keyAction = this.options.actionMapping.keys[$event.keyCode];
+    if (keyAction) {
+      $event.preventDefault();
+      keyAction(this, node, $event);
+      return true;
+    } else {
+      return false;
+    }
+  }
+  filterNodes(filter, autoShow = true) {
+    let filterFn;
+    if (!filter) {
+      return this.clearFilter();
+    }
+    if (filter && typeof filter.valueOf() === "string") {
+      filterFn = (node) => node.displayField.toLowerCase().indexOf(filter.toLowerCase()) !== -1;
+    } else if (filter && typeof filter === "function") {
+      filterFn = filter;
+    } else {
+      console.error("Don't know what to do with filter", filter);
+      console.error("Should be either a string or function");
+      return;
+    }
+    const ids = {};
+    this.roots.forEach((node) => this._filterNode(ids, node, filterFn, autoShow));
+    this.hiddenNodeIds = ids;
+    this.fireEvent({ eventName: TREE_EVENTS.changeFilter });
+  }
+  clearFilter() {
+    this.hiddenNodeIds = {};
+    this.fireEvent({ eventName: TREE_EVENTS.changeFilter });
+  }
+  moveNode(node, to) {
+    const fromIndex = node.getIndexInParent();
+    const fromParent = node.parent;
+    if (!this.canMoveNode(node, to, fromIndex))
+      return;
+    const fromChildren = fromParent.getField("children");
+    if (!to.parent.getField("children")) {
+      to.parent.setField("children", []);
+    }
+    const toChildren = to.parent.getField("children");
+    const originalNode = fromChildren.splice(fromIndex, 1)[0];
+    let toIndex = fromParent === to.parent && to.index > fromIndex ? to.index - 1 : to.index;
+    toChildren.splice(toIndex, 0, originalNode);
+    fromParent.treeModel.update();
+    if (to.parent.treeModel !== fromParent.treeModel) {
+      to.parent.treeModel.update();
+    }
+    this.fireEvent({
+      eventName: TREE_EVENTS.moveNode,
+      node: originalNode,
+      to: { parent: to.parent.data, index: toIndex },
+      from: { parent: fromParent.data, index: fromIndex }
+    });
+  }
+  copyNode(node, to) {
+    const fromIndex = node.getIndexInParent();
+    if (!this.canMoveNode(node, to, fromIndex))
+      return;
+    if (!to.parent.getField("children")) {
+      to.parent.setField("children", []);
+    }
+    const toChildren = to.parent.getField("children");
+    const nodeCopy = this.options.getNodeClone(node);
+    toChildren.splice(to.index, 0, nodeCopy);
+    node.treeModel.update();
+    if (to.parent.treeModel !== node.treeModel) {
+      to.parent.treeModel.update();
+    }
+    this.fireEvent({ eventName: TREE_EVENTS.copyNode, node: nodeCopy, to: { parent: to.parent.data, index: to.index } });
+  }
+  getState() {
+    return {
+      expandedNodeIds: this.expandedNodeIds,
+      selectedLeafNodeIds: this.selectedLeafNodeIds,
+      activeNodeIds: this.activeNodeIds,
+      hiddenNodeIds: this.hiddenNodeIds,
+      focusedNodeId: this.focusedNodeId
+    };
+  }
+  setState(state) {
+    if (!state)
+      return;
+    Object.assign(this, {
+      expandedNodeIds: state.expandedNodeIds || {},
+      selectedLeafNodeIds: state.selectedLeafNodeIds || {},
+      activeNodeIds: state.activeNodeIds || {},
+      hiddenNodeIds: state.hiddenNodeIds || {},
+      focusedNodeId: state.focusedNodeId
+    });
+  }
+  subscribeToState(fn) {
+    (0, import_mobx.autorun)(() => fn(this.getState()));
+  }
+  canMoveNode(node, to, fromIndex = void 0) {
+    const fromNodeIndex = fromIndex || node.getIndexInParent();
+    if (node.parent === to.parent && fromIndex === to.index) {
+      return false;
+    }
+    return !to.parent.isDescendantOf(node);
+  }
+  calculateExpandedNodes() {
+    this._calculateExpandedNodes();
+  }
+  // private methods
+  _filterNode(ids, node, filterFn, autoShow) {
+    let isVisible = filterFn(node);
+    if (node.children) {
+      node.children.forEach((child) => {
+        if (this._filterNode(ids, child, filterFn, autoShow)) {
+          isVisible = true;
+        }
+      });
+    }
+    if (!isVisible) {
+      ids[node.id] = true;
+    }
+    if (autoShow && isVisible) {
+      node.ensureVisible();
+    }
+    return isVisible;
+  }
+  _calculateExpandedNodes(startNode = null) {
+    startNode = startNode || this.virtualRoot;
+    if (startNode.data[this.options.isExpandedField]) {
+      this.expandedNodeIds = Object.assign({}, this.expandedNodeIds, { [startNode.id]: true });
+    }
+    if (startNode.children) {
+      startNode.children.forEach((child) => this._calculateExpandedNodes(child));
+    }
+  }
+  _setActiveNodeSingle(node, value) {
+    this.activeNodes.filter((activeNode) => activeNode !== node).forEach((activeNode) => {
+      this.fireEvent({ eventName: TREE_EVENTS.deactivate, node: activeNode });
+      this.fireEvent({ eventName: TREE_EVENTS.nodeDeactivate, node: activeNode });
+    });
+    if (value) {
+      this.activeNodeIds = { [node.id]: true };
+    } else {
+      this.activeNodeIds = {};
+    }
+  }
+  _setActiveNodeMulti(node, value) {
+    this.activeNodeIds = Object.assign({}, this.activeNodeIds, { [node.id]: value });
+  }
+};
+_TreeModel.focusedTree = null;
+_TreeModel.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeModel, deps: [], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_TreeModel.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeModel });
+let TreeModel = _TreeModel;
+__decorate$2([
+  import_mobx.observable,
+  __metadata$2("design:type", Array)
+], TreeModel.prototype, "roots", void 0);
+__decorate$2([
+  import_mobx.observable,
+  __metadata$2("design:type", Object)
+], TreeModel.prototype, "expandedNodeIds", void 0);
+__decorate$2([
+  import_mobx.observable,
+  __metadata$2("design:type", Object)
+], TreeModel.prototype, "selectedLeafNodeIds", void 0);
+__decorate$2([
+  import_mobx.observable,
+  __metadata$2("design:type", Object)
+], TreeModel.prototype, "activeNodeIds", void 0);
+__decorate$2([
+  import_mobx.observable,
+  __metadata$2("design:type", Object)
+], TreeModel.prototype, "hiddenNodeIds", void 0);
+__decorate$2([
+  import_mobx.observable,
+  __metadata$2("design:type", Object)
+], TreeModel.prototype, "focusedNodeId", void 0);
+__decorate$2([
+  import_mobx.observable,
+  __metadata$2("design:type", TreeNode)
+], TreeModel.prototype, "virtualRoot", void 0);
+__decorate$2([
+  import_mobx.computed,
+  __metadata$2("design:type", Object),
+  __metadata$2("design:paramtypes", [])
+], TreeModel.prototype, "focusedNode", null);
+__decorate$2([
+  import_mobx.computed,
+  __metadata$2("design:type", Object),
+  __metadata$2("design:paramtypes", [])
+], TreeModel.prototype, "expandedNodes", null);
+__decorate$2([
+  import_mobx.computed,
+  __metadata$2("design:type", Object),
+  __metadata$2("design:paramtypes", [])
+], TreeModel.prototype, "activeNodes", null);
+__decorate$2([
+  import_mobx.computed,
+  __metadata$2("design:type", Object),
+  __metadata$2("design:paramtypes", [])
+], TreeModel.prototype, "hiddenNodes", null);
+__decorate$2([
+  import_mobx.computed,
+  __metadata$2("design:type", Object),
+  __metadata$2("design:paramtypes", [])
+], TreeModel.prototype, "selectedLeafNodes", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "setData", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", []),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "update", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "setFocusedNode", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "setFocus", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "doForAll", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", []),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "focusNextNode", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", []),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "focusPreviousNode", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", []),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "focusDrillDown", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", []),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "focusDrillUp", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object, Object, Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "setActiveNode", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object, Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "setSelectedNode", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object, Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "setExpandedNode", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", []),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "expandAll", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", []),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "collapseAll", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object, Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "setIsHidden", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "setHiddenNodeIds", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object, Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "filterNodes", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", []),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "clearFilter", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object, Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "moveNode", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object, Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "copyNode", null);
+__decorate$2([
+  import_mobx.action,
+  __metadata$2("design:type", Function),
+  __metadata$2("design:paramtypes", [Object]),
+  __metadata$2("design:returntype", void 0)
+], TreeModel.prototype, "setState", null);
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeModel, decorators: [{
+  type: import_core.Injectable
+}], propDecorators: { roots: [], expandedNodeIds: [], selectedLeafNodeIds: [], activeNodeIds: [], hiddenNodeIds: [], focusedNodeId: [], virtualRoot: [], focusedNode: [], expandedNodes: [], activeNodes: [], hiddenNodes: [], selectedLeafNodes: [], setData: [], update: [], setFocusedNode: [], setFocus: [], doForAll: [], focusNextNode: [], focusPreviousNode: [], focusDrillDown: [], focusDrillUp: [], setActiveNode: [], setSelectedNode: [], setExpandedNode: [], expandAll: [], collapseAll: [], setIsHidden: [], setHiddenNodeIds: [], filterNodes: [], clearFilter: [], moveNode: [], copyNode: [], setState: [] } });
+const _TreeDraggedElement = class _TreeDraggedElement {
+  constructor() {
+    this._draggedElement = null;
+  }
+  set(draggedElement) {
+    this._draggedElement = draggedElement;
+  }
+  get() {
+    return this._draggedElement;
+  }
+  isDragging() {
+    return !!this.get();
+  }
+};
+_TreeDraggedElement.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeDraggedElement, deps: [], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_TreeDraggedElement.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeDraggedElement, providedIn: "root" });
+let TreeDraggedElement = _TreeDraggedElement;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeDraggedElement, decorators: [{
+  type: import_core.Injectable,
+  args: [{
+    providedIn: "root"
+  }]
+}] });
+var __decorate$1 = function(decorators, target, key, desc) {
+  var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
+    r = Reflect.decorate(decorators, target, key, desc);
+  else
+    for (var i = decorators.length - 1; i >= 0; i--)
+      if (d = decorators[i])
+        r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+  return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata$1 = function(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
+    return Reflect.metadata(k, v);
+};
+const Y_OFFSET = 500;
+const Y_EPSILON = 150;
+const _TreeVirtualScroll = class _TreeVirtualScroll {
+  get y() {
+    return this.yBlocks * Y_EPSILON;
+  }
+  get totalHeight() {
+    return this.treeModel.virtualRoot ? this.treeModel.virtualRoot.height : 0;
+  }
+  constructor(treeModel) {
+    this.treeModel = treeModel;
+    this.yBlocks = 0;
+    this.x = 0;
+    this.viewportHeight = null;
+    this.viewport = null;
+    treeModel.virtualScroll = this;
+    this._dispose = [(0, import_mobx.autorun)(() => this.fixScroll())];
+  }
+  fireEvent(event) {
+    this.treeModel.fireEvent(event);
+  }
+  init() {
+    const fn = this.recalcPositions.bind(this);
+    fn();
+    this._dispose = [
+      ...this._dispose,
+      (0, import_mobx.reaction)(() => this.treeModel.roots, fn),
+      (0, import_mobx.reaction)(() => this.treeModel.expandedNodeIds, fn),
+      (0, import_mobx.reaction)(() => this.treeModel.hiddenNodeIds, fn)
+    ];
+    this.treeModel.subscribe(TREE_EVENTS.loadNodeChildren, fn);
+  }
+  isEnabled() {
+    return this.treeModel.options.useVirtualScroll;
+  }
+  _setYBlocks(value) {
+    this.yBlocks = value;
+  }
+  recalcPositions() {
+    this.treeModel.virtualRoot.height = this._getPositionAfter(this.treeModel.getVisibleRoots(), 0);
+  }
+  _getPositionAfter(nodes, startPos) {
+    let position = startPos;
+    nodes.forEach((node) => {
+      node.position = position;
+      position = this._getPositionAfterNode(node, position);
+    });
+    return position;
+  }
+  _getPositionAfterNode(node, startPos) {
+    let position = node.getSelfHeight() + startPos;
+    if (node.children && node.isExpanded) {
+      position = this._getPositionAfter(node.visibleChildren, position);
+    }
+    node.height = position - startPos;
+    return position;
+  }
+  clear() {
+    this._dispose.forEach((d) => d());
+  }
+  setViewport(viewport) {
+    Object.assign(this, {
+      viewport,
+      x: viewport.scrollLeft,
+      yBlocks: Math.round(viewport.scrollTop / Y_EPSILON),
+      viewportHeight: viewport.getBoundingClientRect ? viewport.getBoundingClientRect().height : 0
+    });
+  }
+  scrollIntoView(node, force, scrollToMiddle = true) {
+    if (node.options.scrollContainer) {
+      const scrollContainer = node.options.scrollContainer;
+      const scrollContainerHeight = scrollContainer.getBoundingClientRect().height;
+      const scrollContainerTop = scrollContainer.getBoundingClientRect().top;
+      const nodeTop = this.viewport.getBoundingClientRect().top + node.position - scrollContainerTop;
+      if (force || // force scroll to node
+      nodeTop < scrollContainer.scrollTop || // node is above scroll container
+      nodeTop + node.getSelfHeight() > scrollContainer.scrollTop + scrollContainerHeight) {
+        scrollContainer.scrollTop = scrollToMiddle ? nodeTop - scrollContainerHeight / 2 : (
+          // scroll to middle
+          nodeTop
+        );
+      }
+    } else {
+      if (force || // force scroll to node
+      node.position < this.y || // node is above viewport
+      node.position + node.getSelfHeight() > this.y + this.viewportHeight) {
+        if (this.viewport) {
+          this.viewport.scrollTop = scrollToMiddle ? node.position - this.viewportHeight / 2 : (
+            // scroll to middle
+            node.position
+          );
+          this._setYBlocks(Math.floor(this.viewport.scrollTop / Y_EPSILON));
+        }
+      }
+    }
+  }
+  getViewportNodes(nodes) {
+    if (!nodes)
+      return [];
+    const visibleNodes = nodes.filter((node) => !node.isHidden);
+    if (!this.isEnabled())
+      return visibleNodes;
+    if (!this.viewportHeight || !visibleNodes.length)
+      return [];
+    const lastVisibleNode = visibleNodes.slice(-1)[0];
+    if (!lastVisibleNode.height && lastVisibleNode.position === 0)
+      return [];
+    const firstIndex = binarySearch(visibleNodes, (node) => {
+      return node.position + Y_OFFSET > this.y || node.position + node.height > this.y;
+    });
+    const lastIndex = binarySearch(visibleNodes, (node) => {
+      return node.position - Y_OFFSET > this.y + this.viewportHeight;
+    }, firstIndex);
+    const viewportNodes = [];
+    for (let i = firstIndex; i <= lastIndex; i++) {
+      viewportNodes.push(visibleNodes[i]);
+    }
+    return viewportNodes;
+  }
+  fixScroll() {
+    const maxY = Math.max(0, this.totalHeight - this.viewportHeight);
+    if (this.y < 0)
+      this._setYBlocks(0);
+    if (this.y > maxY)
+      this._setYBlocks(maxY / Y_EPSILON);
+  }
+};
+_TreeVirtualScroll.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeVirtualScroll, deps: [{ token: TreeModel }], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_TreeVirtualScroll.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeVirtualScroll });
+let TreeVirtualScroll = _TreeVirtualScroll;
+__decorate$1([
+  import_mobx.observable,
+  __metadata$1("design:type", Object)
+], TreeVirtualScroll.prototype, "yBlocks", void 0);
+__decorate$1([
+  import_mobx.observable,
+  __metadata$1("design:type", Object)
+], TreeVirtualScroll.prototype, "x", void 0);
+__decorate$1([
+  import_mobx.observable,
+  __metadata$1("design:type", Object)
+], TreeVirtualScroll.prototype, "viewportHeight", void 0);
+__decorate$1([
+  import_mobx.computed,
+  __metadata$1("design:type", Object),
+  __metadata$1("design:paramtypes", [])
+], TreeVirtualScroll.prototype, "y", null);
+__decorate$1([
+  import_mobx.computed,
+  __metadata$1("design:type", Object),
+  __metadata$1("design:paramtypes", [])
+], TreeVirtualScroll.prototype, "totalHeight", null);
+__decorate$1([
+  import_mobx.action,
+  __metadata$1("design:type", Function),
+  __metadata$1("design:paramtypes", [Object]),
+  __metadata$1("design:returntype", void 0)
+], TreeVirtualScroll.prototype, "_setYBlocks", null);
+__decorate$1([
+  import_mobx.action,
+  __metadata$1("design:type", Function),
+  __metadata$1("design:paramtypes", []),
+  __metadata$1("design:returntype", void 0)
+], TreeVirtualScroll.prototype, "recalcPositions", null);
+__decorate$1([
+  import_mobx.action,
+  __metadata$1("design:type", Function),
+  __metadata$1("design:paramtypes", [Object]),
+  __metadata$1("design:returntype", void 0)
+], TreeVirtualScroll.prototype, "setViewport", null);
+__decorate$1([
+  import_mobx.action,
+  __metadata$1("design:type", Function),
+  __metadata$1("design:paramtypes", [Object, Object, Object]),
+  __metadata$1("design:returntype", void 0)
+], TreeVirtualScroll.prototype, "scrollIntoView", null);
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeVirtualScroll, decorators: [{
+  type: import_core.Injectable
+}], ctorParameters: () => [{ type: TreeModel }], propDecorators: { yBlocks: [], x: [], viewportHeight: [], y: [], totalHeight: [], _setYBlocks: [], recalcPositions: [], setViewport: [], scrollIntoView: [] } });
+function binarySearch(nodes, condition, firstIndex = 0) {
+  let index = firstIndex;
+  let toIndex = nodes.length - 1;
+  while (index !== toIndex) {
+    let midIndex = Math.floor((index + toIndex) / 2);
+    if (condition(nodes[midIndex])) {
+      toIndex = midIndex;
+    } else {
+      if (index === midIndex)
+        index = toIndex;
+      else
+        index = midIndex;
+    }
+  }
+  return index;
+}
+const _LoadingComponent = class _LoadingComponent {
+};
+_LoadingComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _LoadingComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_LoadingComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _LoadingComponent, selector: "tree-loading-component", inputs: { template: "template", node: "node" }, ngImport: i0, template: `
+    <span *ngIf="!template">loading...</span>
+    <ng-container
+      [ngTemplateOutlet]="template"
+      [ngTemplateOutletContext]="{ $implicit: node }">
+    </ng-container>
+  `, isInline: true, dependencies: [{ kind: "directive", type: i1.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "directive", type: i1.NgTemplateOutlet, selector: "[ngTemplateOutlet]", inputs: ["ngTemplateOutletContext", "ngTemplateOutlet", "ngTemplateOutletInjector"] }], encapsulation: i0.ViewEncapsulation.None });
+let LoadingComponent = _LoadingComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: LoadingComponent, decorators: [{
+  type: import_core.Component,
+  args: [{
+    encapsulation: import_core.ViewEncapsulation.None,
+    selector: "tree-loading-component",
+    template: `
+    <span *ngIf="!template">loading...</span>
+    <ng-container
+      [ngTemplateOutlet]="template"
+      [ngTemplateOutletContext]="{ $implicit: node }">
+    </ng-container>
+  `
+  }]
+}], propDecorators: { template: [{
+  type: import_core.Input
+}], node: [{
+  type: import_core.Input
+}] } });
+const _TreeViewportComponent = class _TreeViewportComponent {
+  constructor(elementRef, virtualScroll) {
+    this.elementRef = elementRef;
+    this.virtualScroll = virtualScroll;
+    this.setViewport = this.throttle(() => {
+      this.virtualScroll.setViewport(this.elementRef.nativeElement);
+    }, 17);
+    this.scrollEventHandler = this.setViewport.bind(this);
+  }
+  ngOnInit() {
+    this.virtualScroll.init();
+  }
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.setViewport();
+      this.virtualScroll.fireEvent({ eventName: TREE_EVENTS.initialized });
+    });
+    let el = this.elementRef.nativeElement;
+    el.addEventListener("scroll", this.scrollEventHandler);
+  }
+  ngOnDestroy() {
+    this.virtualScroll.clear();
+    let el = this.elementRef.nativeElement;
+    el.removeEventListener("scroll", this.scrollEventHandler);
+  }
+  getTotalHeight() {
+    return this.virtualScroll.isEnabled() && this.virtualScroll.totalHeight + "px" || "auto";
+  }
+  throttle(func, timeFrame) {
+    let lastTime = 0;
+    return function() {
+      let now = Date.now();
+      if (now - lastTime >= timeFrame) {
+        func();
+        lastTime = now;
+      }
+    };
+  }
+};
+_TreeViewportComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeViewportComponent, deps: [{ token: i0.ElementRef }, { token: TreeVirtualScroll }], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeViewportComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeViewportComponent, selector: "tree-viewport", providers: [TreeVirtualScroll], ngImport: i0, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <div [style.height]="getTotalHeight()">
+        <ng-content></ng-content>
+      </div>
+    </ng-container>
+  `, isInline: true, dependencies: [{ kind: "directive", type: TreeMobxAutorunDirective, selector: "[treeMobxAutorun]", inputs: ["treeMobxAutorun"] }] });
+let TreeViewportComponent = _TreeViewportComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeViewportComponent, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "tree-viewport", providers: [TreeVirtualScroll], template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <div [style.height]="getTotalHeight()">
+        <ng-content></ng-content>
+      </div>
+    </ng-container>
+  ` }]
+}], ctorParameters: () => [{ type: i0.ElementRef }, { type: TreeVirtualScroll }] });
+const DRAG_OVER_CLASS$1 = "is-dragging-over";
+const DRAG_DISABLED_CLASS = "is-dragging-over-disabled";
+const _TreeDropDirective = class _TreeDropDirective {
+  set treeAllowDrop(allowDrop) {
+    if (allowDrop instanceof Function) {
+      this._allowDrop = allowDrop;
+    } else
+      this._allowDrop = (element, $event) => allowDrop;
+  }
+  allowDrop($event) {
+    return this._allowDrop(this.treeDraggedElement.get(), $event);
+  }
+  constructor(el, renderer, treeDraggedElement, ngZone) {
+    this.el = el;
+    this.renderer = renderer;
+    this.treeDraggedElement = treeDraggedElement;
+    this.ngZone = ngZone;
+    this.allowDragoverStyling = true;
+    this.onDropCallback = new import_core.EventEmitter();
+    this.onDragOverCallback = new import_core.EventEmitter();
+    this.onDragLeaveCallback = new import_core.EventEmitter();
+    this.onDragEnterCallback = new import_core.EventEmitter();
+    this._allowDrop = (element, $event) => true;
+    this.dragOverEventHandler = this.onDragOver.bind(this);
+    this.dragEnterEventHandler = this.onDragEnter.bind(this);
+    this.dragLeaveEventHandler = this.onDragLeave.bind(this);
+  }
+  ngAfterViewInit() {
+    let el = this.el.nativeElement;
+    this.ngZone.runOutsideAngular(() => {
+      el.addEventListener("dragover", this.dragOverEventHandler);
+      el.addEventListener("dragenter", this.dragEnterEventHandler);
+      el.addEventListener("dragleave", this.dragLeaveEventHandler);
+    });
+  }
+  ngOnDestroy() {
+    let el = this.el.nativeElement;
+    el.removeEventListener("dragover", this.dragOverEventHandler);
+    el.removeEventListener("dragenter", this.dragEnterEventHandler);
+    el.removeEventListener("dragleave", this.dragLeaveEventHandler);
+  }
+  onDragOver($event) {
+    if (!this.allowDrop($event)) {
+      if (this.allowDragoverStyling) {
+        return this.addDisabledClass();
+      }
+      return;
+    }
+    this.onDragOverCallback.emit({ event: $event, element: this.treeDraggedElement.get() });
+    $event.preventDefault();
+    if (this.allowDragoverStyling) {
+      this.addClass();
+    }
+  }
+  onDragEnter($event) {
+    if (!this.allowDrop($event))
+      return;
+    $event.preventDefault();
+    this.onDragEnterCallback.emit({ event: $event, element: this.treeDraggedElement.get() });
+  }
+  onDragLeave($event) {
+    if (!this.allowDrop($event)) {
+      if (this.allowDragoverStyling) {
+        return this.removeDisabledClass();
+      }
+      return;
+    }
+    this.onDragLeaveCallback.emit({ event: $event, element: this.treeDraggedElement.get() });
+    if (this.allowDragoverStyling) {
+      this.removeClass();
+    }
+  }
+  onDrop($event) {
+    if (!this.allowDrop($event))
+      return;
+    $event.preventDefault();
+    this.onDropCallback.emit({ event: $event, element: this.treeDraggedElement.get() });
+    if (this.allowDragoverStyling) {
+      this.removeClass();
+    }
+    this.treeDraggedElement.set(null);
+  }
+  addClass() {
+    this.renderer.addClass(this.el.nativeElement, DRAG_OVER_CLASS$1);
+  }
+  removeClass() {
+    this.renderer.removeClass(this.el.nativeElement, DRAG_OVER_CLASS$1);
+  }
+  addDisabledClass() {
+    this.renderer.addClass(this.el.nativeElement, DRAG_DISABLED_CLASS);
+  }
+  removeDisabledClass() {
+    this.renderer.removeClass(this.el.nativeElement, DRAG_DISABLED_CLASS);
+  }
+};
+_TreeDropDirective.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeDropDirective, deps: [{ token: i0.ElementRef }, { token: i0.Renderer2 }, { token: TreeDraggedElement }, { token: i0.NgZone }], target: i0.\u0275\u0275FactoryTarget.Directive });
+_TreeDropDirective.\u0275dir = i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "18.1.1", type: _TreeDropDirective, selector: "[treeDrop]", inputs: { allowDragoverStyling: "allowDragoverStyling", treeAllowDrop: "treeAllowDrop" }, outputs: { onDropCallback: "treeDrop", onDragOverCallback: "treeDropDragOver", onDragLeaveCallback: "treeDropDragLeave", onDragEnterCallback: "treeDropDragEnter" }, host: { listeners: { "drop": "onDrop($event)" } }, ngImport: i0 });
+let TreeDropDirective = _TreeDropDirective;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeDropDirective, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    selector: "[treeDrop]"
+  }]
+}], ctorParameters: () => [{ type: i0.ElementRef }, { type: i0.Renderer2 }, { type: TreeDraggedElement }, { type: i0.NgZone }], propDecorators: { allowDragoverStyling: [{
+  type: import_core.Input
+}], onDropCallback: [{
+  type: import_core.Output,
+  args: ["treeDrop"]
+}], onDragOverCallback: [{
+  type: import_core.Output,
+  args: ["treeDropDragOver"]
+}], onDragLeaveCallback: [{
+  type: import_core.Output,
+  args: ["treeDropDragLeave"]
+}], onDragEnterCallback: [{
+  type: import_core.Output,
+  args: ["treeDropDragEnter"]
+}], treeAllowDrop: [{
+  type: import_core.Input
+}], onDrop: [{
+  type: import_core.HostListener,
+  args: ["drop", ["$event"]]
+}] } });
+const _TreeNodeDropSlotComponent = class _TreeNodeDropSlotComponent {
+  onDrop($event) {
+    this.node.mouseAction("drop", $event.event, {
+      from: $event.element,
+      to: { parent: this.node, index: this.dropIndex }
+    });
+  }
+  allowDrop(element, $event) {
+    return this.node.options.allowDrop(element, { parent: this.node, index: this.dropIndex }, $event);
+  }
+};
+_TreeNodeDropSlotComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeNodeDropSlotComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeNodeDropSlotComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeNodeDropSlotComponent, selector: "TreeNodeDropSlot, tree-node-drop-slot", inputs: { node: "node", dropIndex: "dropIndex" }, ngImport: i0, template: `
+    <div
+      class="node-drop-slot"
+      (treeDrop)="onDrop($event)"
+      [treeAllowDrop]="allowDrop.bind(this)"
+      [allowDragoverStyling]="true">
+    </div>
+  `, isInline: true, dependencies: [{ kind: "directive", type: TreeDropDirective, selector: "[treeDrop]", inputs: ["allowDragoverStyling", "treeAllowDrop"], outputs: ["treeDrop", "treeDropDragOver", "treeDropDragLeave", "treeDropDragEnter"] }], encapsulation: i0.ViewEncapsulation.None });
+let TreeNodeDropSlotComponent = _TreeNodeDropSlotComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeNodeDropSlotComponent, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "TreeNodeDropSlot, tree-node-drop-slot", encapsulation: import_core.ViewEncapsulation.None, template: `
+    <div
+      class="node-drop-slot"
+      (treeDrop)="onDrop($event)"
+      [treeAllowDrop]="allowDrop.bind(this)"
+      [allowDragoverStyling]="true">
+    </div>
+  ` }]
+}], propDecorators: { node: [{
+  type: import_core.Input
+}], dropIndex: [{
+  type: import_core.Input
+}] } });
+const EASE_ACCELERATION = 1.005;
+const _TreeAnimateOpenDirective = class _TreeAnimateOpenDirective {
+  set isOpen(value) {
+    if (value) {
+      this._show();
+      if (this.isEnabled && this._isOpen === false) {
+        this._animateOpen();
+      }
+    } else {
+      this.isEnabled ? this._animateClose() : this._hide();
+    }
+    this._isOpen = !!value;
+  }
+  constructor(renderer, templateRef, viewContainerRef) {
+    this.renderer = renderer;
+    this.templateRef = templateRef;
+    this.viewContainerRef = viewContainerRef;
+  }
+  _show() {
+    if (this.innerElement)
+      return;
+    this.innerElement = this.viewContainerRef.createEmbeddedView(this.templateRef).rootNodes[0];
+  }
+  _hide() {
+    this.viewContainerRef.clear();
+    this.innerElement = null;
+  }
+  _animateOpen() {
+    let delta = this.animateSpeed;
+    let ease = this.animateAcceleration;
+    let maxHeight = 0;
+    this.renderer.setStyle(this.innerElement, "max-height", `0`);
+    setTimeout(() => {
+      const i = setInterval(() => {
+        if (!this._isOpen || !this.innerElement)
+          return clearInterval(i);
+        maxHeight += delta;
+        const roundedMaxHeight = Math.round(maxHeight);
+        this.renderer.setStyle(this.innerElement, "max-height", `${roundedMaxHeight}px`);
+        const height = this.innerElement.getBoundingClientRect ? this.innerElement.getBoundingClientRect().height : 0;
+        delta *= ease;
+        ease *= EASE_ACCELERATION;
+        if (height < roundedMaxHeight) {
+          this.renderer.setStyle(this.innerElement, "max-height", null);
+          clearInterval(i);
+        }
+      }, 17);
+    });
+  }
+  _animateClose() {
+    if (!this.innerElement)
+      return;
+    let delta = this.animateSpeed;
+    let ease = this.animateAcceleration;
+    let height = this.innerElement.getBoundingClientRect().height;
+    const i = setInterval(() => {
+      if (this._isOpen || !this.innerElement)
+        return clearInterval(i);
+      height -= delta;
+      this.renderer.setStyle(this.innerElement, "max-height", `${height}px`);
+      delta *= ease;
+      ease *= EASE_ACCELERATION;
+      if (height <= 0) {
+        this.viewContainerRef.clear();
+        this.innerElement = null;
+        clearInterval(i);
+      }
+    }, 17);
+  }
+};
+_TreeAnimateOpenDirective.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeAnimateOpenDirective, deps: [{ token: i0.Renderer2 }, { token: i0.TemplateRef }, { token: i0.ViewContainerRef }], target: i0.\u0275\u0275FactoryTarget.Directive });
+_TreeAnimateOpenDirective.\u0275dir = i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "18.1.1", type: _TreeAnimateOpenDirective, selector: "[treeAnimateOpen]", inputs: { animateSpeed: ["treeAnimateOpenSpeed", "animateSpeed"], animateAcceleration: ["treeAnimateOpenAcceleration", "animateAcceleration"], isEnabled: ["treeAnimateOpenEnabled", "isEnabled"], isOpen: ["treeAnimateOpen", "isOpen"] }, ngImport: i0 });
+let TreeAnimateOpenDirective = _TreeAnimateOpenDirective;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeAnimateOpenDirective, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    selector: "[treeAnimateOpen]"
+  }]
+}], ctorParameters: () => [{ type: i0.Renderer2 }, { type: i0.TemplateRef }, { type: i0.ViewContainerRef }], propDecorators: { animateSpeed: [{
+  type: import_core.Input,
+  args: ["treeAnimateOpenSpeed"]
+}], animateAcceleration: [{
+  type: import_core.Input,
+  args: ["treeAnimateOpenAcceleration"]
+}], isEnabled: [{
+  type: import_core.Input,
+  args: ["treeAnimateOpenEnabled"]
+}], isOpen: [{
+  type: import_core.Input,
+  args: ["treeAnimateOpen"]
+}] } });
+const _TreeNodeContentComponent = class _TreeNodeContentComponent {
+};
+_TreeNodeContentComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeNodeContentComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeNodeContentComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeNodeContentComponent, selector: "tree-node-content", inputs: { node: "node", index: "index", template: "template" }, ngImport: i0, template: `
+  <span *ngIf="!template">{{ node.displayField }}</span>
+  <ng-container
+    [ngTemplateOutlet]="template"
+    [ngTemplateOutletContext]="{ $implicit: node, node: node, index: index }">
+  </ng-container>`, isInline: true, dependencies: [{ kind: "directive", type: i1.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "directive", type: i1.NgTemplateOutlet, selector: "[ngTemplateOutlet]", inputs: ["ngTemplateOutletContext", "ngTemplateOutlet", "ngTemplateOutletInjector"] }], encapsulation: i0.ViewEncapsulation.None });
+let TreeNodeContentComponent = _TreeNodeContentComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeNodeContentComponent, decorators: [{
+  type: import_core.Component,
+  args: [{
+    selector: "tree-node-content",
+    encapsulation: import_core.ViewEncapsulation.None,
+    template: `
+  <span *ngIf="!template">{{ node.displayField }}</span>
+  <ng-container
+    [ngTemplateOutlet]="template"
+    [ngTemplateOutletContext]="{ $implicit: node, node: node, index: index }">
+  </ng-container>`
+  }]
+}], propDecorators: { node: [{
+  type: import_core.Input
+}], index: [{
+  type: import_core.Input
+}], template: [{
+  type: import_core.Input
+}] } });
+const DRAG_OVER_CLASS = "is-dragging-over";
+const _TreeDragDirective = class _TreeDragDirective {
+  constructor(el, renderer, treeDraggedElement, ngZone) {
+    this.el = el;
+    this.renderer = renderer;
+    this.treeDraggedElement = treeDraggedElement;
+    this.ngZone = ngZone;
+    this.dragEventHandler = this.onDrag.bind(this);
+  }
+  ngAfterViewInit() {
+    let el = this.el.nativeElement;
+    this.ngZone.runOutsideAngular(() => {
+      el.addEventListener("drag", this.dragEventHandler);
+    });
+  }
+  ngDoCheck() {
+    this.renderer.setAttribute(this.el.nativeElement, "draggable", this.treeDragEnabled ? "true" : "false");
+  }
+  ngOnDestroy() {
+    let el = this.el.nativeElement;
+    el.removeEventListener("drag", this.dragEventHandler);
+  }
+  onDragStart(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+    this.treeDraggedElement.set(this.draggedElement);
+    if (this.draggedElement.mouseAction) {
+      this.draggedElement.mouseAction("dragStart", ev);
+    }
+  }
+  onDrag(ev) {
+    if (this.draggedElement.mouseAction) {
+      this.draggedElement.mouseAction("drag", ev);
+    }
+  }
+  onDragEnd() {
+    if (this.draggedElement.mouseAction) {
+      this.draggedElement.mouseAction("dragEnd");
+    }
+    this.treeDraggedElement.set(null);
+  }
+};
+_TreeDragDirective.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeDragDirective, deps: [{ token: i0.ElementRef }, { token: i0.Renderer2 }, { token: TreeDraggedElement }, { token: i0.NgZone }], target: i0.\u0275\u0275FactoryTarget.Directive });
+_TreeDragDirective.\u0275dir = i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "18.1.1", type: _TreeDragDirective, selector: "[treeDrag]", inputs: { draggedElement: ["treeDrag", "draggedElement"], treeDragEnabled: "treeDragEnabled" }, host: { listeners: { "dragstart": "onDragStart($event)", "dragend": "onDragEnd()" } }, ngImport: i0 });
+let TreeDragDirective = _TreeDragDirective;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeDragDirective, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    selector: "[treeDrag]"
+  }]
+}], ctorParameters: () => [{ type: i0.ElementRef }, { type: i0.Renderer2 }, { type: TreeDraggedElement }, { type: i0.NgZone }], propDecorators: { draggedElement: [{
+  type: import_core.Input,
+  args: ["treeDrag"]
+}], treeDragEnabled: [{
+  type: import_core.Input
+}], onDragStart: [{
+  type: import_core.HostListener,
+  args: ["dragstart", ["$event"]]
+}], onDragEnd: [{
+  type: import_core.HostListener,
+  args: ["dragend"]
+}] } });
+const _TreeNodeExpanderComponent = class _TreeNodeExpanderComponent {
+};
+_TreeNodeExpanderComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeNodeExpanderComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeNodeExpanderComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeNodeExpanderComponent, selector: "tree-node-expander", inputs: { node: "node" }, ngImport: i0, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <span
+        *ngIf="node.hasChildren"
+        [class.toggle-children-wrapper-expanded]="node.isExpanded"
+        [class.toggle-children-wrapper-collapsed]="node.isCollapsed"
+        class="toggle-children-wrapper"
+        (click)="node.mouseAction('expanderClick', $event)"
+      >
+        <span class="toggle-children"></span>
+      </span>
+      <span *ngIf="!node.hasChildren" class="toggle-children-placeholder">
+      </span>
+    </ng-container>
+  `, isInline: true, dependencies: [{ kind: "directive", type: i1.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "directive", type: TreeMobxAutorunDirective, selector: "[treeMobxAutorun]", inputs: ["treeMobxAutorun"] }], encapsulation: i0.ViewEncapsulation.None });
+let TreeNodeExpanderComponent = _TreeNodeExpanderComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeNodeExpanderComponent, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "tree-node-expander", encapsulation: import_core.ViewEncapsulation.None, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <span
+        *ngIf="node.hasChildren"
+        [class.toggle-children-wrapper-expanded]="node.isExpanded"
+        [class.toggle-children-wrapper-collapsed]="node.isCollapsed"
+        class="toggle-children-wrapper"
+        (click)="node.mouseAction('expanderClick', $event)"
+      >
+        <span class="toggle-children"></span>
+      </span>
+      <span *ngIf="!node.hasChildren" class="toggle-children-placeholder">
+      </span>
+    </ng-container>
+  ` }]
+}], propDecorators: { node: [{
+  type: import_core.Input
+}] } });
+const _TreeNodeCheckboxComponent = class _TreeNodeCheckboxComponent {
+};
+_TreeNodeCheckboxComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeNodeCheckboxComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeNodeCheckboxComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeNodeCheckboxComponent, selector: "tree-node-checkbox", inputs: { node: "node" }, ngImport: i0, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <input
+        class="tree-node-checkbox"
+        type="checkbox"
+        (click)="node.mouseAction('checkboxClick', $event)"
+        [checked]="node.isSelected"
+        [indeterminate]="node.isPartiallySelected"
+      />
+    </ng-container>
+  `, isInline: true, dependencies: [{ kind: "directive", type: TreeMobxAutorunDirective, selector: "[treeMobxAutorun]", inputs: ["treeMobxAutorun"] }], encapsulation: i0.ViewEncapsulation.None });
+let TreeNodeCheckboxComponent = _TreeNodeCheckboxComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeNodeCheckboxComponent, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "tree-node-checkbox", encapsulation: import_core.ViewEncapsulation.None, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <input
+        class="tree-node-checkbox"
+        type="checkbox"
+        (click)="node.mouseAction('checkboxClick', $event)"
+        [checked]="node.isSelected"
+        [indeterminate]="node.isPartiallySelected"
+      />
+    </ng-container>
+  ` }]
+}], propDecorators: { node: [{
+  type: import_core.Input
+}] } });
+const _TreeNodeWrapperComponent = class _TreeNodeWrapperComponent {
+};
+_TreeNodeWrapperComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeNodeWrapperComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeNodeWrapperComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeNodeWrapperComponent, selector: "tree-node-wrapper", inputs: { node: "node", index: "index", templates: "templates" }, ngImport: i0, template: `
+      <div *ngIf="!templates.treeNodeWrapperTemplate" class="node-wrapper" [style.padding-left]="node.getNodePadding()">
+          <tree-node-checkbox *ngIf="node.options.useCheckbox" [node]="node"></tree-node-checkbox>
+          <tree-node-expander [node]="node"></tree-node-expander>
+          <div class="node-content-wrapper"
+               [class.node-content-wrapper-active]="node.isActive"
+               [class.node-content-wrapper-focused]="node.isFocused"
+               (click)="node.mouseAction('click', $event)"
+               (dblclick)="node.mouseAction('dblClick', $event)"
+               (mouseover)="node.mouseAction('mouseOver', $event)"
+               (mouseout)="node.mouseAction('mouseOut', $event)"
+               (contextmenu)="node.mouseAction('contextMenu', $event)"
+               (treeDrop)="node.onDrop($event)"
+               (treeDropDragOver)="node.mouseAction('dragOver', $event)"
+               (treeDropDragLeave)="node.mouseAction('dragLeave', $event)"
+               (treeDropDragEnter)="node.mouseAction('dragEnter', $event)"
+               [treeAllowDrop]="node.allowDrop"
+               [allowDragoverStyling]="node.allowDragoverStyling()"
+               [treeDrag]="node"
+               [treeDragEnabled]="node.allowDrag()">
+
+              <tree-node-content [node]="node" [index]="index" [template]="templates.treeNodeTemplate">
+              </tree-node-content>
+          </div>
+      </div>
+      <ng-container
+              [ngTemplateOutlet]="templates.treeNodeWrapperTemplate"
+              [ngTemplateOutletContext]="{ $implicit: node, node: node, index: index, templates: templates }">
+      </ng-container>
+  `, isInline: true, dependencies: [{ kind: "directive", type: i1.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "directive", type: i1.NgTemplateOutlet, selector: "[ngTemplateOutlet]", inputs: ["ngTemplateOutletContext", "ngTemplateOutlet", "ngTemplateOutletInjector"] }, { kind: "component", type: TreeNodeContentComponent, selector: "tree-node-content", inputs: ["node", "index", "template"] }, { kind: "directive", type: TreeDropDirective, selector: "[treeDrop]", inputs: ["allowDragoverStyling", "treeAllowDrop"], outputs: ["treeDrop", "treeDropDragOver", "treeDropDragLeave", "treeDropDragEnter"] }, { kind: "directive", type: TreeDragDirective, selector: "[treeDrag]", inputs: ["treeDrag", "treeDragEnabled"] }, { kind: "component", type: TreeNodeExpanderComponent, selector: "tree-node-expander", inputs: ["node"] }, { kind: "component", type: TreeNodeCheckboxComponent, selector: "tree-node-checkbox", inputs: ["node"] }], encapsulation: i0.ViewEncapsulation.None });
+let TreeNodeWrapperComponent = _TreeNodeWrapperComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeNodeWrapperComponent, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "tree-node-wrapper", encapsulation: import_core.ViewEncapsulation.None, template: `
+      <div *ngIf="!templates.treeNodeWrapperTemplate" class="node-wrapper" [style.padding-left]="node.getNodePadding()">
+          <tree-node-checkbox *ngIf="node.options.useCheckbox" [node]="node"></tree-node-checkbox>
+          <tree-node-expander [node]="node"></tree-node-expander>
+          <div class="node-content-wrapper"
+               [class.node-content-wrapper-active]="node.isActive"
+               [class.node-content-wrapper-focused]="node.isFocused"
+               (click)="node.mouseAction('click', $event)"
+               (dblclick)="node.mouseAction('dblClick', $event)"
+               (mouseover)="node.mouseAction('mouseOver', $event)"
+               (mouseout)="node.mouseAction('mouseOut', $event)"
+               (contextmenu)="node.mouseAction('contextMenu', $event)"
+               (treeDrop)="node.onDrop($event)"
+               (treeDropDragOver)="node.mouseAction('dragOver', $event)"
+               (treeDropDragLeave)="node.mouseAction('dragLeave', $event)"
+               (treeDropDragEnter)="node.mouseAction('dragEnter', $event)"
+               [treeAllowDrop]="node.allowDrop"
+               [allowDragoverStyling]="node.allowDragoverStyling()"
+               [treeDrag]="node"
+               [treeDragEnabled]="node.allowDrag()">
+
+              <tree-node-content [node]="node" [index]="index" [template]="templates.treeNodeTemplate">
+              </tree-node-content>
+          </div>
+      </div>
+      <ng-container
+              [ngTemplateOutlet]="templates.treeNodeWrapperTemplate"
+              [ngTemplateOutletContext]="{ $implicit: node, node: node, index: index, templates: templates }">
+      </ng-container>
+  ` }]
+}], propDecorators: { node: [{
+  type: import_core.Input
+}], index: [{
+  type: import_core.Input
+}], templates: [{
+  type: import_core.Input
+}] } });
+var __decorate = function(decorators, target, key, desc) {
+  var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
+    r = Reflect.decorate(decorators, target, key, desc);
+  else
+    for (var i = decorators.length - 1; i >= 0; i--)
+      if (d = decorators[i])
+        r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+  return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = function(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
+    return Reflect.metadata(k, v);
+};
+const _TreeNodeCollectionComponent = class _TreeNodeCollectionComponent {
+  constructor() {
+    this._dispose = [];
+  }
+  get nodes() {
+    return this._nodes;
+  }
+  set nodes(nodes) {
+    this.setNodes(nodes);
+  }
+  get marginTop() {
+    const firstNode = this.viewportNodes && this.viewportNodes.length && this.viewportNodes[0];
+    const relativePosition = firstNode && firstNode.parent ? firstNode.position - firstNode.parent.position - firstNode.parent.getSelfHeight() : 0;
+    return `${relativePosition}px`;
+  }
+  setNodes(nodes) {
+    this._nodes = nodes;
+  }
+  ngOnInit() {
+    this.virtualScroll = this.treeModel.virtualScroll;
+    this._dispose = [
+      // return node indexes so we can compare structurally,
+      (0, import_mobx.reaction)(() => {
+        return this.virtualScroll.getViewportNodes(this.nodes).map((n) => n.index);
+      }, (nodeIndexes) => {
+        this.viewportNodes = nodeIndexes.map((i) => this.nodes[i]);
+      }, { compareStructural: true, fireImmediately: true }),
+      (0, import_mobx.reaction)(() => this.nodes, (nodes) => {
+        this.viewportNodes = this.virtualScroll.getViewportNodes(nodes);
+      })
+    ];
+  }
+  ngOnDestroy() {
+    this._dispose.forEach((d) => d());
+  }
+  trackNode(index, node) {
+    return node.id;
+  }
+};
+_TreeNodeCollectionComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeNodeCollectionComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeNodeCollectionComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeNodeCollectionComponent, selector: "tree-node-collection", inputs: { nodes: "nodes", treeModel: "treeModel", templates: "templates" }, ngImport: i0, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <div [style.margin-top]="marginTop">
+        <tree-node
+          *ngFor="let node of viewportNodes; let i = index; trackBy: trackNode"
+          [node]="node"
+          [index]="i"
+          [templates]="templates"
+        >
+        </tree-node>
+      </div>
+    </ng-container>
+  `, isInline: true, dependencies: [{ kind: "directive", type: i0.forwardRef(() => i1.NgForOf), selector: "[ngFor][ngForOf]", inputs: ["ngForOf", "ngForTrackBy", "ngForTemplate"] }, { kind: "component", type: i0.forwardRef(() => TreeNodeComponent), selector: "TreeNode, tree-node", inputs: ["node", "index", "templates"] }, { kind: "directive", type: i0.forwardRef(() => TreeMobxAutorunDirective), selector: "[treeMobxAutorun]", inputs: ["treeMobxAutorun"] }], encapsulation: i0.ViewEncapsulation.None });
+let TreeNodeCollectionComponent = _TreeNodeCollectionComponent;
+__decorate([
+  import_mobx.observable,
+  __metadata("design:type", Object)
+], TreeNodeCollectionComponent.prototype, "_nodes", void 0);
+__decorate([
+  import_mobx.observable,
+  __metadata("design:type", Array)
+], TreeNodeCollectionComponent.prototype, "viewportNodes", void 0);
+__decorate([
+  import_mobx.computed,
+  __metadata("design:type", String),
+  __metadata("design:paramtypes", [])
+], TreeNodeCollectionComponent.prototype, "marginTop", null);
+__decorate([
+  import_mobx.action,
+  __metadata("design:type", Function),
+  __metadata("design:paramtypes", [Object]),
+  __metadata("design:returntype", void 0)
+], TreeNodeCollectionComponent.prototype, "setNodes", null);
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeNodeCollectionComponent, decorators: [{
+  type: import_core.Component,
+  args: [{
+    selector: "tree-node-collection",
+    encapsulation: import_core.ViewEncapsulation.None,
+    template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <div [style.margin-top]="marginTop">
+        <tree-node
+          *ngFor="let node of viewportNodes; let i = index; trackBy: trackNode"
+          [node]="node"
+          [index]="i"
+          [templates]="templates"
+        >
+        </tree-node>
+      </div>
+    </ng-container>
+  `
+  }]
+}], propDecorators: { nodes: [{
+  type: import_core.Input
+}], treeModel: [{
+  type: import_core.Input
+}], _nodes: [], templates: [{
+  type: import_core.Input
+}], viewportNodes: [], marginTop: [], setNodes: [] } });
+const _TreeNodeChildrenComponent = class _TreeNodeChildrenComponent {
+};
+_TreeNodeChildrenComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeNodeChildrenComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeNodeChildrenComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeNodeChildrenComponent, selector: "tree-node-children", inputs: { node: "node", templates: "templates" }, ngImport: i0, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <div
+        [class.tree-children]="true"
+        [class.tree-children-no-padding]="node.options.levelPadding"
+        *treeAnimateOpen="
+          node.isExpanded;
+          speed: node.options.animateSpeed;
+          acceleration: node.options.animateAcceleration;
+          enabled: node.options.animateExpand
+        "
+      >
+        <tree-node-collection
+          *ngIf="node.children"
+          [nodes]="node.children"
+          [templates]="templates"
+          [treeModel]="node.treeModel"
+        >
+        </tree-node-collection>
+        <tree-loading-component
+          [style.padding-left]="node.getNodePadding()"
+          class="tree-node-loading"
+          *ngIf="!node.children"
+          [template]="templates.loadingTemplate"
+          [node]="node"
+        ></tree-loading-component>
+      </div>
+    </ng-container>
+  `, isInline: true, dependencies: [{ kind: "directive", type: i1.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "component", type: LoadingComponent, selector: "tree-loading-component", inputs: ["template", "node"] }, { kind: "component", type: TreeNodeCollectionComponent, selector: "tree-node-collection", inputs: ["nodes", "treeModel", "templates"] }, { kind: "directive", type: TreeAnimateOpenDirective, selector: "[treeAnimateOpen]", inputs: ["treeAnimateOpenSpeed", "treeAnimateOpenAcceleration", "treeAnimateOpenEnabled", "treeAnimateOpen"] }, { kind: "directive", type: TreeMobxAutorunDirective, selector: "[treeMobxAutorun]", inputs: ["treeMobxAutorun"] }], encapsulation: i0.ViewEncapsulation.None });
+let TreeNodeChildrenComponent = _TreeNodeChildrenComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeNodeChildrenComponent, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "tree-node-children", encapsulation: import_core.ViewEncapsulation.None, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <div
+        [class.tree-children]="true"
+        [class.tree-children-no-padding]="node.options.levelPadding"
+        *treeAnimateOpen="
+          node.isExpanded;
+          speed: node.options.animateSpeed;
+          acceleration: node.options.animateAcceleration;
+          enabled: node.options.animateExpand
+        "
+      >
+        <tree-node-collection
+          *ngIf="node.children"
+          [nodes]="node.children"
+          [templates]="templates"
+          [treeModel]="node.treeModel"
+        >
+        </tree-node-collection>
+        <tree-loading-component
+          [style.padding-left]="node.getNodePadding()"
+          class="tree-node-loading"
+          *ngIf="!node.children"
+          [template]="templates.loadingTemplate"
+          [node]="node"
+        ></tree-loading-component>
+      </div>
+    </ng-container>
+  ` }]
+}], propDecorators: { node: [{
+  type: import_core.Input
+}], templates: [{
+  type: import_core.Input
+}] } });
+const _TreeNodeComponent = class _TreeNodeComponent {
+};
+_TreeNodeComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeNodeComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeNodeComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeNodeComponent, selector: "TreeNode, tree-node", inputs: { node: "node", index: "index", templates: "templates" }, ngImport: i0, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <div
+        *ngIf="!templates.treeNodeFullTemplate"
+        [class]="node.getClass()"
+        [class.tree-node]="true"
+        [class.tree-node-expanded]="node.isExpanded && node.hasChildren"
+        [class.tree-node-collapsed]="node.isCollapsed && node.hasChildren"
+        [class.tree-node-leaf]="node.isLeaf"
+        [class.tree-node-active]="node.isActive"
+        [class.tree-node-focused]="node.isFocused"
+      >
+        <tree-node-drop-slot
+          *ngIf="index === 0"
+          [dropIndex]="node.index"
+          [node]="node.parent"
+        ></tree-node-drop-slot>
+
+        <tree-node-wrapper
+          [node]="node"
+          [index]="index"
+          [templates]="templates"
+        ></tree-node-wrapper>
+
+        <tree-node-children
+          [node]="node"
+          [templates]="templates"
+        ></tree-node-children>
+        <tree-node-drop-slot
+          [dropIndex]="node.index + 1"
+          [node]="node.parent"
+        ></tree-node-drop-slot>
+      </div>
+      <ng-container
+        [ngTemplateOutlet]="templates.treeNodeFullTemplate"
+        [ngTemplateOutletContext]="{
+          $implicit: node,
+          node: node,
+          index: index,
+          templates: templates
+        }"
+      >
+      </ng-container>
+    </ng-container>
+  `, isInline: true, dependencies: [{ kind: "directive", type: i1.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "directive", type: i1.NgTemplateOutlet, selector: "[ngTemplateOutlet]", inputs: ["ngTemplateOutletContext", "ngTemplateOutlet", "ngTemplateOutletInjector"] }, { kind: "component", type: TreeNodeChildrenComponent, selector: "tree-node-children", inputs: ["node", "templates"] }, { kind: "component", type: TreeNodeDropSlotComponent, selector: "TreeNodeDropSlot, tree-node-drop-slot", inputs: ["node", "dropIndex"] }, { kind: "component", type: TreeNodeWrapperComponent, selector: "tree-node-wrapper", inputs: ["node", "index", "templates"] }, { kind: "directive", type: TreeMobxAutorunDirective, selector: "[treeMobxAutorun]", inputs: ["treeMobxAutorun"] }], encapsulation: i0.ViewEncapsulation.None });
+let TreeNodeComponent = _TreeNodeComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeNodeComponent, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "TreeNode, tree-node", encapsulation: import_core.ViewEncapsulation.None, template: `
+    <ng-container *treeMobxAutorun="{ dontDetach: true }">
+      <div
+        *ngIf="!templates.treeNodeFullTemplate"
+        [class]="node.getClass()"
+        [class.tree-node]="true"
+        [class.tree-node-expanded]="node.isExpanded && node.hasChildren"
+        [class.tree-node-collapsed]="node.isCollapsed && node.hasChildren"
+        [class.tree-node-leaf]="node.isLeaf"
+        [class.tree-node-active]="node.isActive"
+        [class.tree-node-focused]="node.isFocused"
+      >
+        <tree-node-drop-slot
+          *ngIf="index === 0"
+          [dropIndex]="node.index"
+          [node]="node.parent"
+        ></tree-node-drop-slot>
+
+        <tree-node-wrapper
+          [node]="node"
+          [index]="index"
+          [templates]="templates"
+        ></tree-node-wrapper>
+
+        <tree-node-children
+          [node]="node"
+          [templates]="templates"
+        ></tree-node-children>
+        <tree-node-drop-slot
+          [dropIndex]="node.index + 1"
+          [node]="node.parent"
+        ></tree-node-drop-slot>
+      </div>
+      <ng-container
+        [ngTemplateOutlet]="templates.treeNodeFullTemplate"
+        [ngTemplateOutletContext]="{
+          $implicit: node,
+          node: node,
+          index: index,
+          templates: templates
+        }"
+      >
+      </ng-container>
+    </ng-container>
+  ` }]
+}], propDecorators: { node: [{
+  type: import_core.Input
+}], index: [{
+  type: import_core.Input
+}], templates: [{
+  type: import_core.Input
+}] } });
+const _TreeComponent = class _TreeComponent {
+  // Will be handled in ngOnChanges
+  set nodes(nodes) {
+  }
+  set options(options) {
+  }
+  set focused(value) {
+    this.treeModel.setFocus(value);
+  }
+  set state(state) {
+    this.treeModel.setState(state);
+  }
+  constructor(treeModel, treeDraggedElement) {
+    this.treeModel = treeModel;
+    this.treeDraggedElement = treeDraggedElement;
+    treeModel.eventNames.forEach((name) => this[name] = new import_core.EventEmitter());
+    treeModel.subscribeToState((state) => this.stateChange.emit(state));
+  }
+  onKeydown($event) {
+    if (!this.treeModel.isFocused)
+      return;
+    if (["input", "textarea"].includes(document.activeElement.tagName.toLowerCase()))
+      return;
+    const focusedNode = this.treeModel.getFocusedNode();
+    this.treeModel.performKeyAction(focusedNode, $event);
+  }
+  onMousedown($event) {
+    function isOutsideClick(startElement, nodeName) {
+      return !startElement ? true : startElement.localName === nodeName ? false : isOutsideClick(startElement.parentElement, nodeName);
+    }
+    if (isOutsideClick($event.target, "tree-root")) {
+      this.treeModel.setFocus(false);
+    }
+  }
+  ngOnChanges(changes) {
+    if (changes.options || changes.nodes) {
+      this.treeModel.setData({
+        options: changes.options && changes.options.currentValue,
+        nodes: changes.nodes && changes.nodes.currentValue,
+        events: this.pick(this, this.treeModel.eventNames)
+      });
+    }
+  }
+  sizeChanged() {
+    this.viewportComponent.setViewport();
+  }
+  pick(object, keys) {
+    return keys.reduce((obj, key) => {
+      if (object && object.hasOwnProperty(key)) {
+        obj[key] = object[key];
+      }
+      return obj;
+    }, {});
+  }
+};
+_TreeComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeComponent, deps: [{ token: TreeModel }, { token: TreeDraggedElement }], target: i0.\u0275\u0275FactoryTarget.Component });
+_TreeComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.1.1", type: _TreeComponent, selector: "Tree, tree-root", inputs: { nodes: "nodes", options: "options", focused: "focused", state: "state" }, outputs: { toggleExpanded: "toggleExpanded", activate: "activate", deactivate: "deactivate", nodeActivate: "nodeActivate", nodeDeactivate: "nodeDeactivate", select: "select", deselect: "deselect", focus: "focus", blur: "blur", updateData: "updateData", initialized: "initialized", moveNode: "moveNode", copyNode: "copyNode", loadNodeChildren: "loadNodeChildren", changeFilter: "changeFilter", event: "event", stateChange: "stateChange" }, host: { listeners: { "body: keydown": "onKeydown($event)", "body: mousedown": "onMousedown($event)" } }, providers: [TreeModel], queries: [{ propertyName: "loadingTemplate", first: true, predicate: ["loadingTemplate"], descendants: true }, { propertyName: "treeNodeTemplate", first: true, predicate: ["treeNodeTemplate"], descendants: true }, { propertyName: "treeNodeWrapperTemplate", first: true, predicate: ["treeNodeWrapperTemplate"], descendants: true }, { propertyName: "treeNodeFullTemplate", first: true, predicate: ["treeNodeFullTemplate"], descendants: true }], viewQueries: [{ propertyName: "viewportComponent", first: true, predicate: ["viewport"], descendants: true }], usesOnChanges: true, ngImport: i0, template: `
+      <tree-viewport #viewport>
+          <div
+                  class="angular-tree-component"
+                  [class.node-dragging]="treeDraggedElement.isDragging()"
+                  [class.angular-tree-component-rtl]="treeModel.options.rtl">
+              <tree-node-collection
+                      *ngIf="treeModel.roots"
+                      [nodes]="treeModel.roots"
+                      [treeModel]="treeModel"
+                      [templates]="{
+            loadingTemplate: loadingTemplate,
+            treeNodeTemplate: treeNodeTemplate,
+            treeNodeWrapperTemplate: treeNodeWrapperTemplate,
+            treeNodeFullTemplate: treeNodeFullTemplate
+          }">
+              </tree-node-collection>
+              <tree-node-drop-slot
+                      class="empty-tree-drop-slot"
+                      *ngIf="treeModel.isEmptyTree()"
+                      [dropIndex]="0"
+                      [node]="treeModel.virtualRoot">
+              </tree-node-drop-slot>
+          </div>
+      </tree-viewport>
+  `, isInline: true, dependencies: [{ kind: "directive", type: i1.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "component", type: TreeNodeDropSlotComponent, selector: "TreeNodeDropSlot, tree-node-drop-slot", inputs: ["node", "dropIndex"] }, { kind: "component", type: TreeNodeCollectionComponent, selector: "tree-node-collection", inputs: ["nodes", "treeModel", "templates"] }, { kind: "component", type: TreeViewportComponent, selector: "tree-viewport" }] });
+let TreeComponent = _TreeComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeComponent, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "Tree, tree-root", providers: [TreeModel], template: `
+      <tree-viewport #viewport>
+          <div
+                  class="angular-tree-component"
+                  [class.node-dragging]="treeDraggedElement.isDragging()"
+                  [class.angular-tree-component-rtl]="treeModel.options.rtl">
+              <tree-node-collection
+                      *ngIf="treeModel.roots"
+                      [nodes]="treeModel.roots"
+                      [treeModel]="treeModel"
+                      [templates]="{
+            loadingTemplate: loadingTemplate,
+            treeNodeTemplate: treeNodeTemplate,
+            treeNodeWrapperTemplate: treeNodeWrapperTemplate,
+            treeNodeFullTemplate: treeNodeFullTemplate
+          }">
+              </tree-node-collection>
+              <tree-node-drop-slot
+                      class="empty-tree-drop-slot"
+                      *ngIf="treeModel.isEmptyTree()"
+                      [dropIndex]="0"
+                      [node]="treeModel.virtualRoot">
+              </tree-node-drop-slot>
+          </div>
+      </tree-viewport>
+  ` }]
+}], ctorParameters: () => [{ type: TreeModel }, { type: TreeDraggedElement }], propDecorators: { loadingTemplate: [{
+  type: import_core.ContentChild,
+  args: ["loadingTemplate", { static: false }]
+}], treeNodeTemplate: [{
+  type: import_core.ContentChild,
+  args: ["treeNodeTemplate", { static: false }]
+}], treeNodeWrapperTemplate: [{
+  type: import_core.ContentChild,
+  args: ["treeNodeWrapperTemplate", { static: false }]
+}], treeNodeFullTemplate: [{
+  type: import_core.ContentChild,
+  args: ["treeNodeFullTemplate", { static: false }]
+}], viewportComponent: [{
+  type: import_core.ViewChild,
+  args: ["viewport", { static: false }]
+}], nodes: [{
+  type: import_core.Input
+}], options: [{
+  type: import_core.Input
+}], focused: [{
+  type: import_core.Input
+}], state: [{
+  type: import_core.Input
+}], toggleExpanded: [{
+  type: import_core.Output
+}], activate: [{
+  type: import_core.Output
+}], deactivate: [{
+  type: import_core.Output
+}], nodeActivate: [{
+  type: import_core.Output
+}], nodeDeactivate: [{
+  type: import_core.Output
+}], select: [{
+  type: import_core.Output
+}], deselect: [{
+  type: import_core.Output
+}], focus: [{
+  type: import_core.Output
+}], blur: [{
+  type: import_core.Output
+}], updateData: [{
+  type: import_core.Output
+}], initialized: [{
+  type: import_core.Output
+}], moveNode: [{
+  type: import_core.Output
+}], copyNode: [{
+  type: import_core.Output
+}], loadNodeChildren: [{
+  type: import_core.Output
+}], changeFilter: [{
+  type: import_core.Output
+}], event: [{
+  type: import_core.Output
+}], stateChange: [{
+  type: import_core.Output
+}], onKeydown: [{
+  type: import_core.HostListener,
+  args: ["body: keydown", ["$event"]]
+}], onMousedown: [{
+  type: import_core.HostListener,
+  args: ["body: mousedown", ["$event"]]
+}] } });
+const _TreeModule = class _TreeModule {
+};
+_TreeModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_TreeModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.1.1", ngImport: i0, type: _TreeModule, declarations: [
+  TreeComponent,
+  TreeNodeComponent,
+  TreeNodeContentComponent,
+  LoadingComponent,
+  TreeDropDirective,
+  TreeDragDirective,
+  TreeNodeExpanderComponent,
+  TreeNodeChildrenComponent,
+  TreeNodeDropSlotComponent,
+  TreeNodeCollectionComponent,
+  TreeViewportComponent,
+  TreeNodeWrapperComponent,
+  TreeNodeCheckboxComponent,
+  TreeAnimateOpenDirective,
+  TreeMobxAutorunDirective
+], imports: [import_common.CommonModule], exports: [
+  TreeComponent,
+  TreeNodeComponent,
+  TreeNodeContentComponent,
+  LoadingComponent,
+  TreeDropDirective,
+  TreeDragDirective,
+  TreeNodeExpanderComponent,
+  TreeNodeChildrenComponent,
+  TreeNodeDropSlotComponent,
+  TreeNodeCollectionComponent,
+  TreeViewportComponent,
+  TreeNodeWrapperComponent,
+  TreeNodeCheckboxComponent,
+  TreeAnimateOpenDirective,
+  TreeMobxAutorunDirective
+] });
+_TreeModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: _TreeModule, imports: [import_common.CommonModule] });
+let TreeModule = _TreeModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.1.1", ngImport: i0, type: TreeModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    declarations: [
+      TreeComponent,
+      TreeNodeComponent,
+      TreeNodeContentComponent,
+      LoadingComponent,
+      TreeDropDirective,
+      TreeDragDirective,
+      TreeNodeExpanderComponent,
+      TreeNodeChildrenComponent,
+      TreeNodeDropSlotComponent,
+      TreeNodeCollectionComponent,
+      TreeViewportComponent,
+      TreeNodeWrapperComponent,
+      TreeNodeCheckboxComponent,
+      TreeAnimateOpenDirective,
+      TreeMobxAutorunDirective
+    ],
+    exports: [
+      TreeComponent,
+      TreeNodeComponent,
+      TreeNodeContentComponent,
+      LoadingComponent,
+      TreeDropDirective,
+      TreeDragDirective,
+      TreeNodeExpanderComponent,
+      TreeNodeChildrenComponent,
+      TreeNodeDropSlotComponent,
+      TreeNodeCollectionComponent,
+      TreeViewportComponent,
+      TreeNodeWrapperComponent,
+      TreeNodeCheckboxComponent,
+      TreeAnimateOpenDirective,
+      TreeMobxAutorunDirective
+    ],
+    imports: [import_common.CommonModule],
+    providers: []
+  }]
+}] });

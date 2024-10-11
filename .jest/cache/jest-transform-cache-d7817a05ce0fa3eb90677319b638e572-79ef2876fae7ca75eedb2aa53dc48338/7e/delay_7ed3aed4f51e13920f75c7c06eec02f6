@@ -1,0 +1,33 @@
+bed909a4bd3f26b54eb4fc0b18f14e8c
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseDelay_js_1 = __importDefault(require("./_baseDelay.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const toNumber_js_1 = __importDefault(require("./toNumber.js"));
+/**
+ * Invokes `func` after `wait` milliseconds. Any additional arguments are
+ * provided to `func` when it's invoked.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to delay.
+ * @param {number} wait The number of milliseconds to delay invocation.
+ * @param {...*} [args] The arguments to invoke `func` with.
+ * @returns {number} Returns the timer id.
+ * @example
+ *
+ * _.delay(function(text) {
+ *   console.log(text);
+ * }, 1000, 'later');
+ * // => Logs 'later' after one second.
+ */
+var delay = (0, _baseRest_js_1.default)(function (func, wait, args) {
+    return (0, _baseDelay_js_1.default)(func, (0, toNumber_js_1.default)(wait) || 0, args);
+});
+exports.default = delay;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2RlbGF5LmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsb0VBQXdDO0FBQ3hDLGtFQUFzQztBQUN0QyxnRUFBcUM7QUFFckM7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQWtCRztBQUNILElBQUksS0FBSyxHQUFHLElBQUEsc0JBQVEsRUFBQyxVQUFTLElBQUksRUFBRSxJQUFJLEVBQUUsSUFBSTtJQUM1QyxPQUFPLElBQUEsdUJBQVMsRUFBQyxJQUFJLEVBQUUsSUFBQSxxQkFBUSxFQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsRUFBRSxJQUFJLENBQUMsQ0FBQztBQUNwRCxDQUFDLENBQUMsQ0FBQztBQUVILGtCQUFlLEtBQUssQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvZGVsYXkuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VEZWxheSBmcm9tICcuL19iYXNlRGVsYXkuanMnO1xuaW1wb3J0IGJhc2VSZXN0IGZyb20gJy4vX2Jhc2VSZXN0LmpzJztcbmltcG9ydCB0b051bWJlciBmcm9tICcuL3RvTnVtYmVyLmpzJztcblxuLyoqXG4gKiBJbnZva2VzIGBmdW5jYCBhZnRlciBgd2FpdGAgbWlsbGlzZWNvbmRzLiBBbnkgYWRkaXRpb25hbCBhcmd1bWVudHMgYXJlXG4gKiBwcm92aWRlZCB0byBgZnVuY2Agd2hlbiBpdCdzIGludm9rZWQuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSAwLjEuMFxuICogQGNhdGVnb3J5IEZ1bmN0aW9uXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBmdW5jIFRoZSBmdW5jdGlvbiB0byBkZWxheS5cbiAqIEBwYXJhbSB7bnVtYmVyfSB3YWl0IFRoZSBudW1iZXIgb2YgbWlsbGlzZWNvbmRzIHRvIGRlbGF5IGludm9jYXRpb24uXG4gKiBAcGFyYW0gey4uLip9IFthcmdzXSBUaGUgYXJndW1lbnRzIHRvIGludm9rZSBgZnVuY2Agd2l0aC5cbiAqIEByZXR1cm5zIHtudW1iZXJ9IFJldHVybnMgdGhlIHRpbWVyIGlkLlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLmRlbGF5KGZ1bmN0aW9uKHRleHQpIHtcbiAqICAgY29uc29sZS5sb2codGV4dCk7XG4gKiB9LCAxMDAwLCAnbGF0ZXInKTtcbiAqIC8vID0+IExvZ3MgJ2xhdGVyJyBhZnRlciBvbmUgc2Vjb25kLlxuICovXG52YXIgZGVsYXkgPSBiYXNlUmVzdChmdW5jdGlvbihmdW5jLCB3YWl0LCBhcmdzKSB7XG4gIHJldHVybiBiYXNlRGVsYXkoZnVuYywgdG9OdW1iZXIod2FpdCkgfHwgMCwgYXJncyk7XG59KTtcblxuZXhwb3J0IGRlZmF1bHQgZGVsYXk7XG4iXSwidmVyc2lvbiI6M30=

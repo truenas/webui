@@ -1,0 +1,44 @@
+1c8831a5340dfc3fb1dee68bf7b06bd0
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayMap_js_1 = __importDefault(require("./_arrayMap.js"));
+const _baseIntersection_js_1 = __importDefault(require("./_baseIntersection.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const _castArrayLikeObject_js_1 = __importDefault(require("./_castArrayLikeObject.js"));
+const last_js_1 = __importDefault(require("./last.js"));
+/**
+ * This method is like `_.intersection` except that it accepts `comparator`
+ * which is invoked to compare elements of `arrays`. The order and references
+ * of result values are determined by the first array. The comparator is
+ * invoked with two arguments: (arrVal, othVal).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {...Array} [arrays] The arrays to inspect.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns the new array of intersecting values.
+ * @example
+ *
+ * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+ * var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
+ *
+ * _.intersectionWith(objects, others, _.isEqual);
+ * // => [{ 'x': 1, 'y': 2 }]
+ */
+var intersectionWith = (0, _baseRest_js_1.default)(function (arrays) {
+    var comparator = (0, last_js_1.default)(arrays), mapped = (0, _arrayMap_js_1.default)(arrays, _castArrayLikeObject_js_1.default);
+    comparator = typeof comparator == 'function' ? comparator : undefined;
+    if (comparator) {
+        mapped.pop();
+    }
+    return (mapped.length && mapped[0] === arrays[0])
+        ? (0, _baseIntersection_js_1.default)(mapped, undefined, comparator)
+        : [];
+});
+exports.default = intersectionWith;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2ludGVyc2VjdGlvbldpdGguanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxrRUFBc0M7QUFDdEMsa0ZBQXNEO0FBQ3RELGtFQUFzQztBQUN0Qyx3RkFBNEQ7QUFDNUQsd0RBQTZCO0FBRTdCOzs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQW9CRztBQUNILElBQUksZ0JBQWdCLEdBQUcsSUFBQSxzQkFBUSxFQUFDLFVBQVMsTUFBTTtJQUM3QyxJQUFJLFVBQVUsR0FBRyxJQUFBLGlCQUFJLEVBQUMsTUFBTSxDQUFDLEVBQ3pCLE1BQU0sR0FBRyxJQUFBLHNCQUFRLEVBQUMsTUFBTSxFQUFFLGlDQUFtQixDQUFDLENBQUM7SUFFbkQsVUFBVSxHQUFHLE9BQU8sVUFBVSxJQUFJLFVBQVUsQ0FBQyxDQUFDLENBQUMsVUFBVSxDQUFDLENBQUMsQ0FBQyxTQUFTLENBQUM7SUFDdEUsSUFBSSxVQUFVLEVBQUUsQ0FBQztRQUNmLE1BQU0sQ0FBQyxHQUFHLEVBQUUsQ0FBQztJQUNmLENBQUM7SUFDRCxPQUFPLENBQUMsTUFBTSxDQUFDLE1BQU0sSUFBSSxNQUFNLENBQUMsQ0FBQyxDQUFDLEtBQUssTUFBTSxDQUFDLENBQUMsQ0FBQyxDQUFDO1FBQy9DLENBQUMsQ0FBQyxJQUFBLDhCQUFnQixFQUFDLE1BQU0sRUFBRSxTQUFTLEVBQUUsVUFBVSxDQUFDO1FBQ2pELENBQUMsQ0FBQyxFQUFFLENBQUM7QUFDVCxDQUFDLENBQUMsQ0FBQztBQUVILGtCQUFlLGdCQUFnQixDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9pbnRlcnNlY3Rpb25XaXRoLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBhcnJheU1hcCBmcm9tICcuL19hcnJheU1hcC5qcyc7XG5pbXBvcnQgYmFzZUludGVyc2VjdGlvbiBmcm9tICcuL19iYXNlSW50ZXJzZWN0aW9uLmpzJztcbmltcG9ydCBiYXNlUmVzdCBmcm9tICcuL19iYXNlUmVzdC5qcyc7XG5pbXBvcnQgY2FzdEFycmF5TGlrZU9iamVjdCBmcm9tICcuL19jYXN0QXJyYXlMaWtlT2JqZWN0LmpzJztcbmltcG9ydCBsYXN0IGZyb20gJy4vbGFzdC5qcyc7XG5cbi8qKlxuICogVGhpcyBtZXRob2QgaXMgbGlrZSBgXy5pbnRlcnNlY3Rpb25gIGV4Y2VwdCB0aGF0IGl0IGFjY2VwdHMgYGNvbXBhcmF0b3JgXG4gKiB3aGljaCBpcyBpbnZva2VkIHRvIGNvbXBhcmUgZWxlbWVudHMgb2YgYGFycmF5c2AuIFRoZSBvcmRlciBhbmQgcmVmZXJlbmNlc1xuICogb2YgcmVzdWx0IHZhbHVlcyBhcmUgZGV0ZXJtaW5lZCBieSB0aGUgZmlyc3QgYXJyYXkuIFRoZSBjb21wYXJhdG9yIGlzXG4gKiBpbnZva2VkIHdpdGggdHdvIGFyZ3VtZW50czogKGFyclZhbCwgb3RoVmFsKS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7Li4uQXJyYXl9IFthcnJheXNdIFRoZSBhcnJheXMgdG8gaW5zcGVjdC5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IFtjb21wYXJhdG9yXSBUaGUgY29tcGFyYXRvciBpbnZva2VkIHBlciBlbGVtZW50LlxuICogQHJldHVybnMge0FycmF5fSBSZXR1cm5zIHRoZSBuZXcgYXJyYXkgb2YgaW50ZXJzZWN0aW5nIHZhbHVlcy5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIG9iamVjdHMgPSBbeyAneCc6IDEsICd5JzogMiB9LCB7ICd4JzogMiwgJ3knOiAxIH1dO1xuICogdmFyIG90aGVycyA9IFt7ICd4JzogMSwgJ3knOiAxIH0sIHsgJ3gnOiAxLCAneSc6IDIgfV07XG4gKlxuICogXy5pbnRlcnNlY3Rpb25XaXRoKG9iamVjdHMsIG90aGVycywgXy5pc0VxdWFsKTtcbiAqIC8vID0+IFt7ICd4JzogMSwgJ3knOiAyIH1dXG4gKi9cbnZhciBpbnRlcnNlY3Rpb25XaXRoID0gYmFzZVJlc3QoZnVuY3Rpb24oYXJyYXlzKSB7XG4gIHZhciBjb21wYXJhdG9yID0gbGFzdChhcnJheXMpLFxuICAgICAgbWFwcGVkID0gYXJyYXlNYXAoYXJyYXlzLCBjYXN0QXJyYXlMaWtlT2JqZWN0KTtcblxuICBjb21wYXJhdG9yID0gdHlwZW9mIGNvbXBhcmF0b3IgPT0gJ2Z1bmN0aW9uJyA/IGNvbXBhcmF0b3IgOiB1bmRlZmluZWQ7XG4gIGlmIChjb21wYXJhdG9yKSB7XG4gICAgbWFwcGVkLnBvcCgpO1xuICB9XG4gIHJldHVybiAobWFwcGVkLmxlbmd0aCAmJiBtYXBwZWRbMF0gPT09IGFycmF5c1swXSlcbiAgICA/IGJhc2VJbnRlcnNlY3Rpb24obWFwcGVkLCB1bmRlZmluZWQsIGNvbXBhcmF0b3IpXG4gICAgOiBbXTtcbn0pO1xuXG5leHBvcnQgZGVmYXVsdCBpbnRlcnNlY3Rpb25XaXRoO1xuIl0sInZlcnNpb24iOjN9

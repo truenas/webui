@@ -1,0 +1,98 @@
+0993e8dc35019f126ebc057f2411c416
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helptextSystemAdvanced = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+const syslog_enum_1 = require("app/enums/syslog.enum");
+exports.helptextSystemAdvanced = {
+    fieldset_sed: (0, ngx_translate_extract_marker_1.marker)('Self-Encrypting Drive'),
+    fieldset_sysctl: (0, ngx_translate_extract_marker_1.marker)('Sysctl'),
+    fieldset_cron: (0, ngx_translate_extract_marker_1.marker)('Cron Jobs'),
+    fieldset_initshutdown: (0, ngx_translate_extract_marker_1.marker)('Init/Shutdown Scripts'),
+    fieldset_sessions_table: (0, ngx_translate_extract_marker_1.marker)('Active Sessions'),
+    fieldset_addresses: (0, ngx_translate_extract_marker_1.marker)('Allowed IP Addresses'),
+    dialog_generate_debug_title: (0, ngx_translate_extract_marker_1.marker)('Generate Debug File'),
+    dialog_generate_debug_message: (0, ngx_translate_extract_marker_1.marker)('Warning: Debugs may contain log files with personal information such as usernames or other identifying information about your system. Please review debugs and redact any sensitive information before sharing with external entities.'),
+    dialog_button_ok: (0, ngx_translate_extract_marker_1.marker)('Proceed'),
+    system_dataset_tooltip: (0, ngx_translate_extract_marker_1.marker)('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
+    syslog_audit_tooltip: (0, ngx_translate_extract_marker_1.marker)('Check to enable Audit Logs'),
+    consolemenu_tooltip: (0, ngx_translate_extract_marker_1.marker)('Unset to add a login prompt to the system before\
+ the console menu is shown.'),
+    serialconsole_tooltip: (0, ngx_translate_extract_marker_1.marker)('Do not set this if the Serial Port is disabled.'),
+    serialport_tooltip: (0, ngx_translate_extract_marker_1.marker)('Select the serial port address in hex.'),
+    serialspeed_tooltip: (0, ngx_translate_extract_marker_1.marker)('Choose the speed in bps used by the serial port.'),
+    autotune_tooltip: (0, ngx_translate_extract_marker_1.marker)('Activates a tuning script which attempts to optimize \
+ the system depending on the installed hardware. <b>Warning:</b> Autotuning \
+ is only used as a temporary measure and is not a permanent fix for system \
+ hardware issues.'),
+    debugkernel_tooltip: (0, ngx_translate_extract_marker_1.marker)('Set to boot a debug kernel after the next system\
+  reboot.'),
+    max_parallel_replication_tasks_tooltip: (0, ngx_translate_extract_marker_1.marker)('Maximum number of replication tasks being executed \
+simultaneously.'),
+    motd_tooltip: (0, ngx_translate_extract_marker_1.marker)('The message to show when a user logs in with SSH.'),
+    fqdn_tooltip: (0, ngx_translate_extract_marker_1.marker)('Set to include the Fully-Qualified Domain Name (FQDN)\
+ in logs to precisely identify systems with similar\
+ hostnames.'),
+    sed_user_placeholder: (0, ngx_translate_extract_marker_1.marker)('ATA Security User'),
+    sed_user_tooltip: (0, ngx_translate_extract_marker_1.marker)('User passed to <i>camcontrol security -u</i> to unlock\
+ SEDs'),
+    sed_passwd_placeholder: (0, ngx_translate_extract_marker_1.marker)('SED Password'),
+    sed_passwd_tooltip: (0, ngx_translate_extract_marker_1.marker)('Global password to unlock SEDs.'),
+    sed_passwd2_placeholder: (0, ngx_translate_extract_marker_1.marker)('Confirm SED Password'),
+    debug_download_failed_message: (0, ngx_translate_extract_marker_1.marker)('Debug could not be downloaded.'),
+    retention_tooltip: (0, ngx_translate_extract_marker_1.marker)('Number of days to retain local audit messages.'),
+    reservation_tooltip: (0, ngx_translate_extract_marker_1.marker)('Size in GiB of refreservation to set on ZFS dataset \
+ where the audit databases are stored. The refreservation specifies the \
+ minimum amount of space guaranteed to the dataset, and counts against \
+ the space available for other datasets in the zpool where the audit \
+ dataset is located.'),
+    quota_tooltip: (0, ngx_translate_extract_marker_1.marker)('Size in GiB of the maximum amount of space that may be \
+ consumed by the dataset where the audit dabases are stored.'),
+    quota_fill_warning_tooltip: (0, ngx_translate_extract_marker_1.marker)('Percentage used of dataset quota at which to generate a warning alert.'),
+    quota_fill_critical_tooltip: (0, ngx_translate_extract_marker_1.marker)('Percentage used of dataset quota at which to generate a critical alert.'),
+    sysloglevel: {
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Select the minimum priority level to send to the remote syslog server.\
+  The system only sends logs matching this level or higher.'),
+        options: [
+            { label: (0, ngx_translate_extract_marker_1.marker)('Emergency'), value: syslog_enum_1.SyslogLevel.Emergency },
+            { label: (0, ngx_translate_extract_marker_1.marker)('Alert'), value: syslog_enum_1.SyslogLevel.Alert },
+            { label: (0, ngx_translate_extract_marker_1.marker)('Critical'), value: syslog_enum_1.SyslogLevel.Critical },
+            { label: (0, ngx_translate_extract_marker_1.marker)('Error'), value: syslog_enum_1.SyslogLevel.Error },
+            { label: (0, ngx_translate_extract_marker_1.marker)('Warning'), value: syslog_enum_1.SyslogLevel.Warning },
+            { label: (0, ngx_translate_extract_marker_1.marker)('Notice'), value: syslog_enum_1.SyslogLevel.Notice },
+            { label: (0, ngx_translate_extract_marker_1.marker)('Info'), value: syslog_enum_1.SyslogLevel.Info },
+            { label: (0, ngx_translate_extract_marker_1.marker)('Debug'), value: syslog_enum_1.SyslogLevel.Debug },
+        ],
+    },
+    syslogserver: {
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Remote syslog server DNS hostname or IP address.\
+ Nonstandard port numbers can be used by adding\
+ a colon and the port number to the hostname, like\
+ <samp>mysyslogserver:1928</samp>. Log entries\
+ are written to local logs and sent to the remote\
+ syslog server.'),
+    },
+    syslog_transport: {
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('<a href="https://tools.ietf.org/html/rfc8095" target="_blank">Transport Protocol</a>\
+ for the remote system log server connection. Choosing Transport Layer Security (TLS)\
+ also requires selecting a preconfigured system Certificate.'),
+        options: [
+            { label: 'UDP', value: syslog_enum_1.SyslogTransport.Udp },
+            { label: 'TCP', value: syslog_enum_1.SyslogTransport.Tcp },
+            { label: 'TLS', value: syslog_enum_1.SyslogTransport.Tls },
+        ],
+    },
+    syslog_tls_certificate: {
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('The preconfigured system <i>Certificate</i> to use for authenticating\
+ the TLS protocol connection to the remote system log server.'),
+    },
+    first_time: {
+        title: (0, ngx_translate_extract_marker_1.marker)('Warning'),
+        message: (0, ngx_translate_extract_marker_1.marker)('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'),
+    },
+    allowed_ip_addresses: {
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an \
+ IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.'),
+    },
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L3N5c3RlbS9hZHZhbmNlZC50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSwwRkFBc0U7QUFDdEUsdURBQXFFO0FBRXhELFFBQUEsc0JBQXNCLEdBQUc7SUFDcEMsWUFBWSxFQUFFLElBQUEscUNBQUMsRUFBQyx1QkFBdUIsQ0FBQztJQUN4QyxlQUFlLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFFBQVEsQ0FBQztJQUM1QixhQUFhLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFdBQVcsQ0FBQztJQUM3QixxQkFBcUIsRUFBRSxJQUFBLHFDQUFDLEVBQUMsdUJBQXVCLENBQUM7SUFDakQsdUJBQXVCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLGlCQUFpQixDQUFDO0lBQzdDLGtCQUFrQixFQUFFLElBQUEscUNBQUMsRUFBQyxzQkFBc0IsQ0FBQztJQUU3QywyQkFBMkIsRUFBRSxJQUFBLHFDQUFDLEVBQUMscUJBQXFCLENBQUM7SUFDckQsNkJBQTZCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLHdPQUF3TyxDQUFDO0lBQzFRLGdCQUFnQixFQUFFLElBQUEscUNBQUMsRUFBQyxTQUFTLENBQUM7SUFFOUIsc0JBQXNCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLHFIQUFxSCxDQUFDO0lBQ2hKLG9CQUFvQixFQUFFLElBQUEscUNBQUMsRUFBQyw0QkFBNEIsQ0FBQztJQUVyRCxtQkFBbUIsRUFBRSxJQUFBLHFDQUFDLEVBQUM7NEJBQ0csQ0FBQztJQUUzQixxQkFBcUIsRUFBRSxJQUFBLHFDQUFDLEVBQUMsaURBQWlELENBQUM7SUFFM0Usa0JBQWtCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLHdDQUF3QyxDQUFDO0lBRS9ELG1CQUFtQixFQUFFLElBQUEscUNBQUMsRUFBQyxrREFBa0QsQ0FBQztJQUUxRSxnQkFBZ0IsRUFBRSxJQUFBLHFDQUFDLEVBQUM7OztrQkFHSixDQUFDO0lBRWpCLG1CQUFtQixFQUFFLElBQUEscUNB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S0FDNUQ7SUFFRCxVQUFVLEVBQUU7UUFDVixLQUFLLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFNBQVMsQ0FBQztRQUNuQixPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLHNHQUFzRyxDQUFDO0tBQ25IO0lBRUQsb0JBQW9CLEVBQUU7UUFDcEIsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQztzRkFDdUUsQ0FBQztLQUNwRjtDQUNGLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L3N5c3RlbS9hZHZhbmNlZC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5pbXBvcnQgeyBTeXNsb2dMZXZlbCwgU3lzbG9nVHJhbnNwb3J0IH0gZnJvbSAnYXBwL2VudW1zL3N5c2xvZy5lbnVtJztcblxuZXhwb3J0IGNvbnN0IGhlbHB0ZXh0U3lzdGVtQWR2YW5jZWQgPSB7XG4gIGZpZWxkc2V0X3NlZDogVCgnU2VsZi1FbmNyeXB0aW5nIERyaXZlJyksXG4gIGZpZWxkc2V0X3N5c2N0bDogVCgnU3lzY3RsJyksXG4gIGZpZWxkc2V0X2Nyb246IFQoJ0Nyb24gSm9icycpLFxuICBmaWVsZHNldF9pbml0c2h1dGRvd246IFQoJ0luaXQvU2h1dGRvd24gU2NyaXB0cycpLFxuICBmaWVsZHNldF9zZXNzaW9uc190YWJsZTogVCgnQWN0aXZlIFNlc3Npb25zJyksXG4gIGZpZWxkc2V0X2FkZHJlc3NlczogVCgnQWxsb3dlZCBJUCBBZGRyZXNzZXMnKSxcblxuICBkaWFsb2dfZ2VuZXJhdGVfZGVidWdfdGl0bGU6IFQoJ0dlbmVyYXRlIERlYnVnIEZpbGUnKSxcbiAgZGlhbG9nX2dlbmVyYXRlX2RlYnVnX21lc3NhZ2U6IFQoJ1dhcm5pbmc6IERlYnVncyBtYXkgY29udGFpbiBsb2cgZmlsZXMgd2l0aCBwZXJzb25hbCBpbmZvcm1hdGlvbiBzdWNoIGFzIHVzZXJuYW1lcyBvciBvdGhlciBpZGVudGlmeWluZyBpbmZvcm1hdGlvbiBhYm91dCB5b3VyIHN5c3RlbS4gUGxlYXNlIHJldmlldyBkZWJ1Z3MgYW5kIHJlZGFjdCBhbnkgc2Vuc2l0aXZlIGluZm9ybWF0aW9uIGJlZm9yZSBzaGFyaW5nIHdpdGggZXh0ZXJuYWwgZW50aXRpZXMuJyksXG4gIGRpYWxvZ19idXR0b25fb2s6IFQoJ1Byb2NlZWQnKSxcblxuICBzeXN0ZW1fZGF0YXNldF90b29sdGlwOiBUKCdTdG9yZSBzeXN0ZW0gbG9ncyBvbiB0aGUgc3lzdGVtIGRhdGFzZXQuIFVuc2V0IHRvIHN0b3JlIHN5c3RlbSBsb2dzIGluIDxpPi92YXIvPC9pPiBvbiB0aGUgb3BlcmF0aW5nIHN5c3RlbSBkZXZpY2UuJyksXG4gIHN5c2xvZ19hdWRpdF90b29sdGlwOiBUKCdDaGVjayB0byBlbmFibGUgQXVkaXQgTG9ncycpLFxuXG4gIGNvbnNvbGVtZW51X3Rvb2x0aXA6IFQoJ1Vuc2V0IHRvIGFkZCBhIGxvZ2luIHByb21wdCB0byB0aGUgc3lzdGVtIGJlZm9yZVxcXG4gdGhlIGNvbnNvbGUgbWVudSBpcyBzaG93bi4nKSxcblxuICBzZXJpYWxjb25zb2xlX3Rvb2x0aXA6IFQoJ0RvIG5vdCBzZXQgdGhpcyBpZiB0aGUgU2VyaWFsIFBvcnQgaXMgZGlzYWJsZWQuJyksXG5cbiAgc2VyaWFscG9ydF90b29sdGlwOiBUKCdTZWxlY3QgdGhlIHNlcmlhbCBwb3J0IGFkZHJlc3MgaW4gaGV4LicpLFxuXG4gIHNlcmlhbHNwZWVkX3Rvb2x0aXA6IFQoJ0Nob29zZSB0aGUgc3BlZWQgaW4gYnBzIHVzZWQgYnkgdGhlIHNlcmlhbCBwb3J0LicpLFxuXG4gIGF1dG90dW5lX3Rvb2x0aXA6IFQoJ0FjdGl2YXRlcyBhIHR1bmluZyBzY3JpcHQgd2hpY2ggYXR0ZW1wdHMgdG8gb3B0aW1pemUgXFxcbiB0aGUgc3lzdGVtIGRlcGVuZGluZyBvbiB0aGUgaW5zdGFsbGVkIGhhcmR3YXJlLiA8Yj5XYXJuaW5nOjwvYj4gQXV0b3R1bmluZyBcXFxuIGlzIG9ubHkgdXNlZCBhcyBhIHRlbXBvcmFyeSBtZWFzdXJlIGFuZCBpcyBub3QgYSBwZXJtYW5lbnQgZml4IGZvciBzeXN0ZW0gXFxcbiBoYXJkd2FyZSBpc3N1ZXMuJyksXG5cbiAgZGVidWdrZXJuZWxfdG9vbHRpcDogVCgnU2V0IHRvIGJvb3QgYSBkZWJ1ZyBrZXJuZWwgYWZ0ZXIgdGhlIG5leHQgc3lzdGVtXFxcbiAgcmVib290LicpLFxuXG4gIG1heF9wYXJhbGxlbF9yZXBsaWNhdGlvbl90YXNrc190b29sdGlwOiBUKCdNYXhpbXVtIG51bWJlciBvZiByZXBsaWNhdGlvbiB0YXNrcyBiZWluZyBleGVjdXRlZCBcXFxuc2ltdWx0YW5lb3VzbHkuJyksXG5cbiAgbW90ZF90b29sdGlwOiBUKCdUaGUgbWVzc2FnZSB0byBzaG93IHdoZW4gYSB1c2VyIGxvZ3MgaW4gd2l0aCBTU0guJyksXG5cbiAgZnFkbl90b29sdGlwOiBUKCdTZXQgdG8gaW5jbHVkZSB0aGUgRnVsbHktUXVhbGlmaWVkIERvbWFpbiBOYW1lIChGUUROKVxcXG4gaW4gbG9ncyB0byBwcmVjaXNlbHkgaWRlbnRpZnkgc3lzdGVtcyB3aXRoIHNpbWlsYXJcXFxuIGhvc3RuYW1lcy4nKSxcblxuICBzZWRfdXNlcl9wbGFjZWhvbGRlcjogVCgnQVRBIFNlY3VyaXR5IFVzZXInKSxcbiAgc2VkX3VzZXJfdG9vbHRpcDogVCgnVXNlciBwYXNzZWQgdG8gPGk+Y2FtY29udHJvbCBzZWN1cml0eSAtdTwvaT4gdG8gdW5sb2NrXFxcbiBTRURzJyksXG5cbiAgc2VkX3Bhc3N3ZF9wbGFjZWhvbGRlcjogVCgnU0VEIFBhc3N3b3JkJyksXG4gIHNlZF9wYXNzd2RfdG9vbHRpcDogVCgnR2xvYmFsIHBhc3N3b3JkIHRvIHVubG9jayBTRURzLicpLFxuXG4gIHNlZF9wYXNzd2QyX3BsYWNlaG9sZGVyOiBUKCdDb25maXJtIFNFRCBQYXNzd29yZCcpLFxuXG4gIGRlYnVnX2Rvd25sb2FkX2ZhaWxlZF9tZXNzYWdlOiBUKCdEZWJ1ZyBjb3VsZCBub3QgYmUgZG93bmxvYWRlZC4nKSxcblxuICByZXRlbnRpb25fdG9vbHRpcDogVCgnTnVtYmVyIG9mIGRheXMgdG8gcmV0YWluIGxvY2FsIGF1ZGl0IG1lc3NhZ2VzLicpLFxuICByZXNlcnZhdGlvbl90b29sdGlwOiBUKCdTaXplIGluIEdpQiBvZiByZWZyZXNlcnZhdGlvbiB0byBzZXQgb24gWkZTIGRhdGFzZXQgXFxcbiB3aGVyZSB0aGUgYXVkaXQgZGF0YWJhc2VzIGFyZSBzdG9yZWQuIFRoZSByZWZyZXNlcnZhdGlvbiBzcGVjaWZpZXMgdGhlIFxcXG4gbWluaW11bSBhbW91bnQgb2Ygc3BhY2UgZ3VhcmFudGVlZCB0byB0aGUgZGF0YXNldCwgYW5kIGNvdW50cyBhZ2FpbnN0IFxcXG4gdGhlIHNwYWNlIGF2YWlsYWJsZSBmb3Igb3RoZXIgZGF0YXNldHMgaW4gdGhlIHpwb29sIHdoZXJlIHRoZSBhdWRpdCBcXFxuIGRhdGFzZXQgaXMgbG9jYXRlZC4nKSxcbiAgcXVvdGFfdG9vbHRpcDogVCgnU2l6ZSBpbiBHaUIgb2YgdGhlIG1heGltdW0gYW1vdW50IG9mIHNwYWNlIHRoYXQgbWF5IGJlIFxcXG4gY29uc3VtZWQgYnkgdGhlIGRhdGFzZXQgd2hlcmUgdGhlIGF1ZGl0IGRhYmFzZXMgYXJlIHN0b3JlZC4nKSxcbiAgcXVvdGFfZmlsbF93YXJuaW5nX3Rvb2x0aXA6IFQoJ1BlcmNlbnRhZ2UgdXNlZCBvZiBkYXRhc2V0IHF1b3RhIGF0IHdoaWNoIHRvIGdlbmVyYXRlIGEgd2FybmluZyBhbGVydC4nKSxcbiAgcXVvdGFfZmlsbF9jcml0aWNhbF90b29sdGlwOiBUKCdQZXJjZW50YWdlIHVzZWQgb2YgZGF0YXNldCBxdW90YSBhdCB3aGljaCB0byBnZW5lcmF0ZSBhIGNyaXRpY2FsIGFsZXJ0LicpLFxuXG4gIHN5c2xvZ2xldmVsOiB7XG4gICAgdG9vbHRpcDogVChcbiAgICAgICdTZWxlY3QgdGhlIG1pbmltdW0gcHJpb3JpdHkgbGV2ZWwgdG8gc2VuZCB0byB0aGUgcmVtb3RlIHN5c2xvZyBzZXJ2ZXIuXFxcbiAgVGhlIHN5c3RlbSBvbmx5IHNlbmRzIGxvZ3MgbWF0Y2hpbmcgdGhpcyBsZXZlbCBvciBoaWdoZXIuJyxcbiAgICApLFxuICAgIG9wdGlvbnM6IFtcbiAgICAgIHsgbGFiZWw6IFQoJ0VtZXJnZW5jeScpLCB2YWx1ZTogU3lzbG9nTGV2ZWwuRW1lcmdlbmN5IH0sXG4gICAgICB7IGxhYmVsOiBUKCdBbGVydCcpLCB2YWx1ZTogU3lzbG9nTGV2ZWwuQWxlcnQgfSxcbiAgICAgIHsgbGFiZWw6IFQoJ0NyaXRpY2FsJyksIHZhbHVlOiBTeXNsb2dMZXZlbC5Dcml0aWNhbCB9LFxuICAgICAgeyBsYWJlbDogVCgnRXJyb3InKSwgdmFsdWU6IFN5c2xvZ0xldmVsLkVycm9yIH0sXG4gICAgICB7IGxhYmVsOiBUKCdXYXJuaW5nJyksIHZhbHVlOiBTeXNsb2dMZXZlbC5XYXJuaW5nIH0sXG4gICAgICB7IGxhYmVsOiBUKCdOb3RpY2UnKSwgdmFsdWU6IFN5c2xvZ0xldmVsLk5vdGljZSB9LFxuICAgICAgeyBsYWJlbDogVCgnSW5mbycpLCB2YWx1ZTogU3lzbG9nTGV2ZWwuSW5mbyB9LFxuICAgICAgeyBsYWJlbDogVCgnRGVidWcnKSwgdmFsdWU6IFN5c2xvZ0xldmVsLkRlYnVnIH0sXG4gICAgXSxcbiAgfSxcblxuICBzeXNsb2dzZXJ2ZXI6IHtcbiAgICB0b29sdGlwOiBUKFxuICAgICAgJ1JlbW90ZSBzeXNsb2cgc2VydmVyIEROUyBob3N0bmFtZSBvciBJUCBhZGRyZXNzLlxcXG4gTm9uc3RhbmRhcmQgcG9ydCBudW1iZXJzIGNhbiBiZSB1c2VkIGJ5IGFkZGluZ1xcXG4gYSBjb2xvbiBhbmQgdGhlIHBvcnQgbnVtYmVyIHRvIHRoZSBob3N0bmFtZSwgbGlrZVxcXG4gPHNhbXA+bXlzeXNsb2dzZXJ2ZXI6MTkyODwvc2FtcD4uIExvZyBlbnRyaWVzXFxcbiBhcmUgd3JpdHRlbiB0byBsb2NhbCBsb2dzIGFuZCBzZW50IHRvIHRoZSByZW1vdGVcXFxuIHN5c2xvZyBzZXJ2ZXIuJyxcbiAgICApLFxuICB9LFxuXG4gIHN5c2xvZ190cmFuc3BvcnQ6IHtcbiAgICB0b29sdGlwOiBUKCc8YSBocmVmPVwiaHR0cHM6Ly90b29scy5pZXRmLm9yZy9odG1sL3JmYzgwOTVcIiB0YXJnZXQ9XCJfYmxhbmtcIj5UcmFuc3BvcnQgUHJvdG9jb2w8L2E+XFxcbiBmb3IgdGhlIHJlbW90ZSBzeXN0ZW0gbG9nIHNlcnZlciBjb25uZWN0aW9uLiBDaG9vc2luZyBUcmFuc3BvcnQgTGF5ZXIgU2VjdXJpdHkgKFRMUylcXFxuIGFsc28gcmVxdWlyZXMgc2VsZWN0aW5nIGEgcHJlY29uZmlndXJlZCBzeXN0ZW0gQ2VydGlmaWNhdGUuJyksXG4gICAgb3B0aW9uczogW1xuICAgICAgeyBsYWJlbDogJ1VEUCcsIHZhbHVlOiBTeXNsb2dUcmFuc3BvcnQuVWRwIH0sXG4gICAgICB7IGxhYmVsOiAnVENQJywgdmFsdWU6IFN5c2xvZ1RyYW5zcG9ydC5UY3AgfSxcbiAgICAgIHsgbGFiZWw6ICdUTFMnLCB2YWx1ZTogU3lzbG9nVHJhbnNwb3J0LlRscyB9LFxuICAgIF0sXG4gIH0sXG5cbiAgc3lzbG9nX3Rsc19jZXJ0aWZpY2F0ZToge1xuICAgIHRvb2x0aXA6IFQoJ1RoZSBwcmVjb25maWd1cmVkIHN5c3RlbSA8aT5DZXJ0aWZpY2F0ZTwvaT4gdG8gdXNlIGZvciBhdXRoZW50aWNhdGluZ1xcXG4gdGhlIFRMUyBwcm90b2NvbCBjb25uZWN0aW9uIHRvIHRoZSByZW1vdGUgc3lzdGVtIGxvZyBzZXJ2ZXIuJyksXG4gIH0sXG5cbiAgZmlyc3RfdGltZToge1xuICAgIHRpdGxlOiBUKCdXYXJuaW5nJyksXG4gICAgbWVzc2FnZTogVCgnQ2hhbmdpbmcgQWR2YW5jZWQgc2V0dGluZ3MgY2FuIGJlIGRhbmdlcm91cyB3aGVuIGRvbmUgaW5jb3JyZWN0bHkuIFBsZWFzZSB1c2UgY2F1dGlvbiBiZWZvcmUgc2F2aW5nLicpLFxuICB9LFxuXG4gIGFsbG93ZWRfaXBfYWRkcmVzc2VzOiB7XG4gICAgdG9vbHRpcDogVCgnWW91IG1heSBlbnRlciBhIHNwZWNpZmljIElQIGFkZHJlc3MgKGUuZy4sIDE5Mi4xNjguMS4xKSBmb3IgaW5kaXZpZHVhbCBhY2Nlc3MsIG9yIHVzZSBhbiBcXFxuIElQIGFkZHJlc3Mgd2l0aCBhIHN1Ym5ldCBtYXNrIChlLmcuLCAxOTIuMTY4LjEuMC8yNCkgdG8gZGVmaW5lIGEgcmFuZ2Ugb2YgYWRkcmVzc2VzLicpLFxuICB9LFxufTtcbiJdLCJ2ZXJzaW9uIjozfQ==

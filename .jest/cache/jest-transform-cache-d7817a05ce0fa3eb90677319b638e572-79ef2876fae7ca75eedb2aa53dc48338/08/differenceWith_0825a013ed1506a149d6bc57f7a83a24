@@ -1,0 +1,45 @@
+9ababd25540c89849b2225fe56ef0dd6
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseDifference_js_1 = __importDefault(require("./_baseDifference.js"));
+const _baseFlatten_js_1 = __importDefault(require("./_baseFlatten.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const isArrayLikeObject_js_1 = __importDefault(require("./isArrayLikeObject.js"));
+const last_js_1 = __importDefault(require("./last.js"));
+/**
+ * This method is like `_.difference` except that it accepts `comparator`
+ * which is invoked to compare elements of `array` to `values`. The order and
+ * references of result values are determined by the first array. The comparator
+ * is invoked with two arguments: (arrVal, othVal).
+ *
+ * **Note:** Unlike `_.pullAllWith`, this method returns a new array.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @param {...Array} [values] The values to exclude.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns the new array of filtered values.
+ * @example
+ *
+ * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+ *
+ * _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], _.isEqual);
+ * // => [{ 'x': 2, 'y': 1 }]
+ */
+var differenceWith = (0, _baseRest_js_1.default)(function (array, values) {
+    var comparator = (0, last_js_1.default)(values);
+    if ((0, isArrayLikeObject_js_1.default)(comparator)) {
+        comparator = undefined;
+    }
+    return (0, isArrayLikeObject_js_1.default)(array)
+        ? (0, _baseDifference_js_1.default)(array, (0, _baseFlatten_js_1.default)(values, 1, isArrayLikeObject_js_1.default, true), undefined, comparator)
+        : [];
+});
+exports.default = differenceWith;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2RpZmZlcmVuY2VXaXRoLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsOEVBQWtEO0FBQ2xELHdFQUE0QztBQUM1QyxrRUFBc0M7QUFDdEMsa0ZBQXVEO0FBQ3ZELHdEQUE2QjtBQUU3Qjs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXNCRztBQUNILElBQUksY0FBYyxHQUFHLElBQUEsc0JBQVEsRUFBQyxVQUFTLEtBQUssRUFBRSxNQUFNO0lBQ2xELElBQUksVUFBVSxHQUFHLElBQUEsaUJBQUksRUFBQyxNQUFNLENBQUMsQ0FBQztJQUM5QixJQUFJLElBQUEsOEJBQWlCLEVBQUMsVUFBVSxDQUFDLEVBQUUsQ0FBQztRQUNsQyxVQUFVLEdBQUcsU0FBUyxDQUFDO0lBQ3pCLENBQUM7SUFDRCxPQUFPLElBQUEsOEJBQWlCLEVBQUMsS0FBSyxDQUFDO1FBQzdCLENBQUMsQ0FBQyxJQUFBLDRCQUFjLEVBQUMsS0FBSyxFQUFFLElBQUEseUJBQVcsRUFBQyxNQUFNLEVBQUUsQ0FBQyxFQUFFLDhCQUFpQixFQUFFLElBQUksQ0FBQyxFQUFFLFNBQVMsRUFBRSxVQUFVLENBQUM7UUFDL0YsQ0FBQyxDQUFDLEVBQUUsQ0FBQztBQUNULENBQUMsQ0FBQyxDQUFDO0FBRUgsa0JBQWUsY0FBYyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9kaWZmZXJlbmNlV2l0aC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZURpZmZlcmVuY2UgZnJvbSAnLi9fYmFzZURpZmZlcmVuY2UuanMnO1xuaW1wb3J0IGJhc2VGbGF0dGVuIGZyb20gJy4vX2Jhc2VGbGF0dGVuLmpzJztcbmltcG9ydCBiYXNlUmVzdCBmcm9tICcuL19iYXNlUmVzdC5qcyc7XG5pbXBvcnQgaXNBcnJheUxpa2VPYmplY3QgZnJvbSAnLi9pc0FycmF5TGlrZU9iamVjdC5qcyc7XG5pbXBvcnQgbGFzdCBmcm9tICcuL2xhc3QuanMnO1xuXG4vKipcbiAqIFRoaXMgbWV0aG9kIGlzIGxpa2UgYF8uZGlmZmVyZW5jZWAgZXhjZXB0IHRoYXQgaXQgYWNjZXB0cyBgY29tcGFyYXRvcmBcbiAqIHdoaWNoIGlzIGludm9rZWQgdG8gY29tcGFyZSBlbGVtZW50cyBvZiBgYXJyYXlgIHRvIGB2YWx1ZXNgLiBUaGUgb3JkZXIgYW5kXG4gKiByZWZlcmVuY2VzIG9mIHJlc3VsdCB2YWx1ZXMgYXJlIGRldGVybWluZWQgYnkgdGhlIGZpcnN0IGFycmF5LiBUaGUgY29tcGFyYXRvclxuICogaXMgaW52b2tlZCB3aXRoIHR3byBhcmd1bWVudHM6IChhcnJWYWwsIG90aFZhbCkuXG4gKlxuICogKipOb3RlOioqIFVubGlrZSBgXy5wdWxsQWxsV2l0aGAsIHRoaXMgbWV0aG9kIHJldHVybnMgYSBuZXcgYXJyYXkuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSA0LjAuMFxuICogQGNhdGVnb3J5IEFycmF5XG4gKiBAcGFyYW0ge0FycmF5fSBhcnJheSBUaGUgYXJyYXkgdG8gaW5zcGVjdC5cbiAqIEBwYXJhbSB7Li4uQXJyYXl9IFt2YWx1ZXNdIFRoZSB2YWx1ZXMgdG8gZXhjbHVkZS5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IFtjb21wYXJhdG9yXSBUaGUgY29tcGFyYXRvciBpbnZva2VkIHBlciBlbGVtZW50LlxuICogQHJldHVybnMge0FycmF5fSBSZXR1cm5zIHRoZSBuZXcgYXJyYXkgb2YgZmlsdGVyZWQgdmFsdWVzLlxuICogQGV4YW1wbGVcbiAqXG4gKiB2YXIgb2JqZWN0cyA9IFt7ICd4JzogMSwgJ3knOiAyIH0sIHsgJ3gnOiAyLCAneSc6IDEgfV07XG4gKlxuICogXy5kaWZmZXJlbmNlV2l0aChvYmplY3RzLCBbeyAneCc6IDEsICd5JzogMiB9XSwgXy5pc0VxdWFsKTtcbiAqIC8vID0+IFt7ICd4JzogMiwgJ3knOiAxIH1dXG4gKi9cbnZhciBkaWZmZXJlbmNlV2l0aCA9IGJhc2VSZXN0KGZ1bmN0aW9uKGFycmF5LCB2YWx1ZXMpIHtcbiAgdmFyIGNvbXBhcmF0b3IgPSBsYXN0KHZhbHVlcyk7XG4gIGlmIChpc0FycmF5TGlrZU9iamVjdChjb21wYXJhdG9yKSkge1xuICAgIGNvbXBhcmF0b3IgPSB1bmRlZmluZWQ7XG4gIH1cbiAgcmV0dXJuIGlzQXJyYXlMaWtlT2JqZWN0KGFycmF5KVxuICAgID8gYmFzZURpZmZlcmVuY2UoYXJyYXksIGJhc2VGbGF0dGVuKHZhbHVlcywgMSwgaXNBcnJheUxpa2VPYmplY3QsIHRydWUpLCB1bmRlZmluZWQsIGNvbXBhcmF0b3IpXG4gICAgOiBbXTtcbn0pO1xuXG5leHBvcnQgZGVmYXVsdCBkaWZmZXJlbmNlV2l0aDtcbiJdLCJ2ZXJzaW9uIjozfQ==

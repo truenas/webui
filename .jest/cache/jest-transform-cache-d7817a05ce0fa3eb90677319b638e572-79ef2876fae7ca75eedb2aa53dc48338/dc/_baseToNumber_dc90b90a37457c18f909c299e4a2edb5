@@ -1,0 +1,28 @@
+7bbb5a378ed521f95f178398c6e987c5
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const isSymbol_js_1 = __importDefault(require("./isSymbol.js"));
+/** Used as references for various `Number` constants. */
+var NAN = 0 / 0;
+/**
+ * The base implementation of `_.toNumber` which doesn't ensure correct
+ * conversions of binary, hexadecimal, or octal string values.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ */
+function baseToNumber(value) {
+    if (typeof value == 'number') {
+        return value;
+    }
+    if ((0, isSymbol_js_1.default)(value)) {
+        return NAN;
+    }
+    return +value;
+}
+exports.default = baseToNumber;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlVG9OdW1iZXIuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxnRUFBcUM7QUFFckMseURBQXlEO0FBQ3pELElBQUksR0FBRyxHQUFHLENBQUMsR0FBRyxDQUFDLENBQUM7QUFFaEI7Ozs7Ozs7R0FPRztBQUNILFNBQVMsWUFBWSxDQUFDLEtBQUs7SUFDekIsSUFBSSxPQUFPLEtBQUssSUFBSSxRQUFRLEVBQUUsQ0FBQztRQUM3QixPQUFPLEtBQUssQ0FBQztJQUNmLENBQUM7SUFDRCxJQUFJLElBQUEscUJBQVEsRUFBQyxLQUFLLENBQUMsRUFBRSxDQUFDO1FBQ3BCLE9BQU8sR0FBRyxDQUFDO0lBQ2IsQ0FBQztJQUNELE9BQU8sQ0FBQyxLQUFLLENBQUM7QUFDaEIsQ0FBQztBQUVELGtCQUFlLFlBQVksQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvX2Jhc2VUb051bWJlci5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgaXNTeW1ib2wgZnJvbSAnLi9pc1N5bWJvbC5qcyc7XG5cbi8qKiBVc2VkIGFzIHJlZmVyZW5jZXMgZm9yIHZhcmlvdXMgYE51bWJlcmAgY29uc3RhbnRzLiAqL1xudmFyIE5BTiA9IDAgLyAwO1xuXG4vKipcbiAqIFRoZSBiYXNlIGltcGxlbWVudGF0aW9uIG9mIGBfLnRvTnVtYmVyYCB3aGljaCBkb2Vzbid0IGVuc3VyZSBjb3JyZWN0XG4gKiBjb252ZXJzaW9ucyBvZiBiaW5hcnksIGhleGFkZWNpbWFsLCBvciBvY3RhbCBzdHJpbmcgdmFsdWVzLlxuICpcbiAqIEBwcml2YXRlXG4gKiBAcGFyYW0geyp9IHZhbHVlIFRoZSB2YWx1ZSB0byBwcm9jZXNzLlxuICogQHJldHVybnMge251bWJlcn0gUmV0dXJucyB0aGUgbnVtYmVyLlxuICovXG5mdW5jdGlvbiBiYXNlVG9OdW1iZXIodmFsdWUpIHtcbiAgaWYgKHR5cGVvZiB2YWx1ZSA9PSAnbnVtYmVyJykge1xuICAgIHJldHVybiB2YWx1ZTtcbiAgfVxuICBpZiAoaXNTeW1ib2wodmFsdWUpKSB7XG4gICAgcmV0dXJuIE5BTjtcbiAgfVxuICByZXR1cm4gK3ZhbHVlO1xufVxuXG5leHBvcnQgZGVmYXVsdCBiYXNlVG9OdW1iZXI7XG4iXSwidmVyc2lvbiI6M30=

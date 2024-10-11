@@ -1,0 +1,17 @@
+cec4bb7572b7d79c05378ec51c0f706d
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.transferModeNames = exports.TransferMode = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+var TransferMode;
+(function (TransferMode) {
+    TransferMode["Sync"] = "SYNC";
+    TransferMode["Copy"] = "COPY";
+    TransferMode["Move"] = "MOVE";
+})(TransferMode || (exports.TransferMode = TransferMode = {}));
+exports.transferModeNames = new Map([
+    [TransferMode.Sync, (0, ngx_translate_extract_marker_1.marker)('SYNC')],
+    [TransferMode.Copy, (0, ngx_translate_extract_marker_1.marker)('COPY')],
+    [TransferMode.Move, (0, ngx_translate_extract_marker_1.marker)('MOVE')],
+]);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3RyYW5zZmVyLW1vZGUuZW51bS50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSwwRkFBc0U7QUFFdEUsSUFBWSxZQUlYO0FBSkQsV0FBWSxZQUFZO0lBQ3RCLDZCQUFhLENBQUE7SUFDYiw2QkFBYSxDQUFBO0lBQ2IsNkJBQWEsQ0FBQTtBQUNmLENBQUMsRUFKVyxZQUFZLDRCQUFaLFlBQVksUUFJdkI7QUFFWSxRQUFBLGlCQUFpQixHQUFHLElBQUksR0FBRyxDQUF1QjtJQUM3RCxDQUFDLFlBQVksQ0FBQyxJQUFJLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQzlCLENBQUMsWUFBWSxDQUFDLElBQUksRUFBRSxJQUFBLHFDQUFDLEVBQUMsTUFBTSxDQUFDLENBQUM7SUFDOUIsQ0FBQyxZQUFZLENBQUMsSUFBSSxFQUFFLElBQUEscUNBQUMsRUFBQyxNQUFNLENBQUMsQ0FBQztDQUMvQixDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3RyYW5zZmVyLW1vZGUuZW51bS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5cbmV4cG9ydCBlbnVtIFRyYW5zZmVyTW9kZSB7XG4gIFN5bmMgPSAnU1lOQycsXG4gIENvcHkgPSAnQ09QWScsXG4gIE1vdmUgPSAnTU9WRScsXG59XG5cbmV4cG9ydCBjb25zdCB0cmFuc2Zlck1vZGVOYW1lcyA9IG5ldyBNYXA8VHJhbnNmZXJNb2RlLCBzdHJpbmc+KFtcbiAgW1RyYW5zZmVyTW9kZS5TeW5jLCBUKCdTWU5DJyldLFxuICBbVHJhbnNmZXJNb2RlLkNvcHksIFQoJ0NPUFknKV0sXG4gIFtUcmFuc2Zlck1vZGUuTW92ZSwgVCgnTU9WRScpXSxcbl0pO1xuIl0sInZlcnNpb24iOjN9

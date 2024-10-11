@@ -1,0 +1,2 @@
+8abfbd6dda6c80b1b1951eb69afbcaf9
+module.exports="<span class=\"warning\" [ngClass]=\"{ 'green': color() === 'green' }\">{{ message() | translate }}</span>\n"

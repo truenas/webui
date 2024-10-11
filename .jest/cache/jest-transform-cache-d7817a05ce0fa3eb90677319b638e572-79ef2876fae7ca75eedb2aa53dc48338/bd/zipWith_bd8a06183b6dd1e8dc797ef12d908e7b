@@ -1,0 +1,35 @@
+247282e694abe1b24a0fdf03810c5e4a
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const unzipWith_js_1 = __importDefault(require("./unzipWith.js"));
+/**
+ * This method is like `_.zip` except that it accepts `iteratee` to specify
+ * how grouped values should be combined. The iteratee is invoked with the
+ * elements of each group: (...group).
+ *
+ * @static
+ * @memberOf _
+ * @since 3.8.0
+ * @category Array
+ * @param {...Array} [arrays] The arrays to process.
+ * @param {Function} [iteratee=_.identity] The function to combine
+ *  grouped values.
+ * @returns {Array} Returns the new array of grouped elements.
+ * @example
+ *
+ * _.zipWith([1, 2], [10, 20], [100, 200], function(a, b, c) {
+ *   return a + b + c;
+ * });
+ * // => [111, 222]
+ */
+var zipWith = (0, _baseRest_js_1.default)(function (arrays) {
+    var length = arrays.length, iteratee = length > 1 ? arrays[length - 1] : undefined;
+    iteratee = typeof iteratee == 'function' ? (arrays.pop(), iteratee) : undefined;
+    return (0, unzipWith_js_1.default)(arrays, iteratee);
+});
+exports.default = zipWith;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3ppcFdpdGguanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxrRUFBc0M7QUFDdEMsa0VBQXVDO0FBRXZDOzs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBbUJHO0FBQ0gsSUFBSSxPQUFPLEdBQUcsSUFBQSxzQkFBUSxFQUFDLFVBQVMsTUFBTTtJQUNwQyxJQUFJLE1BQU0sR0FBRyxNQUFNLENBQUMsTUFBTSxFQUN0QixRQUFRLEdBQUcsTUFBTSxHQUFHLENBQUMsQ0FBQyxDQUFDLENBQUMsTUFBTSxDQUFDLE1BQU0sR0FBRyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsU0FBUyxDQUFDO0lBRTNELFFBQVEsR0FBRyxPQUFPLFFBQVEsSUFBSSxVQUFVLENBQUMsQ0FBQyxDQUFDLENBQUMsTUFBTSxDQUFDLEdBQUcsRUFBRSxFQUFFLFFBQVEsQ0FBQyxDQUFDLENBQUMsQ0FBQyxTQUFTLENBQUM7SUFDaEYsT0FBTyxJQUFBLHNCQUFTLEVBQUMsTUFBTSxFQUFFLFFBQVEsQ0FBQyxDQUFDO0FBQ3JDLENBQUMsQ0FBQyxDQUFDO0FBRUgsa0JBQWUsT0FBTyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy96aXBXaXRoLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlUmVzdCBmcm9tICcuL19iYXNlUmVzdC5qcyc7XG5pbXBvcnQgdW56aXBXaXRoIGZyb20gJy4vdW56aXBXaXRoLmpzJztcblxuLyoqXG4gKiBUaGlzIG1ldGhvZCBpcyBsaWtlIGBfLnppcGAgZXhjZXB0IHRoYXQgaXQgYWNjZXB0cyBgaXRlcmF0ZWVgIHRvIHNwZWNpZnlcbiAqIGhvdyBncm91cGVkIHZhbHVlcyBzaG91bGQgYmUgY29tYmluZWQuIFRoZSBpdGVyYXRlZSBpcyBpbnZva2VkIHdpdGggdGhlXG4gKiBlbGVtZW50cyBvZiBlYWNoIGdyb3VwOiAoLi4uZ3JvdXApLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMy44LjBcbiAqIEBjYXRlZ29yeSBBcnJheVxuICogQHBhcmFtIHsuLi5BcnJheX0gW2FycmF5c10gVGhlIGFycmF5cyB0byBwcm9jZXNzLlxuICogQHBhcmFtIHtGdW5jdGlvbn0gW2l0ZXJhdGVlPV8uaWRlbnRpdHldIFRoZSBmdW5jdGlvbiB0byBjb21iaW5lXG4gKiAgZ3JvdXBlZCB2YWx1ZXMuXG4gKiBAcmV0dXJucyB7QXJyYXl9IFJldHVybnMgdGhlIG5ldyBhcnJheSBvZiBncm91cGVkIGVsZW1lbnRzLlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLnppcFdpdGgoWzEsIDJdLCBbMTAsIDIwXSwgWzEwMCwgMjAwXSwgZnVuY3Rpb24oYSwgYiwgYykge1xuICogICByZXR1cm4gYSArIGIgKyBjO1xuICogfSk7XG4gKiAvLyA9PiBbMTExLCAyMjJdXG4gKi9cbnZhciB6aXBXaXRoID0gYmFzZVJlc3QoZnVuY3Rpb24oYXJyYXlzKSB7XG4gIHZhciBsZW5ndGggPSBhcnJheXMubGVuZ3RoLFxuICAgICAgaXRlcmF0ZWUgPSBsZW5ndGggPiAxID8gYXJyYXlzW2xlbmd0aCAtIDFdIDogdW5kZWZpbmVkO1xuXG4gIGl0ZXJhdGVlID0gdHlwZW9mIGl0ZXJhdGVlID09ICdmdW5jdGlvbicgPyAoYXJyYXlzLnBvcCgpLCBpdGVyYXRlZSkgOiB1bmRlZmluZWQ7XG4gIHJldHVybiB1bnppcFdpdGgoYXJyYXlzLCBpdGVyYXRlZSk7XG59KTtcblxuZXhwb3J0IGRlZmF1bHQgemlwV2l0aDtcbiJdLCJ2ZXJzaW9uIjozfQ==

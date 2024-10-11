@@ -1,0 +1,33 @@
+f1814951995c93635ce13637e63c7d54
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const jest_1 = require("@ngneat/spectator/jest");
+const store_1 = require("@ngrx/store");
+const rxjs_1 = require("rxjs");
+const time_constant_1 = require("app/constants/time.constant");
+const fake_format_datetime_pipe_1 = require("app/core/testing/classes/fake-format-datetime.pipe");
+const ix_cell_relative_date_component_1 = require("app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component");
+describe('IxCellRelativeDateComponent', () => {
+    let spectator;
+    const createComponent = (0, jest_1.createComponentFactory)({
+        component: (ix_cell_relative_date_component_1.IxCellRelativeDateComponent),
+        detectChanges: false,
+        imports: [fake_format_datetime_pipe_1.FakeFormatDateTimePipe],
+        providers: [
+            (0, jest_1.mockProvider)(store_1.Store, {
+                select: () => (0, rxjs_1.of)(),
+            }),
+        ],
+    });
+    beforeEach(() => {
+        spectator = createComponent();
+        spectator.component.propertyName = 'dateField';
+        spectator.component.setRow({ dateField: new Date(new Date().getTime() - (time_constant_1.oneDayMillis * 10)) });
+        spectator.component.uniqueRowTag = () => '';
+        spectator.detectChanges();
+    });
+    it('shows custom relative format datetime in template', () => {
+        expect(spectator.element.textContent.trim()).toBe('10 days ago');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1ib2R5L2NlbGxzL2l4LWNlbGwtcmVsYXRpdmUtZGF0ZS9peC1jZWxsLXJlbGF0aXZlLWRhdGUuY29tcG9uZW50LnNwZWMudHMiLCJtYXBwaW5ncyI6Ijs7QUFDQSxpREFBOEU7QUFDOUUsdUNBQW9DO0FBQ3BDLCtCQUEwQjtBQUMxQiwrREFBMkQ7QUFDM0Qsa0dBQTRGO0FBQzVGLCtKQUF3SjtBQUl4SixRQUFRLENBQUMsNkJBQTZCLEVBQUUsR0FBRyxFQUFFO0lBQzNDLElBQUksU0FBZ0UsQ0FBQztJQUVyRSxNQUFNLGVBQWUsR0FBRyxJQUFBLDZCQUFzQixFQUFDO1FBQzdDLFNBQVMsRUFBRSxDQUFBLDZEQUEwQyxDQUFBO1FBQ3JELGFBQWEsRUFBRSxLQUFLO1FBQ3BCLE9BQU8sRUFBRSxDQUFDLGtEQUFzQixDQUFDO1FBQ2pDLFNBQVMsRUFBRTtZQUNULElBQUEsbUJBQVksRUFBQyxhQUFLLEVBQUU7Z0JBQ2xCLE1BQU0sRUFBRSxHQUFHLEVBQUUsQ0FBQyxJQUFBLFNBQUUsR0FBRTthQUNuQixDQUFDO1NBQ0g7S0FDRixDQUFDLENBQUM7SUFFSCxVQUFVLENBQUMsR0FBRyxFQUFFO1FBQ2QsU0FBUyxHQUFHLGVBQWUsRUFBRSxDQUFDO1FBQzlCLFNBQVMsQ0FBQyxTQUFTLENBQUMsWUFBWSxHQUFHLFdBQVcsQ0FBQztRQUMvQyxTQUFTLENBQUMsU0FBUyxDQUFDLE1BQU0sQ0FBQyxFQUFFLFNBQVMsRUFBRSxJQUFJLElBQUksQ0FBQyxJQUFJLElBQUksRUFBRSxDQUFDLE9BQU8sRUFBRSxHQUFHLENBQUMsNEJBQVksR0FBRyxFQUFFLENBQUMsQ0FBQyxFQUFFLENBQUMsQ0FBQztRQUNoRyxTQUFTLENBQUMsU0FBUyxDQUFDLFlBQVksR0FBRyxHQUFHLEVBQUUsQ0FBQyxFQUFFLENBQUM7UUFDNUMsU0FBUyxDQUFDLGFBQWEsRUFBRSxDQUFDO0lBQzVCLENBQUMsQ0FBQyxDQUFDO0lBRUgsRUFBRSxDQUFDLG1EQUFtRCxFQUFFLEdBQUcsRUFBRTtRQUMzRCxNQUFNLENBQUMsU0FBUyxDQUFDLE9BQU8sQ0FBQyxXQUFXLENBQUMsSUFBSSxFQUFFLENBQUMsQ0FBQyxJQUFJLENBQUMsYUFBYSxDQUFDLENBQUM7SUFDbkUsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvbW9kdWxlcy9peC10YWJsZS9jb21wb25lbnRzL2l4LXRhYmxlLWJvZHkvY2VsbHMvaXgtY2VsbC1yZWxhdGl2ZS1kYXRlL2l4LWNlbGwtcmVsYXRpdmUtZGF0ZS5jb21wb25lbnQuc3BlYy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBTcGVjdGF0b3IgfSBmcm9tICdAbmduZWF0L3NwZWN0YXRvcic7XG5pbXBvcnQgeyBjcmVhdGVDb21wb25lbnRGYWN0b3J5LCBtb2NrUHJvdmlkZXIgfSBmcm9tICdAbmduZWF0L3NwZWN0YXRvci9qZXN0JztcbmltcG9ydCB7IFN0b3JlIH0gZnJvbSAnQG5ncngvc3RvcmUnO1xuaW1wb3J0IHsgb2YgfSBmcm9tICdyeGpzJztcbmltcG9ydCB7IG9uZURheU1pbGxpcyB9IGZyb20gJ2FwcC9jb25zdGFudHMvdGltZS5jb25zdGFudCc7XG5pbXBvcnQgeyBGYWtlRm9ybWF0RGF0ZVRpbWVQaXBlIH0gZnJvbSAnYXBwL2NvcmUvdGVzdGluZy9jbGFzc2VzL2Zha2UtZm9ybWF0LWRhdGV0aW1lLnBpcGUnO1xuaW1wb3J0IHsgSXhDZWxsUmVsYXRpdmVEYXRlQ29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1ib2R5L2NlbGxzL2l4LWNlbGwtcmVsYXRpdmUtZGF0ZS9peC1jZWxsLXJlbGF0aXZlLWRhdGUuY29tcG9uZW50JztcblxuaW50ZXJmYWNlIFRlc3RUYWJsZURhdGEgeyBkYXRlRmllbGQ6IERhdGUgfVxuXG5kZXNjcmliZSgnSXhDZWxsUmVsYXRpdmVEYXRlQ29tcG9uZW50JywgKCkgPT4ge1xuICBsZXQgc3BlY3RhdG9yOiBTcGVjdGF0b3I8SXhDZWxsUmVsYXRpdmVEYXRlQ29tcG9uZW50PFRlc3RUYWJsZURhdGE+PjtcblxuICBjb25zdCBjcmVhdGVDb21wb25lbnQgPSBjcmVhdGVDb21wb25lbnRGYWN0b3J5KHtcbiAgICBjb21wb25lbnQ6IEl4Q2VsbFJlbGF0aXZlRGF0ZUNvbXBvbmVudDxUZXN0VGFibGVEYXRhPixcbiAgICBkZXRlY3RDaGFuZ2VzOiBmYWxzZSxcbiAgICBpbXBvcnRzOiBbRmFrZUZvcm1hdERhdGVUaW1lUGlwZV0sXG4gICAgcHJvdmlkZXJzOiBbXG4gICAgICBtb2NrUHJvdmlkZXIoU3RvcmUsIHtcbiAgICAgICAgc2VsZWN0OiAoKSA9PiBvZigpLFxuICAgICAgfSksXG4gICAgXSxcbiAgfSk7XG5cbiAgYmVmb3JlRWFjaCgoKSA9PiB7XG4gICAgc3BlY3RhdG9yID0gY3JlYXRlQ29tcG9uZW50KCk7XG4gICAgc3BlY3RhdG9yLmNvbXBvbmVudC5wcm9wZXJ0eU5hbWUgPSAnZGF0ZUZpZWxkJztcbiAgICBzcGVjdGF0b3IuY29tcG9uZW50LnNldFJvdyh7IGRhdGVGaWVsZDogbmV3IERhdGUobmV3IERhdGUoKS5nZXRUaW1lKCkgLSAob25lRGF5TWlsbGlzICogMTApKSB9KTtcbiAgICBzcGVjdGF0b3IuY29tcG9uZW50LnVuaXF1ZVJvd1RhZyA9ICgpID0+ICcnO1xuICAgIHNwZWN0YXRvci5kZXRlY3RDaGFuZ2VzKCk7XG4gIH0pO1xuXG4gIGl0KCdzaG93cyBjdXN0b20gcmVsYXRpdmUgZm9ybWF0IGRhdGV0aW1lIGluIHRlbXBsYXRlJywgKCkgPT4ge1xuICAgIGV4cGVjdChzcGVjdGF0b3IuZWxlbWVudC50ZXh0Q29udGVudC50cmltKCkpLnRvQmUoJzEwIGRheXMgYWdvJyk7XG4gIH0pO1xufSk7XG4iXSwidmVyc2lvbiI6M30=

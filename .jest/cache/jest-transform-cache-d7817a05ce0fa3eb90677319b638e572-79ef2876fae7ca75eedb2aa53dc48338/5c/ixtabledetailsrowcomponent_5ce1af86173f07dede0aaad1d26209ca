@@ -1,0 +1,2 @@
+7a356ecf72c4c988995bc49c0dd0dc48
+module.exports="@if (hiddenColumns().length) {\n  <dl class=\"table-hidden-columns\">\n    @for (column of hiddenColumns(); track column) {\n      <div>\n        <b>{{ column.title | translate }}:</b>\n        <ng-template\n          ix-body-cell\n          [row]=\"row()\"\n          [column]=\"column\"\n        ></ng-template>\n      </div>\n    }\n    <mat-divider></mat-divider>\n  </dl>\n}\n\n<ng-content></ng-content>\n"

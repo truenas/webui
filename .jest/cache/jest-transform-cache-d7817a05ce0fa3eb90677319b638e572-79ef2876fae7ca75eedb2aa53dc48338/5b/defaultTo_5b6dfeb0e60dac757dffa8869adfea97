@@ -1,0 +1,28 @@
+34fc1776cd08690a6bde2d24b21a8be1
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Checks `value` to determine whether a default value should be returned in
+ * its place. The `defaultValue` is returned if `value` is `NaN`, `null`,
+ * or `undefined`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.14.0
+ * @category Util
+ * @param {*} value The value to check.
+ * @param {*} defaultValue The default value.
+ * @returns {*} Returns the resolved value.
+ * @example
+ *
+ * _.defaultTo(1, 10);
+ * // => 1
+ *
+ * _.defaultTo(undefined, 10);
+ * // => 10
+ */
+function defaultTo(value, defaultValue) {
+    return (value == null || value !== value) ? defaultValue : value;
+}
+exports.default = defaultTo;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2RlZmF1bHRUby5qcyIsIm1hcHBpbmdzIjoiOztBQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBbUJHO0FBQ0gsU0FBUyxTQUFTLENBQUMsS0FBSyxFQUFFLFlBQVk7SUFDcEMsT0FBTyxDQUFDLEtBQUssSUFBSSxJQUFJLElBQUksS0FBSyxLQUFLLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyxZQUFZLENBQUMsQ0FBQyxDQUFDLEtBQUssQ0FBQztBQUNuRSxDQUFDO0FBRUQsa0JBQWUsU0FBUyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9kZWZhdWx0VG8uanMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBDaGVja3MgYHZhbHVlYCB0byBkZXRlcm1pbmUgd2hldGhlciBhIGRlZmF1bHQgdmFsdWUgc2hvdWxkIGJlIHJldHVybmVkIGluXG4gKiBpdHMgcGxhY2UuIFRoZSBgZGVmYXVsdFZhbHVlYCBpcyByZXR1cm5lZCBpZiBgdmFsdWVgIGlzIGBOYU5gLCBgbnVsbGAsXG4gKiBvciBgdW5kZWZpbmVkYC5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMTQuMFxuICogQGNhdGVnb3J5IFV0aWxcbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIGNoZWNrLlxuICogQHBhcmFtIHsqfSBkZWZhdWx0VmFsdWUgVGhlIGRlZmF1bHQgdmFsdWUuXG4gKiBAcmV0dXJucyB7Kn0gUmV0dXJucyB0aGUgcmVzb2x2ZWQgdmFsdWUuXG4gKiBAZXhhbXBsZVxuICpcbiAqIF8uZGVmYXVsdFRvKDEsIDEwKTtcbiAqIC8vID0+IDFcbiAqXG4gKiBfLmRlZmF1bHRUbyh1bmRlZmluZWQsIDEwKTtcbiAqIC8vID0+IDEwXG4gKi9cbmZ1bmN0aW9uIGRlZmF1bHRUbyh2YWx1ZSwgZGVmYXVsdFZhbHVlKSB7XG4gIHJldHVybiAodmFsdWUgPT0gbnVsbCB8fCB2YWx1ZSAhPT0gdmFsdWUpID8gZGVmYXVsdFZhbHVlIDogdmFsdWU7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGRlZmF1bHRUbztcbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,22 @@
+442677edb0bb1aaff40619e68e354c2c
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseGetTag_js_1 = __importDefault(require("./_baseGetTag.js"));
+const isObjectLike_js_1 = __importDefault(require("./isObjectLike.js"));
+/** `Object#toString` result references. */
+var regexpTag = '[object RegExp]';
+/**
+ * The base implementation of `_.isRegExp` without Node.js optimizations.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a regexp, else `false`.
+ */
+function baseIsRegExp(value) {
+    return (0, isObjectLike_js_1.default)(value) && (0, _baseGetTag_js_1.default)(value) == regexpTag;
+}
+exports.default = baseIsRegExp;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlSXNSZWdFeHAuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxzRUFBMEM7QUFDMUMsd0VBQTZDO0FBRTdDLDJDQUEyQztBQUMzQyxJQUFJLFNBQVMsR0FBRyxpQkFBaUIsQ0FBQztBQUVsQzs7Ozs7O0dBTUc7QUFDSCxTQUFTLFlBQVksQ0FBQyxLQUFLO0lBQ3pCLE9BQU8sSUFBQSx5QkFBWSxFQUFDLEtBQUssQ0FBQyxJQUFJLElBQUEsd0JBQVUsRUFBQyxLQUFLLENBQUMsSUFBSSxTQUFTLENBQUM7QUFDL0QsQ0FBQztBQUVELGtCQUFlLFlBQVksQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvX2Jhc2VJc1JlZ0V4cC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZUdldFRhZyBmcm9tICcuL19iYXNlR2V0VGFnLmpzJztcbmltcG9ydCBpc09iamVjdExpa2UgZnJvbSAnLi9pc09iamVjdExpa2UuanMnO1xuXG4vKiogYE9iamVjdCN0b1N0cmluZ2AgcmVzdWx0IHJlZmVyZW5jZXMuICovXG52YXIgcmVnZXhwVGFnID0gJ1tvYmplY3QgUmVnRXhwXSc7XG5cbi8qKlxuICogVGhlIGJhc2UgaW1wbGVtZW50YXRpb24gb2YgYF8uaXNSZWdFeHBgIHdpdGhvdXQgTm9kZS5qcyBvcHRpbWl6YXRpb25zLlxuICpcbiAqIEBwcml2YXRlXG4gKiBAcGFyYW0geyp9IHZhbHVlIFRoZSB2YWx1ZSB0byBjaGVjay5cbiAqIEByZXR1cm5zIHtib29sZWFufSBSZXR1cm5zIGB0cnVlYCBpZiBgdmFsdWVgIGlzIGEgcmVnZXhwLCBlbHNlIGBmYWxzZWAuXG4gKi9cbmZ1bmN0aW9uIGJhc2VJc1JlZ0V4cCh2YWx1ZSkge1xuICByZXR1cm4gaXNPYmplY3RMaWtlKHZhbHVlKSAmJiBiYXNlR2V0VGFnKHZhbHVlKSA9PSByZWdleHBUYWc7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGJhc2VJc1JlZ0V4cDtcbiJdLCJ2ZXJzaW9uIjozfQ==

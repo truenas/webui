@@ -1,0 +1,39 @@
+6d92c4719f12549c8baba03c461dcaed
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseInvoke_js_1 = __importDefault(require("./_baseInvoke.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+/**
+ * Creates a function that invokes the method at `path` of a given object.
+ * Any additional arguments are provided to the invoked method.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.7.0
+ * @category Util
+ * @param {Array|string} path The path of the method to invoke.
+ * @param {...*} [args] The arguments to invoke the method with.
+ * @returns {Function} Returns the new invoker function.
+ * @example
+ *
+ * var objects = [
+ *   { 'a': { 'b': _.constant(2) } },
+ *   { 'a': { 'b': _.constant(1) } }
+ * ];
+ *
+ * _.map(objects, _.method('a.b'));
+ * // => [2, 1]
+ *
+ * _.map(objects, _.method(['a', 'b']));
+ * // => [2, 1]
+ */
+var method = (0, _baseRest_js_1.default)(function (path, args) {
+    return function (object) {
+        return (0, _baseInvoke_js_1.default)(object, path, args);
+    };
+});
+exports.default = method;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL21ldGhvZC5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLHNFQUEwQztBQUMxQyxrRUFBc0M7QUFFdEM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBdUJHO0FBQ0gsSUFBSSxNQUFNLEdBQUcsSUFBQSxzQkFBUSxFQUFDLFVBQVMsSUFBSSxFQUFFLElBQUk7SUFDdkMsT0FBTyxVQUFTLE1BQU07UUFDcEIsT0FBTyxJQUFBLHdCQUFVLEVBQUMsTUFBTSxFQUFFLElBQUksRUFBRSxJQUFJLENBQUMsQ0FBQztJQUN4QyxDQUFDLENBQUM7QUFDSixDQUFDLENBQUMsQ0FBQztBQUVILGtCQUFlLE1BQU0sQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvbWV0aG9kLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlSW52b2tlIGZyb20gJy4vX2Jhc2VJbnZva2UuanMnO1xuaW1wb3J0IGJhc2VSZXN0IGZyb20gJy4vX2Jhc2VSZXN0LmpzJztcblxuLyoqXG4gKiBDcmVhdGVzIGEgZnVuY3Rpb24gdGhhdCBpbnZva2VzIHRoZSBtZXRob2QgYXQgYHBhdGhgIG9mIGEgZ2l2ZW4gb2JqZWN0LlxuICogQW55IGFkZGl0aW9uYWwgYXJndW1lbnRzIGFyZSBwcm92aWRlZCB0byB0aGUgaW52b2tlZCBtZXRob2QuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSAzLjcuMFxuICogQGNhdGVnb3J5IFV0aWxcbiAqIEBwYXJhbSB7QXJyYXl8c3RyaW5nfSBwYXRoIFRoZSBwYXRoIG9mIHRoZSBtZXRob2QgdG8gaW52b2tlLlxuICogQHBhcmFtIHsuLi4qfSBbYXJnc10gVGhlIGFyZ3VtZW50cyB0byBpbnZva2UgdGhlIG1ldGhvZCB3aXRoLlxuICogQHJldHVybnMge0Z1bmN0aW9ufSBSZXR1cm5zIHRoZSBuZXcgaW52b2tlciBmdW5jdGlvbi5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIG9iamVjdHMgPSBbXG4gKiAgIHsgJ2EnOiB7ICdiJzogXy5jb25zdGFudCgyKSB9IH0sXG4gKiAgIHsgJ2EnOiB7ICdiJzogXy5jb25zdGFudCgxKSB9IH1cbiAqIF07XG4gKlxuICogXy5tYXAob2JqZWN0cywgXy5tZXRob2QoJ2EuYicpKTtcbiAqIC8vID0+IFsyLCAxXVxuICpcbiAqIF8ubWFwKG9iamVjdHMsIF8ubWV0aG9kKFsnYScsICdiJ10pKTtcbiAqIC8vID0+IFsyLCAxXVxuICovXG52YXIgbWV0aG9kID0gYmFzZVJlc3QoZnVuY3Rpb24ocGF0aCwgYXJncykge1xuICByZXR1cm4gZnVuY3Rpb24ob2JqZWN0KSB7XG4gICAgcmV0dXJuIGJhc2VJbnZva2Uob2JqZWN0LCBwYXRoLCBhcmdzKTtcbiAgfTtcbn0pO1xuXG5leHBvcnQgZGVmYXVsdCBtZXRob2Q7XG4iXSwidmVyc2lvbiI6M30=

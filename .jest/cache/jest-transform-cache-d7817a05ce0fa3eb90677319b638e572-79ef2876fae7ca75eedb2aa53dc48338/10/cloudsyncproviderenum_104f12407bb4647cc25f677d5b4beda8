@@ -1,0 +1,47 @@
+d1c4d087b8c11191bca262f168d3bd1f
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.cloudSyncProviderNameMap = exports.CloudSyncProviderName = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+var CloudSyncProviderName;
+(function (CloudSyncProviderName) {
+    CloudSyncProviderName["AmazonS3"] = "S3";
+    CloudSyncProviderName["BackblazeB2"] = "B2";
+    CloudSyncProviderName["Box"] = "BOX";
+    CloudSyncProviderName["Dropbox"] = "DROPBOX";
+    CloudSyncProviderName["Ftp"] = "FTP";
+    CloudSyncProviderName["GoogleCloudStorage"] = "GOOGLE_CLOUD_STORAGE";
+    CloudSyncProviderName["GoogleDrive"] = "GOOGLE_DRIVE";
+    CloudSyncProviderName["GooglePhotos"] = "GOOGLE_PHOTOS";
+    CloudSyncProviderName["Http"] = "HTTP";
+    CloudSyncProviderName["Hubic"] = "HUBIC";
+    CloudSyncProviderName["Mega"] = "MEGA";
+    CloudSyncProviderName["MicrosoftAzure"] = "AZUREBLOB";
+    CloudSyncProviderName["OpenstackSwift"] = "OPENSTACK_SWIFT";
+    CloudSyncProviderName["Pcloud"] = "PCLOUD";
+    CloudSyncProviderName["Sftp"] = "SFTP";
+    CloudSyncProviderName["Storj"] = "STORJ_IX";
+    CloudSyncProviderName["Webdav"] = "WEBDAV";
+    CloudSyncProviderName["Yandex"] = "YANDEX";
+})(CloudSyncProviderName || (exports.CloudSyncProviderName = CloudSyncProviderName = {}));
+exports.cloudSyncProviderNameMap = new Map([
+    [CloudSyncProviderName.AmazonS3, (0, ngx_translate_extract_marker_1.marker)('Amazon S3')],
+    [CloudSyncProviderName.BackblazeB2, (0, ngx_translate_extract_marker_1.marker)('Backblaze B2')],
+    [CloudSyncProviderName.Box, (0, ngx_translate_extract_marker_1.marker)('Box')],
+    [CloudSyncProviderName.Dropbox, (0, ngx_translate_extract_marker_1.marker)('Dropbox')],
+    [CloudSyncProviderName.Ftp, (0, ngx_translate_extract_marker_1.marker)('FTP')],
+    [CloudSyncProviderName.GoogleCloudStorage, (0, ngx_translate_extract_marker_1.marker)('Google Cloud Storage')],
+    [CloudSyncProviderName.GoogleDrive, (0, ngx_translate_extract_marker_1.marker)('Google Drive')],
+    [CloudSyncProviderName.GooglePhotos, (0, ngx_translate_extract_marker_1.marker)('Google Photos')],
+    [CloudSyncProviderName.Hubic, (0, ngx_translate_extract_marker_1.marker)('Hubic')],
+    [CloudSyncProviderName.Http, (0, ngx_translate_extract_marker_1.marker)('HTTP')],
+    [CloudSyncProviderName.Mega, (0, ngx_translate_extract_marker_1.marker)('Mega')],
+    [CloudSyncProviderName.MicrosoftAzure, (0, ngx_translate_extract_marker_1.marker)('Microsoft Azure')],
+    [CloudSyncProviderName.OpenstackSwift, (0, ngx_translate_extract_marker_1.marker)('OpenStack Swift')],
+    [CloudSyncProviderName.Pcloud, (0, ngx_translate_extract_marker_1.marker)('pCloud')],
+    [CloudSyncProviderName.Sftp, (0, ngx_translate_extract_marker_1.marker)('SFTP')],
+    [CloudSyncProviderName.Storj, (0, ngx_translate_extract_marker_1.marker)('Storj')],
+    [CloudSyncProviderName.Webdav, (0, ngx_translate_extract_marker_1.marker)('WebDAV')],
+    [CloudSyncProviderName.Yandex, (0, ngx_translate_extract_marker_1.marker)('Yandex')],
+]);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2Nsb3Vkc3luYy1wcm92aWRlci5lbnVtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLDBGQUFzRTtBQUV0RSxJQUFZLHFCQW1CWDtBQW5CRCxXQUFZLHFCQUFxQjtJQUMvQix3Q0FBZSxDQUFBO0lBQ2YsMkNBQWtCLENBQUE7SUFDbEIsb0NBQVcsQ0FBQTtJQUNYLDRDQUFtQixDQUFBO0lBQ25CLG9DQUFXLENBQUE7SUFDWCxvRUFBMkMsQ0FBQTtJQUMzQyxxREFBNEIsQ0FBQTtJQUM1Qix1REFBOEIsQ0FBQTtJQUM5QixzQ0FBYSxDQUFBO0lBQ2Isd0NBQWUsQ0FBQTtJQUNmLHNDQUFhLENBQUE7SUFDYixxREFBNEIsQ0FBQTtJQUM1QiwyREFBa0MsQ0FBQTtJQUNsQywwQ0FBaUIsQ0FBQTtJQUNqQixzQ0FBYSxDQUFBO0lBQ2IsMkNBQWtCLENBQUE7SUFDbEIsMENBQWlCLENBQUE7SUFDakIsMENBQWlCLENBQUE7QUFDbkIsQ0FBQyxFQW5CVyxxQkFBcUIscUNBQXJCLHFCQUFxQixRQW1CaEM7QUFFWSxRQUFBLHdCQUF3QixHQUFHLElBQUksR0FBRyxDQUFnQztJQUM3RSxDQUFDLHFCQUFxQixDQUFDLFFBQVEsRUFBRSxJQUFBLHFDQUFDLEVBQUMsV0FBVyxDQUFDLENBQUM7SUFDaEQsQ0FBQyxxQkFBcUIsQ0FBQyxXQUFXLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLGNBQWMsQ0FBQyxDQUFDO0lBQ3RELENBQUMscUJBQXFCLENBQUMsR0FBRyxFQUFFLElBQUEscUNBQUMsRUFBQyxLQUFLLENBQUMsQ0FBQztJQUNyQyxDQUFDLHFCQUFxQixDQUFDLE9BQU8sRUFBRSxJQUFBLHFDQUFDLEVBQUMsU0FBUyxDQUFDLENBQUM7SUFDN0MsQ0FBQyxxQkFBcUIsQ0FBQyxHQUFHLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLEtBQUssQ0FBQyxDQUFDO0lBQ3JDLENBQUMscUJBQXFCLENBQUMsa0JBQWtCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLHNCQUFzQixDQUFDLENBQUM7SUFDckUsQ0FBQyxxQkFBcUIsQ0FBQyxXQUFXLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLGNBQWMsQ0FBQyxDQUFDO0lBQ3RELENBQUMscUJBQXFCLENBQUMsWUFBWSxFQUFFLElBQUEscUNBQUMsRUFBQyxlQUFlLENBQUMsQ0FBQztJQUN4RCxDQUFDLHFCQUFxQixDQUFDLEtBQUssRUFBRSxJQUFBLHFDQUFDLEVBQUMsT0FBTyxDQUFDLENBQUM7SUFDekMsQ0FBQyxxQkFBcUIsQ0FBQyxJQUFJLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQ3ZDLENBQUMscUJBQXFCLENBQUMsSUFBSSxFQUFFLElBQUEscUNBQUMsRUFBQyxNQUFNLENBQUMsQ0FBQztJQUN2QyxDQUFDLHFCQUFxQixDQUFDLGNBQWMsRUFBRSxJQUFBLHFDQUFDLEVBQUMsaUJBQWlCLENBQUMsQ0FBQztJQUM1RCxDQUFDLHFCQUFxQixDQUFDLGNBQWMsRUFBRSxJQUFBLHFDQUFDLEVBQUMsaUJBQWlCLENBQUMsQ0FBQztJQUM1RCxDQUFDLHFCQUFxQixDQUFDLE1BQU0sRUFBRSxJQUFBLHFDQUFDLEVBQUMsUUFBUSxDQUFDLENBQUM7SUFDM0MsQ0FBQyxxQkFBcUIsQ0FBQyxJQUFJLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQ3ZDLENBQUMscUJBQXFCLENBQUMsS0FBSyxFQUFFLElBQUEscUNBQUMsRUFBQyxPQUFPLENBQUMsQ0FBQztJQUN6QyxDQUFDLHFCQUFxQixDQUFDLE1BQU0sRUFBRSxJQUFBLHFDQUFDLEVBQUMsUUFBUSxDQUFDLENBQUM7SUFDM0MsQ0FBQyxxQkFBcUIsQ0FBQyxNQUFNLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFFBQVEsQ0FBQyxDQUFDO0NBQzVDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvZW51bXMvY2xvdWRzeW5jLXByb3ZpZGVyLmVudW0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgbWFya2VyIGFzIFQgfSBmcm9tICdAYmllc2JqZXJnL25neC10cmFuc2xhdGUtZXh0cmFjdC1tYXJrZXInO1xuXG5leHBvcnQgZW51bSBDbG91ZFN5bmNQcm92aWRlck5hbWUge1xuICBBbWF6b25TMyA9ICdTMycsXG4gIEJhY2tibGF6ZUIyID0gJ0IyJyxcbiAgQm94ID0gJ0JPWCcsXG4gIERyb3Bib3ggPSAnRFJPUEJPWCcsXG4gIEZ0cCA9ICdGVFAnLFxuICBHb29nbGVDbG91ZFN0b3JhZ2UgPSAnR09PR0xFX0NMT1VEX1NUT1JBR0UnLFxuICBHb29nbGVEcml2ZSA9ICdHT09HTEVfRFJJVkUnLFxuICBHb29nbGVQaG90b3MgPSAnR09PR0xFX1BIT1RPUycsXG4gIEh0dHAgPSAnSFRUUCcsXG4gIEh1YmljID0gJ0hVQklDJyxcbiAgTWVnYSA9ICdNRUdBJyxcbiAgTWljcm9zb2Z0QXp1cmUgPSAnQVpVUkVCTE9CJyxcbiAgT3BlbnN0YWNrU3dpZnQgPSAnT1BFTlNUQUNLX1NXSUZUJyxcbiAgUGNsb3VkID0gJ1BDTE9VRCcsXG4gIFNmdHAgPSAnU0ZUUCcsXG4gIFN0b3JqID0gJ1NUT1JKX0lYJyxcbiAgV2ViZGF2ID0gJ1dFQkRBVicsXG4gIFlhbmRleCA9ICdZQU5ERVgnLFxufVxuXG5leHBvcnQgY29uc3QgY2xvdWRTeW5jUHJvdmlkZXJOYW1lTWFwID0gbmV3IE1hcDxDbG91ZFN5bmNQcm92aWRlck5hbWUsIHN0cmluZz4oW1xuICBbQ2xvdWRTeW5jUHJvdmlkZXJOYW1lLkFtYXpvblMzLCBUKCdBbWF6b24gUzMnKV0sXG4gIFtDbG91ZFN5bmNQcm92aWRlck5hbWUuQmFja2JsYXplQjIsIFQoJ0JhY2tibGF6ZSBCMicpXSxcbiAgW0Nsb3VkU3luY1Byb3ZpZGVyTmFtZS5Cb3gsIFQoJ0JveCcpXSxcbiAgW0Nsb3VkU3luY1Byb3ZpZGVyTmFtZS5Ecm9wYm94LCBUKCdEcm9wYm94JyldLFxuICBbQ2xvdWRTeW5jUHJvdmlkZXJOYW1lLkZ0cCwgVCgnRlRQJyldLFxuICBbQ2xvdWRTeW5jUHJvdmlkZXJOYW1lLkdvb2dsZUNsb3VkU3RvcmFnZSwgVCgnR29vZ2xlIENsb3VkIFN0b3JhZ2UnKV0sXG4gIFtDbG91ZFN5bmNQcm92aWRlck5hbWUuR29vZ2xlRHJpdmUsIFQoJ0dvb2dsZSBEcml2ZScpXSxcbiAgW0Nsb3VkU3luY1Byb3ZpZGVyTmFtZS5Hb29nbGVQaG90b3MsIFQoJ0dvb2dsZSBQaG90b3MnKV0sXG4gIFtDbG91ZFN5bmNQcm92aWRlck5hbWUuSHViaWMsIFQoJ0h1YmljJyldLFxuICBbQ2xvdWRTeW5jUHJvdmlkZXJOYW1lLkh0dHAsIFQoJ0hUVFAnKV0sXG4gIFtDbG91ZFN5bmNQcm92aWRlck5hbWUuTWVnYSwgVCgnTWVnYScpXSxcbiAgW0Nsb3VkU3luY1Byb3ZpZGVyTmFtZS5NaWNyb3NvZnRBenVyZSwgVCgnTWljcm9zb2Z0IEF6dXJlJyldLFxuICBbQ2xvdWRTeW5jUHJvdmlkZXJOYW1lLk9wZW5zdGFja1N3aWZ0LCBUKCdPcGVuU3RhY2sgU3dpZnQnKV0sXG4gIFtDbG91ZFN5bmNQcm92aWRlck5hbWUuUGNsb3VkLCBUKCdwQ2xvdWQnKV0sXG4gIFtDbG91ZFN5bmNQcm92aWRlck5hbWUuU2Z0cCwgVCgnU0ZUUCcpXSxcbiAgW0Nsb3VkU3luY1Byb3ZpZGVyTmFtZS5TdG9yaiwgVCgnU3RvcmonKV0sXG4gIFtDbG91ZFN5bmNQcm92aWRlck5hbWUuV2ViZGF2LCBUKCdXZWJEQVYnKV0sXG4gIFtDbG91ZFN5bmNQcm92aWRlck5hbWUuWWFuZGV4LCBUKCdZYW5kZXgnKV0sXG5dKTtcbiJdLCJ2ZXJzaW9uIjozfQ==

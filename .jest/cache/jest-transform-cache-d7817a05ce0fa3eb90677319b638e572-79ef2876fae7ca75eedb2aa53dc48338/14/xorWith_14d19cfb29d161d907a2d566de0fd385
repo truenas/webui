@@ -1,0 +1,39 @@
+bfad5f181686af0ec83b2db042ffb910
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayFilter_js_1 = __importDefault(require("./_arrayFilter.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const _baseXor_js_1 = __importDefault(require("./_baseXor.js"));
+const isArrayLikeObject_js_1 = __importDefault(require("./isArrayLikeObject.js"));
+const last_js_1 = __importDefault(require("./last.js"));
+/**
+ * This method is like `_.xor` except that it accepts `comparator` which is
+ * invoked to compare elements of `arrays`. The order of result values is
+ * determined by the order they occur in the arrays. The comparator is invoked
+ * with two arguments: (arrVal, othVal).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {...Array} [arrays] The arrays to inspect.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns the new array of filtered values.
+ * @example
+ *
+ * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+ * var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
+ *
+ * _.xorWith(objects, others, _.isEqual);
+ * // => [{ 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
+ */
+var xorWith = (0, _baseRest_js_1.default)(function (arrays) {
+    var comparator = (0, last_js_1.default)(arrays);
+    comparator = typeof comparator == 'function' ? comparator : undefined;
+    return (0, _baseXor_js_1.default)((0, _arrayFilter_js_1.default)(arrays, isArrayLikeObject_js_1.default), undefined, comparator);
+});
+exports.default = xorWith;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3hvcldpdGguanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSx3RUFBNEM7QUFDNUMsa0VBQXNDO0FBQ3RDLGdFQUFvQztBQUNwQyxrRkFBdUQ7QUFDdkQsd0RBQTZCO0FBRTdCOzs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQW9CRztBQUNILElBQUksT0FBTyxHQUFHLElBQUEsc0JBQVEsRUFBQyxVQUFTLE1BQU07SUFDcEMsSUFBSSxVQUFVLEdBQUcsSUFBQSxpQkFBSSxFQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQzlCLFVBQVUsR0FBRyxPQUFPLFVBQVUsSUFBSSxVQUFVLENBQUMsQ0FBQyxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUMsU0FBUyxDQUFDO0lBQ3RFLE9BQU8sSUFBQSxxQkFBTyxFQUFDLElBQUEseUJBQVcsRUFBQyxNQUFNLEVBQUUsOEJBQWlCLENBQUMsRUFBRSxTQUFTLEVBQUUsVUFBVSxDQUFDLENBQUM7QUFDaEYsQ0FBQyxDQUFDLENBQUM7QUFFSCxrQkFBZSxPQUFPLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3hvcldpdGguanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGFycmF5RmlsdGVyIGZyb20gJy4vX2FycmF5RmlsdGVyLmpzJztcbmltcG9ydCBiYXNlUmVzdCBmcm9tICcuL19iYXNlUmVzdC5qcyc7XG5pbXBvcnQgYmFzZVhvciBmcm9tICcuL19iYXNlWG9yLmpzJztcbmltcG9ydCBpc0FycmF5TGlrZU9iamVjdCBmcm9tICcuL2lzQXJyYXlMaWtlT2JqZWN0LmpzJztcbmltcG9ydCBsYXN0IGZyb20gJy4vbGFzdC5qcyc7XG5cbi8qKlxuICogVGhpcyBtZXRob2QgaXMgbGlrZSBgXy54b3JgIGV4Y2VwdCB0aGF0IGl0IGFjY2VwdHMgYGNvbXBhcmF0b3JgIHdoaWNoIGlzXG4gKiBpbnZva2VkIHRvIGNvbXBhcmUgZWxlbWVudHMgb2YgYGFycmF5c2AuIFRoZSBvcmRlciBvZiByZXN1bHQgdmFsdWVzIGlzXG4gKiBkZXRlcm1pbmVkIGJ5IHRoZSBvcmRlciB0aGV5IG9jY3VyIGluIHRoZSBhcnJheXMuIFRoZSBjb21wYXJhdG9yIGlzIGludm9rZWRcbiAqIHdpdGggdHdvIGFyZ3VtZW50czogKGFyclZhbCwgb3RoVmFsKS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7Li4uQXJyYXl9IFthcnJheXNdIFRoZSBhcnJheXMgdG8gaW5zcGVjdC5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IFtjb21wYXJhdG9yXSBUaGUgY29tcGFyYXRvciBpbnZva2VkIHBlciBlbGVtZW50LlxuICogQHJldHVybnMge0FycmF5fSBSZXR1cm5zIHRoZSBuZXcgYXJyYXkgb2YgZmlsdGVyZWQgdmFsdWVzLlxuICogQGV4YW1wbGVcbiAqXG4gKiB2YXIgb2JqZWN0cyA9IFt7ICd4JzogMSwgJ3knOiAyIH0sIHsgJ3gnOiAyLCAneSc6IDEgfV07XG4gKiB2YXIgb3RoZXJzID0gW3sgJ3gnOiAxLCAneSc6IDEgfSwgeyAneCc6IDEsICd5JzogMiB9XTtcbiAqXG4gKiBfLnhvcldpdGgob2JqZWN0cywgb3RoZXJzLCBfLmlzRXF1YWwpO1xuICogLy8gPT4gW3sgJ3gnOiAyLCAneSc6IDEgfSwgeyAneCc6IDEsICd5JzogMSB9XVxuICovXG52YXIgeG9yV2l0aCA9IGJhc2VSZXN0KGZ1bmN0aW9uKGFycmF5cykge1xuICB2YXIgY29tcGFyYXRvciA9IGxhc3QoYXJyYXlzKTtcbiAgY29tcGFyYXRvciA9IHR5cGVvZiBjb21wYXJhdG9yID09ICdmdW5jdGlvbicgPyBjb21wYXJhdG9yIDogdW5kZWZpbmVkO1xuICByZXR1cm4gYmFzZVhvcihhcnJheUZpbHRlcihhcnJheXMsIGlzQXJyYXlMaWtlT2JqZWN0KSwgdW5kZWZpbmVkLCBjb21wYXJhdG9yKTtcbn0pO1xuXG5leHBvcnQgZGVmYXVsdCB4b3JXaXRoO1xuIl0sInZlcnNpb24iOjN9

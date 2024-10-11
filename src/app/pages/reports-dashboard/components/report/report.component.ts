@@ -20,6 +20,7 @@ import {
 import {
   delay, distinctUntilChanged, filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
+import { invalidDate } from 'app/constants/invalid-date';
 import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -240,7 +241,7 @@ export class ReportComponent implements OnInit, OnChanges {
 
   formatTime(stamp: number): string {
     const result = this.formatDateTimePipe.transform(new Date(stamp));
-    return result.toLowerCase() !== 'invalid date' ? result : null;
+    return result.toLowerCase() !== invalidDate.toLowerCase() ? result : null;
   }
 
   onZoomChange(interval: number[]): void {

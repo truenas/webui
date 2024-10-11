@@ -1,0 +1,31 @@
+622593af2736bb75868d0b48a5452263
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * This method is like `_.tap` except that it returns the result of `interceptor`.
+ * The purpose of this method is to "pass thru" values replacing intermediate
+ * results in a method chain sequence.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Seq
+ * @param {*} value The value to provide to `interceptor`.
+ * @param {Function} interceptor The function to invoke.
+ * @returns {*} Returns the result of `interceptor`.
+ * @example
+ *
+ * _('  abc  ')
+ *  .chain()
+ *  .trim()
+ *  .thru(function(value) {
+ *    return [value];
+ *  })
+ *  .value();
+ * // => ['abc']
+ */
+function thru(value, interceptor) {
+    return interceptor(value);
+}
+exports.default = thru;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RocnUuanMiLCJtYXBwaW5ncyI6Ijs7QUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXNCRztBQUNILFNBQVMsSUFBSSxDQUFDLEtBQUssRUFBRSxXQUFXO0lBQzlCLE9BQU8sV0FBVyxDQUFDLEtBQUssQ0FBQyxDQUFDO0FBQzVCLENBQUM7QUFFRCxrQkFBZSxJQUFJLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RocnUuanMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBUaGlzIG1ldGhvZCBpcyBsaWtlIGBfLnRhcGAgZXhjZXB0IHRoYXQgaXQgcmV0dXJucyB0aGUgcmVzdWx0IG9mIGBpbnRlcmNlcHRvcmAuXG4gKiBUaGUgcHVycG9zZSBvZiB0aGlzIG1ldGhvZCBpcyB0byBcInBhc3MgdGhydVwiIHZhbHVlcyByZXBsYWNpbmcgaW50ZXJtZWRpYXRlXG4gKiByZXN1bHRzIGluIGEgbWV0aG9kIGNoYWluIHNlcXVlbmNlLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMy4wLjBcbiAqIEBjYXRlZ29yeSBTZXFcbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIHByb3ZpZGUgdG8gYGludGVyY2VwdG9yYC5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IGludGVyY2VwdG9yIFRoZSBmdW5jdGlvbiB0byBpbnZva2UuXG4gKiBAcmV0dXJucyB7Kn0gUmV0dXJucyB0aGUgcmVzdWx0IG9mIGBpbnRlcmNlcHRvcmAuXG4gKiBAZXhhbXBsZVxuICpcbiAqIF8oJyAgYWJjICAnKVxuICogIC5jaGFpbigpXG4gKiAgLnRyaW0oKVxuICogIC50aHJ1KGZ1bmN0aW9uKHZhbHVlKSB7XG4gKiAgICByZXR1cm4gW3ZhbHVlXTtcbiAqICB9KVxuICogIC52YWx1ZSgpO1xuICogLy8gPT4gWydhYmMnXVxuICovXG5mdW5jdGlvbiB0aHJ1KHZhbHVlLCBpbnRlcmNlcHRvcikge1xuICByZXR1cm4gaW50ZXJjZXB0b3IodmFsdWUpO1xufVxuXG5leHBvcnQgZGVmYXVsdCB0aHJ1O1xuIl0sInZlcnNpb24iOjN9

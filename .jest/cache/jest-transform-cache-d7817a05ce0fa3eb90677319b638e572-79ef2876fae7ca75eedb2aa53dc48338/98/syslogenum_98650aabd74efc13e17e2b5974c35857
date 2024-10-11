@@ -1,0 +1,33 @@
+c33a99f76bd13f71993910c9580a64cf
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.syslogLevelLabels = exports.SyslogLevel = exports.SyslogTransport = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+var SyslogTransport;
+(function (SyslogTransport) {
+    SyslogTransport["Udp"] = "UDP";
+    SyslogTransport["Tcp"] = "TCP";
+    SyslogTransport["Tls"] = "TLS";
+})(SyslogTransport || (exports.SyslogTransport = SyslogTransport = {}));
+var SyslogLevel;
+(function (SyslogLevel) {
+    SyslogLevel["Emergency"] = "F_EMERG";
+    SyslogLevel["Alert"] = "F_ALERT";
+    SyslogLevel["Critical"] = "F_CRIT";
+    SyslogLevel["Error"] = "F_ERR";
+    SyslogLevel["Warning"] = "F_WARNING";
+    SyslogLevel["Notice"] = "F_NOTICE";
+    SyslogLevel["Info"] = "F_INFO";
+    SyslogLevel["Debug"] = "F_DEBUG";
+})(SyslogLevel || (exports.SyslogLevel = SyslogLevel = {}));
+exports.syslogLevelLabels = new Map([
+    [SyslogLevel.Emergency, (0, ngx_translate_extract_marker_1.marker)('Emergency')],
+    [SyslogLevel.Alert, (0, ngx_translate_extract_marker_1.marker)('Alert')],
+    [SyslogLevel.Critical, (0, ngx_translate_extract_marker_1.marker)('Critical')],
+    [SyslogLevel.Error, (0, ngx_translate_extract_marker_1.marker)('Error')],
+    [SyslogLevel.Warning, (0, ngx_translate_extract_marker_1.marker)('Warning')],
+    [SyslogLevel.Notice, (0, ngx_translate_extract_marker_1.marker)('Notice')],
+    [SyslogLevel.Info, (0, ngx_translate_extract_marker_1.marker)('Info')],
+    [SyslogLevel.Debug, (0, ngx_translate_extract_marker_1.marker)('Debug')],
+]);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3N5c2xvZy5lbnVtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLDBGQUFzRTtBQUV0RSxJQUFZLGVBSVg7QUFKRCxXQUFZLGVBQWU7SUFDekIsOEJBQVcsQ0FBQTtJQUNYLDhCQUFXLENBQUE7SUFDWCw4QkFBVyxDQUFBO0FBQ2IsQ0FBQyxFQUpXLGVBQWUsK0JBQWYsZUFBZSxRQUkxQjtBQUVELElBQVksV0FTWDtBQVRELFdBQVksV0FBVztJQUNyQixvQ0FBcUIsQ0FBQTtJQUNyQixnQ0FBaUIsQ0FBQTtJQUNqQixrQ0FBbUIsQ0FBQTtJQUNuQiw4QkFBZSxDQUFBO0lBQ2Ysb0NBQXFCLENBQUE7SUFDckIsa0NBQW1CLENBQUE7SUFDbkIsOEJBQWUsQ0FBQTtJQUNmLGdDQUFpQixDQUFBO0FBQ25CLENBQUMsRUFUVyxXQUFXLDJCQUFYLFdBQVcsUUFTdEI7QUFFWSxRQUFBLGlCQUFpQixHQUFHLElBQUksR0FBRyxDQUFzQjtJQUM1RCxDQUFDLFdBQVcsQ0FBQyxTQUFTLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFdBQVcsQ0FBQyxDQUFDO0lBQ3ZDLENBQUMsV0FBVyxDQUFDLEtBQUssRUFBRSxJQUFBLHFDQUFDLEVBQUMsT0FBTyxDQUFDLENBQUM7SUFDL0IsQ0FBQyxXQUFXLENBQUMsUUFBUSxFQUFFLElBQUEscUNBQUMsRUFBQyxVQUFVLENBQUMsQ0FBQztJQUNyQyxDQUFDLFdBQVcsQ0FBQyxLQUFLLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLE9BQU8sQ0FBQyxDQUFDO0lBQy9CLENBQUMsV0FBVyxDQUFDLE9BQU8sRUFBRSxJQUFBLHFDQUFDLEVBQUMsU0FBUyxDQUFDLENBQUM7SUFDbkMsQ0FBQyxXQUFXLENBQUMsTUFBTSxFQUFFLElBQUEscUNBQUMsRUFBQyxRQUFRLENBQUMsQ0FBQztJQUNqQyxDQUFDLFdBQVcsQ0FBQyxJQUFJLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQzdCLENBQUMsV0FBVyxDQUFDLEtBQUssRUFBRSxJQUFBLHFDQUFDLEVBQUMsT0FBTyxDQUFDLENBQUM7Q0FDaEMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9lbnVtcy9zeXNsb2cuZW51bS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5cbmV4cG9ydCBlbnVtIFN5c2xvZ1RyYW5zcG9ydCB7XG4gIFVkcCA9ICdVRFAnLFxuICBUY3AgPSAnVENQJyxcbiAgVGxzID0gJ1RMUycsXG59XG5cbmV4cG9ydCBlbnVtIFN5c2xvZ0xldmVsIHtcbiAgRW1lcmdlbmN5ID0gJ0ZfRU1FUkcnLFxuICBBbGVydCA9ICdGX0FMRVJUJyxcbiAgQ3JpdGljYWwgPSAnRl9DUklUJyxcbiAgRXJyb3IgPSAnRl9FUlInLFxuICBXYXJuaW5nID0gJ0ZfV0FSTklORycsXG4gIE5vdGljZSA9ICdGX05PVElDRScsXG4gIEluZm8gPSAnRl9JTkZPJyxcbiAgRGVidWcgPSAnRl9ERUJVRycsXG59XG5cbmV4cG9ydCBjb25zdCBzeXNsb2dMZXZlbExhYmVscyA9IG5ldyBNYXA8U3lzbG9nTGV2ZWwsIHN0cmluZz4oW1xuICBbU3lzbG9nTGV2ZWwuRW1lcmdlbmN5LCBUKCdFbWVyZ2VuY3knKV0sXG4gIFtTeXNsb2dMZXZlbC5BbGVydCwgVCgnQWxlcnQnKV0sXG4gIFtTeXNsb2dMZXZlbC5Dcml0aWNhbCwgVCgnQ3JpdGljYWwnKV0sXG4gIFtTeXNsb2dMZXZlbC5FcnJvciwgVCgnRXJyb3InKV0sXG4gIFtTeXNsb2dMZXZlbC5XYXJuaW5nLCBUKCdXYXJuaW5nJyldLFxuICBbU3lzbG9nTGV2ZWwuTm90aWNlLCBUKCdOb3RpY2UnKV0sXG4gIFtTeXNsb2dMZXZlbC5JbmZvLCBUKCdJbmZvJyldLFxuICBbU3lzbG9nTGV2ZWwuRGVidWcsIFQoJ0RlYnVnJyldLFxuXSk7XG4iXSwidmVyc2lvbiI6M30=

@@ -1,0 +1,76 @@
+26ee6ca0c08824974c2b4542587e1fed
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CrontabPartValidatorService = exports.CrontabPart = void 0;
+const core_1 = require("@angular/core");
+const core_2 = require("@ngx-translate/core");
+const cronParser = __importStar(require("cron-parser"));
+const ix_validators_service_1 = require("app/modules/forms/ix-forms/services/ix-validators.service");
+var CrontabPart;
+(function (CrontabPart) {
+    CrontabPart[CrontabPart["Minutes"] = 0] = "Minutes";
+    CrontabPart[CrontabPart["Hours"] = 1] = "Hours";
+    CrontabPart[CrontabPart["Days"] = 2] = "Days";
+})(CrontabPart || (exports.CrontabPart = CrontabPart = {}));
+// TODO: Figure out how to limit to module.
+let CrontabPartValidatorService = class CrontabPartValidatorService {
+    constructor(validatorsService, translate) {
+        this.validatorsService = validatorsService;
+        this.translate = translate;
+    }
+    crontabPartValidator(part) {
+        const validator = (control) => {
+            const parts = (new Array(5)).fill('*');
+            parts[part] = control.value;
+            const crontab = parts.join(' ');
+            const parsingResult = cronParser.parseString(crontab);
+            if (!Object.keys(parsingResult.errors).length) {
+                return {};
+            }
+            return {
+                crontabPart: true,
+            };
+        };
+        return this.validatorsService.withMessage(validator, this.translate.instant('Incorrect crontab value.'));
+    }
+};
+exports.CrontabPartValidatorService = CrontabPartValidatorService;
+CrontabPartValidatorService.ctorParameters = () => [
+    { type: ix_validators_service_1.IxValidatorsService },
+    { type: core_2.TranslateService }
+];
+exports.CrontabPartValidatorService = CrontabPartValidatorService = __decorate([
+    (0, core_1.Injectable)({
+        providedIn: 'root',
+    })
+], CrontabPartValidatorService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvc2NoZWR1bGVyL3NlcnZpY2VzL2Nyb250YWItcGFydC12YWxpZGF0b3Iuc2VydmljZS50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUFBLHdDQUEyQztBQUUzQyw4Q0FBdUQ7QUFDdkQsd0RBQTBDO0FBQzFDLHFHQUFnRztBQUVoRyxJQUFZLFdBSVg7QUFKRCxXQUFZLFdBQVc7SUFDckIsbURBQVcsQ0FBQTtJQUNYLCtDQUFTLENBQUE7SUFDVCw2Q0FBUSxDQUFBO0FBQ1YsQ0FBQyxFQUpXLFdBQVcsMkJBQVgsV0FBVyxRQUl0QjtBQUVELDJDQUEyQztBQUlwQyxJQUFNLDJCQUEyQixHQUFqQyxNQUFNLDJCQUEyQjtJQUN0QyxZQUNVLGlCQUFzQyxFQUN0QyxTQUEyQjtRQUQzQixzQkFBaUIsR0FBakIsaUJBQWlCLENBQXFCO1FBQ3RDLGNBQVMsR0FBVCxTQUFTLENBQWtCO0lBQ2xDLENBQUM7SUFFSixvQkFBb0IsQ0FBQyxJQUFpQjtRQUNwQyxNQUFNLFNBQVMsR0FBRyxDQUFDLE9BQWdDLEVBQTJCLEVBQUU7WUFDOUUsTUFBTSxLQUFLLEdBQUcsQ0FBQyxJQUFJLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUMsQ0FBQztZQUN2QyxLQUFLLENBQUMsSUFBSSxDQUFDLEdBQUcsT0FBTyxDQUFDLEtBQUssQ0FBQztZQUU1QixNQUFNLE9BQU8sR0FBRyxLQUFLLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxDQUFDO1lBQ2hDLE1BQU0sYUFBYSxHQUFHLFVBQVUsQ0FBQyxXQUFXLENBQUMsT0FBTyxDQUFDLENBQUM7WUFFdEQsSUFBSSxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsYUFBYSxDQUFDLE1BQU0sQ0FBQyxDQUFDLE1BQU0sRUFBRSxDQUFDO2dCQUM5QyxPQUFPLEVBQUUsQ0FBQztZQUNaLENBQUM7WUFFRCxPQUFPO2dCQUNMLFdBQVcsRUFBRSxJQUFJO2FBQ2xCLENBQUM7UUFDSixDQUFDLENBQUM7UUFFRixPQUFPLElBQUksQ0FBQyxpQkFBaUIsQ0FBQyxXQUFXLENBQUMsU0FBUyxFQUFFLElBQUksQ0FBQyxTQUFTLENBQUMsT0FBTyxDQUFDLDBCQUEwQixDQUFDLENBQUMsQ0FBQztJQUMzRyxDQUFDOztBQXhCVSxrRUFBMkI7Ozs7O3NDQUEzQiwyQkFBMkI7SUFIdkMsSUFBQSxpQkFBVSxFQUFDO1FBQ1YsVUFBVSxFQUFFLE1BQU07S0FDbkIsQ0FBQztHQUNXLDJCQUEyQixDQXlCdkMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvc2NoZWR1bGVyL3NlcnZpY2VzL2Nyb250YWItcGFydC12YWxpZGF0b3Iuc2VydmljZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBJbmplY3RhYmxlIH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBBYnN0cmFjdENvbnRyb2wsIFZhbGlkYXRpb25FcnJvcnMsIFZhbGlkYXRvckZuIH0gZnJvbSAnQGFuZ3VsYXIvZm9ybXMnO1xuaW1wb3J0IHsgVHJhbnNsYXRlU2VydmljZSB9IGZyb20gJ0BuZ3gtdHJhbnNsYXRlL2NvcmUnO1xuaW1wb3J0ICogYXMgY3JvblBhcnNlciBmcm9tICdjcm9uLXBhcnNlcic7XG5pbXBvcnQgeyBJeFZhbGlkYXRvcnNTZXJ2aWNlIH0gZnJvbSAnYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvc2VydmljZXMvaXgtdmFsaWRhdG9ycy5zZXJ2aWNlJztcblxuZXhwb3J0IGVudW0gQ3JvbnRhYlBhcnQge1xuICBNaW51dGVzID0gMCxcbiAgSG91cnMgPSAxLFxuICBEYXlzID0gMixcbn1cblxuLy8gVE9ETzogRmlndXJlIG91dCBob3cgdG8gbGltaXQgdG8gbW9kdWxlLlxuQEluamVjdGFibGUoe1xuICBwcm92aWRlZEluOiAncm9vdCcsXG59KVxuZXhwb3J0IGNsYXNzIENyb250YWJQYXJ0VmFsaWRhdG9yU2VydmljZSB7XG4gIGNvbnN0cnVjdG9yKFxuICAgIHByaXZhdGUgdmFsaWRhdG9yc1NlcnZpY2U6IEl4VmFsaWRhdG9yc1NlcnZpY2UsXG4gICAgcHJpdmF0ZSB0cmFuc2xhdGU6IFRyYW5zbGF0ZVNlcnZpY2UsXG4gICkge31cblxuICBjcm9udGFiUGFydFZhbGlkYXRvcihwYXJ0OiBDcm9udGFiUGFydCk6IFZhbGlkYXRvckZuIHtcbiAgICBjb25zdCB2YWxpZGF0b3IgPSAoY29udHJvbDogQWJzdHJhY3RDb250cm9sPHN0cmluZz4pOiBWYWxpZGF0aW9uRXJyb3JzIHwgbnVsbCA9PiB7XG4gICAgICBjb25zdCBwYXJ0cyA9IChuZXcgQXJyYXkoNSkpLmZpbGwoJyonKTtcbiAgICAgIHBhcnRzW3BhcnRdID0gY29udHJvbC52YWx1ZTtcblxuICAgICAgY29uc3QgY3JvbnRhYiA9IHBhcnRzLmpvaW4oJyAnKTtcbiAgICAgIGNvbnN0IHBhcnNpbmdSZXN1bHQgPSBjcm9uUGFyc2VyLnBhcnNlU3RyaW5nKGNyb250YWIpO1xuXG4gICAgICBpZiAoIU9iamVjdC5rZXlzKHBhcnNpbmdSZXN1bHQuZXJyb3JzKS5sZW5ndGgpIHtcbiAgICAgICAgcmV0dXJuIHt9O1xuICAgICAgfVxuXG4gICAgICByZXR1cm4ge1xuICAgICAgICBjcm9udGFiUGFydDogdHJ1ZSxcbiAgICAgIH07XG4gICAgfTtcblxuICAgIHJldHVybiB0aGlzLnZhbGlkYXRvcnNTZXJ2aWNlLndpdGhNZXNzYWdlKHZhbGlkYXRvciwgdGhpcy50cmFuc2xhdGUuaW5zdGFudCgnSW5jb3JyZWN0IGNyb250YWIgdmFsdWUuJykpO1xuICB9XG59XG4iXSwidmVyc2lvbiI6M30=

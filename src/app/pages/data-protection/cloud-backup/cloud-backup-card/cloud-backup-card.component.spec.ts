@@ -23,6 +23,10 @@ import {
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+import { provideMockStore } from '@ngrx/store/testing';
+import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 
 describe('CloudBackupCardComponent', () => {
   let spectator: Spectator<CloudBackupCardComponent>;
@@ -67,6 +71,27 @@ describe('CloudBackupCardComponent', () => {
         open: jest.fn(() => of({
           response: true,
         })),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+          {
+            selector: selectJobs,
+            value: [{
+              state: JobState.Finished,
+              time_finished: {
+                $date: new Date().getTime() - 50000,
+              },
+            }],
+          },
+        ],
       }),
     ],
   });

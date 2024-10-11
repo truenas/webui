@@ -1,0 +1,38 @@
+70f47d7316b592093d4e59c71eb2b72c
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+const _basePullAll_js_1 = __importDefault(require("./_basePullAll.js"));
+/**
+ * This method is like `_.pullAll` except that it accepts `iteratee` which is
+ * invoked for each element of `array` and `values` to generate the criterion
+ * by which they're compared. The iteratee is invoked with one argument: (value).
+ *
+ * **Note:** Unlike `_.differenceBy`, this method mutates `array`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The array to modify.
+ * @param {Array} values The values to remove.
+ * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @returns {Array} Returns `array`.
+ * @example
+ *
+ * var array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
+ *
+ * _.pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x');
+ * console.log(array);
+ * // => [{ 'x': 2 }]
+ */
+function pullAllBy(array, values, iteratee) {
+    return (array && array.length && values && values.length)
+        ? (0, _basePullAll_js_1.default)(array, values, (0, _baseIteratee_js_1.default)(iteratee, 2))
+        : array;
+}
+exports.default = pullAllBy;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3B1bGxBbGxCeS5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLDBFQUE4QztBQUM5Qyx3RUFBNEM7QUFFNUM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FzQkc7QUFDSCxTQUFTLFNBQVMsQ0FBQyxLQUFLLEVBQUUsTUFBTSxFQUFFLFFBQVE7SUFDeEMsT0FBTyxDQUFDLEtBQUssSUFBSSxLQUFLLENBQUMsTUFBTSxJQUFJLE1BQU0sSUFBSSxNQUFNLENBQUMsTUFBTSxDQUFDO1FBQ3ZELENBQUMsQ0FBQyxJQUFBLHlCQUFXLEVBQUMsS0FBSyxFQUFFLE1BQU0sRUFBRSxJQUFBLDBCQUFZLEVBQUMsUUFBUSxFQUFFLENBQUMsQ0FBQyxDQUFDO1FBQ3ZELENBQUMsQ0FBQyxLQUFLLENBQUM7QUFDWixDQUFDO0FBRUQsa0JBQWUsU0FBUyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9wdWxsQWxsQnkuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VJdGVyYXRlZSBmcm9tICcuL19iYXNlSXRlcmF0ZWUuanMnO1xuaW1wb3J0IGJhc2VQdWxsQWxsIGZyb20gJy4vX2Jhc2VQdWxsQWxsLmpzJztcblxuLyoqXG4gKiBUaGlzIG1ldGhvZCBpcyBsaWtlIGBfLnB1bGxBbGxgIGV4Y2VwdCB0aGF0IGl0IGFjY2VwdHMgYGl0ZXJhdGVlYCB3aGljaCBpc1xuICogaW52b2tlZCBmb3IgZWFjaCBlbGVtZW50IG9mIGBhcnJheWAgYW5kIGB2YWx1ZXNgIHRvIGdlbmVyYXRlIHRoZSBjcml0ZXJpb25cbiAqIGJ5IHdoaWNoIHRoZXkncmUgY29tcGFyZWQuIFRoZSBpdGVyYXRlZSBpcyBpbnZva2VkIHdpdGggb25lIGFyZ3VtZW50OiAodmFsdWUpLlxuICpcbiAqICoqTm90ZToqKiBVbmxpa2UgYF8uZGlmZmVyZW5jZUJ5YCwgdGhpcyBtZXRob2QgbXV0YXRlcyBgYXJyYXlgLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgNC4wLjBcbiAqIEBjYXRlZ29yeSBBcnJheVxuICogQHBhcmFtIHtBcnJheX0gYXJyYXkgVGhlIGFycmF5IHRvIG1vZGlmeS5cbiAqIEBwYXJhbSB7QXJyYXl9IHZhbHVlcyBUaGUgdmFsdWVzIHRvIHJlbW92ZS5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IFtpdGVyYXRlZT1fLmlkZW50aXR5XSBUaGUgaXRlcmF0ZWUgaW52b2tlZCBwZXIgZWxlbWVudC5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyBgYXJyYXlgLlxuICogQGV4YW1wbGVcbiAqXG4gKiB2YXIgYXJyYXkgPSBbeyAneCc6IDEgfSwgeyAneCc6IDIgfSwgeyAneCc6IDMgfSwgeyAneCc6IDEgfV07XG4gKlxuICogXy5wdWxsQWxsQnkoYXJyYXksIFt7ICd4JzogMSB9LCB7ICd4JzogMyB9XSwgJ3gnKTtcbiAqIGNvbnNvbGUubG9nKGFycmF5KTtcbiAqIC8vID0+IFt7ICd4JzogMiB9XVxuICovXG5mdW5jdGlvbiBwdWxsQWxsQnkoYXJyYXksIHZhbHVlcywgaXRlcmF0ZWUpIHtcbiAgcmV0dXJuIChhcnJheSAmJiBhcnJheS5sZW5ndGggJiYgdmFsdWVzICYmIHZhbHVlcy5sZW5ndGgpXG4gICAgPyBiYXNlUHVsbEFsbChhcnJheSwgdmFsdWVzLCBiYXNlSXRlcmF0ZWUoaXRlcmF0ZWUsIDIpKVxuICAgIDogYXJyYXk7XG59XG5cbmV4cG9ydCBkZWZhdWx0IHB1bGxBbGxCeTtcbiJdLCJ2ZXJzaW9uIjozfQ==

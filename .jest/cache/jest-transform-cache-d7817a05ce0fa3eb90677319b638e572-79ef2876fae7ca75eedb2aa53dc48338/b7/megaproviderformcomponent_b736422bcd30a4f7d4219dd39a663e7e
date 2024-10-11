@@ -1,0 +1,2 @@
+8669cf640aea5e62c36d5092742ee16e
+module.exports="<ix-fieldset [title]=\"'Authentication' | translate\" [formGroup]=\"form\">\n  <ix-input\n    formControlName=\"user\"\n    [label]=\"'Username' | translate\"\n    [required]=\"true\"\n    [tooltip]=\"helptext.user_mega.tooltip | translate\"\n  ></ix-input>\n\n  <ix-input\n    formControlName=\"pass\"\n    type=\"password\"\n    [required]=\"true\"\n    [label]=\"'Password' | translate\"\n    [tooltip]=\"helptext.pass_mega.tooltip | translate\"\n  ></ix-input>\n</ix-fieldset>\n"

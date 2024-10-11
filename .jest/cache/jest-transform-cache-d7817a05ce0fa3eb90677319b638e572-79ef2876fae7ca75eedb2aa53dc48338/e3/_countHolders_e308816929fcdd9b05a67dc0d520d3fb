@@ -1,0 +1,22 @@
+94474b7fe63e83fd768d3c6acff6e9ea
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Gets the number of `placeholder` occurrences in `array`.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} placeholder The placeholder to search for.
+ * @returns {number} Returns the placeholder count.
+ */
+function countHolders(array, placeholder) {
+    var length = array.length, result = 0;
+    while (length--) {
+        if (array[length] === placeholder) {
+            ++result;
+        }
+    }
+    return result;
+}
+exports.default = countHolders;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jb3VudEhvbGRlcnMuanMiLCJtYXBwaW5ncyI6Ijs7QUFBQTs7Ozs7OztHQU9HO0FBQ0gsU0FBUyxZQUFZLENBQUMsS0FBSyxFQUFFLFdBQVc7SUFDdEMsSUFBSSxNQUFNLEdBQUcsS0FBSyxDQUFDLE1BQU0sRUFDckIsTUFBTSxHQUFHLENBQUMsQ0FBQztJQUVmLE9BQU8sTUFBTSxFQUFFLEVBQUUsQ0FBQztRQUNoQixJQUFJLEtBQUssQ0FBQyxNQUFNLENBQUMsS0FBSyxXQUFXLEVBQUUsQ0FBQztZQUNsQyxFQUFFLE1BQU0sQ0FBQztRQUNYLENBQUM7SUFDSCxDQUFDO0lBQ0QsT0FBTyxNQUFNLENBQUM7QUFDaEIsQ0FBQztBQUVELGtCQUFlLFlBQVksQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvX2NvdW50SG9sZGVycy5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEdldHMgdGhlIG51bWJlciBvZiBgcGxhY2Vob2xkZXJgIG9jY3VycmVuY2VzIGluIGBhcnJheWAuXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBhcnJheSB0byBpbnNwZWN0LlxuICogQHBhcmFtIHsqfSBwbGFjZWhvbGRlciBUaGUgcGxhY2Vob2xkZXIgdG8gc2VhcmNoIGZvci5cbiAqIEByZXR1cm5zIHtudW1iZXJ9IFJldHVybnMgdGhlIHBsYWNlaG9sZGVyIGNvdW50LlxuICovXG5mdW5jdGlvbiBjb3VudEhvbGRlcnMoYXJyYXksIHBsYWNlaG9sZGVyKSB7XG4gIHZhciBsZW5ndGggPSBhcnJheS5sZW5ndGgsXG4gICAgICByZXN1bHQgPSAwO1xuXG4gIHdoaWxlIChsZW5ndGgtLSkge1xuICAgIGlmIChhcnJheVtsZW5ndGhdID09PSBwbGFjZWhvbGRlcikge1xuICAgICAgKytyZXN1bHQ7XG4gICAgfVxuICB9XG4gIHJldHVybiByZXN1bHQ7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGNvdW50SG9sZGVycztcbiJdLCJ2ZXJzaW9uIjozfQ==

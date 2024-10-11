@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Options as CronOptions } from 'cronstrue/dist/options';
 import cronstrue from 'cronstrue/i18n';
+import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Option } from 'app/interfaces/option.interface';
 import { LocaleService } from 'app/services/locale.service';
@@ -138,7 +139,7 @@ export class TaskService {
 
       return formatDistanceToNowShortened(date);
     } catch {
-      return this.translate.instant('Invalid Date');
+      return this.translate.instant(invalidDate);
     }
   }
 
@@ -151,7 +152,7 @@ export class TaskService {
 
       return schedule.next().value.toDate();
     } catch {
-      return this.translate.instant('Invalid Date');
+      return this.translate.instant(invalidDate);
     }
   }
 

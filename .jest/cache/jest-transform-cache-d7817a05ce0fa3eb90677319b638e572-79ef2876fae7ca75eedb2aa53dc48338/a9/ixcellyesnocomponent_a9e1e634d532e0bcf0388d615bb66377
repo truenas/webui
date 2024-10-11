@@ -1,0 +1,36 @@
+9eb7f1e1f474d92f45a4ee1f9452edbe
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxCellYesNoComponent = void 0;
+exports.yesNoColumn = yesNoColumn;
+const core_1 = require("@angular/core");
+const core_2 = require("@ngx-translate/core");
+const column_component_class_1 = require("app/modules/ix-table/interfaces/column-component.class");
+const yes_no_pipe_1 = require("app/modules/pipes/yes-no/yes-no.pipe");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+let IxCellYesNoComponent = class IxCellYesNoComponent extends column_component_class_1.ColumnComponent {
+};
+exports.IxCellYesNoComponent = IxCellYesNoComponent;
+exports.IxCellYesNoComponent = IxCellYesNoComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-cell-yesno',
+        template: require("./ix-cell-yes-no.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            core_2.TranslateModule,
+            yes_no_pipe_1.YesNoPipe,
+            test_directive_1.TestDirective,
+        ],
+    })
+], IxCellYesNoComponent);
+function yesNoColumn(options) {
+    return Object.assign({ type: IxCellYesNoComponent }, options);
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1ib2R5L2NlbGxzL2l4LWNlbGwteWVzLW5vL2l4LWNlbGwteWVzLW5vLmNvbXBvbmVudC50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7QUFtQkEsa0NBRUM7QUFyQkQsd0NBQW1FO0FBQ25FLDhDQUFzRDtBQUN0RCxtR0FBaUc7QUFDakcsc0VBQWlFO0FBQ2pFLHVFQUFtRTtBQWE1RCxJQUFNLG9CQUFvQixHQUExQixNQUFNLG9CQUF3QixTQUFRLHdDQUFrQjtDQUFHLENBQUE7QUFBckQsb0RBQW9COytCQUFwQixvQkFBb0I7SUFYaEMsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLGVBQWU7UUFDekIsb0RBQThDO1FBQzlDLGVBQWUsRUFBRSw4QkFBdUIsQ0FBQyxNQUFNO1FBQy9DLFVBQVUsRUFBRSxJQUFJO1FBQ2hCLE9BQU8sRUFBRTtZQUNQLHNCQUFlO1lBQ2YsdUJBQVM7WUFDVCw4QkFBYTtTQUNkO0tBQ0YsQ0FBQztHQUNXLG9CQUFvQixDQUFpQztBQUVsRSxTQUFnQixXQUFXLENBQUksT0FBeUM7SUFDdEUsdUJBQVMsSUFBSSxFQUFFLG9CQUFvQixJQUFLLE9BQU8sRUFBRztBQUNwRCxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9tb2R1bGVzL2l4LXRhYmxlL2NvbXBvbmVudHMvaXgtdGFibGUtYm9keS9jZWxscy9peC1jZWxsLXllcy1uby9peC1jZWxsLXllcy1uby5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgVHJhbnNsYXRlTW9kdWxlIH0gZnJvbSAnQG5neC10cmFuc2xhdGUvY29yZSc7XG5pbXBvcnQgeyBDb2x1bW5Db21wb25lbnQsIENvbHVtbiB9IGZyb20gJ2FwcC9tb2R1bGVzL2l4LXRhYmxlL2ludGVyZmFjZXMvY29sdW1uLWNvbXBvbmVudC5jbGFzcyc7XG5pbXBvcnQgeyBZZXNOb1BpcGUgfSBmcm9tICdhcHAvbW9kdWxlcy9waXBlcy95ZXMtbm8veWVzLW5vLnBpcGUnO1xuaW1wb3J0IHsgVGVzdERpcmVjdGl2ZSB9IGZyb20gJ2FwcC9tb2R1bGVzL3Rlc3QtaWQvdGVzdC5kaXJlY3RpdmUnO1xuXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC1jZWxsLXllc25vJyxcbiAgdGVtcGxhdGVVcmw6ICcuL2l4LWNlbGwteWVzLW5vLmNvbXBvbmVudC5odG1sJyxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGltcG9ydHM6IFtcbiAgICBUcmFuc2xhdGVNb2R1bGUsXG4gICAgWWVzTm9QaXBlLFxuICAgIFRlc3REaXJlY3RpdmUsXG4gIF0sXG59KVxuZXhwb3J0IGNsYXNzIEl4Q2VsbFllc05vQ29tcG9uZW50PFQ+IGV4dGVuZHMgQ29sdW1uQ29tcG9uZW50PFQ+IHt9XG5cbmV4cG9ydCBmdW5jdGlvbiB5ZXNOb0NvbHVtbjxUPihvcHRpb25zOiBQYXJ0aWFsPEl4Q2VsbFllc05vQ29tcG9uZW50PFQ+Pik6IENvbHVtbjxULCBJeENlbGxZZXNOb0NvbXBvbmVudDxUPj4ge1xuICByZXR1cm4geyB0eXBlOiBJeENlbGxZZXNOb0NvbXBvbmVudCwgLi4ub3B0aW9ucyB9O1xufVxuIl0sInZlcnNpb24iOjN9

@@ -1,0 +1,63 @@
+0b241f7f18904b8bb7e6a8b4cea3f339
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxTableDetailsRowComponent = void 0;
+const core_1 = require("@angular/core");
+const divider_1 = require("@angular/material/divider");
+const core_2 = require("@ngx-translate/core");
+const ix_body_cell_directive_1 = require("app/modules/ix-table/directives/ix-body-cell.directive");
+const i0 = __importStar(require("@angular/core"));
+let IxTableDetailsRowComponent = class IxTableDetailsRowComponent {
+    constructor() {
+        this.hiddenColumns = (0, core_1.input)();
+        this.row = (0, core_1.input)();
+    }
+};
+exports.IxTableDetailsRowComponent = IxTableDetailsRowComponent;
+IxTableDetailsRowComponent.propDecorators = {
+    hiddenColumns: [{ type: i0.Input, args: [{ isSignal: true, alias: "hiddenColumns", required: false, transform: undefined },] }],
+    row: [{ type: i0.Input, args: [{ isSignal: true, alias: "row", required: false, transform: undefined },] }]
+};
+exports.IxTableDetailsRowComponent = IxTableDetailsRowComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-table-details-row',
+        template: require("./ix-table-details-row.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            ix_body_cell_directive_1.IxTableBodyCellDirective,
+            divider_1.MatDivider,
+            core_2.TranslateModule,
+        ],
+    })
+], IxTableDetailsRowComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1kZXRhaWxzLXJvdy9peC10YWJsZS1kZXRhaWxzLXJvdy5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSx3Q0FFdUI7QUFDdkIsdURBQXVEO0FBQ3ZELDhDQUFzRDtBQUN0RCxtR0FBa0c7O0FBZTNGLElBQU0sMEJBQTBCLEdBQWhDLE1BQU0sMEJBQTBCO0lBQWhDOzZCQUNvQixJQUFBLFlBQUssR0FBbUM7bUJBQ2xELElBQUEsWUFBSyxHQUFLO0tBQzFCOztBQUhZLGdFQUEwQjs7Ozs7cUNBQTFCLDBCQUEwQjtJQVp0QyxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsc0JBQXNCO1FBQ2hDLDBEQUFvRDtRQUVwRCxlQUFlLEVBQUUsOEJBQXVCLENBQUMsTUFBTTtRQUMvQyxVQUFVLEVBQUUsSUFBSTtRQUNoQixPQUFPLEVBQUU7WUFDUCxpREFBd0I7WUFDeEIsb0JBQVU7WUFDVixzQkFBZTtTQUNoQjtLQUNGLENBQUM7R0FDVywwQkFBMEIsQ0FHdEMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1kZXRhaWxzLXJvdy9peC10YWJsZS1kZXRhaWxzLXJvdy5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcbiAgQ29tcG9uZW50LCBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgaW5wdXQsXG59IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgTWF0RGl2aWRlciB9IGZyb20gJ0Bhbmd1bGFyL21hdGVyaWFsL2RpdmlkZXInO1xuaW1wb3J0IHsgVHJhbnNsYXRlTW9kdWxlIH0gZnJvbSAnQG5neC10cmFuc2xhdGUvY29yZSc7XG5pbXBvcnQgeyBJeFRhYmxlQm9keUNlbGxEaXJlY3RpdmUgfSBmcm9tICdhcHAvbW9kdWxlcy9peC10YWJsZS9kaXJlY3RpdmVzL2l4LWJvZHktY2VsbC5kaXJlY3RpdmUnO1xuaW1wb3J0IHsgQ29sdW1uLCBDb2x1bW5Db21wb25lbnQgfSBmcm9tICdhcHAvbW9kdWxlcy9peC10YWJsZS9pbnRlcmZhY2VzL2NvbHVtbi1jb21wb25lbnQuY2xhc3MnO1xuXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC10YWJsZS1kZXRhaWxzLXJvdycsXG4gIHRlbXBsYXRlVXJsOiAnLi9peC10YWJsZS1kZXRhaWxzLXJvdy5jb21wb25lbnQuaHRtbCcsXG4gIHN0eWxlVXJsczogWycuL2l4LXRhYmxlLWRldGFpbHMtcm93LmNvbXBvbmVudC5zY3NzJ10sXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICBzdGFuZGFsb25lOiB0cnVlLFxuICBpbXBvcnRzOiBbXG4gICAgSXhUYWJsZUJvZHlDZWxsRGlyZWN0aXZlLFxuICAgIE1hdERpdmlkZXIsXG4gICAgVHJhbnNsYXRlTW9kdWxlLFxuICBdLFxufSlcbmV4cG9ydCBjbGFzcyBJeFRhYmxlRGV0YWlsc1Jvd0NvbXBvbmVudDxUPiB7XG4gIHJlYWRvbmx5IGhpZGRlbkNvbHVtbnMgPSBpbnB1dDxDb2x1bW48VCwgQ29sdW1uQ29tcG9uZW50PFQ+PltdPigpO1xuICByZWFkb25seSByb3cgPSBpbnB1dDxUPigpO1xufVxuIl0sInZlcnNpb24iOjN9

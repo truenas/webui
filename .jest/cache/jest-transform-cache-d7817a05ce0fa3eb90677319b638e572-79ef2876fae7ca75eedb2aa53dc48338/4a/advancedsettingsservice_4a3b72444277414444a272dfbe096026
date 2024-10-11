@@ -1,0 +1,37 @@
+9a98a1fbac14737fa00cfe57b2916d95
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AdvancedSettingsService = void 0;
+const core_1 = require("@angular/core");
+const rxjs_1 = require("rxjs");
+const operators_1 = require("rxjs/operators");
+const advanced_1 = require("app/helptext/system/advanced");
+const dialog_service_1 = require("app/modules/dialog/dialog.service");
+let AdvancedSettingsService = class AdvancedSettingsService {
+    constructor(dialogService) {
+        this.dialogService = dialogService;
+        this.isFirstTime = true;
+    }
+    showFirstTimeWarningIfNeeded() {
+        if (!this.isFirstTime) {
+            return (0, rxjs_1.of)(true);
+        }
+        return this.dialogService.warn(advanced_1.helptextSystemAdvanced.first_time.title, advanced_1.helptextSystemAdvanced.first_time.message).pipe((0, operators_1.tap)(() => this.isFirstTime = false), (0, operators_1.map)(() => true));
+    }
+};
+exports.AdvancedSettingsService = AdvancedSettingsService;
+AdvancedSettingsService.ctorParameters = () => [
+    { type: dialog_service_1.DialogService }
+];
+exports.AdvancedSettingsService = AdvancedSettingsService = __decorate([
+    (0, core_1.Injectable)({
+        providedIn: 'root',
+    })
+], AdvancedSettingsService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL3N5c3RlbS9hZHZhbmNlZC9hZHZhbmNlZC1zZXR0aW5ncy5zZXJ2aWNlLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUFBLHdDQUEyQztBQUMzQywrQkFBc0M7QUFDdEMsOENBQTBDO0FBQzFDLDJEQUFzRTtBQUN0RSxzRUFBa0U7QUFLM0QsSUFBTSx1QkFBdUIsR0FBN0IsTUFBTSx1QkFBdUI7SUFHbEMsWUFDVSxhQUE0QjtRQUE1QixrQkFBYSxHQUFiLGFBQWEsQ0FBZTtRQUg5QixnQkFBVyxHQUFHLElBQUksQ0FBQztJQUl4QixDQUFDO0lBRUosNEJBQTRCO1FBQzFCLElBQUksQ0FBQyxJQUFJLENBQUMsV0FBVyxFQUFFLENBQUM7WUFDdEIsT0FBTyxJQUFBLFNBQUUsRUFBQyxJQUFJLENBQUMsQ0FBQztRQUNsQixDQUFDO1FBRUQsT0FBTyxJQUFJLENBQUMsYUFBYSxDQUFDLElBQUksQ0FDNUIsaUNBQXNCLENBQUMsVUFBVSxDQUFDLEtBQUssRUFDdkMsaUNBQXNCLENBQUMsVUFBVSxDQUFDLE9BQU8sQ0FDMUMsQ0FBQyxJQUFJLENBQ0osSUFBQSxlQUFHLEVBQUMsR0FBRyxFQUFFLENBQUMsSUFBSSxDQUFDLFdBQVcsR0FBRyxLQUFLLENBQUMsRUFDbkMsSUFBQSxlQUFHLEVBQUMsR0FBRyxFQUFFLENBQUMsSUFBSSxDQUFDLENBQ2hCLENBQUM7SUFDSixDQUFDOztBQW5CVSwwREFBdUI7Ozs7a0NBQXZCLHVCQUF1QjtJQUhuQyxJQUFBLGlCQUFVLEVBQUM7UUFDVixVQUFVLEVBQUUsTUFBTTtLQUNuQixDQUFDO0dBQ1csdUJBQXVCLENBb0JuQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvc3lzdGVtL2FkdmFuY2VkL2FkdmFuY2VkLXNldHRpbmdzLnNlcnZpY2UudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgSW5qZWN0YWJsZSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgT2JzZXJ2YWJsZSwgb2YgfSBmcm9tICdyeGpzJztcbmltcG9ydCB7IG1hcCwgdGFwIH0gZnJvbSAncnhqcy9vcGVyYXRvcnMnO1xuaW1wb3J0IHsgaGVscHRleHRTeXN0ZW1BZHZhbmNlZCB9IGZyb20gJ2FwcC9oZWxwdGV4dC9zeXN0ZW0vYWR2YW5jZWQnO1xuaW1wb3J0IHsgRGlhbG9nU2VydmljZSB9IGZyb20gJ2FwcC9tb2R1bGVzL2RpYWxvZy9kaWFsb2cuc2VydmljZSc7XG5cbkBJbmplY3RhYmxlKHtcbiAgcHJvdmlkZWRJbjogJ3Jvb3QnLFxufSlcbmV4cG9ydCBjbGFzcyBBZHZhbmNlZFNldHRpbmdzU2VydmljZSB7XG4gIHByaXZhdGUgaXNGaXJzdFRpbWUgPSB0cnVlO1xuXG4gIGNvbnN0cnVjdG9yKFxuICAgIHByaXZhdGUgZGlhbG9nU2VydmljZTogRGlhbG9nU2VydmljZSxcbiAgKSB7fVxuXG4gIHNob3dGaXJzdFRpbWVXYXJuaW5nSWZOZWVkZWQoKTogT2JzZXJ2YWJsZTx0cnVlPiB7XG4gICAgaWYgKCF0aGlzLmlzRmlyc3RUaW1lKSB7XG4gICAgICByZXR1cm4gb2YodHJ1ZSk7XG4gICAgfVxuXG4gICAgcmV0dXJuIHRoaXMuZGlhbG9nU2VydmljZS53YXJuKFxuICAgICAgaGVscHRleHRTeXN0ZW1BZHZhbmNlZC5maXJzdF90aW1lLnRpdGxlLFxuICAgICAgaGVscHRleHRTeXN0ZW1BZHZhbmNlZC5maXJzdF90aW1lLm1lc3NhZ2UsXG4gICAgKS5waXBlKFxuICAgICAgdGFwKCgpID0+IHRoaXMuaXNGaXJzdFRpbWUgPSBmYWxzZSksXG4gICAgICBtYXAoKCkgPT4gdHJ1ZSksXG4gICAgKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

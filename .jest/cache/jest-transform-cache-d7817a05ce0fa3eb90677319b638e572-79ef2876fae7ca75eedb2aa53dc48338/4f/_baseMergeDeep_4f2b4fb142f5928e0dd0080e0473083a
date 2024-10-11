@@ -1,0 +1,91 @@
+97083b75f773939484b7535a514a850c
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _assignMergeValue_js_1 = __importDefault(require("./_assignMergeValue.js"));
+const _cloneBuffer_js_1 = __importDefault(require("./_cloneBuffer.js"));
+const _cloneTypedArray_js_1 = __importDefault(require("./_cloneTypedArray.js"));
+const _copyArray_js_1 = __importDefault(require("./_copyArray.js"));
+const _initCloneObject_js_1 = __importDefault(require("./_initCloneObject.js"));
+const isArguments_js_1 = __importDefault(require("./isArguments.js"));
+const isArray_js_1 = __importDefault(require("./isArray.js"));
+const isArrayLikeObject_js_1 = __importDefault(require("./isArrayLikeObject.js"));
+const isBuffer_js_1 = __importDefault(require("./isBuffer.js"));
+const isFunction_js_1 = __importDefault(require("./isFunction.js"));
+const isObject_js_1 = __importDefault(require("./isObject.js"));
+const isPlainObject_js_1 = __importDefault(require("./isPlainObject.js"));
+const isTypedArray_js_1 = __importDefault(require("./isTypedArray.js"));
+const _safeGet_js_1 = __importDefault(require("./_safeGet.js"));
+const toPlainObject_js_1 = __importDefault(require("./toPlainObject.js"));
+/**
+ * A specialized version of `baseMerge` for arrays and objects which performs
+ * deep merges and tracks traversed objects enabling objects with circular
+ * references to be merged.
+ *
+ * @private
+ * @param {Object} object The destination object.
+ * @param {Object} source The source object.
+ * @param {string} key The key of the value to merge.
+ * @param {number} srcIndex The index of `source`.
+ * @param {Function} mergeFunc The function to merge values.
+ * @param {Function} [customizer] The function to customize assigned values.
+ * @param {Object} [stack] Tracks traversed source values and their merged
+ *  counterparts.
+ */
+function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
+    var objValue = (0, _safeGet_js_1.default)(object, key), srcValue = (0, _safeGet_js_1.default)(source, key), stacked = stack.get(srcValue);
+    if (stacked) {
+        (0, _assignMergeValue_js_1.default)(object, key, stacked);
+        return;
+    }
+    var newValue = customizer
+        ? customizer(objValue, srcValue, (key + ''), object, source, stack)
+        : undefined;
+    var isCommon = newValue === undefined;
+    if (isCommon) {
+        var isArr = (0, isArray_js_1.default)(srcValue), isBuff = !isArr && (0, isBuffer_js_1.default)(srcValue), isTyped = !isArr && !isBuff && (0, isTypedArray_js_1.default)(srcValue);
+        newValue = srcValue;
+        if (isArr || isBuff || isTyped) {
+            if ((0, isArray_js_1.default)(objValue)) {
+                newValue = objValue;
+            }
+            else if ((0, isArrayLikeObject_js_1.default)(objValue)) {
+                newValue = (0, _copyArray_js_1.default)(objValue);
+            }
+            else if (isBuff) {
+                isCommon = false;
+                newValue = (0, _cloneBuffer_js_1.default)(srcValue, true);
+            }
+            else if (isTyped) {
+                isCommon = false;
+                newValue = (0, _cloneTypedArray_js_1.default)(srcValue, true);
+            }
+            else {
+                newValue = [];
+            }
+        }
+        else if ((0, isPlainObject_js_1.default)(srcValue) || (0, isArguments_js_1.default)(srcValue)) {
+            newValue = objValue;
+            if ((0, isArguments_js_1.default)(objValue)) {
+                newValue = (0, toPlainObject_js_1.default)(objValue);
+            }
+            else if (!(0, isObject_js_1.default)(objValue) || (0, isFunction_js_1.default)(objValue)) {
+                newValue = (0, _initCloneObject_js_1.default)(srcValue);
+            }
+        }
+        else {
+            isCommon = false;
+        }
+    }
+    if (isCommon) {
+        // Recursively merge objects and arrays (susceptible to call stack limits).
+        stack.set(srcValue, newValue);
+        mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
+        stack['delete'](srcValue);
+    }
+    (0, _assignMergeValue_js_1.default)(object, key, newValue);
+}
+exports.default = baseMergeDeep;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlTWVyZ2VEZWVwLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsa0ZBQXNEO0FBQ3RELHdFQUE0QztBQUM1QyxnRkFBb0Q7QUFDcEQsb0VBQXdDO0FBQ3hDLGdGQUFvRDtBQUNwRCxzRUFBMkM7QUFDM0MsOERBQW1DO0FBQ25DLGtGQUF1RDtBQUN2RCxnRUFBcUM7QUFDckMsb0VBQXlDO0FBQ3pDLGdFQUFxQztBQUNyQywwRUFBK0M7QUFDL0Msd0VBQTZDO0FBQzdDLGdFQUFvQztBQUNwQywwRUFBK0M7QUFFL0M7Ozs7Ozs7Ozs7Ozs7O0dBY0c7QUFDSCxTQUFTLGFBQWEsQ0FBQyxNQUFNLEVBQUUsTUFBTSxFQUFFLEdBQUcsRUFBRSxRQUFRLEVBQUUsU0FBUyxFQUFFLFVBQVUsRUFBRSxLQUFLO0lBQ2hGLElBQUksUUFBUSxHQUFHLElBQUEscUJBQU8sRUFBQyxNQUFNLEVBQUUsR0FBRyxDQUFDLEVBQy9CLFFBQVEsR0FBRyxJQUFBLHFCQUFPLEVBQUMsTUFBTSxFQUFFLEdBQUcsQ0FBQyxFQUMvQixPQUFPLEdBQUcsS0FBSyxDQUFDLEdBQUcsQ0FBQyxRQUFRLENBQUMsQ0FBQztJQUVsQyxJQUFJLE9BQU8sRUFBRSxDQUFDO1FBQ1osSUFBQSw4QkFBZ0IsRUFBQyxNQUFNLEVBQUUsR0FBRyxFQUFFLE9BQU8sQ0FBQyxDQUFDO1FBQ3ZDLE9BQU87SUFDVCxDQUFDO0lBQ0QsSUFBSSxRQUFRLEdBQUcsVUFBVTtRQUN2QixDQUFDLENBQUMsVUFBVSxDQUFDLFFBQVEsRUFBRSxRQUFRLEVBQUUsQ0FBQyxHQUFHLEdBQUcsRUFBRSxDQUFDLEVBQUUsTUFBTSxFQUFFLE1BQU0sRUFBRSxLQUFLLENBQUM7UUFDbkUsQ0FBQyxDQUFDLFNBQVMsQ0FBQztJQUVkLElBQUksUUFBUSxHQUFHLFFBQVEsS0FBSyxTQUFTLENBQUM7SUFFdEMsSUFBSSxRQUFRLEVBQUUsQ0FBQztRQUNiLElBQUksS0FBSyxHQUFHLElBQUEsb0JBQU8sRUFBQyxRQUFRLENBQUMsRUFDekIsTUFBTSxHQUFHLENBQUMsS0FBSyxJQUFJLElBQUEscUJBQVEsRUFBQyxRQUFRLENBQUMsRUFDckMsT0FBTyxHQUFHLENBQUMsS0FBSyxJQUFJLENBQUMsTUFBTSxJQUFJLElBQUEseUJBQVksRUFBQyxRQUFRLENBQUMsQ0FBQztRQUUxRCxRQUFRLEdBQUcsUUFBUSxDQUFDO1FBQ3BCLElBQUksS0FBSyxJQUFJLE1BQU0sSUFBSSxPQUFPLEVBQUUsQ0FBQztZQUMvQixJQUFJLElBQUEsb0JBQU8sRUFBQyxRQUFRLENBQUMsRUFBRSxDQUFDO2dCQUN0QixRQUFRLEdBQUcsUUFBUSxDQUFDO1lBQ3RCLENBQUM7aUJBQ0ksSUFBSSxJQUFBLDhCQUFpQixFQUFDLFFBQVEsQ0FBQyxFQUFFLENBQUM7Z0JBQ3JDLFFBQVEsR0FBRyxJQUFBLHVCQUFTLEVBQUMsUUFBUSxDQUFDLENBQUM7WUFDakMsQ0FBQztpQkFDSSxJQUFJLE1BQU0sRUFBRSxDQUFDO2dCQUNoQixRQUFRLEdBQUcsS0FBSyxDQUFDO2dCQUNqQixRQUFRLEdBQUcsSUFBQSx5QkFBVyxFQUFDLFFBQVEsRUFBRSxJQUFJLENBQUMsQ0FBQztZQUN6QyxDQUFDO2lCQUNJLElBQUksT0FBTyxFQUFFLENBQUM7Z0JBQ2pCLFFBQVEsR0FBRyxLQUFLLENBQUM7Z0JBQ2pCLFFBQVEsR0FBRyxJQUFBLDZCQUFlLEVBQUMsUUFBUSxFQUFFLElBQUksQ0FBQyxDQUFDO1lBQzdDLENBQUM7aUJBQ0ksQ0FBQztnQkFDSixRQUFRLEdBQUcsRUFBRSxDQUFDO1lBQ2hCLENBQUM7UUFDSCxDQUFDO2FBQ0ksSUFBSSxJQUFBLDBCQUFhLEVBQUMsUUFBUSxDQUFDLElBQUksSUFBQSx3QkFBVyxFQUFDLFFBQVEsQ0FBQyxFQUFFLENBQUM7WUFDMUQsUUFBUSxHQUFHLFFBQVEsQ0FBQztZQUNwQixJQUFJLElBQUEsd0JBQVcsRUFBQyxRQUFRLENBQUMsRUFBRSxDQUFDO2dCQUMxQixRQUFRLEdBQUcsSUFBQSwwQkFBYSxFQUFDLFFBQVEsQ0FBQyxDQUFDO1lBQ3JDLENBQUM7aUJBQ0ksSUFBSSxDQUFDLElBQUEscUJBQVEsRUFBQyxRQUFRLENBQUMsSUFBSSxJQUFBLHVCQUFVLEVBQUMsUUFBUSxDQUFDLEVBQUUsQ0FBQztnQkFDckQsUUFBUSxHQUFHLElBQUEsNkJBQWUsRUFBQyxRQUFRLENBQUMsQ0FBQztZQUN2QyxDQUFDO1FBQ0gsQ0FBQzthQUNJLENBQUM7WUFDSixRQUFRLEdBQUcsS0FBSyxDQUFDO1FBQ25CLENBQUM7SUFDSCxDQUFDO0lBQ0QsSUFBSSxRQUFRLEVBQUUsQ0FBQztRQUNiLDJFQUEyRTtRQUMzRSxLQUFLLENBQUMsR0FBRyxDQUFDLFFBQVEsRUFBRSxRQUFRLENBQUMsQ0FBQztRQUM5QixTQUFTLENBQUMsUUFBUSxFQUFFLFFBQVEsRUFBRSxRQUFRLEVBQUUsVUFBVSxFQUFFLEtBQUssQ0FBQyxDQUFDO1FBQzNELEtBQUssQ0FBQyxRQUFRLENBQUMsQ0FBQyxRQUFRLENBQUMsQ0FBQztJQUM1QixDQUFDO0lBQ0QsSUFBQSw4QkFBZ0IsRUFBQyxNQUFNLEVBQUUsR0FBRyxFQUFFLFFBQVEsQ0FBQyxDQUFDO0FBQzFDLENBQUM7QUFFRCxrQkFBZSxhQUFhLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlTWVyZ2VEZWVwLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBhc3NpZ25NZXJnZVZhbHVlIGZyb20gJy4vX2Fzc2lnbk1lcmdlVmFsdWUuanMnO1xuaW1wb3J0IGNsb25lQnVmZmVyIGZyb20gJy4vX2Nsb25lQnVmZmVyLmpzJztcbmltcG9ydCBjbG9uZVR5cGVkQXJyYXkgZnJvbSAnLi9fY2xvbmVUeXBlZEFycmF5LmpzJztcbmltcG9ydCBjb3B5QXJyYXkgZnJvbSAnLi9fY29weUFycmF5LmpzJztcbmltcG9ydCBpbml0Q2xvbmVPYmplY3QgZnJvbSAnLi9faW5pdENsb25lT2JqZWN0LmpzJztcbmltcG9ydCBpc0FyZ3VtZW50cyBmcm9tICcuL2lzQXJndW1lbnRzLmpzJztcbmltcG9ydCBpc0FycmF5IGZyb20gJy4vaXNBcnJheS5qcyc7XG5pbXBvcnQgaXNBcnJheUxpa2VPYmplY3QgZnJvbSAnLi9pc0FycmF5TGlrZU9iamVjdC5qcyc7XG5pbXBvcnQgaXNCdWZmZXIgZnJvbSAnLi9pc0J1ZmZlci5qcyc7XG5pbXBvcnQgaXNGdW5jdGlvbiBmcm9tICcuL2lzRnVuY3Rpb24uanMnO1xuaW1wb3J0IGlzT2JqZWN0IGZyb20gJy4vaXNPYmplY3QuanMnO1xuaW1wb3J0IGlzUGxhaW5PYmplY3QgZnJvbSAnLi9pc1BsYWluT2JqZWN0LmpzJztcbmltcG9ydCBpc1R5cGVkQXJyYXkgZnJvbSAnLi9pc1R5cGVkQXJyYXkuanMnO1xuaW1wb3J0IHNhZmVHZXQgZnJvbSAnLi9fc2FmZUdldC5qcyc7XG5pbXBvcnQgdG9QbGFpbk9iamVjdCBmcm9tICcuL3RvUGxhaW5PYmplY3QuanMnO1xuXG4vKipcbiAqIEEgc3BlY2lhbGl6ZWQgdmVyc2lvbiBvZiBgYmFzZU1lcmdlYCBmb3IgYXJyYXlzIGFuZCBvYmplY3RzIHdoaWNoIHBlcmZvcm1zXG4gKiBkZWVwIG1lcmdlcyBhbmQgdHJhY2tzIHRyYXZlcnNlZCBvYmplY3RzIGVuYWJsaW5nIG9iamVjdHMgd2l0aCBjaXJjdWxhclxuICogcmVmZXJlbmNlcyB0byBiZSBtZXJnZWQuXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7T2JqZWN0fSBvYmplY3QgVGhlIGRlc3RpbmF0aW9uIG9iamVjdC5cbiAqIEBwYXJhbSB7T2JqZWN0fSBzb3VyY2UgVGhlIHNvdXJjZSBvYmplY3QuXG4gKiBAcGFyYW0ge3N0cmluZ30ga2V5IFRoZSBrZXkgb2YgdGhlIHZhbHVlIHRvIG1lcmdlLlxuICogQHBhcmFtIHtudW1iZXJ9IHNyY0luZGV4IFRoZSBpbmRleCBvZiBgc291cmNlYC5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IG1lcmdlRnVuYyBUaGUgZnVuY3Rpb24gdG8gbWVyZ2UgdmFsdWVzLlxuICogQHBhcmFtIHtGdW5jdGlvbn0gW2N1c3RvbWl6ZXJdIFRoZSBmdW5jdGlvbiB0byBjdXN0b21pemUgYXNzaWduZWQgdmFsdWVzLlxuICogQHBhcmFtIHtPYmplY3R9IFtzdGFja10gVHJhY2tzIHRyYXZlcnNlZCBzb3VyY2UgdmFsdWVzIGFuZCB0aGVpciBtZXJnZWRcbiAqICBjb3VudGVycGFydHMuXG4gKi9cbmZ1bmN0aW9uIGJhc2VNZXJnZURlZXAob2JqZWN0LCBzb3VyY2UsIGtleSwgc3JjSW5kZXgsIG1lcmdlRnVuYywgY3VzdG9taXplciwgc3RhY2spIHtcbiAgdmFyIG9ialZhbHVlID0gc2FmZUdldChvYmplY3QsIGtleSksXG4gICAgICBzcmNWYWx1ZSA9IHNhZmVHZXQoc291cmNlLCBrZXkpLFxuICAgICAgc3RhY2tlZCA9IHN0YWNrLmdldChzcmNWYWx1ZSk7XG5cbiAgaWYgKHN0YWNrZWQpIHtcbiAgICBhc3NpZ25NZXJnZVZhbHVlKG9iamVjdCwga2V5LCBzdGFja2VkKTtcbiAgICByZXR1cm47XG4gIH1cbiAgdmFyIG5ld1ZhbHVlID0gY3VzdG9taXplclxuICAgID8gY3VzdG9taXplcihvYmpWYWx1ZSwgc3JjVmFsdWUsIChrZXkgKyAnJyksIG9iamVjdCwgc291cmNlLCBzdGFjaylcbiAgICA6IHVuZGVmaW5lZDtcblxuICB2YXIgaXNDb21tb24gPSBuZXdWYWx1ZSA9PT0gdW5kZWZpbmVkO1xuXG4gIGlmIChpc0NvbW1vbikge1xuICAgIHZhciBpc0FyciA9IGlzQXJyYXkoc3JjVmFsdWUpLFxuICAgICAgICBpc0J1ZmYgPSAhaXNBcnIgJiYgaXNCdWZmZXIoc3JjVmFsdWUpLFxuICAgICAgICBpc1R5cGVkID0gIWlzQXJyICYmICFpc0J1ZmYgJiYgaXNUeXBlZEFycmF5KHNyY1ZhbHVlKTtcblxuICAgIG5ld1ZhbHVlID0gc3JjVmFsdWU7XG4gICAgaWYgKGlzQXJyIHx8IGlzQnVmZiB8fCBpc1R5cGVkKSB7XG4gICAgICBpZiAoaXNBcnJheShvYmpWYWx1ZSkpIHtcbiAgICAgICAgbmV3VmFsdWUgPSBvYmpWYWx1ZTtcbiAgICAgIH1cbiAgICAgIGVsc2UgaWYgKGlzQXJyYXlMaWtlT2JqZWN0KG9ialZhbHVlKSkge1xuICAgICAgICBuZXdWYWx1ZSA9IGNvcHlBcnJheShvYmpWYWx1ZSk7XG4gICAgICB9XG4gICAgICBlbHNlIGlmIChpc0J1ZmYpIHtcbiAgICAgICAgaXNDb21tb24gPSBmYWxzZTtcbiAgICAgICAgbmV3VmFsdWUgPSBjbG9uZUJ1ZmZlcihzcmNWYWx1ZSwgdHJ1ZSk7XG4gICAgICB9XG4gICAgICBlbHNlIGlmIChpc1R5cGVkKSB7XG4gICAgICAgIGlzQ29tbW9uID0gZmFsc2U7XG4gICAgICAgIG5ld1ZhbHVlID0gY2xvbmVUeXBlZEFycmF5KHNyY1ZhbHVlLCB0cnVlKTtcbiAgICAgIH1cbiAgICAgIGVsc2Uge1xuICAgICAgICBuZXdWYWx1ZSA9IFtdO1xuICAgICAgfVxuICAgIH1cbiAgICBlbHNlIGlmIChpc1BsYWluT2JqZWN0KHNyY1ZhbHVlKSB8fCBpc0FyZ3VtZW50cyhzcmNWYWx1ZSkpIHtcbiAgICAgIG5ld1ZhbHVlID0gb2JqVmFsdWU7XG4gICAgICBpZiAoaXNBcmd1bWVudHMob2JqVmFsdWUpKSB7XG4gICAgICAgIG5ld1ZhbHVlID0gdG9QbGFpbk9iamVjdChvYmpWYWx1ZSk7XG4gICAgICB9XG4gICAgICBlbHNlIGlmICghaXNPYmplY3Qob2JqVmFsdWUpIHx8IGlzRnVuY3Rpb24ob2JqVmFsdWUpKSB7XG4gICAgICAgIG5ld1ZhbHVlID0gaW5pdENsb25lT2JqZWN0KHNyY1ZhbHVlKTtcbiAgICAgIH1cbiAgICB9XG4gICAgZWxzZSB7XG4gICAgICBpc0NvbW1vbiA9IGZhbHNlO1xuICAgIH1cbiAgfVxuICBpZiAoaXNDb21tb24pIHtcbiAgICAvLyBSZWN1cnNpdmVseSBtZXJnZSBvYmplY3RzIGFuZCBhcnJheXMgKHN1c2NlcHRpYmxlIHRvIGNhbGwgc3RhY2sgbGltaXRzKS5cbiAgICBzdGFjay5zZXQoc3JjVmFsdWUsIG5ld1ZhbHVlKTtcbiAgICBtZXJnZUZ1bmMobmV3VmFsdWUsIHNyY1ZhbHVlLCBzcmNJbmRleCwgY3VzdG9taXplciwgc3RhY2spO1xuICAgIHN0YWNrWydkZWxldGUnXShzcmNWYWx1ZSk7XG4gIH1cbiAgYXNzaWduTWVyZ2VWYWx1ZShvYmplY3QsIGtleSwgbmV3VmFsdWUpO1xufVxuXG5leHBvcnQgZGVmYXVsdCBiYXNlTWVyZ2VEZWVwO1xuIl0sInZlcnNpb24iOjN9

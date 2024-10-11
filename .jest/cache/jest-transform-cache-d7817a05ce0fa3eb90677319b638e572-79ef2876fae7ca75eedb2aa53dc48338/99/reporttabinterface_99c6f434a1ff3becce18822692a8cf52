@@ -1,0 +1,31 @@
+9d1b65e771f28229f91d00066602843a
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.reportTypeLabels = exports.ReportType = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+var ReportType;
+(function (ReportType) {
+    ReportType["Cpu"] = "cpu";
+    ReportType["Disk"] = "disk";
+    ReportType["Memory"] = "memory";
+    ReportType["Network"] = "network";
+    ReportType["Nfs"] = "nfs";
+    ReportType["Partition"] = "partition";
+    ReportType["System"] = "system";
+    ReportType["Ups"] = "ups";
+    ReportType["Target"] = "target";
+    ReportType["Zfs"] = "zfs";
+})(ReportType || (exports.ReportType = ReportType = {}));
+exports.reportTypeLabels = new Map([
+    [ReportType.Cpu, (0, ngx_translate_extract_marker_1.marker)('CPU')],
+    [ReportType.Disk, (0, ngx_translate_extract_marker_1.marker)('Disk')],
+    [ReportType.Memory, (0, ngx_translate_extract_marker_1.marker)('Memory')],
+    [ReportType.Network, (0, ngx_translate_extract_marker_1.marker)('Network')],
+    [ReportType.Nfs, (0, ngx_translate_extract_marker_1.marker)('NFS')],
+    [ReportType.Partition, (0, ngx_translate_extract_marker_1.marker)('Partition')],
+    [ReportType.System, (0, ngx_translate_extract_marker_1.marker)('System')],
+    [ReportType.Ups, (0, ngx_translate_extract_marker_1.marker)('UPS')],
+    [ReportType.Target, (0, ngx_translate_extract_marker_1.marker)('Target')],
+    [ReportType.Zfs, (0, ngx_translate_extract_marker_1.marker)('ZFS')],
+]);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL3JlcG9ydHMtZGFzaGJvYXJkL2ludGVyZmFjZXMvcmVwb3J0LXRhYi5pbnRlcmZhY2UudHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMEZBQXNFO0FBRXRFLElBQVksVUFXWDtBQVhELFdBQVksVUFBVTtJQUNwQix5QkFBVyxDQUFBO0lBQ1gsMkJBQWEsQ0FBQTtJQUNiLCtCQUFpQixDQUFBO0lBQ2pCLGlDQUFtQixDQUFBO0lBQ25CLHlCQUFXLENBQUE7SUFDWCxxQ0FBdUIsQ0FBQTtJQUN2QiwrQkFBaUIsQ0FBQTtJQUNqQix5QkFBVyxDQUFBO0lBQ1gsK0JBQWlCLENBQUE7SUFDakIseUJBQVcsQ0FBQTtBQUNiLENBQUMsRUFYVyxVQUFVLDBCQUFWLFVBQVUsUUFXckI7QUFPWSxRQUFBLGdCQUFnQixHQUFHLElBQUksR0FBRyxDQUFxQjtJQUMxRCxDQUFDLFVBQVUsQ0FBQyxHQUFHLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLEtBQUssQ0FBQyxDQUFDO0lBQzFCLENBQUMsVUFBVSxDQUFDLElBQUksRUFBRSxJQUFBLHFDQUFDLEVBQUMsTUFBTSxDQUFDLENBQUM7SUFDNUIsQ0FBQyxVQUFVLENBQUMsTUFBTSxFQUFFLElBQUEscUNBQUMsRUFBQyxRQUFRLENBQUMsQ0FBQztJQUNoQyxDQUFDLFVBQVUsQ0FBQyxPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFNBQVMsQ0FBQyxDQUFDO0lBQ2xDLENBQUMsVUFBVSxDQUFDLEdBQUcsRUFBRSxJQUFBLHFDQUFDLEVBQUMsS0FBSyxDQUFDLENBQUM7SUFDMUIsQ0FBQyxVQUFVLENBQUMsU0FBUyxFQUFFLElBQUEscUNBQUMsRUFBQyxXQUFXLENBQUMsQ0FBQztJQUN0QyxDQUFDLFVBQVUsQ0FBQyxNQUFNLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFFBQVEsQ0FBQyxDQUFDO0lBQ2hDLENBQUMsVUFBVSxDQUFDLEdBQUcsRUFBRSxJQUFBLHFDQUFDLEVBQUMsS0FBSyxDQUFDLENBQUM7SUFDMUIsQ0FBQyxVQUFVLENBQUMsTUFBTSxFQUFFLElBQUEscUNBQUMsRUFBQyxRQUFRLENBQUMsQ0FBQztJQUNoQyxDQUFDLFVBQVUsQ0FBQyxHQUFHLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLEtBQUssQ0FBQyxDQUFDO0NBQzNCLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvcmVwb3J0cy1kYXNoYm9hcmQvaW50ZXJmYWNlcy9yZXBvcnQtdGFiLmludGVyZmFjZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5cbmV4cG9ydCBlbnVtIFJlcG9ydFR5cGUge1xuICBDcHUgPSAnY3B1JyxcbiAgRGlzayA9ICdkaXNrJyxcbiAgTWVtb3J5ID0gJ21lbW9yeScsXG4gIE5ldHdvcmsgPSAnbmV0d29yaycsXG4gIE5mcyA9ICduZnMnLFxuICBQYXJ0aXRpb24gPSAncGFydGl0aW9uJyxcbiAgU3lzdGVtID0gJ3N5c3RlbScsXG4gIFVwcyA9ICd1cHMnLFxuICBUYXJnZXQgPSAndGFyZ2V0JyxcbiAgWmZzID0gJ3pmcycsXG59XG5cbmV4cG9ydCBpbnRlcmZhY2UgUmVwb3J0VGFiIHtcbiAgbGFiZWw6IHN0cmluZztcbiAgdmFsdWU6IFJlcG9ydFR5cGU7XG59XG5cbmV4cG9ydCBjb25zdCByZXBvcnRUeXBlTGFiZWxzID0gbmV3IE1hcDxSZXBvcnRUeXBlLCBzdHJpbmc+KFtcbiAgW1JlcG9ydFR5cGUuQ3B1LCBUKCdDUFUnKV0sXG4gIFtSZXBvcnRUeXBlLkRpc2ssIFQoJ0Rpc2snKV0sXG4gIFtSZXBvcnRUeXBlLk1lbW9yeSwgVCgnTWVtb3J5JyldLFxuICBbUmVwb3J0VHlwZS5OZXR3b3JrLCBUKCdOZXR3b3JrJyldLFxuICBbUmVwb3J0VHlwZS5OZnMsIFQoJ05GUycpXSxcbiAgW1JlcG9ydFR5cGUuUGFydGl0aW9uLCBUKCdQYXJ0aXRpb24nKV0sXG4gIFtSZXBvcnRUeXBlLlN5c3RlbSwgVCgnU3lzdGVtJyldLFxuICBbUmVwb3J0VHlwZS5VcHMsIFQoJ1VQUycpXSxcbiAgW1JlcG9ydFR5cGUuVGFyZ2V0LCBUKCdUYXJnZXQnKV0sXG4gIFtSZXBvcnRUeXBlLlpmcywgVCgnWkZTJyldLFxuXSk7XG4iXSwidmVyc2lvbiI6M30=

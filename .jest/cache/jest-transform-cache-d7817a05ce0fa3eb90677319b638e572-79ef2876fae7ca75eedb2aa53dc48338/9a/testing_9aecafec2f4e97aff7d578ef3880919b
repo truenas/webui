@@ -1,0 +1,74 @@
+10eab91ff4d40e2c99ea2356c7e5cfcc
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var testing_exports = {};
+__export(testing_exports, {
+  BrowserTestingModule: () => BrowserTestingModule,
+  platformBrowserTesting: () => platformBrowserTesting
+});
+module.exports = __toCommonJS(testing_exports);
+var import_common = require("@angular/common");
+var import_testing = require("@angular/common/testing");
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_platform_browser = require("@angular/platform-browser");
+/**
+ * @license Angular v18.2.4
+ * (c) 2010-2024 Google LLC. https://angular.io/
+ * License: MIT
+ */
+function initBrowserTests() {
+  import_platform_browser.\u0275BrowserDomAdapter.makeCurrent();
+}
+const _TEST_BROWSER_PLATFORM_PROVIDERS = [
+  { provide: import_core.PLATFORM_INITIALIZER, useValue: initBrowserTests, multi: true }
+];
+const platformBrowserTesting = (0, import_core.createPlatformFactory)(import_core.platformCore, "browserTesting", _TEST_BROWSER_PLATFORM_PROVIDERS);
+const _BrowserTestingModule = class _BrowserTestingModule {
+};
+_BrowserTestingModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _BrowserTestingModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_BrowserTestingModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.4", ngImport: i0, type: _BrowserTestingModule, exports: [import_platform_browser.BrowserModule] });
+_BrowserTestingModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _BrowserTestingModule, providers: [
+  { provide: import_core.APP_ID, useValue: "a" },
+  (0, import_core.\u0275internalProvideZoneChangeDetection)({}),
+  { provide: import_core.\u0275ChangeDetectionScheduler, useExisting: import_core.\u0275ChangeDetectionSchedulerImpl },
+  { provide: import_common.PlatformLocation, useClass: import_testing.MockPlatformLocation }
+], imports: [import_platform_browser.BrowserModule] });
+let BrowserTestingModule = _BrowserTestingModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: BrowserTestingModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    exports: [import_platform_browser.BrowserModule],
+    providers: [
+      { provide: import_core.APP_ID, useValue: "a" },
+      (0, import_core.\u0275internalProvideZoneChangeDetection)({}),
+      { provide: import_core.\u0275ChangeDetectionScheduler, useExisting: import_core.\u0275ChangeDetectionSchedulerImpl },
+      { provide: import_common.PlatformLocation, useClass: import_testing.MockPlatformLocation }
+    ]
+  }]
+}] });

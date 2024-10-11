@@ -1,0 +1,2 @@
+e51683b3feff40cb0d27f1e4e55a8bb4
+module.exports="<div class=\"header\">\n  <div class=\"image\">\n    <img [src]=\"image()\" [src-fallback]=\"imagePlaceholder\">\n  </div>\n  <div class=\"name\">{{ name() }}</div>\n</div>\n<div class=\"body\">\n  <p>{{ description() }}</p>\n</div>\n"

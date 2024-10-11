@@ -1,0 +1,36 @@
+de899cbc5d6ccb32e387432ce03ce932
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseSortedIndex_js_1 = __importDefault(require("./_baseSortedIndex.js"));
+const eq_js_1 = __importDefault(require("./eq.js"));
+/**
+ * This method is like `_.lastIndexOf` except that it performs a binary
+ * search on a sorted `array`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @param {*} value The value to search for.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ * @example
+ *
+ * _.sortedLastIndexOf([4, 5, 5, 5, 6], 5);
+ * // => 3
+ */
+function sortedLastIndexOf(array, value) {
+    var length = array == null ? 0 : array.length;
+    if (length) {
+        var index = (0, _baseSortedIndex_js_1.default)(array, value, true) - 1;
+        if ((0, eq_js_1.default)(array[index], value)) {
+            return index;
+        }
+    }
+    return -1;
+}
+exports.default = sortedLastIndexOf;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3NvcnRlZExhc3RJbmRleE9mLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsZ0ZBQW9EO0FBQ3BELG9EQUF5QjtBQUV6Qjs7Ozs7Ozs7Ozs7Ozs7O0dBZUc7QUFDSCxTQUFTLGlCQUFpQixDQUFDLEtBQUssRUFBRSxLQUFLO0lBQ3JDLElBQUksTUFBTSxHQUFHLEtBQUssSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDLE1BQU0sQ0FBQztJQUM5QyxJQUFJLE1BQU0sRUFBRSxDQUFDO1FBQ1gsSUFBSSxLQUFLLEdBQUcsSUFBQSw2QkFBZSxFQUFDLEtBQUssRUFBRSxLQUFLLEVBQUUsSUFBSSxDQUFDLEdBQUcsQ0FBQyxDQUFDO1FBQ3BELElBQUksSUFBQSxlQUFFLEVBQUMsS0FBSyxDQUFDLEtBQUssQ0FBQyxFQUFFLEtBQUssQ0FBQyxFQUFFLENBQUM7WUFDNUIsT0FBTyxLQUFLLENBQUM7UUFDZixDQUFDO0lBQ0gsQ0FBQztJQUNELE9BQU8sQ0FBQyxDQUFDLENBQUM7QUFDWixDQUFDO0FBRUQsa0JBQWUsaUJBQWlCLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3NvcnRlZExhc3RJbmRleE9mLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlU29ydGVkSW5kZXggZnJvbSAnLi9fYmFzZVNvcnRlZEluZGV4LmpzJztcbmltcG9ydCBlcSBmcm9tICcuL2VxLmpzJztcblxuLyoqXG4gKiBUaGlzIG1ldGhvZCBpcyBsaWtlIGBfLmxhc3RJbmRleE9mYCBleGNlcHQgdGhhdCBpdCBwZXJmb3JtcyBhIGJpbmFyeVxuICogc2VhcmNoIG9uIGEgc29ydGVkIGBhcnJheWAuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSA0LjAuMFxuICogQGNhdGVnb3J5IEFycmF5XG4gKiBAcGFyYW0ge0FycmF5fSBhcnJheSBUaGUgYXJyYXkgdG8gaW5zcGVjdC5cbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIHNlYXJjaCBmb3IuXG4gKiBAcmV0dXJucyB7bnVtYmVyfSBSZXR1cm5zIHRoZSBpbmRleCBvZiB0aGUgbWF0Y2hlZCB2YWx1ZSwgZWxzZSBgLTFgLlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLnNvcnRlZExhc3RJbmRleE9mKFs0LCA1LCA1LCA1LCA2XSwgNSk7XG4gKiAvLyA9PiAzXG4gKi9cbmZ1bmN0aW9uIHNvcnRlZExhc3RJbmRleE9mKGFycmF5LCB2YWx1ZSkge1xuICB2YXIgbGVuZ3RoID0gYXJyYXkgPT0gbnVsbCA/IDAgOiBhcnJheS5sZW5ndGg7XG4gIGlmIChsZW5ndGgpIHtcbiAgICB2YXIgaW5kZXggPSBiYXNlU29ydGVkSW5kZXgoYXJyYXksIHZhbHVlLCB0cnVlKSAtIDE7XG4gICAgaWYgKGVxKGFycmF5W2luZGV4XSwgdmFsdWUpKSB7XG4gICAgICByZXR1cm4gaW5kZXg7XG4gICAgfVxuICB9XG4gIHJldHVybiAtMTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgc29ydGVkTGFzdEluZGV4T2Y7XG4iXSwidmVyc2lvbiI6M30=

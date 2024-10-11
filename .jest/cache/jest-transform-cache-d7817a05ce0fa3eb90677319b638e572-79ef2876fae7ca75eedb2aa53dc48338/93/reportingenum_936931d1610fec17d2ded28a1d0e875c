@@ -1,0 +1,35 @@
+cc5fb3adb466e7bed89db36436bd5296
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ReportingQueryUnit = exports.ReportingGraphName = void 0;
+var ReportingGraphName;
+(function (ReportingGraphName) {
+    ReportingGraphName["Cpu"] = "cpu";
+    ReportingGraphName["CpuTemp"] = "cputemp";
+    ReportingGraphName["Disk"] = "disk";
+    ReportingGraphName["DiskTemp"] = "disktemp";
+    ReportingGraphName["Memory"] = "memory";
+    ReportingGraphName["NetworkInterface"] = "interface";
+    ReportingGraphName["NfsStat"] = "nfsstat";
+    ReportingGraphName["NfsStatBytes"] = "nfsstatbytes";
+    ReportingGraphName["Partition"] = "df";
+    ReportingGraphName["Processes"] = "processes";
+    ReportingGraphName["SystemLoad"] = "load";
+    ReportingGraphName["Target"] = "ctl";
+    ReportingGraphName["Uptime"] = "uptime";
+    ReportingGraphName["Ups"] = "ups";
+    ReportingGraphName["ZfsArcRatio"] = "arcratio";
+    ReportingGraphName["ZfsArcResult"] = "arcresult";
+    ReportingGraphName["ZfsArcSize"] = "arcsize";
+    ReportingGraphName["ZfsArcRate"] = "arcrate";
+    ReportingGraphName["ZfsArcActualRate"] = "arcactualrate";
+})(ReportingGraphName || (exports.ReportingGraphName = ReportingGraphName = {}));
+var ReportingQueryUnit;
+(function (ReportingQueryUnit) {
+    ReportingQueryUnit["Hour"] = "HOUR";
+    ReportingQueryUnit["Day"] = "DAY";
+    ReportingQueryUnit["Week"] = "WEEK";
+    ReportingQueryUnit["Month"] = "MONTH";
+    ReportingQueryUnit["Year"] = "YEAR";
+})(ReportingQueryUnit || (exports.ReportingQueryUnit = ReportingQueryUnit = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3JlcG9ydGluZy5lbnVtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLElBQVksa0JBb0JYO0FBcEJELFdBQVksa0JBQWtCO0lBQzVCLGlDQUFXLENBQUE7SUFDWCx5Q0FBbUIsQ0FBQTtJQUNuQixtQ0FBYSxDQUFBO0lBQ2IsMkNBQXFCLENBQUE7SUFDckIsdUNBQWlCLENBQUE7SUFDakIsb0RBQThCLENBQUE7SUFDOUIseUNBQW1CLENBQUE7SUFDbkIsbURBQTZCLENBQUE7SUFDN0Isc0NBQWdCLENBQUE7SUFDaEIsNkNBQXVCLENBQUE7SUFDdkIseUNBQW1CLENBQUE7SUFDbkIsb0NBQWMsQ0FBQTtJQUNkLHVDQUFpQixDQUFBO0lBQ2pCLGlDQUFXLENBQUE7SUFDWCw4Q0FBd0IsQ0FBQTtJQUN4QixnREFBMEIsQ0FBQTtJQUMxQiw0Q0FBc0IsQ0FBQTtJQUN0Qiw0Q0FBc0IsQ0FBQTtJQUN0Qix3REFBa0MsQ0FBQTtBQUNwQyxDQUFDLEVBcEJXLGtCQUFrQixrQ0FBbEIsa0JBQWtCLFFBb0I3QjtBQUVELElBQVksa0JBTVg7QUFORCxXQUFZLGtCQUFrQjtJQUM1QixtQ0FBYSxDQUFBO0lBQ2IsaUNBQVcsQ0FBQTtJQUNYLG1DQUFhLENBQUE7SUFDYixxQ0FBZSxDQUFBO0lBQ2YsbUNBQWEsQ0FBQTtBQUNmLENBQUMsRUFOVyxrQkFBa0Isa0NBQWxCLGtCQUFrQixRQU03QiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvZW51bXMvcmVwb3J0aW5nLmVudW0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGVudW0gUmVwb3J0aW5nR3JhcGhOYW1lIHtcbiAgQ3B1ID0gJ2NwdScsXG4gIENwdVRlbXAgPSAnY3B1dGVtcCcsXG4gIERpc2sgPSAnZGlzaycsXG4gIERpc2tUZW1wID0gJ2Rpc2t0ZW1wJywgLy8gZGVwcmVjYXRlZFxuICBNZW1vcnkgPSAnbWVtb3J5JyxcbiAgTmV0d29ya0ludGVyZmFjZSA9ICdpbnRlcmZhY2UnLFxuICBOZnNTdGF0ID0gJ25mc3N0YXQnLCAvLyBkZXByZWNhdGVkXG4gIE5mc1N0YXRCeXRlcyA9ICduZnNzdGF0Ynl0ZXMnLCAvLyBkZXByZWNhdGVkXG4gIFBhcnRpdGlvbiA9ICdkZicsIC8vIGRlcHJlY2F0ZWRcbiAgUHJvY2Vzc2VzID0gJ3Byb2Nlc3NlcycsIC8vIGRlcHJlY2F0ZWRcbiAgU3lzdGVtTG9hZCA9ICdsb2FkJyxcbiAgVGFyZ2V0ID0gJ2N0bCcsIC8vIGRlcHJlY2F0ZWQgb3IgdW5hdmFpbGFibGVcbiAgVXB0aW1lID0gJ3VwdGltZScsXG4gIFVwcyA9ICd1cHMnLFxuICBaZnNBcmNSYXRpbyA9ICdhcmNyYXRpbycsXG4gIFpmc0FyY1Jlc3VsdCA9ICdhcmNyZXN1bHQnLFxuICBaZnNBcmNTaXplID0gJ2FyY3NpemUnLFxuICBaZnNBcmNSYXRlID0gJ2FyY3JhdGUnLFxuICBaZnNBcmNBY3R1YWxSYXRlID0gJ2FyY2FjdHVhbHJhdGUnLFxufVxuXG5leHBvcnQgZW51bSBSZXBvcnRpbmdRdWVyeVVuaXQge1xuICBIb3VyID0gJ0hPVVInLFxuICBEYXkgPSAnREFZJyxcbiAgV2VlayA9ICdXRUVLJyxcbiAgTW9udGggPSAnTU9OVEgnLFxuICBZZWFyID0gJ1lFQVInLFxufVxuIl0sInZlcnNpb24iOjN9

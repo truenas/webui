@@ -1,0 +1,39 @@
+e806ea37aa3dcca712a09bbe7ea669c7
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayEvery_js_1 = __importDefault(require("./_arrayEvery.js"));
+const _createOver_js_1 = __importDefault(require("./_createOver.js"));
+/**
+ * Creates a function that checks if **all** of the `predicates` return
+ * truthy when invoked with the arguments it receives.
+ *
+ * Following shorthands are possible for providing predicates.
+ * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
+ * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Util
+ * @param {...(Function|Function[])} [predicates=[_.identity]]
+ *  The predicates to check.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var func = _.overEvery([Boolean, isFinite]);
+ *
+ * func('1');
+ * // => true
+ *
+ * func(null);
+ * // => false
+ *
+ * func(NaN);
+ * // => false
+ */
+var overEvery = (0, _createOver_js_1.default)(_arrayEvery_js_1.default);
+exports.default = overEvery;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL292ZXJFdmVyeS5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLHNFQUEwQztBQUMxQyxzRUFBMEM7QUFFMUM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQTJCRztBQUNILElBQUksU0FBUyxHQUFHLElBQUEsd0JBQVUsRUFBQyx3QkFBVSxDQUFDLENBQUM7QUFFdkMsa0JBQWUsU0FBUyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9vdmVyRXZlcnkuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGFycmF5RXZlcnkgZnJvbSAnLi9fYXJyYXlFdmVyeS5qcyc7XG5pbXBvcnQgY3JlYXRlT3ZlciBmcm9tICcuL19jcmVhdGVPdmVyLmpzJztcblxuLyoqXG4gKiBDcmVhdGVzIGEgZnVuY3Rpb24gdGhhdCBjaGVja3MgaWYgKiphbGwqKiBvZiB0aGUgYHByZWRpY2F0ZXNgIHJldHVyblxuICogdHJ1dGh5IHdoZW4gaW52b2tlZCB3aXRoIHRoZSBhcmd1bWVudHMgaXQgcmVjZWl2ZXMuXG4gKlxuICogRm9sbG93aW5nIHNob3J0aGFuZHMgYXJlIHBvc3NpYmxlIGZvciBwcm92aWRpbmcgcHJlZGljYXRlcy5cbiAqIFBhc3MgYW4gYE9iamVjdGAgYW5kIGl0IHdpbGwgYmUgdXNlZCBhcyBhbiBwYXJhbWV0ZXIgZm9yIGBfLm1hdGNoZXNgIHRvIGNyZWF0ZSB0aGUgcHJlZGljYXRlLlxuICogUGFzcyBhbiBgQXJyYXlgIG9mIHBhcmFtZXRlcnMgZm9yIGBfLm1hdGNoZXNQcm9wZXJ0eWAgYW5kIHRoZSBwcmVkaWNhdGUgd2lsbCBiZSBjcmVhdGVkIHVzaW5nIHRoZW0uXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSA0LjAuMFxuICogQGNhdGVnb3J5IFV0aWxcbiAqIEBwYXJhbSB7Li4uKEZ1bmN0aW9ufEZ1bmN0aW9uW10pfSBbcHJlZGljYXRlcz1bXy5pZGVudGl0eV1dXG4gKiAgVGhlIHByZWRpY2F0ZXMgdG8gY2hlY2suXG4gKiBAcmV0dXJucyB7RnVuY3Rpb259IFJldHVybnMgdGhlIG5ldyBmdW5jdGlvbi5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIGZ1bmMgPSBfLm92ZXJFdmVyeShbQm9vbGVhbiwgaXNGaW5pdGVdKTtcbiAqXG4gKiBmdW5jKCcxJyk7XG4gKiAvLyA9PiB0cnVlXG4gKlxuICogZnVuYyhudWxsKTtcbiAqIC8vID0+IGZhbHNlXG4gKlxuICogZnVuYyhOYU4pO1xuICogLy8gPT4gZmFsc2VcbiAqL1xudmFyIG92ZXJFdmVyeSA9IGNyZWF0ZU92ZXIoYXJyYXlFdmVyeSk7XG5cbmV4cG9ydCBkZWZhdWx0IG92ZXJFdmVyeTtcbiJdLCJ2ZXJzaW9uIjozfQ==

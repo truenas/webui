@@ -1,0 +1,118 @@
+177e8f00c4b587d61aa462b449af8299
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+var ngx_img_fallback_exports = {};
+__export(ngx_img_fallback_exports, {
+  ImgFallbackDirective: () => ImgFallbackDirective,
+  ImgFallbackModule: () => ImgFallbackModule
+});
+module.exports = __toCommonJS(ngx_img_fallback_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+const _ImgFallbackDirective = class _ImgFallbackDirective {
+  constructor(el, renderer) {
+    __publicField(this, "el");
+    __publicField(this, "renderer");
+    __publicField(this, "imgSrc");
+    __publicField(this, "loaded", new import_core.EventEmitter());
+    __publicField(this, "nativeElement");
+    __publicField(this, "isApplied", false);
+    __publicField(this, "ERROR_EVENT_TYPE", "error");
+    __publicField(this, "LOAD_EVENT_TYPE", "load");
+    __publicField(this, "cancelOnError");
+    __publicField(this, "cancelOnLoad");
+    this.el = el;
+    this.renderer = renderer;
+    this.nativeElement = el.nativeElement;
+    this.onError = this.onError.bind(this);
+    this.onLoad = this.onLoad.bind(this);
+    this.addEvents();
+  }
+  ngOnDestroy() {
+    this.removeErrorEvent();
+    this.removeOnLoadEvent();
+  }
+  onError() {
+    if (this.nativeElement.getAttribute("src") !== this.imgSrc) {
+      this.isApplied = true;
+      this.renderer.setAttribute(this.nativeElement, "src", this.imgSrc);
+    } else {
+      this.removeOnLoadEvent();
+    }
+  }
+  onLoad() {
+    this.loaded.emit(this.isApplied);
+  }
+  removeErrorEvent() {
+    if (this.cancelOnError) {
+      this.cancelOnError();
+    }
+  }
+  removeOnLoadEvent() {
+    if (this.cancelOnLoad) {
+      this.cancelOnLoad();
+    }
+  }
+  addEvents() {
+    this.cancelOnError = this.renderer.listen(this.nativeElement, this.ERROR_EVENT_TYPE, this.onError);
+    this.cancelOnLoad = this.renderer.listen(this.nativeElement, this.LOAD_EVENT_TYPE, this.onLoad);
+  }
+};
+__publicField(_ImgFallbackDirective, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "17.3.9", ngImport: i0, type: _ImgFallbackDirective, deps: [{ token: i0.ElementRef }, { token: i0.Renderer2 }], target: i0.\u0275\u0275FactoryTarget.Directive }));
+__publicField(_ImgFallbackDirective, "\u0275dir", i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "17.3.9", type: _ImgFallbackDirective, selector: "[src-fallback]", inputs: { imgSrc: ["src-fallback", "imgSrc"] }, outputs: { loaded: "loaded" }, ngImport: i0 }));
+let ImgFallbackDirective = _ImgFallbackDirective;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.9", ngImport: i0, type: ImgFallbackDirective, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    selector: "[src-fallback]"
+  }]
+}], ctorParameters: () => [{ type: i0.ElementRef }, { type: i0.Renderer2 }], propDecorators: { imgSrc: [{
+  type: import_core.Input,
+  args: ["src-fallback"]
+}], loaded: [{
+  type: import_core.Output,
+  args: ["loaded"]
+}] } });
+const _ImgFallbackModule = class _ImgFallbackModule {
+};
+__publicField(_ImgFallbackModule, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "17.3.9", ngImport: i0, type: _ImgFallbackModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule }));
+__publicField(_ImgFallbackModule, "\u0275mod", i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "17.3.9", ngImport: i0, type: _ImgFallbackModule, declarations: [ImgFallbackDirective], exports: [ImgFallbackDirective] }));
+__publicField(_ImgFallbackModule, "\u0275inj", i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "17.3.9", ngImport: i0, type: _ImgFallbackModule }));
+let ImgFallbackModule = _ImgFallbackModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.9", ngImport: i0, type: ImgFallbackModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    declarations: [ImgFallbackDirective],
+    exports: [ImgFallbackDirective]
+  }]
+}] });

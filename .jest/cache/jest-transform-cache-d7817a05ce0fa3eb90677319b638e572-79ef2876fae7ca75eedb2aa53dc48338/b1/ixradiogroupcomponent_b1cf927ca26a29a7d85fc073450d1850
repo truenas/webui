@@ -1,0 +1,93 @@
+c823b8ea9e747045d4c820a3deb1625c
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxRadioGroupComponent = void 0;
+const common_1 = require("@angular/common");
+const core_1 = require("@angular/core");
+const forms_1 = require("@angular/forms");
+const radio_1 = require("@angular/material/radio");
+const until_destroy_1 = require("@ngneat/until-destroy");
+const core_2 = require("@ngx-translate/core");
+const ix_errors_component_1 = require("app/modules/forms/ix-forms/components/ix-errors/ix-errors.component");
+const ix_label_component_1 = require("app/modules/forms/ix-forms/components/ix-label/ix-label.component");
+const test_override_directive_1 = require("app/modules/test-id/test-override/test-override.directive");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+const tooltip_component_1 = require("app/modules/tooltip/tooltip.component");
+let IxRadioGroupComponent = class IxRadioGroupComponent {
+    constructor(controlDirective, cdr) {
+        this.controlDirective = controlDirective;
+        this.cdr = cdr;
+        this.isDisabled = false;
+        this.onChange = () => { };
+        this.onTouch = () => { };
+        this.controlDirective.valueAccessor = this;
+    }
+    get fieldFlex() {
+        if (!this.inlineFields) {
+            return '100%';
+        }
+        if (this.inlineFields && this.inlineFieldFlex) {
+            return this.inlineFieldFlex;
+        }
+        return '50%';
+    }
+    writeValue(value) {
+        this.value = value;
+        this.cdr.markForCheck();
+    }
+    registerOnChange(onChange) {
+        this.onChange = onChange;
+    }
+    registerOnTouched(onTouched) {
+        this.onTouch = onTouched;
+    }
+    setDisabledState(isDisabled) {
+        this.isDisabled = isDisabled;
+        this.cdr.markForCheck();
+    }
+    onRadiosChanged(event) {
+        this.value = event.value;
+        this.onChange(this.value);
+    }
+};
+exports.IxRadioGroupComponent = IxRadioGroupComponent;
+IxRadioGroupComponent.ctorParameters = () => [
+    { type: forms_1.NgControl },
+    { type: core_1.ChangeDetectorRef }
+];
+IxRadioGroupComponent.propDecorators = {
+    label: [{ type: core_1.Input }],
+    hint: [{ type: core_1.Input }],
+    tooltip: [{ type: core_1.Input }],
+    required: [{ type: core_1.Input }],
+    options: [{ type: core_1.Input }],
+    inlineFields: [{ type: core_1.Input }],
+    inlineFieldFlex: [{ type: core_1.Input }]
+};
+exports.IxRadioGroupComponent = IxRadioGroupComponent = __decorate([
+    (0, until_destroy_1.UntilDestroy)(),
+    (0, core_1.Component)({
+        selector: 'ix-radio-group',
+        template: require("./ix-radio-group.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            ix_label_component_1.IxLabelComponent,
+            radio_1.MatRadioGroup,
+            radio_1.MatRadioButton,
+            tooltip_component_1.TooltipComponent,
+            ix_errors_component_1.IxErrorsComponent,
+            common_1.AsyncPipe,
+            core_2.TranslateModule,
+            test_override_directive_1.TestOverrideDirective,
+            test_directive_1.TestDirective,
+        ],
+    })
+], IxRadioGroupComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1yYWRpby1ncm91cC9peC1yYWRpby1ncm91cC5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7O0FBQUEsNENBQTRDO0FBQzVDLHdDQUV1QjtBQUN2QiwwQ0FFd0I7QUFDeEIsbURBQXdGO0FBQ3hGLHlEQUFxRDtBQUNyRCw4Q0FBc0Q7QUFHdEQsNkdBQXdHO0FBQ3hHLDBHQUFxRztBQUNyRyx1R0FBa0c7QUFDbEcsdUVBQW1FO0FBQ25FLDZFQUF5RTtBQXFCbEUsSUFBTSxxQkFBcUIsR0FBM0IsTUFBTSxxQkFBcUI7SUFZaEMsWUFDUyxnQkFBMkIsRUFDMUIsR0FBc0I7UUFEdkIscUJBQWdCLEdBQWhCLGdCQUFnQixDQUFXO1FBQzFCLFFBQUcsR0FBSCxHQUFHLENBQW1CO1FBTGhDLGVBQVUsR0FBRyxLQUFLLENBQUM7UUFzQm5CLGFBQVEsR0FBNEIsR0FBUyxFQUFFLEdBQUUsQ0FBQyxDQUFDO1FBQ25ELFlBQU8sR0FBZSxHQUFTLEVBQUUsR0FBRSxDQUFDLENBQUM7UUFoQm5DLElBQUksQ0FBQyxnQkFBZ0IsQ0FBQyxhQUFhLEdBQUcsSUFBSSxDQUFDO0lBQzdDLENBQUM7SUFFRCxJQUFJLFNBQVM7UUFDWCxJQUFJLENBQUMsSUFBSSxDQUFDLFlBQVksRUFBRSxDQUFDO1lBQ3ZCLE9BQU8sTUFBTSxDQUFDO1FBQ2hCLENBQUM7UUFFRCxJQUFJLElBQUksQ0FBQyxZQUFZLElBQUksSUFBSSxDQUFDLGVBQWUsRUFBRSxDQUFDO1lBQzlDLE9BQU8sSUFBSSxDQUFDLGVBQWUsQ0FBQztRQUM5QixDQUFDO1FBRUQsT0FBTyxLQUFLLENBQUM7SUFDZixDQUFDO0lBS0QsVUFBVSxDQUFDLEtBQWE7UUFDdEIsSUFBSSxDQUFDLEtBQUssR0FBRyxLQUFLLENBQUM7UUFDbkIsSUFBSSxDQUFDLEdBQUcsQ0FBQyxZQUFZLEVBQUUsQ0FBQztJQUMxQixDQUFDO0lBRUQsZ0JBQWdCLENBQUMsUUFBaUM7UUFDaEQsSUFBSSxDQUFDLFFBQVEsR0FBRyxRQUFRLENBQUM7SUFDM0IsQ0FBQztJQUVELGlCQUFpQixDQUFDLFNBQXFCO1FBQ3JDLElBQUksQ0FBQyxPQUFPLEdBQUcsU0FBUyxDQUFDO0lBQzNCLENBQUM7SUFFRCxnQkFBZ0IsQ0FBQyxVQUFtQjtRQUNsQyxJQUFJLENBQUMsVUFBVSxHQUFHLFVBQVUsQ0FBQztRQUM3QixJQUFJLENBQUMsR0FBRyxDQUFDLFlBQVksRUFBRSxDQUFDO0lBQzFCLENBQUM7SUFFRCxlQUFlLENBQUMsS0FBcUI7UUFDbkMsSUFBSSxDQUFDLEtBQUssR0FBRyxLQUFLLENBQUMsS0FBZSxDQUFDO1FBQ25DLElBQUksQ0FBQyxRQUFRLENBQUMsSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDO0lBQzVCLENBQUM7O0FBdkRVLHNEQUFxQjs7Ozs7O29CQUMvQixZQUFLO21CQUNMLFlBQUs7c0JBQ0wsWUFBSzt1QkFDTCxZQUFLO3NCQUNMLFlBQUs7MkJBQ0wsWUFBSzs4QkFDTCxZQUFLOztnQ0FQSyxxQkFBcUI7SUFuQmpDLElBQUEsNEJBQVksR0FBRTtJQUNkLElBQUEsZ0JBQVMsRUFBQztRQUNULFFBQVEsRUFBRSxnQkFBZ0I7UUFFMUIsb0RBQThDO1FBQzlDLGVBQWUsRUFBRSw4QkFBdUIsQ0FBQyxNQUFNO1FBQy9DLFVBQVUsRUFBRSxJQUFJO1FBQ2hCLE9BQU8sRUFBRTtZQUNQLHFDQUFnQjtZQUNoQixxQkFBYTtZQUNiLHNCQUFjO1lBQ2Qsb0NBQWdCO1lBQ2hCLHVDQUFpQjtZQUNqQixrQkFBUztZQUNULHNCQUFlO1lBQ2YsK0NBQXFCO1lBQ3JCLDhCQUFhO1NBQ2Q7S0FDRixDQUFDO0dBQ1cscUJBQXFCLENBd0RqQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvbW9kdWxlcy9mb3Jtcy9peC1mb3Jtcy9jb21wb25lbnRzL2l4LXJhZGlvLWdyb3VwL2l4LXJhZGlvLWdyb3VwLmNvbXBvbmVudC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBBc3luY1BpcGUgfSBmcm9tICdAYW5ndWxhci9jb21tb24nO1xuaW1wb3J0IHtcbiAgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENoYW5nZURldGVjdG9yUmVmLCBDb21wb25lbnQsIElucHV0LFxufSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7XG4gIENvbnRyb2xWYWx1ZUFjY2Vzc29yLCBOZ0NvbnRyb2wsXG59IGZyb20gJ0Bhbmd1bGFyL2Zvcm1zJztcbmltcG9ydCB7IE1hdFJhZGlvQ2hhbmdlLCBNYXRSYWRpb0dyb3VwLCBNYXRSYWRpb0J1dHRvbiB9IGZyb20gJ0Bhbmd1bGFyL21hdGVyaWFsL3JhZGlvJztcbmltcG9ydCB7IFVudGlsRGVzdHJveSB9IGZyb20gJ0BuZ25lYXQvdW50aWwtZGVzdHJveSc7XG5pbXBvcnQgeyBUcmFuc2xhdGVNb2R1bGUgfSBmcm9tICdAbmd4LXRyYW5zbGF0ZS9jb3JlJztcbmltcG9ydCB7IE9ic2VydmFibGUgfSBmcm9tICdyeGpzJztcbmltcG9ydCB7IFJhZGlvT3B0aW9uIH0gZnJvbSAnYXBwL2ludGVyZmFjZXMvb3B0aW9uLmludGVyZmFjZSc7XG5pbXBvcnQgeyBJeEVycm9yc0NvbXBvbmVudCB9IGZyb20gJ2FwcC9tb2R1bGVzL2Zvcm1zL2l4LWZvcm1zL2NvbXBvbmVudHMvaXgtZXJyb3JzL2l4LWVycm9ycy5jb21wb25lbnQnO1xuaW1wb3J0IHsgSXhMYWJlbENvbXBvbmVudCB9IGZyb20gJ2FwcC9tb2R1bGVzL2Zvcm1zL2l4LWZvcm1zL2NvbXBvbmVudHMvaXgtbGFiZWwvaXgtbGFiZWwuY29tcG9uZW50JztcbmltcG9ydCB7IFRlc3RPdmVycmlkZURpcmVjdGl2ZSB9IGZyb20gJ2FwcC9tb2R1bGVzL3Rlc3QtaWQvdGVzdC1vdmVycmlkZS90ZXN0LW92ZXJyaWRlLmRpcmVjdGl2ZSc7XG5pbXBvcnQgeyBUZXN0RGlyZWN0aXZlIH0gZnJvbSAnYXBwL21vZHVsZXMvdGVzdC1pZC90ZXN0LmRpcmVjdGl2ZSc7XG5pbXBvcnQgeyBUb29sdGlwQ29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvdG9vbHRpcC90b29sdGlwLmNvbXBvbmVudCc7XG5cbkBVbnRpbERlc3Ryb3koKVxuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnaXgtcmFkaW8tZ3JvdXAnLFxuICBzdHlsZVVybHM6IFsnLi9peC1yYWRpby1ncm91cC5jb21wb25lbnQuc2NzcyddLFxuICB0ZW1wbGF0ZVVybDogJy4vaXgtcmFkaW8tZ3JvdXAuY29tcG9uZW50Lmh0bWwnLFxuICBjaGFuZ2VEZXRlY3Rpb246IENoYW5nZURldGVjdGlvblN0cmF0ZWd5Lk9uUHVzaCxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbiAgaW1wb3J0czogW1xuICAgIEl4TGFiZWxDb21wb25lbnQsXG4gICAgTWF0UmFkaW9Hcm91cCxcbiAgICBNYXRSYWRpb0J1dHRvbixcbiAgICBUb29sdGlwQ29tcG9uZW50LFxuICAgIEl4RXJyb3JzQ29tcG9uZW50LFxuICAgIEFzeW5jUGlwZSxcbiAgICBUcmFuc2xhdGVNb2R1bGUsXG4gICAgVGVzdE92ZXJyaWRlRGlyZWN0aXZlLFxuICAgIFRlc3REaXJlY3RpdmUsXG4gIF0sXG59KVxuZXhwb3J0IGNsYXNzIEl4UmFkaW9Hcm91cENvbXBvbmVudCBpbXBsZW1lbnRzIENvbnRyb2xWYWx1ZUFjY2Vzc29yIHtcbiAgQElucHV0KCkgbGFiZWw6IHN0cmluZztcbiAgQElucHV0KCkgaGludDogc3RyaW5nO1xuICBASW5wdXQoKSB0b29sdGlwOiBzdHJpbmc7XG4gIEBJbnB1dCgpIHJlcXVpcmVkOiBib29sZWFuO1xuICBASW5wdXQoKSBvcHRpb25zOiBPYnNlcnZhYmxlPFJhZGlvT3B0aW9uW10+O1xuICBASW5wdXQoKSBpbmxpbmVGaWVsZHM6IGJvb2xlYW47XG4gIEBJbnB1dCgpIGlubGluZUZpZWxkRmxleDogc3RyaW5nO1xuXG4gIGlzRGlzYWJsZWQgPSBmYWxzZTtcbiAgdmFsdWU6IHN0cmluZztcblxuICBjb25zdHJ1Y3RvcihcbiAgICBwdWJsaWMgY29udHJvbERpcmVjdGl2ZTogTmdDb250cm9sLFxuICAgIHByaXZhdGUgY2RyOiBDaGFuZ2VEZXRlY3RvclJlZixcbiAgKSB7XG4gICAgdGhpcy5jb250cm9sRGlyZWN0aXZlLnZhbHVlQWNjZXNzb3IgPSB0aGlzO1xuICB9XG5cbiAgZ2V0IGZpZWxkRmxleCgpOiBzdHJpbmcge1xuICAgIGlmICghdGhpcy5pbmxpbmVGaWVsZHMpIHtcbiAgICAgIHJldHVybiAnMTAwJSc7XG4gICAgfVxuXG4gICAgaWYgKHRoaXMuaW5saW5lRmllbGRzICYmIHRoaXMuaW5saW5lRmllbGRGbGV4KSB7XG4gICAgICByZXR1cm4gdGhpcy5pbmxpbmVGaWVsZEZsZXg7XG4gICAgfVxuXG4gICAgcmV0dXJuICc1MCUnO1xuICB9XG5cbiAgb25DaGFuZ2U6ICh2YWx1ZTogc3RyaW5nKSA9PiB2b2lkID0gKCk6IHZvaWQgPT4ge307XG4gIG9uVG91Y2g6ICgpID0+IHZvaWQgPSAoKTogdm9pZCA9PiB7fTtcblxuICB3cml0ZVZhbHVlKHZhbHVlOiBzdHJpbmcpOiB2b2lkIHtcbiAgICB0aGlzLnZhbHVlID0gdmFsdWU7XG4gICAgdGhpcy5jZHIubWFya0ZvckNoZWNrKCk7XG4gIH1cblxuICByZWdpc3Rlck9uQ2hhbmdlKG9uQ2hhbmdlOiAodmFsdWU6IHN0cmluZykgPT4gdm9pZCk6IHZvaWQge1xuICAgIHRoaXMub25DaGFuZ2UgPSBvbkNoYW5nZTtcbiAgfVxuXG4gIHJlZ2lzdGVyT25Ub3VjaGVkKG9uVG91Y2hlZDogKCkgPT4gdm9pZCk6IHZvaWQge1xuICAgIHRoaXMub25Ub3VjaCA9IG9uVG91Y2hlZDtcbiAgfVxuXG4gIHNldERpc2FibGVkU3RhdGUoaXNEaXNhYmxlZDogYm9vbGVhbik6IHZvaWQge1xuICAgIHRoaXMuaXNEaXNhYmxlZCA9IGlzRGlzYWJsZWQ7XG4gICAgdGhpcy5jZHIubWFya0ZvckNoZWNrKCk7XG4gIH1cblxuICBvblJhZGlvc0NoYW5nZWQoZXZlbnQ6IE1hdFJhZGlvQ2hhbmdlKTogdm9pZCB7XG4gICAgdGhpcy52YWx1ZSA9IGV2ZW50LnZhbHVlIGFzIHN0cmluZztcbiAgICB0aGlzLm9uQ2hhbmdlKHRoaXMudmFsdWUpO1xuICB9XG59XG4iXSwidmVyc2lvbiI6M30=

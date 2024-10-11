@@ -1,0 +1,575 @@
+d6299f242778fd51bbf6a8d18febedea
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var checkbox_exports = {};
+__export(checkbox_exports, {
+  MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR: () => MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR,
+  MAT_CHECKBOX_DEFAULT_OPTIONS: () => MAT_CHECKBOX_DEFAULT_OPTIONS,
+  MAT_CHECKBOX_DEFAULT_OPTIONS_FACTORY: () => MAT_CHECKBOX_DEFAULT_OPTIONS_FACTORY,
+  MAT_CHECKBOX_REQUIRED_VALIDATOR: () => MAT_CHECKBOX_REQUIRED_VALIDATOR,
+  MatCheckbox: () => MatCheckbox,
+  MatCheckboxChange: () => MatCheckboxChange,
+  MatCheckboxModule: () => MatCheckboxModule,
+  MatCheckboxRequiredValidator: () => MatCheckboxRequiredValidator,
+  TransitionCheckState: () => TransitionCheckState,
+  _MatCheckboxRequiredValidatorModule: () => _MatCheckboxRequiredValidatorModule
+});
+module.exports = __toCommonJS(checkbox_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_forms = require("@angular/forms");
+var import_core2 = require("@angular/material/core");
+const MAT_CHECKBOX_DEFAULT_OPTIONS = new import_core.InjectionToken("mat-checkbox-default-options", {
+  providedIn: "root",
+  factory: MAT_CHECKBOX_DEFAULT_OPTIONS_FACTORY
+});
+function MAT_CHECKBOX_DEFAULT_OPTIONS_FACTORY() {
+  return {
+    color: "accent",
+    clickAction: "check-indeterminate",
+    disabledInteractive: false
+  };
+}
+var TransitionCheckState;
+(function(TransitionCheckState2) {
+  TransitionCheckState2[TransitionCheckState2["Init"] = 0] = "Init";
+  TransitionCheckState2[TransitionCheckState2["Checked"] = 1] = "Checked";
+  TransitionCheckState2[TransitionCheckState2["Unchecked"] = 2] = "Unchecked";
+  TransitionCheckState2[TransitionCheckState2["Indeterminate"] = 3] = "Indeterminate";
+})(TransitionCheckState || (TransitionCheckState = {}));
+const MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR = {
+  provide: import_forms.NG_VALUE_ACCESSOR,
+  useExisting: (0, import_core.forwardRef)(() => MatCheckbox),
+  multi: true
+};
+class MatCheckboxChange {
+}
+let nextUniqueId = 0;
+const defaults = MAT_CHECKBOX_DEFAULT_OPTIONS_FACTORY();
+const _MatCheckbox = class _MatCheckbox {
+  /** Focuses the checkbox. */
+  focus() {
+    this._inputElement.nativeElement.focus();
+  }
+  /** Creates the change event that will be emitted by the checkbox. */
+  _createChangeEvent(isChecked) {
+    const event = new MatCheckboxChange();
+    event.source = this;
+    event.checked = isChecked;
+    return event;
+  }
+  /** Gets the element on which to add the animation CSS classes. */
+  _getAnimationTargetElement() {
+    var _a;
+    return (_a = this._inputElement) == null ? void 0 : _a.nativeElement;
+  }
+  /** Returns the unique id for the visual hidden input. */
+  get inputId() {
+    return `${this.id || this._uniqueId}-input`;
+  }
+  constructor(_elementRef, _changeDetectorRef, _ngZone, tabIndex, _animationMode, _options) {
+    var _a;
+    this._elementRef = _elementRef;
+    this._changeDetectorRef = _changeDetectorRef;
+    this._ngZone = _ngZone;
+    this._animationMode = _animationMode;
+    this._options = _options;
+    this._animationClasses = {
+      uncheckedToChecked: "mdc-checkbox--anim-unchecked-checked",
+      uncheckedToIndeterminate: "mdc-checkbox--anim-unchecked-indeterminate",
+      checkedToUnchecked: "mdc-checkbox--anim-checked-unchecked",
+      checkedToIndeterminate: "mdc-checkbox--anim-checked-indeterminate",
+      indeterminateToChecked: "mdc-checkbox--anim-indeterminate-checked",
+      indeterminateToUnchecked: "mdc-checkbox--anim-indeterminate-unchecked"
+    };
+    this.ariaLabel = "";
+    this.ariaLabelledby = null;
+    this.labelPosition = "after";
+    this.name = null;
+    this.change = new import_core.EventEmitter();
+    this.indeterminateChange = new import_core.EventEmitter();
+    this._onTouched = () => {
+    };
+    this._currentAnimationClass = "";
+    this._currentCheckState = TransitionCheckState.Init;
+    this._controlValueAccessorChangeFn = () => {
+    };
+    this._validatorChangeFn = () => {
+    };
+    this._checked = false;
+    this._disabled = false;
+    this._indeterminate = false;
+    this._options = this._options || defaults;
+    this.color = this._options.color || defaults.color;
+    this.tabIndex = parseInt(tabIndex) || 0;
+    this.id = this._uniqueId = `mat-mdc-checkbox-${++nextUniqueId}`;
+    this.disabledInteractive = (_a = _options == null ? void 0 : _options.disabledInteractive) != null ? _a : false;
+  }
+  ngOnChanges(changes) {
+    if (changes["required"]) {
+      this._validatorChangeFn();
+    }
+  }
+  ngAfterViewInit() {
+    this._syncIndeterminate(this._indeterminate);
+  }
+  /** Whether the checkbox is checked. */
+  get checked() {
+    return this._checked;
+  }
+  set checked(value) {
+    if (value != this.checked) {
+      this._checked = value;
+      this._changeDetectorRef.markForCheck();
+    }
+  }
+  /** Whether the checkbox is disabled. */
+  get disabled() {
+    return this._disabled;
+  }
+  set disabled(value) {
+    if (value !== this.disabled) {
+      this._disabled = value;
+      this._changeDetectorRef.markForCheck();
+    }
+  }
+  /**
+   * Whether the checkbox is indeterminate. This is also known as "mixed" mode and can be used to
+   * represent a checkbox with three states, e.g. a checkbox that represents a nested list of
+   * checkable items. Note that whenever checkbox is manually clicked, indeterminate is immediately
+   * set to false.
+   */
+  get indeterminate() {
+    return this._indeterminate;
+  }
+  set indeterminate(value) {
+    const changed = value != this._indeterminate;
+    this._indeterminate = value;
+    if (changed) {
+      if (this._indeterminate) {
+        this._transitionCheckState(TransitionCheckState.Indeterminate);
+      } else {
+        this._transitionCheckState(this.checked ? TransitionCheckState.Checked : TransitionCheckState.Unchecked);
+      }
+      this.indeterminateChange.emit(this._indeterminate);
+    }
+    this._syncIndeterminate(this._indeterminate);
+  }
+  _isRippleDisabled() {
+    return this.disableRipple || this.disabled;
+  }
+  /** Method being called whenever the label text changes. */
+  _onLabelTextChange() {
+    this._changeDetectorRef.detectChanges();
+  }
+  // Implemented as part of ControlValueAccessor.
+  writeValue(value) {
+    this.checked = !!value;
+  }
+  // Implemented as part of ControlValueAccessor.
+  registerOnChange(fn) {
+    this._controlValueAccessorChangeFn = fn;
+  }
+  // Implemented as part of ControlValueAccessor.
+  registerOnTouched(fn) {
+    this._onTouched = fn;
+  }
+  // Implemented as part of ControlValueAccessor.
+  setDisabledState(isDisabled) {
+    this.disabled = isDisabled;
+  }
+  // Implemented as a part of Validator.
+  validate(control) {
+    return this.required && control.value !== true ? { "required": true } : null;
+  }
+  // Implemented as a part of Validator.
+  registerOnValidatorChange(fn) {
+    this._validatorChangeFn = fn;
+  }
+  _transitionCheckState(newState) {
+    let oldState = this._currentCheckState;
+    let element = this._getAnimationTargetElement();
+    if (oldState === newState || !element) {
+      return;
+    }
+    if (this._currentAnimationClass) {
+      element.classList.remove(this._currentAnimationClass);
+    }
+    this._currentAnimationClass = this._getAnimationClassForCheckStateTransition(oldState, newState);
+    this._currentCheckState = newState;
+    if (this._currentAnimationClass.length > 0) {
+      element.classList.add(this._currentAnimationClass);
+      const animationClass = this._currentAnimationClass;
+      this._ngZone.runOutsideAngular(() => {
+        setTimeout(() => {
+          element.classList.remove(animationClass);
+        }, 1e3);
+      });
+    }
+  }
+  _emitChangeEvent() {
+    this._controlValueAccessorChangeFn(this.checked);
+    this.change.emit(this._createChangeEvent(this.checked));
+    if (this._inputElement) {
+      this._inputElement.nativeElement.checked = this.checked;
+    }
+  }
+  /** Toggles the `checked` state of the checkbox. */
+  toggle() {
+    this.checked = !this.checked;
+    this._controlValueAccessorChangeFn(this.checked);
+  }
+  _handleInputClick() {
+    var _a;
+    const clickAction = (_a = this._options) == null ? void 0 : _a.clickAction;
+    if (!this.disabled && clickAction !== "noop") {
+      if (this.indeterminate && clickAction !== "check") {
+        Promise.resolve().then(() => {
+          this._indeterminate = false;
+          this.indeterminateChange.emit(this._indeterminate);
+        });
+      }
+      this._checked = !this._checked;
+      this._transitionCheckState(this._checked ? TransitionCheckState.Checked : TransitionCheckState.Unchecked);
+      this._emitChangeEvent();
+    } else if (this.disabled && this.disabledInteractive || !this.disabled && clickAction === "noop") {
+      this._inputElement.nativeElement.checked = this.checked;
+      this._inputElement.nativeElement.indeterminate = this.indeterminate;
+    }
+  }
+  _onInteractionEvent(event) {
+    event.stopPropagation();
+  }
+  _onBlur() {
+    Promise.resolve().then(() => {
+      this._onTouched();
+      this._changeDetectorRef.markForCheck();
+    });
+  }
+  _getAnimationClassForCheckStateTransition(oldState, newState) {
+    if (this._animationMode === "NoopAnimations") {
+      return "";
+    }
+    switch (oldState) {
+      case TransitionCheckState.Init:
+        if (newState === TransitionCheckState.Checked) {
+          return this._animationClasses.uncheckedToChecked;
+        } else if (newState == TransitionCheckState.Indeterminate) {
+          return this._checked ? this._animationClasses.checkedToIndeterminate : this._animationClasses.uncheckedToIndeterminate;
+        }
+        break;
+      case TransitionCheckState.Unchecked:
+        return newState === TransitionCheckState.Checked ? this._animationClasses.uncheckedToChecked : this._animationClasses.uncheckedToIndeterminate;
+      case TransitionCheckState.Checked:
+        return newState === TransitionCheckState.Unchecked ? this._animationClasses.checkedToUnchecked : this._animationClasses.checkedToIndeterminate;
+      case TransitionCheckState.Indeterminate:
+        return newState === TransitionCheckState.Checked ? this._animationClasses.indeterminateToChecked : this._animationClasses.indeterminateToUnchecked;
+    }
+    return "";
+  }
+  /**
+   * Syncs the indeterminate value with the checkbox DOM node.
+   *
+   * We sync `indeterminate` directly on the DOM node, because in Ivy the check for whether a
+   * property is supported on an element boils down to `if (propName in element)`. Domino's
+   * HTMLInputElement doesn't have an `indeterminate` property so Ivy will warn during
+   * server-side rendering.
+   */
+  _syncIndeterminate(value) {
+    const nativeCheckbox = this._inputElement;
+    if (nativeCheckbox) {
+      nativeCheckbox.nativeElement.indeterminate = value;
+    }
+  }
+  _onInputClick() {
+    this._handleInputClick();
+  }
+  _onTouchTargetClick() {
+    this._handleInputClick();
+    if (!this.disabled) {
+      this._inputElement.nativeElement.focus();
+    }
+  }
+  /**
+   *  Prevent click events that come from the `<label/>` element from bubbling. This prevents the
+   *  click handler on the host from triggering twice when clicking on the `<label/>` element. After
+   *  the click event on the `<label/>` propagates, the browsers dispatches click on the associated
+   *  `<input/>`. By preventing clicks on the label by bubbling, we ensure only one click event
+   *  bubbles when the label is clicked.
+   */
+  _preventBubblingFromLabel(event) {
+    if (!!event.target && this._labelElement.nativeElement.contains(event.target)) {
+      event.stopPropagation();
+    }
+  }
+};
+_MatCheckbox.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatCheckbox, deps: [{ token: i0.ElementRef }, { token: i0.ChangeDetectorRef }, { token: i0.NgZone }, { token: "tabindex", attribute: true }, { token: import_core.ANIMATION_MODULE_TYPE, optional: true }, { token: MAT_CHECKBOX_DEFAULT_OPTIONS, optional: true }], target: i0.\u0275\u0275FactoryTarget.Component });
+_MatCheckbox.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "16.1.0", version: "18.2.0-next.2", type: _MatCheckbox, isStandalone: true, selector: "mat-checkbox", inputs: { ariaLabel: ["aria-label", "ariaLabel"], ariaLabelledby: ["aria-labelledby", "ariaLabelledby"], ariaDescribedby: ["aria-describedby", "ariaDescribedby"], id: "id", required: ["required", "required", import_core.booleanAttribute], labelPosition: "labelPosition", name: "name", value: "value", disableRipple: ["disableRipple", "disableRipple", import_core.booleanAttribute], tabIndex: ["tabIndex", "tabIndex", (value) => value == null ? void 0 : (0, import_core.numberAttribute)(value)], color: "color", disabledInteractive: ["disabledInteractive", "disabledInteractive", import_core.booleanAttribute], checked: ["checked", "checked", import_core.booleanAttribute], disabled: ["disabled", "disabled", import_core.booleanAttribute], indeterminate: ["indeterminate", "indeterminate", import_core.booleanAttribute] }, outputs: { change: "change", indeterminateChange: "indeterminateChange" }, host: { properties: { "attr.tabindex": "null", "attr.aria-label": "null", "attr.aria-labelledby": "null", "class._mat-animation-noopable": "_animationMode === 'NoopAnimations'", "class.mdc-checkbox--disabled": "disabled", "id": "id", "class.mat-mdc-checkbox-disabled": "disabled", "class.mat-mdc-checkbox-checked": "checked", "class.mat-mdc-checkbox-disabled-interactive": "disabledInteractive", "class": 'color ? "mat-" + color : "mat-accent"' }, classAttribute: "mat-mdc-checkbox" }, providers: [
+  MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR,
+  {
+    provide: import_forms.NG_VALIDATORS,
+    useExisting: _MatCheckbox,
+    multi: true
+  }
+], viewQueries: [{ propertyName: "_inputElement", first: true, predicate: ["input"], descendants: true }, { propertyName: "_labelElement", first: true, predicate: ["label"], descendants: true }, { propertyName: "ripple", first: true, predicate: import_core2.MatRipple, descendants: true }], exportAs: ["matCheckbox"], usesOnChanges: true, ngImport: i0, template: `<div mat-internal-form-field [labelPosition]="labelPosition" (click)="_preventBubblingFromLabel($event)">
+  <div #checkbox class="mdc-checkbox">
+    <!-- Render this element first so the input is on top. -->
+    <div class="mat-mdc-checkbox-touch-target" (click)="_onTouchTargetClick()"></div>
+    <input #input
+           type="checkbox"
+           class="mdc-checkbox__native-control"
+           [class.mdc-checkbox--selected]="checked"
+           [attr.aria-label]="ariaLabel || null"
+           [attr.aria-labelledby]="ariaLabelledby"
+           [attr.aria-describedby]="ariaDescribedby"
+           [attr.aria-checked]="indeterminate ? 'mixed' : null"
+           [attr.aria-disabled]="disabled && disabledInteractive ? true : null"
+           [attr.name]="name"
+           [attr.value]="value"
+           [checked]="checked"
+           [indeterminate]="indeterminate"
+           [disabled]="disabled && !disabledInteractive"
+           [id]="inputId"
+           [required]="required"
+           [tabIndex]="disabled && !disabledInteractive ? -1 : tabIndex"
+           (blur)="_onBlur()"
+           (click)="_onInputClick()"
+           (change)="_onInteractionEvent($event)"/>
+    <div class="mdc-checkbox__ripple"></div>
+    <div class="mdc-checkbox__background">
+      <svg class="mdc-checkbox__checkmark"
+           focusable="false"
+           viewBox="0 0 24 24"
+           aria-hidden="true">
+        <path class="mdc-checkbox__checkmark-path"
+              fill="none"
+              d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+      </svg>
+      <div class="mdc-checkbox__mixedmark"></div>
+    </div>
+    <div class="mat-mdc-checkbox-ripple mat-mdc-focus-indicator" mat-ripple
+      [matRippleTrigger]="checkbox"
+      [matRippleDisabled]="disableRipple || disabled"
+      [matRippleCentered]="true"></div>
+  </div>
+  <!--
+    Avoid putting a click handler on the <label/> to fix duplicate navigation stop on Talk Back
+    (#14385). Putting a click handler on the <label/> caused this bug because the browser produced
+    an unnecessary accessibility tree node.
+  -->
+  <label class="mdc-label" #label [for]="inputId">
+    <ng-content></ng-content>
+  </label>
+</div>
+`, styles: ['.mdc-checkbox{display:inline-block;position:relative;flex:0 0 18px;box-sizing:content-box;width:18px;height:18px;line-height:0;white-space:nowrap;cursor:pointer;vertical-align:bottom;padding:calc((var(--mdc-checkbox-state-layer-size, 40px) - 18px)/2);margin:calc((var(--mdc-checkbox-state-layer-size, 40px) - var(--mdc-checkbox-state-layer-size, 40px))/2)}.mdc-checkbox:hover .mdc-checkbox__ripple{opacity:var(--mdc-checkbox-unselected-hover-state-layer-opacity, var(--mat-app-hover-state-layer-opacity));background-color:var(--mdc-checkbox-unselected-hover-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox:hover .mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-unselected-hover-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox .mdc-checkbox__native-control:focus~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-unselected-focus-state-layer-opacity, var(--mat-app-focus-state-layer-opacity));background-color:var(--mdc-checkbox-unselected-focus-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox .mdc-checkbox__native-control:focus~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-unselected-focus-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox:active .mdc-checkbox__native-control~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-unselected-pressed-state-layer-opacity, var(--mat-app-pressed-state-layer-opacity));background-color:var(--mdc-checkbox-unselected-pressed-state-layer-color, var(--mat-app-primary))}.mdc-checkbox:active .mdc-checkbox__native-control~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-unselected-pressed-state-layer-color, var(--mat-app-primary))}.mdc-checkbox:hover .mdc-checkbox__native-control:checked~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-selected-hover-state-layer-opacity, var(--mat-app-hover-state-layer-opacity));background-color:var(--mdc-checkbox-selected-hover-state-layer-color, var(--mat-app-primary))}.mdc-checkbox:hover .mdc-checkbox__native-control:checked~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-selected-hover-state-layer-color, var(--mat-app-primary))}.mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-selected-focus-state-layer-opacity, var(--mat-app-focus-state-layer-opacity));background-color:var(--mdc-checkbox-selected-focus-state-layer-color, var(--mat-app-primary))}.mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-selected-focus-state-layer-color, var(--mat-app-primary))}.mdc-checkbox:active .mdc-checkbox__native-control:checked~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-selected-pressed-state-layer-opacity, var(--mat-app-pressed-state-layer-opacity));background-color:var(--mdc-checkbox-selected-pressed-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox:active .mdc-checkbox__native-control:checked~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-selected-pressed-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox .mdc-checkbox__native-control~.mat-mdc-checkbox-ripple .mat-ripple-element,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox .mdc-checkbox__native-control~.mdc-checkbox__ripple{background-color:var(--mdc-checkbox-unselected-hover-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox .mdc-checkbox__native-control{position:absolute;margin:0;padding:0;opacity:0;cursor:inherit;width:var(--mdc-checkbox-state-layer-size, 40px);height:var(--mdc-checkbox-state-layer-size, 40px);top:calc((var(--mdc-checkbox-state-layer-size, 40px) - var(--mdc-checkbox-state-layer-size, 40px))/2);right:calc((var(--mdc-checkbox-state-layer-size, 40px) - var(--mdc-checkbox-state-layer-size, 40px))/2);left:calc((var(--mdc-checkbox-state-layer-size, 40px) - var(--mdc-checkbox-state-layer-size, 40px))/2)}.mdc-checkbox--disabled{cursor:default;pointer-events:none}.cdk-high-contrast-active .mdc-checkbox--disabled{opacity:.5}.mdc-checkbox__background{display:inline-flex;position:absolute;align-items:center;justify-content:center;box-sizing:border-box;width:18px;height:18px;border:2px solid currentColor;border-radius:2px;background-color:rgba(0,0,0,0);pointer-events:none;will-change:background-color,border-color;transition:background-color 90ms cubic-bezier(0.4, 0, 0.6, 1),border-color 90ms cubic-bezier(0.4, 0, 0.6, 1);-webkit-print-color-adjust:exact;color-adjust:exact;border-color:var(--mdc-checkbox-unselected-icon-color, var(--mat-app-on-surface-variant));top:calc((var(--mdc-checkbox-state-layer-size, 40px) - 18px)/2);left:calc((var(--mdc-checkbox-state-layer-size, 40px) - 18px)/2)}.mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background,.mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background{border-color:var(--mdc-checkbox-selected-icon-color, var(--mat-app-primary));background-color:var(--mdc-checkbox-selected-icon-color, var(--mat-app-primary))}.mdc-checkbox--disabled .mdc-checkbox__background{border-color:var(--mdc-checkbox-disabled-unselected-icon-color)}.mdc-checkbox__native-control:disabled:checked~.mdc-checkbox__background,.mdc-checkbox__native-control:disabled:indeterminate~.mdc-checkbox__background{background-color:var(--mdc-checkbox-disabled-selected-icon-color);border-color:rgba(0,0,0,0)}.mdc-checkbox:hover .mdc-checkbox__native-control:not(:checked)~.mdc-checkbox__background,.mdc-checkbox:hover .mdc-checkbox__native-control:not(:indeterminate)~.mdc-checkbox__background{border-color:var(--mdc-checkbox-unselected-hover-icon-color, var(--mat-app-on-surface));background-color:rgba(0,0,0,0)}.mdc-checkbox:hover .mdc-checkbox__native-control:checked~.mdc-checkbox__background,.mdc-checkbox:hover .mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background{border-color:var(--mdc-checkbox-selected-hover-icon-color, var(--mat-app-primary));background-color:var(--mdc-checkbox-selected-hover-icon-color, var(--mat-app-primary))}.mdc-checkbox__native-control:focus:focus:not(:checked)~.mdc-checkbox__background,.mdc-checkbox__native-control:focus:focus:not(:indeterminate)~.mdc-checkbox__background{border-color:var(--mdc-checkbox-unselected-focus-icon-color, var(--mat-app-on-surface))}.mdc-checkbox__native-control:focus:focus:checked~.mdc-checkbox__background,.mdc-checkbox__native-control:focus:focus:indeterminate~.mdc-checkbox__background{border-color:var(--mdc-checkbox-selected-focus-icon-color, var(--mat-app-primary));background-color:var(--mdc-checkbox-selected-focus-icon-color, var(--mat-app-primary))}.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox:hover .mdc-checkbox__native-control~.mdc-checkbox__background,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox .mdc-checkbox__native-control:focus~.mdc-checkbox__background,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__background{border-color:var(--mdc-checkbox-disabled-unselected-icon-color)}.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__native-control:checked~.mdc-checkbox__background,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background{background-color:var(--mdc-checkbox-disabled-selected-icon-color);border-color:rgba(0,0,0,0)}.mdc-checkbox__checkmark{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;opacity:0;transition:opacity 180ms cubic-bezier(0.4, 0, 0.6, 1);color:var(--mdc-checkbox-selected-checkmark-color, var(--mat-app-on-primary))}.cdk-high-contrast-active .mdc-checkbox__checkmark{color:CanvasText}.mdc-checkbox--disabled .mdc-checkbox__checkmark,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__checkmark{color:var(--mdc-checkbox-disabled-selected-checkmark-color, var(--mat-app-surface))}.cdk-high-contrast-active .mdc-checkbox--disabled .mdc-checkbox__checkmark,.cdk-high-contrast-active .mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__checkmark{color:CanvasText}.mdc-checkbox__checkmark-path{transition:stroke-dashoffset 180ms cubic-bezier(0.4, 0, 0.6, 1);stroke:currentColor;stroke-width:3.12px;stroke-dashoffset:29.7833385;stroke-dasharray:29.7833385}.mdc-checkbox__mixedmark{width:100%;height:0;transform:scaleX(0) rotate(0deg);border-width:1px;border-style:solid;opacity:0;transition:opacity 90ms cubic-bezier(0.4, 0, 0.6, 1),transform 90ms cubic-bezier(0.4, 0, 0.6, 1);border-color:var(--mdc-checkbox-selected-checkmark-color, var(--mat-app-on-primary))}.cdk-high-contrast-active .mdc-checkbox__mixedmark{margin:0 1px}.mdc-checkbox--disabled .mdc-checkbox__mixedmark,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__mixedmark{border-color:var(--mdc-checkbox-disabled-selected-checkmark-color, var(--mat-app-surface))}.mdc-checkbox--anim-unchecked-checked .mdc-checkbox__background,.mdc-checkbox--anim-unchecked-indeterminate .mdc-checkbox__background,.mdc-checkbox--anim-checked-unchecked .mdc-checkbox__background,.mdc-checkbox--anim-indeterminate-unchecked .mdc-checkbox__background{animation-duration:180ms;animation-timing-function:linear}.mdc-checkbox--anim-unchecked-checked .mdc-checkbox__checkmark-path{animation:mdc-checkbox-unchecked-checked-checkmark-path 180ms linear;transition:none}.mdc-checkbox--anim-unchecked-indeterminate .mdc-checkbox__mixedmark{animation:mdc-checkbox-unchecked-indeterminate-mixedmark 90ms linear;transition:none}.mdc-checkbox--anim-checked-unchecked .mdc-checkbox__checkmark-path{animation:mdc-checkbox-checked-unchecked-checkmark-path 90ms linear;transition:none}.mdc-checkbox--anim-checked-indeterminate .mdc-checkbox__checkmark{animation:mdc-checkbox-checked-indeterminate-checkmark 90ms linear;transition:none}.mdc-checkbox--anim-checked-indeterminate .mdc-checkbox__mixedmark{animation:mdc-checkbox-checked-indeterminate-mixedmark 90ms linear;transition:none}.mdc-checkbox--anim-indeterminate-checked .mdc-checkbox__checkmark{animation:mdc-checkbox-indeterminate-checked-checkmark 500ms linear;transition:none}.mdc-checkbox--anim-indeterminate-checked .mdc-checkbox__mixedmark{animation:mdc-checkbox-indeterminate-checked-mixedmark 500ms linear;transition:none}.mdc-checkbox--anim-indeterminate-unchecked .mdc-checkbox__mixedmark{animation:mdc-checkbox-indeterminate-unchecked-mixedmark 300ms linear;transition:none}.mdc-checkbox__native-control:checked~.mdc-checkbox__background,.mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background{transition:border-color 90ms cubic-bezier(0, 0, 0.2, 1),background-color 90ms cubic-bezier(0, 0, 0.2, 1)}.mdc-checkbox__native-control:checked~.mdc-checkbox__background .mdc-checkbox__checkmark-path,.mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background .mdc-checkbox__checkmark-path{stroke-dashoffset:0}.mdc-checkbox__native-control:checked~.mdc-checkbox__background .mdc-checkbox__checkmark{transition:opacity 180ms cubic-bezier(0, 0, 0.2, 1),transform 180ms cubic-bezier(0, 0, 0.2, 1);opacity:1}.mdc-checkbox__native-control:checked~.mdc-checkbox__background .mdc-checkbox__mixedmark{transform:scaleX(1) rotate(-45deg)}.mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background .mdc-checkbox__checkmark{transform:rotate(45deg);opacity:0;transition:opacity 90ms cubic-bezier(0.4, 0, 0.6, 1),transform 90ms cubic-bezier(0.4, 0, 0.6, 1)}.mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background .mdc-checkbox__mixedmark{transform:scaleX(1) rotate(0deg);opacity:1}@keyframes mdc-checkbox-unchecked-checked-checkmark-path{0%,50%{stroke-dashoffset:29.7833385}50%{animation-timing-function:cubic-bezier(0, 0, 0.2, 1)}100%{stroke-dashoffset:0}}@keyframes mdc-checkbox-unchecked-indeterminate-mixedmark{0%,68.2%{transform:scaleX(0)}68.2%{animation-timing-function:cubic-bezier(0, 0, 0, 1)}100%{transform:scaleX(1)}}@keyframes mdc-checkbox-checked-unchecked-checkmark-path{from{animation-timing-function:cubic-bezier(0.4, 0, 1, 1);opacity:1;stroke-dashoffset:0}to{opacity:0;stroke-dashoffset:-29.7833385}}@keyframes mdc-checkbox-checked-indeterminate-checkmark{from{animation-timing-function:cubic-bezier(0, 0, 0.2, 1);transform:rotate(0deg);opacity:1}to{transform:rotate(45deg);opacity:0}}@keyframes mdc-checkbox-indeterminate-checked-checkmark{from{animation-timing-function:cubic-bezier(0.14, 0, 0, 1);transform:rotate(45deg);opacity:0}to{transform:rotate(360deg);opacity:1}}@keyframes mdc-checkbox-checked-indeterminate-mixedmark{from{animation-timing-function:cubic-bezier(0, 0, 0.2, 1);transform:rotate(-45deg);opacity:0}to{transform:rotate(0deg);opacity:1}}@keyframes mdc-checkbox-indeterminate-checked-mixedmark{from{animation-timing-function:cubic-bezier(0.14, 0, 0, 1);transform:rotate(0deg);opacity:1}to{transform:rotate(315deg);opacity:0}}@keyframes mdc-checkbox-indeterminate-unchecked-mixedmark{0%{animation-timing-function:linear;transform:scaleX(1);opacity:1}32.8%,100%{transform:scaleX(0);opacity:0}}.mat-mdc-checkbox{display:inline-block;position:relative;-webkit-tap-highlight-color:rgba(0,0,0,0)}.mat-mdc-checkbox._mat-animation-noopable .mdc-checkbox *,.mat-mdc-checkbox._mat-animation-noopable .mdc-checkbox *::before{transition:none !important;animation:none !important}.mat-mdc-checkbox label{cursor:pointer}.mat-mdc-checkbox .mat-internal-form-field{color:var(--mat-checkbox-label-text-color, var(--mat-app-on-surface));font-family:var(--mat-checkbox-label-text-font, var(--mat-app-body-medium-font));line-height:var(--mat-checkbox-label-text-line-height, var(--mat-app-body-medium-line-height));font-size:var(--mat-checkbox-label-text-size, var(--mat-app-body-medium-size));letter-spacing:var(--mat-checkbox-label-text-tracking, var(--mat-app-body-medium-tracking));font-weight:var(--mat-checkbox-label-text-weight, var(--mat-app-body-medium-weight))}.mat-mdc-checkbox.mat-mdc-checkbox-disabled.mat-mdc-checkbox-disabled-interactive{pointer-events:auto}.mat-mdc-checkbox.mat-mdc-checkbox-disabled.mat-mdc-checkbox-disabled-interactive input{cursor:default}.mat-mdc-checkbox.mat-mdc-checkbox-disabled label{cursor:default;color:var(--mat-checkbox-disabled-label-color)}.mat-mdc-checkbox label:empty{display:none}.mat-mdc-checkbox .mdc-checkbox__ripple{opacity:0}.mat-mdc-checkbox-ripple,.mdc-checkbox__ripple{top:0;left:0;right:0;bottom:0;position:absolute;border-radius:50%;pointer-events:none}.mat-mdc-checkbox-ripple:not(:empty),.mdc-checkbox__ripple:not(:empty){transform:translateZ(0)}.mat-mdc-checkbox-ripple .mat-ripple-element{opacity:.1}.mat-mdc-checkbox-touch-target{position:absolute;top:50%;left:50%;height:48px;width:48px;transform:translate(-50%, -50%);display:var(--mat-checkbox-touch-target-display)}.mat-mdc-checkbox-ripple::before{border-radius:50%}.mdc-checkbox__native-control:focus~.mat-mdc-focus-indicator::before{content:""}'], dependencies: [{ kind: "directive", type: import_core2.MatRipple, selector: "[mat-ripple], [matRipple]", inputs: ["matRippleColor", "matRippleUnbounded", "matRippleCentered", "matRippleRadius", "matRippleAnimation", "matRippleDisabled", "matRippleTrigger"], exportAs: ["matRipple"] }, { kind: "component", type: import_core2._MatInternalFormField, selector: "div[mat-internal-form-field]", inputs: ["labelPosition"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush, encapsulation: i0.ViewEncapsulation.None });
+let MatCheckbox = _MatCheckbox;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatCheckbox, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "mat-checkbox", host: {
+    "class": "mat-mdc-checkbox",
+    "[attr.tabindex]": "null",
+    "[attr.aria-label]": "null",
+    "[attr.aria-labelledby]": "null",
+    "[class._mat-animation-noopable]": `_animationMode === 'NoopAnimations'`,
+    "[class.mdc-checkbox--disabled]": "disabled",
+    "[id]": "id",
+    // Add classes that users can use to more easily target disabled or checked checkboxes.
+    "[class.mat-mdc-checkbox-disabled]": "disabled",
+    "[class.mat-mdc-checkbox-checked]": "checked",
+    "[class.mat-mdc-checkbox-disabled-interactive]": "disabledInteractive",
+    "[class]": 'color ? "mat-" + color : "mat-accent"'
+  }, providers: [
+    MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR,
+    {
+      provide: import_forms.NG_VALIDATORS,
+      useExisting: MatCheckbox,
+      multi: true
+    }
+  ], exportAs: "matCheckbox", encapsulation: import_core.ViewEncapsulation.None, changeDetection: import_core.ChangeDetectionStrategy.OnPush, standalone: true, imports: [import_core2.MatRipple, import_core2._MatInternalFormField], template: `<div mat-internal-form-field [labelPosition]="labelPosition" (click)="_preventBubblingFromLabel($event)">
+  <div #checkbox class="mdc-checkbox">
+    <!-- Render this element first so the input is on top. -->
+    <div class="mat-mdc-checkbox-touch-target" (click)="_onTouchTargetClick()"></div>
+    <input #input
+           type="checkbox"
+           class="mdc-checkbox__native-control"
+           [class.mdc-checkbox--selected]="checked"
+           [attr.aria-label]="ariaLabel || null"
+           [attr.aria-labelledby]="ariaLabelledby"
+           [attr.aria-describedby]="ariaDescribedby"
+           [attr.aria-checked]="indeterminate ? 'mixed' : null"
+           [attr.aria-disabled]="disabled && disabledInteractive ? true : null"
+           [attr.name]="name"
+           [attr.value]="value"
+           [checked]="checked"
+           [indeterminate]="indeterminate"
+           [disabled]="disabled && !disabledInteractive"
+           [id]="inputId"
+           [required]="required"
+           [tabIndex]="disabled && !disabledInteractive ? -1 : tabIndex"
+           (blur)="_onBlur()"
+           (click)="_onInputClick()"
+           (change)="_onInteractionEvent($event)"/>
+    <div class="mdc-checkbox__ripple"></div>
+    <div class="mdc-checkbox__background">
+      <svg class="mdc-checkbox__checkmark"
+           focusable="false"
+           viewBox="0 0 24 24"
+           aria-hidden="true">
+        <path class="mdc-checkbox__checkmark-path"
+              fill="none"
+              d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+      </svg>
+      <div class="mdc-checkbox__mixedmark"></div>
+    </div>
+    <div class="mat-mdc-checkbox-ripple mat-mdc-focus-indicator" mat-ripple
+      [matRippleTrigger]="checkbox"
+      [matRippleDisabled]="disableRipple || disabled"
+      [matRippleCentered]="true"></div>
+  </div>
+  <!--
+    Avoid putting a click handler on the <label/> to fix duplicate navigation stop on Talk Back
+    (#14385). Putting a click handler on the <label/> caused this bug because the browser produced
+    an unnecessary accessibility tree node.
+  -->
+  <label class="mdc-label" #label [for]="inputId">
+    <ng-content></ng-content>
+  </label>
+</div>
+`, styles: ['.mdc-checkbox{display:inline-block;position:relative;flex:0 0 18px;box-sizing:content-box;width:18px;height:18px;line-height:0;white-space:nowrap;cursor:pointer;vertical-align:bottom;padding:calc((var(--mdc-checkbox-state-layer-size, 40px) - 18px)/2);margin:calc((var(--mdc-checkbox-state-layer-size, 40px) - var(--mdc-checkbox-state-layer-size, 40px))/2)}.mdc-checkbox:hover .mdc-checkbox__ripple{opacity:var(--mdc-checkbox-unselected-hover-state-layer-opacity, var(--mat-app-hover-state-layer-opacity));background-color:var(--mdc-checkbox-unselected-hover-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox:hover .mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-unselected-hover-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox .mdc-checkbox__native-control:focus~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-unselected-focus-state-layer-opacity, var(--mat-app-focus-state-layer-opacity));background-color:var(--mdc-checkbox-unselected-focus-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox .mdc-checkbox__native-control:focus~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-unselected-focus-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox:active .mdc-checkbox__native-control~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-unselected-pressed-state-layer-opacity, var(--mat-app-pressed-state-layer-opacity));background-color:var(--mdc-checkbox-unselected-pressed-state-layer-color, var(--mat-app-primary))}.mdc-checkbox:active .mdc-checkbox__native-control~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-unselected-pressed-state-layer-color, var(--mat-app-primary))}.mdc-checkbox:hover .mdc-checkbox__native-control:checked~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-selected-hover-state-layer-opacity, var(--mat-app-hover-state-layer-opacity));background-color:var(--mdc-checkbox-selected-hover-state-layer-color, var(--mat-app-primary))}.mdc-checkbox:hover .mdc-checkbox__native-control:checked~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-selected-hover-state-layer-color, var(--mat-app-primary))}.mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-selected-focus-state-layer-opacity, var(--mat-app-focus-state-layer-opacity));background-color:var(--mdc-checkbox-selected-focus-state-layer-color, var(--mat-app-primary))}.mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-selected-focus-state-layer-color, var(--mat-app-primary))}.mdc-checkbox:active .mdc-checkbox__native-control:checked~.mdc-checkbox__ripple{opacity:var(--mdc-checkbox-selected-pressed-state-layer-opacity, var(--mat-app-pressed-state-layer-opacity));background-color:var(--mdc-checkbox-selected-pressed-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox:active .mdc-checkbox__native-control:checked~.mat-mdc-checkbox-ripple .mat-ripple-element{background-color:var(--mdc-checkbox-selected-pressed-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox .mdc-checkbox__native-control~.mat-mdc-checkbox-ripple .mat-ripple-element,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox .mdc-checkbox__native-control~.mdc-checkbox__ripple{background-color:var(--mdc-checkbox-unselected-hover-state-layer-color, var(--mat-app-on-surface))}.mdc-checkbox .mdc-checkbox__native-control{position:absolute;margin:0;padding:0;opacity:0;cursor:inherit;width:var(--mdc-checkbox-state-layer-size, 40px);height:var(--mdc-checkbox-state-layer-size, 40px);top:calc((var(--mdc-checkbox-state-layer-size, 40px) - var(--mdc-checkbox-state-layer-size, 40px))/2);right:calc((var(--mdc-checkbox-state-layer-size, 40px) - var(--mdc-checkbox-state-layer-size, 40px))/2);left:calc((var(--mdc-checkbox-state-layer-size, 40px) - var(--mdc-checkbox-state-layer-size, 40px))/2)}.mdc-checkbox--disabled{cursor:default;pointer-events:none}.cdk-high-contrast-active .mdc-checkbox--disabled{opacity:.5}.mdc-checkbox__background{display:inline-flex;position:absolute;align-items:center;justify-content:center;box-sizing:border-box;width:18px;height:18px;border:2px solid currentColor;border-radius:2px;background-color:rgba(0,0,0,0);pointer-events:none;will-change:background-color,border-color;transition:background-color 90ms cubic-bezier(0.4, 0, 0.6, 1),border-color 90ms cubic-bezier(0.4, 0, 0.6, 1);-webkit-print-color-adjust:exact;color-adjust:exact;border-color:var(--mdc-checkbox-unselected-icon-color, var(--mat-app-on-surface-variant));top:calc((var(--mdc-checkbox-state-layer-size, 40px) - 18px)/2);left:calc((var(--mdc-checkbox-state-layer-size, 40px) - 18px)/2)}.mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background,.mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background{border-color:var(--mdc-checkbox-selected-icon-color, var(--mat-app-primary));background-color:var(--mdc-checkbox-selected-icon-color, var(--mat-app-primary))}.mdc-checkbox--disabled .mdc-checkbox__background{border-color:var(--mdc-checkbox-disabled-unselected-icon-color)}.mdc-checkbox__native-control:disabled:checked~.mdc-checkbox__background,.mdc-checkbox__native-control:disabled:indeterminate~.mdc-checkbox__background{background-color:var(--mdc-checkbox-disabled-selected-icon-color);border-color:rgba(0,0,0,0)}.mdc-checkbox:hover .mdc-checkbox__native-control:not(:checked)~.mdc-checkbox__background,.mdc-checkbox:hover .mdc-checkbox__native-control:not(:indeterminate)~.mdc-checkbox__background{border-color:var(--mdc-checkbox-unselected-hover-icon-color, var(--mat-app-on-surface));background-color:rgba(0,0,0,0)}.mdc-checkbox:hover .mdc-checkbox__native-control:checked~.mdc-checkbox__background,.mdc-checkbox:hover .mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background{border-color:var(--mdc-checkbox-selected-hover-icon-color, var(--mat-app-primary));background-color:var(--mdc-checkbox-selected-hover-icon-color, var(--mat-app-primary))}.mdc-checkbox__native-control:focus:focus:not(:checked)~.mdc-checkbox__background,.mdc-checkbox__native-control:focus:focus:not(:indeterminate)~.mdc-checkbox__background{border-color:var(--mdc-checkbox-unselected-focus-icon-color, var(--mat-app-on-surface))}.mdc-checkbox__native-control:focus:focus:checked~.mdc-checkbox__background,.mdc-checkbox__native-control:focus:focus:indeterminate~.mdc-checkbox__background{border-color:var(--mdc-checkbox-selected-focus-icon-color, var(--mat-app-primary));background-color:var(--mdc-checkbox-selected-focus-icon-color, var(--mat-app-primary))}.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox:hover .mdc-checkbox__native-control~.mdc-checkbox__background,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox .mdc-checkbox__native-control:focus~.mdc-checkbox__background,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__background{border-color:var(--mdc-checkbox-disabled-unselected-icon-color)}.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__native-control:checked~.mdc-checkbox__background,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background{background-color:var(--mdc-checkbox-disabled-selected-icon-color);border-color:rgba(0,0,0,0)}.mdc-checkbox__checkmark{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;opacity:0;transition:opacity 180ms cubic-bezier(0.4, 0, 0.6, 1);color:var(--mdc-checkbox-selected-checkmark-color, var(--mat-app-on-primary))}.cdk-high-contrast-active .mdc-checkbox__checkmark{color:CanvasText}.mdc-checkbox--disabled .mdc-checkbox__checkmark,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__checkmark{color:var(--mdc-checkbox-disabled-selected-checkmark-color, var(--mat-app-surface))}.cdk-high-contrast-active .mdc-checkbox--disabled .mdc-checkbox__checkmark,.cdk-high-contrast-active .mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__checkmark{color:CanvasText}.mdc-checkbox__checkmark-path{transition:stroke-dashoffset 180ms cubic-bezier(0.4, 0, 0.6, 1);stroke:currentColor;stroke-width:3.12px;stroke-dashoffset:29.7833385;stroke-dasharray:29.7833385}.mdc-checkbox__mixedmark{width:100%;height:0;transform:scaleX(0) rotate(0deg);border-width:1px;border-style:solid;opacity:0;transition:opacity 90ms cubic-bezier(0.4, 0, 0.6, 1),transform 90ms cubic-bezier(0.4, 0, 0.6, 1);border-color:var(--mdc-checkbox-selected-checkmark-color, var(--mat-app-on-primary))}.cdk-high-contrast-active .mdc-checkbox__mixedmark{margin:0 1px}.mdc-checkbox--disabled .mdc-checkbox__mixedmark,.mdc-checkbox--disabled.mat-mdc-checkbox-disabled-interactive .mdc-checkbox__mixedmark{border-color:var(--mdc-checkbox-disabled-selected-checkmark-color, var(--mat-app-surface))}.mdc-checkbox--anim-unchecked-checked .mdc-checkbox__background,.mdc-checkbox--anim-unchecked-indeterminate .mdc-checkbox__background,.mdc-checkbox--anim-checked-unchecked .mdc-checkbox__background,.mdc-checkbox--anim-indeterminate-unchecked .mdc-checkbox__background{animation-duration:180ms;animation-timing-function:linear}.mdc-checkbox--anim-unchecked-checked .mdc-checkbox__checkmark-path{animation:mdc-checkbox-unchecked-checked-checkmark-path 180ms linear;transition:none}.mdc-checkbox--anim-unchecked-indeterminate .mdc-checkbox__mixedmark{animation:mdc-checkbox-unchecked-indeterminate-mixedmark 90ms linear;transition:none}.mdc-checkbox--anim-checked-unchecked .mdc-checkbox__checkmark-path{animation:mdc-checkbox-checked-unchecked-checkmark-path 90ms linear;transition:none}.mdc-checkbox--anim-checked-indeterminate .mdc-checkbox__checkmark{animation:mdc-checkbox-checked-indeterminate-checkmark 90ms linear;transition:none}.mdc-checkbox--anim-checked-indeterminate .mdc-checkbox__mixedmark{animation:mdc-checkbox-checked-indeterminate-mixedmark 90ms linear;transition:none}.mdc-checkbox--anim-indeterminate-checked .mdc-checkbox__checkmark{animation:mdc-checkbox-indeterminate-checked-checkmark 500ms linear;transition:none}.mdc-checkbox--anim-indeterminate-checked .mdc-checkbox__mixedmark{animation:mdc-checkbox-indeterminate-checked-mixedmark 500ms linear;transition:none}.mdc-checkbox--anim-indeterminate-unchecked .mdc-checkbox__mixedmark{animation:mdc-checkbox-indeterminate-unchecked-mixedmark 300ms linear;transition:none}.mdc-checkbox__native-control:checked~.mdc-checkbox__background,.mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background{transition:border-color 90ms cubic-bezier(0, 0, 0.2, 1),background-color 90ms cubic-bezier(0, 0, 0.2, 1)}.mdc-checkbox__native-control:checked~.mdc-checkbox__background .mdc-checkbox__checkmark-path,.mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background .mdc-checkbox__checkmark-path{stroke-dashoffset:0}.mdc-checkbox__native-control:checked~.mdc-checkbox__background .mdc-checkbox__checkmark{transition:opacity 180ms cubic-bezier(0, 0, 0.2, 1),transform 180ms cubic-bezier(0, 0, 0.2, 1);opacity:1}.mdc-checkbox__native-control:checked~.mdc-checkbox__background .mdc-checkbox__mixedmark{transform:scaleX(1) rotate(-45deg)}.mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background .mdc-checkbox__checkmark{transform:rotate(45deg);opacity:0;transition:opacity 90ms cubic-bezier(0.4, 0, 0.6, 1),transform 90ms cubic-bezier(0.4, 0, 0.6, 1)}.mdc-checkbox__native-control:indeterminate~.mdc-checkbox__background .mdc-checkbox__mixedmark{transform:scaleX(1) rotate(0deg);opacity:1}@keyframes mdc-checkbox-unchecked-checked-checkmark-path{0%,50%{stroke-dashoffset:29.7833385}50%{animation-timing-function:cubic-bezier(0, 0, 0.2, 1)}100%{stroke-dashoffset:0}}@keyframes mdc-checkbox-unchecked-indeterminate-mixedmark{0%,68.2%{transform:scaleX(0)}68.2%{animation-timing-function:cubic-bezier(0, 0, 0, 1)}100%{transform:scaleX(1)}}@keyframes mdc-checkbox-checked-unchecked-checkmark-path{from{animation-timing-function:cubic-bezier(0.4, 0, 1, 1);opacity:1;stroke-dashoffset:0}to{opacity:0;stroke-dashoffset:-29.7833385}}@keyframes mdc-checkbox-checked-indeterminate-checkmark{from{animation-timing-function:cubic-bezier(0, 0, 0.2, 1);transform:rotate(0deg);opacity:1}to{transform:rotate(45deg);opacity:0}}@keyframes mdc-checkbox-indeterminate-checked-checkmark{from{animation-timing-function:cubic-bezier(0.14, 0, 0, 1);transform:rotate(45deg);opacity:0}to{transform:rotate(360deg);opacity:1}}@keyframes mdc-checkbox-checked-indeterminate-mixedmark{from{animation-timing-function:cubic-bezier(0, 0, 0.2, 1);transform:rotate(-45deg);opacity:0}to{transform:rotate(0deg);opacity:1}}@keyframes mdc-checkbox-indeterminate-checked-mixedmark{from{animation-timing-function:cubic-bezier(0.14, 0, 0, 1);transform:rotate(0deg);opacity:1}to{transform:rotate(315deg);opacity:0}}@keyframes mdc-checkbox-indeterminate-unchecked-mixedmark{0%{animation-timing-function:linear;transform:scaleX(1);opacity:1}32.8%,100%{transform:scaleX(0);opacity:0}}.mat-mdc-checkbox{display:inline-block;position:relative;-webkit-tap-highlight-color:rgba(0,0,0,0)}.mat-mdc-checkbox._mat-animation-noopable .mdc-checkbox *,.mat-mdc-checkbox._mat-animation-noopable .mdc-checkbox *::before{transition:none !important;animation:none !important}.mat-mdc-checkbox label{cursor:pointer}.mat-mdc-checkbox .mat-internal-form-field{color:var(--mat-checkbox-label-text-color, var(--mat-app-on-surface));font-family:var(--mat-checkbox-label-text-font, var(--mat-app-body-medium-font));line-height:var(--mat-checkbox-label-text-line-height, var(--mat-app-body-medium-line-height));font-size:var(--mat-checkbox-label-text-size, var(--mat-app-body-medium-size));letter-spacing:var(--mat-checkbox-label-text-tracking, var(--mat-app-body-medium-tracking));font-weight:var(--mat-checkbox-label-text-weight, var(--mat-app-body-medium-weight))}.mat-mdc-checkbox.mat-mdc-checkbox-disabled.mat-mdc-checkbox-disabled-interactive{pointer-events:auto}.mat-mdc-checkbox.mat-mdc-checkbox-disabled.mat-mdc-checkbox-disabled-interactive input{cursor:default}.mat-mdc-checkbox.mat-mdc-checkbox-disabled label{cursor:default;color:var(--mat-checkbox-disabled-label-color)}.mat-mdc-checkbox label:empty{display:none}.mat-mdc-checkbox .mdc-checkbox__ripple{opacity:0}.mat-mdc-checkbox-ripple,.mdc-checkbox__ripple{top:0;left:0;right:0;bottom:0;position:absolute;border-radius:50%;pointer-events:none}.mat-mdc-checkbox-ripple:not(:empty),.mdc-checkbox__ripple:not(:empty){transform:translateZ(0)}.mat-mdc-checkbox-ripple .mat-ripple-element{opacity:.1}.mat-mdc-checkbox-touch-target{position:absolute;top:50%;left:50%;height:48px;width:48px;transform:translate(-50%, -50%);display:var(--mat-checkbox-touch-target-display)}.mat-mdc-checkbox-ripple::before{border-radius:50%}.mdc-checkbox__native-control:focus~.mat-mdc-focus-indicator::before{content:""}'] }]
+}], ctorParameters: () => [{ type: i0.ElementRef }, { type: i0.ChangeDetectorRef }, { type: i0.NgZone }, { type: void 0, decorators: [{
+  type: import_core.Attribute,
+  args: ["tabindex"]
+}] }, { type: void 0, decorators: [{
+  type: import_core.Optional
+}, {
+  type: import_core.Inject,
+  args: [import_core.ANIMATION_MODULE_TYPE]
+}] }, { type: void 0, decorators: [{
+  type: import_core.Optional
+}, {
+  type: import_core.Inject,
+  args: [MAT_CHECKBOX_DEFAULT_OPTIONS]
+}] }], propDecorators: { ariaLabel: [{
+  type: import_core.Input,
+  args: ["aria-label"]
+}], ariaLabelledby: [{
+  type: import_core.Input,
+  args: ["aria-labelledby"]
+}], ariaDescribedby: [{
+  type: import_core.Input,
+  args: ["aria-describedby"]
+}], id: [{
+  type: import_core.Input
+}], required: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}], labelPosition: [{
+  type: import_core.Input
+}], name: [{
+  type: import_core.Input
+}], change: [{
+  type: import_core.Output
+}], indeterminateChange: [{
+  type: import_core.Output
+}], value: [{
+  type: import_core.Input
+}], disableRipple: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}], _inputElement: [{
+  type: import_core.ViewChild,
+  args: ["input"]
+}], _labelElement: [{
+  type: import_core.ViewChild,
+  args: ["label"]
+}], tabIndex: [{
+  type: import_core.Input,
+  args: [{ transform: (value) => value == null ? void 0 : (0, import_core.numberAttribute)(value) }]
+}], color: [{
+  type: import_core.Input
+}], disabledInteractive: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}], ripple: [{
+  type: import_core.ViewChild,
+  args: [import_core2.MatRipple]
+}], checked: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}], disabled: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}], indeterminate: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}] } });
+const MAT_CHECKBOX_REQUIRED_VALIDATOR = {
+  provide: import_forms.NG_VALIDATORS,
+  useExisting: (0, import_core.forwardRef)(() => MatCheckboxRequiredValidator),
+  multi: true
+};
+const _MatCheckboxRequiredValidator = class _MatCheckboxRequiredValidator extends import_forms.CheckboxRequiredValidator {
+};
+_MatCheckboxRequiredValidator.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatCheckboxRequiredValidator, deps: null, target: i0.\u0275\u0275FactoryTarget.Directive });
+_MatCheckboxRequiredValidator.\u0275dir = i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "18.2.0-next.2", type: _MatCheckboxRequiredValidator, isStandalone: true, selector: "mat-checkbox[required][formControlName],\n             mat-checkbox[required][formControl], mat-checkbox[required][ngModel]", providers: [MAT_CHECKBOX_REQUIRED_VALIDATOR], usesInheritance: true, ngImport: i0 });
+let MatCheckboxRequiredValidator = _MatCheckboxRequiredValidator;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatCheckboxRequiredValidator, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    selector: `mat-checkbox[required][formControlName],
+             mat-checkbox[required][formControl], mat-checkbox[required][ngModel]`,
+    providers: [MAT_CHECKBOX_REQUIRED_VALIDATOR],
+    standalone: true
+  }]
+}] });
+const __MatCheckboxRequiredValidatorModule = class __MatCheckboxRequiredValidatorModule {
+};
+__MatCheckboxRequiredValidatorModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: __MatCheckboxRequiredValidatorModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+__MatCheckboxRequiredValidatorModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.0-next.2", ngImport: i0, type: __MatCheckboxRequiredValidatorModule, imports: [MatCheckboxRequiredValidator], exports: [MatCheckboxRequiredValidator] });
+__MatCheckboxRequiredValidatorModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: __MatCheckboxRequiredValidatorModule });
+let _MatCheckboxRequiredValidatorModule = __MatCheckboxRequiredValidatorModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatCheckboxRequiredValidatorModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    imports: [MatCheckboxRequiredValidator],
+    exports: [MatCheckboxRequiredValidator]
+  }]
+}] });
+const _MatCheckboxModule = class _MatCheckboxModule {
+};
+_MatCheckboxModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatCheckboxModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_MatCheckboxModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatCheckboxModule, imports: [MatCheckbox, import_core2.MatCommonModule], exports: [MatCheckbox, import_core2.MatCommonModule] });
+_MatCheckboxModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatCheckboxModule, imports: [MatCheckbox, import_core2.MatCommonModule, import_core2.MatCommonModule] });
+let MatCheckboxModule = _MatCheckboxModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatCheckboxModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    imports: [MatCheckbox, import_core2.MatCommonModule],
+    exports: [MatCheckbox, import_core2.MatCommonModule]
+  }]
+}] });

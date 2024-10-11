@@ -1,0 +1,33 @@
+5d23dd1fb92ebd001d40e1d853f29f35
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const toString_js_1 = __importDefault(require("./toString.js"));
+/**
+ * Converts `string`, as a whole, to upper case just like
+ * [String#toUpperCase](https://mdn.io/toUpperCase).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category String
+ * @param {string} [string=''] The string to convert.
+ * @returns {string} Returns the upper cased string.
+ * @example
+ *
+ * _.toUpper('--foo-bar--');
+ * // => '--FOO-BAR--'
+ *
+ * _.toUpper('fooBar');
+ * // => 'FOOBAR'
+ *
+ * _.toUpper('__foo_bar__');
+ * // => '__FOO_BAR__'
+ */
+function toUpper(value) {
+    return (0, toString_js_1.default)(value).toUpperCase();
+}
+exports.default = toUpper;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RvVXBwZXIuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxnRUFBcUM7QUFFckM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBb0JHO0FBQ0gsU0FBUyxPQUFPLENBQUMsS0FBSztJQUNwQixPQUFPLElBQUEscUJBQVEsRUFBQyxLQUFLLENBQUMsQ0FBQyxXQUFXLEVBQUUsQ0FBQztBQUN2QyxDQUFDO0FBRUQsa0JBQWUsT0FBTyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy90b1VwcGVyLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB0b1N0cmluZyBmcm9tICcuL3RvU3RyaW5nLmpzJztcblxuLyoqXG4gKiBDb252ZXJ0cyBgc3RyaW5nYCwgYXMgYSB3aG9sZSwgdG8gdXBwZXIgY2FzZSBqdXN0IGxpa2VcbiAqIFtTdHJpbmcjdG9VcHBlckNhc2VdKGh0dHBzOi8vbWRuLmlvL3RvVXBwZXJDYXNlKS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgU3RyaW5nXG4gKiBAcGFyYW0ge3N0cmluZ30gW3N0cmluZz0nJ10gVGhlIHN0cmluZyB0byBjb252ZXJ0LlxuICogQHJldHVybnMge3N0cmluZ30gUmV0dXJucyB0aGUgdXBwZXIgY2FzZWQgc3RyaW5nLlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLnRvVXBwZXIoJy0tZm9vLWJhci0tJyk7XG4gKiAvLyA9PiAnLS1GT08tQkFSLS0nXG4gKlxuICogXy50b1VwcGVyKCdmb29CYXInKTtcbiAqIC8vID0+ICdGT09CQVInXG4gKlxuICogXy50b1VwcGVyKCdfX2Zvb19iYXJfXycpO1xuICogLy8gPT4gJ19fRk9PX0JBUl9fJ1xuICovXG5mdW5jdGlvbiB0b1VwcGVyKHZhbHVlKSB7XG4gIHJldHVybiB0b1N0cmluZyh2YWx1ZSkudG9VcHBlckNhc2UoKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgdG9VcHBlcjtcbiJdLCJ2ZXJzaW9uIjozfQ==

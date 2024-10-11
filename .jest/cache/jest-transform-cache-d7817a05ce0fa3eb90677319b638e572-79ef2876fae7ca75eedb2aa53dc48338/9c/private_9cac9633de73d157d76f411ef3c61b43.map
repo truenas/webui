@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["/Users/macbook/karpov-work/TrueNAS/webui/node_modules/@angular/cdk/fesm2022/coercion/private.mjs"],
+  "sourcesContent": ["import { isObservable, of } from 'rxjs';\n\n/**\n * Given either an Observable or non-Observable value, returns either the original\n * Observable, or wraps it in an Observable that emits the non-Observable value.\n */\nfunction coerceObservable(data) {\n    if (!isObservable(data)) {\n        return of(data);\n    }\n    return data;\n}\n\n/**\n * Generated bundle index. Do not edit.\n */\n\nexport { coerceObservable };\n//# sourceMappingURL=private.mjs.map\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,kBAAiC;AAMjC,SAAS,iBAAiB,MAAM;AAC5B,MAAI,KAAC,0BAAa,IAAI,GAAG;AACrB,eAAO,gBAAG,IAAI;AAAA,EAClB;AACA,SAAO;AACX;",
+  "names": []
+}

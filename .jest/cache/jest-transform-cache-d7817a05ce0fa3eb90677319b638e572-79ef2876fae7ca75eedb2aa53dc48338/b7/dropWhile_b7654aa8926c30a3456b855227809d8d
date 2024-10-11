@@ -1,0 +1,50 @@
+1bc57846a646c034620ca54d433b6984
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+const _baseWhile_js_1 = __importDefault(require("./_baseWhile.js"));
+/**
+ * Creates a slice of `array` excluding elements dropped from the beginning.
+ * Elements are dropped until `predicate` returns falsey. The predicate is
+ * invoked with three arguments: (value, index, array).
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Array
+ * @param {Array} array The array to query.
+ * @param {Function} [predicate=_.identity] The function invoked per iteration.
+ * @returns {Array} Returns the slice of `array`.
+ * @example
+ *
+ * var users = [
+ *   { 'user': 'barney',  'active': false },
+ *   { 'user': 'fred',    'active': false },
+ *   { 'user': 'pebbles', 'active': true }
+ * ];
+ *
+ * _.dropWhile(users, function(o) { return !o.active; });
+ * // => objects for ['pebbles']
+ *
+ * // The `_.matches` iteratee shorthand.
+ * _.dropWhile(users, { 'user': 'barney', 'active': false });
+ * // => objects for ['fred', 'pebbles']
+ *
+ * // The `_.matchesProperty` iteratee shorthand.
+ * _.dropWhile(users, ['active', false]);
+ * // => objects for ['pebbles']
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.dropWhile(users, 'active');
+ * // => objects for ['barney', 'fred', 'pebbles']
+ */
+function dropWhile(array, predicate) {
+    return (array && array.length)
+        ? (0, _baseWhile_js_1.default)(array, (0, _baseIteratee_js_1.default)(predicate, 3), true)
+        : [];
+}
+exports.default = dropWhile;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2Ryb3BXaGlsZS5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLDBFQUE4QztBQUM5QyxvRUFBd0M7QUFFeEM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FrQ0c7QUFDSCxTQUFTLFNBQVMsQ0FBQyxLQUFLLEVBQUUsU0FBUztJQUNqQyxPQUFPLENBQUMsS0FBSyxJQUFJLEtBQUssQ0FBQyxNQUFNLENBQUM7UUFDNUIsQ0FBQyxDQUFDLElBQUEsdUJBQVMsRUFBQyxLQUFLLEVBQUUsSUFBQSwwQkFBWSxFQUFDLFNBQVMsRUFBRSxDQUFDLENBQUMsRUFBRSxJQUFJLENBQUM7UUFDcEQsQ0FBQyxDQUFDLEVBQUUsQ0FBQztBQUNULENBQUM7QUFFRCxrQkFBZSxTQUFTLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2Ryb3BXaGlsZS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZUl0ZXJhdGVlIGZyb20gJy4vX2Jhc2VJdGVyYXRlZS5qcyc7XG5pbXBvcnQgYmFzZVdoaWxlIGZyb20gJy4vX2Jhc2VXaGlsZS5qcyc7XG5cbi8qKlxuICogQ3JlYXRlcyBhIHNsaWNlIG9mIGBhcnJheWAgZXhjbHVkaW5nIGVsZW1lbnRzIGRyb3BwZWQgZnJvbSB0aGUgYmVnaW5uaW5nLlxuICogRWxlbWVudHMgYXJlIGRyb3BwZWQgdW50aWwgYHByZWRpY2F0ZWAgcmV0dXJucyBmYWxzZXkuIFRoZSBwcmVkaWNhdGUgaXNcbiAqIGludm9rZWQgd2l0aCB0aHJlZSBhcmd1bWVudHM6ICh2YWx1ZSwgaW5kZXgsIGFycmF5KS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDMuMC4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBhcnJheSB0byBxdWVyeS5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IFtwcmVkaWNhdGU9Xy5pZGVudGl0eV0gVGhlIGZ1bmN0aW9uIGludm9rZWQgcGVyIGl0ZXJhdGlvbi5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUgc2xpY2Ugb2YgYGFycmF5YC5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIHVzZXJzID0gW1xuICogICB7ICd1c2VyJzogJ2Jhcm5leScsICAnYWN0aXZlJzogZmFsc2UgfSxcbiAqICAgeyAndXNlcic6ICdmcmVkJywgICAgJ2FjdGl2ZSc6IGZhbHNlIH0sXG4gKiAgIHsgJ3VzZXInOiAncGViYmxlcycsICdhY3RpdmUnOiB0cnVlIH1cbiAqIF07XG4gKlxuICogXy5kcm9wV2hpbGUodXNlcnMsIGZ1bmN0aW9uKG8pIHsgcmV0dXJuICFvLmFjdGl2ZTsgfSk7XG4gKiAvLyA9PiBvYmplY3RzIGZvciBbJ3BlYmJsZXMnXVxuICpcbiAqIC8vIFRoZSBgXy5tYXRjaGVzYCBpdGVyYXRlZSBzaG9ydGhhbmQuXG4gKiBfLmRyb3BXaGlsZSh1c2VycywgeyAndXNlcic6ICdiYXJuZXknLCAnYWN0aXZlJzogZmFsc2UgfSk7XG4gKiAvLyA9PiBvYmplY3RzIGZvciBbJ2ZyZWQnLCAncGViYmxlcyddXG4gKlxuICogLy8gVGhlIGBfLm1hdGNoZXNQcm9wZXJ0eWAgaXRlcmF0ZWUgc2hvcnRoYW5kLlxuICogXy5kcm9wV2hpbGUodXNlcnMsIFsnYWN0aXZlJywgZmFsc2VdKTtcbiAqIC8vID0+IG9iamVjdHMgZm9yIFsncGViYmxlcyddXG4gKlxuICogLy8gVGhlIGBfLnByb3BlcnR5YCBpdGVyYXRlZSBzaG9ydGhhbmQuXG4gKiBfLmRyb3BXaGlsZSh1c2VycywgJ2FjdGl2ZScpO1xuICogLy8gPT4gb2JqZWN0cyBmb3IgWydiYXJuZXknLCAnZnJlZCcsICdwZWJibGVzJ11cbiAqL1xuZnVuY3Rpb24gZHJvcFdoaWxlKGFycmF5LCBwcmVkaWNhdGUpIHtcbiAgcmV0dXJuIChhcnJheSAmJiBhcnJheS5sZW5ndGgpXG4gICAgPyBiYXNlV2hpbGUoYXJyYXksIGJhc2VJdGVyYXRlZShwcmVkaWNhdGUsIDMpLCB0cnVlKVxuICAgIDogW107XG59XG5cbmV4cG9ydCBkZWZhdWx0IGRyb3BXaGlsZTtcbiJdLCJ2ZXJzaW9uIjozfQ==

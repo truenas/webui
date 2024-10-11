@@ -1,0 +1,19 @@
+799664a892b058302ee51b4a6a16c477
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.environment = void 0;
+exports.environment = {
+    environmentVersion: '0.0.3',
+    buildYear: 2024,
+    remote: '10.220.38.134',
+    port: 4200,
+    production: false,
+    sentryPublicDsn: 'https://7ac3e76fe2a94f77a58e1c38ea6b42d9@sentry.ixsystems.com/4',
+    mockConfig: {
+        enabled: false,
+        // controllerModel: EnclosureModel.H20,
+        // expansionModels: [EnclosureModel.H20],
+        // scenario: MockEnclosureScenario.FillSomeSlots,
+    },
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvZW52aXJvbm1lbnRzL2Vudmlyb25tZW50LnRzIiwibWFwcGluZ3MiOiI7OztBQUVhLFFBQUEsV0FBVyxHQUFxQjtJQUMzQyxrQkFBa0IsRUFBRSxPQUFPO0lBQzNCLFNBQVMsRUFBRSxJQUFJO0lBQ2YsTUFBTSxFQUFFLGVBQWU7SUFDdkIsSUFBSSxFQUFFLElBQUk7SUFDVixVQUFVLEVBQUUsS0FBSztJQUNqQixlQUFlLEVBQUUsaUVBQWlFO0lBQ2xGLFVBQVUsRUFBRTtRQUNWLE9BQU8sRUFBRSxLQUFLO1FBQ2QsdUNBQXVDO1FBQ3ZDLHlDQUF5QztRQUN6QyxpREFBaUQ7S0FDM0M7Q0FDVCxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2Vudmlyb25tZW50cy9lbnZpcm9ubWVudC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBXZWJVaUVudmlyb25tZW50IH0gZnJvbSAnZW52aXJvbm1lbnRzL2Vudmlyb25tZW50LmludGVyZmFjZSc7XG5cbmV4cG9ydCBjb25zdCBlbnZpcm9ubWVudDogV2ViVWlFbnZpcm9ubWVudCA9IHtcbiAgZW52aXJvbm1lbnRWZXJzaW9uOiAnMC4wLjMnLFxuICBidWlsZFllYXI6IDIwMjQsXG4gIHJlbW90ZTogJzEwLjIyMC4zOC4xMzQnLFxuICBwb3J0OiA0MjAwLFxuICBwcm9kdWN0aW9uOiBmYWxzZSxcbiAgc2VudHJ5UHVibGljRHNuOiAnaHR0cHM6Ly83YWMzZTc2ZmUyYTk0Zjc3YTU4ZTFjMzhlYTZiNDJkOUBzZW50cnkuaXhzeXN0ZW1zLmNvbS80JyxcbiAgbW9ja0NvbmZpZzoge1xuICAgIGVuYWJsZWQ6IGZhbHNlLFxuICAgIC8vIGNvbnRyb2xsZXJNb2RlbDogRW5jbG9zdXJlTW9kZWwuSDIwLFxuICAgIC8vIGV4cGFuc2lvbk1vZGVsczogW0VuY2xvc3VyZU1vZGVsLkgyMF0sXG4gICAgLy8gc2NlbmFyaW86IE1vY2tFbmNsb3N1cmVTY2VuYXJpby5GaWxsU29tZVNsb3RzLFxuICB9IGFzIGFueSxcbn07XG4iXSwidmVyc2lvbiI6M30=

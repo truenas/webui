@@ -1,0 +1,84 @@
+1b24074211acb19bf0e8db126ff7abcf
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxButtonGroupComponent = void 0;
+const common_1 = require("@angular/common");
+const core_1 = require("@angular/core");
+const forms_1 = require("@angular/forms");
+const button_toggle_1 = require("@angular/material/button-toggle");
+const form_field_1 = require("@angular/material/form-field");
+const core_2 = require("@ngx-translate/core");
+const ix_errors_component_1 = require("app/modules/forms/ix-forms/components/ix-errors/ix-errors.component");
+const ix_label_component_1 = require("app/modules/forms/ix-forms/components/ix-label/ix-label.component");
+const test_override_directive_1 = require("app/modules/test-id/test-override/test-override.directive");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+let IxButtonGroupComponent = class IxButtonGroupComponent {
+    constructor(controlDirective, cdr) {
+        this.controlDirective = controlDirective;
+        this.cdr = cdr;
+        this.vertical = false;
+        this.inlineFields = false;
+        this.isDisabled = false;
+        this.onChange = () => { };
+        this.onTouch = () => { };
+        this.controlDirective.valueAccessor = this;
+    }
+    writeValue(value) {
+        this.value = value;
+        this.cdr.markForCheck();
+    }
+    registerOnChange(onChange) {
+        this.onChange = onChange;
+    }
+    registerOnTouched(onTouched) {
+        this.onTouch = onTouched;
+    }
+    setDisabledState(isDisabled) {
+        this.isDisabled = isDisabled;
+        this.cdr.markForCheck();
+    }
+    onValueChanged(event) {
+        this.value = event.value;
+        this.onChange(this.value);
+    }
+};
+exports.IxButtonGroupComponent = IxButtonGroupComponent;
+IxButtonGroupComponent.ctorParameters = () => [
+    { type: forms_1.NgControl },
+    { type: core_1.ChangeDetectorRef }
+];
+IxButtonGroupComponent.propDecorators = {
+    label: [{ type: core_1.Input }],
+    hint: [{ type: core_1.Input }],
+    tooltip: [{ type: core_1.Input }],
+    required: [{ type: core_1.Input }],
+    options: [{ type: core_1.Input }],
+    vertical: [{ type: core_1.Input }],
+    inlineFields: [{ type: core_1.HostBinding, args: ['class.inlineFields',] }, { type: core_1.Input }]
+};
+exports.IxButtonGroupComponent = IxButtonGroupComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-button-group',
+        template: require("./ix-button-group.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            ix_label_component_1.IxLabelComponent,
+            button_toggle_1.MatButtonToggleGroup,
+            button_toggle_1.MatButtonToggle,
+            ix_errors_component_1.IxErrorsComponent,
+            form_field_1.MatHint,
+            common_1.AsyncPipe,
+            core_2.TranslateModule,
+            test_override_directive_1.TestOverrideDirective,
+            test_directive_1.TestDirective,
+        ],
+    })
+], IxButtonGroupComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1idXR0b24tZ3JvdXAvaXgtYnV0dG9uLWdyb3VwLmNvbXBvbmVudC50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7QUFBQSw0Q0FBNEM7QUFDNUMsd0NBRXVCO0FBQ3ZCLDBDQUFpRTtBQUNqRSxtRUFBK0c7QUFDL0csNkRBQXVEO0FBQ3ZELDhDQUFzRDtBQUd0RCw2R0FBd0c7QUFDeEcsMEdBQXFHO0FBQ3JHLHVHQUFrRztBQUNsRyx1RUFBbUU7QUFvQjVELElBQU0sc0JBQXNCLEdBQTVCLE1BQU0sc0JBQXNCO0lBYWpDLFlBQ1MsZ0JBQTJCLEVBQzFCLEdBQXNCO1FBRHZCLHFCQUFnQixHQUFoQixnQkFBZ0IsQ0FBVztRQUMxQixRQUFHLEdBQUgsR0FBRyxDQUFtQjtRQVR2QixhQUFRLEdBQUcsS0FBSztRQUVoQixpQkFBWSxHQUFHLEtBQUs7UUFFN0IsZUFBVSxHQUFHLEtBQUssQ0FBQztRQVVuQixhQUFRLEdBQTRCLEdBQVMsRUFBRSxHQUFFLENBQUMsQ0FBQztRQUNuRCxZQUFPLEdBQWUsR0FBUyxFQUFFLEdBQUUsQ0FBQyxDQUFDO1FBSm5DLElBQUksQ0FBQyxnQkFBZ0IsQ0FBQyxhQUFhLEdBQUcsSUFBSSxDQUFDO0lBQzdDLENBQUM7SUFLRCxVQUFVLENBQUMsS0FBYTtRQUN0QixJQUFJLENBQUMsS0FBSyxHQUFHLEtBQUssQ0FBQztRQUNuQixJQUFJLENBQUMsR0FBRyxDQUFDLFlBQVksRUFBRSxDQUFDO0lBQzFCLENBQUM7SUFFRCxnQkFBZ0IsQ0FBQyxRQUFpQztRQUNoRCxJQUFJLENBQUMsUUFBUSxHQUFHLFFBQVEsQ0FBQztJQUMzQixDQUFDO0lBRUQsaUJBQWlCLENBQUMsU0FBcUI7UUFDckMsSUFBSSxDQUFDLE9BQU8sR0FBRyxTQUFTLENBQUM7SUFDM0IsQ0FBQztJQUVELGdCQUFnQixDQUFDLFVBQW1CO1FBQ2xDLElBQUksQ0FBQyxVQUFVLEdBQUcsVUFBVSxDQUFDO1FBQzdCLElBQUksQ0FBQyxHQUFHLENBQUMsWUFBWSxFQUFFLENBQUM7SUFDMUIsQ0FBQztJQUVELGNBQWMsQ0FBQyxLQUE0QjtRQUN6QyxJQUFJLENBQUMsS0FBSyxHQUFHLEtBQUssQ0FBQyxLQUFlLENBQUM7UUFDbkMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDLENBQUM7SUFDNUIsQ0FBQzs7QUE1Q1Usd0RBQXNCOzs7Ozs7b0JBQ2hDLFlBQUs7bUJBQ0wsWUFBSztzQkFDTCxZQUFLO3VCQUNMLFlBQUs7c0JBQ0wsWUFBSzt1QkFDTCxZQUFLOzJCQUNMLGtCQUFXLFNBQUMsb0JBQW9CLGNBQ2hDLFlBQUs7O2lDQVJLLHNCQUFzQjtJQWxCbEMsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLGlCQUFpQjtRQUMzQixxREFBK0M7UUFFL0MsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07UUFDL0MsVUFBVSxFQUFFLElBQUk7UUFDaEIsT0FBTyxFQUFFO1lBQ1AscUNBQWdCO1lBQ2hCLG9DQUFvQjtZQUNwQiwrQkFBZTtZQUNmLHVDQUFpQjtZQUNqQixvQkFBTztZQUNQLGtCQUFTO1lBQ1Qsc0JBQWU7WUFDZiwrQ0FBcUI7WUFDckIsOEJBQWE7U0FDZDtLQUNGLENBQUM7R0FDVyxzQkFBc0IsQ0E2Q2xDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9tb2R1bGVzL2Zvcm1zL2l4LWZvcm1zL2NvbXBvbmVudHMvaXgtYnV0dG9uLWdyb3VwL2l4LWJ1dHRvbi1ncm91cC5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQXN5bmNQaXBlIH0gZnJvbSAnQGFuZ3VsYXIvY29tbW9uJztcbmltcG9ydCB7XG4gIENoYW5nZURldGVjdGlvblN0cmF0ZWd5LCBDaGFuZ2VEZXRlY3RvclJlZiwgQ29tcG9uZW50LCBIb3N0QmluZGluZywgSW5wdXQsXG59IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgQ29udHJvbFZhbHVlQWNjZXNzb3IsIE5nQ29udHJvbCB9IGZyb20gJ0Bhbmd1bGFyL2Zvcm1zJztcbmltcG9ydCB7IE1hdEJ1dHRvblRvZ2dsZUNoYW5nZSwgTWF0QnV0dG9uVG9nZ2xlR3JvdXAsIE1hdEJ1dHRvblRvZ2dsZSB9IGZyb20gJ0Bhbmd1bGFyL21hdGVyaWFsL2J1dHRvbi10b2dnbGUnO1xuaW1wb3J0IHsgTWF0SGludCB9IGZyb20gJ0Bhbmd1bGFyL21hdGVyaWFsL2Zvcm0tZmllbGQnO1xuaW1wb3J0IHsgVHJhbnNsYXRlTW9kdWxlIH0gZnJvbSAnQG5neC10cmFuc2xhdGUvY29yZSc7XG5pbXBvcnQgeyBPYnNlcnZhYmxlIH0gZnJvbSAncnhqcyc7XG5pbXBvcnQgeyBPcHRpb24gfSBmcm9tICdhcHAvaW50ZXJmYWNlcy9vcHRpb24uaW50ZXJmYWNlJztcbmltcG9ydCB7IEl4RXJyb3JzQ29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1lcnJvcnMvaXgtZXJyb3JzLmNvbXBvbmVudCc7XG5pbXBvcnQgeyBJeExhYmVsQ29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1sYWJlbC9peC1sYWJlbC5jb21wb25lbnQnO1xuaW1wb3J0IHsgVGVzdE92ZXJyaWRlRGlyZWN0aXZlIH0gZnJvbSAnYXBwL21vZHVsZXMvdGVzdC1pZC90ZXN0LW92ZXJyaWRlL3Rlc3Qtb3ZlcnJpZGUuZGlyZWN0aXZlJztcbmltcG9ydCB7IFRlc3REaXJlY3RpdmUgfSBmcm9tICdhcHAvbW9kdWxlcy90ZXN0LWlkL3Rlc3QuZGlyZWN0aXZlJztcblxuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnaXgtYnV0dG9uLWdyb3VwJyxcbiAgdGVtcGxhdGVVcmw6ICcuL2l4LWJ1dHRvbi1ncm91cC5jb21wb25lbnQuaHRtbCcsXG4gIHN0eWxlVXJsczogWycuL2l4LWJ1dHRvbi1ncm91cC5jb21wb25lbnQuc2NzcyddLFxuICBjaGFuZ2VEZXRlY3Rpb246IENoYW5nZURldGVjdGlvblN0cmF0ZWd5Lk9uUHVzaCxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbiAgaW1wb3J0czogW1xuICAgIEl4TGFiZWxDb21wb25lbnQsXG4gICAgTWF0QnV0dG9uVG9nZ2xlR3JvdXAsXG4gICAgTWF0QnV0dG9uVG9nZ2xlLFxuICAgIEl4RXJyb3JzQ29tcG9uZW50LFxuICAgIE1hdEhpbnQsXG4gICAgQXN5bmNQaXBlLFxuICAgIFRyYW5zbGF0ZU1vZHVsZSxcbiAgICBUZXN0T3ZlcnJpZGVEaXJlY3RpdmUsXG4gICAgVGVzdERpcmVjdGl2ZSxcbiAgXSxcbn0pXG5leHBvcnQgY2xhc3MgSXhCdXR0b25Hcm91cENvbXBvbmVudCBpbXBsZW1lbnRzIENvbnRyb2xWYWx1ZUFjY2Vzc29yIHtcbiAgQElucHV0KCkgbGFiZWw6IHN0cmluZztcbiAgQElucHV0KCkgaGludDogc3RyaW5nO1xuICBASW5wdXQoKSB0b29sdGlwOiBzdHJpbmc7XG4gIEBJbnB1dCgpIHJlcXVpcmVkOiBib29sZWFuO1xuICBASW5wdXQoKSBvcHRpb25zOiBPYnNlcnZhYmxlPE9wdGlvbltdPjtcbiAgQElucHV0KCkgdmVydGljYWwgPSBmYWxzZTtcbiAgQEhvc3RCaW5kaW5nKCdjbGFzcy5pbmxpbmVGaWVsZHMnKVxuICBASW5wdXQoKSBpbmxpbmVGaWVsZHMgPSBmYWxzZTtcblxuICBpc0Rpc2FibGVkID0gZmFsc2U7XG4gIHZhbHVlOiBzdHJpbmc7XG5cbiAgY29uc3RydWN0b3IoXG4gICAgcHVibGljIGNvbnRyb2xEaXJlY3RpdmU6IE5nQ29udHJvbCxcbiAgICBwcml2YXRlIGNkcjogQ2hhbmdlRGV0ZWN0b3JSZWYsXG4gICkge1xuICAgIHRoaXMuY29udHJvbERpcmVjdGl2ZS52YWx1ZUFjY2Vzc29yID0gdGhpcztcbiAgfVxuXG4gIG9uQ2hhbmdlOiAodmFsdWU6IHN0cmluZykgPT4gdm9pZCA9ICgpOiB2b2lkID0+IHt9O1xuICBvblRvdWNoOiAoKSA9PiB2b2lkID0gKCk6IHZvaWQgPT4ge307XG5cbiAgd3JpdGVWYWx1ZSh2YWx1ZTogc3RyaW5nKTogdm9pZCB7XG4gICAgdGhpcy52YWx1ZSA9IHZhbHVlO1xuICAgIHRoaXMuY2RyLm1hcmtGb3JDaGVjaygpO1xuICB9XG5cbiAgcmVnaXN0ZXJPbkNoYW5nZShvbkNoYW5nZTogKHZhbHVlOiBzdHJpbmcpID0+IHZvaWQpOiB2b2lkIHtcbiAgICB0aGlzLm9uQ2hhbmdlID0gb25DaGFuZ2U7XG4gIH1cblxuICByZWdpc3Rlck9uVG91Y2hlZChvblRvdWNoZWQ6ICgpID0+IHZvaWQpOiB2b2lkIHtcbiAgICB0aGlzLm9uVG91Y2ggPSBvblRvdWNoZWQ7XG4gIH1cblxuICBzZXREaXNhYmxlZFN0YXRlKGlzRGlzYWJsZWQ6IGJvb2xlYW4pOiB2b2lkIHtcbiAgICB0aGlzLmlzRGlzYWJsZWQgPSBpc0Rpc2FibGVkO1xuICAgIHRoaXMuY2RyLm1hcmtGb3JDaGVjaygpO1xuICB9XG5cbiAgb25WYWx1ZUNoYW5nZWQoZXZlbnQ6IE1hdEJ1dHRvblRvZ2dsZUNoYW5nZSk6IHZvaWQge1xuICAgIHRoaXMudmFsdWUgPSBldmVudC52YWx1ZSBhcyBzdHJpbmc7XG4gICAgdGhpcy5vbkNoYW5nZSh0aGlzLnZhbHVlKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

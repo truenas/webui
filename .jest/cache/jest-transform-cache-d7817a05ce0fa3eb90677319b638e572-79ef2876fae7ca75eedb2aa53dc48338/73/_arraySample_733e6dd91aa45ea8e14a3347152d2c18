@@ -1,0 +1,20 @@
+c40936fa024520d3accfa9ae6d79067d
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseRandom_js_1 = __importDefault(require("./_baseRandom.js"));
+/**
+ * A specialized version of `_.sample` for arrays.
+ *
+ * @private
+ * @param {Array} array The array to sample.
+ * @returns {*} Returns the random element.
+ */
+function arraySample(array) {
+    var length = array.length;
+    return length ? array[(0, _baseRandom_js_1.default)(0, length - 1)] : undefined;
+}
+exports.default = arraySample;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19hcnJheVNhbXBsZS5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLHNFQUEwQztBQUUxQzs7Ozs7O0dBTUc7QUFDSCxTQUFTLFdBQVcsQ0FBQyxLQUFLO0lBQ3hCLElBQUksTUFBTSxHQUFHLEtBQUssQ0FBQyxNQUFNLENBQUM7SUFDMUIsT0FBTyxNQUFNLENBQUMsQ0FBQyxDQUFDLEtBQUssQ0FBQyxJQUFBLHdCQUFVLEVBQUMsQ0FBQyxFQUFFLE1BQU0sR0FBRyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxTQUFTLENBQUM7QUFDL0QsQ0FBQztBQUVELGtCQUFlLFdBQVcsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvX2FycmF5U2FtcGxlLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlUmFuZG9tIGZyb20gJy4vX2Jhc2VSYW5kb20uanMnO1xuXG4vKipcbiAqIEEgc3BlY2lhbGl6ZWQgdmVyc2lvbiBvZiBgXy5zYW1wbGVgIGZvciBhcnJheXMuXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBhcnJheSB0byBzYW1wbGUuXG4gKiBAcmV0dXJucyB7Kn0gUmV0dXJucyB0aGUgcmFuZG9tIGVsZW1lbnQuXG4gKi9cbmZ1bmN0aW9uIGFycmF5U2FtcGxlKGFycmF5KSB7XG4gIHZhciBsZW5ndGggPSBhcnJheS5sZW5ndGg7XG4gIHJldHVybiBsZW5ndGggPyBhcnJheVtiYXNlUmFuZG9tKDAsIGxlbmd0aCAtIDEpXSA6IHVuZGVmaW5lZDtcbn1cblxuZXhwb3J0IGRlZmF1bHQgYXJyYXlTYW1wbGU7XG4iXSwidmVyc2lvbiI6M30=

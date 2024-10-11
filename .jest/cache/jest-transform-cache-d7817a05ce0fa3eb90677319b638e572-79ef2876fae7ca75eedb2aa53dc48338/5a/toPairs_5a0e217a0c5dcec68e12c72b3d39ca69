@@ -1,0 +1,35 @@
+71b4d6a061d8ba6db09af26a8adbd641
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _createToPairs_js_1 = __importDefault(require("./_createToPairs.js"));
+const keys_js_1 = __importDefault(require("./keys.js"));
+/**
+ * Creates an array of own enumerable string keyed-value pairs for `object`
+ * which can be consumed by `_.fromPairs`. If `object` is a map or set, its
+ * entries are returned.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @alias entries
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the key-value pairs.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.toPairs(new Foo);
+ * // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
+ */
+var toPairs = (0, _createToPairs_js_1.default)(keys_js_1.default);
+exports.default = toPairs;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RvUGFpcnMuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSw0RUFBZ0Q7QUFDaEQsd0RBQTZCO0FBRTdCOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXVCRztBQUNILElBQUksT0FBTyxHQUFHLElBQUEsMkJBQWEsRUFBQyxpQkFBSSxDQUFDLENBQUM7QUFFbEMsa0JBQWUsT0FBTyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy90b1BhaXJzLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBjcmVhdGVUb1BhaXJzIGZyb20gJy4vX2NyZWF0ZVRvUGFpcnMuanMnO1xuaW1wb3J0IGtleXMgZnJvbSAnLi9rZXlzLmpzJztcblxuLyoqXG4gKiBDcmVhdGVzIGFuIGFycmF5IG9mIG93biBlbnVtZXJhYmxlIHN0cmluZyBrZXllZC12YWx1ZSBwYWlycyBmb3IgYG9iamVjdGBcbiAqIHdoaWNoIGNhbiBiZSBjb25zdW1lZCBieSBgXy5mcm9tUGFpcnNgLiBJZiBgb2JqZWN0YCBpcyBhIG1hcCBvciBzZXQsIGl0c1xuICogZW50cmllcyBhcmUgcmV0dXJuZWQuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSA0LjAuMFxuICogQGFsaWFzIGVudHJpZXNcbiAqIEBjYXRlZ29yeSBPYmplY3RcbiAqIEBwYXJhbSB7T2JqZWN0fSBvYmplY3QgVGhlIG9iamVjdCB0byBxdWVyeS5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUga2V5LXZhbHVlIHBhaXJzLlxuICogQGV4YW1wbGVcbiAqXG4gKiBmdW5jdGlvbiBGb28oKSB7XG4gKiAgIHRoaXMuYSA9IDE7XG4gKiAgIHRoaXMuYiA9IDI7XG4gKiB9XG4gKlxuICogRm9vLnByb3RvdHlwZS5jID0gMztcbiAqXG4gKiBfLnRvUGFpcnMobmV3IEZvbyk7XG4gKiAvLyA9PiBbWydhJywgMV0sIFsnYicsIDJdXSAoaXRlcmF0aW9uIG9yZGVyIGlzIG5vdCBndWFyYW50ZWVkKVxuICovXG52YXIgdG9QYWlycyA9IGNyZWF0ZVRvUGFpcnMoa2V5cyk7XG5cbmV4cG9ydCBkZWZhdWx0IHRvUGFpcnM7XG4iXSwidmVyc2lvbiI6M30=

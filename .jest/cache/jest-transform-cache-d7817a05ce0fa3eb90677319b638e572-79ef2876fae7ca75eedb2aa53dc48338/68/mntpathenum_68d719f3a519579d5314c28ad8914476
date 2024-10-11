@@ -1,0 +1,6 @@
+9b88142edb62b83536437c17e595df2c
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mntPath = void 0;
+exports.mntPath = '/mnt';
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL21udC1wYXRoLmVudW0udHMiLCJtYXBwaW5ncyI6Ijs7O0FBQWEsUUFBQSxPQUFPLEdBQUcsTUFBTSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9lbnVtcy9tbnQtcGF0aC5lbnVtLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBjb25zdCBtbnRQYXRoID0gJy9tbnQnO1xuIl0sInZlcnNpb24iOjN9

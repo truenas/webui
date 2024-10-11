@@ -1,0 +1,2 @@
+05db8bf330d6a2cae1393fdd967cb954
+module.exports="<span\n  class=\"date-spanner\"\n  [matTooltip]=\"'Browser time: {time}' | translate: { time: (date | formatDateTime) }\"\n  [matTooltipDisabled]=\"!isTimezoneDifference\"\n>\n  {{ machineTime | formatDateTime }}\n</span>"

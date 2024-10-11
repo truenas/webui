@@ -1,0 +1,47 @@
+87ec13f1828b18899340e35267462bd6
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _root_js_1 = __importDefault(require("./_root.js"));
+const toString_js_1 = __importDefault(require("./toString.js"));
+/** Used to match leading whitespace. */
+var reTrimStart = /^\s+/;
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeParseInt = _root_js_1.default.parseInt;
+/**
+ * Converts `string` to an integer of the specified radix. If `radix` is
+ * `undefined` or `0`, a `radix` of `10` is used unless `value` is a
+ * hexadecimal, in which case a `radix` of `16` is used.
+ *
+ * **Note:** This method aligns with the
+ * [ES5 implementation](https://es5.github.io/#x15.1.2.2) of `parseInt`.
+ *
+ * @static
+ * @memberOf _
+ * @since 1.1.0
+ * @category String
+ * @param {string} string The string to convert.
+ * @param {number} [radix=10] The radix to interpret `value` by.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @returns {number} Returns the converted integer.
+ * @example
+ *
+ * _.parseInt('08');
+ * // => 8
+ *
+ * _.map(['6', '08', '10'], _.parseInt);
+ * // => [6, 8, 10]
+ */
+function parseInt(string, radix, guard) {
+    if (guard || radix == null) {
+        radix = 0;
+    }
+    else if (radix) {
+        radix = +radix;
+    }
+    return nativeParseInt((0, toString_js_1.default)(string).replace(reTrimStart, ''), radix || 0);
+}
+exports.default = parseInt;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3BhcnNlSW50LmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsMERBQThCO0FBQzlCLGdFQUFxQztBQUVyQyx3Q0FBd0M7QUFDeEMsSUFBSSxXQUFXLEdBQUcsTUFBTSxDQUFDO0FBRXpCLHdGQUF3RjtBQUN4RixJQUFJLGNBQWMsR0FBRyxrQkFBSSxDQUFDLFFBQVEsQ0FBQztBQUVuQzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0F1Qkc7QUFDSCxTQUFTLFFBQVEsQ0FBQyxNQUFNLEVBQUUsS0FBSyxFQUFFLEtBQUs7SUFDcEMsSUFBSSxLQUFLLElBQUksS0FBSyxJQUFJLElBQUksRUFBRSxDQUFDO1FBQzNCLEtBQUssR0FBRyxDQUFDLENBQUM7SUFDWixDQUFDO1NBQU0sSUFBSSxLQUFLLEVBQUUsQ0FBQztRQUNqQixLQUFLLEdBQUcsQ0FBQyxLQUFLLENBQUM7SUFDakIsQ0FBQztJQUNELE9BQU8sY0FBYyxDQUFDLElBQUEscUJBQVEsRUFBQyxNQUFNLENBQUMsQ0FBQyxPQUFPLENBQUMsV0FBVyxFQUFFLEVBQUUsQ0FBQyxFQUFFLEtBQUssSUFBSSxDQUFDLENBQUMsQ0FBQztBQUMvRSxDQUFDO0FBRUQsa0JBQWUsUUFBUSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9wYXJzZUludC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgcm9vdCBmcm9tICcuL19yb290LmpzJztcbmltcG9ydCB0b1N0cmluZyBmcm9tICcuL3RvU3RyaW5nLmpzJztcblxuLyoqIFVzZWQgdG8gbWF0Y2ggbGVhZGluZyB3aGl0ZXNwYWNlLiAqL1xudmFyIHJlVHJpbVN0YXJ0ID0gL15cXHMrLztcblxuLyogQnVpbHQtaW4gbWV0aG9kIHJlZmVyZW5jZXMgZm9yIHRob3NlIHdpdGggdGhlIHNhbWUgbmFtZSBhcyBvdGhlciBgbG9kYXNoYCBtZXRob2RzLiAqL1xudmFyIG5hdGl2ZVBhcnNlSW50ID0gcm9vdC5wYXJzZUludDtcblxuLyoqXG4gKiBDb252ZXJ0cyBgc3RyaW5nYCB0byBhbiBpbnRlZ2VyIG9mIHRoZSBzcGVjaWZpZWQgcmFkaXguIElmIGByYWRpeGAgaXNcbiAqIGB1bmRlZmluZWRgIG9yIGAwYCwgYSBgcmFkaXhgIG9mIGAxMGAgaXMgdXNlZCB1bmxlc3MgYHZhbHVlYCBpcyBhXG4gKiBoZXhhZGVjaW1hbCwgaW4gd2hpY2ggY2FzZSBhIGByYWRpeGAgb2YgYDE2YCBpcyB1c2VkLlxuICpcbiAqICoqTm90ZToqKiBUaGlzIG1ldGhvZCBhbGlnbnMgd2l0aCB0aGVcbiAqIFtFUzUgaW1wbGVtZW50YXRpb25dKGh0dHBzOi8vZXM1LmdpdGh1Yi5pby8jeDE1LjEuMi4yKSBvZiBgcGFyc2VJbnRgLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMS4xLjBcbiAqIEBjYXRlZ29yeSBTdHJpbmdcbiAqIEBwYXJhbSB7c3RyaW5nfSBzdHJpbmcgVGhlIHN0cmluZyB0byBjb252ZXJ0LlxuICogQHBhcmFtIHtudW1iZXJ9IFtyYWRpeD0xMF0gVGhlIHJhZGl4IHRvIGludGVycHJldCBgdmFsdWVgIGJ5LlxuICogQHBhcmFtLSB7T2JqZWN0fSBbZ3VhcmRdIEVuYWJsZXMgdXNlIGFzIGFuIGl0ZXJhdGVlIGZvciBtZXRob2RzIGxpa2UgYF8ubWFwYC5cbiAqIEByZXR1cm5zIHtudW1iZXJ9IFJldHVybnMgdGhlIGNvbnZlcnRlZCBpbnRlZ2VyLlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLnBhcnNlSW50KCcwOCcpO1xuICogLy8gPT4gOFxuICpcbiAqIF8ubWFwKFsnNicsICcwOCcsICcxMCddLCBfLnBhcnNlSW50KTtcbiAqIC8vID0+IFs2LCA4LCAxMF1cbiAqL1xuZnVuY3Rpb24gcGFyc2VJbnQoc3RyaW5nLCByYWRpeCwgZ3VhcmQpIHtcbiAgaWYgKGd1YXJkIHx8IHJhZGl4ID09IG51bGwpIHtcbiAgICByYWRpeCA9IDA7XG4gIH0gZWxzZSBpZiAocmFkaXgpIHtcbiAgICByYWRpeCA9ICtyYWRpeDtcbiAgfVxuICByZXR1cm4gbmF0aXZlUGFyc2VJbnQodG9TdHJpbmcoc3RyaW5nKS5yZXBsYWNlKHJlVHJpbVN0YXJ0LCAnJyksIHJhZGl4IHx8IDApO1xufVxuXG5leHBvcnQgZGVmYXVsdCBwYXJzZUludDtcbiJdLCJ2ZXJzaW9uIjozfQ==

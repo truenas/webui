@@ -1,0 +1,68 @@
+4c82de92867c264758d639904b8c6117
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CloudSyncProviderDescriptionComponent = void 0;
+const core_1 = require("@angular/core");
+const ngx_img_fallback_1 = require("ngx-img-fallback");
+const catalog_constants_1 = require("app/constants/catalog.constants");
+const cloudsync_provider_enum_1 = require("app/enums/cloudsync-provider.enum");
+const cloudsync_provider_description_1 = require("app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description");
+const i0 = __importStar(require("@angular/core"));
+let CloudSyncProviderDescriptionComponent = class CloudSyncProviderDescriptionComponent {
+    constructor() {
+        this.provider = core_1.input.required();
+        this.imagePlaceholder = catalog_constants_1.appImagePlaceholder;
+        this.image = (0, core_1.computed)(() => {
+            return `/assets/images/cloudsync/${this.provider()}.png`;
+        });
+        this.name = (0, core_1.computed)(() => {
+            return cloudsync_provider_enum_1.cloudSyncProviderNameMap.get(this.provider());
+        });
+        this.description = (0, core_1.computed)(() => {
+            return cloudsync_provider_description_1.cloudsyncProviderDescriptionMap.get(this.provider());
+        });
+    }
+};
+exports.CloudSyncProviderDescriptionComponent = CloudSyncProviderDescriptionComponent;
+CloudSyncProviderDescriptionComponent.propDecorators = {
+    provider: [{ type: i0.Input, args: [{ isSignal: true, alias: "provider", required: true, transform: undefined },] }]
+};
+exports.CloudSyncProviderDescriptionComponent = CloudSyncProviderDescriptionComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-cloudsync-provider-description',
+        template: require("./cloudsync-provider-description.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [ngx_img_fallback_1.ImgFallbackModule],
+    })
+], CloudSyncProviderDescriptionComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2RhdGEtcHJvdGVjdGlvbi9jbG91ZHN5bmMvY2xvdWRzeW5jLXByb3ZpZGVyLWRlc2NyaXB0aW9uL2Nsb3Vkc3luYy1wcm92aWRlci1kZXNjcmlwdGlvbi5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSx3Q0FFdUI7QUFDdkIsdURBQXFEO0FBQ3JELHVFQUFzRTtBQUN0RSwrRUFBb0c7QUFDcEcsc0pBQW9KOztBQVU3SSxJQUFNLHFDQUFxQyxHQUEzQyxNQUFNLHFDQUFxQztJQUEzQzt3QkFDZSxZQUFLLENBQUMsUUFBUSxFQUF5QjtRQUVsRCxxQkFBZ0IsR0FBRyx1Q0FBbUIsQ0FBQztRQUU3QixVQUFLLEdBQUcsSUFBQSxlQUFRLEVBQUMsR0FBRyxFQUFFO1lBQ3ZDLE9BQU8sNEJBQTRCLElBQUksQ0FBQyxRQUFRLEVBQUUsTUFBTSxDQUFDO1FBQzNELENBQUMsQ0FBQyxDQUFDO1FBRWdCLFNBQUksR0FBRyxJQUFBLGVBQVEsRUFBQyxHQUFHLEVBQUU7WUFDdEMsT0FBTyxrREFBd0IsQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFDLFFBQVEsRUFBRSxDQUFDLENBQUM7UUFDdkQsQ0FBQyxDQUFDLENBQUM7UUFFZ0IsZ0JBQVcsR0FBRyxJQUFBLGVBQVEsRUFBQyxHQUFHLEVBQUU7WUFDN0MsT0FBTyxnRUFBK0IsQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFDLFFBQVEsRUFBRSxDQUFDLENBQUM7UUFDOUQsQ0FBQyxDQUFDLENBQUM7S0FDSjs7QUFoQlksc0ZBQXFDOzs7O2dEQUFyQyxxQ0FBcUM7SUFSakQsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLG1DQUFtQztRQUM3QyxvRUFBOEQ7UUFFOUQsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07UUFDL0MsVUFBVSxFQUFFLElBQUk7UUFDaEIsT0FBTyxFQUFFLENBQUMsb0NBQWlCLENBQUM7S0FDN0IsQ0FBQztHQUNXLHFDQUFxQyxDQWdCakQiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2RhdGEtcHJvdGVjdGlvbi9jbG91ZHN5bmMvY2xvdWRzeW5jLXByb3ZpZGVyLWRlc2NyaXB0aW9uL2Nsb3Vkc3luYy1wcm92aWRlci1kZXNjcmlwdGlvbi5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcbiAgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCwgY29tcHV0ZWQsIGlucHV0LFxufSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7IEltZ0ZhbGxiYWNrTW9kdWxlIH0gZnJvbSAnbmd4LWltZy1mYWxsYmFjayc7XG5pbXBvcnQgeyBhcHBJbWFnZVBsYWNlaG9sZGVyIH0gZnJvbSAnYXBwL2NvbnN0YW50cy9jYXRhbG9nLmNvbnN0YW50cyc7XG5pbXBvcnQgeyBDbG91ZFN5bmNQcm92aWRlck5hbWUsIGNsb3VkU3luY1Byb3ZpZGVyTmFtZU1hcCB9IGZyb20gJ2FwcC9lbnVtcy9jbG91ZHN5bmMtcHJvdmlkZXIuZW51bSc7XG5pbXBvcnQgeyBjbG91ZHN5bmNQcm92aWRlckRlc2NyaXB0aW9uTWFwIH0gZnJvbSAnYXBwL3BhZ2VzL2RhdGEtcHJvdGVjdGlvbi9jbG91ZHN5bmMvY2xvdWRzeW5jLXByb3ZpZGVyLWRlc2NyaXB0aW9uL2Nsb3Vkc3luYy1wcm92aWRlci1kZXNjcmlwdGlvbic7XG5cbkBDb21wb25lbnQoe1xuICBzZWxlY3RvcjogJ2l4LWNsb3Vkc3luYy1wcm92aWRlci1kZXNjcmlwdGlvbicsXG4gIHRlbXBsYXRlVXJsOiAnLi9jbG91ZHN5bmMtcHJvdmlkZXItZGVzY3JpcHRpb24uY29tcG9uZW50Lmh0bWwnLFxuICBzdHlsZVVybHM6IFsnLi9jbG91ZHN5bmMtcHJvdmlkZXItZGVzY3JpcHRpb24uY29tcG9uZW50LnNjc3MnXSxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGltcG9ydHM6IFtJbWdGYWxsYmFja01vZHVsZV0sXG59KVxuZXhwb3J0IGNsYXNzIENsb3VkU3luY1Byb3ZpZGVyRGVzY3JpcHRpb25Db21wb25lbnQge1xuICByZWFkb25seSBwcm92aWRlciA9IGlucHV0LnJlcXVpcmVkPENsb3VkU3luY1Byb3ZpZGVyTmFtZT4oKTtcblxuICByZWFkb25seSBpbWFnZVBsYWNlaG9sZGVyID0gYXBwSW1hZ2VQbGFjZWhvbGRlcjtcblxuICBwcm90ZWN0ZWQgcmVhZG9ubHkgaW1hZ2UgPSBjb21wdXRlZCgoKSA9PiB7XG4gICAgcmV0dXJuIGAvYXNzZXRzL2ltYWdlcy9jbG91ZHN5bmMvJHt0aGlzLnByb3ZpZGVyKCl9LnBuZ2A7XG4gIH0pO1xuXG4gIHByb3RlY3RlZCByZWFkb25seSBuYW1lID0gY29tcHV0ZWQoKCkgPT4ge1xuICAgIHJldHVybiBjbG91ZFN5bmNQcm92aWRlck5hbWVNYXAuZ2V0KHRoaXMucHJvdmlkZXIoKSk7XG4gIH0pO1xuXG4gIHByb3RlY3RlZCByZWFkb25seSBkZXNjcmlwdGlvbiA9IGNvbXB1dGVkKCgpID0+IHtcbiAgICByZXR1cm4gY2xvdWRzeW5jUHJvdmlkZXJEZXNjcmlwdGlvbk1hcC5nZXQodGhpcy5wcm92aWRlcigpKTtcbiAgfSk7XG59XG4iXSwidmVyc2lvbiI6M30=

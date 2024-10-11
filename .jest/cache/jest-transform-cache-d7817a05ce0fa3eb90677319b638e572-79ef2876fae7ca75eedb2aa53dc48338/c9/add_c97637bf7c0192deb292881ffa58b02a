@@ -1,0 +1,27 @@
+30a1d7b35ec32821eb48a608e0f9245f
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _createMathOperation_js_1 = __importDefault(require("./_createMathOperation.js"));
+/**
+ * Adds two numbers.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.4.0
+ * @category Math
+ * @param {number} augend The first number in an addition.
+ * @param {number} addend The second number in an addition.
+ * @returns {number} Returns the total.
+ * @example
+ *
+ * _.add(6, 4);
+ * // => 10
+ */
+var add = (0, _createMathOperation_js_1.default)(function (augend, addend) {
+    return augend + addend;
+}, 0);
+exports.default = add;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2FkZC5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLHdGQUE0RDtBQUU1RDs7Ozs7Ozs7Ozs7Ozs7R0FjRztBQUNILElBQUksR0FBRyxHQUFHLElBQUEsaUNBQW1CLEVBQUMsVUFBUyxNQUFNLEVBQUUsTUFBTTtJQUNuRCxPQUFPLE1BQU0sR0FBRyxNQUFNLENBQUM7QUFDekIsQ0FBQyxFQUFFLENBQUMsQ0FBQyxDQUFDO0FBRU4sa0JBQWUsR0FBRyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9hZGQuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGNyZWF0ZU1hdGhPcGVyYXRpb24gZnJvbSAnLi9fY3JlYXRlTWF0aE9wZXJhdGlvbi5qcyc7XG5cbi8qKlxuICogQWRkcyB0d28gbnVtYmVycy5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDMuNC4wXG4gKiBAY2F0ZWdvcnkgTWF0aFxuICogQHBhcmFtIHtudW1iZXJ9IGF1Z2VuZCBUaGUgZmlyc3QgbnVtYmVyIGluIGFuIGFkZGl0aW9uLlxuICogQHBhcmFtIHtudW1iZXJ9IGFkZGVuZCBUaGUgc2Vjb25kIG51bWJlciBpbiBhbiBhZGRpdGlvbi5cbiAqIEByZXR1cm5zIHtudW1iZXJ9IFJldHVybnMgdGhlIHRvdGFsLlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLmFkZCg2LCA0KTtcbiAqIC8vID0+IDEwXG4gKi9cbnZhciBhZGQgPSBjcmVhdGVNYXRoT3BlcmF0aW9uKGZ1bmN0aW9uKGF1Z2VuZCwgYWRkZW5kKSB7XG4gIHJldHVybiBhdWdlbmQgKyBhZGRlbmQ7XG59LCAwKTtcblxuZXhwb3J0IGRlZmF1bHQgYWRkO1xuIl0sInZlcnNpb24iOjN9

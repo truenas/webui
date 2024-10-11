@@ -1,0 +1,36 @@
+850976aad614a8e7bc14b20218dea29a
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseRange_js_1 = __importDefault(require("./_baseRange.js"));
+const _isIterateeCall_js_1 = __importDefault(require("./_isIterateeCall.js"));
+const toFinite_js_1 = __importDefault(require("./toFinite.js"));
+/**
+ * Creates a `_.range` or `_.rangeRight` function.
+ *
+ * @private
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new range function.
+ */
+function createRange(fromRight) {
+    return function (start, end, step) {
+        if (step && typeof step != 'number' && (0, _isIterateeCall_js_1.default)(start, end, step)) {
+            end = step = undefined;
+        }
+        // Ensure the sign of `-0` is preserved.
+        start = (0, toFinite_js_1.default)(start);
+        if (end === undefined) {
+            end = start;
+            start = 0;
+        }
+        else {
+            end = (0, toFinite_js_1.default)(end);
+        }
+        step = step === undefined ? (start < end ? 1 : -1) : (0, toFinite_js_1.default)(step);
+        return (0, _baseRange_js_1.default)(start, end, step, fromRight);
+    };
+}
+exports.default = createRange;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jcmVhdGVSYW5nZS5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLG9FQUF3QztBQUN4Qyw4RUFBa0Q7QUFDbEQsZ0VBQXFDO0FBRXJDOzs7Ozs7R0FNRztBQUNILFNBQVMsV0FBVyxDQUFDLFNBQVM7SUFDNUIsT0FBTyxVQUFTLEtBQUssRUFBRSxHQUFHLEVBQUUsSUFBSTtRQUM5QixJQUFJLElBQUksSUFBSSxPQUFPLElBQUksSUFBSSxRQUFRLElBQUksSUFBQSw0QkFBYyxFQUFDLEtBQUssRUFBRSxHQUFHLEVBQUUsSUFBSSxDQUFDLEVBQUUsQ0FBQztZQUN4RSxHQUFHLEdBQUcsSUFBSSxHQUFHLFNBQVMsQ0FBQztRQUN6QixDQUFDO1FBQ0Qsd0NBQXdDO1FBQ3hDLEtBQUssR0FBRyxJQUFBLHFCQUFRLEVBQUMsS0FBSyxDQUFDLENBQUM7UUFDeEIsSUFBSSxHQUFHLEtBQUssU0FBUyxFQUFFLENBQUM7WUFDdEIsR0FBRyxHQUFHLEtBQUssQ0FBQztZQUNaLEtBQUssR0FBRyxDQUFDLENBQUM7UUFDWixDQUFDO2FBQU0sQ0FBQztZQUNOLEdBQUcsR0FBRyxJQUFBLHFCQUFRLEVBQUMsR0FBRyxDQUFDLENBQUM7UUFDdEIsQ0FBQztRQUNELElBQUksR0FBRyxJQUFJLEtBQUssU0FBUyxDQUFDLENBQUMsQ0FBQyxDQUFDLEtBQUssR0FBRyxHQUFHLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsSUFBQSxxQkFBUSxFQUFDLElBQUksQ0FBQyxDQUFDO1FBQ3BFLE9BQU8sSUFBQSx1QkFBUyxFQUFDLEtBQUssRUFBRSxHQUFHLEVBQUUsSUFBSSxFQUFFLFNBQVMsQ0FBQyxDQUFDO0lBQ2hELENBQUMsQ0FBQztBQUNKLENBQUM7QUFFRCxrQkFBZSxXQUFXLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jcmVhdGVSYW5nZS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZVJhbmdlIGZyb20gJy4vX2Jhc2VSYW5nZS5qcyc7XG5pbXBvcnQgaXNJdGVyYXRlZUNhbGwgZnJvbSAnLi9faXNJdGVyYXRlZUNhbGwuanMnO1xuaW1wb3J0IHRvRmluaXRlIGZyb20gJy4vdG9GaW5pdGUuanMnO1xuXG4vKipcbiAqIENyZWF0ZXMgYSBgXy5yYW5nZWAgb3IgYF8ucmFuZ2VSaWdodGAgZnVuY3Rpb24uXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7Ym9vbGVhbn0gW2Zyb21SaWdodF0gU3BlY2lmeSBpdGVyYXRpbmcgZnJvbSByaWdodCB0byBsZWZ0LlxuICogQHJldHVybnMge0Z1bmN0aW9ufSBSZXR1cm5zIHRoZSBuZXcgcmFuZ2UgZnVuY3Rpb24uXG4gKi9cbmZ1bmN0aW9uIGNyZWF0ZVJhbmdlKGZyb21SaWdodCkge1xuICByZXR1cm4gZnVuY3Rpb24oc3RhcnQsIGVuZCwgc3RlcCkge1xuICAgIGlmIChzdGVwICYmIHR5cGVvZiBzdGVwICE9ICdudW1iZXInICYmIGlzSXRlcmF0ZWVDYWxsKHN0YXJ0LCBlbmQsIHN0ZXApKSB7XG4gICAgICBlbmQgPSBzdGVwID0gdW5kZWZpbmVkO1xuICAgIH1cbiAgICAvLyBFbnN1cmUgdGhlIHNpZ24gb2YgYC0wYCBpcyBwcmVzZXJ2ZWQuXG4gICAgc3RhcnQgPSB0b0Zpbml0ZShzdGFydCk7XG4gICAgaWYgKGVuZCA9PT0gdW5kZWZpbmVkKSB7XG4gICAgICBlbmQgPSBzdGFydDtcbiAgICAgIHN0YXJ0ID0gMDtcbiAgICB9IGVsc2Uge1xuICAgICAgZW5kID0gdG9GaW5pdGUoZW5kKTtcbiAgICB9XG4gICAgc3RlcCA9IHN0ZXAgPT09IHVuZGVmaW5lZCA/IChzdGFydCA8IGVuZCA/IDEgOiAtMSkgOiB0b0Zpbml0ZShzdGVwKTtcbiAgICByZXR1cm4gYmFzZVJhbmdlKHN0YXJ0LCBlbmQsIHN0ZXAsIGZyb21SaWdodCk7XG4gIH07XG59XG5cbmV4cG9ydCBkZWZhdWx0IGNyZWF0ZVJhbmdlO1xuIl0sInZlcnNpb24iOjN9

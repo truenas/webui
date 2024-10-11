@@ -1,0 +1,42 @@
+9d54d845b52324a87f769d30cbb1f988
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseSlice_js_1 = __importDefault(require("./_baseSlice.js"));
+const _isIterateeCall_js_1 = __importDefault(require("./_isIterateeCall.js"));
+const toInteger_js_1 = __importDefault(require("./toInteger.js"));
+/**
+ * Creates a slice of `array` from `start` up to, but not including, `end`.
+ *
+ * **Note:** This method is used instead of
+ * [`Array#slice`](https://mdn.io/Array/slice) to ensure dense arrays are
+ * returned.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Array
+ * @param {Array} array The array to slice.
+ * @param {number} [start=0] The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns the slice of `array`.
+ */
+function slice(array, start, end) {
+    var length = array == null ? 0 : array.length;
+    if (!length) {
+        return [];
+    }
+    if (end && typeof end != 'number' && (0, _isIterateeCall_js_1.default)(array, start, end)) {
+        start = 0;
+        end = length;
+    }
+    else {
+        start = start == null ? 0 : (0, toInteger_js_1.default)(start);
+        end = end === undefined ? length : (0, toInteger_js_1.default)(end);
+    }
+    return (0, _baseSlice_js_1.default)(array, start, end);
+}
+exports.default = slice;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3NsaWNlLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsb0VBQXdDO0FBQ3hDLDhFQUFrRDtBQUNsRCxrRUFBdUM7QUFFdkM7Ozs7Ozs7Ozs7Ozs7OztHQWVHO0FBQ0gsU0FBUyxLQUFLLENBQUMsS0FBSyxFQUFFLEtBQUssRUFBRSxHQUFHO0lBQzlCLElBQUksTUFBTSxHQUFHLEtBQUssSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDLE1BQU0sQ0FBQztJQUM5QyxJQUFJLENBQUMsTUFBTSxFQUFFLENBQUM7UUFDWixPQUFPLEVBQUUsQ0FBQztJQUNaLENBQUM7SUFDRCxJQUFJLEdBQUcsSUFBSSxPQUFPLEdBQUcsSUFBSSxRQUFRLElBQUksSUFBQSw0QkFBYyxFQUFDLEtBQUssRUFBRSxLQUFLLEVBQUUsR0FBRyxDQUFDLEVBQUUsQ0FBQztRQUN2RSxLQUFLLEdBQUcsQ0FBQyxDQUFDO1FBQ1YsR0FBRyxHQUFHLE1BQU0sQ0FBQztJQUNmLENBQUM7U0FDSSxDQUFDO1FBQ0osS0FBSyxHQUFHLEtBQUssSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsSUFBQSxzQkFBUyxFQUFDLEtBQUssQ0FBQyxDQUFDO1FBQzdDLEdBQUcsR0FBRyxHQUFHLEtBQUssU0FBUyxDQUFDLENBQUMsQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDLElBQUEsc0JBQVMsRUFBQyxHQUFHLENBQUMsQ0FBQztJQUNwRCxDQUFDO0lBQ0QsT0FBTyxJQUFBLHVCQUFTLEVBQUMsS0FBSyxFQUFFLEtBQUssRUFBRSxHQUFHLENBQUMsQ0FBQztBQUN0QyxDQUFDO0FBRUQsa0JBQWUsS0FBSyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9zbGljZS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZVNsaWNlIGZyb20gJy4vX2Jhc2VTbGljZS5qcyc7XG5pbXBvcnQgaXNJdGVyYXRlZUNhbGwgZnJvbSAnLi9faXNJdGVyYXRlZUNhbGwuanMnO1xuaW1wb3J0IHRvSW50ZWdlciBmcm9tICcuL3RvSW50ZWdlci5qcyc7XG5cbi8qKlxuICogQ3JlYXRlcyBhIHNsaWNlIG9mIGBhcnJheWAgZnJvbSBgc3RhcnRgIHVwIHRvLCBidXQgbm90IGluY2x1ZGluZywgYGVuZGAuXG4gKlxuICogKipOb3RlOioqIFRoaXMgbWV0aG9kIGlzIHVzZWQgaW5zdGVhZCBvZlxuICogW2BBcnJheSNzbGljZWBdKGh0dHBzOi8vbWRuLmlvL0FycmF5L3NsaWNlKSB0byBlbnN1cmUgZGVuc2UgYXJyYXlzIGFyZVxuICogcmV0dXJuZWQuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSAzLjAuMFxuICogQGNhdGVnb3J5IEFycmF5XG4gKiBAcGFyYW0ge0FycmF5fSBhcnJheSBUaGUgYXJyYXkgdG8gc2xpY2UuXG4gKiBAcGFyYW0ge251bWJlcn0gW3N0YXJ0PTBdIFRoZSBzdGFydCBwb3NpdGlvbi5cbiAqIEBwYXJhbSB7bnVtYmVyfSBbZW5kPWFycmF5Lmxlbmd0aF0gVGhlIGVuZCBwb3NpdGlvbi5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUgc2xpY2Ugb2YgYGFycmF5YC5cbiAqL1xuZnVuY3Rpb24gc2xpY2UoYXJyYXksIHN0YXJ0LCBlbmQpIHtcbiAgdmFyIGxlbmd0aCA9IGFycmF5ID09IG51bGwgPyAwIDogYXJyYXkubGVuZ3RoO1xuICBpZiAoIWxlbmd0aCkge1xuICAgIHJldHVybiBbXTtcbiAgfVxuICBpZiAoZW5kICYmIHR5cGVvZiBlbmQgIT0gJ251bWJlcicgJiYgaXNJdGVyYXRlZUNhbGwoYXJyYXksIHN0YXJ0LCBlbmQpKSB7XG4gICAgc3RhcnQgPSAwO1xuICAgIGVuZCA9IGxlbmd0aDtcbiAgfVxuICBlbHNlIHtcbiAgICBzdGFydCA9IHN0YXJ0ID09IG51bGwgPyAwIDogdG9JbnRlZ2VyKHN0YXJ0KTtcbiAgICBlbmQgPSBlbmQgPT09IHVuZGVmaW5lZCA/IGxlbmd0aCA6IHRvSW50ZWdlcihlbmQpO1xuICB9XG4gIHJldHVybiBiYXNlU2xpY2UoYXJyYXksIHN0YXJ0LCBlbmQpO1xufVxuXG5leHBvcnQgZGVmYXVsdCBzbGljZTtcbiJdLCJ2ZXJzaW9uIjozfQ==

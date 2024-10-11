@@ -1,0 +1,2 @@
+712dc70fde6f7c5771be5e9dc60eba68
+module.exports="<ix-fieldset [title]=\"'Authentication' | translate\" [formGroup]=\"form\">\n  <ix-input\n    formControlName=\"account\"\n    [label]=\"'Key ID' | translate\"\n    [required]=\"true\"\n    [tooltip]=\"helptext.account_b2.tooltip | translate\"\n  ></ix-input>\n\n  <ix-input\n    formControlName=\"key\"\n    type=\"password\"\n    [label]=\"'Application Key' | translate\"\n    [required]=\"true\"\n    [tooltip]=\"helptext.key_b2.tooltip | translate\"\n  ></ix-input>\n</ix-fieldset>\n"

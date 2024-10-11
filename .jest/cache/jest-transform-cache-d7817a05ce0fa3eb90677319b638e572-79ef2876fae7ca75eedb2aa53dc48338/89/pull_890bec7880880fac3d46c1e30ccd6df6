@@ -1,0 +1,34 @@
+0b70b649f7e102c4e580210df0219d01
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const pullAll_js_1 = __importDefault(require("./pullAll.js"));
+/**
+ * Removes all given values from `array` using
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons.
+ *
+ * **Note:** Unlike `_.without`, this method mutates `array`. Use `_.remove`
+ * to remove elements from an array by predicate.
+ *
+ * @static
+ * @memberOf _
+ * @since 2.0.0
+ * @category Array
+ * @param {Array} array The array to modify.
+ * @param {...*} [values] The values to remove.
+ * @returns {Array} Returns `array`.
+ * @example
+ *
+ * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
+ *
+ * _.pull(array, 'a', 'c');
+ * console.log(array);
+ * // => ['b', 'b']
+ */
+var pull = (0, _baseRest_js_1.default)(pullAll_js_1.default);
+exports.default = pull;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3B1bGwuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxrRUFBc0M7QUFDdEMsOERBQW1DO0FBRW5DOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBc0JHO0FBQ0gsSUFBSSxJQUFJLEdBQUcsSUFBQSxzQkFBUSxFQUFDLG9CQUFPLENBQUMsQ0FBQztBQUU3QixrQkFBZSxJQUFJLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3B1bGwuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VSZXN0IGZyb20gJy4vX2Jhc2VSZXN0LmpzJztcbmltcG9ydCBwdWxsQWxsIGZyb20gJy4vcHVsbEFsbC5qcyc7XG5cbi8qKlxuICogUmVtb3ZlcyBhbGwgZ2l2ZW4gdmFsdWVzIGZyb20gYGFycmF5YCB1c2luZ1xuICogW2BTYW1lVmFsdWVaZXJvYF0oaHR0cDovL2VjbWEtaW50ZXJuYXRpb25hbC5vcmcvZWNtYS0yNjIvNy4wLyNzZWMtc2FtZXZhbHVlemVybylcbiAqIGZvciBlcXVhbGl0eSBjb21wYXJpc29ucy5cbiAqXG4gKiAqKk5vdGU6KiogVW5saWtlIGBfLndpdGhvdXRgLCB0aGlzIG1ldGhvZCBtdXRhdGVzIGBhcnJheWAuIFVzZSBgXy5yZW1vdmVgXG4gKiB0byByZW1vdmUgZWxlbWVudHMgZnJvbSBhbiBhcnJheSBieSBwcmVkaWNhdGUuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSAyLjAuMFxuICogQGNhdGVnb3J5IEFycmF5XG4gKiBAcGFyYW0ge0FycmF5fSBhcnJheSBUaGUgYXJyYXkgdG8gbW9kaWZ5LlxuICogQHBhcmFtIHsuLi4qfSBbdmFsdWVzXSBUaGUgdmFsdWVzIHRvIHJlbW92ZS5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyBgYXJyYXlgLlxuICogQGV4YW1wbGVcbiAqXG4gKiB2YXIgYXJyYXkgPSBbJ2EnLCAnYicsICdjJywgJ2EnLCAnYicsICdjJ107XG4gKlxuICogXy5wdWxsKGFycmF5LCAnYScsICdjJyk7XG4gKiBjb25zb2xlLmxvZyhhcnJheSk7XG4gKiAvLyA9PiBbJ2InLCAnYiddXG4gKi9cbnZhciBwdWxsID0gYmFzZVJlc3QocHVsbEFsbCk7XG5cbmV4cG9ydCBkZWZhdWx0IHB1bGw7XG4iXSwidmVyc2lvbiI6M30=

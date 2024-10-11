@@ -1,0 +1,18 @@
+582c933cd6e0dd710c36b29f1adbfc3e
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PlotterService = void 0;
+const core_1 = require("@angular/core");
+let PlotterService = class PlotterService {
+};
+exports.PlotterService = PlotterService;
+exports.PlotterService = PlotterService = __decorate([
+    (0, core_1.Injectable)()
+], PlotterService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL3JlcG9ydHMtZGFzaGJvYXJkL3NlcnZpY2VzL3Bsb3R0ZXIuc2VydmljZS50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7QUFBQSx3Q0FBMkM7QUFHcEMsSUFBZSxjQUFjLEdBQTdCLE1BQWUsY0FBYztDQUVuQyxDQUFBO0FBRnFCLHdDQUFjO3lCQUFkLGNBQWM7SUFEbkMsSUFBQSxpQkFBVSxHQUFFO0dBQ1MsY0FBYyxDQUVuQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvcmVwb3J0cy1kYXNoYm9hcmQvc2VydmljZXMvcGxvdHRlci5zZXJ2aWNlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEluamVjdGFibGUgfSBmcm9tICdAYW5ndWxhci9jb3JlJztcblxuQEluamVjdGFibGUoKVxuZXhwb3J0IGFic3RyYWN0IGNsYXNzIFBsb3R0ZXJTZXJ2aWNlIHtcbiAgYWJzdHJhY3QgZ2V0U21vb3RoUGxvdHRlcigpOiB1bmtub3duO1xufVxuIl0sInZlcnNpb24iOjN9

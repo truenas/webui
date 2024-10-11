@@ -1,0 +1,192 @@
+6b53c9ccd876a74a7201941da3d7282a
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
+var testing_exports = {};
+__export(testing_exports, {
+  FakeMatIconRegistry: () => FakeMatIconRegistry,
+  IconType: () => IconType,
+  MatIconHarness: () => MatIconHarness,
+  MatIconTestingModule: () => MatIconTestingModule
+});
+module.exports = __toCommonJS(testing_exports);
+var import_testing = require("@angular/cdk/testing");
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_icon = require("@angular/material/icon");
+var import_rxjs = require("rxjs");
+var IconType;
+(function(IconType2) {
+  IconType2[IconType2["SVG"] = 0] = "SVG";
+  IconType2[IconType2["FONT"] = 1] = "FONT";
+})(IconType || (IconType = {}));
+const _MatIconHarness = class _MatIconHarness extends import_testing.ComponentHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a `MatIconHarness` that meets
+   * certain criteria.
+   * @param options Options for filtering which icon instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(_MatIconHarness, options).addOption("type", options.type, (harness, type) => __async(this, null, function* () {
+      return (yield harness.getType()) === type;
+    })).addOption("name", options.name, (harness, text) => import_testing.HarnessPredicate.stringMatches(harness.getName(), text)).addOption("namespace", options.namespace, (harness, text) => import_testing.HarnessPredicate.stringMatches(harness.getNamespace(), text));
+  }
+  /** Gets the type of the icon. */
+  getType() {
+    return __async(this, null, function* () {
+      const type = yield (yield this.host()).getAttribute("data-mat-icon-type");
+      return type === "svg" ? IconType.SVG : IconType.FONT;
+    });
+  }
+  /** Gets the name of the icon. */
+  getName() {
+    return __async(this, null, function* () {
+      const host = yield this.host();
+      const nameFromDom = yield host.getAttribute("data-mat-icon-name");
+      if (nameFromDom) {
+        return nameFromDom;
+      }
+      if ((yield this.getType()) === IconType.FONT) {
+        const text = yield host.text({ exclude: "*" });
+        return text.length > 0 ? text : host.text();
+      }
+      return null;
+    });
+  }
+  /** Gets the namespace of the icon. */
+  getNamespace() {
+    return __async(this, null, function* () {
+      return (yield this.host()).getAttribute("data-mat-icon-namespace");
+    });
+  }
+  /** Gets whether the icon is inline. */
+  isInline() {
+    return __async(this, null, function* () {
+      return (yield this.host()).hasClass("mat-icon-inline");
+    });
+  }
+};
+_MatIconHarness.hostSelector = ".mat-icon";
+let MatIconHarness = _MatIconHarness;
+const _FakeMatIconRegistry = class _FakeMatIconRegistry {
+  addSvgIcon() {
+    return this;
+  }
+  addSvgIconLiteral() {
+    return this;
+  }
+  addSvgIconInNamespace() {
+    return this;
+  }
+  addSvgIconLiteralInNamespace() {
+    return this;
+  }
+  addSvgIconSet() {
+    return this;
+  }
+  addSvgIconSetLiteral() {
+    return this;
+  }
+  addSvgIconSetInNamespace() {
+    return this;
+  }
+  addSvgIconSetLiteralInNamespace() {
+    return this;
+  }
+  registerFontClassAlias() {
+    return this;
+  }
+  classNameForFontAlias(alias) {
+    return alias;
+  }
+  getDefaultFontSetClass() {
+    return ["material-icons"];
+  }
+  getSvgIconFromUrl() {
+    return (0, import_rxjs.of)(this._generateEmptySvg());
+  }
+  getNamedSvgIcon() {
+    return (0, import_rxjs.of)(this._generateEmptySvg());
+  }
+  setDefaultFontSetClass() {
+    return this;
+  }
+  addSvgIconResolver() {
+    return this;
+  }
+  ngOnDestroy() {
+  }
+  _generateEmptySvg() {
+    const emptySvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    emptySvg.classList.add("fake-testing-svg");
+    emptySvg.setAttribute("fit", "");
+    emptySvg.setAttribute("height", "100%");
+    emptySvg.setAttribute("width", "100%");
+    emptySvg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    emptySvg.setAttribute("focusable", "false");
+    return emptySvg;
+  }
+};
+_FakeMatIconRegistry.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _FakeMatIconRegistry, deps: [], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_FakeMatIconRegistry.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _FakeMatIconRegistry });
+let FakeMatIconRegistry = _FakeMatIconRegistry;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: FakeMatIconRegistry, decorators: [{
+  type: import_core.Injectable
+}] });
+const _MatIconTestingModule = class _MatIconTestingModule {
+};
+_MatIconTestingModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatIconTestingModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_MatIconTestingModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatIconTestingModule });
+_MatIconTestingModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatIconTestingModule, providers: [{ provide: import_icon.MatIconRegistry, useClass: FakeMatIconRegistry }] });
+let MatIconTestingModule = _MatIconTestingModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatIconTestingModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    providers: [{ provide: import_icon.MatIconRegistry, useClass: FakeMatIconRegistry }]
+  }]
+}] });

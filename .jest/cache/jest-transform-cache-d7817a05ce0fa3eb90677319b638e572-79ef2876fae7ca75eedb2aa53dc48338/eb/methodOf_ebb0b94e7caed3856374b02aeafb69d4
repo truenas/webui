@@ -1,0 +1,38 @@
+211829bbddebeec08fd11135dc8b7233
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseInvoke_js_1 = __importDefault(require("./_baseInvoke.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+/**
+ * The opposite of `_.method`; this method creates a function that invokes
+ * the method at a given path of `object`. Any additional arguments are
+ * provided to the invoked method.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.7.0
+ * @category Util
+ * @param {Object} object The object to query.
+ * @param {...*} [args] The arguments to invoke the method with.
+ * @returns {Function} Returns the new invoker function.
+ * @example
+ *
+ * var array = _.times(3, _.constant),
+ *     object = { 'a': array, 'b': array, 'c': array };
+ *
+ * _.map(['a[2]', 'c[0]'], _.methodOf(object));
+ * // => [2, 0]
+ *
+ * _.map([['a', '2'], ['c', '0']], _.methodOf(object));
+ * // => [2, 0]
+ */
+var methodOf = (0, _baseRest_js_1.default)(function (object, args) {
+    return function (path) {
+        return (0, _baseInvoke_js_1.default)(object, path, args);
+    };
+});
+exports.default = methodOf;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL21ldGhvZE9mLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsc0VBQTBDO0FBQzFDLGtFQUFzQztBQUV0Qzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXNCRztBQUNILElBQUksUUFBUSxHQUFHLElBQUEsc0JBQVEsRUFBQyxVQUFTLE1BQU0sRUFBRSxJQUFJO0lBQzNDLE9BQU8sVUFBUyxJQUFJO1FBQ2xCLE9BQU8sSUFBQSx3QkFBVSxFQUFDLE1BQU0sRUFBRSxJQUFJLEVBQUUsSUFBSSxDQUFDLENBQUM7SUFDeEMsQ0FBQyxDQUFDO0FBQ0osQ0FBQyxDQUFDLENBQUM7QUFFSCxrQkFBZSxRQUFRLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL21ldGhvZE9mLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlSW52b2tlIGZyb20gJy4vX2Jhc2VJbnZva2UuanMnO1xuaW1wb3J0IGJhc2VSZXN0IGZyb20gJy4vX2Jhc2VSZXN0LmpzJztcblxuLyoqXG4gKiBUaGUgb3Bwb3NpdGUgb2YgYF8ubWV0aG9kYDsgdGhpcyBtZXRob2QgY3JlYXRlcyBhIGZ1bmN0aW9uIHRoYXQgaW52b2tlc1xuICogdGhlIG1ldGhvZCBhdCBhIGdpdmVuIHBhdGggb2YgYG9iamVjdGAuIEFueSBhZGRpdGlvbmFsIGFyZ3VtZW50cyBhcmVcbiAqIHByb3ZpZGVkIHRvIHRoZSBpbnZva2VkIG1ldGhvZC5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDMuNy4wXG4gKiBAY2F0ZWdvcnkgVXRpbFxuICogQHBhcmFtIHtPYmplY3R9IG9iamVjdCBUaGUgb2JqZWN0IHRvIHF1ZXJ5LlxuICogQHBhcmFtIHsuLi4qfSBbYXJnc10gVGhlIGFyZ3VtZW50cyB0byBpbnZva2UgdGhlIG1ldGhvZCB3aXRoLlxuICogQHJldHVybnMge0Z1bmN0aW9ufSBSZXR1cm5zIHRoZSBuZXcgaW52b2tlciBmdW5jdGlvbi5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIGFycmF5ID0gXy50aW1lcygzLCBfLmNvbnN0YW50KSxcbiAqICAgICBvYmplY3QgPSB7ICdhJzogYXJyYXksICdiJzogYXJyYXksICdjJzogYXJyYXkgfTtcbiAqXG4gKiBfLm1hcChbJ2FbMl0nLCAnY1swXSddLCBfLm1ldGhvZE9mKG9iamVjdCkpO1xuICogLy8gPT4gWzIsIDBdXG4gKlxuICogXy5tYXAoW1snYScsICcyJ10sIFsnYycsICcwJ11dLCBfLm1ldGhvZE9mKG9iamVjdCkpO1xuICogLy8gPT4gWzIsIDBdXG4gKi9cbnZhciBtZXRob2RPZiA9IGJhc2VSZXN0KGZ1bmN0aW9uKG9iamVjdCwgYXJncykge1xuICByZXR1cm4gZnVuY3Rpb24ocGF0aCkge1xuICAgIHJldHVybiBiYXNlSW52b2tlKG9iamVjdCwgcGF0aCwgYXJncyk7XG4gIH07XG59KTtcblxuZXhwb3J0IGRlZmF1bHQgbWV0aG9kT2Y7XG4iXSwidmVyc2lvbiI6M30=

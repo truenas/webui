@@ -1,0 +1,91 @@
+e4eaa5f992693047b9405925722c411b
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TokenProviderFormComponent = void 0;
+const core_1 = require("@angular/core");
+const forms_1 = require("@angular/forms");
+const until_destroy_1 = require("@ngneat/until-destroy");
+const core_2 = require("@ngx-translate/core");
+const cloudsync_provider_enum_1 = require("app/enums/cloudsync-provider.enum");
+const cloud_credentials_1 = require("app/helptext/system/cloud-credentials");
+const ix_fieldset_component_1 = require("app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component");
+const ix_input_component_1 = require("app/modules/forms/ix-forms/components/ix-input/ix-input.component");
+const oauth_provider_component_1 = require("app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component");
+const base_provider_form_1 = require("app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form");
+let TokenProviderFormComponent = class TokenProviderFormComponent extends base_provider_form_1.BaseProviderFormComponent {
+    constructor(formBuilder, cdr) {
+        super();
+        this.formBuilder = formBuilder;
+        this.cdr = cdr;
+        this.form = this.formBuilder.group({
+            token: ['', forms_1.Validators.required],
+        });
+    }
+    get hasOAuth() {
+        return Boolean(this.provider.credentials_oauth);
+    }
+    get tooltip() {
+        switch (this.provider.name) {
+            case cloudsync_provider_enum_1.CloudSyncProviderName.Box:
+                return cloud_credentials_1.helptextSystemCloudcredentials.token_box.tooltip;
+            case cloudsync_provider_enum_1.CloudSyncProviderName.Dropbox:
+                return cloud_credentials_1.helptextSystemCloudcredentials.token_dropbox.tooltip;
+            case cloudsync_provider_enum_1.CloudSyncProviderName.Hubic:
+                return cloud_credentials_1.helptextSystemCloudcredentials.token_hubic.tooltip;
+            case cloudsync_provider_enum_1.CloudSyncProviderName.Yandex:
+                return cloud_credentials_1.helptextSystemCloudcredentials.token_yandex.tooltip;
+            default:
+                return '';
+        }
+    }
+    ngAfterViewInit() {
+        this.formPatcher$.pipe((0, until_destroy_1.untilDestroyed)(this)).subscribe((values) => {
+            this.form.patchValue(values);
+            if (this.hasOAuth) {
+                this.oauthComponent.form.patchValue(values);
+            }
+            this.cdr.detectChanges();
+        });
+    }
+    onOauthAuthenticated(attributes) {
+        this.form.patchValue(attributes);
+    }
+    getSubmitAttributes() {
+        var _a, _b;
+        if (!this.hasOAuth) {
+            return this.form.value;
+        }
+        return Object.assign(Object.assign({}, (_b = (_a = this.oauthComponent) === null || _a === void 0 ? void 0 : _a.form) === null || _b === void 0 ? void 0 : _b.value), this.form.value);
+    }
+};
+exports.TokenProviderFormComponent = TokenProviderFormComponent;
+TokenProviderFormComponent.ctorParameters = () => [
+    { type: forms_1.FormBuilder },
+    { type: core_1.ChangeDetectorRef }
+];
+TokenProviderFormComponent.propDecorators = {
+    oauthComponent: [{ type: core_1.ViewChild, args: [oauth_provider_component_1.OauthProviderComponent, { static: false },] }]
+};
+exports.TokenProviderFormComponent = TokenProviderFormComponent = __decorate([
+    (0, until_destroy_1.UntilDestroy)(),
+    (0, core_1.Component)({
+        selector: 'ix-token-provider-form',
+        template: require("./token-provider-form.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            oauth_provider_component_1.OauthProviderComponent,
+            ix_fieldset_component_1.IxFieldsetComponent,
+            forms_1.ReactiveFormsModule,
+            ix_input_component_1.IxInputComponent,
+            core_2.TranslateModule,
+        ],
+    })
+], TokenProviderFormComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2NyZWRlbnRpYWxzL2JhY2t1cC1jcmVkZW50aWFscy9jbG91ZC1jcmVkZW50aWFscy1mb3JtL3Byb3ZpZGVyLWZvcm1zL3Rva2VuLXByb3ZpZGVyLWZvcm0vdG9rZW4tcHJvdmlkZXItZm9ybS5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7O0FBQUEsd0NBRXVCO0FBQ3ZCLDBDQUE4RTtBQUM5RSx5REFBcUU7QUFDckUsOENBQXNEO0FBQ3RELCtFQUEwRTtBQUMxRSw2RUFBbUc7QUFDbkcsbUhBQThHO0FBQzlHLDBHQUFxRztBQUNyRyxzSkFFaUg7QUFDakgsMElBRTJHO0FBZ0JwRyxJQUFNLDBCQUEwQixHQUFoQyxNQUFNLDBCQUEyQixTQUFRLDhDQUF5QjtJQU92RSxZQUNVLFdBQXdCLEVBQ3hCLEdBQXNCO1FBRTlCLEtBQUssRUFBRSxDQUFDO1FBSEEsZ0JBQVcsR0FBWCxXQUFXLENBQWE7UUFDeEIsUUFBRyxHQUFILEdBQUcsQ0FBbUI7UUFOaEMsU0FBSSxHQUFHLElBQUksQ0FBQyxXQUFXLENBQUMsS0FBSyxDQUFDO1lBQzVCLEtBQUssRUFBRSxDQUFDLEVBQUUsRUFBRSxrQkFBVSxDQUFDLFFBQVEsQ0FBQztTQUNqQyxDQUFDLENBQUM7SUFPSCxDQUFDO0lBRUQsSUFBSSxRQUFRO1FBQ1YsT0FBTyxPQUFPLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxpQkFBaUIsQ0FBQyxDQUFDO0lBQ2xELENBQUM7SUFFRCxJQUFJLE9BQU87UUFDVCxRQUFRLElBQUksQ0FBQyxRQUFRLENBQUMsSUFBSSxFQUFFLENBQUM7WUFDM0IsS0FBSywrQ0FBcUIsQ0FBQyxHQUFHO2dCQUM1QixPQUFPLGtEQUFRLENBQUMsU0FBUyxDQUFDLE9BQU8sQ0FBQztZQUNwQyxLQUFLLCtDQUFxQixDQUFDLE9BQU87Z0JBQ2hDLE9BQU8sa0RBQVEsQ0FBQyxhQUFhLENBQUMsT0FBTyxDQUFDO1lBQ3hDLEtBQUssK0NBQXFCLENBQUMsS0FBSztnQkFDOUIsT0FBTyxrREFBUSxDQUFDLFdBQVcsQ0FBQyxPQUFPLENBQUM7WUFDdEMsS0FBSywrQ0FBcUIsQ0FBQyxNQUFNO2dCQUMvQixPQUFPLGtEQUFRLENBQUMsWUFBWSxDQUFDLE9BQU8sQ0FBQztZQUN2QztnQkFDRSxPQUFPLEVBQUUsQ0FBQztRQUNkLENBQUM7SUFDSCxDQUFDO0lBRUQsZUFBZTtRQUNiLElBQUksQ0FBQyxZQUFZLENBQUMsSUFBSSxDQUFDLElBQUEsOEJBQWMsRUFBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLFNBQVMsQ0FBQyxDQUFDLE1BQU0sRUFBRSxFQUFFO1lBQ2hFLElBQUksQ0FBQyxJQUFJLENBQUMsVUFBVSxDQUFDLE1BQU0sQ0FBQyxDQUFDO1lBQzdCLElBQUksSUFBSSxDQUFDLFFBQVEsRUFBRSxDQUFDO2dCQUNsQixJQUFJLENBQUMsY0FBYyxDQUFDLElBQUksQ0FBQyxVQUFVLENBQUMsTUFBTSxDQUFDLENBQUM7WUFDOUMsQ0FBQztZQUNELElBQUksQ0FBQyxHQUFHLENBQUMsYUFBYSxFQUFFLENBQUM7UUFDM0IsQ0FBQyxDQUFDLENBQUM7SUFDTCxDQUFDO0lBRUQsb0JBQW9CLENBQUMsVUFBbUM7UUFDdEQsSUFBSSxDQUFDLElBQUksQ0FBQyxVQUFVLENBQUMsVUFBVSxDQUFDLENBQUM7SUFDbkMsQ0FBQztJQUVRLG1CQUFtQjs7UUFDMUIsSUFBSSxDQUFDLElBQUksQ0FBQyxRQUFRLEVBQUUsQ0FBQztZQUNuQixPQUFPLElBQUksQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDO1FBQ3pCLENBQUM7UUFFRCx1Q0FDSyxNQUFBLE1BQUEsSUFBSSxDQUFDLGNBQWMsMENBQUUsSUFBSSwwQ0FBRSxLQUFLLEdBQ2hDLElBQUksQ0FBQyxJQUFJLENBQUMsS0FBSyxFQUNsQjtJQUNKLENBQUM7O0FBeERVLGdFQUEwQjs7Ozs7OzZCQUNwQyxnQkFBUyxTQUFDLGlEQUFzQixFQUFFLEVBQUUsTUFBTSxFQUFFLEtBQUssRUFBRTs7cUNBRHpDLDBCQUEwQjtJQWR0QyxJQUFBLDRCQUFZLEdBQUU7SUFDZCxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsd0JBQXdCO1FBQ2xDLHlEQUFtRDtRQUNuRCxlQUFlLEVBQUUsOEJBQXVCLENBQUMsTUFBTTtRQUMvQyxVQUFVLEVBQUUsSUFBSTtRQUNoQixPQUFPLEVBQUU7WUFDUCxpREFBc0I7WUFDdEIsMkNBQW1CO1lBQ25CLDJCQUFtQjtZQUNuQixxQ0FBZ0I7WUFDaEIsc0JBQWU7U0FDaEI7S0FDRixDQUFDO0dBQ1csMEJBQTBCLENBeUR0QyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvY3JlZGVudGlhbHMvYmFja3VwLWNyZWRlbnRpYWxzL2Nsb3VkLWNyZWRlbnRpYWxzLWZvcm0vcHJvdmlkZXItZm9ybXMvdG9rZW4tcHJvdmlkZXItZm9ybS90b2tlbi1wcm92aWRlci1mb3JtLmNvbXBvbmVudC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge1xuICBBZnRlclZpZXdJbml0LCBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgQ2hhbmdlRGV0ZWN0b3JSZWYsIENvbXBvbmVudCwgVmlld0NoaWxkLFxufSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7IEZvcm1CdWlsZGVyLCBWYWxpZGF0b3JzLCBSZWFjdGl2ZUZvcm1zTW9kdWxlIH0gZnJvbSAnQGFuZ3VsYXIvZm9ybXMnO1xuaW1wb3J0IHsgVW50aWxEZXN0cm95LCB1bnRpbERlc3Ryb3llZCB9IGZyb20gJ0BuZ25lYXQvdW50aWwtZGVzdHJveSc7XG5pbXBvcnQgeyBUcmFuc2xhdGVNb2R1bGUgfSBmcm9tICdAbmd4LXRyYW5zbGF0ZS9jb3JlJztcbmltcG9ydCB7IENsb3VkU3luY1Byb3ZpZGVyTmFtZSB9IGZyb20gJ2FwcC9lbnVtcy9jbG91ZHN5bmMtcHJvdmlkZXIuZW51bSc7XG5pbXBvcnQgeyBoZWxwdGV4dFN5c3RlbUNsb3VkY3JlZGVudGlhbHMgYXMgaGVscHRleHQgfSBmcm9tICdhcHAvaGVscHRleHQvc3lzdGVtL2Nsb3VkLWNyZWRlbnRpYWxzJztcbmltcG9ydCB7IEl4RmllbGRzZXRDb21wb25lbnQgfSBmcm9tICdhcHAvbW9kdWxlcy9mb3Jtcy9peC1mb3Jtcy9jb21wb25lbnRzL2l4LWZpZWxkc2V0L2l4LWZpZWxkc2V0LmNvbXBvbmVudCc7XG5pbXBvcnQgeyBJeElucHV0Q29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1pbnB1dC9peC1pbnB1dC5jb21wb25lbnQnO1xuaW1wb3J0IHtcbiAgT2F1dGhQcm92aWRlckNvbXBvbmVudCxcbn0gZnJvbSAnYXBwL3BhZ2VzL2NyZWRlbnRpYWxzL2JhY2t1cC1jcmVkZW50aWFscy9jbG91ZC1jcmVkZW50aWFscy1mb3JtL29hdXRoLXByb3ZpZGVyL29hdXRoLXByb3ZpZGVyLmNvbXBvbmVudCc7XG5pbXBvcnQge1xuICBCYXNlUHJvdmlkZXJGb3JtQ29tcG9uZW50LFxufSBmcm9tICdhcHAvcGFnZXMvY3JlZGVudGlhbHMvYmFja3VwLWNyZWRlbnRpYWxzL2Nsb3VkLWNyZWRlbnRpYWxzLWZvcm0vcHJvdmlkZXItZm9ybXMvYmFzZS1wcm92aWRlci1mb3JtJztcblxuQFVudGlsRGVzdHJveSgpXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC10b2tlbi1wcm92aWRlci1mb3JtJyxcbiAgdGVtcGxhdGVVcmw6ICcuL3Rva2VuLXByb3ZpZGVyLWZvcm0uY29tcG9uZW50Lmh0bWwnLFxuICBjaGFuZ2VEZXRlY3Rpb246IENoYW5nZURldGVjdGlvblN0cmF0ZWd5Lk9uUHVzaCxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbiAgaW1wb3J0czogW1xuICAgIE9hdXRoUHJvdmlkZXJDb21wb25lbnQsXG4gICAgSXhGaWVsZHNldENvbXBvbmVudCxcbiAgICBSZWFjdGl2ZUZvcm1zTW9kdWxlLFxuICAgIEl4SW5wdXRDb21wb25lbnQsXG4gICAgVHJhbnNsYXRlTW9kdWxlLFxuICBdLFxufSlcbmV4cG9ydCBjbGFzcyBUb2tlblByb3ZpZGVyRm9ybUNvbXBvbmVudCBleHRlbmRzIEJhc2VQcm92aWRlckZvcm1Db21wb25lbnQgaW1wbGVtZW50cyBBZnRlclZpZXdJbml0IHtcbiAgQFZpZXdDaGlsZChPYXV0aFByb3ZpZGVyQ29tcG9uZW50LCB7IHN0YXRpYzogZmFsc2UgfSkgb2F1dGhDb21wb25lbnQ6IE9hdXRoUHJvdmlkZXJDb21wb25lbnQ7XG5cbiAgZm9ybSA9IHRoaXMuZm9ybUJ1aWxkZXIuZ3JvdXAoe1xuICAgIHRva2VuOiBbJycsIFZhbGlkYXRvcnMucmVxdWlyZWRdLFxuICB9KTtcblxuICBjb25zdHJ1Y3RvcihcbiAgICBwcml2YXRlIGZvcm1CdWlsZGVyOiBGb3JtQnVpbGRlcixcbiAgICBwcml2YXRlIGNkcjogQ2hhbmdlRGV0ZWN0b3JSZWYsXG4gICkge1xuICAgIHN1cGVyKCk7XG4gIH1cblxuICBnZXQgaGFzT0F1dGgoKTogYm9vbGVhbiB7XG4gICAgcmV0dXJuIEJvb2xlYW4odGhpcy5wcm92aWRlci5jcmVkZW50aWFsc19vYXV0aCk7XG4gIH1cblxuICBnZXQgdG9vbHRpcCgpOiBzdHJpbmcge1xuICAgIHN3aXRjaCAodGhpcy5wcm92aWRlci5uYW1lKSB7XG4gICAgICBjYXNlIENsb3VkU3luY1Byb3ZpZGVyTmFtZS5Cb3g6XG4gICAgICAgIHJldHVybiBoZWxwdGV4dC50b2tlbl9ib3gudG9vbHRpcDtcbiAgICAgIGNhc2UgQ2xvdWRTeW5jUHJvdmlkZXJOYW1lLkRyb3Bib3g6XG4gICAgICAgIHJldHVybiBoZWxwdGV4dC50b2tlbl9kcm9wYm94LnRvb2x0aXA7XG4gICAgICBjYXNlIENsb3VkU3luY1Byb3ZpZGVyTmFtZS5IdWJpYzpcbiAgICAgICAgcmV0dXJuIGhlbHB0ZXh0LnRva2VuX2h1YmljLnRvb2x0aXA7XG4gICAgICBjYXNlIENsb3VkU3luY1Byb3ZpZGVyTmFtZS5ZYW5kZXg6XG4gICAgICAgIHJldHVybiBoZWxwdGV4dC50b2tlbl95YW5kZXgudG9vbHRpcDtcbiAgICAgIGRlZmF1bHQ6XG4gICAgICAgIHJldHVybiAnJztcbiAgICB9XG4gIH1cblxuICBuZ0FmdGVyVmlld0luaXQoKTogdm9pZCB7XG4gICAgdGhpcy5mb3JtUGF0Y2hlciQucGlwZSh1bnRpbERlc3Ryb3llZCh0aGlzKSkuc3Vic2NyaWJlKCh2YWx1ZXMpID0+IHtcbiAgICAgIHRoaXMuZm9ybS5wYXRjaFZhbHVlKHZhbHVlcyk7XG4gICAgICBpZiAodGhpcy5oYXNPQXV0aCkge1xuICAgICAgICB0aGlzLm9hdXRoQ29tcG9uZW50LmZvcm0ucGF0Y2hWYWx1ZSh2YWx1ZXMpO1xuICAgICAgfVxuICAgICAgdGhpcy5jZHIuZGV0ZWN0Q2hhbmdlcygpO1xuICAgIH0pO1xuICB9XG5cbiAgb25PYXV0aEF1dGhlbnRpY2F0ZWQoYXR0cmlidXRlczogUmVjb3JkPHN0cmluZywgdW5rbm93bj4pOiB2b2lkIHtcbiAgICB0aGlzLmZvcm0ucGF0Y2hWYWx1ZShhdHRyaWJ1dGVzKTtcbiAgfVxuXG4gIG92ZXJyaWRlIGdldFN1Ym1pdEF0dHJpYnV0ZXMoKTogT2F1dGhQcm92aWRlckNvbXBvbmVudFsnZm9ybSddWyd2YWx1ZSddICYgdGhpc1snZm9ybSddWyd2YWx1ZSddIHtcbiAgICBpZiAoIXRoaXMuaGFzT0F1dGgpIHtcbiAgICAgIHJldHVybiB0aGlzLmZvcm0udmFsdWU7XG4gICAgfVxuXG4gICAgcmV0dXJuIHtcbiAgICAgIC4uLnRoaXMub2F1dGhDb21wb25lbnQ/LmZvcm0/LnZhbHVlLFxuICAgICAgLi4udGhpcy5mb3JtLnZhbHVlLFxuICAgIH07XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,35 @@
+3c31106e57d8c91fa0fb9de8b371fa59
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WithManageCertificatesLinkComponent = void 0;
+const core_1 = require("@angular/core");
+const router_1 = require("@angular/router");
+const core_2 = require("@ngx-translate/core");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+/**
+ * Adds a manage certificates link to the form control.
+ * Designed to be used with an ix-select.
+ */
+let WithManageCertificatesLinkComponent = class WithManageCertificatesLinkComponent {
+};
+exports.WithManageCertificatesLinkComponent = WithManageCertificatesLinkComponent;
+exports.WithManageCertificatesLinkComponent = WithManageCertificatesLinkComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-with-manage-certificates-link',
+        template: require("./with-manage-certificates-link.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            router_1.RouterLink,
+            core_2.TranslateModule,
+            test_directive_1.TestDirective,
+        ],
+    })
+], WithManageCertificatesLinkComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy93aXRoLW1hbmFnZS1jZXJ0aWZpY2F0ZXMtbGluay93aXRoLW1hbmFnZS1jZXJ0aWZpY2F0ZXMtbGluay5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7O0FBQUEsd0NBQW1FO0FBQ25FLDRDQUE2QztBQUM3Qyw4Q0FBc0Q7QUFDdEQsdUVBQW1FO0FBRW5FOzs7R0FHRztBQWFJLElBQU0sbUNBQW1DLEdBQXpDLE1BQU0sbUNBQW1DO0NBQy9DLENBQUE7QUFEWSxrRkFBbUM7OENBQW5DLG1DQUFtQztJQVovQyxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsa0NBQWtDO1FBQzVDLG1FQUE2RDtRQUU3RCxlQUFlLEVBQUUsOEJBQXVCLENBQUMsTUFBTTtRQUMvQyxVQUFVLEVBQUUsSUFBSTtRQUNoQixPQUFPLEVBQUU7WUFDUCxtQkFBVTtZQUNWLHNCQUFlO1lBQ2YsOEJBQWE7U0FDZDtLQUNGLENBQUM7R0FDVyxtQ0FBbUMsQ0FDL0MiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy93aXRoLW1hbmFnZS1jZXJ0aWZpY2F0ZXMtbGluay93aXRoLW1hbmFnZS1jZXJ0aWZpY2F0ZXMtbGluay5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgUm91dGVyTGluayB9IGZyb20gJ0Bhbmd1bGFyL3JvdXRlcic7XG5pbXBvcnQgeyBUcmFuc2xhdGVNb2R1bGUgfSBmcm9tICdAbmd4LXRyYW5zbGF0ZS9jb3JlJztcbmltcG9ydCB7IFRlc3REaXJlY3RpdmUgfSBmcm9tICdhcHAvbW9kdWxlcy90ZXN0LWlkL3Rlc3QuZGlyZWN0aXZlJztcblxuLyoqXG4gKiBBZGRzIGEgbWFuYWdlIGNlcnRpZmljYXRlcyBsaW5rIHRvIHRoZSBmb3JtIGNvbnRyb2wuXG4gKiBEZXNpZ25lZCB0byBiZSB1c2VkIHdpdGggYW4gaXgtc2VsZWN0LlxuICovXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC13aXRoLW1hbmFnZS1jZXJ0aWZpY2F0ZXMtbGluaycsXG4gIHRlbXBsYXRlVXJsOiAnLi93aXRoLW1hbmFnZS1jZXJ0aWZpY2F0ZXMtbGluay5jb21wb25lbnQuaHRtbCcsXG4gIHN0eWxlVXJsczogWycuL3dpdGgtbWFuYWdlLWNlcnRpZmljYXRlcy1saW5rLmNvbXBvbmVudC5zY3NzJ10sXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICBzdGFuZGFsb25lOiB0cnVlLFxuICBpbXBvcnRzOiBbXG4gICAgUm91dGVyTGluayxcbiAgICBUcmFuc2xhdGVNb2R1bGUsXG4gICAgVGVzdERpcmVjdGl2ZSxcbiAgXSxcbn0pXG5leHBvcnQgY2xhc3MgV2l0aE1hbmFnZUNlcnRpZmljYXRlc0xpbmtDb21wb25lbnQge1xufVxuIl0sInZlcnNpb24iOjN9

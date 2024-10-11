@@ -1,0 +1,83 @@
+77ce325b5ee9240e75af43bf5647b1ea
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WebdavProviderFormComponent = void 0;
+const core_1 = require("@angular/core");
+const forms_1 = require("@angular/forms");
+const until_destroy_1 = require("@ngneat/until-destroy");
+const core_2 = require("@ngx-translate/core");
+const rxjs_1 = require("rxjs");
+const ix_fieldset_component_1 = require("app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component");
+const ix_input_component_1 = require("app/modules/forms/ix-forms/components/ix-input/ix-input.component");
+const ix_select_component_1 = require("app/modules/forms/ix-forms/components/ix-select/ix-select.component");
+const ix_formatter_service_1 = require("app/modules/forms/ix-forms/services/ix-formatter.service");
+const base_provider_form_1 = require("app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form");
+let WebdavProviderFormComponent = class WebdavProviderFormComponent extends base_provider_form_1.BaseProviderFormComponent {
+    ngAfterViewInit() {
+        this.formPatcher$.pipe((0, until_destroy_1.untilDestroyed)(this)).subscribe((values) => {
+            this.form.patchValue(values);
+            this.cdr.detectChanges();
+        });
+    }
+    constructor(formatter, formBuilder, translate, cdr) {
+        super();
+        this.formatter = formatter;
+        this.formBuilder = formBuilder;
+        this.translate = translate;
+        this.cdr = cdr;
+        this.form = this.formBuilder.group({
+            url: ['', forms_1.Validators.required],
+            vendor: ['NEXTCLOUD'],
+            user: ['', forms_1.Validators.required],
+            pass: ['', forms_1.Validators.required],
+        });
+        this.vendors$ = (0, rxjs_1.of)([
+            {
+                label: 'NEXTCLOUD',
+                value: 'NEXTCLOUD',
+            },
+            {
+                label: 'OWNCLOUD',
+                value: 'OWNCLOUD',
+            },
+            {
+                label: 'SHAREPOINT',
+                value: 'SHAREPOINT',
+            },
+            {
+                label: this.translate.instant('OTHER'),
+                value: 'OTHER',
+            },
+        ]);
+    }
+};
+exports.WebdavProviderFormComponent = WebdavProviderFormComponent;
+WebdavProviderFormComponent.ctorParameters = () => [
+    { type: ix_formatter_service_1.IxFormatterService },
+    { type: forms_1.FormBuilder },
+    { type: core_2.TranslateService },
+    { type: core_1.ChangeDetectorRef }
+];
+exports.WebdavProviderFormComponent = WebdavProviderFormComponent = __decorate([
+    (0, until_destroy_1.UntilDestroy)(),
+    (0, core_1.Component)({
+        selector: 'ix-webdav-provider-form',
+        template: require("./webdav-provider-form.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            ix_fieldset_component_1.IxFieldsetComponent,
+            forms_1.ReactiveFormsModule,
+            ix_input_component_1.IxInputComponent,
+            ix_select_component_1.IxSelectComponent,
+            core_2.TranslateModule,
+        ],
+    })
+], WebdavProviderFormComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2NyZWRlbnRpYWxzL2JhY2t1cC1jcmVkZW50aWFscy9jbG91ZC1jcmVkZW50aWFscy1mb3JtL3Byb3ZpZGVyLWZvcm1zL3dlYmRhdi1wcm92aWRlci1mb3JtL3dlYmRhdi1wcm92aWRlci1mb3JtLmNvbXBvbmVudC50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7QUFBQSx3Q0FFdUI7QUFDdkIsMENBQThFO0FBQzlFLHlEQUFxRTtBQUNyRSw4Q0FBd0U7QUFDeEUsK0JBQTBCO0FBQzFCLG1IQUE4RztBQUM5RywwR0FBcUc7QUFDckcsNkdBQXdHO0FBQ3hHLG1HQUE4RjtBQUM5RiwwSUFFMkc7QUFnQnBHLElBQU0sMkJBQTJCLEdBQWpDLE1BQU0sMkJBQTRCLFNBQVEsOENBQXlCO0lBMkJ4RSxlQUFlO1FBQ2IsSUFBSSxDQUFDLFlBQVksQ0FBQyxJQUFJLENBQUMsSUFBQSw4QkFBYyxFQUFDLElBQUksQ0FBQyxDQUFDLENBQUMsU0FBUyxDQUFDLENBQUMsTUFBTSxFQUFFLEVBQUU7WUFDaEUsSUFBSSxDQUFDLElBQUksQ0FBQyxVQUFVLENBQUMsTUFBTSxDQUFDLENBQUM7WUFDN0IsSUFBSSxDQUFDLEdBQUcsQ0FBQyxhQUFhLEVBQUUsQ0FBQztRQUMzQixDQUFDLENBQUMsQ0FBQztJQUNMLENBQUM7SUFFRCxZQUNTLFNBQTZCLEVBQzVCLFdBQXdCLEVBQ3hCLFNBQTJCLEVBQzNCLEdBQXNCO1FBRTlCLEtBQUssRUFBRSxDQUFDO1FBTEQsY0FBUyxHQUFULFNBQVMsQ0FBb0I7UUFDNUIsZ0JBQVcsR0FBWCxXQUFXLENBQWE7UUFDeEIsY0FBUyxHQUFULFNBQVMsQ0FBa0I7UUFDM0IsUUFBRyxHQUFILEdBQUcsQ0FBbUI7UUFyQ2hDLFNBQUksR0FBRyxJQUFJLENBQUMsV0FBVyxDQUFDLEtBQUssQ0FBQztZQUM1QixHQUFHLEVBQUUsQ0FBQyxFQUFFLEVBQUUsa0JBQVUsQ0FBQyxRQUFRLENBQUM7WUFDOUIsTUFBTSxFQUFFLENBQUMsV0FBVyxDQUFDO1lBQ3JCLElBQUksRUFBRSxDQUFDLEVBQUUsRUFBRSxrQkFBVSxDQUFDLFFBQVEsQ0FBQztZQUMvQixJQUFJLEVBQUUsQ0FBQyxFQUFFLEVBQUUsa0JBQVUsQ0FBQyxRQUFRLENBQUM7U0FDaEMsQ0FBQyxDQUFDO1FBRUgsYUFBUSxHQUFHLElBQUEsU0FBRSxFQUFDO1lBQ1o7Z0JBQ0UsS0FBSyxFQUFFLFdBQVc7Z0JBQ2xCLEtBQUssRUFBRSxXQUFXO2FBQ25CO1lBQ0Q7Z0JBQ0UsS0FBSyxFQUFFLFVBQVU7Z0JBQ2pCLEtBQUssRUFBRSxVQUFVO2FBQ2xCO1lBQ0Q7Z0JBQ0UsS0FBSyxFQUFFLFlBQVk7Z0JBQ25CLEtBQUssRUFBRSxZQUFZO2FBQ3BCO1lBQ0Q7Z0JBQ0UsS0FBSyxFQUFFLElBQUksQ0FBQyxTQUFTLENBQUMsT0FBTyxDQUFDLE9BQU8sQ0FBQztnQkFDdEMsS0FBSyxFQUFFLE9BQU87YUFDZjtTQUNGLENBQUMsQ0FBQztJQWdCSCxDQUFDOztBQXpDVSxrRUFBMkI7Ozs7Ozs7c0NBQTNCLDJCQUEyQjtJQWR2QyxJQUFBLDRCQUFZLEdBQUU7SUFDZCxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUseUJBQXlCO1FBQ25DLDBEQUFvRDtRQUNwRCxlQUFlLEVBQUUsOEJBQXVCLENBQUMsTUFBTTtRQUMvQyxVQUFVLEVBQUUsSUFBSTtRQUNoQixPQUFPLEVBQUU7WUFDUCwyQ0FBbUI7WUFDbkIsMkJBQW1CO1lBQ25CLHFDQUFnQjtZQUNoQix1Q0FBaUI7WUFDakIsc0JBQWU7U0FDaEI7S0FDRixDQUFDO0dBQ1csMkJBQTJCLENBMEN2QyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvY3JlZGVudGlhbHMvYmFja3VwLWNyZWRlbnRpYWxzL2Nsb3VkLWNyZWRlbnRpYWxzLWZvcm0vcHJvdmlkZXItZm9ybXMvd2ViZGF2LXByb3ZpZGVyLWZvcm0vd2ViZGF2LXByb3ZpZGVyLWZvcm0uY29tcG9uZW50LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7XG4gIEFmdGVyVmlld0luaXQsIENoYW5nZURldGVjdGlvblN0cmF0ZWd5LCBDaGFuZ2VEZXRlY3RvclJlZiwgQ29tcG9uZW50LFxufSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7IEZvcm1CdWlsZGVyLCBWYWxpZGF0b3JzLCBSZWFjdGl2ZUZvcm1zTW9kdWxlIH0gZnJvbSAnQGFuZ3VsYXIvZm9ybXMnO1xuaW1wb3J0IHsgVW50aWxEZXN0cm95LCB1bnRpbERlc3Ryb3llZCB9IGZyb20gJ0BuZ25lYXQvdW50aWwtZGVzdHJveSc7XG5pbXBvcnQgeyBUcmFuc2xhdGVTZXJ2aWNlLCBUcmFuc2xhdGVNb2R1bGUgfSBmcm9tICdAbmd4LXRyYW5zbGF0ZS9jb3JlJztcbmltcG9ydCB7IG9mIH0gZnJvbSAncnhqcyc7XG5pbXBvcnQgeyBJeEZpZWxkc2V0Q29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1maWVsZHNldC9peC1maWVsZHNldC5jb21wb25lbnQnO1xuaW1wb3J0IHsgSXhJbnB1dENvbXBvbmVudCB9IGZyb20gJ2FwcC9tb2R1bGVzL2Zvcm1zL2l4LWZvcm1zL2NvbXBvbmVudHMvaXgtaW5wdXQvaXgtaW5wdXQuY29tcG9uZW50JztcbmltcG9ydCB7IEl4U2VsZWN0Q29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1zZWxlY3QvaXgtc2VsZWN0LmNvbXBvbmVudCc7XG5pbXBvcnQgeyBJeEZvcm1hdHRlclNlcnZpY2UgfSBmcm9tICdhcHAvbW9kdWxlcy9mb3Jtcy9peC1mb3Jtcy9zZXJ2aWNlcy9peC1mb3JtYXR0ZXIuc2VydmljZSc7XG5pbXBvcnQge1xuICBCYXNlUHJvdmlkZXJGb3JtQ29tcG9uZW50LFxufSBmcm9tICdhcHAvcGFnZXMvY3JlZGVudGlhbHMvYmFja3VwLWNyZWRlbnRpYWxzL2Nsb3VkLWNyZWRlbnRpYWxzLWZvcm0vcHJvdmlkZXItZm9ybXMvYmFzZS1wcm92aWRlci1mb3JtJztcblxuQFVudGlsRGVzdHJveSgpXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC13ZWJkYXYtcHJvdmlkZXItZm9ybScsXG4gIHRlbXBsYXRlVXJsOiAnLi93ZWJkYXYtcHJvdmlkZXItZm9ybS5jb21wb25lbnQuaHRtbCcsXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICBzdGFuZGFsb25lOiB0cnVlLFxuICBpbXBvcnRzOiBbXG4gICAgSXhGaWVsZHNldENvbXBvbmVudCxcbiAgICBSZWFjdGl2ZUZvcm1zTW9kdWxlLFxuICAgIEl4SW5wdXRDb21wb25lbnQsXG4gICAgSXhTZWxlY3RDb21wb25lbnQsXG4gICAgVHJhbnNsYXRlTW9kdWxlLFxuICBdLFxufSlcbmV4cG9ydCBjbGFzcyBXZWJkYXZQcm92aWRlckZvcm1Db21wb25lbnQgZXh0ZW5kcyBCYXNlUHJvdmlkZXJGb3JtQ29tcG9uZW50IGltcGxlbWVudHMgQWZ0ZXJWaWV3SW5pdCB7XG4gIGZvcm0gPSB0aGlzLmZvcm1CdWlsZGVyLmdyb3VwKHtcbiAgICB1cmw6IFsnJywgVmFsaWRhdG9ycy5yZXF1aXJlZF0sXG4gICAgdmVuZG9yOiBbJ05FWFRDTE9VRCddLFxuICAgIHVzZXI6IFsnJywgVmFsaWRhdG9ycy5yZXF1aXJlZF0sXG4gICAgcGFzczogWycnLCBWYWxpZGF0b3JzLnJlcXVpcmVkXSxcbiAgfSk7XG5cbiAgdmVuZG9ycyQgPSBvZihbXG4gICAge1xuICAgICAgbGFiZWw6ICdORVhUQ0xPVUQnLFxuICAgICAgdmFsdWU6ICdORVhUQ0xPVUQnLFxuICAgIH0sXG4gICAge1xuICAgICAgbGFiZWw6ICdPV05DTE9VRCcsXG4gICAgICB2YWx1ZTogJ09XTkNMT1VEJyxcbiAgICB9LFxuICAgIHtcbiAgICAgIGxhYmVsOiAnU0hBUkVQT0lOVCcsXG4gICAgICB2YWx1ZTogJ1NIQVJFUE9JTlQnLFxuICAgIH0sXG4gICAge1xuICAgICAgbGFiZWw6IHRoaXMudHJhbnNsYXRlLmluc3RhbnQoJ09USEVSJyksXG4gICAgICB2YWx1ZTogJ09USEVSJyxcbiAgICB9LFxuICBdKTtcblxuICBuZ0FmdGVyVmlld0luaXQoKTogdm9pZCB7XG4gICAgdGhpcy5mb3JtUGF0Y2hlciQucGlwZSh1bnRpbERlc3Ryb3llZCh0aGlzKSkuc3Vic2NyaWJlKCh2YWx1ZXMpID0+IHtcbiAgICAgIHRoaXMuZm9ybS5wYXRjaFZhbHVlKHZhbHVlcyk7XG4gICAgICB0aGlzLmNkci5kZXRlY3RDaGFuZ2VzKCk7XG4gICAgfSk7XG4gIH1cblxuICBjb25zdHJ1Y3RvcihcbiAgICBwdWJsaWMgZm9ybWF0dGVyOiBJeEZvcm1hdHRlclNlcnZpY2UsXG4gICAgcHJpdmF0ZSBmb3JtQnVpbGRlcjogRm9ybUJ1aWxkZXIsXG4gICAgcHJpdmF0ZSB0cmFuc2xhdGU6IFRyYW5zbGF0ZVNlcnZpY2UsXG4gICAgcHJpdmF0ZSBjZHI6IENoYW5nZURldGVjdG9yUmVmLFxuICApIHtcbiAgICBzdXBlcigpO1xuICB9XG59XG4iXSwidmVyc2lvbiI6M30=

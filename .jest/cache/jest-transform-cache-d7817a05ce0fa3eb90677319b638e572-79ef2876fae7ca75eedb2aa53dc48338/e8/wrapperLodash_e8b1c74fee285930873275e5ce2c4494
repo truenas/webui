@@ -1,0 +1,149 @@
+97cb8bb1dba1d5c68ee7e3e805527bec
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _LazyWrapper_js_1 = __importDefault(require("./_LazyWrapper.js"));
+const _LodashWrapper_js_1 = __importDefault(require("./_LodashWrapper.js"));
+const _baseLodash_js_1 = __importDefault(require("./_baseLodash.js"));
+const isArray_js_1 = __importDefault(require("./isArray.js"));
+const isObjectLike_js_1 = __importDefault(require("./isObjectLike.js"));
+const _wrapperClone_js_1 = __importDefault(require("./_wrapperClone.js"));
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+/**
+ * Creates a `lodash` object which wraps `value` to enable implicit method
+ * chain sequences. Methods that operate on and return arrays, collections,
+ * and functions can be chained together. Methods that retrieve a single value
+ * or may return a primitive value will automatically end the chain sequence
+ * and return the unwrapped value. Otherwise, the value must be unwrapped
+ * with `_#value`.
+ *
+ * Explicit chain sequences, which must be unwrapped with `_#value`, may be
+ * enabled using `_.chain`.
+ *
+ * The execution of chained methods is lazy, that is, it's deferred until
+ * `_#value` is implicitly or explicitly called.
+ *
+ * Lazy evaluation allows several methods to support shortcut fusion.
+ * Shortcut fusion is an optimization to merge iteratee calls; this avoids
+ * the creation of intermediate arrays and can greatly reduce the number of
+ * iteratee executions. Sections of a chain sequence qualify for shortcut
+ * fusion if the section is applied to an array and iteratees accept only
+ * one argument. The heuristic for whether a section qualifies for shortcut
+ * fusion is subject to change.
+ *
+ * Chaining is supported in custom builds as long as the `_#value` method is
+ * directly or indirectly included in the build.
+ *
+ * In addition to lodash methods, wrappers have `Array` and `String` methods.
+ *
+ * The wrapper `Array` methods are:
+ * `concat`, `join`, `pop`, `push`, `shift`, `sort`, `splice`, and `unshift`
+ *
+ * The wrapper `String` methods are:
+ * `replace` and `split`
+ *
+ * The wrapper methods that support shortcut fusion are:
+ * `at`, `compact`, `drop`, `dropRight`, `dropWhile`, `filter`, `find`,
+ * `findLast`, `head`, `initial`, `last`, `map`, `reject`, `reverse`, `slice`,
+ * `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
+ *
+ * The chainable wrapper methods are:
+ * `after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`, `at`,
+ * `before`, `bind`, `bindAll`, `bindKey`, `castArray`, `chain`, `chunk`,
+ * `commit`, `compact`, `concat`, `conforms`, `constant`, `countBy`, `create`,
+ * `curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`,
+ * `difference`, `differenceBy`, `differenceWith`, `drop`, `dropRight`,
+ * `dropRightWhile`, `dropWhile`, `extend`, `extendWith`, `fill`, `filter`,
+ * `flatMap`, `flatMapDeep`, `flatMapDepth`, `flatten`, `flattenDeep`,
+ * `flattenDepth`, `flip`, `flow`, `flowRight`, `fromPairs`, `functions`,
+ * `functionsIn`, `groupBy`, `initial`, `intersection`, `intersectionBy`,
+ * `intersectionWith`, `invert`, `invertBy`, `invokeMap`, `iteratee`, `keyBy`,
+ * `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`,
+ * `memoize`, `merge`, `mergeWith`, `method`, `methodOf`, `mixin`, `negate`,
+ * `nthArg`, `omit`, `omitBy`, `once`, `orderBy`, `over`, `overArgs`,
+ * `overEvery`, `overSome`, `partial`, `partialRight`, `partition`, `pick`,
+ * `pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`, `pullAllBy`,
+ * `pullAllWith`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`, `reject`,
+ * `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`,
+ * `slice`, `sort`, `sortBy`, `splice`, `spread`, `tail`, `take`, `takeRight`,
+ * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `toArray`,
+ * `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`, `unary`,
+ * `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`, `unset`,
+ * `unshift`, `unzip`, `unzipWith`, `update`, `updateWith`, `values`,
+ * `valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`,
+ * `zipObject`, `zipObjectDeep`, and `zipWith`
+ *
+ * The wrapper methods that are **not** chainable by default are:
+ * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
+ * `cloneDeep`, `cloneDeepWith`, `cloneWith`, `conformsTo`, `deburr`,
+ * `defaultTo`, `divide`, `each`, `eachRight`, `endsWith`, `eq`, `escape`,
+ * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
+ * `findLastIndex`, `findLastKey`, `first`, `floor`, `forEach`, `forEachRight`,
+ * `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `get`, `gt`, `gte`, `has`,
+ * `hasIn`, `head`, `identity`, `includes`, `indexOf`, `inRange`, `invoke`,
+ * `isArguments`, `isArray`, `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`,
+ * `isBoolean`, `isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`,
+ * `isEqualWith`, `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`,
+ * `isMap`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
+ * `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
+ * `isSafeInteger`, `isSet`, `isString`, `isUndefined`, `isTypedArray`,
+ * `isWeakMap`, `isWeakSet`, `join`, `kebabCase`, `last`, `lastIndexOf`,
+ * `lowerCase`, `lowerFirst`, `lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`,
+ * `min`, `minBy`, `multiply`, `noConflict`, `noop`, `now`, `nth`, `pad`,
+ * `padEnd`, `padStart`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`,
+ * `repeat`, `result`, `round`, `runInContext`, `sample`, `shift`, `size`,
+ * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
+ * `sortedLastIndexBy`, `startCase`, `startsWith`, `stubArray`, `stubFalse`,
+ * `stubObject`, `stubString`, `stubTrue`, `subtract`, `sum`, `sumBy`,
+ * `template`, `times`, `toFinite`, `toInteger`, `toJSON`, `toLength`,
+ * `toLower`, `toNumber`, `toSafeInteger`, `toString`, `toUpper`, `trim`,
+ * `trimEnd`, `trimStart`, `truncate`, `unescape`, `uniqueId`, `upperCase`,
+ * `upperFirst`, `value`, and `words`
+ *
+ * @name _
+ * @constructor
+ * @category Seq
+ * @param {*} value The value to wrap in a `lodash` instance.
+ * @returns {Object} Returns the new `lodash` wrapper instance.
+ * @example
+ *
+ * function square(n) {
+ *   return n * n;
+ * }
+ *
+ * var wrapped = _([1, 2, 3]);
+ *
+ * // Returns an unwrapped value.
+ * wrapped.reduce(_.add);
+ * // => 6
+ *
+ * // Returns a wrapped value.
+ * var squares = wrapped.map(square);
+ *
+ * _.isArray(squares);
+ * // => false
+ *
+ * _.isArray(squares.value());
+ * // => true
+ */
+function lodash(value) {
+    if ((0, isObjectLike_js_1.default)(value) && !(0, isArray_js_1.default)(value) && !(value instanceof _LazyWrapper_js_1.default)) {
+        if (value instanceof _LodashWrapper_js_1.default) {
+            return value;
+        }
+        if (hasOwnProperty.call(value, '__wrapped__')) {
+            return (0, _wrapperClone_js_1.default)(value);
+        }
+    }
+    return new _LodashWrapper_js_1.default(value);
+}
+// Ensure wrappers are instances of `baseLodash`.
+lodash.prototype = _baseLodash_js_1.default.prototype;
+lodash.prototype.constructor = lodash;
+exports.default = lodash;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3dyYXBwZXJMb2Rhc2guanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSx3RUFBNEM7QUFDNUMsNEVBQWdEO0FBQ2hELHNFQUEwQztBQUMxQyw4REFBbUM7QUFDbkMsd0VBQTZDO0FBQzdDLDBFQUE4QztBQUU5QywyQ0FBMkM7QUFDM0MsSUFBSSxXQUFXLEdBQUcsTUFBTSxDQUFDLFNBQVMsQ0FBQztBQUVuQyxnREFBZ0Q7QUFDaEQsSUFBSSxjQUFjLEdBQUcsV0FBVyxDQUFDLGNBQWMsQ0FBQztBQUVoRDs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FvSEc7QUFDSCxTQUFTLE1BQU0sQ0FBQyxLQUFLO0lBQ25CLElBQUksSUFBQSx5QkFBWSxFQUFDLEtBQUssQ0FBQyxJQUFJLENBQUMsSUFBQSxvQkFBTyxFQUFDLEtBQUssQ0FBQyxJQUFJLENBQUMsQ0FBQyxLQUFLLFlBQVkseUJBQVcsQ0FBQyxFQUFFLENBQUM7UUFDOUUsSUFBSSxLQUFLLFlBQVksMkJBQWEsRUFBRSxDQUFDO1lBQ25DLE9BQU8sS0FBSyxDQUFDO1FBQ2YsQ0FBQztRQUNELElBQUksY0FBYyxDQUFDLElBQUksQ0FBQyxLQUFLLEVBQUUsYUFBYSxDQUFDLEVBQUUsQ0FBQztZQUM5QyxPQUFPLElBQUEsMEJBQVksRUFBQyxLQUFLLENBQUMsQ0FBQztRQUM3QixDQUFDO0lBQ0gsQ0FBQztJQUNELE9BQU8sSUFBSSwyQkFBYSxDQUFDLEtBQUssQ0FBQyxDQUFDO0FBQ2xDLENBQUM7QUFFRCxpREFBaUQ7QUFDakQsTUFBTSxDQUFDLFNBQVMsR0FBRyx3QkFBVSxDQUFDLFNBQVMsQ0FBQztBQUN4QyxNQUFNLENBQUMsU0FBUyxDQUFDLFdBQVcsR0FBRyxNQUFNLENBQUM7QUFFdEMsa0JBQWUsTUFBTSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy93cmFwcGVyTG9kYXNoLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBMYXp5V3JhcHBlciBmcm9tICcuL19MYXp5V3JhcHBlci5qcyc7XG5pbXBvcnQgTG9kYXNoV3JhcHBlciBmcm9tICcuL19Mb2Rhc2hXcmFwcGVyLmpzJztcbmltcG9ydCBiYXNlTG9kYXNoIGZyb20gJy4vX2Jhc2VMb2Rhc2guanMnO1xuaW1wb3J0IGlzQXJyYXkgZnJvbSAnLi9pc0FycmF5LmpzJztcbmltcG9ydCBpc09iamVjdExpa2UgZnJvbSAnLi9pc09iamVjdExpa2UuanMnO1xuaW1wb3J0IHdyYXBwZXJDbG9uZSBmcm9tICcuL193cmFwcGVyQ2xvbmUuanMnO1xuXG4vKiogVXNlZCBmb3IgYnVpbHQtaW4gbWV0aG9kIHJlZmVyZW5jZXMuICovXG52YXIgb2JqZWN0UHJvdG8gPSBPYmplY3QucHJvdG90eXBlO1xuXG4vKiogVXNlZCB0byBjaGVjayBvYmplY3RzIGZvciBvd24gcHJvcGVydGllcy4gKi9cbnZhciBoYXNPd25Qcm9wZXJ0eSA9IG9iamVjdFByb3RvLmhhc093blByb3BlcnR5O1xuXG4vKipcbiAqIENyZWF0ZXMgYSBgbG9kYXNoYCBvYmplY3Qgd2hpY2ggd3JhcHMgYHZhbHVlYCB0byBlbmFibGUgaW1wbGljaXQgbWV0aG9kXG4gKiBjaGFpbiBzZXF1ZW5jZXMuIE1ldGhvZHMgdGhhdCBvcGVyYXRlIG9uIGFuZCByZXR1cm4gYXJyYXlzLCBjb2xsZWN0aW9ucyxcbiAqIGFuZCBmdW5jdGlvbnMgY2FuIGJlIGNoYWluZWQgdG9nZXRoZXIuIE1ldGhvZHMgdGhhdCByZXRyaWV2ZSBhIHNpbmdsZSB2YWx1ZVxuICogb3IgbWF5IHJldHVybiBhIHByaW1pdGl2ZSB2YWx1ZSB3aWxsIGF1dG9tYXRpY2FsbHkgZW5kIHRoZSBjaGFpbiBzZXF1ZW5jZVxuICogYW5kIHJldHVybiB0aGUgdW53cmFwcGVkIHZhbHVlLiBPdGhlcndpc2UsIHRoZSB2YWx1ZSBtdXN0IGJlIHVud3JhcHBlZFxuICogd2l0aCBgXyN2YWx1ZWAuXG4gKlxuICogRXhwbGljaXQgY2hhaW4gc2VxdWVuY2VzLCB3aGljaCBtdXN0IGJlIHVud3JhcHBlZCB3aXRoIGBfI3ZhbHVlYCwgbWF5IGJlXG4gKiBlbmFibGVkIHVzaW5nIGBfLmNoYWluYC5cbiAqXG4gKiBUaGUgZXhlY3V0aW9uIG9mIGNoYWluZWQgbWV0aG9kcyBpcyBsYXp5LCB0aGF0IGlzLCBpdCdzIGRlZmVycmVkIHVudGlsXG4gKiBgXyN2YWx1ZWAgaXMgaW1wbGljaXRseSBvciBleHBsaWNpdGx5IGNhbGxlZC5cbiAqXG4gKiBMYXp5IGV2YWx1YXRpb24gYWxsb3dzIHNldmVyYWwgbWV0aG9kcyB0byBzdXBwb3J0IHNob3J0Y3V0IGZ1c2lvbi5cbiAqIFNob3J0Y3V0IGZ1c2lvbiBpcyBhbiBvcHRpbWl6YXRpb24gdG8gbWVyZ2UgaXRlcmF0ZWUgY2FsbHM7IHRoaXMgYXZvaWRzXG4gKiB0aGUgY3JlYXRpb24gb2YgaW50ZXJtZWRpYXRlIGFycmF5cyBhbmQgY2FuIGdyZWF0bHkgcmVkdWNlIHRoZSBudW1iZXIgb2ZcbiAqIGl0ZXJhdGVlIGV4ZWN1dGlvbnMuIFNlY3Rpb25zIG9mIGEgY2hhaW4gc2VxdWVuY2UgcXVhbGlmeSBmb3Igc2hvcnRjdXRcbiAqIGZ1c2lvbiBpZiB0aGUgc2VjdGlvbiBpcyBhcHBsaWVkIHRvIGFuIGFycmF5IGFuZCBpdGVyYXRlZXMgYWNjZXB0IG9ubHlcbiAqIG9uZSBhcmd1bWVudC4gVGhlIGhldXJpc3RpYyBmb3Igd2hldGhlciBhIHNlY3Rpb24gcXVhbGlmaWVzIGZvciBzaG9ydGN1dFxuICogZnVzaW9uIGlzIHN1YmplY3QgdG8gY2hhbmdlLlxuICpcbiAqIENoYWluaW5nIGlzIHN1cHBvcnRlZCBpbiBjdXN0b20gYnVpbGRzIGFzIGxvbmcgYXMgdGhlIGBfI3ZhbHVlYCBtZXRob2QgaXNcbiAqIGRpcmVjdGx5IG9yIGluZGlyZWN0bHkgaW5jbHVkZWQgaW4gdGhlIGJ1aWxkLlxuICpcbiAqIEluIGFkZGl0aW9uIHRvIGxvZGFzaCBtZXRob2RzLCB3cmFwcGVycyBoYXZlIGBBcnJheWAgYW5kIGBTdHJpbmdgIG1ldGhvZHMuXG4gKlxuICogVGhlIHdyYXBwZXIgYEFycmF5YCBtZXRob2RzIGFyZTpcbiAqIGBjb25jYXRgLCBgam9pbmAsIGBwb3BgLCBgcHVzaGAsIGBzaGlmdGAsIGBzb3J0YCwgYHNwbGljZWAsIGFuZCBgdW5zaGlmdGBcbiAqXG4gKiBUaGUgd3JhcHBlciBgU3RyaW5nYCBtZXRob2RzIGFyZTpcbiAqIGByZXBsYWNlYCBhbmQgYHNwbGl0YFxuICpcbiAqIFRoZSB3cmFwcGVyIG1ldGhvZHMgdGhhdCBzdXBwb3J0IHNob3J0Y3V0IGZ1c2lvbiBhcmU6XG4gKiBgYXRgLCBgY29tcGFjdGAsIGBkcm9wYCwgYGRyb3BSaWdodGAsIGBkcm9wV2hpbGVgLCBgZmlsdGVyYCwgYGZpbmRgLFxuICogYGZpbmRMYXN0YCwgYGhlYWRgLCBgaW5pdGlhbGAsIGBsYXN0YCwgYG1hcGAsIGByZWplY3RgLCBgcmV2ZXJzZWAsIGBzbGljZWAsXG4gKiBgdGFpbGAsIGB0YWtlYCwgYHRha2VSaWdodGAsIGB0YWtlUmlnaHRXaGlsZWAsIGB0YWtlV2hpbGVgLCBhbmQgYHRvQXJyYXlgXG4gKlxuICogVGhlIGNoYWluYWJsZSB3cmFwcGVyIG1ldGhvZHMgYXJlOlxuICogYGFmdGVyYCwgYGFyeWAsIGBhc3NpZ25gLCBgYXNzaWduSW5gLCBgYXNzaWduSW5XaXRoYCwgYGFzc2lnbldpdGhgLCBgYXRgLFxuICogYGJlZm9yZWAsIGBiaW5kYCwgYGJpbmRBbGxgLCBgYmluZEtleWAsIGBjYXN0QXJyYXlgLCBgY2hhaW5gLCBgY2h1bmtgLFxuICogYGNvbW1pdGAsIGBjb21wYWN0YCwgYGNvbmNhdGAsIGBjb25mb3Jtc2AsIGBjb25zdGFudGAsIGBjb3VudEJ5YCwgYGNyZWF0ZWAsXG4gKiBgY3VycnlgLCBgZGVib3VuY2VgLCBgZGVmYXVsdHNgLCBgZGVmYXVsdHNEZWVwYCwgYGRlZmVyYCwgYGRlbGF5YCxcbiAqIGBkaWZmZXJlbmNlYCwgYGRpZmZlcmVuY2VCeWAsIGBkaWZmZXJlbmNlV2l0aGAsIGBkcm9wYCwgYGRyb3BSaWdodGAsXG4gKiBgZHJvcFJpZ2h0V2hpbGVgLCBgZHJvcFdoaWxlYCwgYGV4dGVuZGAsIGBleHRlbmRXaXRoYCwgYGZpbGxgLCBgZmlsdGVyYCxcbiAqIGBmbGF0TWFwYCwgYGZsYXRNYXBEZWVwYCwgYGZsYXRNYXBEZXB0aGAsIGBmbGF0dGVuYCwgYGZsYXR0ZW5EZWVwYCxcbiAqIGBmbGF0dGVuRGVwdGhgLCBgZmxpcGAsIGBmbG93YCwgYGZsb3dSaWdodGAsIGBmcm9tUGFpcnNgLCBgZnVuY3Rpb25zYCxcbiAqIGBmdW5jdGlvbnNJbmAsIGBncm91cEJ5YCwgYGluaXRpYWxgLCBgaW50ZXJzZWN0aW9uYCwgYGludGVyc2VjdGlvbkJ5YCxcbiAqIGBpbnRlcnNlY3Rpb25XaXRoYCwgYGludmVydGAsIGBpbnZlcnRCeWAsIGBpbnZva2VNYXBgLCBgaXRlcmF0ZWVgLCBga2V5QnlgLFxuICogYGtleXNgLCBga2V5c0luYCwgYG1hcGAsIGBtYXBLZXlzYCwgYG1hcFZhbHVlc2AsIGBtYXRjaGVzYCwgYG1hdGNoZXNQcm9wZXJ0eWAsXG4gKiBgbWVtb2l6ZWAsIGBtZXJnZWAsIGBtZXJnZVdpdGhgLCBgbWV0aG9kYCwgYG1ldGhvZE9mYCwgYG1peGluYCwgYG5lZ2F0ZWAsXG4gKiBgbnRoQXJnYCwgYG9taXRgLCBgb21pdEJ5YCwgYG9uY2VgLCBgb3JkZXJCeWAsIGBvdmVyYCwgYG92ZXJBcmdzYCxcbiAqIGBvdmVyRXZlcnlgLCBgb3ZlclNvbWVgLCBgcGFydGlhbGAsIGBwYXJ0aWFsUmlnaHRgLCBgcGFydGl0aW9uYCwgYHBpY2tgLFxuICogYHBpY2tCeWAsIGBwbGFudGAsIGBwcm9wZXJ0eWAsIGBwcm9wZXJ0eU9mYCwgYHB1bGxgLCBgcHVsbEFsbGAsIGBwdWxsQWxsQnlgLFxuICogYHB1bGxBbGxXaXRoYCwgYHB1bGxBdGAsIGBwdXNoYCwgYHJhbmdlYCwgYHJhbmdlUmlnaHRgLCBgcmVhcmdgLCBgcmVqZWN0YCxcbiAqIGByZW1vdmVgLCBgcmVzdGAsIGByZXZlcnNlYCwgYHNhbXBsZVNpemVgLCBgc2V0YCwgYHNldFdpdGhgLCBgc2h1ZmZsZWAsXG4gKiBgc2xpY2VgLCBgc29ydGAsIGBzb3J0QnlgLCBgc3BsaWNlYCwgYHNwcmVhZGAsIGB0YWlsYCwgYHRha2VgLCBgdGFrZVJpZ2h0YCxcbiAqIGB0YWtlUmlnaHRXaGlsZWAsIGB0YWtlV2hpbGVgLCBgdGFwYCwgYHRocm90dGxlYCwgYHRocnVgLCBgdG9BcnJheWAsXG4gKiBgdG9QYWlyc2AsIGB0b1BhaXJzSW5gLCBgdG9QYXRoYCwgYHRvUGxhaW5PYmplY3RgLCBgdHJhbnNmb3JtYCwgYHVuYXJ5YCxcbiAqIGB1bmlvbmAsIGB1bmlvbkJ5YCwgYHVuaW9uV2l0aGAsIGB1bmlxYCwgYHVuaXFCeWAsIGB1bmlxV2l0aGAsIGB1bnNldGAsXG4gKiBgdW5zaGlmdGAsIGB1bnppcGAsIGB1bnppcFdpdGhgLCBgdXBkYXRlYCwgYHVwZGF0ZVdpdGhgLCBgdmFsdWVzYCxcbiAqIGB2YWx1ZXNJbmAsIGB3aXRob3V0YCwgYHdyYXBgLCBgeG9yYCwgYHhvckJ5YCwgYHhvcldpdGhgLCBgemlwYCxcbiAqIGB6aXBPYmplY3RgLCBgemlwT2JqZWN0RGVlcGAsIGFuZCBgemlwV2l0aGBcbiAqXG4gKiBUaGUgd3JhcHBlciBtZXRob2RzIHRoYXQgYXJlICoqbm90KiogY2hhaW5hYmxlIGJ5IGRlZmF1bHQgYXJlOlxuICogYGFkZGAsIGBhdHRlbXB0YCwgYGNhbWVsQ2FzZWAsIGBjYXBpdGFsaXplYCwgYGNlaWxgLCBgY2xhbXBgLCBgY2xvbmVgLFxuICogYGNsb25lRGVlcGAsIGBjbG9uZURlZXBXaXRoYCwgYGNsb25lV2l0aGAsIGBjb25mb3Jtc1RvYCwgYGRlYnVycmAsXG4gKiBgZGVmYXVsdFRvYCwgYGRpdmlkZWAsIGBlYWNoYCwgYGVhY2hSaWdodGAsIGBlbmRzV2l0aGAsIGBlcWAsIGBlc2NhcGVgLFxuICogYGVzY2FwZVJlZ0V4cGAsIGBldmVyeWAsIGBmaW5kYCwgYGZpbmRJbmRleGAsIGBmaW5kS2V5YCwgYGZpbmRMYXN0YCxcbiAqIGBmaW5kTGFzdEluZGV4YCwgYGZpbmRMYXN0S2V5YCwgYGZpcnN0YCwgYGZsb29yYCwgYGZvckVhY2hgLCBgZm9yRWFjaFJpZ2h0YCxcbiAqIGBmb3JJbmAsIGBmb3JJblJpZ2h0YCwgYGZvck93bmAsIGBmb3JPd25SaWdodGAsIGBnZXRgLCBgZ3RgLCBgZ3RlYCwgYGhhc2AsXG4gKiBgaGFzSW5gLCBgaGVhZGAsIGBpZGVudGl0eWAsIGBpbmNsdWRlc2AsIGBpbmRleE9mYCwgYGluUmFuZ2VgLCBgaW52b2tlYCxcbiAqIGBpc0FyZ3VtZW50c2AsIGBpc0FycmF5YCwgYGlzQXJyYXlCdWZmZXJgLCBgaXNBcnJheUxpa2VgLCBgaXNBcnJheUxpa2VPYmplY3RgLFxuICogYGlzQm9vbGVhbmAsIGBpc0J1ZmZlcmAsIGBpc0RhdGVgLCBgaXNFbGVtZW50YCwgYGlzRW1wdHlgLCBgaXNFcXVhbGAsXG4gKiBgaXNFcXVhbFdpdGhgLCBgaXNFcnJvcmAsIGBpc0Zpbml0ZWAsIGBpc0Z1bmN0aW9uYCwgYGlzSW50ZWdlcmAsIGBpc0xlbmd0aGAsXG4gKiBgaXNNYXBgLCBgaXNNYXRjaGAsIGBpc01hdGNoV2l0aGAsIGBpc05hTmAsIGBpc05hdGl2ZWAsIGBpc05pbGAsIGBpc051bGxgLFxuICogYGlzTnVtYmVyYCwgYGlzT2JqZWN0YCwgYGlzT2JqZWN0TGlrZWAsIGBpc1BsYWluT2JqZWN0YCwgYGlzUmVnRXhwYCxcbiAqIGBpc1NhZmVJbnRlZ2VyYCwgYGlzU2V0YCwgYGlzU3RyaW5nYCwgYGlzVW5kZWZpbmVkYCwgYGlzVHlwZWRBcnJheWAsXG4gKiBgaXNXZWFrTWFwYCwgYGlzV2Vha1NldGAsIGBqb2luYCwgYGtlYmFiQ2FzZWAsIGBsYXN0YCwgYGxhc3RJbmRleE9mYCxcbiAqIGBsb3dlckNhc2VgLCBgbG93ZXJGaXJzdGAsIGBsdGAsIGBsdGVgLCBgbWF4YCwgYG1heEJ5YCwgYG1lYW5gLCBgbWVhbkJ5YCxcbiAqIGBtaW5gLCBgbWluQnlgLCBgbXVsdGlwbHlgLCBgbm9Db25mbGljdGAsIGBub29wYCwgYG5vd2AsIGBudGhgLCBgcGFkYCxcbiAqIGBwYWRFbmRgLCBgcGFkU3RhcnRgLCBgcGFyc2VJbnRgLCBgcG9wYCwgYHJhbmRvbWAsIGByZWR1Y2VgLCBgcmVkdWNlUmlnaHRgLFxuICogYHJlcGVhdGAsIGByZXN1bHRgLCBgcm91bmRgLCBgcnVuSW5Db250ZXh0YCwgYHNhbXBsZWAsIGBzaGlmdGAsIGBzaXplYCxcbiAqIGBzbmFrZUNhc2VgLCBgc29tZWAsIGBzb3J0ZWRJbmRleGAsIGBzb3J0ZWRJbmRleEJ5YCwgYHNvcnRlZExhc3RJbmRleGAsXG4gKiBgc29ydGVkTGFzdEluZGV4QnlgLCBgc3RhcnRDYXNlYCwgYHN0YXJ0c1dpdGhgLCBgc3R1YkFycmF5YCwgYHN0dWJGYWxzZWAsXG4gKiBgc3R1Yk9iamVjdGAsIGBzdHViU3RyaW5nYCwgYHN0dWJUcnVlYCwgYHN1YnRyYWN0YCwgYHN1bWAsIGBzdW1CeWAsXG4gKiBgdGVtcGxhdGVgLCBgdGltZXNgLCBgdG9GaW5pdGVgLCBgdG9JbnRlZ2VyYCwgYHRvSlNPTmAsIGB0b0xlbmd0aGAsXG4gKiBgdG9Mb3dlcmAsIGB0b051bWJlcmAsIGB0b1NhZmVJbnRlZ2VyYCwgYHRvU3RyaW5nYCwgYHRvVXBwZXJgLCBgdHJpbWAsXG4gKiBgdHJpbUVuZGAsIGB0cmltU3RhcnRgLCBgdHJ1bmNhdGVgLCBgdW5lc2NhcGVgLCBgdW5pcXVlSWRgLCBgdXBwZXJDYXNlYCxcbiAqIGB1cHBlckZpcnN0YCwgYHZhbHVlYCwgYW5kIGB3b3Jkc2BcbiAqXG4gKiBAbmFtZSBfXG4gKiBAY29uc3RydWN0b3JcbiAqIEBjYXRlZ29yeSBTZXFcbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIHdyYXAgaW4gYSBgbG9kYXNoYCBpbnN0YW5jZS5cbiAqIEByZXR1cm5zIHtPYmplY3R9IFJldHVybnMgdGhlIG5ldyBgbG9kYXNoYCB3cmFwcGVyIGluc3RhbmNlLlxuICogQGV4YW1wbGVcbiAqXG4gKiBmdW5jdGlvbiBzcXVhcmUobikge1xuICogICByZXR1cm4gbiAqIG47XG4gKiB9XG4gKlxuICogdmFyIHdyYXBwZWQgPSBfKFsxLCAyLCAzXSk7XG4gKlxuICogLy8gUmV0dXJucyBhbiB1bndyYXBwZWQgdmFsdWUuXG4gKiB3cmFwcGVkLnJlZHVjZShfLmFkZCk7XG4gKiAvLyA9PiA2XG4gKlxuICogLy8gUmV0dXJucyBhIHdyYXBwZWQgdmFsdWUuXG4gKiB2YXIgc3F1YXJlcyA9IHdyYXBwZWQubWFwKHNxdWFyZSk7XG4gKlxuICogXy5pc0FycmF5KHNxdWFyZXMpO1xuICogLy8gPT4gZmFsc2VcbiAqXG4gKiBfLmlzQXJyYXkoc3F1YXJlcy52YWx1ZSgpKTtcbiAqIC8vID0+IHRydWVcbiAqL1xuZnVuY3Rpb24gbG9kYXNoKHZhbHVlKSB7XG4gIGlmIChpc09iamVjdExpa2UodmFsdWUpICYmICFpc0FycmF5KHZhbHVlKSAmJiAhKHZhbHVlIGluc3RhbmNlb2YgTGF6eVdyYXBwZXIpKSB7XG4gICAgaWYgKHZhbHVlIGluc3RhbmNlb2YgTG9kYXNoV3JhcHBlcikge1xuICAgICAgcmV0dXJuIHZhbHVlO1xuICAgIH1cbiAgICBpZiAoaGFzT3duUHJvcGVydHkuY2FsbCh2YWx1ZSwgJ19fd3JhcHBlZF9fJykpIHtcbiAgICAgIHJldHVybiB3cmFwcGVyQ2xvbmUodmFsdWUpO1xuICAgIH1cbiAgfVxuICByZXR1cm4gbmV3IExvZGFzaFdyYXBwZXIodmFsdWUpO1xufVxuXG4vLyBFbnN1cmUgd3JhcHBlcnMgYXJlIGluc3RhbmNlcyBvZiBgYmFzZUxvZGFzaGAuXG5sb2Rhc2gucHJvdG90eXBlID0gYmFzZUxvZGFzaC5wcm90b3R5cGU7XG5sb2Rhc2gucHJvdG90eXBlLmNvbnN0cnVjdG9yID0gbG9kYXNoO1xuXG5leHBvcnQgZGVmYXVsdCBsb2Rhc2g7XG4iXSwidmVyc2lvbiI6M30=

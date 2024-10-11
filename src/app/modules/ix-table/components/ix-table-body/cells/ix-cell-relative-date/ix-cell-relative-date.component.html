@@ -1,4 +1,5 @@
 <span
   [matTooltip]="dateTooltip"
-  [ixTest]="[title, rowTestId(row), 'row-relative-date']"
+  [ixTest]="[title, uniqueRowTag(row()), 'row-relative-date']"
+  [class.error]="isInvalidDate"
 >{{ date }}</span>

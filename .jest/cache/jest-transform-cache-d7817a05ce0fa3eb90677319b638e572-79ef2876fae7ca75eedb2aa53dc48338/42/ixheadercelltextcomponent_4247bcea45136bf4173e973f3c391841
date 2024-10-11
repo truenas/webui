@@ -1,0 +1,2 @@
+8f18c8e78411515bb0b6a8cc2f65db20
+module.exports="{{ title | translate }}\n"

@@ -1,0 +1,65 @@
+55c23aa0a94e7ac090ed52b6eb43bc1e
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SchedulerDateExamplesComponent = void 0;
+const core_1 = require("@angular/core");
+const lodash_es_1 = require("lodash-es");
+const locale_service_1 = require("app/services/locale.service");
+const i0 = __importStar(require("@angular/core"));
+let SchedulerDateExamplesComponent = class SchedulerDateExamplesComponent {
+    constructor(localeService) {
+        this.localeService = localeService;
+        this.cronPreview = core_1.input.required();
+        this.startDate = core_1.input.required();
+        this.maxExamples = 25;
+        this.scheduleExamples = (0, core_1.computed)(() => {
+            return this.cronPreview().listNextRunsInMonth(this.startDate(), this.maxExamples + 1, this.localeService.timezone);
+        });
+        this.slice = lodash_es_1.slice;
+    }
+};
+exports.SchedulerDateExamplesComponent = SchedulerDateExamplesComponent;
+SchedulerDateExamplesComponent.ctorParameters = () => [
+    { type: locale_service_1.LocaleService }
+];
+SchedulerDateExamplesComponent.propDecorators = {
+    cronPreview: [{ type: i0.Input, args: [{ isSignal: true, alias: "cronPreview", required: true, transform: undefined },] }],
+    startDate: [{ type: i0.Input, args: [{ isSignal: true, alias: "startDate", required: true, transform: undefined },] }]
+};
+exports.SchedulerDateExamplesComponent = SchedulerDateExamplesComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-scheduler-date-examples',
+        template: require("./scheduler-date-examples.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+    })
+], SchedulerDateExamplesComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvc2NoZWR1bGVyL2NvbXBvbmVudHMvc2NoZWR1bGVyLW1vZGFsL3NjaGVkdWxlci1kYXRlLWV4YW1wbGVzL3NjaGVkdWxlci1kYXRlLWV4YW1wbGVzLmNvbXBvbmVudC50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUFBLHdDQUV1QjtBQUN2Qix5Q0FBa0M7QUFFbEMsZ0VBQTREOztBQVFyRCxJQUFNLDhCQUE4QixHQUFwQyxNQUFNLDhCQUE4QjtJQUl6QyxZQUNVLGFBQTRCO1FBQTVCLGtCQUFhLEdBQWIsYUFBYSxDQUFlOzJCQUpmLFlBQUssQ0FBQyxRQUFRLEVBQXVCO3lCQUN2QyxZQUFLLENBQUMsUUFBUSxFQUFRO1FBTXhCLGdCQUFXLEdBQUcsRUFBRSxDQUFDO1FBRWpCLHFCQUFnQixHQUFHLElBQUEsZUFBUSxFQUFDLEdBQUcsRUFBRTtZQUNsRCxPQUFPLElBQUksQ0FBQyxXQUFXLEVBQUUsQ0FBQyxtQkFBbUIsQ0FDM0MsSUFBSSxDQUFDLFNBQVMsRUFBRSxFQUNoQixJQUFJLENBQUMsV0FBVyxHQUFHLENBQUMsRUFDcEIsSUFBSSxDQUFDLGFBQWEsQ0FBQyxRQUFRLENBQzVCLENBQUM7UUFDSixDQUFDLENBQUMsQ0FBQztRQUNnQixVQUFLLEdBQUcsaUJBQUssQ0FBQztJQVg3QixDQUFDOztBQU5NLHdFQUE4Qjs7Ozs7Ozs7eUNBQTlCLDhCQUE4QjtJQU4xQyxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsNEJBQTRCO1FBQ3RDLDZEQUF1RDtRQUV2RCxlQUFlLEVBQUUsOEJBQXVCLENBQUMsTUFBTTtLQUNoRCxDQUFDO0dBQ1csOEJBQThCLENBa0IxQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvbW9kdWxlcy9zY2hlZHVsZXIvY29tcG9uZW50cy9zY2hlZHVsZXItbW9kYWwvc2NoZWR1bGVyLWRhdGUtZXhhbXBsZXMvc2NoZWR1bGVyLWRhdGUtZXhhbXBsZXMuY29tcG9uZW50LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7XG4gIENoYW5nZURldGVjdGlvblN0cmF0ZWd5LCBDb21wb25lbnQsIGNvbXB1dGVkLCBpbnB1dCxcbn0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBzbGljZSB9IGZyb20gJ2xvZGFzaC1lcyc7XG5pbXBvcnQgeyBDcm9uU2NoZWR1bGVQcmV2aWV3IH0gZnJvbSAnYXBwL21vZHVsZXMvc2NoZWR1bGVyL2NsYXNzZXMvY3Jvbi1zY2hlZHVsZS1wcmV2aWV3L2Nyb24tc2NoZWR1bGUtcHJldmlldyc7XG5pbXBvcnQgeyBMb2NhbGVTZXJ2aWNlIH0gZnJvbSAnYXBwL3NlcnZpY2VzL2xvY2FsZS5zZXJ2aWNlJztcblxuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnaXgtc2NoZWR1bGVyLWRhdGUtZXhhbXBsZXMnLFxuICB0ZW1wbGF0ZVVybDogJy4vc2NoZWR1bGVyLWRhdGUtZXhhbXBsZXMuY29tcG9uZW50Lmh0bWwnLFxuICBzdHlsZVVybHM6IFsnLi9zY2hlZHVsZXItZGF0ZS1leGFtcGxlcy5jb21wb25lbnQuc2NzcyddLFxuICBjaGFuZ2VEZXRlY3Rpb246IENoYW5nZURldGVjdGlvblN0cmF0ZWd5Lk9uUHVzaCxcbn0pXG5leHBvcnQgY2xhc3MgU2NoZWR1bGVyRGF0ZUV4YW1wbGVzQ29tcG9uZW50IHtcbiAgcmVhZG9ubHkgY3JvblByZXZpZXcgPSBpbnB1dC5yZXF1aXJlZDxDcm9uU2NoZWR1bGVQcmV2aWV3PigpO1xuICByZWFkb25seSBzdGFydERhdGUgPSBpbnB1dC5yZXF1aXJlZDxEYXRlPigpO1xuXG4gIGNvbnN0cnVjdG9yKFxuICAgIHByaXZhdGUgbG9jYWxlU2VydmljZTogTG9jYWxlU2VydmljZSxcbiAgKSB7IH1cblxuICBwcm90ZWN0ZWQgcmVhZG9ubHkgbWF4RXhhbXBsZXMgPSAyNTtcblxuICBwcm90ZWN0ZWQgcmVhZG9ubHkgc2NoZWR1bGVFeGFtcGxlcyA9IGNvbXB1dGVkKCgpID0+IHtcbiAgICByZXR1cm4gdGhpcy5jcm9uUHJldmlldygpLmxpc3ROZXh0UnVuc0luTW9udGgoXG4gICAgICB0aGlzLnN0YXJ0RGF0ZSgpLFxuICAgICAgdGhpcy5tYXhFeGFtcGxlcyArIDEsXG4gICAgICB0aGlzLmxvY2FsZVNlcnZpY2UudGltZXpvbmUsXG4gICAgKTtcbiAgfSk7XG4gIHByb3RlY3RlZCByZWFkb25seSBzbGljZSA9IHNsaWNlO1xufVxuIl0sInZlcnNpb24iOjN9

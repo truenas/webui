@@ -1,0 +1,31 @@
+11435ab52633b7f8cb5470bf9ccd2693
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseFlatten_js_1 = __importDefault(require("./_baseFlatten.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const _baseUniq_js_1 = __importDefault(require("./_baseUniq.js"));
+const isArrayLikeObject_js_1 = __importDefault(require("./isArrayLikeObject.js"));
+/**
+ * Creates an array of unique values, in order, from all given arrays using
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Array
+ * @param {...Array} [arrays] The arrays to inspect.
+ * @returns {Array} Returns the new array of combined values.
+ * @example
+ *
+ * _.union([2], [1, 2]);
+ * // => [2, 1]
+ */
+var union = (0, _baseRest_js_1.default)(function (arrays) {
+    return (0, _baseUniq_js_1.default)((0, _baseFlatten_js_1.default)(arrays, 1, isArrayLikeObject_js_1.default, true));
+});
+exports.default = union;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3VuaW9uLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsd0VBQTRDO0FBQzVDLGtFQUFzQztBQUN0QyxrRUFBc0M7QUFDdEMsa0ZBQXVEO0FBRXZEOzs7Ozs7Ozs7Ozs7Ozs7R0FlRztBQUNILElBQUksS0FBSyxHQUFHLElBQUEsc0JBQVEsRUFBQyxVQUFTLE1BQU07SUFDbEMsT0FBTyxJQUFBLHNCQUFRLEVBQUMsSUFBQSx5QkFBVyxFQUFDLE1BQU0sRUFBRSxDQUFDLEVBQUUsOEJBQWlCLEVBQUUsSUFBSSxDQUFDLENBQUMsQ0FBQztBQUNuRSxDQUFDLENBQUMsQ0FBQztBQUVILGtCQUFlLEtBQUssQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvdW5pb24uanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VGbGF0dGVuIGZyb20gJy4vX2Jhc2VGbGF0dGVuLmpzJztcbmltcG9ydCBiYXNlUmVzdCBmcm9tICcuL19iYXNlUmVzdC5qcyc7XG5pbXBvcnQgYmFzZVVuaXEgZnJvbSAnLi9fYmFzZVVuaXEuanMnO1xuaW1wb3J0IGlzQXJyYXlMaWtlT2JqZWN0IGZyb20gJy4vaXNBcnJheUxpa2VPYmplY3QuanMnO1xuXG4vKipcbiAqIENyZWF0ZXMgYW4gYXJyYXkgb2YgdW5pcXVlIHZhbHVlcywgaW4gb3JkZXIsIGZyb20gYWxsIGdpdmVuIGFycmF5cyB1c2luZ1xuICogW2BTYW1lVmFsdWVaZXJvYF0oaHR0cDovL2VjbWEtaW50ZXJuYXRpb25hbC5vcmcvZWNtYS0yNjIvNy4wLyNzZWMtc2FtZXZhbHVlemVybylcbiAqIGZvciBlcXVhbGl0eSBjb21wYXJpc29ucy5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDAuMS4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7Li4uQXJyYXl9IFthcnJheXNdIFRoZSBhcnJheXMgdG8gaW5zcGVjdC5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUgbmV3IGFycmF5IG9mIGNvbWJpbmVkIHZhbHVlcy5cbiAqIEBleGFtcGxlXG4gKlxuICogXy51bmlvbihbMl0sIFsxLCAyXSk7XG4gKiAvLyA9PiBbMiwgMV1cbiAqL1xudmFyIHVuaW9uID0gYmFzZVJlc3QoZnVuY3Rpb24oYXJyYXlzKSB7XG4gIHJldHVybiBiYXNlVW5pcShiYXNlRmxhdHRlbihhcnJheXMsIDEsIGlzQXJyYXlMaWtlT2JqZWN0LCB0cnVlKSk7XG59KTtcblxuZXhwb3J0IGRlZmF1bHQgdW5pb247XG4iXSwidmVyc2lvbiI6M30=

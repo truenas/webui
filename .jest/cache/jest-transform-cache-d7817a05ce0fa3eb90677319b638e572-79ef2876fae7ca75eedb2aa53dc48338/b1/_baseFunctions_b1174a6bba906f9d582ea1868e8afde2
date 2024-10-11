@@ -1,0 +1,24 @@
+3680eec823a6706b989c8fd758e673e4
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayFilter_js_1 = __importDefault(require("./_arrayFilter.js"));
+const isFunction_js_1 = __importDefault(require("./isFunction.js"));
+/**
+ * The base implementation of `_.functions` which creates an array of
+ * `object` function property names filtered from `props`.
+ *
+ * @private
+ * @param {Object} object The object to inspect.
+ * @param {Array} props The property names to filter.
+ * @returns {Array} Returns the function names.
+ */
+function baseFunctions(object, props) {
+    return (0, _arrayFilter_js_1.default)(props, function (key) {
+        return (0, isFunction_js_1.default)(object[key]);
+    });
+}
+exports.default = baseFunctions;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlRnVuY3Rpb25zLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsd0VBQTRDO0FBQzVDLG9FQUF5QztBQUV6Qzs7Ozs7Ozs7R0FRRztBQUNILFNBQVMsYUFBYSxDQUFDLE1BQU0sRUFBRSxLQUFLO0lBQ2xDLE9BQU8sSUFBQSx5QkFBVyxFQUFDLEtBQUssRUFBRSxVQUFTLEdBQUc7UUFDcEMsT0FBTyxJQUFBLHVCQUFVLEVBQUMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUM7SUFDakMsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDO0FBRUQsa0JBQWUsYUFBYSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9fYmFzZUZ1bmN0aW9ucy5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYXJyYXlGaWx0ZXIgZnJvbSAnLi9fYXJyYXlGaWx0ZXIuanMnO1xuaW1wb3J0IGlzRnVuY3Rpb24gZnJvbSAnLi9pc0Z1bmN0aW9uLmpzJztcblxuLyoqXG4gKiBUaGUgYmFzZSBpbXBsZW1lbnRhdGlvbiBvZiBgXy5mdW5jdGlvbnNgIHdoaWNoIGNyZWF0ZXMgYW4gYXJyYXkgb2ZcbiAqIGBvYmplY3RgIGZ1bmN0aW9uIHByb3BlcnR5IG5hbWVzIGZpbHRlcmVkIGZyb20gYHByb3BzYC5cbiAqXG4gKiBAcHJpdmF0ZVxuICogQHBhcmFtIHtPYmplY3R9IG9iamVjdCBUaGUgb2JqZWN0IHRvIGluc3BlY3QuXG4gKiBAcGFyYW0ge0FycmF5fSBwcm9wcyBUaGUgcHJvcGVydHkgbmFtZXMgdG8gZmlsdGVyLlxuICogQHJldHVybnMge0FycmF5fSBSZXR1cm5zIHRoZSBmdW5jdGlvbiBuYW1lcy5cbiAqL1xuZnVuY3Rpb24gYmFzZUZ1bmN0aW9ucyhvYmplY3QsIHByb3BzKSB7XG4gIHJldHVybiBhcnJheUZpbHRlcihwcm9wcywgZnVuY3Rpb24oa2V5KSB7XG4gICAgcmV0dXJuIGlzRnVuY3Rpb24ob2JqZWN0W2tleV0pO1xuICB9KTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgYmFzZUZ1bmN0aW9ucztcbiJdLCJ2ZXJzaW9uIjozfQ==

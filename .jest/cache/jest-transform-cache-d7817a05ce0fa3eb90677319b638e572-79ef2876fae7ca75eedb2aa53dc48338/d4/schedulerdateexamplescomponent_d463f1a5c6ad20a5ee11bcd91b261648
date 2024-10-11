@@ -1,0 +1,2 @@
+dfd0b43bd8f30326992087577a52cbac
+module.exports="@for (date of scheduleExamples() | slice: 0:maxExamples; track $index) {\n  <div class=\"schedule-example\">\n    <ix-date [date]=\"date\"></ix-date>\n  </div>\n}\n\n@if (scheduleExamples().length > maxExamples) {\n  <div class=\"only-first-results-message\">\n    {{ 'Only first {number} examples are shown.' | translate: { number: maxExamples } }}\n  </div>\n}\n"

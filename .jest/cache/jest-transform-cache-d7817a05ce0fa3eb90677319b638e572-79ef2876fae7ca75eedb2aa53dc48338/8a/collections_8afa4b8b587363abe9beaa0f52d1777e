@@ -1,0 +1,419 @@
+43bac497520f921cb51b58eb2e409837
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var collections_exports = {};
+__export(collections_exports, {
+  ArrayDataSource: () => ArrayDataSource,
+  DataSource: () => DataSource,
+  SelectionModel: () => SelectionModel,
+  UniqueSelectionDispatcher: () => UniqueSelectionDispatcher,
+  _DisposeViewRepeaterStrategy: () => _DisposeViewRepeaterStrategy,
+  _RecycleViewRepeaterStrategy: () => _RecycleViewRepeaterStrategy,
+  _VIEW_REPEATER_STRATEGY: () => _VIEW_REPEATER_STRATEGY,
+  _ViewRepeaterOperation: () => _ViewRepeaterOperation,
+  getMultipleValuesInSingleSelectionError: () => getMultipleValuesInSingleSelectionError,
+  isDataSource: () => isDataSource
+});
+module.exports = __toCommonJS(collections_exports);
+var import_rxjs = require("rxjs");
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+class DataSource {
+}
+function isDataSource(value) {
+  return value && typeof value.connect === "function" && !(value instanceof import_rxjs.ConnectableObservable);
+}
+class ArrayDataSource extends DataSource {
+  constructor(_data) {
+    super();
+    this._data = _data;
+  }
+  connect() {
+    return (0, import_rxjs.isObservable)(this._data) ? this._data : (0, import_rxjs.of)(this._data);
+  }
+  disconnect() {
+  }
+}
+var _ViewRepeaterOperation;
+(function(_ViewRepeaterOperation2) {
+  _ViewRepeaterOperation2[_ViewRepeaterOperation2["REPLACED"] = 0] = "REPLACED";
+  _ViewRepeaterOperation2[_ViewRepeaterOperation2["INSERTED"] = 1] = "INSERTED";
+  _ViewRepeaterOperation2[_ViewRepeaterOperation2["MOVED"] = 2] = "MOVED";
+  _ViewRepeaterOperation2[_ViewRepeaterOperation2["REMOVED"] = 3] = "REMOVED";
+})(_ViewRepeaterOperation || (_ViewRepeaterOperation = {}));
+const _VIEW_REPEATER_STRATEGY = new import_core.InjectionToken("_ViewRepeater");
+class _DisposeViewRepeaterStrategy {
+  applyChanges(changes, viewContainerRef, itemContextFactory, itemValueResolver, itemViewChanged) {
+    changes.forEachOperation((record, adjustedPreviousIndex, currentIndex) => {
+      let view;
+      let operation;
+      if (record.previousIndex == null) {
+        const insertContext = itemContextFactory(record, adjustedPreviousIndex, currentIndex);
+        view = viewContainerRef.createEmbeddedView(insertContext.templateRef, insertContext.context, insertContext.index);
+        operation = _ViewRepeaterOperation.INSERTED;
+      } else if (currentIndex == null) {
+        viewContainerRef.remove(adjustedPreviousIndex);
+        operation = _ViewRepeaterOperation.REMOVED;
+      } else {
+        view = viewContainerRef.get(adjustedPreviousIndex);
+        viewContainerRef.move(view, currentIndex);
+        operation = _ViewRepeaterOperation.MOVED;
+      }
+      if (itemViewChanged) {
+        itemViewChanged({
+          context: view == null ? void 0 : view.context,
+          operation,
+          record
+        });
+      }
+    });
+  }
+  detach() {
+  }
+}
+class _RecycleViewRepeaterStrategy {
+  constructor() {
+    this.viewCacheSize = 20;
+    this._viewCache = [];
+  }
+  /** Apply changes to the DOM. */
+  applyChanges(changes, viewContainerRef, itemContextFactory, itemValueResolver, itemViewChanged) {
+    changes.forEachOperation((record, adjustedPreviousIndex, currentIndex) => {
+      let view;
+      let operation;
+      if (record.previousIndex == null) {
+        const viewArgsFactory = () => itemContextFactory(record, adjustedPreviousIndex, currentIndex);
+        view = this._insertView(viewArgsFactory, currentIndex, viewContainerRef, itemValueResolver(record));
+        operation = view ? _ViewRepeaterOperation.INSERTED : _ViewRepeaterOperation.REPLACED;
+      } else if (currentIndex == null) {
+        this._detachAndCacheView(adjustedPreviousIndex, viewContainerRef);
+        operation = _ViewRepeaterOperation.REMOVED;
+      } else {
+        view = this._moveView(adjustedPreviousIndex, currentIndex, viewContainerRef, itemValueResolver(record));
+        operation = _ViewRepeaterOperation.MOVED;
+      }
+      if (itemViewChanged) {
+        itemViewChanged({
+          context: view == null ? void 0 : view.context,
+          operation,
+          record
+        });
+      }
+    });
+  }
+  detach() {
+    for (const view of this._viewCache) {
+      view.destroy();
+    }
+    this._viewCache = [];
+  }
+  /**
+   * Inserts a view for a new item, either from the cache or by creating a new
+   * one. Returns `undefined` if the item was inserted into a cached view.
+   */
+  _insertView(viewArgsFactory, currentIndex, viewContainerRef, value) {
+    const cachedView = this._insertViewFromCache(currentIndex, viewContainerRef);
+    if (cachedView) {
+      cachedView.context.$implicit = value;
+      return void 0;
+    }
+    const viewArgs = viewArgsFactory();
+    return viewContainerRef.createEmbeddedView(viewArgs.templateRef, viewArgs.context, viewArgs.index);
+  }
+  /** Detaches the view at the given index and inserts into the view cache. */
+  _detachAndCacheView(index, viewContainerRef) {
+    const detachedView = viewContainerRef.detach(index);
+    this._maybeCacheView(detachedView, viewContainerRef);
+  }
+  /** Moves view at the previous index to the current index. */
+  _moveView(adjustedPreviousIndex, currentIndex, viewContainerRef, value) {
+    const view = viewContainerRef.get(adjustedPreviousIndex);
+    viewContainerRef.move(view, currentIndex);
+    view.context.$implicit = value;
+    return view;
+  }
+  /**
+   * Cache the given detached view. If the cache is full, the view will be
+   * destroyed.
+   */
+  _maybeCacheView(view, viewContainerRef) {
+    if (this._viewCache.length < this.viewCacheSize) {
+      this._viewCache.push(view);
+    } else {
+      const index = viewContainerRef.indexOf(view);
+      if (index === -1) {
+        view.destroy();
+      } else {
+        viewContainerRef.remove(index);
+      }
+    }
+  }
+  /** Inserts a recycled view from the cache at the given index. */
+  _insertViewFromCache(index, viewContainerRef) {
+    const cachedView = this._viewCache.pop();
+    if (cachedView) {
+      viewContainerRef.insert(cachedView, index);
+    }
+    return cachedView || null;
+  }
+}
+class SelectionModel {
+  /** Selected values. */
+  get selected() {
+    if (!this._selected) {
+      this._selected = Array.from(this._selection.values());
+    }
+    return this._selected;
+  }
+  constructor(_multiple = false, initiallySelectedValues, _emitChanges = true, compareWith) {
+    this._multiple = _multiple;
+    this._emitChanges = _emitChanges;
+    this.compareWith = compareWith;
+    this._selection = /* @__PURE__ */ new Set();
+    this._deselectedToEmit = [];
+    this._selectedToEmit = [];
+    this.changed = new import_rxjs.Subject();
+    if (initiallySelectedValues && initiallySelectedValues.length) {
+      if (_multiple) {
+        initiallySelectedValues.forEach((value) => this._markSelected(value));
+      } else {
+        this._markSelected(initiallySelectedValues[0]);
+      }
+      this._selectedToEmit.length = 0;
+    }
+  }
+  /**
+   * Selects a value or an array of values.
+   * @param values The values to select
+   * @return Whether the selection changed as a result of this call
+   * @breaking-change 16.0.0 make return type boolean
+   */
+  select(...values) {
+    this._verifyValueAssignment(values);
+    values.forEach((value) => this._markSelected(value));
+    const changed = this._hasQueuedChanges();
+    this._emitChangeEvent();
+    return changed;
+  }
+  /**
+   * Deselects a value or an array of values.
+   * @param values The values to deselect
+   * @return Whether the selection changed as a result of this call
+   * @breaking-change 16.0.0 make return type boolean
+   */
+  deselect(...values) {
+    this._verifyValueAssignment(values);
+    values.forEach((value) => this._unmarkSelected(value));
+    const changed = this._hasQueuedChanges();
+    this._emitChangeEvent();
+    return changed;
+  }
+  /**
+   * Sets the selected values
+   * @param values The new selected values
+   * @return Whether the selection changed as a result of this call
+   * @breaking-change 16.0.0 make return type boolean
+   */
+  setSelection(...values) {
+    this._verifyValueAssignment(values);
+    const oldValues = this.selected;
+    const newSelectedSet = new Set(values);
+    values.forEach((value) => this._markSelected(value));
+    oldValues.filter((value) => !newSelectedSet.has(this._getConcreteValue(value, newSelectedSet))).forEach((value) => this._unmarkSelected(value));
+    const changed = this._hasQueuedChanges();
+    this._emitChangeEvent();
+    return changed;
+  }
+  /**
+   * Toggles a value between selected and deselected.
+   * @param value The value to toggle
+   * @return Whether the selection changed as a result of this call
+   * @breaking-change 16.0.0 make return type boolean
+   */
+  toggle(value) {
+    return this.isSelected(value) ? this.deselect(value) : this.select(value);
+  }
+  /**
+   * Clears all of the selected values.
+   * @param flushEvent Whether to flush the changes in an event.
+   *   If false, the changes to the selection will be flushed along with the next event.
+   * @return Whether the selection changed as a result of this call
+   * @breaking-change 16.0.0 make return type boolean
+   */
+  clear(flushEvent = true) {
+    this._unmarkAll();
+    const changed = this._hasQueuedChanges();
+    if (flushEvent) {
+      this._emitChangeEvent();
+    }
+    return changed;
+  }
+  /**
+   * Determines whether a value is selected.
+   */
+  isSelected(value) {
+    return this._selection.has(this._getConcreteValue(value));
+  }
+  /**
+   * Determines whether the model does not have a value.
+   */
+  isEmpty() {
+    return this._selection.size === 0;
+  }
+  /**
+   * Determines whether the model has a value.
+   */
+  hasValue() {
+    return !this.isEmpty();
+  }
+  /**
+   * Sorts the selected values based on a predicate function.
+   */
+  sort(predicate) {
+    if (this._multiple && this.selected) {
+      this._selected.sort(predicate);
+    }
+  }
+  /**
+   * Gets whether multiple values can be selected.
+   */
+  isMultipleSelection() {
+    return this._multiple;
+  }
+  /** Emits a change event and clears the records of selected and deselected values. */
+  _emitChangeEvent() {
+    this._selected = null;
+    if (this._selectedToEmit.length || this._deselectedToEmit.length) {
+      this.changed.next({
+        source: this,
+        added: this._selectedToEmit,
+        removed: this._deselectedToEmit
+      });
+      this._deselectedToEmit = [];
+      this._selectedToEmit = [];
+    }
+  }
+  /** Selects a value. */
+  _markSelected(value) {
+    value = this._getConcreteValue(value);
+    if (!this.isSelected(value)) {
+      if (!this._multiple) {
+        this._unmarkAll();
+      }
+      if (!this.isSelected(value)) {
+        this._selection.add(value);
+      }
+      if (this._emitChanges) {
+        this._selectedToEmit.push(value);
+      }
+    }
+  }
+  /** Deselects a value. */
+  _unmarkSelected(value) {
+    value = this._getConcreteValue(value);
+    if (this.isSelected(value)) {
+      this._selection.delete(value);
+      if (this._emitChanges) {
+        this._deselectedToEmit.push(value);
+      }
+    }
+  }
+  /** Clears out the selected values. */
+  _unmarkAll() {
+    if (!this.isEmpty()) {
+      this._selection.forEach((value) => this._unmarkSelected(value));
+    }
+  }
+  /**
+   * Verifies the value assignment and throws an error if the specified value array is
+   * including multiple values while the selection model is not supporting multiple values.
+   */
+  _verifyValueAssignment(values) {
+    if (values.length > 1 && !this._multiple && (typeof ngDevMode === "undefined" || ngDevMode)) {
+      throw getMultipleValuesInSingleSelectionError();
+    }
+  }
+  /** Whether there are queued up change to be emitted. */
+  _hasQueuedChanges() {
+    return !!(this._deselectedToEmit.length || this._selectedToEmit.length);
+  }
+  /** Returns a value that is comparable to inputValue by applying compareWith function, returns the same inputValue otherwise. */
+  _getConcreteValue(inputValue, selection) {
+    if (!this.compareWith) {
+      return inputValue;
+    } else {
+      selection = selection != null ? selection : this._selection;
+      for (let selectedValue of selection) {
+        if (this.compareWith(inputValue, selectedValue)) {
+          return selectedValue;
+        }
+      }
+      return inputValue;
+    }
+  }
+}
+function getMultipleValuesInSingleSelectionError() {
+  return Error("Cannot pass multiple values into SelectionModel with single-value mode.");
+}
+const _UniqueSelectionDispatcher = class _UniqueSelectionDispatcher {
+  constructor() {
+    this._listeners = [];
+  }
+  /**
+   * Notify other items that selection for the given name has been set.
+   * @param id ID of the item.
+   * @param name Name of the item.
+   */
+  notify(id, name) {
+    for (let listener of this._listeners) {
+      listener(id, name);
+    }
+  }
+  /**
+   * Listen for future changes to item selection.
+   * @return Function used to deregister listener
+   */
+  listen(listener) {
+    this._listeners.push(listener);
+    return () => {
+      this._listeners = this._listeners.filter((registered) => {
+        return listener !== registered;
+      });
+    };
+  }
+  ngOnDestroy() {
+    this._listeners = [];
+  }
+};
+_UniqueSelectionDispatcher.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _UniqueSelectionDispatcher, deps: [], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_UniqueSelectionDispatcher.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _UniqueSelectionDispatcher, providedIn: "root" });
+let UniqueSelectionDispatcher = _UniqueSelectionDispatcher;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: UniqueSelectionDispatcher, decorators: [{
+  type: import_core.Injectable,
+  args: [{ providedIn: "root" }]
+}] });

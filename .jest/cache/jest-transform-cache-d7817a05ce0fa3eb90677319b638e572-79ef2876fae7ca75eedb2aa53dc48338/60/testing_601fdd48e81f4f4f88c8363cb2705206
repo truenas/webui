@@ -1,0 +1,141 @@
+32ee883489de37f15be4d722c33fe550
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
+var testing_exports = {};
+__export(testing_exports, {
+  MatOptgroupHarness: () => MatOptgroupHarness,
+  MatOptionHarness: () => MatOptionHarness
+});
+module.exports = __toCommonJS(testing_exports);
+var import_testing = require("@angular/cdk/testing");
+const _MatOptionHarness = class _MatOptionHarness extends import_testing.ContentContainerComponentHarness {
+  constructor() {
+    super(...arguments);
+    this._text = this.locatorFor(".mdc-list-item__primary-text");
+  }
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for an option with specific attributes.
+   * @param options Options for filtering which option instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options).addOption("text", options.text, (harness, title) => __async(this, null, function* () {
+      return import_testing.HarnessPredicate.stringMatches(yield harness.getText(), title);
+    })).addOption("isSelected", options.isSelected, (harness, isSelected) => __async(this, null, function* () {
+      return (yield harness.isSelected()) === isSelected;
+    }));
+  }
+  /** Clicks the option. */
+  click() {
+    return __async(this, null, function* () {
+      return (yield this.host()).click();
+    });
+  }
+  /** Gets the option's label text. */
+  getText() {
+    return __async(this, null, function* () {
+      return (yield this._text()).text();
+    });
+  }
+  /** Gets whether the option is disabled. */
+  isDisabled() {
+    return __async(this, null, function* () {
+      return (yield this.host()).hasClass("mdc-list-item--disabled");
+    });
+  }
+  /** Gets whether the option is selected. */
+  isSelected() {
+    return __async(this, null, function* () {
+      return (yield this.host()).hasClass("mdc-list-item--selected");
+    });
+  }
+  /** Gets whether the option is active. */
+  isActive() {
+    return __async(this, null, function* () {
+      return (yield this.host()).hasClass("mat-mdc-option-active");
+    });
+  }
+  /** Gets whether the option is in multiple selection mode. */
+  isMultiple() {
+    return __async(this, null, function* () {
+      return (yield this.host()).hasClass("mat-mdc-option-multiple");
+    });
+  }
+};
+_MatOptionHarness.hostSelector = ".mat-mdc-option";
+let MatOptionHarness = _MatOptionHarness;
+const _MatOptgroupHarness = class _MatOptgroupHarness extends import_testing.ComponentHarness {
+  constructor() {
+    super(...arguments);
+    this._label = this.locatorFor(".mat-mdc-optgroup-label");
+  }
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a option group with specific
+   * attributes.
+   * @param options Options for filtering which option instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options).addOption("labelText", options.labelText, (harness, title) => __async(this, null, function* () {
+      return import_testing.HarnessPredicate.stringMatches(yield harness.getLabelText(), title);
+    }));
+  }
+  /** Gets the option group's label text. */
+  getLabelText() {
+    return __async(this, null, function* () {
+      return (yield this._label()).text();
+    });
+  }
+  /** Gets whether the option group is disabled. */
+  isDisabled() {
+    return __async(this, null, function* () {
+      return (yield (yield this.host()).getAttribute("aria-disabled")) === "true";
+    });
+  }
+  /**
+   * Gets the options that are inside the group.
+   * @param filter Optionally filters which options are included.
+   */
+  getOptions() {
+    return __async(this, arguments, function* (filter = {}) {
+      return this.locatorForAll(MatOptionHarness.with(filter))();
+    });
+  }
+};
+_MatOptgroupHarness.hostSelector = ".mat-mdc-optgroup";
+let MatOptgroupHarness = _MatOptgroupHarness;

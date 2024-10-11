@@ -1,0 +1,44 @@
+644225b5d7a0c8e4d102a7ead253740e
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const constant_js_1 = __importDefault(require("./constant.js"));
+const _createInverter_js_1 = __importDefault(require("./_createInverter.js"));
+const identity_js_1 = __importDefault(require("./identity.js"));
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+/**
+ * Creates an object composed of the inverted keys and values of `object`.
+ * If `object` contains duplicate values, subsequent values overwrite
+ * property assignments of previous values.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.7.0
+ * @category Object
+ * @param {Object} object The object to invert.
+ * @returns {Object} Returns the new inverted object.
+ * @example
+ *
+ * var object = { 'a': 1, 'b': 2, 'c': 1 };
+ *
+ * _.invert(object);
+ * // => { '1': 'c', '2': 'b' }
+ */
+var invert = (0, _createInverter_js_1.default)(function (result, value, key) {
+    if (value != null &&
+        typeof value.toString != 'function') {
+        value = nativeObjectToString.call(value);
+    }
+    result[value] = key;
+}, (0, constant_js_1.default)(identity_js_1.default));
+exports.default = invert;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2ludmVydC5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLGdFQUFxQztBQUNyQyw4RUFBa0Q7QUFDbEQsZ0VBQXFDO0FBRXJDLDJDQUEyQztBQUMzQyxJQUFJLFdBQVcsR0FBRyxNQUFNLENBQUMsU0FBUyxDQUFDO0FBRW5DOzs7O0dBSUc7QUFDSCxJQUFJLG9CQUFvQixHQUFHLFdBQVcsQ0FBQyxRQUFRLENBQUM7QUFFaEQ7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBaUJHO0FBQ0gsSUFBSSxNQUFNLEdBQUcsSUFBQSw0QkFBYyxFQUFDLFVBQVMsTUFBTSxFQUFFLEtBQUssRUFBRSxHQUFHO0lBQ3JELElBQUksS0FBSyxJQUFJLElBQUk7UUFDYixPQUFPLEtBQUssQ0FBQyxRQUFRLElBQUksVUFBVSxFQUFFLENBQUM7UUFDeEMsS0FBSyxHQUFHLG9CQUFvQixDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsQ0FBQztJQUMzQyxDQUFDO0lBRUQsTUFBTSxDQUFDLEtBQUssQ0FBQyxHQUFHLEdBQUcsQ0FBQztBQUN0QixDQUFDLEVBQUUsSUFBQSxxQkFBUSxFQUFDLHFCQUFRLENBQUMsQ0FBQyxDQUFDO0FBRXZCLGtCQUFlLE1BQU0sQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvaW52ZXJ0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBjb25zdGFudCBmcm9tICcuL2NvbnN0YW50LmpzJztcbmltcG9ydCBjcmVhdGVJbnZlcnRlciBmcm9tICcuL19jcmVhdGVJbnZlcnRlci5qcyc7XG5pbXBvcnQgaWRlbnRpdHkgZnJvbSAnLi9pZGVudGl0eS5qcyc7XG5cbi8qKiBVc2VkIGZvciBidWlsdC1pbiBtZXRob2QgcmVmZXJlbmNlcy4gKi9cbnZhciBvYmplY3RQcm90byA9IE9iamVjdC5wcm90b3R5cGU7XG5cbi8qKlxuICogVXNlZCB0byByZXNvbHZlIHRoZVxuICogW2B0b1N0cmluZ1RhZ2BdKGh0dHA6Ly9lY21hLWludGVybmF0aW9uYWwub3JnL2VjbWEtMjYyLzcuMC8jc2VjLW9iamVjdC5wcm90b3R5cGUudG9zdHJpbmcpXG4gKiBvZiB2YWx1ZXMuXG4gKi9cbnZhciBuYXRpdmVPYmplY3RUb1N0cmluZyA9IG9iamVjdFByb3RvLnRvU3RyaW5nO1xuXG4vKipcbiAqIENyZWF0ZXMgYW4gb2JqZWN0IGNvbXBvc2VkIG9mIHRoZSBpbnZlcnRlZCBrZXlzIGFuZCB2YWx1ZXMgb2YgYG9iamVjdGAuXG4gKiBJZiBgb2JqZWN0YCBjb250YWlucyBkdXBsaWNhdGUgdmFsdWVzLCBzdWJzZXF1ZW50IHZhbHVlcyBvdmVyd3JpdGVcbiAqIHByb3BlcnR5IGFzc2lnbm1lbnRzIG9mIHByZXZpb3VzIHZhbHVlcy5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDAuNy4wXG4gKiBAY2F0ZWdvcnkgT2JqZWN0XG4gKiBAcGFyYW0ge09iamVjdH0gb2JqZWN0IFRoZSBvYmplY3QgdG8gaW52ZXJ0LlxuICogQHJldHVybnMge09iamVjdH0gUmV0dXJucyB0aGUgbmV3IGludmVydGVkIG9iamVjdC5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIG9iamVjdCA9IHsgJ2EnOiAxLCAnYic6IDIsICdjJzogMSB9O1xuICpcbiAqIF8uaW52ZXJ0KG9iamVjdCk7XG4gKiAvLyA9PiB7ICcxJzogJ2MnLCAnMic6ICdiJyB9XG4gKi9cbnZhciBpbnZlcnQgPSBjcmVhdGVJbnZlcnRlcihmdW5jdGlvbihyZXN1bHQsIHZhbHVlLCBrZXkpIHtcbiAgaWYgKHZhbHVlICE9IG51bGwgJiZcbiAgICAgIHR5cGVvZiB2YWx1ZS50b1N0cmluZyAhPSAnZnVuY3Rpb24nKSB7XG4gICAgdmFsdWUgPSBuYXRpdmVPYmplY3RUb1N0cmluZy5jYWxsKHZhbHVlKTtcbiAgfVxuXG4gIHJlc3VsdFt2YWx1ZV0gPSBrZXk7XG59LCBjb25zdGFudChpZGVudGl0eSkpO1xuXG5leHBvcnQgZGVmYXVsdCBpbnZlcnQ7XG4iXSwidmVyc2lvbiI6M30=

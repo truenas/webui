@@ -1,0 +1,26 @@
+03cf5a62f6dfe688dd1fcaf6407e894b
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helptextCron = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.helptextCron = {
+    cron_description_tooltip: (0, ngx_translate_extract_marker_1.marker)('Enter a description of the cron job.'),
+    cron_command_tooltip: (0, ngx_translate_extract_marker_1.marker)('Enter the full path to the command or script to\
+                be run.'),
+    cron_user_tooltip: (0, ngx_translate_extract_marker_1.marker)('Select a user account to run the command. The\
+                user must have permissions allowing them to run\
+                the command or script.'),
+    crontab_tooltip: (0, ngx_translate_extract_marker_1.marker)('Select a schedule preset or choose <i>Custom</i> \
+ to open the advanced scheduler. Note that an in-progress cron task postpones \
+ any later scheduled instance of the same task until the running task is \
+ complete.'),
+    cron_stdout_tooltip: (0, ngx_translate_extract_marker_1.marker)('Hide standard output (stdout) from the command.\
+                When unset, any standard output is mailed to the user\
+                account cron used to run the command.'),
+    cron_stderr_tooltip: (0, ngx_translate_extract_marker_1.marker)('Hide error output (stderr) from the command.\
+                When unset, any error output is mailed to the user\
+                account cron used to run the command.'),
+    cron_enabled_tooltip: (0, ngx_translate_extract_marker_1.marker)('Enable this cron job. When unset, disable the\
+                cron job without deleting it.'),
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L3N5c3RlbS9jcm9uLWZvcm0udHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMEZBQXNFO0FBRXpELFFBQUEsWUFBWSxHQUFHO0lBQzFCLHdCQUF3QixFQUFFLElBQUEscUNBQUMsRUFBQyxzQ0FBc0MsQ0FBQztJQUNuRSxvQkFBb0IsRUFBRSxJQUFBLHFDQUFDLEVBQUM7d0JBQ0YsQ0FBQztJQUN2QixpQkFBaUIsRUFBRSxJQUFBLHFDQUFDLEVBQUM7O3VDQUVnQixDQUFDO0lBQ3RDLGVBQWUsRUFBRSxJQUFBLHFDQUFDLEVBQUM7OztXQUdWLENBQUM7SUFDVixtQkFBbUIsRUFBRSxJQUFBLHFDQUFDLEVBQUM7O3NEQUU2QixDQUFDO0lBQ3JELG1CQUFtQixFQUFFLElBQUEscUNBQUMsRUFBQzs7c0RBRTZCLENBQUM7SUFDckQsb0JBQW9CLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzhDQUNvQixDQUFDO0NBQzlDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L3N5c3RlbS9jcm9uLWZvcm0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgbWFya2VyIGFzIFQgfSBmcm9tICdAYmllc2JqZXJnL25neC10cmFuc2xhdGUtZXh0cmFjdC1tYXJrZXInO1xuXG5leHBvcnQgY29uc3QgaGVscHRleHRDcm9uID0ge1xuICBjcm9uX2Rlc2NyaXB0aW9uX3Rvb2x0aXA6IFQoJ0VudGVyIGEgZGVzY3JpcHRpb24gb2YgdGhlIGNyb24gam9iLicpLFxuICBjcm9uX2NvbW1hbmRfdG9vbHRpcDogVCgnRW50ZXIgdGhlIGZ1bGwgcGF0aCB0byB0aGUgY29tbWFuZCBvciBzY3JpcHQgdG9cXFxuICAgICAgICAgICAgICAgIGJlIHJ1bi4nKSxcbiAgY3Jvbl91c2VyX3Rvb2x0aXA6IFQoJ1NlbGVjdCBhIHVzZXIgYWNjb3VudCB0byBydW4gdGhlIGNvbW1hbmQuIFRoZVxcXG4gICAgICAgICAgICAgICAgdXNlciBtdXN0IGhhdmUgcGVybWlzc2lvbnMgYWxsb3dpbmcgdGhlbSB0byBydW5cXFxuICAgICAgICAgICAgICAgIHRoZSBjb21tYW5kIG9yIHNjcmlwdC4nKSxcbiAgY3JvbnRhYl90b29sdGlwOiBUKCdTZWxlY3QgYSBzY2hlZHVsZSBwcmVzZXQgb3IgY2hvb3NlIDxpPkN1c3RvbTwvaT4gXFxcbiB0byBvcGVuIHRoZSBhZHZhbmNlZCBzY2hlZHVsZXIuIE5vdGUgdGhhdCBhbiBpbi1wcm9ncmVzcyBjcm9uIHRhc2sgcG9zdHBvbmVzIFxcXG4gYW55IGxhdGVyIHNjaGVkdWxlZCBpbnN0YW5jZSBvZiB0aGUgc2FtZSB0YXNrIHVudGlsIHRoZSBydW5uaW5nIHRhc2sgaXMgXFxcbiBjb21wbGV0ZS4nKSxcbiAgY3Jvbl9zdGRvdXRfdG9vbHRpcDogVCgnSGlkZSBzdGFuZGFyZCBvdXRwdXQgKHN0ZG91dCkgZnJvbSB0aGUgY29tbWFuZC5cXFxuICAgICAgICAgICAgICAgIFdoZW4gdW5zZXQsIGFueSBzdGFuZGFyZCBvdXRwdXQgaXMgbWFpbGVkIHRvIHRoZSB1c2VyXFxcbiAgICAgICAgICAgICAgICBhY2NvdW50IGNyb24gdXNlZCB0byBydW4gdGhlIGNvbW1hbmQuJyksXG4gIGNyb25fc3RkZXJyX3Rvb2x0aXA6IFQoJ0hpZGUgZXJyb3Igb3V0cHV0IChzdGRlcnIpIGZyb20gdGhlIGNvbW1hbmQuXFxcbiAgICAgICAgICAgICAgICBXaGVuIHVuc2V0LCBhbnkgZXJyb3Igb3V0cHV0IGlzIG1haWxlZCB0byB0aGUgdXNlclxcXG4gICAgICAgICAgICAgICAgYWNjb3VudCBjcm9uIHVzZWQgdG8gcnVuIHRoZSBjb21tYW5kLicpLFxuICBjcm9uX2VuYWJsZWRfdG9vbHRpcDogVCgnRW5hYmxlIHRoaXMgY3JvbiBqb2IuIFdoZW4gdW5zZXQsIGRpc2FibGUgdGhlXFxcbiAgICAgICAgICAgICAgICBjcm9uIGpvYiB3aXRob3V0IGRlbGV0aW5nIGl0LicpLFxufTtcbiJdLCJ2ZXJzaW9uIjozfQ==

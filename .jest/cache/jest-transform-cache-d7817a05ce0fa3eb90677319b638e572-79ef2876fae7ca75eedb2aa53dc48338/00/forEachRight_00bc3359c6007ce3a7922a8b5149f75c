@@ -1,0 +1,36 @@
+26b3a8850f194e9560ad0ba65914c545
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayEachRight_js_1 = __importDefault(require("./_arrayEachRight.js"));
+const _baseEachRight_js_1 = __importDefault(require("./_baseEachRight.js"));
+const _castFunction_js_1 = __importDefault(require("./_castFunction.js"));
+const isArray_js_1 = __importDefault(require("./isArray.js"));
+/**
+ * This method is like `_.forEach` except that it iterates over elements of
+ * `collection` from right to left.
+ *
+ * @static
+ * @memberOf _
+ * @since 2.0.0
+ * @alias eachRight
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Array|Object} Returns `collection`.
+ * @see _.forEach
+ * @example
+ *
+ * _.forEachRight([1, 2], function(value) {
+ *   console.log(value);
+ * });
+ * // => Logs `2` then `1`.
+ */
+function forEachRight(collection, iteratee) {
+    var func = (0, isArray_js_1.default)(collection) ? _arrayEachRight_js_1.default : _baseEachRight_js_1.default;
+    return func(collection, (0, _castFunction_js_1.default)(iteratee));
+}
+exports.default = forEachRight;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2ZvckVhY2hSaWdodC5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLDhFQUFrRDtBQUNsRCw0RUFBZ0Q7QUFDaEQsMEVBQThDO0FBQzlDLDhEQUFtQztBQUVuQzs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQW1CRztBQUNILFNBQVMsWUFBWSxDQUFDLFVBQVUsRUFBRSxRQUFRO0lBQ3hDLElBQUksSUFBSSxHQUFHLElBQUEsb0JBQU8sRUFBQyxVQUFVLENBQUMsQ0FBQyxDQUFDLENBQUMsNEJBQWMsQ0FBQyxDQUFDLENBQUMsMkJBQWEsQ0FBQztJQUNoRSxPQUFPLElBQUksQ0FBQyxVQUFVLEVBQUUsSUFBQSwwQkFBWSxFQUFDLFFBQVEsQ0FBQyxDQUFDLENBQUM7QUFDbEQsQ0FBQztBQUVELGtCQUFlLFlBQVksQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvZm9yRWFjaFJpZ2h0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBhcnJheUVhY2hSaWdodCBmcm9tICcuL19hcnJheUVhY2hSaWdodC5qcyc7XG5pbXBvcnQgYmFzZUVhY2hSaWdodCBmcm9tICcuL19iYXNlRWFjaFJpZ2h0LmpzJztcbmltcG9ydCBjYXN0RnVuY3Rpb24gZnJvbSAnLi9fY2FzdEZ1bmN0aW9uLmpzJztcbmltcG9ydCBpc0FycmF5IGZyb20gJy4vaXNBcnJheS5qcyc7XG5cbi8qKlxuICogVGhpcyBtZXRob2QgaXMgbGlrZSBgXy5mb3JFYWNoYCBleGNlcHQgdGhhdCBpdCBpdGVyYXRlcyBvdmVyIGVsZW1lbnRzIG9mXG4gKiBgY29sbGVjdGlvbmAgZnJvbSByaWdodCB0byBsZWZ0LlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMi4wLjBcbiAqIEBhbGlhcyBlYWNoUmlnaHRcbiAqIEBjYXRlZ29yeSBDb2xsZWN0aW9uXG4gKiBAcGFyYW0ge0FycmF5fE9iamVjdH0gY29sbGVjdGlvbiBUaGUgY29sbGVjdGlvbiB0byBpdGVyYXRlIG92ZXIuXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBbaXRlcmF0ZWU9Xy5pZGVudGl0eV0gVGhlIGZ1bmN0aW9uIGludm9rZWQgcGVyIGl0ZXJhdGlvbi5cbiAqIEByZXR1cm5zIHtBcnJheXxPYmplY3R9IFJldHVybnMgYGNvbGxlY3Rpb25gLlxuICogQHNlZSBfLmZvckVhY2hcbiAqIEBleGFtcGxlXG4gKlxuICogXy5mb3JFYWNoUmlnaHQoWzEsIDJdLCBmdW5jdGlvbih2YWx1ZSkge1xuICogICBjb25zb2xlLmxvZyh2YWx1ZSk7XG4gKiB9KTtcbiAqIC8vID0+IExvZ3MgYDJgIHRoZW4gYDFgLlxuICovXG5mdW5jdGlvbiBmb3JFYWNoUmlnaHQoY29sbGVjdGlvbiwgaXRlcmF0ZWUpIHtcbiAgdmFyIGZ1bmMgPSBpc0FycmF5KGNvbGxlY3Rpb24pID8gYXJyYXlFYWNoUmlnaHQgOiBiYXNlRWFjaFJpZ2h0O1xuICByZXR1cm4gZnVuYyhjb2xsZWN0aW9uLCBjYXN0RnVuY3Rpb24oaXRlcmF0ZWUpKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgZm9yRWFjaFJpZ2h0O1xuIl0sInZlcnNpb24iOjN9

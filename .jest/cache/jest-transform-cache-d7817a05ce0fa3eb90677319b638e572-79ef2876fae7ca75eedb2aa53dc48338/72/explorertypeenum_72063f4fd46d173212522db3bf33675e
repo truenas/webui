@@ -1,0 +1,10 @@
+b05ab3a40b35f0b4084e0e2c2373700b
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ExplorerNodeType = void 0;
+var ExplorerNodeType;
+(function (ExplorerNodeType) {
+    ExplorerNodeType["Directory"] = "directory";
+    ExplorerNodeType["File"] = "file";
+})(ExplorerNodeType || (exports.ExplorerNodeType = ExplorerNodeType = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2V4cGxvcmVyLXR5cGUuZW51bS50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSxJQUFZLGdCQUdYO0FBSEQsV0FBWSxnQkFBZ0I7SUFDMUIsMkNBQXVCLENBQUE7SUFDdkIsaUNBQWEsQ0FBQTtBQUNmLENBQUMsRUFIVyxnQkFBZ0IsZ0NBQWhCLGdCQUFnQixRQUczQiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvZW51bXMvZXhwbG9yZXItdHlwZS5lbnVtLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBlbnVtIEV4cGxvcmVyTm9kZVR5cGUge1xuICBEaXJlY3RvcnkgPSAnZGlyZWN0b3J5JyxcbiAgRmlsZSA9ICdmaWxlJyxcbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

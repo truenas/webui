@@ -1,0 +1,73 @@
+9df1ca02ab9dd6449e5b811968612912
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SentryService = void 0;
+const core_1 = require("@angular/core");
+const store_1 = require("@ngrx/store");
+const Sentry = __importStar(require("@sentry/angular"));
+const angular2_uuid_1 = require("angular2-uuid");
+const environment_1 = require("environments/environment");
+const rxjs_1 = require("rxjs");
+const system_info_selectors_1 = require("app/store/system-info/system-info.selectors");
+let SentryService = class SentryService {
+    constructor(store$) {
+        this.store$ = store$;
+        this.sessionId$ = new rxjs_1.BehaviorSubject(angular2_uuid_1.UUID.UUID());
+    }
+    init() {
+        if (!environment_1.environment.production) {
+            return;
+        }
+        (0, rxjs_1.combineLatest)([
+            this.store$.pipe(system_info_selectors_1.waitForSystemInfo),
+            this.sessionId$,
+        ]).subscribe(([sysInfo, sessionId]) => {
+            Sentry.init({
+                dsn: environment_1.environment.sentryPublicDsn,
+                release: sysInfo.version,
+            });
+            Sentry.configureScope((scope) => {
+                scope.setTag('session_id', sessionId);
+            });
+        });
+    }
+};
+exports.SentryService = SentryService;
+SentryService.ctorParameters = () => [
+    { type: store_1.Store }
+];
+exports.SentryService = SentryService = __decorate([
+    (0, core_1.Injectable)({
+        providedIn: 'root',
+    })
+], SentryService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3NlcnZpY2VzL3NlbnRyeS5zZXJ2aWNlLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQUEsd0NBQTJDO0FBQzNDLHVDQUFvQztBQUNwQyx3REFBMEM7QUFDMUMsaURBQXFDO0FBQ3JDLDBEQUF1RDtBQUN2RCwrQkFBc0Q7QUFFdEQsdUZBQWdGO0FBS3pFLElBQU0sYUFBYSxHQUFuQixNQUFNLGFBQWE7SUFHeEIsWUFDVSxNQUF1QjtRQUF2QixXQUFNLEdBQU4sTUFBTSxDQUFpQjtRQUhqQyxlQUFVLEdBQUcsSUFBSSxzQkFBZSxDQUFTLG9CQUFJLENBQUMsSUFBSSxFQUFFLENBQUMsQ0FBQztJQUluRCxDQUFDO0lBRUosSUFBSTtRQUNGLElBQUksQ0FBQyx5QkFBVyxDQUFDLFVBQVUsRUFBRSxDQUFDO1lBQzVCLE9BQU87UUFDVCxDQUFDO1FBRUQsSUFBQSxvQkFBYSxFQUFDO1lBQ1osSUFBSSxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMseUNBQWlCLENBQUM7WUFDbkMsSUFBSSxDQUFDLFVBQVU7U0FDaEIsQ0FBQyxDQUFDLFNBQVMsQ0FBQyxDQUFDLENBQUMsT0FBTyxFQUFFLFNBQVMsQ0FBQyxFQUFFLEVBQUU7WUFDcEMsTUFBTSxDQUFDLElBQUksQ0FBQztnQkFDVixHQUFHLEVBQUUseUJBQVcsQ0FBQyxlQUFlO2dCQUNoQyxPQUFPLEVBQUUsT0FBTyxDQUFDLE9BQU87YUFDekIsQ0FBQyxDQUFDO1lBQ0gsTUFBTSxDQUFDLGNBQWMsQ0FBQyxDQUFDLEtBQUssRUFBRSxFQUFFO2dCQUM5QixLQUFLLENBQUMsTUFBTSxDQUFDLFlBQVksRUFBRSxTQUFTLENBQUMsQ0FBQztZQUN4QyxDQUFDLENBQUMsQ0FBQztRQUNMLENBQUMsQ0FBQyxDQUFDO0lBQ0wsQ0FBQzs7QUF4QlUsc0NBQWE7Ozs7d0JBQWIsYUFBYTtJQUh6QixJQUFBLGlCQUFVLEVBQUM7UUFDVixVQUFVLEVBQUUsTUFBTTtLQUNuQixDQUFDO0dBQ1csYUFBYSxDQXlCekIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3NlcnZpY2VzL3NlbnRyeS5zZXJ2aWNlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEluamVjdGFibGUgfSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7IFN0b3JlIH0gZnJvbSAnQG5ncngvc3RvcmUnO1xuaW1wb3J0ICogYXMgU2VudHJ5IGZyb20gJ0BzZW50cnkvYW5ndWxhcic7XG5pbXBvcnQgeyBVVUlEIH0gZnJvbSAnYW5ndWxhcjItdXVpZCc7XG5pbXBvcnQgeyBlbnZpcm9ubWVudCB9IGZyb20gJ2Vudmlyb25tZW50cy9lbnZpcm9ubWVudCc7XG5pbXBvcnQgeyBCZWhhdmlvclN1YmplY3QsIGNvbWJpbmVMYXRlc3QgfSBmcm9tICdyeGpzJztcbmltcG9ydCB7IEFwcFN0YXRlIH0gZnJvbSAnYXBwL3N0b3JlJztcbmltcG9ydCB7IHdhaXRGb3JTeXN0ZW1JbmZvIH0gZnJvbSAnYXBwL3N0b3JlL3N5c3RlbS1pbmZvL3N5c3RlbS1pbmZvLnNlbGVjdG9ycyc7XG5cbkBJbmplY3RhYmxlKHtcbiAgcHJvdmlkZWRJbjogJ3Jvb3QnLFxufSlcbmV4cG9ydCBjbGFzcyBTZW50cnlTZXJ2aWNlIHtcbiAgc2Vzc2lvbklkJCA9IG5ldyBCZWhhdmlvclN1YmplY3Q8c3RyaW5nPihVVUlELlVVSUQoKSk7XG5cbiAgY29uc3RydWN0b3IoXG4gICAgcHJpdmF0ZSBzdG9yZSQ6IFN0b3JlPEFwcFN0YXRlPixcbiAgKSB7fVxuXG4gIGluaXQoKTogdm9pZCB7XG4gICAgaWYgKCFlbnZpcm9ubWVudC5wcm9kdWN0aW9uKSB7XG4gICAgICByZXR1cm47XG4gICAgfVxuXG4gICAgY29tYmluZUxhdGVzdChbXG4gICAgICB0aGlzLnN0b3JlJC5waXBlKHdhaXRGb3JTeXN0ZW1JbmZvKSxcbiAgICAgIHRoaXMuc2Vzc2lvbklkJCxcbiAgICBdKS5zdWJzY3JpYmUoKFtzeXNJbmZvLCBzZXNzaW9uSWRdKSA9PiB7XG4gICAgICBTZW50cnkuaW5pdCh7XG4gICAgICAgIGRzbjogZW52aXJvbm1lbnQuc2VudHJ5UHVibGljRHNuLFxuICAgICAgICByZWxlYXNlOiBzeXNJbmZvLnZlcnNpb24sXG4gICAgICB9KTtcbiAgICAgIFNlbnRyeS5jb25maWd1cmVTY29wZSgoc2NvcGUpID0+IHtcbiAgICAgICAgc2NvcGUuc2V0VGFnKCdzZXNzaW9uX2lkJywgc2Vzc2lvbklkKTtcbiAgICAgIH0pO1xuICAgIH0pO1xuICB9XG59XG4iXSwidmVyc2lvbiI6M30=

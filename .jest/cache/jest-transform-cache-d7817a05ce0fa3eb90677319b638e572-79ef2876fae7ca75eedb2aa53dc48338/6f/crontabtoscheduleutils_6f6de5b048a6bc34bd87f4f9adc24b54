@@ -1,0 +1,25 @@
+8b389eea27b19071a3c93e09e20499c3
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.crontabToSchedule = crontabToSchedule;
+exports.crontabToScheduleWithoutMinutes = crontabToScheduleWithoutMinutes;
+function crontabToSchedule(crontab) {
+    const [minute, hour, dom, month, dow] = crontab.split(' ');
+    return {
+        minute,
+        hour,
+        dom,
+        month,
+        dow,
+    };
+}
+function crontabToScheduleWithoutMinutes(crontab) {
+    const [, hour, dom, month, dow] = crontab.split(' ');
+    return {
+        hour,
+        dom,
+        month,
+        dow,
+    };
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvc2NoZWR1bGVyL3V0aWxzL2Nyb250YWItdG8tc2NoZWR1bGUudXRpbHMudHMiLCJtYXBwaW5ncyI6Ijs7QUFFQSw4Q0FVQztBQUVELDBFQVNDO0FBckJELFNBQWdCLGlCQUFpQixDQUFDLE9BQWU7SUFDL0MsTUFBTSxDQUFDLE1BQU0sRUFBRSxJQUFJLEVBQUUsR0FBRyxFQUFFLEtBQUssRUFBRSxHQUFHLENBQUMsR0FBRyxPQUFPLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxDQUFDO0lBRTNELE9BQU87UUFDTCxNQUFNO1FBQ04sSUFBSTtRQUNKLEdBQUc7UUFDSCxLQUFLO1FBQ0wsR0FBRztLQUNKLENBQUM7QUFDSixDQUFDO0FBRUQsU0FBZ0IsK0JBQStCLENBQUMsT0FBZTtJQUM3RCxNQUFNLENBQUMsRUFBRSxJQUFJLEVBQUUsR0FBRyxFQUFFLEtBQUssRUFBRSxHQUFHLENBQUMsR0FBRyxPQUFPLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxDQUFDO0lBRXJELE9BQU87UUFDTCxJQUFJO1FBQ0osR0FBRztRQUNILEtBQUs7UUFDTCxHQUFHO0tBQ0osQ0FBQztBQUNKLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvc2NoZWR1bGVyL3V0aWxzL2Nyb250YWItdG8tc2NoZWR1bGUudXRpbHMudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgU2NoZWR1bGUgfSBmcm9tICdhcHAvaW50ZXJmYWNlcy9zY2hlZHVsZS5pbnRlcmZhY2UnO1xuXG5leHBvcnQgZnVuY3Rpb24gY3JvbnRhYlRvU2NoZWR1bGUoY3JvbnRhYjogc3RyaW5nKTogU2NoZWR1bGUge1xuICBjb25zdCBbbWludXRlLCBob3VyLCBkb20sIG1vbnRoLCBkb3ddID0gY3JvbnRhYi5zcGxpdCgnICcpO1xuXG4gIHJldHVybiB7XG4gICAgbWludXRlLFxuICAgIGhvdXIsXG4gICAgZG9tLFxuICAgIG1vbnRoLFxuICAgIGRvdyxcbiAgfTtcbn1cblxuZXhwb3J0IGZ1bmN0aW9uIGNyb250YWJUb1NjaGVkdWxlV2l0aG91dE1pbnV0ZXMoY3JvbnRhYjogc3RyaW5nKTogU2NoZWR1bGUge1xuICBjb25zdCBbLCBob3VyLCBkb20sIG1vbnRoLCBkb3ddID0gY3JvbnRhYi5zcGxpdCgnICcpO1xuXG4gIHJldHVybiB7XG4gICAgaG91cixcbiAgICBkb20sXG4gICAgbW9udGgsXG4gICAgZG93LFxuICB9O1xufVxuIl0sInZlcnNpb24iOjN9

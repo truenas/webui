@@ -1,0 +1,2 @@
+c2251765a49d1182fcad955f322b0e95
+module.exports="<ix-fieldset [title]=\"'Authentication' | translate\" [formGroup]=\"form\">\n  <a href=\"https://ix.storj.io/\" target=\"_blank\" ixTest=\"signup-for-account\">\n    {{ 'Sign up for account' | translate }}\n  </a>\n\n  <ix-input\n    formControlName=\"access_key_id\"\n    [label]=\"'Access Key ID' | translate\"\n    [required]=\"true\"\n  ></ix-input>\n\n  <ix-input\n    formControlName=\"secret_access_key\"\n    [label]=\"'Secret Access Key' | translate\"\n    [required]=\"true\"\n  ></ix-input>\n</ix-fieldset>\n"

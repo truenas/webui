@@ -1,0 +1,2 @@
+2faadcb90e449e656b05d1694c7b984f
+module.exports="<span class=\"prefix-icon\">\n  <ix-icon name=\"search\"></ix-icon>\n</span>\n\n<input\n  #ixSearchInput\n  matInput\n  ixTest=\"search\"\n  [maxLength]=\"maxLength\"\n  [value]=\"searchValue\"\n  [disabled]=\"disabled\"\n  [placeholder]=\"'Search' | translate\"\n  (input)=\"onInput(ixSearchInput.value)\"\n/>\n\n@if (!!ixSearchInput.value) {\n  <span\n    class=\"reset-icon reset-input\"\n    (click)=\"onResetInput();\"\n  >\n    <ix-icon name=\"mdi-close-circle\"></ix-icon>\n  </span>\n}\n"

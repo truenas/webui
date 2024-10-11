@@ -1,0 +1,1043 @@
+7cf9f3cf1757253f071bc0e79ccc1e7d
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+var ngx_translate_core_exports = {};
+__export(ngx_translate_core_exports, {
+  DEFAULT_LANGUAGE: () => DEFAULT_LANGUAGE,
+  FakeMissingTranslationHandler: () => FakeMissingTranslationHandler,
+  MissingTranslationHandler: () => MissingTranslationHandler,
+  TranslateCompiler: () => TranslateCompiler,
+  TranslateDefaultParser: () => TranslateDefaultParser,
+  TranslateDirective: () => TranslateDirective,
+  TranslateFakeCompiler: () => TranslateFakeCompiler,
+  TranslateFakeLoader: () => TranslateFakeLoader,
+  TranslateLoader: () => TranslateLoader,
+  TranslateModule: () => TranslateModule,
+  TranslateParser: () => TranslateParser,
+  TranslatePipe: () => TranslatePipe,
+  TranslateService: () => TranslateService,
+  TranslateStore: () => TranslateStore,
+  USE_DEFAULT_LANG: () => USE_DEFAULT_LANG,
+  USE_EXTEND: () => USE_EXTEND,
+  USE_STORE: () => USE_STORE
+});
+module.exports = __toCommonJS(ngx_translate_core_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_rxjs = require("rxjs");
+var import_operators = require("rxjs/operators");
+class TranslateLoader {
+}
+const _TranslateFakeLoader = class _TranslateFakeLoader extends TranslateLoader {
+  getTranslation(lang) {
+    return (0, import_rxjs.of)({});
+  }
+};
+__publicField(_TranslateFakeLoader, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateFakeLoader, deps: null, target: i0.\u0275\u0275FactoryTarget.Injectable }));
+__publicField(_TranslateFakeLoader, "\u0275prov", i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateFakeLoader }));
+let TranslateFakeLoader = _TranslateFakeLoader;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: TranslateFakeLoader, decorators: [{
+  type: import_core.Injectable
+}] });
+class MissingTranslationHandler {
+}
+const _FakeMissingTranslationHandler = class _FakeMissingTranslationHandler {
+  handle(params) {
+    return params.key;
+  }
+};
+__publicField(_FakeMissingTranslationHandler, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _FakeMissingTranslationHandler, deps: [], target: i0.\u0275\u0275FactoryTarget.Injectable }));
+__publicField(_FakeMissingTranslationHandler, "\u0275prov", i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _FakeMissingTranslationHandler }));
+let FakeMissingTranslationHandler = _FakeMissingTranslationHandler;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: FakeMissingTranslationHandler, decorators: [{
+  type: import_core.Injectable
+}] });
+function equals(o1, o2) {
+  if (o1 === o2)
+    return true;
+  if (o1 === null || o2 === null)
+    return false;
+  if (o1 !== o1 && o2 !== o2)
+    return true;
+  let t1 = typeof o1, t2 = typeof o2, length, key, keySet;
+  if (t1 == t2 && t1 == "object") {
+    if (Array.isArray(o1)) {
+      if (!Array.isArray(o2))
+        return false;
+      if ((length = o1.length) == o2.length) {
+        for (key = 0; key < length; key++) {
+          if (!equals(o1[key], o2[key]))
+            return false;
+        }
+        return true;
+      }
+    } else {
+      if (Array.isArray(o2)) {
+        return false;
+      }
+      keySet = /* @__PURE__ */ Object.create(null);
+      for (key in o1) {
+        if (!equals(o1[key], o2[key])) {
+          return false;
+        }
+        keySet[key] = true;
+      }
+      for (key in o2) {
+        if (!(key in keySet) && typeof o2[key] !== "undefined") {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+  return false;
+}
+function isDefined(value) {
+  return typeof value !== "undefined" && value !== null;
+}
+function isObject(item) {
+  return item && typeof item === "object" && !Array.isArray(item);
+}
+function mergeDeep(target, source) {
+  let output = Object.assign({}, target);
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach((key) => {
+      if (isObject(source[key])) {
+        if (!(key in target)) {
+          Object.assign(output, { [key]: source[key] });
+        } else {
+          output[key] = mergeDeep(target[key], source[key]);
+        }
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
+  }
+  return output;
+}
+class TranslateParser {
+}
+const _TranslateDefaultParser = class _TranslateDefaultParser extends TranslateParser {
+  constructor() {
+    super(...arguments);
+    __publicField(this, "templateMatcher", /{{\s?([^{}\s]*)\s?}}/g);
+  }
+  interpolate(expr, params) {
+    let result;
+    if (typeof expr === "string") {
+      result = this.interpolateString(expr, params);
+    } else if (typeof expr === "function") {
+      result = this.interpolateFunction(expr, params);
+    } else {
+      result = expr;
+    }
+    return result;
+  }
+  getValue(target, key) {
+    let keys = typeof key === "string" ? key.split(".") : [key];
+    key = "";
+    do {
+      key += keys.shift();
+      if (isDefined(target) && isDefined(target[key]) && (typeof target[key] === "object" || !keys.length)) {
+        target = target[key];
+        key = "";
+      } else if (!keys.length) {
+        target = void 0;
+      } else {
+        key += ".";
+      }
+    } while (keys.length);
+    return target;
+  }
+  interpolateFunction(fn, params) {
+    return fn(params);
+  }
+  interpolateString(expr, params) {
+    if (!params) {
+      return expr;
+    }
+    return expr.replace(this.templateMatcher, (substring, b) => {
+      let r = this.getValue(params, b);
+      return isDefined(r) ? r : substring;
+    });
+  }
+};
+__publicField(_TranslateDefaultParser, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateDefaultParser, deps: null, target: i0.\u0275\u0275FactoryTarget.Injectable }));
+__publicField(_TranslateDefaultParser, "\u0275prov", i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateDefaultParser }));
+let TranslateDefaultParser = _TranslateDefaultParser;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: TranslateDefaultParser, decorators: [{
+  type: import_core.Injectable
+}] });
+class TranslateCompiler {
+}
+const _TranslateFakeCompiler = class _TranslateFakeCompiler extends TranslateCompiler {
+  compile(value, lang) {
+    return value;
+  }
+  compileTranslations(translations, lang) {
+    return translations;
+  }
+};
+__publicField(_TranslateFakeCompiler, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateFakeCompiler, deps: null, target: i0.\u0275\u0275FactoryTarget.Injectable }));
+__publicField(_TranslateFakeCompiler, "\u0275prov", i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateFakeCompiler }));
+let TranslateFakeCompiler = _TranslateFakeCompiler;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: TranslateFakeCompiler, decorators: [{
+  type: import_core.Injectable
+}] });
+class TranslateStore {
+  constructor() {
+    /**
+     * The default lang to fallback when translations are missing on the current lang
+     */
+    __publicField(this, "defaultLang");
+    /**
+     * The lang currently used
+     */
+    __publicField(this, "currentLang", this.defaultLang);
+    /**
+     * a list of translations per lang
+     */
+    __publicField(this, "translations", {});
+    /**
+     * an array of langs
+     */
+    __publicField(this, "langs", []);
+    /**
+     * An EventEmitter to listen to translation change events
+     * onTranslationChange.subscribe((params: TranslationChangeEvent) => {
+       *     // do something
+       * });
+     */
+    __publicField(this, "onTranslationChange", new import_core.EventEmitter());
+    /**
+     * An EventEmitter to listen to lang change events
+     * onLangChange.subscribe((params: LangChangeEvent) => {
+       *     // do something
+       * });
+     */
+    __publicField(this, "onLangChange", new import_core.EventEmitter());
+    /**
+     * An EventEmitter to listen to default lang change events
+     * onDefaultLangChange.subscribe((params: DefaultLangChangeEvent) => {
+       *     // do something
+       * });
+     */
+    __publicField(this, "onDefaultLangChange", new import_core.EventEmitter());
+  }
+}
+const USE_STORE = new import_core.InjectionToken("USE_STORE");
+const USE_DEFAULT_LANG = new import_core.InjectionToken("USE_DEFAULT_LANG");
+const DEFAULT_LANGUAGE = new import_core.InjectionToken("DEFAULT_LANGUAGE");
+const USE_EXTEND = new import_core.InjectionToken("USE_EXTEND");
+const _TranslateService = class _TranslateService {
+  /**
+   *
+   * @param store an instance of the store (that is supposed to be unique)
+   * @param currentLoader An instance of the loader currently used
+   * @param compiler An instance of the compiler currently used
+   * @param parser An instance of the parser currently used
+   * @param missingTranslationHandler A handler for missing translations.
+   * @param useDefaultLang whether we should use default language translation when current language translation is missing.
+   * @param isolate whether this service should use the store or not
+   * @param extend To make a child module extend (and use) translations from parent modules.
+   * @param defaultLanguage Set the default language using configuration
+   */
+  constructor(store, currentLoader, compiler, parser, missingTranslationHandler, useDefaultLang = true, isolate = false, extend = false, defaultLanguage) {
+    __publicField(this, "store");
+    __publicField(this, "currentLoader");
+    __publicField(this, "compiler");
+    __publicField(this, "parser");
+    __publicField(this, "missingTranslationHandler");
+    __publicField(this, "useDefaultLang");
+    __publicField(this, "isolate");
+    __publicField(this, "extend");
+    __publicField(this, "loadingTranslations");
+    __publicField(this, "pending", false);
+    __publicField(this, "_onTranslationChange", new import_core.EventEmitter());
+    __publicField(this, "_onLangChange", new import_core.EventEmitter());
+    __publicField(this, "_onDefaultLangChange", new import_core.EventEmitter());
+    __publicField(this, "_defaultLang");
+    __publicField(this, "_currentLang");
+    __publicField(this, "_langs", []);
+    __publicField(this, "_translations", {});
+    __publicField(this, "_translationRequests", {});
+    this.store = store;
+    this.currentLoader = currentLoader;
+    this.compiler = compiler;
+    this.parser = parser;
+    this.missingTranslationHandler = missingTranslationHandler;
+    this.useDefaultLang = useDefaultLang;
+    this.isolate = isolate;
+    this.extend = extend;
+    if (defaultLanguage) {
+      this.setDefaultLang(defaultLanguage);
+    }
+  }
+  /**
+   * An EventEmitter to listen to translation change events
+   * onTranslationChange.subscribe((params: TranslationChangeEvent) => {
+     *     // do something
+     * });
+   */
+  get onTranslationChange() {
+    return this.isolate ? this._onTranslationChange : this.store.onTranslationChange;
+  }
+  /**
+   * An EventEmitter to listen to lang change events
+   * onLangChange.subscribe((params: LangChangeEvent) => {
+     *     // do something
+     * });
+   */
+  get onLangChange() {
+    return this.isolate ? this._onLangChange : this.store.onLangChange;
+  }
+  /**
+   * An EventEmitter to listen to default lang change events
+   * onDefaultLangChange.subscribe((params: DefaultLangChangeEvent) => {
+     *     // do something
+     * });
+   */
+  get onDefaultLangChange() {
+    return this.isolate ? this._onDefaultLangChange : this.store.onDefaultLangChange;
+  }
+  /**
+   * The default lang to fallback when translations are missing on the current lang
+   */
+  get defaultLang() {
+    return this.isolate ? this._defaultLang : this.store.defaultLang;
+  }
+  set defaultLang(defaultLang) {
+    if (this.isolate) {
+      this._defaultLang = defaultLang;
+    } else {
+      this.store.defaultLang = defaultLang;
+    }
+  }
+  /**
+   * The lang currently used
+   */
+  get currentLang() {
+    return this.isolate ? this._currentLang : this.store.currentLang;
+  }
+  set currentLang(currentLang) {
+    if (this.isolate) {
+      this._currentLang = currentLang;
+    } else {
+      this.store.currentLang = currentLang;
+    }
+  }
+  /**
+   * an array of langs
+   */
+  get langs() {
+    return this.isolate ? this._langs : this.store.langs;
+  }
+  set langs(langs) {
+    if (this.isolate) {
+      this._langs = langs;
+    } else {
+      this.store.langs = langs;
+    }
+  }
+  /**
+   * a list of translations per lang
+   */
+  get translations() {
+    return this.isolate ? this._translations : this.store.translations;
+  }
+  set translations(translations) {
+    if (this.isolate) {
+      this._translations = translations;
+    } else {
+      this.store.translations = translations;
+    }
+  }
+  /**
+   * Sets the default language to use as a fallback
+   */
+  setDefaultLang(lang) {
+    if (lang === this.defaultLang) {
+      return;
+    }
+    let pending = this.retrieveTranslations(lang);
+    if (typeof pending !== "undefined") {
+      if (this.defaultLang == null) {
+        this.defaultLang = lang;
+      }
+      pending.pipe((0, import_operators.take)(1)).subscribe((res) => {
+        this.changeDefaultLang(lang);
+      });
+    } else {
+      this.changeDefaultLang(lang);
+    }
+  }
+  /**
+   * Gets the default language used
+   */
+  getDefaultLang() {
+    return this.defaultLang;
+  }
+  /**
+   * Changes the lang currently used
+   */
+  use(lang) {
+    if (lang === this.currentLang) {
+      return (0, import_rxjs.of)(this.translations[lang]);
+    }
+    let pending = this.retrieveTranslations(lang);
+    if (typeof pending !== "undefined") {
+      if (!this.currentLang) {
+        this.currentLang = lang;
+      }
+      pending.pipe((0, import_operators.take)(1)).subscribe((res) => {
+        this.changeLang(lang);
+      });
+      return pending;
+    } else {
+      this.changeLang(lang);
+      return (0, import_rxjs.of)(this.translations[lang]);
+    }
+  }
+  /**
+   * Retrieves the given translations
+   */
+  retrieveTranslations(lang) {
+    let pending;
+    if (typeof this.translations[lang] === "undefined" || this.extend) {
+      this._translationRequests[lang] = this._translationRequests[lang] || this.getTranslation(lang);
+      pending = this._translationRequests[lang];
+    }
+    return pending;
+  }
+  /**
+   * Gets an object of translations for a given language with the current loader
+   * and passes it through the compiler
+   */
+  getTranslation(lang) {
+    this.pending = true;
+    const loadingTranslations = this.currentLoader.getTranslation(lang).pipe((0, import_operators.shareReplay)(1), (0, import_operators.take)(1));
+    this.loadingTranslations = loadingTranslations.pipe((0, import_operators.map)((res) => this.compiler.compileTranslations(res, lang)), (0, import_operators.shareReplay)(1), (0, import_operators.take)(1));
+    this.loadingTranslations.subscribe({
+      next: (res) => {
+        this.translations[lang] = this.extend && this.translations[lang] ? __spreadValues(__spreadValues({}, res), this.translations[lang]) : res;
+        this.updateLangs();
+        this.pending = false;
+      },
+      error: (err) => {
+        this.pending = false;
+      }
+    });
+    return loadingTranslations;
+  }
+  /**
+   * Manually sets an object of translations for a given language
+   * after passing it through the compiler
+   */
+  setTranslation(lang, translations, shouldMerge = false) {
+    translations = this.compiler.compileTranslations(translations, lang);
+    if ((shouldMerge || this.extend) && this.translations[lang]) {
+      this.translations[lang] = mergeDeep(this.translations[lang], translations);
+    } else {
+      this.translations[lang] = translations;
+    }
+    this.updateLangs();
+    this.onTranslationChange.emit({ lang, translations: this.translations[lang] });
+  }
+  /**
+   * Returns an array of currently available langs
+   */
+  getLangs() {
+    return this.langs;
+  }
+  /**
+   * Add available langs
+   */
+  addLangs(langs) {
+    langs.forEach((lang) => {
+      if (this.langs.indexOf(lang) === -1) {
+        this.langs.push(lang);
+      }
+    });
+  }
+  /**
+   * Update the list of available langs
+   */
+  updateLangs() {
+    this.addLangs(Object.keys(this.translations));
+  }
+  /**
+   * Returns the parsed result of the translations
+   */
+  getParsedResult(translations, key, interpolateParams) {
+    let res;
+    if (key instanceof Array) {
+      let result = {}, observables = false;
+      for (let k of key) {
+        result[k] = this.getParsedResult(translations, k, interpolateParams);
+        if ((0, import_rxjs.isObservable)(result[k])) {
+          observables = true;
+        }
+      }
+      if (observables) {
+        const sources = key.map((k) => (0, import_rxjs.isObservable)(result[k]) ? result[k] : (0, import_rxjs.of)(result[k]));
+        return (0, import_rxjs.forkJoin)(sources).pipe((0, import_operators.map)((arr) => {
+          let obj = {};
+          arr.forEach((value, index) => {
+            obj[key[index]] = value;
+          });
+          return obj;
+        }));
+      }
+      return result;
+    }
+    if (translations) {
+      res = this.parser.interpolate(this.parser.getValue(translations, key), interpolateParams);
+    }
+    if (typeof res === "undefined" && this.defaultLang != null && this.defaultLang !== this.currentLang && this.useDefaultLang) {
+      res = this.parser.interpolate(this.parser.getValue(this.translations[this.defaultLang], key), interpolateParams);
+    }
+    if (typeof res === "undefined") {
+      let params = { key, translateService: this };
+      if (typeof interpolateParams !== "undefined") {
+        params.interpolateParams = interpolateParams;
+      }
+      res = this.missingTranslationHandler.handle(params);
+    }
+    return typeof res !== "undefined" ? res : key;
+  }
+  /**
+   * Gets the translated value of a key (or an array of keys)
+   * @returns the translated key, or an object of translated keys
+   */
+  get(key, interpolateParams) {
+    if (!isDefined(key) || !key.length) {
+      throw new Error(`Parameter "key" required`);
+    }
+    if (this.pending) {
+      return this.loadingTranslations.pipe((0, import_operators.concatMap)((res) => {
+        res = this.getParsedResult(res, key, interpolateParams);
+        return (0, import_rxjs.isObservable)(res) ? res : (0, import_rxjs.of)(res);
+      }));
+    } else {
+      let res = this.getParsedResult(this.translations[this.currentLang], key, interpolateParams);
+      return (0, import_rxjs.isObservable)(res) ? res : (0, import_rxjs.of)(res);
+    }
+  }
+  /**
+   * Returns a stream of translated values of a key (or an array of keys) which updates
+   * whenever the translation changes.
+   * @returns A stream of the translated key, or an object of translated keys
+   */
+  getStreamOnTranslationChange(key, interpolateParams) {
+    if (!isDefined(key) || !key.length) {
+      throw new Error(`Parameter "key" required`);
+    }
+    return (0, import_rxjs.concat)((0, import_rxjs.defer)(() => this.get(key, interpolateParams)), this.onTranslationChange.pipe((0, import_operators.switchMap)((event) => {
+      const res = this.getParsedResult(event.translations, key, interpolateParams);
+      if (typeof res.subscribe === "function") {
+        return res;
+      } else {
+        return (0, import_rxjs.of)(res);
+      }
+    })));
+  }
+  /**
+   * Returns a stream of translated values of a key (or an array of keys) which updates
+   * whenever the language changes.
+   * @returns A stream of the translated key, or an object of translated keys
+   */
+  stream(key, interpolateParams) {
+    if (!isDefined(key) || !key.length) {
+      throw new Error(`Parameter "key" required`);
+    }
+    return (0, import_rxjs.concat)((0, import_rxjs.defer)(() => this.get(key, interpolateParams)), this.onLangChange.pipe((0, import_operators.switchMap)((event) => {
+      const res = this.getParsedResult(event.translations, key, interpolateParams);
+      return (0, import_rxjs.isObservable)(res) ? res : (0, import_rxjs.of)(res);
+    })));
+  }
+  /**
+   * Returns a translation instantly from the internal state of loaded translation.
+   * All rules regarding the current language, the preferred language of even fallback languages will be used except any promise handling.
+   */
+  instant(key, interpolateParams) {
+    if (!isDefined(key) || !key.length) {
+      throw new Error(`Parameter "key" required`);
+    }
+    let res = this.getParsedResult(this.translations[this.currentLang], key, interpolateParams);
+    if ((0, import_rxjs.isObservable)(res)) {
+      if (key instanceof Array) {
+        let obj = {};
+        key.forEach((value, index) => {
+          obj[key[index]] = key[index];
+        });
+        return obj;
+      }
+      return key;
+    } else {
+      return res;
+    }
+  }
+  /**
+   * Sets the translated value of a key, after compiling it
+   */
+  set(key, value, lang = this.currentLang) {
+    this.translations[lang][key] = this.compiler.compile(value, lang);
+    this.updateLangs();
+    this.onTranslationChange.emit({ lang, translations: this.translations[lang] });
+  }
+  /**
+   * Changes the current lang
+   */
+  changeLang(lang) {
+    this.currentLang = lang;
+    this.onLangChange.emit({ lang, translations: this.translations[lang] });
+    if (this.defaultLang == null) {
+      this.changeDefaultLang(lang);
+    }
+  }
+  /**
+   * Changes the default lang
+   */
+  changeDefaultLang(lang) {
+    this.defaultLang = lang;
+    this.onDefaultLangChange.emit({ lang, translations: this.translations[lang] });
+  }
+  /**
+   * Allows to reload the lang file from the file
+   */
+  reloadLang(lang) {
+    this.resetLang(lang);
+    return this.getTranslation(lang);
+  }
+  /**
+   * Deletes inner translation
+   */
+  resetLang(lang) {
+    this._translationRequests[lang] = void 0;
+    this.translations[lang] = void 0;
+  }
+  /**
+   * Returns the language code name from the browser, e.g. "de"
+   */
+  getBrowserLang() {
+    if (typeof window === "undefined" || typeof window.navigator === "undefined") {
+      return void 0;
+    }
+    let browserLang = window.navigator.languages ? window.navigator.languages[0] : null;
+    browserLang = browserLang || window.navigator.language || window.navigator.browserLanguage || window.navigator.userLanguage;
+    if (typeof browserLang === "undefined") {
+      return void 0;
+    }
+    if (browserLang.indexOf("-") !== -1) {
+      browserLang = browserLang.split("-")[0];
+    }
+    if (browserLang.indexOf("_") !== -1) {
+      browserLang = browserLang.split("_")[0];
+    }
+    return browserLang;
+  }
+  /**
+   * Returns the culture language code name from the browser, e.g. "de-DE"
+   */
+  getBrowserCultureLang() {
+    if (typeof window === "undefined" || typeof window.navigator === "undefined") {
+      return void 0;
+    }
+    let browserCultureLang = window.navigator.languages ? window.navigator.languages[0] : null;
+    browserCultureLang = browserCultureLang || window.navigator.language || window.navigator.browserLanguage || window.navigator.userLanguage;
+    return browserCultureLang;
+  }
+};
+__publicField(_TranslateService, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateService, deps: [{ token: TranslateStore }, { token: TranslateLoader }, { token: TranslateCompiler }, { token: TranslateParser }, { token: MissingTranslationHandler }, { token: USE_DEFAULT_LANG }, { token: USE_STORE }, { token: USE_EXTEND }, { token: DEFAULT_LANGUAGE }], target: i0.\u0275\u0275FactoryTarget.Injectable }));
+__publicField(_TranslateService, "\u0275prov", i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateService }));
+let TranslateService = _TranslateService;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: TranslateService, decorators: [{
+  type: import_core.Injectable
+}], ctorParameters: function() {
+  return [{ type: TranslateStore }, { type: TranslateLoader }, { type: TranslateCompiler }, { type: TranslateParser }, { type: MissingTranslationHandler }, { type: void 0, decorators: [{
+    type: import_core.Inject,
+    args: [USE_DEFAULT_LANG]
+  }] }, { type: void 0, decorators: [{
+    type: import_core.Inject,
+    args: [USE_STORE]
+  }] }, { type: void 0, decorators: [{
+    type: import_core.Inject,
+    args: [USE_EXTEND]
+  }] }, { type: void 0, decorators: [{
+    type: import_core.Inject,
+    args: [DEFAULT_LANGUAGE]
+  }] }];
+} });
+const _TranslateDirective = class _TranslateDirective {
+  constructor(translateService, element, _ref) {
+    __publicField(this, "translateService");
+    __publicField(this, "element");
+    __publicField(this, "_ref");
+    __publicField(this, "key");
+    __publicField(this, "lastParams");
+    __publicField(this, "currentParams");
+    __publicField(this, "onLangChangeSub");
+    __publicField(this, "onDefaultLangChangeSub");
+    __publicField(this, "onTranslationChangeSub");
+    this.translateService = translateService;
+    this.element = element;
+    this._ref = _ref;
+    if (!this.onTranslationChangeSub) {
+      this.onTranslationChangeSub = this.translateService.onTranslationChange.subscribe((event) => {
+        if (event.lang === this.translateService.currentLang) {
+          this.checkNodes(true, event.translations);
+        }
+      });
+    }
+    if (!this.onLangChangeSub) {
+      this.onLangChangeSub = this.translateService.onLangChange.subscribe((event) => {
+        this.checkNodes(true, event.translations);
+      });
+    }
+    if (!this.onDefaultLangChangeSub) {
+      this.onDefaultLangChangeSub = this.translateService.onDefaultLangChange.subscribe((event) => {
+        this.checkNodes(true);
+      });
+    }
+  }
+  set translate(key) {
+    if (key) {
+      this.key = key;
+      this.checkNodes();
+    }
+  }
+  set translateParams(params) {
+    if (!equals(this.currentParams, params)) {
+      this.currentParams = params;
+      this.checkNodes(true);
+    }
+  }
+  ngAfterViewChecked() {
+    this.checkNodes();
+  }
+  checkNodes(forceUpdate = false, translations) {
+    let nodes = this.element.nativeElement.childNodes;
+    if (!nodes.length) {
+      this.setContent(this.element.nativeElement, this.key);
+      nodes = this.element.nativeElement.childNodes;
+    }
+    for (let i = 0; i < nodes.length; ++i) {
+      let node = nodes[i];
+      if (node.nodeType === 3) {
+        let key;
+        if (forceUpdate) {
+          node.lastKey = null;
+        }
+        if (isDefined(node.lookupKey)) {
+          key = node.lookupKey;
+        } else if (this.key) {
+          key = this.key;
+        } else {
+          let content = this.getContent(node);
+          let trimmedContent = content.trim();
+          if (trimmedContent.length) {
+            node.lookupKey = trimmedContent;
+            if (content !== node.currentValue) {
+              key = trimmedContent;
+              node.originalContent = content || node.originalContent;
+            } else if (node.originalContent) {
+              key = node.originalContent.trim();
+            } else if (content !== node.currentValue) {
+              key = trimmedContent;
+              node.originalContent = content || node.originalContent;
+            }
+          }
+        }
+        this.updateValue(key, node, translations);
+      }
+    }
+  }
+  updateValue(key, node, translations) {
+    if (key) {
+      if (node.lastKey === key && this.lastParams === this.currentParams) {
+        return;
+      }
+      this.lastParams = this.currentParams;
+      let onTranslation = (res) => {
+        if (res !== key) {
+          node.lastKey = key;
+        }
+        if (!node.originalContent) {
+          node.originalContent = this.getContent(node);
+        }
+        node.currentValue = isDefined(res) ? res : node.originalContent || key;
+        this.setContent(node, this.key ? node.currentValue : node.originalContent.replace(key, node.currentValue));
+        this._ref.markForCheck();
+      };
+      if (isDefined(translations)) {
+        let res = this.translateService.getParsedResult(translations, key, this.currentParams);
+        if ((0, import_rxjs.isObservable)(res)) {
+          res.subscribe({ next: onTranslation });
+        } else {
+          onTranslation(res);
+        }
+      } else {
+        this.translateService.get(key, this.currentParams).subscribe(onTranslation);
+      }
+    }
+  }
+  getContent(node) {
+    return isDefined(node.textContent) ? node.textContent : node.data;
+  }
+  setContent(node, content) {
+    if (isDefined(node.textContent)) {
+      node.textContent = content;
+    } else {
+      node.data = content;
+    }
+  }
+  ngOnDestroy() {
+    if (this.onLangChangeSub) {
+      this.onLangChangeSub.unsubscribe();
+    }
+    if (this.onDefaultLangChangeSub) {
+      this.onDefaultLangChangeSub.unsubscribe();
+    }
+    if (this.onTranslationChangeSub) {
+      this.onTranslationChangeSub.unsubscribe();
+    }
+  }
+};
+__publicField(_TranslateDirective, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateDirective, deps: [{ token: TranslateService }, { token: i0.ElementRef }, { token: i0.ChangeDetectorRef }], target: i0.\u0275\u0275FactoryTarget.Directive }));
+__publicField(_TranslateDirective, "\u0275dir", i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "16.0.0", type: _TranslateDirective, selector: "[translate],[ngx-translate]", inputs: { translate: "translate", translateParams: "translateParams" }, ngImport: i0 }));
+let TranslateDirective = _TranslateDirective;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: TranslateDirective, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    selector: "[translate],[ngx-translate]"
+  }]
+}], ctorParameters: function() {
+  return [{ type: TranslateService }, { type: i0.ElementRef }, { type: i0.ChangeDetectorRef }];
+}, propDecorators: { translate: [{
+  type: import_core.Input
+}], translateParams: [{
+  type: import_core.Input
+}] } });
+const _TranslatePipe = class _TranslatePipe {
+  constructor(translate, _ref) {
+    __publicField(this, "translate");
+    __publicField(this, "_ref");
+    __publicField(this, "value", "");
+    __publicField(this, "lastKey", null);
+    __publicField(this, "lastParams", []);
+    __publicField(this, "onTranslationChange");
+    __publicField(this, "onLangChange");
+    __publicField(this, "onDefaultLangChange");
+    this.translate = translate;
+    this._ref = _ref;
+  }
+  updateValue(key, interpolateParams, translations) {
+    let onTranslation = (res) => {
+      this.value = res !== void 0 ? res : key;
+      this.lastKey = key;
+      this._ref.markForCheck();
+    };
+    if (translations) {
+      let res = this.translate.getParsedResult(translations, key, interpolateParams);
+      if ((0, import_rxjs.isObservable)(res.subscribe)) {
+        res.subscribe(onTranslation);
+      } else {
+        onTranslation(res);
+      }
+    }
+    this.translate.get(key, interpolateParams).subscribe(onTranslation);
+  }
+  transform(query, ...args) {
+    if (!query || !query.length) {
+      return query;
+    }
+    if (equals(query, this.lastKey) && equals(args, this.lastParams)) {
+      return this.value;
+    }
+    let interpolateParams = void 0;
+    if (isDefined(args[0]) && args.length) {
+      if (typeof args[0] === "string" && args[0].length) {
+        let validArgs = args[0].replace(/(\')?([a-zA-Z0-9_]+)(\')?(\s)?:/g, '"$2":').replace(/:(\s)?(\')(.*?)(\')/g, ':"$3"');
+        try {
+          interpolateParams = JSON.parse(validArgs);
+        } catch (e) {
+          throw new SyntaxError(`Wrong parameter in TranslatePipe. Expected a valid Object, received: ${args[0]}`);
+        }
+      } else if (typeof args[0] === "object" && !Array.isArray(args[0])) {
+        interpolateParams = args[0];
+      }
+    }
+    this.lastKey = query;
+    this.lastParams = args;
+    this.updateValue(query, interpolateParams);
+    this._dispose();
+    if (!this.onTranslationChange) {
+      this.onTranslationChange = this.translate.onTranslationChange.subscribe((event) => {
+        if (this.lastKey && event.lang === this.translate.currentLang) {
+          this.lastKey = null;
+          this.updateValue(query, interpolateParams, event.translations);
+        }
+      });
+    }
+    if (!this.onLangChange) {
+      this.onLangChange = this.translate.onLangChange.subscribe((event) => {
+        if (this.lastKey) {
+          this.lastKey = null;
+          this.updateValue(query, interpolateParams, event.translations);
+        }
+      });
+    }
+    if (!this.onDefaultLangChange) {
+      this.onDefaultLangChange = this.translate.onDefaultLangChange.subscribe(() => {
+        if (this.lastKey) {
+          this.lastKey = null;
+          this.updateValue(query, interpolateParams);
+        }
+      });
+    }
+    return this.value;
+  }
+  /**
+   * Clean any existing subscription to change events
+   */
+  _dispose() {
+    if (typeof this.onTranslationChange !== "undefined") {
+      this.onTranslationChange.unsubscribe();
+      this.onTranslationChange = void 0;
+    }
+    if (typeof this.onLangChange !== "undefined") {
+      this.onLangChange.unsubscribe();
+      this.onLangChange = void 0;
+    }
+    if (typeof this.onDefaultLangChange !== "undefined") {
+      this.onDefaultLangChange.unsubscribe();
+      this.onDefaultLangChange = void 0;
+    }
+  }
+  ngOnDestroy() {
+    this._dispose();
+  }
+};
+__publicField(_TranslatePipe, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslatePipe, deps: [{ token: TranslateService }, { token: i0.ChangeDetectorRef }], target: i0.\u0275\u0275FactoryTarget.Pipe }));
+__publicField(_TranslatePipe, "\u0275pipe", i0.\u0275\u0275ngDeclarePipe({ minVersion: "14.0.0", version: "16.0.0", ngImport: i0, type: _TranslatePipe, name: "translate", pure: false }));
+__publicField(_TranslatePipe, "\u0275prov", i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslatePipe }));
+let TranslatePipe = _TranslatePipe;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: TranslatePipe, decorators: [{
+  type: import_core.Injectable
+}, {
+  type: import_core.Pipe,
+  args: [{
+    name: "translate",
+    pure: false
+    // required to update the value when the promise is resolved
+  }]
+}], ctorParameters: function() {
+  return [{ type: TranslateService }, { type: i0.ChangeDetectorRef }];
+} });
+const _TranslateModule = class _TranslateModule {
+  /**
+   * Use this method in your root module to provide the TranslateService
+   */
+  static forRoot(config = {}) {
+    return {
+      ngModule: _TranslateModule,
+      providers: [
+        config.loader || { provide: TranslateLoader, useClass: TranslateFakeLoader },
+        config.compiler || { provide: TranslateCompiler, useClass: TranslateFakeCompiler },
+        config.parser || { provide: TranslateParser, useClass: TranslateDefaultParser },
+        config.missingTranslationHandler || { provide: MissingTranslationHandler, useClass: FakeMissingTranslationHandler },
+        TranslateStore,
+        { provide: USE_STORE, useValue: config.isolate },
+        { provide: USE_DEFAULT_LANG, useValue: config.useDefaultLang },
+        { provide: USE_EXTEND, useValue: config.extend },
+        { provide: DEFAULT_LANGUAGE, useValue: config.defaultLanguage },
+        TranslateService
+      ]
+    };
+  }
+  /**
+   * Use this method in your other (non root) modules to import the directive/pipe
+   */
+  static forChild(config = {}) {
+    return {
+      ngModule: _TranslateModule,
+      providers: [
+        config.loader || { provide: TranslateLoader, useClass: TranslateFakeLoader },
+        config.compiler || { provide: TranslateCompiler, useClass: TranslateFakeCompiler },
+        config.parser || { provide: TranslateParser, useClass: TranslateDefaultParser },
+        config.missingTranslationHandler || { provide: MissingTranslationHandler, useClass: FakeMissingTranslationHandler },
+        { provide: USE_STORE, useValue: config.isolate },
+        { provide: USE_DEFAULT_LANG, useValue: config.useDefaultLang },
+        { provide: USE_EXTEND, useValue: config.extend },
+        { provide: DEFAULT_LANGUAGE, useValue: config.defaultLanguage },
+        TranslateService
+      ]
+    };
+  }
+};
+__publicField(_TranslateModule, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule }));
+__publicField(_TranslateModule, "\u0275mod", i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "16.0.0", ngImport: i0, type: _TranslateModule, declarations: [
+  TranslatePipe,
+  TranslateDirective
+], exports: [
+  TranslatePipe,
+  TranslateDirective
+] }));
+__publicField(_TranslateModule, "\u0275inj", i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: _TranslateModule }));
+let TranslateModule = _TranslateModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.0", ngImport: i0, type: TranslateModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    declarations: [
+      TranslatePipe,
+      TranslateDirective
+    ],
+    exports: [
+      TranslatePipe,
+      TranslateDirective
+    ]
+  }]
+}] });

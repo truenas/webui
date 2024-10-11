@@ -1,0 +1,9 @@
+ebfca2f9e5fc23efb946c35aa657e962
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ResponseErrorType = void 0;
+var ResponseErrorType;
+(function (ResponseErrorType) {
+    ResponseErrorType["Validation"] = "VALIDATION";
+})(ResponseErrorType || (exports.ResponseErrorType = ResponseErrorType = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3Jlc3BvbnNlLWVycm9yLXR5cGUuZW51bS50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSxJQUFZLGlCQUVYO0FBRkQsV0FBWSxpQkFBaUI7SUFDM0IsOENBQXlCLENBQUE7QUFDM0IsQ0FBQyxFQUZXLGlCQUFpQixpQ0FBakIsaUJBQWlCLFFBRTVCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9lbnVtcy9yZXNwb25zZS1lcnJvci10eXBlLmVudW0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGVudW0gUmVzcG9uc2VFcnJvclR5cGUge1xuICBWYWxpZGF0aW9uID0gJ1ZBTElEQVRJT04nLFxufVxuIl0sInZlcnNpb24iOjN9

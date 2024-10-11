@@ -1,0 +1,39 @@
+31cc207cceadb528c6f2f490db325dea
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseExtremum_js_1 = __importDefault(require("./_baseExtremum.js"));
+const _baseGt_js_1 = __importDefault(require("./_baseGt.js"));
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+/**
+ * This method is like `_.max` except that it accepts `iteratee` which is
+ * invoked for each element in `array` to generate the criterion by which
+ * the value is ranked. The iteratee is invoked with one argument: (value).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Math
+ * @param {Array} array The array to iterate over.
+ * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @returns {*} Returns the maximum value.
+ * @example
+ *
+ * var objects = [{ 'n': 1 }, { 'n': 2 }];
+ *
+ * _.maxBy(objects, function(o) { return o.n; });
+ * // => { 'n': 2 }
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.maxBy(objects, 'n');
+ * // => { 'n': 2 }
+ */
+function maxBy(array, iteratee) {
+    return (array && array.length)
+        ? (0, _baseExtremum_js_1.default)(array, (0, _baseIteratee_js_1.default)(iteratee, 2), _baseGt_js_1.default)
+        : undefined;
+}
+exports.default = maxBy;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL21heEJ5LmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsMEVBQThDO0FBQzlDLDhEQUFrQztBQUNsQywwRUFBOEM7QUFFOUM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FzQkc7QUFDSCxTQUFTLEtBQUssQ0FBQyxLQUFLLEVBQUUsUUFBUTtJQUM1QixPQUFPLENBQUMsS0FBSyxJQUFJLEtBQUssQ0FBQyxNQUFNLENBQUM7UUFDNUIsQ0FBQyxDQUFDLElBQUEsMEJBQVksRUFBQyxLQUFLLEVBQUUsSUFBQSwwQkFBWSxFQUFDLFFBQVEsRUFBRSxDQUFDLENBQUMsRUFBRSxvQkFBTSxDQUFDO1FBQ3hELENBQUMsQ0FBQyxTQUFTLENBQUM7QUFDaEIsQ0FBQztBQUVELGtCQUFlLEtBQUssQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvbWF4QnkuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VFeHRyZW11bSBmcm9tICcuL19iYXNlRXh0cmVtdW0uanMnO1xuaW1wb3J0IGJhc2VHdCBmcm9tICcuL19iYXNlR3QuanMnO1xuaW1wb3J0IGJhc2VJdGVyYXRlZSBmcm9tICcuL19iYXNlSXRlcmF0ZWUuanMnO1xuXG4vKipcbiAqIFRoaXMgbWV0aG9kIGlzIGxpa2UgYF8ubWF4YCBleGNlcHQgdGhhdCBpdCBhY2NlcHRzIGBpdGVyYXRlZWAgd2hpY2ggaXNcbiAqIGludm9rZWQgZm9yIGVhY2ggZWxlbWVudCBpbiBgYXJyYXlgIHRvIGdlbmVyYXRlIHRoZSBjcml0ZXJpb24gYnkgd2hpY2hcbiAqIHRoZSB2YWx1ZSBpcyByYW5rZWQuIFRoZSBpdGVyYXRlZSBpcyBpbnZva2VkIHdpdGggb25lIGFyZ3VtZW50OiAodmFsdWUpLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgNC4wLjBcbiAqIEBjYXRlZ29yeSBNYXRoXG4gKiBAcGFyYW0ge0FycmF5fSBhcnJheSBUaGUgYXJyYXkgdG8gaXRlcmF0ZSBvdmVyLlxuICogQHBhcmFtIHtGdW5jdGlvbn0gW2l0ZXJhdGVlPV8uaWRlbnRpdHldIFRoZSBpdGVyYXRlZSBpbnZva2VkIHBlciBlbGVtZW50LlxuICogQHJldHVybnMgeyp9IFJldHVybnMgdGhlIG1heGltdW0gdmFsdWUuXG4gKiBAZXhhbXBsZVxuICpcbiAqIHZhciBvYmplY3RzID0gW3sgJ24nOiAxIH0sIHsgJ24nOiAyIH1dO1xuICpcbiAqIF8ubWF4Qnkob2JqZWN0cywgZnVuY3Rpb24obykgeyByZXR1cm4gby5uOyB9KTtcbiAqIC8vID0+IHsgJ24nOiAyIH1cbiAqXG4gKiAvLyBUaGUgYF8ucHJvcGVydHlgIGl0ZXJhdGVlIHNob3J0aGFuZC5cbiAqIF8ubWF4Qnkob2JqZWN0cywgJ24nKTtcbiAqIC8vID0+IHsgJ24nOiAyIH1cbiAqL1xuZnVuY3Rpb24gbWF4QnkoYXJyYXksIGl0ZXJhdGVlKSB7XG4gIHJldHVybiAoYXJyYXkgJiYgYXJyYXkubGVuZ3RoKVxuICAgID8gYmFzZUV4dHJlbXVtKGFycmF5LCBiYXNlSXRlcmF0ZWUoaXRlcmF0ZWUsIDIpLCBiYXNlR3QpXG4gICAgOiB1bmRlZmluZWQ7XG59XG5cbmV4cG9ydCBkZWZhdWx0IG1heEJ5O1xuIl0sInZlcnNpb24iOjN9

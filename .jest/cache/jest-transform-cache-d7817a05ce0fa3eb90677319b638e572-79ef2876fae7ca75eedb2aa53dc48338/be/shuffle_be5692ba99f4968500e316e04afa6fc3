@@ -1,0 +1,30 @@
+3adfe179df0d33fc64d0c6721413f183
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayShuffle_js_1 = __importDefault(require("./_arrayShuffle.js"));
+const _baseShuffle_js_1 = __importDefault(require("./_baseShuffle.js"));
+const isArray_js_1 = __importDefault(require("./isArray.js"));
+/**
+ * Creates an array of shuffled values, using a version of the
+ * [Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to shuffle.
+ * @returns {Array} Returns the new shuffled array.
+ * @example
+ *
+ * _.shuffle([1, 2, 3, 4]);
+ * // => [4, 1, 3, 2]
+ */
+function shuffle(collection) {
+    var func = (0, isArray_js_1.default)(collection) ? _arrayShuffle_js_1.default : _baseShuffle_js_1.default;
+    return func(collection);
+}
+exports.default = shuffle;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3NodWZmbGUuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSwwRUFBOEM7QUFDOUMsd0VBQTRDO0FBQzVDLDhEQUFtQztBQUVuQzs7Ozs7Ozs7Ozs7Ozs7R0FjRztBQUNILFNBQVMsT0FBTyxDQUFDLFVBQVU7SUFDekIsSUFBSSxJQUFJLEdBQUcsSUFBQSxvQkFBTyxFQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUMsQ0FBQywwQkFBWSxDQUFDLENBQUMsQ0FBQyx5QkFBVyxDQUFDO0lBQzVELE9BQU8sSUFBSSxDQUFDLFVBQVUsQ0FBQyxDQUFDO0FBQzFCLENBQUM7QUFFRCxrQkFBZSxPQUFPLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3NodWZmbGUuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGFycmF5U2h1ZmZsZSBmcm9tICcuL19hcnJheVNodWZmbGUuanMnO1xuaW1wb3J0IGJhc2VTaHVmZmxlIGZyb20gJy4vX2Jhc2VTaHVmZmxlLmpzJztcbmltcG9ydCBpc0FycmF5IGZyb20gJy4vaXNBcnJheS5qcyc7XG5cbi8qKlxuICogQ3JlYXRlcyBhbiBhcnJheSBvZiBzaHVmZmxlZCB2YWx1ZXMsIHVzaW5nIGEgdmVyc2lvbiBvZiB0aGVcbiAqIFtGaXNoZXItWWF0ZXMgc2h1ZmZsZV0oaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvRmlzaGVyLVlhdGVzX3NodWZmbGUpLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMC4xLjBcbiAqIEBjYXRlZ29yeSBDb2xsZWN0aW9uXG4gKiBAcGFyYW0ge0FycmF5fE9iamVjdH0gY29sbGVjdGlvbiBUaGUgY29sbGVjdGlvbiB0byBzaHVmZmxlLlxuICogQHJldHVybnMge0FycmF5fSBSZXR1cm5zIHRoZSBuZXcgc2h1ZmZsZWQgYXJyYXkuXG4gKiBAZXhhbXBsZVxuICpcbiAqIF8uc2h1ZmZsZShbMSwgMiwgMywgNF0pO1xuICogLy8gPT4gWzQsIDEsIDMsIDJdXG4gKi9cbmZ1bmN0aW9uIHNodWZmbGUoY29sbGVjdGlvbikge1xuICB2YXIgZnVuYyA9IGlzQXJyYXkoY29sbGVjdGlvbikgPyBhcnJheVNodWZmbGUgOiBiYXNlU2h1ZmZsZTtcbiAgcmV0dXJuIGZ1bmMoY29sbGVjdGlvbik7XG59XG5cbmV4cG9ydCBkZWZhdWx0IHNodWZmbGU7XG4iXSwidmVyc2lvbiI6M30=

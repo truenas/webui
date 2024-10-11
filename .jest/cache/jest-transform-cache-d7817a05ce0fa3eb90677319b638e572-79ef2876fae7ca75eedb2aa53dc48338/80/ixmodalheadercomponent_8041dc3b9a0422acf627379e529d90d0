@@ -1,0 +1,83 @@
+b6e7392c95510859dc8ffed6a03eddcf
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxModalHeaderComponent = void 0;
+const common_1 = require("@angular/common");
+const core_1 = require("@angular/core");
+const progress_bar_1 = require("@angular/material/progress-bar");
+const core_2 = require("@ngx-translate/core");
+const ix_slide_in_ref_1 = require("app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref");
+const readonly_badge_component_1 = require("app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component");
+const ix_icon_component_1 = require("app/modules/ix-icon/ix-icon.component");
+const auth_service_1 = require("app/services/auth/auth.service");
+const i0 = __importStar(require("@angular/core"));
+let IxModalHeaderComponent = class IxModalHeaderComponent {
+    constructor(slideInRef, authService) {
+        this.slideInRef = slideInRef;
+        this.authService = authService;
+        this.title = (0, core_1.input)();
+        this.loading = (0, core_1.input)();
+        this.disableClose = (0, core_1.input)(false);
+        this.requiredRoles = (0, core_1.input)([]);
+        this.hasRequiredRoles = (0, core_1.computed)(() => this.authService.hasRole(this.requiredRoles()));
+    }
+    close() {
+        this.slideInRef.close();
+    }
+};
+exports.IxModalHeaderComponent = IxModalHeaderComponent;
+IxModalHeaderComponent.ctorParameters = () => [
+    { type: ix_slide_in_ref_1.IxSlideInRef },
+    { type: auth_service_1.AuthService }
+];
+IxModalHeaderComponent.propDecorators = {
+    title: [{ type: i0.Input, args: [{ isSignal: true, alias: "title", required: false, transform: undefined },] }],
+    loading: [{ type: i0.Input, args: [{ isSignal: true, alias: "loading", required: false, transform: undefined },] }],
+    disableClose: [{ type: i0.Input, args: [{ isSignal: true, alias: "disableClose", required: false, transform: undefined },] }],
+    requiredRoles: [{ type: i0.Input, args: [{ isSignal: true, alias: "requiredRoles", required: false, transform: undefined },] }]
+};
+exports.IxModalHeaderComponent = IxModalHeaderComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-modal-header',
+        template: require("./ix-modal-header.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            readonly_badge_component_1.ReadOnlyComponent,
+            ix_icon_component_1.IxIconComponent,
+            progress_bar_1.MatProgressBar,
+            common_1.AsyncPipe,
+            core_2.TranslateModule,
+        ],
+    })
+], IxModalHeaderComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1zbGlkZS1pbi9jb21wb25lbnRzL2l4LW1vZGFsLWhlYWRlci9peC1tb2RhbC1oZWFkZXIuY29tcG9uZW50LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQUEsNENBQTRDO0FBQzVDLHdDQUV1QjtBQUN2QixpRUFBZ0U7QUFDaEUsOENBQXNEO0FBRXRELHVHQUFpRztBQUNqRyw0SEFBa0g7QUFDbEgsNkVBQXdFO0FBQ3hFLGlFQUE2RDs7QUFnQnRELElBQU0sc0JBQXNCLEdBQTVCLE1BQU0sc0JBQXNCO0lBUWpDLFlBQ1UsVUFBZ0QsRUFDaEQsV0FBd0I7UUFEeEIsZUFBVSxHQUFWLFVBQVUsQ0FBc0M7UUFDaEQsZ0JBQVcsR0FBWCxXQUFXLENBQWE7cUJBVGpCLElBQUEsWUFBSyxHQUFVO3VCQUNiLElBQUEsWUFBSyxHQUFXOzRCQUNYLElBQUEsWUFBSyxFQUFDLEtBQUssQ0FBQzs2QkFDWCxJQUFBLFlBQUssRUFBUyxFQUFFLENBQUM7UUFFakMscUJBQWdCLEdBQUcsSUFBQSxlQUFRLEVBQUMsR0FBRyxFQUFFLENBQUMsSUFBSSxDQUFDLFdBQVcsQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLGFBQWEsRUFBRSxDQUFDLENBQUMsQ0FBQztJQUt4RixDQUFDO0lBRUosS0FBSztRQUNILElBQUksQ0FBQyxVQUFVLENBQUMsS0FBSyxFQUFFLENBQUM7SUFDMUIsQ0FBQzs7QUFmVSx3REFBc0I7Ozs7Ozs7Ozs7O2lDQUF0QixzQkFBc0I7SUFkbEMsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLGlCQUFpQjtRQUMzQixxREFBK0M7UUFFL0MsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07UUFDL0MsVUFBVSxFQUFFLElBQUk7UUFDaEIsT0FBTyxFQUFFO1lBQ1AsNENBQWlCO1lBQ2pCLG1DQUFlO1lBQ2YsNkJBQWM7WUFDZCxrQkFBUztZQUNULHNCQUFlO1NBQ2hCO0tBQ0YsQ0FBQztHQUNXLHNCQUFzQixDQWdCbEMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1zbGlkZS1pbi9jb21wb25lbnRzL2l4LW1vZGFsLWhlYWRlci9peC1tb2RhbC1oZWFkZXIuY29tcG9uZW50LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEFzeW5jUGlwZSB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbic7XG5pbXBvcnQge1xuICBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgQ29tcG9uZW50LCBjb21wdXRlZCwgaW5wdXQsXG59IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgTWF0UHJvZ3Jlc3NCYXIgfSBmcm9tICdAYW5ndWxhci9tYXRlcmlhbC9wcm9ncmVzcy1iYXInO1xuaW1wb3J0IHsgVHJhbnNsYXRlTW9kdWxlIH0gZnJvbSAnQG5neC10cmFuc2xhdGUvY29yZSc7XG5pbXBvcnQgeyBSb2xlIH0gZnJvbSAnYXBwL2VudW1zL3JvbGUuZW51bSc7XG5pbXBvcnQgeyBJeFNsaWRlSW5SZWYgfSBmcm9tICdhcHAvbW9kdWxlcy9mb3Jtcy9peC1mb3Jtcy9jb21wb25lbnRzL2l4LXNsaWRlLWluL2l4LXNsaWRlLWluLXJlZic7XG5pbXBvcnQgeyBSZWFkT25seUNvbXBvbmVudCB9IGZyb20gJ2FwcC9tb2R1bGVzL2Zvcm1zL2l4LWZvcm1zL2NvbXBvbmVudHMvcmVhZG9ubHktYmFkZ2UvcmVhZG9ubHktYmFkZ2UuY29tcG9uZW50JztcbmltcG9ydCB7IEl4SWNvbkNvbXBvbmVudCB9IGZyb20gJ2FwcC9tb2R1bGVzL2l4LWljb24vaXgtaWNvbi5jb21wb25lbnQnO1xuaW1wb3J0IHsgQXV0aFNlcnZpY2UgfSBmcm9tICdhcHAvc2VydmljZXMvYXV0aC9hdXRoLnNlcnZpY2UnO1xuXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC1tb2RhbC1oZWFkZXInLFxuICB0ZW1wbGF0ZVVybDogJy4vaXgtbW9kYWwtaGVhZGVyLmNvbXBvbmVudC5odG1sJyxcbiAgc3R5bGVVcmxzOiBbJy4vaXgtbW9kYWwtaGVhZGVyLmNvbXBvbmVudC5zY3NzJ10sXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICBzdGFuZGFsb25lOiB0cnVlLFxuICBpbXBvcnRzOiBbXG4gICAgUmVhZE9ubHlDb21wb25lbnQsXG4gICAgSXhJY29uQ29tcG9uZW50LFxuICAgIE1hdFByb2dyZXNzQmFyLFxuICAgIEFzeW5jUGlwZSxcbiAgICBUcmFuc2xhdGVNb2R1bGUsXG4gIF0sXG59KVxuZXhwb3J0IGNsYXNzIEl4TW9kYWxIZWFkZXJDb21wb25lbnQge1xuICByZWFkb25seSB0aXRsZSA9IGlucHV0PHN0cmluZz4oKTtcbiAgcmVhZG9ubHkgbG9hZGluZyA9IGlucHV0PGJvb2xlYW4+KCk7XG4gIHJlYWRvbmx5IGRpc2FibGVDbG9zZSA9IGlucHV0KGZhbHNlKTtcbiAgcmVhZG9ubHkgcmVxdWlyZWRSb2xlcyA9IGlucHV0PFJvbGVbXT4oW10pO1xuXG4gIHJlYWRvbmx5IGhhc1JlcXVpcmVkUm9sZXMgPSBjb21wdXRlZCgoKSA9PiB0aGlzLmF1dGhTZXJ2aWNlLmhhc1JvbGUodGhpcy5yZXF1aXJlZFJvbGVzKCkpKTtcblxuICBjb25zdHJ1Y3RvcihcbiAgICBwcml2YXRlIHNsaWRlSW5SZWY6IEl4U2xpZGVJblJlZjxJeE1vZGFsSGVhZGVyQ29tcG9uZW50PixcbiAgICBwcml2YXRlIGF1dGhTZXJ2aWNlOiBBdXRoU2VydmljZSxcbiAgKSB7fVxuXG4gIGNsb3NlKCk6IHZvaWQge1xuICAgIHRoaXMuc2xpZGVJblJlZi5jbG9zZSgpO1xuICB9XG59XG4iXSwidmVyc2lvbiI6M30=

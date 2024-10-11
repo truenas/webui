@@ -1,0 +1,24 @@
+48d7420ceccb8c0f694ee9140cb43fe0
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.cronCardElements = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.cronCardElements = {
+    hierarchy: [(0, ngx_translate_extract_marker_1.marker)('System'), (0, ngx_translate_extract_marker_1.marker)('Advanced Settings'), (0, ngx_translate_extract_marker_1.marker)('Cron Jobs')],
+    synonyms: [(0, ngx_translate_extract_marker_1.marker)('Add Cron Job')],
+    anchorRouterLink: ['/system', 'advanced'],
+    elements: {
+        addCronJob: {
+            hierarchy: [(0, ngx_translate_extract_marker_1.marker)('Add Cron Job')],
+            anchor: 'add-cron-job',
+            synonyms: [
+                (0, ngx_translate_extract_marker_1.marker)('Create Cron Job'),
+                (0, ngx_translate_extract_marker_1.marker)('New Cron Job'),
+                (0, ngx_translate_extract_marker_1.marker)('Setup Cron Job'),
+                (0, ngx_translate_extract_marker_1.marker)('Cron Job'),
+                (0, ngx_translate_extract_marker_1.marker)('Cronjob'),
+            ],
+        },
+    },
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL3N5c3RlbS9hZHZhbmNlZC9jcm9uL2Nyb24tY2FyZC9jcm9uLWNhcmQuZWxlbWVudHMudHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMEZBQXNFO0FBR3pELFFBQUEsZ0JBQWdCLEdBQUc7SUFDOUIsU0FBUyxFQUFFLENBQUMsSUFBQSxxQ0FBQyxFQUFDLFFBQVEsQ0FBQyxFQUFFLElBQUEscUNBQUMsRUFBQyxtQkFBbUIsQ0FBQyxFQUFFLElBQUEscUNBQUMsRUFBQyxXQUFXLENBQUMsQ0FBQztJQUNoRSxRQUFRLEVBQUUsQ0FBQyxJQUFBLHFDQUFDLEVBQUMsY0FBYyxDQUFDLENBQUM7SUFDN0IsZ0JBQWdCLEVBQUUsQ0FBQyxTQUFTLEVBQUUsVUFBVSxDQUFDO0lBQ3pDLFFBQVEsRUFBRTtRQUNSLFVBQVUsRUFBRTtZQUNWLFNBQVMsRUFBRSxDQUFDLElBQUEscUNBQUMsRUFBQyxjQUFjLENBQUMsQ0FBQztZQUM5QixNQUFNLEVBQUUsY0FBYztZQUN0QixRQUFRLEVBQUU7Z0JBQ1IsSUFBQSxxQ0FBQyxFQUFDLGlCQUFpQixDQUFDO2dCQUNwQixJQUFBLHFDQUFDLEVBQUMsY0FBYyxDQUFDO2dCQUNqQixJQUFBLHFDQUFDLEVBQUMsZ0JBQWdCLENBQUM7Z0JBQ25CLElBQUEscUNBQUMsRUFBQyxVQUFVLENBQUM7Z0JBQ2IsSUFBQSxxQ0FBQyxFQUFDLFNBQVMsQ0FBQzthQUNiO1NBQ0Y7S0FDRjtDQUM0QixDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9wYWdlcy9zeXN0ZW0vYWR2YW5jZWQvY3Jvbi9jcm9uLWNhcmQvY3Jvbi1jYXJkLmVsZW1lbnRzLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IG1hcmtlciBhcyBUIH0gZnJvbSAnQGJpZXNiamVyZy9uZ3gtdHJhbnNsYXRlLWV4dHJhY3QtbWFya2VyJztcbmltcG9ydCB7IFVpU2VhcmNoYWJsZUVsZW1lbnQgfSBmcm9tICdhcHAvbW9kdWxlcy9nbG9iYWwtc2VhcmNoL2ludGVyZmFjZXMvdWktc2VhcmNoYWJsZS1lbGVtZW50LmludGVyZmFjZSc7XG5cbmV4cG9ydCBjb25zdCBjcm9uQ2FyZEVsZW1lbnRzID0ge1xuICBoaWVyYXJjaHk6IFtUKCdTeXN0ZW0nKSwgVCgnQWR2YW5jZWQgU2V0dGluZ3MnKSwgVCgnQ3JvbiBKb2JzJyldLFxuICBzeW5vbnltczogW1QoJ0FkZCBDcm9uIEpvYicpXSxcbiAgYW5jaG9yUm91dGVyTGluazogWycvc3lzdGVtJywgJ2FkdmFuY2VkJ10sXG4gIGVsZW1lbnRzOiB7XG4gICAgYWRkQ3JvbkpvYjoge1xuICAgICAgaGllcmFyY2h5OiBbVCgnQWRkIENyb24gSm9iJyldLFxuICAgICAgYW5jaG9yOiAnYWRkLWNyb24tam9iJyxcbiAgICAgIHN5bm9ueW1zOiBbXG4gICAgICAgIFQoJ0NyZWF0ZSBDcm9uIEpvYicpLFxuICAgICAgICBUKCdOZXcgQ3JvbiBKb2InKSxcbiAgICAgICAgVCgnU2V0dXAgQ3JvbiBKb2InKSxcbiAgICAgICAgVCgnQ3JvbiBKb2InKSxcbiAgICAgICAgVCgnQ3JvbmpvYicpLFxuICAgICAgXSxcbiAgICB9LFxuICB9LFxufSBzYXRpc2ZpZXMgVWlTZWFyY2hhYmxlRWxlbWVudDtcbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,457 @@
+b2d029143e05f05e86627159d2b76f34
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
+var testing_exports = {};
+__export(testing_exports, {
+  MatChipAvatarHarness: () => MatChipAvatarHarness,
+  MatChipEditInputHarness: () => MatChipEditInputHarness,
+  MatChipGridHarness: () => MatChipGridHarness,
+  MatChipHarness: () => MatChipHarness,
+  MatChipInputHarness: () => MatChipInputHarness,
+  MatChipListboxHarness: () => MatChipListboxHarness,
+  MatChipOptionHarness: () => MatChipOptionHarness,
+  MatChipRemoveHarness: () => MatChipRemoveHarness,
+  MatChipRowHarness: () => MatChipRowHarness,
+  MatChipSetHarness: () => MatChipSetHarness
+});
+module.exports = __toCommonJS(testing_exports);
+var import_testing = require("@angular/cdk/testing");
+const _MatChipAvatarHarness = class _MatChipAvatarHarness extends import_testing.ComponentHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a chip avatar with specific
+   * attributes.
+   * @param options Options for filtering which input instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options);
+  }
+};
+_MatChipAvatarHarness.hostSelector = ".mat-mdc-chip-avatar";
+let MatChipAvatarHarness = _MatChipAvatarHarness;
+const _MatChipRemoveHarness = class _MatChipRemoveHarness extends import_testing.ComponentHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a chip remove with specific
+   * attributes.
+   * @param options Options for filtering which input instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options);
+  }
+  /** Clicks the remove button. */
+  click() {
+    return __async(this, null, function* () {
+      return (yield this.host()).click();
+    });
+  }
+};
+_MatChipRemoveHarness.hostSelector = ".mat-mdc-chip-remove";
+let MatChipRemoveHarness = _MatChipRemoveHarness;
+const _MatChipHarness = class _MatChipHarness extends import_testing.ContentContainerComponentHarness {
+  constructor() {
+    super(...arguments);
+    this._primaryAction = this.locatorFor(".mdc-evolution-chip__action--primary");
+  }
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a chip with specific attributes.
+   * @param options Options for narrowing the search.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options).addOption("text", options.text, (harness, label) => {
+      return import_testing.HarnessPredicate.stringMatches(harness.getText(), label);
+    }).addOption("disabled", options.disabled, (harness, disabled) => __async(this, null, function* () {
+      return (yield harness.isDisabled()) === disabled;
+    }));
+  }
+  /** Gets a promise for the text content the option. */
+  getText() {
+    return __async(this, null, function* () {
+      return (yield this.host()).text({
+        exclude: ".mat-mdc-chip-avatar, .mat-mdc-chip-trailing-icon, .mat-icon"
+      });
+    });
+  }
+  /** Whether the chip is disabled. */
+  isDisabled() {
+    return __async(this, null, function* () {
+      return (yield this.host()).hasClass("mat-mdc-chip-disabled");
+    });
+  }
+  /** Delete a chip from the set. */
+  remove() {
+    return __async(this, null, function* () {
+      const hostEl = yield this.host();
+      yield hostEl.sendKeys(import_testing.TestKey.DELETE);
+    });
+  }
+  /**
+   * Gets the remove button inside of a chip.
+   * @param filter Optionally filters which chips are included.
+   */
+  getRemoveButton() {
+    return __async(this, arguments, function* (filter = {}) {
+      return this.locatorFor(MatChipRemoveHarness.with(filter))();
+    });
+  }
+  /**
+   * Gets the avatar inside a chip.
+   * @param filter Optionally filters which avatars are included.
+   */
+  getAvatar() {
+    return __async(this, arguments, function* (filter = {}) {
+      return this.locatorForOptional(MatChipAvatarHarness.with(filter))();
+    });
+  }
+};
+_MatChipHarness.hostSelector = ".mat-mdc-basic-chip, .mat-mdc-chip";
+let MatChipHarness = _MatChipHarness;
+const _MatChipInputHarness = class _MatChipInputHarness extends import_testing.ComponentHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a chip input with specific
+   * attributes.
+   * @param options Options for filtering which input instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options).addOption("value", options.value, (harness, value) => __async(this, null, function* () {
+      return (yield harness.getValue()) === value;
+    })).addOption("placeholder", options.placeholder, (harness, placeholder) => __async(this, null, function* () {
+      return (yield harness.getPlaceholder()) === placeholder;
+    })).addOption("disabled", options.disabled, (harness, disabled) => __async(this, null, function* () {
+      return (yield harness.isDisabled()) === disabled;
+    }));
+  }
+  /** Whether the input is disabled. */
+  isDisabled() {
+    return __async(this, null, function* () {
+      return (yield this.host()).getProperty("disabled");
+    });
+  }
+  /** Whether the input is required. */
+  isRequired() {
+    return __async(this, null, function* () {
+      return (yield this.host()).getProperty("required");
+    });
+  }
+  /** Gets the value of the input. */
+  getValue() {
+    return __async(this, null, function* () {
+      return yield (yield this.host()).getProperty("value");
+    });
+  }
+  /** Gets the placeholder of the input. */
+  getPlaceholder() {
+    return __async(this, null, function* () {
+      return yield (yield this.host()).getProperty("placeholder");
+    });
+  }
+  /**
+   * Focuses the input and returns a promise that indicates when the
+   * action is complete.
+   */
+  focus() {
+    return __async(this, null, function* () {
+      return (yield this.host()).focus();
+    });
+  }
+  /**
+   * Blurs the input and returns a promise that indicates when the
+   * action is complete.
+   */
+  blur() {
+    return __async(this, null, function* () {
+      return (yield this.host()).blur();
+    });
+  }
+  /** Whether the input is focused. */
+  isFocused() {
+    return __async(this, null, function* () {
+      return (yield this.host()).isFocused();
+    });
+  }
+  /**
+   * Sets the value of the input. The value will be set by simulating
+   * keypresses that correspond to the given value.
+   */
+  setValue(newValue) {
+    return __async(this, null, function* () {
+      const inputEl = yield this.host();
+      yield inputEl.clear();
+      if (newValue) {
+        yield inputEl.sendKeys(newValue);
+      }
+    });
+  }
+  /** Sends a chip separator key to the input element. */
+  sendSeparatorKey(key) {
+    return __async(this, null, function* () {
+      const inputEl = yield this.host();
+      return inputEl.sendKeys(key);
+    });
+  }
+};
+_MatChipInputHarness.hostSelector = ".mat-mdc-chip-input";
+let MatChipInputHarness = _MatChipInputHarness;
+const _MatChipOptionHarness = class _MatChipOptionHarness extends MatChipHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a chip option with specific
+   * attributes.
+   * @param options Options for narrowing the search.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(_MatChipOptionHarness, options).addOption("text", options.text, (harness, label) => import_testing.HarnessPredicate.stringMatches(harness.getText(), label)).addOption("selected", options.selected, (harness, selected) => __async(this, null, function* () {
+      return (yield harness.isSelected()) === selected;
+    }));
+  }
+  /** Whether the chip is selected. */
+  isSelected() {
+    return __async(this, null, function* () {
+      return (yield this.host()).hasClass("mat-mdc-chip-selected");
+    });
+  }
+  /** Selects the given chip. Only applies if it's selectable. */
+  select() {
+    return __async(this, null, function* () {
+      if (!(yield this.isSelected())) {
+        yield this.toggle();
+      }
+    });
+  }
+  /** Deselects the given chip. Only applies if it's selectable. */
+  deselect() {
+    return __async(this, null, function* () {
+      if (yield this.isSelected()) {
+        yield this.toggle();
+      }
+    });
+  }
+  /** Toggles the selected state of the given chip. */
+  toggle() {
+    return __async(this, null, function* () {
+      return (yield this._primaryAction()).click();
+    });
+  }
+};
+_MatChipOptionHarness.hostSelector = ".mat-mdc-chip-option";
+let MatChipOptionHarness = _MatChipOptionHarness;
+const _MatChipListboxHarness = class _MatChipListboxHarness extends import_testing.ComponentHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a chip listbox with specific
+   * attributes.
+   * @param options Options for narrowing the search.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options).addOption("disabled", options.disabled, (harness, disabled) => __async(this, null, function* () {
+      return (yield harness.isDisabled()) === disabled;
+    }));
+  }
+  /** Gets whether the chip listbox is disabled. */
+  isDisabled() {
+    return __async(this, null, function* () {
+      return (yield (yield this.host()).getAttribute("aria-disabled")) === "true";
+    });
+  }
+  /** Gets whether the chip listbox is required. */
+  isRequired() {
+    return __async(this, null, function* () {
+      return (yield (yield this.host()).getAttribute("aria-required")) === "true";
+    });
+  }
+  /** Gets whether the chip listbox is in multi selection mode. */
+  isMultiple() {
+    return __async(this, null, function* () {
+      return (yield (yield this.host()).getAttribute("aria-multiselectable")) === "true";
+    });
+  }
+  /** Gets whether the orientation of the chip list. */
+  getOrientation() {
+    return __async(this, null, function* () {
+      const orientation = yield (yield this.host()).getAttribute("aria-orientation");
+      return orientation === "vertical" ? "vertical" : "horizontal";
+    });
+  }
+  /**
+   * Gets the list of chips inside the chip list.
+   * @param filter Optionally filters which chips are included.
+   */
+  getChips() {
+    return __async(this, arguments, function* (filter = {}) {
+      return this.locatorForAll(MatChipOptionHarness.with(filter))();
+    });
+  }
+  /**
+   * Selects a chip inside the chip list.
+   * @param filter An optional filter to apply to the child chips.
+   *    All the chips matching the filter will be selected.
+   */
+  selectChips() {
+    return __async(this, arguments, function* (filter = {}) {
+      const chips = yield this.getChips(filter);
+      if (!chips.length) {
+        throw Error(`Cannot find chip matching filter ${JSON.stringify(filter)}`);
+      }
+      yield (0, import_testing.parallel)(() => chips.map((chip) => chip.select()));
+    });
+  }
+};
+_MatChipListboxHarness.hostSelector = ".mat-mdc-chip-listbox";
+let MatChipListboxHarness = _MatChipListboxHarness;
+const _MatChipEditInputHarness = class _MatChipEditInputHarness extends import_testing.ComponentHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a chip edit input with specific
+   * attributes.
+   * @param options Options for filtering which input instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options);
+  }
+  /** Sets the value of the input. */
+  setValue(value) {
+    return __async(this, null, function* () {
+      const host = yield this.host();
+      if (!host.setContenteditableValue) {
+        throw new Error("Cannot set chip edit input value, because test element does not implement the `setContenteditableValue` method.");
+      }
+      return host.setContenteditableValue(value);
+    });
+  }
+};
+_MatChipEditInputHarness.hostSelector = ".mat-chip-edit-input";
+let MatChipEditInputHarness = _MatChipEditInputHarness;
+const _MatChipRowHarness = class _MatChipRowHarness extends MatChipHarness {
+  /** Whether the chip is editable. */
+  isEditable() {
+    return __async(this, null, function* () {
+      return (yield this.host()).hasClass("mat-mdc-chip-editable");
+    });
+  }
+  /** Whether the chip is currently being edited. */
+  isEditing() {
+    return __async(this, null, function* () {
+      return (yield this.host()).hasClass("mat-mdc-chip-editing");
+    });
+  }
+  /** Sets the chip row into an editing state, if it is editable. */
+  startEditing() {
+    return __async(this, null, function* () {
+      if (!(yield this.isEditable())) {
+        throw new Error("Cannot begin editing a chip that is not editable.");
+      }
+      return (yield this.host()).dispatchEvent("dblclick");
+    });
+  }
+  /** Stops editing the chip, if it was in the editing state. */
+  finishEditing() {
+    return __async(this, null, function* () {
+      if (yield this.isEditing()) {
+        yield (yield this.host()).sendKeys(import_testing.TestKey.ENTER);
+      }
+    });
+  }
+  /** Gets the edit input inside the chip row. */
+  getEditInput() {
+    return __async(this, arguments, function* (filter = {}) {
+      return this.locatorFor(MatChipEditInputHarness.with(filter))();
+    });
+  }
+};
+_MatChipRowHarness.hostSelector = ".mat-mdc-chip-row";
+let MatChipRowHarness = _MatChipRowHarness;
+const _MatChipGridHarness = class _MatChipGridHarness extends import_testing.ComponentHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a chip grid with specific attributes.
+   * @param options Options for filtering which chip grid instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options).addOption("disabled", options.disabled, (harness, disabled) => __async(this, null, function* () {
+      return (yield harness.isDisabled()) === disabled;
+    }));
+  }
+  /** Gets whether the chip grid is disabled. */
+  isDisabled() {
+    return __async(this, null, function* () {
+      return (yield (yield this.host()).getAttribute("aria-disabled")) === "true";
+    });
+  }
+  /** Gets whether the chip grid is required. */
+  isRequired() {
+    return __async(this, null, function* () {
+      return yield (yield this.host()).hasClass("mat-mdc-chip-list-required");
+    });
+  }
+  /** Gets whether the chip grid is invalid. */
+  isInvalid() {
+    return __async(this, null, function* () {
+      return (yield (yield this.host()).getAttribute("aria-invalid")) === "true";
+    });
+  }
+  /** Gets promise of the harnesses for the chip rows. */
+  getRows(filter = {}) {
+    return this.locatorForAll(MatChipRowHarness.with(filter))();
+  }
+  /** Gets promise of the chip text input harness. */
+  getInput(filter = {}) {
+    return this.locatorFor(MatChipInputHarness.with(filter))();
+  }
+};
+_MatChipGridHarness.hostSelector = ".mat-mdc-chip-grid";
+let MatChipGridHarness = _MatChipGridHarness;
+const _MatChipSetHarness = class _MatChipSetHarness extends import_testing.ComponentHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a chip set with specific attributes.
+   * @param options Options for filtering which chip set instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options);
+  }
+  /** Gets promise of the harnesses for the chips. */
+  getChips() {
+    return __async(this, arguments, function* (filter = {}) {
+      return yield this.locatorForAll(MatChipHarness.with(filter))();
+    });
+  }
+};
+_MatChipSetHarness.hostSelector = ".mat-mdc-chip-set";
+let MatChipSetHarness = _MatChipSetHarness;

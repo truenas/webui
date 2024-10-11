@@ -1,0 +1,317 @@
+3dbbdd92c23cca348d1feb624fde5a99
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var testing_exports = {};
+__export(testing_exports, {
+  HttpClientTestingModule: () => HttpClientTestingModule,
+  HttpTestingController: () => HttpTestingController,
+  TestRequest: () => TestRequest,
+  provideHttpClientTesting: () => provideHttpClientTesting
+});
+module.exports = __toCommonJS(testing_exports);
+var import_http = require("@angular/common/http");
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_rxjs = require("rxjs");
+/**
+ * @license Angular v18.2.4
+ * (c) 2010-2024 Google LLC. https://angular.io/
+ * License: MIT
+ */
+class HttpTestingController {
+}
+class TestRequest {
+  /**
+   * Whether the request was cancelled after it was sent.
+   */
+  get cancelled() {
+    return this._cancelled;
+  }
+  constructor(request, observer) {
+    this.request = request;
+    this.observer = observer;
+    this._cancelled = false;
+  }
+  /**
+   * Resolve the request by returning a body plus additional HTTP information (such as response
+   * headers) if provided.
+   * If the request specifies an expected body type, the body is converted into the requested type.
+   * Otherwise, the body is converted to `JSON` by default.
+   *
+   * Both successful and unsuccessful responses can be delivered via `flush()`.
+   */
+  flush(body, opts = {}) {
+    if (this.cancelled) {
+      throw new Error(`Cannot flush a cancelled request.`);
+    }
+    const url = this.request.urlWithParams;
+    const headers = opts.headers instanceof import_http.HttpHeaders ? opts.headers : new import_http.HttpHeaders(opts.headers);
+    body = _maybeConvertBody(this.request.responseType, body);
+    let statusText = opts.statusText;
+    let status = opts.status !== void 0 ? opts.status : import_http.HttpStatusCode.Ok;
+    if (opts.status === void 0) {
+      if (body === null) {
+        status = import_http.HttpStatusCode.NoContent;
+        statusText || (statusText = "No Content");
+      } else {
+        statusText || (statusText = "OK");
+      }
+    }
+    if (statusText === void 0) {
+      throw new Error("statusText is required when setting a custom status.");
+    }
+    if (status >= 200 && status < 300) {
+      this.observer.next(new import_http.HttpResponse({ body, headers, status, statusText, url }));
+      this.observer.complete();
+    } else {
+      this.observer.error(new import_http.HttpErrorResponse({ error: body, headers, status, statusText, url }));
+    }
+  }
+  error(error, opts = {}) {
+    if (this.cancelled) {
+      throw new Error(`Cannot return an error for a cancelled request.`);
+    }
+    if (opts.status && opts.status >= 200 && opts.status < 300) {
+      throw new Error(`error() called with a successful status.`);
+    }
+    const headers = opts.headers instanceof import_http.HttpHeaders ? opts.headers : new import_http.HttpHeaders(opts.headers);
+    this.observer.error(new import_http.HttpErrorResponse({
+      error,
+      headers,
+      status: opts.status || 0,
+      statusText: opts.statusText || "",
+      url: this.request.urlWithParams
+    }));
+  }
+  /**
+   * Deliver an arbitrary `HttpEvent` (such as a progress event) on the response stream for this
+   * request.
+   */
+  event(event) {
+    if (this.cancelled) {
+      throw new Error(`Cannot send events to a cancelled request.`);
+    }
+    this.observer.next(event);
+  }
+}
+function _toArrayBufferBody(body) {
+  if (typeof ArrayBuffer === "undefined") {
+    throw new Error("ArrayBuffer responses are not supported on this platform.");
+  }
+  if (body instanceof ArrayBuffer) {
+    return body;
+  }
+  throw new Error("Automatic conversion to ArrayBuffer is not supported for response type.");
+}
+function _toBlob(body) {
+  if (typeof Blob === "undefined") {
+    throw new Error("Blob responses are not supported on this platform.");
+  }
+  if (body instanceof Blob) {
+    return body;
+  }
+  if (ArrayBuffer && body instanceof ArrayBuffer) {
+    return new Blob([body]);
+  }
+  throw new Error("Automatic conversion to Blob is not supported for response type.");
+}
+function _toJsonBody(body, format = "JSON") {
+  if (typeof ArrayBuffer !== "undefined" && body instanceof ArrayBuffer) {
+    throw new Error(`Automatic conversion to ${format} is not supported for ArrayBuffers.`);
+  }
+  if (typeof Blob !== "undefined" && body instanceof Blob) {
+    throw new Error(`Automatic conversion to ${format} is not supported for Blobs.`);
+  }
+  if (typeof body === "string" || typeof body === "number" || typeof body === "object" || typeof body === "boolean" || Array.isArray(body)) {
+    return body;
+  }
+  throw new Error(`Automatic conversion to ${format} is not supported for response type.`);
+}
+function _toTextBody(body) {
+  if (typeof body === "string") {
+    return body;
+  }
+  if (typeof ArrayBuffer !== "undefined" && body instanceof ArrayBuffer) {
+    throw new Error("Automatic conversion to text is not supported for ArrayBuffers.");
+  }
+  if (typeof Blob !== "undefined" && body instanceof Blob) {
+    throw new Error("Automatic conversion to text is not supported for Blobs.");
+  }
+  return JSON.stringify(_toJsonBody(body, "text"));
+}
+function _maybeConvertBody(responseType, body) {
+  if (body === null) {
+    return null;
+  }
+  switch (responseType) {
+    case "arraybuffer":
+      return _toArrayBufferBody(body);
+    case "blob":
+      return _toBlob(body);
+    case "json":
+      return _toJsonBody(body);
+    case "text":
+      return _toTextBody(body);
+    default:
+      throw new Error(`Unsupported responseType: ${responseType}`);
+  }
+}
+const _HttpClientTestingBackend = class _HttpClientTestingBackend {
+  constructor() {
+    this.open = [];
+  }
+  /**
+   * Handle an incoming request by queueing it in the list of open requests.
+   */
+  handle(req) {
+    return new import_rxjs.Observable((observer) => {
+      const testReq = new TestRequest(req, observer);
+      this.open.push(testReq);
+      observer.next({ type: import_http.HttpEventType.Sent });
+      return () => {
+        testReq._cancelled = true;
+      };
+    });
+  }
+  /**
+   * Helper function to search for requests in the list of open requests.
+   */
+  _match(match) {
+    if (typeof match === "string") {
+      return this.open.filter((testReq) => testReq.request.urlWithParams === match);
+    } else if (typeof match === "function") {
+      return this.open.filter((testReq) => match(testReq.request));
+    } else {
+      return this.open.filter((testReq) => (!match.method || testReq.request.method === match.method.toUpperCase()) && (!match.url || testReq.request.urlWithParams === match.url));
+    }
+  }
+  /**
+   * Search for requests in the list of open requests, and return all that match
+   * without asserting anything about the number of matches.
+   */
+  match(match) {
+    const results = this._match(match);
+    results.forEach((result) => {
+      const index = this.open.indexOf(result);
+      if (index !== -1) {
+        this.open.splice(index, 1);
+      }
+    });
+    return results;
+  }
+  /**
+   * Expect that a single outstanding request matches the given matcher, and return
+   * it.
+   *
+   * Requests returned through this API will no longer be in the list of open requests,
+   * and thus will not match twice.
+   */
+  expectOne(match, description) {
+    description || (description = this.descriptionFromMatcher(match));
+    const matches = this.match(match);
+    if (matches.length > 1) {
+      throw new Error(`Expected one matching request for criteria "${description}", found ${matches.length} requests.`);
+    }
+    if (matches.length === 0) {
+      let message = `Expected one matching request for criteria "${description}", found none.`;
+      if (this.open.length > 0) {
+        const requests = this.open.map(describeRequest).join(", ");
+        message += ` Requests received are: ${requests}.`;
+      }
+      throw new Error(message);
+    }
+    return matches[0];
+  }
+  /**
+   * Expect that no outstanding requests match the given matcher, and throw an error
+   * if any do.
+   */
+  expectNone(match, description) {
+    description || (description = this.descriptionFromMatcher(match));
+    const matches = this.match(match);
+    if (matches.length > 0) {
+      throw new Error(`Expected zero matching requests for criteria "${description}", found ${matches.length}.`);
+    }
+  }
+  /**
+   * Validate that there are no outstanding requests.
+   */
+  verify(opts = {}) {
+    let open = this.open;
+    if (opts.ignoreCancelled) {
+      open = open.filter((testReq) => !testReq.cancelled);
+    }
+    if (open.length > 0) {
+      const requests = open.map(describeRequest).join(", ");
+      throw new Error(`Expected no open requests, found ${open.length}: ${requests}`);
+    }
+  }
+  descriptionFromMatcher(matcher) {
+    if (typeof matcher === "string") {
+      return `Match URL: ${matcher}`;
+    } else if (typeof matcher === "object") {
+      const method = matcher.method || "(any)";
+      const url = matcher.url || "(any)";
+      return `Match method: ${method}, URL: ${url}`;
+    } else {
+      return `Match by function: ${matcher.name}`;
+    }
+  }
+};
+_HttpClientTestingBackend.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _HttpClientTestingBackend, deps: [], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_HttpClientTestingBackend.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _HttpClientTestingBackend });
+let HttpClientTestingBackend = _HttpClientTestingBackend;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: HttpClientTestingBackend, decorators: [{
+  type: import_core.Injectable
+}] });
+function describeRequest(testRequest) {
+  const url = testRequest.request.urlWithParams;
+  const method = testRequest.request.method;
+  return `${method} ${url}`;
+}
+function provideHttpClientTesting() {
+  return [
+    HttpClientTestingBackend,
+    { provide: import_http.HttpBackend, useExisting: HttpClientTestingBackend },
+    { provide: HttpTestingController, useExisting: HttpClientTestingBackend },
+    { provide: import_http.\u0275REQUESTS_CONTRIBUTE_TO_STABILITY, useValue: false }
+  ];
+}
+const _HttpClientTestingModule = class _HttpClientTestingModule {
+};
+_HttpClientTestingModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _HttpClientTestingModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_HttpClientTestingModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.4", ngImport: i0, type: _HttpClientTestingModule, imports: [import_http.HttpClientModule] });
+_HttpClientTestingModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _HttpClientTestingModule, providers: [provideHttpClientTesting()], imports: [import_http.HttpClientModule] });
+let HttpClientTestingModule = _HttpClientTestingModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: HttpClientTestingModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    imports: [import_http.HttpClientModule],
+    providers: [provideHttpClientTesting()]
+  }]
+}] });

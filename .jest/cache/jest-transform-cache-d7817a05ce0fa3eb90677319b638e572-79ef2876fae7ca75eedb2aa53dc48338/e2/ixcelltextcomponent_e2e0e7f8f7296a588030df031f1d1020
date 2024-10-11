@@ -1,0 +1,2 @@
+6128998612b0c638560fffb3c540da56
+module.exports="<span\n  [matTooltip]=\"value?.toString() | translate\"\n  [ixTest]=\"[title, uniqueRowTag(row()), 'row-text']\"\n>{{ value }}</span>\n"

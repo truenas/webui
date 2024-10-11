@@ -1,0 +1,19 @@
+6945d3e405adf01980df1f2977ad53ed
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+/**
+ * A `baseRest` alias which can be replaced with `identity` by module
+ * replacement plugins.
+ *
+ * @private
+ * @type {Function}
+ * @param {Function} func The function to apply a rest parameter to.
+ * @returns {Function} Returns the new function.
+ */
+var castRest = _baseRest_js_1.default;
+exports.default = castRest;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jYXN0UmVzdC5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLGtFQUFzQztBQUV0Qzs7Ozs7Ozs7R0FRRztBQUNILElBQUksUUFBUSxHQUFHLHNCQUFRLENBQUM7QUFFeEIsa0JBQWUsUUFBUSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9fY2FzdFJlc3QuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VSZXN0IGZyb20gJy4vX2Jhc2VSZXN0LmpzJztcblxuLyoqXG4gKiBBIGBiYXNlUmVzdGAgYWxpYXMgd2hpY2ggY2FuIGJlIHJlcGxhY2VkIHdpdGggYGlkZW50aXR5YCBieSBtb2R1bGVcbiAqIHJlcGxhY2VtZW50IHBsdWdpbnMuXG4gKlxuICogQHByaXZhdGVcbiAqIEB0eXBlIHtGdW5jdGlvbn1cbiAqIEBwYXJhbSB7RnVuY3Rpb259IGZ1bmMgVGhlIGZ1bmN0aW9uIHRvIGFwcGx5IGEgcmVzdCBwYXJhbWV0ZXIgdG8uXG4gKiBAcmV0dXJucyB7RnVuY3Rpb259IFJldHVybnMgdGhlIG5ldyBmdW5jdGlvbi5cbiAqL1xudmFyIGNhc3RSZXN0ID0gYmFzZVJlc3Q7XG5cbmV4cG9ydCBkZWZhdWx0IGNhc3RSZXN0O1xuIl0sInZlcnNpb24iOjN9

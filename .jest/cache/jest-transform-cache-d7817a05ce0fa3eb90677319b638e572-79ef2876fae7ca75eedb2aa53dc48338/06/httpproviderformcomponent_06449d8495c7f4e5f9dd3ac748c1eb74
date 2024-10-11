@@ -1,0 +1,2 @@
+01fdb28c1b44c41fb337368ef06dd613
+module.exports="<ix-fieldset [title]=\"'Authentication' | translate\" [formGroup]=\"form\">\n  <ix-input\n    formControlName=\"url\"\n    label=\"URL\"\n    [required]=\"true\"\n    [tooltip]=\"helptext.url_http.tooltip | translate\"\n    [parse]=\"formatter.stringAsUrlParsing\"\n  ></ix-input>\n</ix-fieldset>\n"

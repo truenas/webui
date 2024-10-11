@@ -1,0 +1,67 @@
+63cd6fc87a699af44cdef9e05b97125b
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxFieldsetComponent = void 0;
+const core_1 = require("@angular/core");
+const divider_1 = require("@angular/material/divider");
+const core_2 = require("@ngx-translate/core");
+const tooltip_component_1 = require("app/modules/tooltip/tooltip.component");
+const i0 = __importStar(require("@angular/core"));
+let IxFieldsetComponent = class IxFieldsetComponent {
+    constructor() {
+        this.disable = (0, core_1.input)();
+        this.title = (0, core_1.input)();
+        this.divider = (0, core_1.input)();
+        this.tooltip = (0, core_1.input)();
+    }
+};
+exports.IxFieldsetComponent = IxFieldsetComponent;
+IxFieldsetComponent.propDecorators = {
+    disable: [{ type: i0.Input, args: [{ isSignal: true, alias: "disable", required: false, transform: undefined },] }],
+    title: [{ type: i0.Input, args: [{ isSignal: true, alias: "title", required: false, transform: undefined },] }],
+    divider: [{ type: i0.Input, args: [{ isSignal: true, alias: "divider", required: false, transform: undefined },] }],
+    tooltip: [{ type: i0.Input, args: [{ isSignal: true, alias: "tooltip", required: false, transform: undefined },] }]
+};
+exports.IxFieldsetComponent = IxFieldsetComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-fieldset',
+        template: require("./ix-fieldset.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            tooltip_component_1.TooltipComponent,
+            divider_1.MatDivider,
+            core_2.TranslateModule,
+        ],
+    })
+], IxFieldsetComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1maWVsZHNldC9peC1maWVsZHNldC5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSx3Q0FFdUI7QUFDdkIsdURBQXVEO0FBQ3ZELDhDQUFzRDtBQUN0RCw2RUFBeUU7O0FBY2xFLElBQU0sbUJBQW1CLEdBQXpCLE1BQU0sbUJBQW1CO0lBQXpCO3VCQUNjLElBQUEsWUFBSyxHQUFXO3FCQUNsQixJQUFBLFlBQUssR0FBVTt1QkFDYixJQUFBLFlBQUssR0FBVzt1QkFDaEIsSUFBQSxZQUFLLEdBQVU7S0FDbkM7O0FBTFksa0RBQW1COzs7Ozs7OzhCQUFuQixtQkFBbUI7SUFaL0IsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLGFBQWE7UUFDdkIsaURBQTJDO1FBRTNDLGVBQWUsRUFBRSw4QkFBdUIsQ0FBQyxNQUFNO1FBQy9DLFVBQVUsRUFBRSxJQUFJO1FBQ2hCLE9BQU8sRUFBRTtZQUNQLG9DQUFnQjtZQUNoQixvQkFBVTtZQUNWLHNCQUFlO1NBQ2hCO0tBQ0YsQ0FBQztHQUNXLG1CQUFtQixDQUsvQiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvbW9kdWxlcy9mb3Jtcy9peC1mb3Jtcy9jb21wb25lbnRzL2l4LWZpZWxkc2V0L2l4LWZpZWxkc2V0LmNvbXBvbmVudC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge1xuICBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgQ29tcG9uZW50LCBpbnB1dCxcbn0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBNYXREaXZpZGVyIH0gZnJvbSAnQGFuZ3VsYXIvbWF0ZXJpYWwvZGl2aWRlcic7XG5pbXBvcnQgeyBUcmFuc2xhdGVNb2R1bGUgfSBmcm9tICdAbmd4LXRyYW5zbGF0ZS9jb3JlJztcbmltcG9ydCB7IFRvb2x0aXBDb21wb25lbnQgfSBmcm9tICdhcHAvbW9kdWxlcy90b29sdGlwL3Rvb2x0aXAuY29tcG9uZW50JztcblxuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnaXgtZmllbGRzZXQnLFxuICB0ZW1wbGF0ZVVybDogJy4vaXgtZmllbGRzZXQuY29tcG9uZW50Lmh0bWwnLFxuICBzdHlsZVVybHM6IFsnLi9peC1maWVsZHNldC5jb21wb25lbnQuc2NzcyddLFxuICBjaGFuZ2VEZXRlY3Rpb246IENoYW5nZURldGVjdGlvblN0cmF0ZWd5Lk9uUHVzaCxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbiAgaW1wb3J0czogW1xuICAgIFRvb2x0aXBDb21wb25lbnQsXG4gICAgTWF0RGl2aWRlcixcbiAgICBUcmFuc2xhdGVNb2R1bGUsXG4gIF0sXG59KVxuZXhwb3J0IGNsYXNzIEl4RmllbGRzZXRDb21wb25lbnQge1xuICByZWFkb25seSBkaXNhYmxlID0gaW5wdXQ8Ym9vbGVhbj4oKTtcbiAgcmVhZG9ubHkgdGl0bGUgPSBpbnB1dDxzdHJpbmc+KCk7XG4gIHJlYWRvbmx5IGRpdmlkZXIgPSBpbnB1dDxib29sZWFuPigpO1xuICByZWFkb25seSB0b29sdGlwID0gaW5wdXQ8c3RyaW5nPigpO1xufVxuIl0sInZlcnNpb24iOjN9

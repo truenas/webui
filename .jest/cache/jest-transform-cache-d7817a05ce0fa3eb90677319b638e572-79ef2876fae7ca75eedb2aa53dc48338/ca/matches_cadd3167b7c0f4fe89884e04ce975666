@@ -1,0 +1,50 @@
+8ee51507aaf77521f7595574393b0f3b
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseClone_js_1 = __importDefault(require("./_baseClone.js"));
+const _baseMatches_js_1 = __importDefault(require("./_baseMatches.js"));
+/** Used to compose bitmasks for cloning. */
+var CLONE_DEEP_FLAG = 1;
+/**
+ * Creates a function that performs a partial deep comparison between a given
+ * object and `source`, returning `true` if the given object has equivalent
+ * property values, else `false`.
+ *
+ * **Note:** The created function is equivalent to `_.isMatch` with `source`
+ * partially applied.
+ *
+ * Partial comparisons will match empty array and empty object `source`
+ * values against any array or object value, respectively. See `_.isEqual`
+ * for a list of supported value comparisons.
+ *
+ * **Note:** Multiple values can be checked by combining several matchers
+ * using `_.overSome`
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Util
+ * @param {Object} source The object of property values to match.
+ * @returns {Function} Returns the new spec function.
+ * @example
+ *
+ * var objects = [
+ *   { 'a': 1, 'b': 2, 'c': 3 },
+ *   { 'a': 4, 'b': 5, 'c': 6 }
+ * ];
+ *
+ * _.filter(objects, _.matches({ 'a': 4, 'c': 6 }));
+ * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
+ *
+ * // Checking for several possible values
+ * _.filter(objects, _.overSome([_.matches({ 'a': 1 }), _.matches({ 'a': 4 })]));
+ * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
+ */
+function matches(source) {
+    return (0, _baseMatches_js_1.default)((0, _baseClone_js_1.default)(source, CLONE_DEEP_FLAG));
+}
+exports.default = matches;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL21hdGNoZXMuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxvRUFBd0M7QUFDeEMsd0VBQTRDO0FBRTVDLDRDQUE0QztBQUM1QyxJQUFJLGVBQWUsR0FBRyxDQUFDLENBQUM7QUFFeEI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FrQ0c7QUFDSCxTQUFTLE9BQU8sQ0FBQyxNQUFNO0lBQ3JCLE9BQU8sSUFBQSx5QkFBVyxFQUFDLElBQUEsdUJBQVMsRUFBQyxNQUFNLEVBQUUsZUFBZSxDQUFDLENBQUMsQ0FBQztBQUN6RCxDQUFDO0FBRUQsa0JBQWUsT0FBTyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9tYXRjaGVzLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlQ2xvbmUgZnJvbSAnLi9fYmFzZUNsb25lLmpzJztcbmltcG9ydCBiYXNlTWF0Y2hlcyBmcm9tICcuL19iYXNlTWF0Y2hlcy5qcyc7XG5cbi8qKiBVc2VkIHRvIGNvbXBvc2UgYml0bWFza3MgZm9yIGNsb25pbmcuICovXG52YXIgQ0xPTkVfREVFUF9GTEFHID0gMTtcblxuLyoqXG4gKiBDcmVhdGVzIGEgZnVuY3Rpb24gdGhhdCBwZXJmb3JtcyBhIHBhcnRpYWwgZGVlcCBjb21wYXJpc29uIGJldHdlZW4gYSBnaXZlblxuICogb2JqZWN0IGFuZCBgc291cmNlYCwgcmV0dXJuaW5nIGB0cnVlYCBpZiB0aGUgZ2l2ZW4gb2JqZWN0IGhhcyBlcXVpdmFsZW50XG4gKiBwcm9wZXJ0eSB2YWx1ZXMsIGVsc2UgYGZhbHNlYC5cbiAqXG4gKiAqKk5vdGU6KiogVGhlIGNyZWF0ZWQgZnVuY3Rpb24gaXMgZXF1aXZhbGVudCB0byBgXy5pc01hdGNoYCB3aXRoIGBzb3VyY2VgXG4gKiBwYXJ0aWFsbHkgYXBwbGllZC5cbiAqXG4gKiBQYXJ0aWFsIGNvbXBhcmlzb25zIHdpbGwgbWF0Y2ggZW1wdHkgYXJyYXkgYW5kIGVtcHR5IG9iamVjdCBgc291cmNlYFxuICogdmFsdWVzIGFnYWluc3QgYW55IGFycmF5IG9yIG9iamVjdCB2YWx1ZSwgcmVzcGVjdGl2ZWx5LiBTZWUgYF8uaXNFcXVhbGBcbiAqIGZvciBhIGxpc3Qgb2Ygc3VwcG9ydGVkIHZhbHVlIGNvbXBhcmlzb25zLlxuICpcbiAqICoqTm90ZToqKiBNdWx0aXBsZSB2YWx1ZXMgY2FuIGJlIGNoZWNrZWQgYnkgY29tYmluaW5nIHNldmVyYWwgbWF0Y2hlcnNcbiAqIHVzaW5nIGBfLm92ZXJTb21lYFxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMy4wLjBcbiAqIEBjYXRlZ29yeSBVdGlsXG4gKiBAcGFyYW0ge09iamVjdH0gc291cmNlIFRoZSBvYmplY3Qgb2YgcHJvcGVydHkgdmFsdWVzIHRvIG1hdGNoLlxuICogQHJldHVybnMge0Z1bmN0aW9ufSBSZXR1cm5zIHRoZSBuZXcgc3BlYyBmdW5jdGlvbi5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIG9iamVjdHMgPSBbXG4gKiAgIHsgJ2EnOiAxLCAnYic6IDIsICdjJzogMyB9LFxuICogICB7ICdhJzogNCwgJ2InOiA1LCAnYyc6IDYgfVxuICogXTtcbiAqXG4gKiBfLmZpbHRlcihvYmplY3RzLCBfLm1hdGNoZXMoeyAnYSc6IDQsICdjJzogNiB9KSk7XG4gKiAvLyA9PiBbeyAnYSc6IDQsICdiJzogNSwgJ2MnOiA2IH1dXG4gKlxuICogLy8gQ2hlY2tpbmcgZm9yIHNldmVyYWwgcG9zc2libGUgdmFsdWVzXG4gKiBfLmZpbHRlcihvYmplY3RzLCBfLm92ZXJTb21lKFtfLm1hdGNoZXMoeyAnYSc6IDEgfSksIF8ubWF0Y2hlcyh7ICdhJzogNCB9KV0pKTtcbiAqIC8vID0+IFt7ICdhJzogMSwgJ2InOiAyLCAnYyc6IDMgfSwgeyAnYSc6IDQsICdiJzogNSwgJ2MnOiA2IH1dXG4gKi9cbmZ1bmN0aW9uIG1hdGNoZXMoc291cmNlKSB7XG4gIHJldHVybiBiYXNlTWF0Y2hlcyhiYXNlQ2xvbmUoc291cmNlLCBDTE9ORV9ERUVQX0ZMQUcpKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgbWF0Y2hlcztcbiJdLCJ2ZXJzaW9uIjozfQ==

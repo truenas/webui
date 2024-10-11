@@ -1,0 +1,27 @@
+6f51fc1edc028077efeae5d5734daed3
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayReduce_js_1 = __importDefault(require("./_arrayReduce.js"));
+const deburr_js_1 = __importDefault(require("./deburr.js"));
+const words_js_1 = __importDefault(require("./words.js"));
+/** Used to compose unicode capture groups. */
+var rsApos = "['\u2019]";
+/** Used to match apostrophes. */
+var reApos = RegExp(rsApos, 'g');
+/**
+ * Creates a function like `_.camelCase`.
+ *
+ * @private
+ * @param {Function} callback The function to combine each word.
+ * @returns {Function} Returns the new compounder function.
+ */
+function createCompounder(callback) {
+    return function (string) {
+        return (0, _arrayReduce_js_1.default)((0, words_js_1.default)((0, deburr_js_1.default)(string).replace(reApos, '')), callback, '');
+    };
+}
+exports.default = createCompounder;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jcmVhdGVDb21wb3VuZGVyLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsd0VBQTRDO0FBQzVDLDREQUFpQztBQUNqQywwREFBK0I7QUFFL0IsOENBQThDO0FBQzlDLElBQUksTUFBTSxHQUFHLFdBQVcsQ0FBQztBQUV6QixpQ0FBaUM7QUFDakMsSUFBSSxNQUFNLEdBQUcsTUFBTSxDQUFDLE1BQU0sRUFBRSxHQUFHLENBQUMsQ0FBQztBQUVqQzs7Ozs7O0dBTUc7QUFDSCxTQUFTLGdCQUFnQixDQUFDLFFBQVE7SUFDaEMsT0FBTyxVQUFTLE1BQU07UUFDcEIsT0FBTyxJQUFBLHlCQUFXLEVBQUMsSUFBQSxrQkFBSyxFQUFDLElBQUEsbUJBQU0sRUFBQyxNQUFNLENBQUMsQ0FBQyxPQUFPLENBQUMsTUFBTSxFQUFFLEVBQUUsQ0FBQyxDQUFDLEVBQUUsUUFBUSxFQUFFLEVBQUUsQ0FBQyxDQUFDO0lBQzlFLENBQUMsQ0FBQztBQUNKLENBQUM7QUFFRCxrQkFBZSxnQkFBZ0IsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvX2NyZWF0ZUNvbXBvdW5kZXIuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGFycmF5UmVkdWNlIGZyb20gJy4vX2FycmF5UmVkdWNlLmpzJztcbmltcG9ydCBkZWJ1cnIgZnJvbSAnLi9kZWJ1cnIuanMnO1xuaW1wb3J0IHdvcmRzIGZyb20gJy4vd29yZHMuanMnO1xuXG4vKiogVXNlZCB0byBjb21wb3NlIHVuaWNvZGUgY2FwdHVyZSBncm91cHMuICovXG52YXIgcnNBcG9zID0gXCJbJ1xcdTIwMTldXCI7XG5cbi8qKiBVc2VkIHRvIG1hdGNoIGFwb3N0cm9waGVzLiAqL1xudmFyIHJlQXBvcyA9IFJlZ0V4cChyc0Fwb3MsICdnJyk7XG5cbi8qKlxuICogQ3JlYXRlcyBhIGZ1bmN0aW9uIGxpa2UgYF8uY2FtZWxDYXNlYC5cbiAqXG4gKiBAcHJpdmF0ZVxuICogQHBhcmFtIHtGdW5jdGlvbn0gY2FsbGJhY2sgVGhlIGZ1bmN0aW9uIHRvIGNvbWJpbmUgZWFjaCB3b3JkLlxuICogQHJldHVybnMge0Z1bmN0aW9ufSBSZXR1cm5zIHRoZSBuZXcgY29tcG91bmRlciBmdW5jdGlvbi5cbiAqL1xuZnVuY3Rpb24gY3JlYXRlQ29tcG91bmRlcihjYWxsYmFjaykge1xuICByZXR1cm4gZnVuY3Rpb24oc3RyaW5nKSB7XG4gICAgcmV0dXJuIGFycmF5UmVkdWNlKHdvcmRzKGRlYnVycihzdHJpbmcpLnJlcGxhY2UocmVBcG9zLCAnJykpLCBjYWxsYmFjaywgJycpO1xuICB9O1xufVxuXG5leHBvcnQgZGVmYXVsdCBjcmVhdGVDb21wb3VuZGVyO1xuIl0sInZlcnNpb24iOjN9

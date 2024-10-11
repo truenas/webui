@@ -1,0 +1,38 @@
+b04c5e45b08a0c321cc86e40b1e5563b
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+const _baseSortedIndexBy_js_1 = __importDefault(require("./_baseSortedIndexBy.js"));
+/**
+ * This method is like `_.sortedLastIndex` except that it accepts `iteratee`
+ * which is invoked for `value` and each element of `array` to compute their
+ * sort ranking. The iteratee is invoked with one argument: (value).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ * @example
+ *
+ * var objects = [{ 'x': 4 }, { 'x': 5 }];
+ *
+ * _.sortedLastIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
+ * // => 1
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.sortedLastIndexBy(objects, { 'x': 4 }, 'x');
+ * // => 1
+ */
+function sortedLastIndexBy(array, value, iteratee) {
+    return (0, _baseSortedIndexBy_js_1.default)(array, value, (0, _baseIteratee_js_1.default)(iteratee, 2), true);
+}
+exports.default = sortedLastIndexBy;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3NvcnRlZExhc3RJbmRleEJ5LmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsMEVBQThDO0FBQzlDLG9GQUF3RDtBQUV4RDs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBd0JHO0FBQ0gsU0FBUyxpQkFBaUIsQ0FBQyxLQUFLLEVBQUUsS0FBSyxFQUFFLFFBQVE7SUFDL0MsT0FBTyxJQUFBLCtCQUFpQixFQUFDLEtBQUssRUFBRSxLQUFLLEVBQUUsSUFBQSwwQkFBWSxFQUFDLFFBQVEsRUFBRSxDQUFDLENBQUMsRUFBRSxJQUFJLENBQUMsQ0FBQztBQUMxRSxDQUFDO0FBRUQsa0JBQWUsaUJBQWlCLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3NvcnRlZExhc3RJbmRleEJ5LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlSXRlcmF0ZWUgZnJvbSAnLi9fYmFzZUl0ZXJhdGVlLmpzJztcbmltcG9ydCBiYXNlU29ydGVkSW5kZXhCeSBmcm9tICcuL19iYXNlU29ydGVkSW5kZXhCeS5qcyc7XG5cbi8qKlxuICogVGhpcyBtZXRob2QgaXMgbGlrZSBgXy5zb3J0ZWRMYXN0SW5kZXhgIGV4Y2VwdCB0aGF0IGl0IGFjY2VwdHMgYGl0ZXJhdGVlYFxuICogd2hpY2ggaXMgaW52b2tlZCBmb3IgYHZhbHVlYCBhbmQgZWFjaCBlbGVtZW50IG9mIGBhcnJheWAgdG8gY29tcHV0ZSB0aGVpclxuICogc29ydCByYW5raW5nLiBUaGUgaXRlcmF0ZWUgaXMgaW52b2tlZCB3aXRoIG9uZSBhcmd1bWVudDogKHZhbHVlKS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBzb3J0ZWQgYXJyYXkgdG8gaW5zcGVjdC5cbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIGV2YWx1YXRlLlxuICogQHBhcmFtIHtGdW5jdGlvbn0gW2l0ZXJhdGVlPV8uaWRlbnRpdHldIFRoZSBpdGVyYXRlZSBpbnZva2VkIHBlciBlbGVtZW50LlxuICogQHJldHVybnMge251bWJlcn0gUmV0dXJucyB0aGUgaW5kZXggYXQgd2hpY2ggYHZhbHVlYCBzaG91bGQgYmUgaW5zZXJ0ZWRcbiAqICBpbnRvIGBhcnJheWAuXG4gKiBAZXhhbXBsZVxuICpcbiAqIHZhciBvYmplY3RzID0gW3sgJ3gnOiA0IH0sIHsgJ3gnOiA1IH1dO1xuICpcbiAqIF8uc29ydGVkTGFzdEluZGV4Qnkob2JqZWN0cywgeyAneCc6IDQgfSwgZnVuY3Rpb24obykgeyByZXR1cm4gby54OyB9KTtcbiAqIC8vID0+IDFcbiAqXG4gKiAvLyBUaGUgYF8ucHJvcGVydHlgIGl0ZXJhdGVlIHNob3J0aGFuZC5cbiAqIF8uc29ydGVkTGFzdEluZGV4Qnkob2JqZWN0cywgeyAneCc6IDQgfSwgJ3gnKTtcbiAqIC8vID0+IDFcbiAqL1xuZnVuY3Rpb24gc29ydGVkTGFzdEluZGV4QnkoYXJyYXksIHZhbHVlLCBpdGVyYXRlZSkge1xuICByZXR1cm4gYmFzZVNvcnRlZEluZGV4QnkoYXJyYXksIHZhbHVlLCBiYXNlSXRlcmF0ZWUoaXRlcmF0ZWUsIDIpLCB0cnVlKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgc29ydGVkTGFzdEluZGV4Qnk7XG4iXSwidmVyc2lvbiI6M30=

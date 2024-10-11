@@ -1,0 +1,35 @@
+41684463ee219d3cda0fe2ab9ea4022c
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseGet_js_1 = __importDefault(require("./_baseGet.js"));
+/**
+ * The opposite of `_.property`; this method creates a function that returns
+ * the value at a given path of `object`.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Util
+ * @param {Object} object The object to query.
+ * @returns {Function} Returns the new accessor function.
+ * @example
+ *
+ * var array = [0, 1, 2],
+ *     object = { 'a': array, 'b': array, 'c': array };
+ *
+ * _.map(['a[2]', 'c[0]'], _.propertyOf(object));
+ * // => [2, 0]
+ *
+ * _.map([['a', '2'], ['c', '0']], _.propertyOf(object));
+ * // => [2, 0]
+ */
+function propertyOf(object) {
+    return function (path) {
+        return object == null ? undefined : (0, _baseGet_js_1.default)(object, path);
+    };
+}
+exports.default = propertyOf;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3Byb3BlcnR5T2YuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxnRUFBb0M7QUFFcEM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBb0JHO0FBQ0gsU0FBUyxVQUFVLENBQUMsTUFBTTtJQUN4QixPQUFPLFVBQVMsSUFBSTtRQUNsQixPQUFPLE1BQU0sSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDLFNBQVMsQ0FBQyxDQUFDLENBQUMsSUFBQSxxQkFBTyxFQUFDLE1BQU0sRUFBRSxJQUFJLENBQUMsQ0FBQztJQUM1RCxDQUFDLENBQUM7QUFDSixDQUFDO0FBRUQsa0JBQWUsVUFBVSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9wcm9wZXJ0eU9mLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlR2V0IGZyb20gJy4vX2Jhc2VHZXQuanMnO1xuXG4vKipcbiAqIFRoZSBvcHBvc2l0ZSBvZiBgXy5wcm9wZXJ0eWA7IHRoaXMgbWV0aG9kIGNyZWF0ZXMgYSBmdW5jdGlvbiB0aGF0IHJldHVybnNcbiAqIHRoZSB2YWx1ZSBhdCBhIGdpdmVuIHBhdGggb2YgYG9iamVjdGAuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSAzLjAuMFxuICogQGNhdGVnb3J5IFV0aWxcbiAqIEBwYXJhbSB7T2JqZWN0fSBvYmplY3QgVGhlIG9iamVjdCB0byBxdWVyeS5cbiAqIEByZXR1cm5zIHtGdW5jdGlvbn0gUmV0dXJucyB0aGUgbmV3IGFjY2Vzc29yIGZ1bmN0aW9uLlxuICogQGV4YW1wbGVcbiAqXG4gKiB2YXIgYXJyYXkgPSBbMCwgMSwgMl0sXG4gKiAgICAgb2JqZWN0ID0geyAnYSc6IGFycmF5LCAnYic6IGFycmF5LCAnYyc6IGFycmF5IH07XG4gKlxuICogXy5tYXAoWydhWzJdJywgJ2NbMF0nXSwgXy5wcm9wZXJ0eU9mKG9iamVjdCkpO1xuICogLy8gPT4gWzIsIDBdXG4gKlxuICogXy5tYXAoW1snYScsICcyJ10sIFsnYycsICcwJ11dLCBfLnByb3BlcnR5T2Yob2JqZWN0KSk7XG4gKiAvLyA9PiBbMiwgMF1cbiAqL1xuZnVuY3Rpb24gcHJvcGVydHlPZihvYmplY3QpIHtcbiAgcmV0dXJuIGZ1bmN0aW9uKHBhdGgpIHtcbiAgICByZXR1cm4gb2JqZWN0ID09IG51bGwgPyB1bmRlZmluZWQgOiBiYXNlR2V0KG9iamVjdCwgcGF0aCk7XG4gIH07XG59XG5cbmV4cG9ydCBkZWZhdWx0IHByb3BlcnR5T2Y7XG4iXSwidmVyc2lvbiI6M30=

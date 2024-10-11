@@ -1,0 +1,47 @@
+d4f1396f954e9034f0dcec7375862d37
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxCellActionsComponent = void 0;
+exports.actionsColumn = actionsColumn;
+const common_1 = require("@angular/common");
+const core_1 = require("@angular/core");
+const button_1 = require("@angular/material/button");
+const tooltip_1 = require("@angular/material/tooltip");
+const requires_roles_directive_1 = require("app/directives/requires-roles/requires-roles.directive");
+const role_enum_1 = require("app/enums/role.enum");
+const ix_icon_component_1 = require("app/modules/ix-icon/ix-icon.component");
+const column_component_class_1 = require("app/modules/ix-table/interfaces/column-component.class");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+let IxCellActionsComponent = class IxCellActionsComponent extends column_component_class_1.ColumnComponent {
+    constructor() {
+        super(...arguments);
+        this.Role = role_enum_1.Role;
+    }
+};
+exports.IxCellActionsComponent = IxCellActionsComponent;
+exports.IxCellActionsComponent = IxCellActionsComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-cell-actions',
+        template: require("./ix-cell-actions.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            tooltip_1.MatTooltip,
+            requires_roles_directive_1.RequiresRolesDirective,
+            button_1.MatIconButton,
+            ix_icon_component_1.IxIconComponent,
+            common_1.AsyncPipe,
+            test_directive_1.TestDirective,
+        ],
+    })
+], IxCellActionsComponent);
+function actionsColumn(options) {
+    return Object.assign({ type: IxCellActionsComponent }, options);
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1ib2R5L2NlbGxzL2l4LWNlbGwtYWN0aW9ucy9peC1jZWxsLWFjdGlvbnMuY29tcG9uZW50LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQStCQSxzQ0FJQztBQW5DRCw0Q0FBNEM7QUFDNUMsd0NBQW1FO0FBQ25FLHFEQUF5RDtBQUN6RCx1REFBdUQ7QUFDdkQscUdBQWdHO0FBQ2hHLG1EQUEyQztBQUMzQyw2RUFBd0U7QUFFeEUsbUdBQWlHO0FBQ2pHLHVFQUFtRTtBQWlCNUQsSUFBTSxzQkFBc0IsR0FBNUIsTUFBTSxzQkFBMEIsU0FBUSx3Q0FBa0I7SUFBMUQ7O1FBRUwsU0FBSSxHQUFHLGdCQUFJLENBQUM7SUFDZCxDQUFDO0NBQUEsQ0FBQTtBQUhZLHdEQUFzQjtpQ0FBdEIsc0JBQXNCO0lBZmxDLElBQUEsZ0JBQVMsRUFBQztRQUNULFFBQVEsRUFBRSxpQkFBaUI7UUFDM0IscURBQStDO1FBRS9DLGVBQWUsRUFBRSw4QkFBdUIsQ0FBQyxNQUFNO1FBQy9DLFVBQVUsRUFBRSxJQUFJO1FBQ2hCLE9BQU8sRUFBRTtZQUNQLG9CQUFVO1lBQ1YsaURBQXNCO1lBQ3RCLHNCQUFhO1lBQ2IsbUNBQWU7WUFDZixrQkFBUztZQUNULDhCQUFhO1NBQ2Q7S0FDRixDQUFDO0dBQ1csc0JBQXNCLENBR2xDO0FBRUQsU0FBZ0IsYUFBYSxDQUMzQixPQUEyQztJQUUzQyx1QkFBUyxJQUFJLEVBQUUsc0JBQXNCLElBQUssT0FBTyxFQUFHO0FBQ3RELENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1ib2R5L2NlbGxzL2l4LWNlbGwtYWN0aW9ucy9peC1jZWxsLWFjdGlvbnMuY29tcG9uZW50LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEFzeW5jUGlwZSB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbic7XG5pbXBvcnQgeyBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgQ29tcG9uZW50IH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBNYXRJY29uQnV0dG9uIH0gZnJvbSAnQGFuZ3VsYXIvbWF0ZXJpYWwvYnV0dG9uJztcbmltcG9ydCB7IE1hdFRvb2x0aXAgfSBmcm9tICdAYW5ndWxhci9tYXRlcmlhbC90b29sdGlwJztcbmltcG9ydCB7IFJlcXVpcmVzUm9sZXNEaXJlY3RpdmUgfSBmcm9tICdhcHAvZGlyZWN0aXZlcy9yZXF1aXJlcy1yb2xlcy9yZXF1aXJlcy1yb2xlcy5kaXJlY3RpdmUnO1xuaW1wb3J0IHsgUm9sZSB9IGZyb20gJ2FwcC9lbnVtcy9yb2xlLmVudW0nO1xuaW1wb3J0IHsgSXhJY29uQ29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvaXgtaWNvbi9peC1pY29uLmNvbXBvbmVudCc7XG5pbXBvcnQgeyBJY29uQWN0aW9uQ29uZmlnIH0gZnJvbSAnYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1ib2R5L2NlbGxzL2l4LWNlbGwtYWN0aW9ucy9pY29uLWFjdGlvbi1jb25maWcuaW50ZXJmYWNlJztcbmltcG9ydCB7IENvbHVtbkNvbXBvbmVudCwgQ29sdW1uIH0gZnJvbSAnYXBwL21vZHVsZXMvaXgtdGFibGUvaW50ZXJmYWNlcy9jb2x1bW4tY29tcG9uZW50LmNsYXNzJztcbmltcG9ydCB7IFRlc3REaXJlY3RpdmUgfSBmcm9tICdhcHAvbW9kdWxlcy90ZXN0LWlkL3Rlc3QuZGlyZWN0aXZlJztcblxuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnaXgtY2VsbC1hY3Rpb25zJyxcbiAgdGVtcGxhdGVVcmw6ICcuL2l4LWNlbGwtYWN0aW9ucy5jb21wb25lbnQuaHRtbCcsXG4gIHN0eWxlVXJsczogWycuL2l4LWNlbGwtYWN0aW9ucy5jb21wb25lbnQuc2NzcyddLFxuICBjaGFuZ2VEZXRlY3Rpb246IENoYW5nZURldGVjdGlvblN0cmF0ZWd5Lk9uUHVzaCxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbiAgaW1wb3J0czogW1xuICAgIE1hdFRvb2x0aXAsXG4gICAgUmVxdWlyZXNSb2xlc0RpcmVjdGl2ZSxcbiAgICBNYXRJY29uQnV0dG9uLFxuICAgIEl4SWNvbkNvbXBvbmVudCxcbiAgICBBc3luY1BpcGUsXG4gICAgVGVzdERpcmVjdGl2ZSxcbiAgXSxcbn0pXG5leHBvcnQgY2xhc3MgSXhDZWxsQWN0aW9uc0NvbXBvbmVudDxUPiBleHRlbmRzIENvbHVtbkNvbXBvbmVudDxUPiB7XG4gIGFjdGlvbnM6IEljb25BY3Rpb25Db25maWc8VD5bXTtcbiAgUm9sZSA9IFJvbGU7XG59XG5cbmV4cG9ydCBmdW5jdGlvbiBhY3Rpb25zQ29sdW1uPFQ+KFxuICBvcHRpb25zOiBQYXJ0aWFsPEl4Q2VsbEFjdGlvbnNDb21wb25lbnQ8VD4+LFxuKTogQ29sdW1uPFQsIEl4Q2VsbEFjdGlvbnNDb21wb25lbnQ8VD4+IHtcbiAgcmV0dXJuIHsgdHlwZTogSXhDZWxsQWN0aW9uc0NvbXBvbmVudCwgLi4ub3B0aW9ucyB9O1xufVxuIl0sInZlcnNpb24iOjN9

@@ -1,0 +1,49 @@
+34af57dea0e1698335ff31d859f06052
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseFindIndex_js_1 = __importDefault(require("./_baseFindIndex.js"));
+const _baseIsNaN_js_1 = __importDefault(require("./_baseIsNaN.js"));
+const _strictLastIndexOf_js_1 = __importDefault(require("./_strictLastIndexOf.js"));
+const toInteger_js_1 = __importDefault(require("./toInteger.js"));
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max, nativeMin = Math.min;
+/**
+ * This method is like `_.indexOf` except that it iterates over elements of
+ * `array` from right to left.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @param {*} value The value to search for.
+ * @param {number} [fromIndex=array.length-1] The index to search from.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ * @example
+ *
+ * _.lastIndexOf([1, 2, 1, 2], 2);
+ * // => 3
+ *
+ * // Search from the `fromIndex`.
+ * _.lastIndexOf([1, 2, 1, 2], 2, 2);
+ * // => 1
+ */
+function lastIndexOf(array, value, fromIndex) {
+    var length = array == null ? 0 : array.length;
+    if (!length) {
+        return -1;
+    }
+    var index = length;
+    if (fromIndex !== undefined) {
+        index = (0, toInteger_js_1.default)(fromIndex);
+        index = index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1);
+    }
+    return value === value
+        ? (0, _strictLastIndexOf_js_1.default)(array, value, index)
+        : (0, _baseFindIndex_js_1.default)(array, _baseIsNaN_js_1.default, index, true);
+}
+exports.default = lastIndexOf;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2xhc3RJbmRleE9mLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsNEVBQWdEO0FBQ2hELG9FQUF3QztBQUN4QyxvRkFBd0Q7QUFDeEQsa0VBQXVDO0FBRXZDLHdGQUF3RjtBQUN4RixJQUFJLFNBQVMsR0FBRyxJQUFJLENBQUMsR0FBRyxFQUNwQixTQUFTLEdBQUcsSUFBSSxDQUFDLEdBQUcsQ0FBQztBQUV6Qjs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FvQkc7QUFDSCxTQUFTLFdBQVcsQ0FBQyxLQUFLLEVBQUUsS0FBSyxFQUFFLFNBQVM7SUFDMUMsSUFBSSxNQUFNLEdBQUcsS0FBSyxJQUFJLElBQUksQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxLQUFLLENBQUMsTUFBTSxDQUFDO0lBQzlDLElBQUksQ0FBQyxNQUFNLEVBQUUsQ0FBQztRQUNaLE9BQU8sQ0FBQyxDQUFDLENBQUM7SUFDWixDQUFDO0lBQ0QsSUFBSSxLQUFLLEdBQUcsTUFBTSxDQUFDO0lBQ25CLElBQUksU0FBUyxLQUFLLFNBQVMsRUFBRSxDQUFDO1FBQzVCLEtBQUssR0FBRyxJQUFBLHNCQUFTLEVBQUMsU0FBUyxDQUFDLENBQUM7UUFDN0IsS0FBSyxHQUFHLEtBQUssR0FBRyxDQUFDLENBQUMsQ0FBQyxDQUFDLFNBQVMsQ0FBQyxNQUFNLEdBQUcsS0FBSyxFQUFFLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxTQUFTLENBQUMsS0FBSyxFQUFFLE1BQU0sR0FBRyxDQUFDLENBQUMsQ0FBQztJQUNsRixDQUFDO0lBQ0QsT0FBTyxLQUFLLEtBQUssS0FBSztRQUNwQixDQUFDLENBQUMsSUFBQSwrQkFBaUIsRUFBQyxLQUFLLEVBQUUsS0FBSyxFQUFFLEtBQUssQ0FBQztRQUN4QyxDQUFDLENBQUMsSUFBQSwyQkFBYSxFQUFDLEtBQUssRUFBRSx1QkFBUyxFQUFFLEtBQUssRUFBRSxJQUFJLENBQUMsQ0FBQztBQUNuRCxDQUFDO0FBRUQsa0JBQWUsV0FBVyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9sYXN0SW5kZXhPZi5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZUZpbmRJbmRleCBmcm9tICcuL19iYXNlRmluZEluZGV4LmpzJztcbmltcG9ydCBiYXNlSXNOYU4gZnJvbSAnLi9fYmFzZUlzTmFOLmpzJztcbmltcG9ydCBzdHJpY3RMYXN0SW5kZXhPZiBmcm9tICcuL19zdHJpY3RMYXN0SW5kZXhPZi5qcyc7XG5pbXBvcnQgdG9JbnRlZ2VyIGZyb20gJy4vdG9JbnRlZ2VyLmpzJztcblxuLyogQnVpbHQtaW4gbWV0aG9kIHJlZmVyZW5jZXMgZm9yIHRob3NlIHdpdGggdGhlIHNhbWUgbmFtZSBhcyBvdGhlciBgbG9kYXNoYCBtZXRob2RzLiAqL1xudmFyIG5hdGl2ZU1heCA9IE1hdGgubWF4LFxuICAgIG5hdGl2ZU1pbiA9IE1hdGgubWluO1xuXG4vKipcbiAqIFRoaXMgbWV0aG9kIGlzIGxpa2UgYF8uaW5kZXhPZmAgZXhjZXB0IHRoYXQgaXQgaXRlcmF0ZXMgb3ZlciBlbGVtZW50cyBvZlxuICogYGFycmF5YCBmcm9tIHJpZ2h0IHRvIGxlZnQuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSAwLjEuMFxuICogQGNhdGVnb3J5IEFycmF5XG4gKiBAcGFyYW0ge0FycmF5fSBhcnJheSBUaGUgYXJyYXkgdG8gaW5zcGVjdC5cbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIHNlYXJjaCBmb3IuXG4gKiBAcGFyYW0ge251bWJlcn0gW2Zyb21JbmRleD1hcnJheS5sZW5ndGgtMV0gVGhlIGluZGV4IHRvIHNlYXJjaCBmcm9tLlxuICogQHJldHVybnMge251bWJlcn0gUmV0dXJucyB0aGUgaW5kZXggb2YgdGhlIG1hdGNoZWQgdmFsdWUsIGVsc2UgYC0xYC5cbiAqIEBleGFtcGxlXG4gKlxuICogXy5sYXN0SW5kZXhPZihbMSwgMiwgMSwgMl0sIDIpO1xuICogLy8gPT4gM1xuICpcbiAqIC8vIFNlYXJjaCBmcm9tIHRoZSBgZnJvbUluZGV4YC5cbiAqIF8ubGFzdEluZGV4T2YoWzEsIDIsIDEsIDJdLCAyLCAyKTtcbiAqIC8vID0+IDFcbiAqL1xuZnVuY3Rpb24gbGFzdEluZGV4T2YoYXJyYXksIHZhbHVlLCBmcm9tSW5kZXgpIHtcbiAgdmFyIGxlbmd0aCA9IGFycmF5ID09IG51bGwgPyAwIDogYXJyYXkubGVuZ3RoO1xuICBpZiAoIWxlbmd0aCkge1xuICAgIHJldHVybiAtMTtcbiAgfVxuICB2YXIgaW5kZXggPSBsZW5ndGg7XG4gIGlmIChmcm9tSW5kZXggIT09IHVuZGVmaW5lZCkge1xuICAgIGluZGV4ID0gdG9JbnRlZ2VyKGZyb21JbmRleCk7XG4gICAgaW5kZXggPSBpbmRleCA8IDAgPyBuYXRpdmVNYXgobGVuZ3RoICsgaW5kZXgsIDApIDogbmF0aXZlTWluKGluZGV4LCBsZW5ndGggLSAxKTtcbiAgfVxuICByZXR1cm4gdmFsdWUgPT09IHZhbHVlXG4gICAgPyBzdHJpY3RMYXN0SW5kZXhPZihhcnJheSwgdmFsdWUsIGluZGV4KVxuICAgIDogYmFzZUZpbmRJbmRleChhcnJheSwgYmFzZUlzTmFOLCBpbmRleCwgdHJ1ZSk7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGxhc3RJbmRleE9mO1xuIl0sInZlcnNpb24iOjN9

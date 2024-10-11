@@ -1,0 +1,33 @@
+71a1bd1f05539ddc6fb8111f71569a2a
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseUniq_js_1 = __importDefault(require("./_baseUniq.js"));
+/**
+ * This method is like `_.uniq` except that it accepts `comparator` which
+ * is invoked to compare elements of `array`. The order of result values is
+ * determined by the order they occur in the array.The comparator is invoked
+ * with two arguments: (arrVal, othVal).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns the new duplicate free array.
+ * @example
+ *
+ * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }];
+ *
+ * _.uniqWith(objects, _.isEqual);
+ * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]
+ */
+function uniqWith(array, comparator) {
+    comparator = typeof comparator == 'function' ? comparator : undefined;
+    return (array && array.length) ? (0, _baseUniq_js_1.default)(array, undefined, comparator) : [];
+}
+exports.default = uniqWith;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3VuaXFXaXRoLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsa0VBQXNDO0FBRXRDOzs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBbUJHO0FBQ0gsU0FBUyxRQUFRLENBQUMsS0FBSyxFQUFFLFVBQVU7SUFDakMsVUFBVSxHQUFHLE9BQU8sVUFBVSxJQUFJLFVBQVUsQ0FBQyxDQUFDLENBQUMsVUFBVSxDQUFDLENBQUMsQ0FBQyxTQUFTLENBQUM7SUFDdEUsT0FBTyxDQUFDLEtBQUssSUFBSSxLQUFLLENBQUMsTUFBTSxDQUFDLENBQUMsQ0FBQyxDQUFDLElBQUEsc0JBQVEsRUFBQyxLQUFLLEVBQUUsU0FBUyxFQUFFLFVBQVUsQ0FBQyxDQUFDLENBQUMsQ0FBQyxFQUFFLENBQUM7QUFDL0UsQ0FBQztBQUVELGtCQUFlLFFBQVEsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvdW5pcVdpdGguanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VVbmlxIGZyb20gJy4vX2Jhc2VVbmlxLmpzJztcblxuLyoqXG4gKiBUaGlzIG1ldGhvZCBpcyBsaWtlIGBfLnVuaXFgIGV4Y2VwdCB0aGF0IGl0IGFjY2VwdHMgYGNvbXBhcmF0b3JgIHdoaWNoXG4gKiBpcyBpbnZva2VkIHRvIGNvbXBhcmUgZWxlbWVudHMgb2YgYGFycmF5YC4gVGhlIG9yZGVyIG9mIHJlc3VsdCB2YWx1ZXMgaXNcbiAqIGRldGVybWluZWQgYnkgdGhlIG9yZGVyIHRoZXkgb2NjdXIgaW4gdGhlIGFycmF5LlRoZSBjb21wYXJhdG9yIGlzIGludm9rZWRcbiAqIHdpdGggdHdvIGFyZ3VtZW50czogKGFyclZhbCwgb3RoVmFsKS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBhcnJheSB0byBpbnNwZWN0LlxuICogQHBhcmFtIHtGdW5jdGlvbn0gW2NvbXBhcmF0b3JdIFRoZSBjb21wYXJhdG9yIGludm9rZWQgcGVyIGVsZW1lbnQuXG4gKiBAcmV0dXJucyB7QXJyYXl9IFJldHVybnMgdGhlIG5ldyBkdXBsaWNhdGUgZnJlZSBhcnJheS5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIG9iamVjdHMgPSBbeyAneCc6IDEsICd5JzogMiB9LCB7ICd4JzogMiwgJ3knOiAxIH0sIHsgJ3gnOiAxLCAneSc6IDIgfV07XG4gKlxuICogXy51bmlxV2l0aChvYmplY3RzLCBfLmlzRXF1YWwpO1xuICogLy8gPT4gW3sgJ3gnOiAxLCAneSc6IDIgfSwgeyAneCc6IDIsICd5JzogMSB9XVxuICovXG5mdW5jdGlvbiB1bmlxV2l0aChhcnJheSwgY29tcGFyYXRvcikge1xuICBjb21wYXJhdG9yID0gdHlwZW9mIGNvbXBhcmF0b3IgPT0gJ2Z1bmN0aW9uJyA/IGNvbXBhcmF0b3IgOiB1bmRlZmluZWQ7XG4gIHJldHVybiAoYXJyYXkgJiYgYXJyYXkubGVuZ3RoKSA/IGJhc2VVbmlxKGFycmF5LCB1bmRlZmluZWQsIGNvbXBhcmF0b3IpIDogW107XG59XG5cbmV4cG9ydCBkZWZhdWx0IHVuaXFXaXRoO1xuIl0sInZlcnNpb24iOjN9

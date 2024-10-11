@@ -1,0 +1,286 @@
+1f743449b8a764dd8097cb1f3df476da
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
+var testing_exports = {};
+__export(testing_exports, {
+  MatRadioButtonHarness: () => MatRadioButtonHarness,
+  MatRadioGroupHarness: () => MatRadioGroupHarness
+});
+module.exports = __toCommonJS(testing_exports);
+var import_coercion = require("@angular/cdk/coercion");
+var import_testing = require("@angular/cdk/testing");
+const _MatRadioGroupHarness = class _MatRadioGroupHarness extends import_testing.ComponentHarness {
+  constructor() {
+    super(...arguments);
+    this._buttonClass = MatRadioButtonHarness;
+  }
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a radio group with specific
+   * attributes.
+   * @param options Options for filtering which radio group instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options).addOption("name", options.name, _MatRadioGroupHarness._checkRadioGroupName);
+  }
+  /** Gets the name of the radio-group. */
+  getName() {
+    return __async(this, null, function* () {
+      const hostName = yield this._getGroupNameFromHost();
+      if (hostName !== null) {
+        return hostName;
+      }
+      const radioNames = yield this._getNamesFromRadioButtons();
+      if (!radioNames.length) {
+        return null;
+      }
+      if (!this._checkRadioNamesInGroupEqual(radioNames)) {
+        throw Error("Radio buttons in radio-group have mismatching names.");
+      }
+      return radioNames[0];
+    });
+  }
+  /** Gets the id of the radio-group. */
+  getId() {
+    return __async(this, null, function* () {
+      return (yield this.host()).getProperty("id");
+    });
+  }
+  /** Gets the checked radio-button in a radio-group. */
+  getCheckedRadioButton() {
+    return __async(this, null, function* () {
+      for (let radioButton of yield this.getRadioButtons()) {
+        if (yield radioButton.isChecked()) {
+          return radioButton;
+        }
+      }
+      return null;
+    });
+  }
+  /** Gets the checked value of the radio-group. */
+  getCheckedValue() {
+    return __async(this, null, function* () {
+      const checkedRadio = yield this.getCheckedRadioButton();
+      if (!checkedRadio) {
+        return null;
+      }
+      return checkedRadio.getValue();
+    });
+  }
+  /**
+   * Gets a list of radio buttons which are part of the radio-group.
+   * @param filter Optionally filters which radio buttons are included.
+   */
+  getRadioButtons(filter) {
+    return __async(this, null, function* () {
+      return this.locatorForAll(this._buttonClass.with(filter))();
+    });
+  }
+  /**
+   * Checks a radio button in this group.
+   * @param filter An optional filter to apply to the child radio buttons. The first tab matching
+   *     the filter will be selected.
+   */
+  checkRadioButton(filter) {
+    return __async(this, null, function* () {
+      const radioButtons = yield this.getRadioButtons(filter);
+      if (!radioButtons.length) {
+        throw Error(`Could not find radio button matching ${JSON.stringify(filter)}`);
+      }
+      return radioButtons[0].check();
+    });
+  }
+  /** Gets the name attribute of the host element. */
+  _getGroupNameFromHost() {
+    return __async(this, null, function* () {
+      return (yield this.host()).getAttribute("name");
+    });
+  }
+  /** Gets a list of the name attributes of all child radio buttons. */
+  _getNamesFromRadioButtons() {
+    return __async(this, null, function* () {
+      const groupNames = [];
+      for (let radio of yield this.getRadioButtons()) {
+        const radioName = yield radio.getName();
+        if (radioName !== null) {
+          groupNames.push(radioName);
+        }
+      }
+      return groupNames;
+    });
+  }
+  /** Checks if the specified radio names are all equal. */
+  _checkRadioNamesInGroupEqual(radioNames) {
+    let groupName = null;
+    for (let radioName of radioNames) {
+      if (groupName === null) {
+        groupName = radioName;
+      } else if (groupName !== radioName) {
+        return false;
+      }
+    }
+    return true;
+  }
+  /**
+   * Checks if a radio-group harness has the given name. Throws if a radio-group with
+   * matching name could be found but has mismatching radio-button names.
+   */
+  static _checkRadioGroupName(harness, name) {
+    return __async(this, null, function* () {
+      if ((yield harness._getGroupNameFromHost()) === name) {
+        return true;
+      }
+      const radioNames = yield harness._getNamesFromRadioButtons();
+      if (radioNames.indexOf(name) === -1) {
+        return false;
+      }
+      if (!harness._checkRadioNamesInGroupEqual(radioNames)) {
+        throw Error(`The locator found a radio-group with name "${name}", but some radio-button's within the group have mismatching names, which is invalid.`);
+      }
+      return true;
+    });
+  }
+};
+_MatRadioGroupHarness.hostSelector = ".mat-mdc-radio-group";
+let MatRadioGroupHarness = _MatRadioGroupHarness;
+const _MatRadioButtonHarness = class _MatRadioButtonHarness extends import_testing.ComponentHarness {
+  constructor() {
+    super(...arguments);
+    this._textLabel = this.locatorFor("label");
+    this._clickLabel = this._textLabel;
+    this._input = this.locatorFor("input");
+  }
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a radio button with specific
+   * attributes.
+   * @param options Options for filtering which radio button instances are considered a match.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options).addOption("label", options.label, (harness, label) => import_testing.HarnessPredicate.stringMatches(harness.getLabelText(), label)).addOption("name", options.name, (harness, name) => __async(this, null, function* () {
+      return (yield harness.getName()) === name;
+    })).addOption("checked", options.checked, (harness, checked) => __async(this, null, function* () {
+      return (yield harness.isChecked()) == checked;
+    }));
+  }
+  /** Whether the radio-button is checked. */
+  isChecked() {
+    return __async(this, null, function* () {
+      const checked = (yield this._input()).getProperty("checked");
+      return (0, import_coercion.coerceBooleanProperty)(yield checked);
+    });
+  }
+  /** Whether the radio-button is disabled. */
+  isDisabled() {
+    return __async(this, null, function* () {
+      const input = yield this._input();
+      const disabled = yield input.getAttribute("disabled");
+      if (disabled !== null) {
+        return (0, import_coercion.coerceBooleanProperty)(disabled);
+      }
+      return (yield input.getAttribute("aria-disabled")) === "true";
+    });
+  }
+  /** Whether the radio-button is required. */
+  isRequired() {
+    return __async(this, null, function* () {
+      const required = (yield this._input()).getAttribute("required");
+      return (0, import_coercion.coerceBooleanProperty)(yield required);
+    });
+  }
+  /** Gets the radio-button's name. */
+  getName() {
+    return __async(this, null, function* () {
+      return (yield this._input()).getAttribute("name");
+    });
+  }
+  /** Gets the radio-button's id. */
+  getId() {
+    return __async(this, null, function* () {
+      return (yield this.host()).getProperty("id");
+    });
+  }
+  /**
+   * Gets the value of the radio-button. The radio-button value will be converted to a string.
+   *
+   * Note: This means that for radio-button's with an object as a value `[object Object]` is
+   * intentionally returned.
+   */
+  getValue() {
+    return __async(this, null, function* () {
+      return (yield this._input()).getProperty("value");
+    });
+  }
+  /** Gets the radio-button's label text. */
+  getLabelText() {
+    return __async(this, null, function* () {
+      return (yield this._textLabel()).text();
+    });
+  }
+  /** Focuses the radio-button. */
+  focus() {
+    return __async(this, null, function* () {
+      return (yield this._input()).focus();
+    });
+  }
+  /** Blurs the radio-button. */
+  blur() {
+    return __async(this, null, function* () {
+      return (yield this._input()).blur();
+    });
+  }
+  /** Whether the radio-button is focused. */
+  isFocused() {
+    return __async(this, null, function* () {
+      return (yield this._input()).isFocused();
+    });
+  }
+  /**
+   * Puts the radio-button in a checked state by clicking it if it is currently unchecked,
+   * or doing nothing if it is already checked.
+   */
+  check() {
+    return __async(this, null, function* () {
+      if (!(yield this.isChecked())) {
+        return (yield this._clickLabel()).click();
+      }
+    });
+  }
+};
+_MatRadioButtonHarness.hostSelector = ".mat-mdc-radio-button";
+let MatRadioButtonHarness = _MatRadioButtonHarness;

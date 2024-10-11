@@ -1,0 +1,7 @@
+68940174b3550e1511e0c7d909eeba4e
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/** Used to match template delimiters. */
+var reEscape = /<%-([\s\S]+?)%>/g;
+exports.default = reEscape;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19yZUVzY2FwZS5qcyIsIm1hcHBpbmdzIjoiOztBQUFBLHlDQUF5QztBQUN6QyxJQUFJLFFBQVEsR0FBRyxrQkFBa0IsQ0FBQztBQUVsQyxrQkFBZSxRQUFRLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19yZUVzY2FwZS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKiogVXNlZCB0byBtYXRjaCB0ZW1wbGF0ZSBkZWxpbWl0ZXJzLiAqL1xudmFyIHJlRXNjYXBlID0gLzwlLShbXFxzXFxTXSs/KSU+L2c7XG5cbmV4cG9ydCBkZWZhdWx0IHJlRXNjYXBlO1xuIl0sInZlcnNpb24iOjN9

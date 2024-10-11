@@ -1,0 +1,22 @@
+bfd6aac08138cf227d5c4cfd02d0d63c
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseInverter_js_1 = __importDefault(require("./_baseInverter.js"));
+/**
+ * Creates a function like `_.invertBy`.
+ *
+ * @private
+ * @param {Function} setter The function to set accumulator values.
+ * @param {Function} toIteratee The function to resolve iteratees.
+ * @returns {Function} Returns the new inverter function.
+ */
+function createInverter(setter, toIteratee) {
+    return function (object, iteratee) {
+        return (0, _baseInverter_js_1.default)(object, setter, toIteratee(iteratee), {});
+    };
+}
+exports.default = createInverter;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jcmVhdGVJbnZlcnRlci5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLDBFQUE4QztBQUU5Qzs7Ozs7OztHQU9HO0FBQ0gsU0FBUyxjQUFjLENBQUMsTUFBTSxFQUFFLFVBQVU7SUFDeEMsT0FBTyxVQUFTLE1BQU0sRUFBRSxRQUFRO1FBQzlCLE9BQU8sSUFBQSwwQkFBWSxFQUFDLE1BQU0sRUFBRSxNQUFNLEVBQUUsVUFBVSxDQUFDLFFBQVEsQ0FBQyxFQUFFLEVBQUUsQ0FBQyxDQUFDO0lBQ2hFLENBQUMsQ0FBQztBQUNKLENBQUM7QUFFRCxrQkFBZSxjQUFjLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jcmVhdGVJbnZlcnRlci5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZUludmVydGVyIGZyb20gJy4vX2Jhc2VJbnZlcnRlci5qcyc7XG5cbi8qKlxuICogQ3JlYXRlcyBhIGZ1bmN0aW9uIGxpa2UgYF8uaW52ZXJ0QnlgLlxuICpcbiAqIEBwcml2YXRlXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBzZXR0ZXIgVGhlIGZ1bmN0aW9uIHRvIHNldCBhY2N1bXVsYXRvciB2YWx1ZXMuXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSB0b0l0ZXJhdGVlIFRoZSBmdW5jdGlvbiB0byByZXNvbHZlIGl0ZXJhdGVlcy5cbiAqIEByZXR1cm5zIHtGdW5jdGlvbn0gUmV0dXJucyB0aGUgbmV3IGludmVydGVyIGZ1bmN0aW9uLlxuICovXG5mdW5jdGlvbiBjcmVhdGVJbnZlcnRlcihzZXR0ZXIsIHRvSXRlcmF0ZWUpIHtcbiAgcmV0dXJuIGZ1bmN0aW9uKG9iamVjdCwgaXRlcmF0ZWUpIHtcbiAgICByZXR1cm4gYmFzZUludmVydGVyKG9iamVjdCwgc2V0dGVyLCB0b0l0ZXJhdGVlKGl0ZXJhdGVlKSwge30pO1xuICB9O1xufVxuXG5leHBvcnQgZGVmYXVsdCBjcmVhdGVJbnZlcnRlcjtcbiJdLCJ2ZXJzaW9uIjozfQ==

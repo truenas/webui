@@ -1,0 +1,193 @@
+c35664358f8d96a827c6defb7d3aba90
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var progress_spinner_exports = {};
+__export(progress_spinner_exports, {
+  MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS: () => MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS,
+  MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS_FACTORY: () => MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS_FACTORY,
+  MatProgressSpinner: () => MatProgressSpinner,
+  MatProgressSpinnerModule: () => MatProgressSpinnerModule,
+  MatSpinner: () => MatSpinner
+});
+module.exports = __toCommonJS(progress_spinner_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_common = require("@angular/common");
+var import_core2 = require("@angular/material/core");
+const MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS = new import_core.InjectionToken("mat-progress-spinner-default-options", {
+  providedIn: "root",
+  factory: MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS_FACTORY
+});
+function MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS_FACTORY() {
+  return { diameter: BASE_SIZE };
+}
+const BASE_SIZE = 100;
+const BASE_STROKE_WIDTH = 10;
+const _MatProgressSpinner = class _MatProgressSpinner {
+  // TODO: should be typed as `ThemePalette` but internal apps pass in arbitrary strings.
+  /**
+   * Theme color of the progress spinner. This API is supported in M2 themes only, it
+   * has no effect in M3 themes.
+   *
+   * For information on applying color variants in M3, see
+   * https://material.angular.io/guide/theming#using-component-color-variants.
+   */
+  get color() {
+    return this._color || this._defaultColor;
+  }
+  set color(value) {
+    this._color = value;
+  }
+  constructor(_elementRef, animationMode, defaults) {
+    this._elementRef = _elementRef;
+    this._defaultColor = "primary";
+    this._value = 0;
+    this._diameter = BASE_SIZE;
+    this._noopAnimations = animationMode === "NoopAnimations" && !!defaults && !defaults._forceAnimations;
+    this.mode = _elementRef.nativeElement.nodeName.toLowerCase() === "mat-spinner" ? "indeterminate" : "determinate";
+    if (defaults) {
+      if (defaults.color) {
+        this.color = this._defaultColor = defaults.color;
+      }
+      if (defaults.diameter) {
+        this.diameter = defaults.diameter;
+      }
+      if (defaults.strokeWidth) {
+        this.strokeWidth = defaults.strokeWidth;
+      }
+    }
+  }
+  /** Value of the progress bar. Defaults to zero. Mirrored to aria-valuenow. */
+  get value() {
+    return this.mode === "determinate" ? this._value : 0;
+  }
+  set value(v) {
+    this._value = Math.max(0, Math.min(100, v || 0));
+  }
+  /** The diameter of the progress spinner (will set width and height of svg). */
+  get diameter() {
+    return this._diameter;
+  }
+  set diameter(size) {
+    this._diameter = size || 0;
+  }
+  /** Stroke width of the progress spinner. */
+  get strokeWidth() {
+    var _a;
+    return (_a = this._strokeWidth) != null ? _a : this.diameter / 10;
+  }
+  set strokeWidth(value) {
+    this._strokeWidth = value || 0;
+  }
+  /** The radius of the spinner, adjusted for stroke width. */
+  _circleRadius() {
+    return (this.diameter - BASE_STROKE_WIDTH) / 2;
+  }
+  /** The view box of the spinner's svg element. */
+  _viewBox() {
+    const viewBox = this._circleRadius() * 2 + this.strokeWidth;
+    return `0 0 ${viewBox} ${viewBox}`;
+  }
+  /** The stroke circumference of the svg circle. */
+  _strokeCircumference() {
+    return 2 * Math.PI * this._circleRadius();
+  }
+  /** The dash offset of the svg circle. */
+  _strokeDashOffset() {
+    if (this.mode === "determinate") {
+      return this._strokeCircumference() * (100 - this._value) / 100;
+    }
+    return null;
+  }
+  /** Stroke width of the circle in percent. */
+  _circleStrokeWidth() {
+    return this.strokeWidth / this.diameter * 100;
+  }
+};
+_MatProgressSpinner.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatProgressSpinner, deps: [{ token: i0.ElementRef }, { token: import_core.ANIMATION_MODULE_TYPE, optional: true }, { token: MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS }], target: i0.\u0275\u0275FactoryTarget.Component });
+_MatProgressSpinner.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "16.1.0", version: "18.2.0-next.2", type: _MatProgressSpinner, isStandalone: true, selector: "mat-progress-spinner, mat-spinner", inputs: { color: "color", mode: "mode", value: ["value", "value", import_core.numberAttribute], diameter: ["diameter", "diameter", import_core.numberAttribute], strokeWidth: ["strokeWidth", "strokeWidth", import_core.numberAttribute] }, host: { attributes: { "role": "progressbar", "tabindex": "-1" }, properties: { "class": '"mat-" + color', "class._mat-animation-noopable": "_noopAnimations", "class.mdc-circular-progress--indeterminate": 'mode === "indeterminate"', "style.width.px": "diameter", "style.height.px": "diameter", "style.--mdc-circular-progress-size": 'diameter + "px"', "style.--mdc-circular-progress-active-indicator-width": 'diameter + "px"', "attr.aria-valuemin": "0", "attr.aria-valuemax": "100", "attr.aria-valuenow": 'mode === "determinate" ? value : null', "attr.mode": "mode" }, classAttribute: "mat-mdc-progress-spinner mdc-circular-progress" }, viewQueries: [{ propertyName: "_determinateCircle", first: true, predicate: ["determinateSpinner"], descendants: true }], exportAs: ["matProgressSpinner"], ngImport: i0, template: '<ng-template #circle>\n  <svg [attr.viewBox]="_viewBox()" class="mdc-circular-progress__indeterminate-circle-graphic"\n       xmlns="http://www.w3.org/2000/svg" focusable="false">\n    <circle [attr.r]="_circleRadius()"\n            [style.stroke-dasharray.px]="_strokeCircumference()"\n            [style.stroke-dashoffset.px]="_strokeCircumference() / 2"\n            [style.stroke-width.%]="_circleStrokeWidth()"\n            cx="50%" cy="50%"/>\n  </svg>\n</ng-template>\n\n<!--\n  All children need to be hidden for screen readers in order to support ChromeVox.\n  More context in the issue: https://github.com/angular/components/issues/22165.\n-->\n<div class="mdc-circular-progress__determinate-container" aria-hidden="true" #determinateSpinner>\n  <svg [attr.viewBox]="_viewBox()" class="mdc-circular-progress__determinate-circle-graphic"\n       xmlns="http://www.w3.org/2000/svg" focusable="false">\n    <circle [attr.r]="_circleRadius()"\n            [style.stroke-dasharray.px]="_strokeCircumference()"\n            [style.stroke-dashoffset.px]="_strokeDashOffset()"\n            [style.stroke-width.%]="_circleStrokeWidth()"\n            class="mdc-circular-progress__determinate-circle"\n            cx="50%" cy="50%"/>\n  </svg>\n</div>\n<!--TODO: figure out why there are 3 separate svgs-->\n<div class="mdc-circular-progress__indeterminate-container" aria-hidden="true">\n  <div class="mdc-circular-progress__spinner-layer">\n    <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-left">\n      <ng-container [ngTemplateOutlet]="circle"></ng-container>\n    </div>\n    <div class="mdc-circular-progress__gap-patch">\n      <ng-container [ngTemplateOutlet]="circle"></ng-container>\n    </div>\n    <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-right">\n      <ng-container [ngTemplateOutlet]="circle"></ng-container>\n    </div>\n  </div>\n</div>\n', styles: [".mat-mdc-progress-spinner{display:block;overflow:hidden;line-height:0;position:relative;direction:ltr;transition:opacity 250ms cubic-bezier(0.4, 0, 0.6, 1)}.mat-mdc-progress-spinner circle{stroke-width:var(--mdc-circular-progress-active-indicator-width)}.mat-mdc-progress-spinner._mat-animation-noopable,.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__determinate-circle{transition:none !important}.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__indeterminate-circle-graphic,.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__spinner-layer,.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__indeterminate-container{animation:none !important}.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__indeterminate-container circle{stroke-dasharray:0 !important}.cdk-high-contrast-active .mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic,.cdk-high-contrast-active .mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle{stroke:currentColor;stroke:CanvasText}.mdc-circular-progress__determinate-container,.mdc-circular-progress__indeterminate-circle-graphic,.mdc-circular-progress__indeterminate-container,.mdc-circular-progress__spinner-layer{position:absolute;width:100%;height:100%}.mdc-circular-progress__determinate-container{transform:rotate(-90deg)}.mdc-circular-progress--indeterminate .mdc-circular-progress__determinate-container{opacity:0}.mdc-circular-progress__indeterminate-container{font-size:0;letter-spacing:0;white-space:nowrap;opacity:0}.mdc-circular-progress--indeterminate .mdc-circular-progress__indeterminate-container{opacity:1;animation:mdc-circular-progress-container-rotate 1568.2352941176ms linear infinite}.mdc-circular-progress__determinate-circle-graphic,.mdc-circular-progress__indeterminate-circle-graphic{fill:rgba(0,0,0,0)}.mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle,.mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic{stroke:var(--mdc-circular-progress-active-indicator-color, var(--mat-app-primary))}.cdk-high-contrast-active .mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle,.cdk-high-contrast-active .mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic{stroke:CanvasText}.mdc-circular-progress__determinate-circle{transition:stroke-dashoffset 500ms cubic-bezier(0, 0, 0.2, 1)}.mdc-circular-progress__gap-patch{position:absolute;top:0;left:47.5%;box-sizing:border-box;width:5%;height:100%;overflow:hidden}.mdc-circular-progress__gap-patch .mdc-circular-progress__indeterminate-circle-graphic{left:-900%;width:2000%;transform:rotate(180deg)}.mdc-circular-progress__circle-clipper .mdc-circular-progress__indeterminate-circle-graphic{width:200%}.mdc-circular-progress__circle-right .mdc-circular-progress__indeterminate-circle-graphic{left:-100%}.mdc-circular-progress--indeterminate .mdc-circular-progress__circle-left .mdc-circular-progress__indeterminate-circle-graphic{animation:mdc-circular-progress-left-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both}.mdc-circular-progress--indeterminate .mdc-circular-progress__circle-right .mdc-circular-progress__indeterminate-circle-graphic{animation:mdc-circular-progress-right-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both}.mdc-circular-progress__circle-clipper{display:inline-flex;position:relative;width:50%;height:100%;overflow:hidden}.mdc-circular-progress--indeterminate .mdc-circular-progress__spinner-layer{animation:mdc-circular-progress-spinner-layer-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both}@keyframes mdc-circular-progress-container-rotate{to{transform:rotate(360deg)}}@keyframes mdc-circular-progress-spinner-layer-rotate{12.5%{transform:rotate(135deg)}25%{transform:rotate(270deg)}37.5%{transform:rotate(405deg)}50%{transform:rotate(540deg)}62.5%{transform:rotate(675deg)}75%{transform:rotate(810deg)}87.5%{transform:rotate(945deg)}100%{transform:rotate(1080deg)}}@keyframes mdc-circular-progress-left-spin{from{transform:rotate(265deg)}50%{transform:rotate(130deg)}to{transform:rotate(265deg)}}@keyframes mdc-circular-progress-right-spin{from{transform:rotate(-265deg)}50%{transform:rotate(-130deg)}to{transform:rotate(-265deg)}}"], dependencies: [{ kind: "directive", type: import_common.NgTemplateOutlet, selector: "[ngTemplateOutlet]", inputs: ["ngTemplateOutletContext", "ngTemplateOutlet", "ngTemplateOutletInjector"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush, encapsulation: i0.ViewEncapsulation.None });
+let MatProgressSpinner = _MatProgressSpinner;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatProgressSpinner, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "mat-progress-spinner, mat-spinner", exportAs: "matProgressSpinner", host: {
+    "role": "progressbar",
+    "class": "mat-mdc-progress-spinner mdc-circular-progress",
+    // set tab index to -1 so screen readers will read the aria-label
+    // Note: there is a known issue with JAWS that does not read progressbar aria labels on FireFox
+    "tabindex": "-1",
+    "[class]": '"mat-" + color',
+    "[class._mat-animation-noopable]": `_noopAnimations`,
+    "[class.mdc-circular-progress--indeterminate]": 'mode === "indeterminate"',
+    "[style.width.px]": "diameter",
+    "[style.height.px]": "diameter",
+    "[style.--mdc-circular-progress-size]": 'diameter + "px"',
+    "[style.--mdc-circular-progress-active-indicator-width]": 'diameter + "px"',
+    "[attr.aria-valuemin]": "0",
+    "[attr.aria-valuemax]": "100",
+    "[attr.aria-valuenow]": 'mode === "determinate" ? value : null',
+    "[attr.mode]": "mode"
+  }, changeDetection: import_core.ChangeDetectionStrategy.OnPush, encapsulation: import_core.ViewEncapsulation.None, standalone: true, imports: [import_common.NgTemplateOutlet], template: '<ng-template #circle>\n  <svg [attr.viewBox]="_viewBox()" class="mdc-circular-progress__indeterminate-circle-graphic"\n       xmlns="http://www.w3.org/2000/svg" focusable="false">\n    <circle [attr.r]="_circleRadius()"\n            [style.stroke-dasharray.px]="_strokeCircumference()"\n            [style.stroke-dashoffset.px]="_strokeCircumference() / 2"\n            [style.stroke-width.%]="_circleStrokeWidth()"\n            cx="50%" cy="50%"/>\n  </svg>\n</ng-template>\n\n<!--\n  All children need to be hidden for screen readers in order to support ChromeVox.\n  More context in the issue: https://github.com/angular/components/issues/22165.\n-->\n<div class="mdc-circular-progress__determinate-container" aria-hidden="true" #determinateSpinner>\n  <svg [attr.viewBox]="_viewBox()" class="mdc-circular-progress__determinate-circle-graphic"\n       xmlns="http://www.w3.org/2000/svg" focusable="false">\n    <circle [attr.r]="_circleRadius()"\n            [style.stroke-dasharray.px]="_strokeCircumference()"\n            [style.stroke-dashoffset.px]="_strokeDashOffset()"\n            [style.stroke-width.%]="_circleStrokeWidth()"\n            class="mdc-circular-progress__determinate-circle"\n            cx="50%" cy="50%"/>\n  </svg>\n</div>\n<!--TODO: figure out why there are 3 separate svgs-->\n<div class="mdc-circular-progress__indeterminate-container" aria-hidden="true">\n  <div class="mdc-circular-progress__spinner-layer">\n    <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-left">\n      <ng-container [ngTemplateOutlet]="circle"></ng-container>\n    </div>\n    <div class="mdc-circular-progress__gap-patch">\n      <ng-container [ngTemplateOutlet]="circle"></ng-container>\n    </div>\n    <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-right">\n      <ng-container [ngTemplateOutlet]="circle"></ng-container>\n    </div>\n  </div>\n</div>\n', styles: [".mat-mdc-progress-spinner{display:block;overflow:hidden;line-height:0;position:relative;direction:ltr;transition:opacity 250ms cubic-bezier(0.4, 0, 0.6, 1)}.mat-mdc-progress-spinner circle{stroke-width:var(--mdc-circular-progress-active-indicator-width)}.mat-mdc-progress-spinner._mat-animation-noopable,.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__determinate-circle{transition:none !important}.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__indeterminate-circle-graphic,.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__spinner-layer,.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__indeterminate-container{animation:none !important}.mat-mdc-progress-spinner._mat-animation-noopable .mdc-circular-progress__indeterminate-container circle{stroke-dasharray:0 !important}.cdk-high-contrast-active .mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic,.cdk-high-contrast-active .mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle{stroke:currentColor;stroke:CanvasText}.mdc-circular-progress__determinate-container,.mdc-circular-progress__indeterminate-circle-graphic,.mdc-circular-progress__indeterminate-container,.mdc-circular-progress__spinner-layer{position:absolute;width:100%;height:100%}.mdc-circular-progress__determinate-container{transform:rotate(-90deg)}.mdc-circular-progress--indeterminate .mdc-circular-progress__determinate-container{opacity:0}.mdc-circular-progress__indeterminate-container{font-size:0;letter-spacing:0;white-space:nowrap;opacity:0}.mdc-circular-progress--indeterminate .mdc-circular-progress__indeterminate-container{opacity:1;animation:mdc-circular-progress-container-rotate 1568.2352941176ms linear infinite}.mdc-circular-progress__determinate-circle-graphic,.mdc-circular-progress__indeterminate-circle-graphic{fill:rgba(0,0,0,0)}.mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle,.mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic{stroke:var(--mdc-circular-progress-active-indicator-color, var(--mat-app-primary))}.cdk-high-contrast-active .mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle,.cdk-high-contrast-active .mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic{stroke:CanvasText}.mdc-circular-progress__determinate-circle{transition:stroke-dashoffset 500ms cubic-bezier(0, 0, 0.2, 1)}.mdc-circular-progress__gap-patch{position:absolute;top:0;left:47.5%;box-sizing:border-box;width:5%;height:100%;overflow:hidden}.mdc-circular-progress__gap-patch .mdc-circular-progress__indeterminate-circle-graphic{left:-900%;width:2000%;transform:rotate(180deg)}.mdc-circular-progress__circle-clipper .mdc-circular-progress__indeterminate-circle-graphic{width:200%}.mdc-circular-progress__circle-right .mdc-circular-progress__indeterminate-circle-graphic{left:-100%}.mdc-circular-progress--indeterminate .mdc-circular-progress__circle-left .mdc-circular-progress__indeterminate-circle-graphic{animation:mdc-circular-progress-left-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both}.mdc-circular-progress--indeterminate .mdc-circular-progress__circle-right .mdc-circular-progress__indeterminate-circle-graphic{animation:mdc-circular-progress-right-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both}.mdc-circular-progress__circle-clipper{display:inline-flex;position:relative;width:50%;height:100%;overflow:hidden}.mdc-circular-progress--indeterminate .mdc-circular-progress__spinner-layer{animation:mdc-circular-progress-spinner-layer-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both}@keyframes mdc-circular-progress-container-rotate{to{transform:rotate(360deg)}}@keyframes mdc-circular-progress-spinner-layer-rotate{12.5%{transform:rotate(135deg)}25%{transform:rotate(270deg)}37.5%{transform:rotate(405deg)}50%{transform:rotate(540deg)}62.5%{transform:rotate(675deg)}75%{transform:rotate(810deg)}87.5%{transform:rotate(945deg)}100%{transform:rotate(1080deg)}}@keyframes mdc-circular-progress-left-spin{from{transform:rotate(265deg)}50%{transform:rotate(130deg)}to{transform:rotate(265deg)}}@keyframes mdc-circular-progress-right-spin{from{transform:rotate(-265deg)}50%{transform:rotate(-130deg)}to{transform:rotate(-265deg)}}"] }]
+}], ctorParameters: () => [{ type: i0.ElementRef }, { type: void 0, decorators: [{
+  type: import_core.Optional
+}, {
+  type: import_core.Inject,
+  args: [import_core.ANIMATION_MODULE_TYPE]
+}] }, { type: void 0, decorators: [{
+  type: import_core.Inject,
+  args: [MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS]
+}] }], propDecorators: { color: [{
+  type: import_core.Input
+}], _determinateCircle: [{
+  type: import_core.ViewChild,
+  args: ["determinateSpinner"]
+}], mode: [{
+  type: import_core.Input
+}], value: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.numberAttribute }]
+}], diameter: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.numberAttribute }]
+}], strokeWidth: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.numberAttribute }]
+}] } });
+const MatSpinner = MatProgressSpinner;
+const _MatProgressSpinnerModule = class _MatProgressSpinnerModule {
+};
+_MatProgressSpinnerModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatProgressSpinnerModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_MatProgressSpinnerModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatProgressSpinnerModule, imports: [import_common.CommonModule, MatProgressSpinner, MatSpinner], exports: [MatProgressSpinner, MatSpinner, import_core2.MatCommonModule] });
+_MatProgressSpinnerModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatProgressSpinnerModule, imports: [import_common.CommonModule, import_core2.MatCommonModule] });
+let MatProgressSpinnerModule = _MatProgressSpinnerModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatProgressSpinnerModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    imports: [import_common.CommonModule, MatProgressSpinner, MatSpinner],
+    exports: [MatProgressSpinner, MatSpinner, import_core2.MatCommonModule]
+  }]
+}] });

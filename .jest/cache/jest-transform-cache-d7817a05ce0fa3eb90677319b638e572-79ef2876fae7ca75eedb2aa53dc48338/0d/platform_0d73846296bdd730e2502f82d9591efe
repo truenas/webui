@@ -1,0 +1,244 @@
+52804e40bfdc3493b950be7f4a668d4b
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var platform_exports = {};
+__export(platform_exports, {
+  Platform: () => Platform,
+  PlatformModule: () => PlatformModule,
+  RtlScrollAxisType: () => RtlScrollAxisType,
+  _getEventTarget: () => _getEventTarget,
+  _getFocusedElementPierceShadowDom: () => _getFocusedElementPierceShadowDom,
+  _getShadowRoot: () => _getShadowRoot,
+  _isTestEnvironment: () => _isTestEnvironment,
+  _supportsShadowDom: () => _supportsShadowDom,
+  getRtlScrollAxisType: () => getRtlScrollAxisType,
+  getSupportedInputTypes: () => getSupportedInputTypes,
+  normalizePassiveListenerOptions: () => normalizePassiveListenerOptions,
+  supportsPassiveEventListeners: () => supportsPassiveEventListeners,
+  supportsScrollBehavior: () => supportsScrollBehavior
+});
+module.exports = __toCommonJS(platform_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_common = require("@angular/common");
+let hasV8BreakIterator;
+try {
+  hasV8BreakIterator = typeof Intl !== "undefined" && Intl.v8BreakIterator;
+} catch (e) {
+  hasV8BreakIterator = false;
+}
+const _Platform = class _Platform {
+  constructor(_platformId) {
+    this._platformId = _platformId;
+    this.isBrowser = this._platformId ? (0, import_common.isPlatformBrowser)(this._platformId) : typeof document === "object" && !!document;
+    this.EDGE = this.isBrowser && /(edge)/i.test(navigator.userAgent);
+    this.TRIDENT = this.isBrowser && /(msie|trident)/i.test(navigator.userAgent);
+    this.BLINK = this.isBrowser && !!(window.chrome || hasV8BreakIterator) && typeof CSS !== "undefined" && !this.EDGE && !this.TRIDENT;
+    this.WEBKIT = this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
+    this.IOS = this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
+    this.FIREFOX = this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent);
+    this.ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
+    this.SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
+  }
+};
+_Platform.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _Platform, deps: [{ token: import_core.PLATFORM_ID }], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_Platform.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _Platform, providedIn: "root" });
+let Platform = _Platform;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: Platform, decorators: [{
+  type: import_core.Injectable,
+  args: [{ providedIn: "root" }]
+}], ctorParameters: () => [{ type: Object, decorators: [{
+  type: import_core.Inject,
+  args: [import_core.PLATFORM_ID]
+}] }] });
+const _PlatformModule = class _PlatformModule {
+};
+_PlatformModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _PlatformModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_PlatformModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.0-next.2", ngImport: i0, type: _PlatformModule });
+_PlatformModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _PlatformModule });
+let PlatformModule = _PlatformModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: PlatformModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{}]
+}] });
+let supportedInputTypes;
+const candidateInputTypes = [
+  // `color` must come first. Chrome 56 shows a warning if we change the type to `color` after
+  // first changing it to something else:
+  // The specified value "" does not conform to the required format.
+  // The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers.
+  "color",
+  "button",
+  "checkbox",
+  "date",
+  "datetime-local",
+  "email",
+  "file",
+  "hidden",
+  "image",
+  "month",
+  "number",
+  "password",
+  "radio",
+  "range",
+  "reset",
+  "search",
+  "submit",
+  "tel",
+  "text",
+  "time",
+  "url",
+  "week"
+];
+function getSupportedInputTypes() {
+  if (supportedInputTypes) {
+    return supportedInputTypes;
+  }
+  if (typeof document !== "object" || !document) {
+    supportedInputTypes = new Set(candidateInputTypes);
+    return supportedInputTypes;
+  }
+  let featureTestInput = document.createElement("input");
+  supportedInputTypes = new Set(candidateInputTypes.filter((value) => {
+    featureTestInput.setAttribute("type", value);
+    return featureTestInput.type === value;
+  }));
+  return supportedInputTypes;
+}
+let supportsPassiveEvents;
+function supportsPassiveEventListeners() {
+  if (supportsPassiveEvents == null && typeof window !== "undefined") {
+    try {
+      window.addEventListener("test", null, Object.defineProperty({}, "passive", {
+        get: () => supportsPassiveEvents = true
+      }));
+    } finally {
+      supportsPassiveEvents = supportsPassiveEvents || false;
+    }
+  }
+  return supportsPassiveEvents;
+}
+function normalizePassiveListenerOptions(options) {
+  return supportsPassiveEventListeners() ? options : !!options.capture;
+}
+var RtlScrollAxisType;
+(function(RtlScrollAxisType2) {
+  RtlScrollAxisType2[RtlScrollAxisType2["NORMAL"] = 0] = "NORMAL";
+  RtlScrollAxisType2[RtlScrollAxisType2["NEGATED"] = 1] = "NEGATED";
+  RtlScrollAxisType2[RtlScrollAxisType2["INVERTED"] = 2] = "INVERTED";
+})(RtlScrollAxisType || (RtlScrollAxisType = {}));
+let rtlScrollAxisType;
+let scrollBehaviorSupported;
+function supportsScrollBehavior() {
+  if (scrollBehaviorSupported == null) {
+    if (typeof document !== "object" || !document || typeof Element !== "function" || !Element) {
+      scrollBehaviorSupported = false;
+      return scrollBehaviorSupported;
+    }
+    if ("scrollBehavior" in document.documentElement.style) {
+      scrollBehaviorSupported = true;
+    } else {
+      const scrollToFunction = Element.prototype.scrollTo;
+      if (scrollToFunction) {
+        scrollBehaviorSupported = !/\{\s*\[native code\]\s*\}/.test(scrollToFunction.toString());
+      } else {
+        scrollBehaviorSupported = false;
+      }
+    }
+  }
+  return scrollBehaviorSupported;
+}
+function getRtlScrollAxisType() {
+  if (typeof document !== "object" || !document) {
+    return RtlScrollAxisType.NORMAL;
+  }
+  if (rtlScrollAxisType == null) {
+    const scrollContainer = document.createElement("div");
+    const containerStyle = scrollContainer.style;
+    scrollContainer.dir = "rtl";
+    containerStyle.width = "1px";
+    containerStyle.overflow = "auto";
+    containerStyle.visibility = "hidden";
+    containerStyle.pointerEvents = "none";
+    containerStyle.position = "absolute";
+    const content = document.createElement("div");
+    const contentStyle = content.style;
+    contentStyle.width = "2px";
+    contentStyle.height = "1px";
+    scrollContainer.appendChild(content);
+    document.body.appendChild(scrollContainer);
+    rtlScrollAxisType = RtlScrollAxisType.NORMAL;
+    if (scrollContainer.scrollLeft === 0) {
+      scrollContainer.scrollLeft = 1;
+      rtlScrollAxisType = scrollContainer.scrollLeft === 0 ? RtlScrollAxisType.NEGATED : RtlScrollAxisType.INVERTED;
+    }
+    scrollContainer.remove();
+  }
+  return rtlScrollAxisType;
+}
+let shadowDomIsSupported;
+function _supportsShadowDom() {
+  if (shadowDomIsSupported == null) {
+    const head = typeof document !== "undefined" ? document.head : null;
+    shadowDomIsSupported = !!(head && (head.createShadowRoot || head.attachShadow));
+  }
+  return shadowDomIsSupported;
+}
+function _getShadowRoot(element) {
+  if (_supportsShadowDom()) {
+    const rootNode = element.getRootNode ? element.getRootNode() : null;
+    if (typeof ShadowRoot !== "undefined" && ShadowRoot && rootNode instanceof ShadowRoot) {
+      return rootNode;
+    }
+  }
+  return null;
+}
+function _getFocusedElementPierceShadowDom() {
+  let activeElement = typeof document !== "undefined" && document ? document.activeElement : null;
+  while (activeElement && activeElement.shadowRoot) {
+    const newActiveElement = activeElement.shadowRoot.activeElement;
+    if (newActiveElement === activeElement) {
+      break;
+    } else {
+      activeElement = newActiveElement;
+    }
+  }
+  return activeElement;
+}
+function _getEventTarget(event) {
+  return event.composedPath ? event.composedPath()[0] : event.target;
+}
+function _isTestEnvironment() {
+  return (
+    // @ts-ignore
+    typeof __karma__ !== "undefined" && !!__karma__ || // @ts-ignore
+    typeof jasmine !== "undefined" && !!jasmine || // @ts-ignore
+    typeof jest !== "undefined" && !!jest || // @ts-ignore
+    typeof Mocha !== "undefined" && !!Mocha
+  );
+}

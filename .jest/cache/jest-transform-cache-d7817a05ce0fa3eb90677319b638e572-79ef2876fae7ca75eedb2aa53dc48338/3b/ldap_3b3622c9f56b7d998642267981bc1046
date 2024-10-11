@@ -1,0 +1,56 @@
+44a76dd51f72ba9547b6d080ef3f6ff6
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helptextLdap = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.helptextLdap = {
+    ldap_custactions_clearcache_dialog_message: (0, ngx_translate_extract_marker_1.marker)('The cache is being rebuilt.'),
+    ldap_hostname_tooltip: (0, ngx_translate_extract_marker_1.marker)('The hostname or IP address of the LDAP server. \
+ Separate entries by pressing <code>Enter</code>.'),
+    ldap_hostname_noreq_tooltip: (0, ngx_translate_extract_marker_1.marker)('LDAP server hostnames or IP addresses.\
+ Separate entries with an empty space. Multiple hostnames or IP\
+ addresses can be entered to create an LDAP failover priority list. If a\
+ host does not respond, the next host in the list is tried until a new\
+ connection is established.'),
+    ldap_basedn_tooltip: (0, ngx_translate_extract_marker_1.marker)('Top level of the LDAP directory tree to be used when\
+ searching for resources. Example: <i>dc=test,dc=org</i>.'),
+    ldap_binddn_tooltip: (0, ngx_translate_extract_marker_1.marker)('Administrative account name on the LDAP server.\
+ Example: <i>cn=Manager,dc=test,dc=org</i>.'),
+    ldap_bindpw_tooltip: (0, ngx_translate_extract_marker_1.marker)('Password for the Bind DN.'),
+    ldap_anonbind_tooltip: (0, ngx_translate_extract_marker_1.marker)('Set for the LDAP server to disable authentication and\
+ allow read and write access to any client.'),
+    ldap_kerberos_realm_tooltip: (0, ngx_translate_extract_marker_1.marker)('Select an existing realm that was added \
+ in <b>Directory Services > Kerberos Realms</b>.'),
+    ldap_kerberos_principal_tooltip: (0, ngx_translate_extract_marker_1.marker)('Select the location of the principal in the \
+ keytab created in <b>Directory Services > Kerberos Keytabs</b>.'),
+    ldap_ssl_tooltip: (0, ngx_translate_extract_marker_1.marker)('Options for encrypting the LDAP connection: \
+ <ul> \
+ <li><i>OFF:</i> do not encrypt the LDAP connection.</li> \
+ <li><i>ON:</i> encrypt the LDAP connection with <i>SSL</i> on port \
+ <i>636</i>.</li> \
+ <li><i>START_TLS:</i> encrypt the LDAP connection with <i>STARTTLS</i> \
+ on the default LDAP port <i>389</i>.</li> \
+ </ul>'),
+    ldap_certificate_tooltip: (0, ngx_translate_extract_marker_1.marker)('Certificate to use when performing LDAP \
+ certificate-based authentication. To configure LDAP certificate-based \
+ authentication, create a Certificate Signing Request for the LDAP \
+ provider to sign. A certificate is not required when using \
+ username/password or Kerberos authentication.'),
+    ldap_validate_certificates_tooltip: (0, ngx_translate_extract_marker_1.marker)('Verify certificate authenticity.'),
+    ldap_disable_fn_cache_tooltip: (0, ngx_translate_extract_marker_1.marker)('Disable caching LDAP users and groups in large LDAP environments. \
+ When caching is disabled, LDAP users and groups do not appear in dropdown \
+ menus, but are still accepted when manually entered.'),
+    ldap_timeout_tooltip: (0, ngx_translate_extract_marker_1.marker)('LDAP timeout in seconds. Increase this value if a\
+ Kerberos ticket timeout occurs.'),
+    ldap_dns_timeout_tooltip: (0, ngx_translate_extract_marker_1.marker)('DNS timeout in seconds. Increase this value if DNS queries timeout.'),
+    ldap_idmap_backend_tooltip: (0, ngx_translate_extract_marker_1.marker)('Backend used to map Windows security \
+ identifiers (SIDs) to UNIX UIDs and GIDs. To configure the selected \
+ backend, click <i>EDIT IDMAP</i>.'),
+    ldap_auxiliary_parameters_tooltip: (0, ngx_translate_extract_marker_1.marker)('Additional options for <a\
+ href="https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5"\
+ target="_blank">nslcd.conf</a>.'),
+    ldap_schema_tooltip: (0, ngx_translate_extract_marker_1.marker)('Select a schema when LDAP NSS schema is set.'),
+    ldap_enable_tooltip: (0, ngx_translate_extract_marker_1.marker)('Activates the configuration. Unset to disable the\
+ configuration without deleting it.'),
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L2RpcmVjdG9yeS1zZXJ2aWNlL2xkYXAudHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMEZBQXNFO0FBRXpELFFBQUEsWUFBWSxHQUFHO0lBQzFCLDBDQUEwQyxFQUFFLElBQUEscUNBQUMsRUFBQyw2QkFBNkIsQ0FBQztJQUM1RSxxQkFBcUIsRUFBRSxJQUFBLHFDQUFDLEVBQUM7a0RBQ3VCLENBQUM7SUFDakQsMkJBQTJCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzs7OzRCQUlMLENBQUM7SUFDM0IsbUJBQW1CLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzBEQUNpQyxDQUFDO0lBQ3pELG1CQUFtQixFQUFFLElBQUEscUNBQUMsRUFBQzs0Q0FDbUIsQ0FBQztJQUMzQyxtQkFBbUIsRUFBRSxJQUFBLHFDQUFDLEVBQUMsMkJBQTJCLENBQUM7SUFDbkQscUJBQXFCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzRDQUNpQixDQUFDO0lBQzNDLDJCQUEyQixFQUFFLElBQUEscUNBQUMsRUFBQztpREFDZ0IsQ0FBQztJQUNoRCwrQkFBK0IsRUFBRSxJQUFBLHFDQUFDLEVBQUM7aUVBQzRCLENBQUM7SUFDaEUsZ0JBQWdCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzs7Ozs7O09BT2YsQ0FBQztJQUNOLHdCQUF3QixFQUFFLElBQUEscUNBQUMsRUFBQzs7OzsrQ0FJaUIsQ0FBQztJQUM5QyxrQ0FBa0MsRUFBRSxJQUFBLHFDQUFDLEVBQUMsa0NBQWtDLENBQUM7SUFDekUsNkJBQTZCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOztzREFFbUIsQ0FBQztJQUNyRCxvQkFBb0IsRUFBRSxJQUFBLHFDQUFDLEVBQUM7aUNBQ08sQ0FBQztJQUNoQyx3QkFBd0IsRUFBRSxJQUFBLHFDQUFDLEVBQUMscUVBQXFFLENBQUM7SUFDbEcsMEJBQTBCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzttQ0FFRyxDQUFDO0lBQ2xDLGlDQUFpQyxFQUFFLElBQUEscUNBQUMsRUFBQzs7aUNBRU4sQ0FBQztJQUNoQyxtQkFBbUIsRUFBRSxJQUFBLHFDQUFDLEVBQUMsOENBQThDLENBQUM7SUFDdEUsbUJBQW1CLEVBQUUsSUFBQSxxQ0FBQyxFQUFDO29DQUNXLENBQUM7Q0FDcEMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvaGVscHRleHQvZGlyZWN0b3J5LXNlcnZpY2UvbGRhcC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5cbmV4cG9ydCBjb25zdCBoZWxwdGV4dExkYXAgPSB7XG4gIGxkYXBfY3VzdGFjdGlvbnNfY2xlYXJjYWNoZV9kaWFsb2dfbWVzc2FnZTogVCgnVGhlIGNhY2hlIGlzIGJlaW5nIHJlYnVpbHQuJyksXG4gIGxkYXBfaG9zdG5hbWVfdG9vbHRpcDogVCgnVGhlIGhvc3RuYW1lIG9yIElQIGFkZHJlc3Mgb2YgdGhlIExEQVAgc2VydmVyLiBcXFxuIFNlcGFyYXRlIGVudHJpZXMgYnkgcHJlc3NpbmcgPGNvZGU+RW50ZXI8L2NvZGU+LicpLFxuICBsZGFwX2hvc3RuYW1lX25vcmVxX3Rvb2x0aXA6IFQoJ0xEQVAgc2VydmVyIGhvc3RuYW1lcyBvciBJUCBhZGRyZXNzZXMuXFxcbiBTZXBhcmF0ZSBlbnRyaWVzIHdpdGggYW4gZW1wdHkgc3BhY2UuIE11bHRpcGxlIGhvc3RuYW1lcyBvciBJUFxcXG4gYWRkcmVzc2VzIGNhbiBiZSBlbnRlcmVkIHRvIGNyZWF0ZSBhbiBMREFQIGZhaWxvdmVyIHByaW9yaXR5IGxpc3QuIElmIGFcXFxuIGhvc3QgZG9lcyBub3QgcmVzcG9uZCwgdGhlIG5leHQgaG9zdCBpbiB0aGUgbGlzdCBpcyB0cmllZCB1bnRpbCBhIG5ld1xcXG4gY29ubmVjdGlvbiBpcyBlc3RhYmxpc2hlZC4nKSxcbiAgbGRhcF9iYXNlZG5fdG9vbHRpcDogVCgnVG9wIGxldmVsIG9mIHRoZSBMREFQIGRpcmVjdG9yeSB0cmVlIHRvIGJlIHVzZWQgd2hlblxcXG4gc2VhcmNoaW5nIGZvciByZXNvdXJjZXMuIEV4YW1wbGU6IDxpPmRjPXRlc3QsZGM9b3JnPC9pPi4nKSxcbiAgbGRhcF9iaW5kZG5fdG9vbHRpcDogVCgnQWRtaW5pc3RyYXRpdmUgYWNjb3VudCBuYW1lIG9uIHRoZSBMREFQIHNlcnZlci5cXFxuIEV4YW1wbGU6IDxpPmNuPU1hbmFnZXIsZGM9dGVzdCxkYz1vcmc8L2k+LicpLFxuICBsZGFwX2JpbmRwd190b29sdGlwOiBUKCdQYXNzd29yZCBmb3IgdGhlIEJpbmQgRE4uJyksXG4gIGxkYXBfYW5vbmJpbmRfdG9vbHRpcDogVCgnU2V0IGZvciB0aGUgTERBUCBzZXJ2ZXIgdG8gZGlzYWJsZSBhdXRoZW50aWNhdGlvbiBhbmRcXFxuIGFsbG93IHJlYWQgYW5kIHdyaXRlIGFjY2VzcyB0byBhbnkgY2xpZW50LicpLFxuICBsZGFwX2tlcmJlcm9zX3JlYWxtX3Rvb2x0aXA6IFQoJ1NlbGVjdCBhbiBleGlzdGluZyByZWFsbSB0aGF0IHdhcyBhZGRlZCBcXFxuIGluIDxiPkRpcmVjdG9yeSBTZXJ2aWNlcyA+IEtlcmJlcm9zIFJlYWxtczwvYj4uJyksXG4gIGxkYXBfa2VyYmVyb3NfcHJpbmNpcGFsX3Rvb2x0aXA6IFQoJ1NlbGVjdCB0aGUgbG9jYXRpb24gb2YgdGhlIHByaW5jaXBhbCBpbiB0aGUgXFxcbiBrZXl0YWIgY3JlYXRlZCBpbiA8Yj5EaXJlY3RvcnkgU2VydmljZXMgPiBLZXJiZXJvcyBLZXl0YWJzPC9iPi4nKSxcbiAgbGRhcF9zc2xfdG9vbHRpcDogVCgnT3B0aW9ucyBmb3IgZW5jcnlwdGluZyB0aGUgTERBUCBjb25uZWN0aW9uOiBcXFxuIDx1bD4gXFxcbiA8bGk+PGk+T0ZGOjwvaT4gZG8gbm90IGVuY3J5cHQgdGhlIExEQVAgY29ubmVjdGlvbi48L2xpPiBcXFxuIDxsaT48aT5PTjo8L2k+IGVuY3J5cHQgdGhlIExEQVAgY29ubmVjdGlvbiB3aXRoIDxpPlNTTDwvaT4gb24gcG9ydCBcXFxuIDxpPjYzNjwvaT4uPC9saT4gXFxcbiA8bGk+PGk+U1RBUlRfVExTOjwvaT4gZW5jcnlwdCB0aGUgTERBUCBjb25uZWN0aW9uIHdpdGggPGk+U1RBUlRUTFM8L2k+IFxcXG4gb24gdGhlIGRlZmF1bHQgTERBUCBwb3J0IDxpPjM4OTwvaT4uPC9saT4gXFxcbiA8L3VsPicpLFxuICBsZGFwX2NlcnRpZmljYXRlX3Rvb2x0aXA6IFQoJ0NlcnRpZmljYXRlIHRvIHVzZSB3aGVuIHBlcmZvcm1pbmcgTERBUCBcXFxuIGNlcnRpZmljYXRlLWJhc2VkIGF1dGhlbnRpY2F0aW9uLiBUbyBjb25maWd1cmUgTERBUCBjZXJ0aWZpY2F0ZS1iYXNlZCBcXFxuIGF1dGhlbnRpY2F0aW9uLCBjcmVhdGUgYSBDZXJ0aWZpY2F0ZSBTaWduaW5nIFJlcXVlc3QgZm9yIHRoZSBMREFQIFxcXG4gcHJvdmlkZXIgdG8gc2lnbi4gQSBjZXJ0aWZpY2F0ZSBpcyBub3QgcmVxdWlyZWQgd2hlbiB1c2luZyBcXFxuIHVzZXJuYW1lL3Bhc3N3b3JkIG9yIEtlcmJlcm9zIGF1dGhlbnRpY2F0aW9uLicpLFxuICBsZGFwX3ZhbGlkYXRlX2NlcnRpZmljYXRlc190b29sdGlwOiBUKCdWZXJpZnkgY2VydGlmaWNhdGUgYXV0aGVudGljaXR5LicpLFxuICBsZGFwX2Rpc2FibGVfZm5fY2FjaGVfdG9vbHRpcDogVCgnRGlzYWJsZSBjYWNoaW5nIExEQVAgdXNlcnMgYW5kIGdyb3VwcyBpbiBsYXJnZSBMREFQIGVudmlyb25tZW50cy4gXFxcbiBXaGVuIGNhY2hpbmcgaXMgZGlzYWJsZWQsIExEQVAgdXNlcnMgYW5kIGdyb3VwcyBkbyBub3QgYXBwZWFyIGluIGRyb3Bkb3duIFxcXG4gbWVudXMsIGJ1dCBhcmUgc3RpbGwgYWNjZXB0ZWQgd2hlbiBtYW51YWxseSBlbnRlcmVkLicpLFxuICBsZGFwX3RpbWVvdXRfdG9vbHRpcDogVCgnTERBUCB0aW1lb3V0IGluIHNlY29uZHMuIEluY3JlYXNlIHRoaXMgdmFsdWUgaWYgYVxcXG4gS2VyYmVyb3MgdGlja2V0IHRpbWVvdXQgb2NjdXJzLicpLFxuICBsZGFwX2Ruc190aW1lb3V0X3Rvb2x0aXA6IFQoJ0ROUyB0aW1lb3V0IGluIHNlY29uZHMuIEluY3JlYXNlIHRoaXMgdmFsdWUgaWYgRE5TIHF1ZXJpZXMgdGltZW91dC4nKSxcbiAgbGRhcF9pZG1hcF9iYWNrZW5kX3Rvb2x0aXA6IFQoJ0JhY2tlbmQgdXNlZCB0byBtYXAgV2luZG93cyBzZWN1cml0eSBcXFxuIGlkZW50aWZpZXJzIChTSURzKSB0byBVTklYIFVJRHMgYW5kIEdJRHMuIFRvIGNvbmZpZ3VyZSB0aGUgc2VsZWN0ZWQgXFxcbiBiYWNrZW5kLCBjbGljayA8aT5FRElUIElETUFQPC9pPi4nKSxcbiAgbGRhcF9hdXhpbGlhcnlfcGFyYW1ldGVyc190b29sdGlwOiBUKCdBZGRpdGlvbmFsIG9wdGlvbnMgZm9yIDxhXFxcbiBocmVmPVwiaHR0cHM6Ly9hcnRodXJkZWpvbmcub3JnL25zcy1wYW0tbGRhcGQvbnNsY2QuY29uZi41XCJcXFxuIHRhcmdldD1cIl9ibGFua1wiPm5zbGNkLmNvbmY8L2E+LicpLFxuICBsZGFwX3NjaGVtYV90b29sdGlwOiBUKCdTZWxlY3QgYSBzY2hlbWEgd2hlbiBMREFQIE5TUyBzY2hlbWEgaXMgc2V0LicpLFxuICBsZGFwX2VuYWJsZV90b29sdGlwOiBUKCdBY3RpdmF0ZXMgdGhlIGNvbmZpZ3VyYXRpb24uIFVuc2V0IHRvIGRpc2FibGUgdGhlXFxcbiBjb25maWd1cmF0aW9uIHdpdGhvdXQgZGVsZXRpbmcgaXQuJyksXG59O1xuIl0sInZlcnNpb24iOjN9

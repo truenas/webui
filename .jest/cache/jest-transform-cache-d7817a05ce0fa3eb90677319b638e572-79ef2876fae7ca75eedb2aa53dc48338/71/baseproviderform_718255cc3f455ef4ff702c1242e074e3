@@ -1,0 +1,31 @@
+5fadd407adf7758315a2f80c99cd1f40
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseProviderFormComponent = void 0;
+const lodash_es_1 = require("lodash-es");
+const rxjs_1 = require("rxjs");
+const cloud_credentials_1 = require("app/helptext/system/cloud-credentials");
+class BaseProviderFormComponent {
+    constructor() {
+        this.formPatcher$ = new rxjs_1.BehaviorSubject({});
+        this.helptext = cloud_credentials_1.helptextSystemCloudcredentials;
+        this.getFormSetter$ = () => {
+            return this.formPatcher$;
+        };
+    }
+    /**
+     * Override in child class to do async data preparation.
+     *
+     * TODO: Only exists to allow for 'Generate New' private key option in SFTP form.
+     * TODO: Consider making this functionality part of the private key select.
+     */
+    beforeSubmit() {
+        return (0, rxjs_1.of)([]);
+    }
+    getSubmitAttributes() {
+        const nonNullAttributes = (0, lodash_es_1.omitBy)(this.form.value, lodash_es_1.isNull);
+        return nonNullAttributes;
+    }
+}
+exports.BaseProviderFormComponent = BaseProviderFormComponent;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2NyZWRlbnRpYWxzL2JhY2t1cC1jcmVkZW50aWFscy9jbG91ZC1jcmVkZW50aWFscy1mb3JtL3Byb3ZpZGVyLWZvcm1zL2Jhc2UtcHJvdmlkZXItZm9ybS50cyIsIm1hcHBpbmdzIjoiOzs7QUFDQSx5Q0FBMkM7QUFDM0MsK0JBQXVEO0FBQ3ZELDZFQUFtRztBQUluRyxNQUFzQix5QkFBeUI7SUFBL0M7UUFHWSxpQkFBWSxHQUFHLElBQUksc0JBQWUsQ0FBZ0MsRUFBRSxDQUFDLENBQUM7UUFFdkUsYUFBUSxHQUFHLGtEQUFRLENBQUM7UUFpQjdCLG1CQUFjLEdBQUcsR0FBbUQsRUFBRTtZQUNwRSxPQUFPLElBQUksQ0FBQyxZQUFZLENBQUM7UUFDM0IsQ0FBQyxDQUFDO0lBQ0osQ0FBQztJQWxCQzs7Ozs7T0FLRztJQUNILFlBQVk7UUFDVixPQUFPLElBQUEsU0FBRSxFQUFDLEVBQUUsQ0FBQyxDQUFDO0lBQ2hCLENBQUM7SUFFRCxtQkFBbUI7UUFDakIsTUFBTSxpQkFBaUIsR0FBRyxJQUFBLGtCQUFNLEVBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxLQUFLLEVBQUUsa0JBQU0sQ0FBQyxDQUFDO1FBQzFELE9BQU8saUJBQXNCLENBQUM7SUFDaEMsQ0FBQztDQUtGO0FBekJELDhEQXlCQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvY3JlZGVudGlhbHMvYmFja3VwLWNyZWRlbnRpYWxzL2Nsb3VkLWNyZWRlbnRpYWxzLWZvcm0vcHJvdmlkZXItZm9ybXMvYmFzZS1wcm92aWRlci1mb3JtLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEZvcm1Hcm91cCB9IGZyb20gJ0Bhbmd1bGFyL2Zvcm1zJztcbmltcG9ydCB7IGlzTnVsbCwgb21pdEJ5IH0gZnJvbSAnbG9kYXNoLWVzJztcbmltcG9ydCB7IEJlaGF2aW9yU3ViamVjdCwgT2JzZXJ2YWJsZSwgb2YgfSBmcm9tICdyeGpzJztcbmltcG9ydCB7IGhlbHB0ZXh0U3lzdGVtQ2xvdWRjcmVkZW50aWFscyBhcyBoZWxwdGV4dCB9IGZyb20gJ2FwcC9oZWxwdGV4dC9zeXN0ZW0vY2xvdWQtY3JlZGVudGlhbHMnO1xuaW1wb3J0IHsgQ2xvdWRDcmVkZW50aWFsIH0gZnJvbSAnYXBwL2ludGVyZmFjZXMvY2xvdWQtc3luYy10YXNrLmludGVyZmFjZSc7XG5pbXBvcnQgeyBDbG91ZFN5bmNQcm92aWRlciB9IGZyb20gJ2FwcC9pbnRlcmZhY2VzL2Nsb3Vkc3luYy1wcm92aWRlci5pbnRlcmZhY2UnO1xuXG5leHBvcnQgYWJzdHJhY3QgY2xhc3MgQmFzZVByb3ZpZGVyRm9ybUNvbXBvbmVudDxUID0gQ2xvdWRDcmVkZW50aWFsWydhdHRyaWJ1dGVzJ10+IHtcbiAgcHJvdmlkZXI6IENsb3VkU3luY1Byb3ZpZGVyO1xuICBhYnN0cmFjdCByZWFkb25seSBmb3JtOiBGb3JtR3JvdXA7XG4gIHByb3RlY3RlZCBmb3JtUGF0Y2hlciQgPSBuZXcgQmVoYXZpb3JTdWJqZWN0PENsb3VkQ3JlZGVudGlhbFsnYXR0cmlidXRlcyddPih7fSk7XG5cbiAgcmVhZG9ubHkgaGVscHRleHQgPSBoZWxwdGV4dDtcblxuICAvKipcbiAgICogT3ZlcnJpZGUgaW4gY2hpbGQgY2xhc3MgdG8gZG8gYXN5bmMgZGF0YSBwcmVwYXJhdGlvbi5cbiAgICpcbiAgICogVE9ETzogT25seSBleGlzdHMgdG8gYWxsb3cgZm9yICdHZW5lcmF0ZSBOZXcnIHByaXZhdGUga2V5IG9wdGlvbiBpbiBTRlRQIGZvcm0uXG4gICAqIFRPRE86IENvbnNpZGVyIG1ha2luZyB0aGlzIGZ1bmN0aW9uYWxpdHkgcGFydCBvZiB0aGUgcHJpdmF0ZSBrZXkgc2VsZWN0LlxuICAgKi9cbiAgYmVmb3JlU3VibWl0KCk6IE9ic2VydmFibGU8dW5rbm93bj4ge1xuICAgIHJldHVybiBvZihbXSk7XG4gIH1cblxuICBnZXRTdWJtaXRBdHRyaWJ1dGVzKCk6IFQge1xuICAgIGNvbnN0IG5vbk51bGxBdHRyaWJ1dGVzID0gb21pdEJ5KHRoaXMuZm9ybS52YWx1ZSwgaXNOdWxsKTtcbiAgICByZXR1cm4gbm9uTnVsbEF0dHJpYnV0ZXMgYXMgVDtcbiAgfVxuXG4gIGdldEZvcm1TZXR0ZXIkID0gKCk6IEJlaGF2aW9yU3ViamVjdDxDbG91ZENyZWRlbnRpYWxbJ2F0dHJpYnV0ZXMnXT4gPT4ge1xuICAgIHJldHVybiB0aGlzLmZvcm1QYXRjaGVyJDtcbiAgfTtcbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,52 @@
+dc030c514c1f3b5231adcbde87371603
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseLodash_js_1 = __importDefault(require("./_baseLodash.js"));
+const _wrapperClone_js_1 = __importDefault(require("./_wrapperClone.js"));
+/**
+ * Creates a clone of the chain sequence planting `value` as the wrapped value.
+ *
+ * @name plant
+ * @memberOf _
+ * @since 3.2.0
+ * @category Seq
+ * @param {*} value The value to plant.
+ * @returns {Object} Returns the new `lodash` wrapper instance.
+ * @example
+ *
+ * function square(n) {
+ *   return n * n;
+ * }
+ *
+ * var wrapped = _([1, 2]).map(square);
+ * var other = wrapped.plant([3, 4]);
+ *
+ * other.value();
+ * // => [9, 16]
+ *
+ * wrapped.value();
+ * // => [1, 4]
+ */
+function wrapperPlant(value) {
+    var result, parent = this;
+    while (parent instanceof _baseLodash_js_1.default) {
+        var clone = (0, _wrapperClone_js_1.default)(parent);
+        clone.__index__ = 0;
+        clone.__values__ = undefined;
+        if (result) {
+            previous.__wrapped__ = clone;
+        }
+        else {
+            result = clone;
+        }
+        var previous = clone;
+        parent = parent.__wrapped__;
+    }
+    previous.__wrapped__ = value;
+    return result;
+}
+exports.default = wrapperPlant;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3BsYW50LmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsc0VBQTBDO0FBQzFDLDBFQUE4QztBQUU5Qzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0F1Qkc7QUFDSCxTQUFTLFlBQVksQ0FBQyxLQUFLO0lBQ3pCLElBQUksTUFBTSxFQUNOLE1BQU0sR0FBRyxJQUFJLENBQUM7SUFFbEIsT0FBTyxNQUFNLFlBQVksd0JBQVUsRUFBRSxDQUFDO1FBQ3BDLElBQUksS0FBSyxHQUFHLElBQUEsMEJBQVksRUFBQyxNQUFNLENBQUMsQ0FBQztRQUNqQyxLQUFLLENBQUMsU0FBUyxHQUFHLENBQUMsQ0FBQztRQUNwQixLQUFLLENBQUMsVUFBVSxHQUFHLFNBQVMsQ0FBQztRQUM3QixJQUFJLE1BQU0sRUFBRSxDQUFDO1lBQ1gsUUFBUSxDQUFDLFdBQVcsR0FBRyxLQUFLLENBQUM7UUFDL0IsQ0FBQzthQUFNLENBQUM7WUFDTixNQUFNLEdBQUcsS0FBSyxDQUFDO1FBQ2pCLENBQUM7UUFDRCxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUM7UUFDckIsTUFBTSxHQUFHLE1BQU0sQ0FBQyxXQUFXLENBQUM7SUFDOUIsQ0FBQztJQUNELFFBQVEsQ0FBQyxXQUFXLEdBQUcsS0FBSyxDQUFDO0lBQzdCLE9BQU8sTUFBTSxDQUFDO0FBQ2hCLENBQUM7QUFFRCxrQkFBZSxZQUFZLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3BsYW50LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlTG9kYXNoIGZyb20gJy4vX2Jhc2VMb2Rhc2guanMnO1xuaW1wb3J0IHdyYXBwZXJDbG9uZSBmcm9tICcuL193cmFwcGVyQ2xvbmUuanMnO1xuXG4vKipcbiAqIENyZWF0ZXMgYSBjbG9uZSBvZiB0aGUgY2hhaW4gc2VxdWVuY2UgcGxhbnRpbmcgYHZhbHVlYCBhcyB0aGUgd3JhcHBlZCB2YWx1ZS5cbiAqXG4gKiBAbmFtZSBwbGFudFxuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSAzLjIuMFxuICogQGNhdGVnb3J5IFNlcVxuICogQHBhcmFtIHsqfSB2YWx1ZSBUaGUgdmFsdWUgdG8gcGxhbnQuXG4gKiBAcmV0dXJucyB7T2JqZWN0fSBSZXR1cm5zIHRoZSBuZXcgYGxvZGFzaGAgd3JhcHBlciBpbnN0YW5jZS5cbiAqIEBleGFtcGxlXG4gKlxuICogZnVuY3Rpb24gc3F1YXJlKG4pIHtcbiAqICAgcmV0dXJuIG4gKiBuO1xuICogfVxuICpcbiAqIHZhciB3cmFwcGVkID0gXyhbMSwgMl0pLm1hcChzcXVhcmUpO1xuICogdmFyIG90aGVyID0gd3JhcHBlZC5wbGFudChbMywgNF0pO1xuICpcbiAqIG90aGVyLnZhbHVlKCk7XG4gKiAvLyA9PiBbOSwgMTZdXG4gKlxuICogd3JhcHBlZC52YWx1ZSgpO1xuICogLy8gPT4gWzEsIDRdXG4gKi9cbmZ1bmN0aW9uIHdyYXBwZXJQbGFudCh2YWx1ZSkge1xuICB2YXIgcmVzdWx0LFxuICAgICAgcGFyZW50ID0gdGhpcztcblxuICB3aGlsZSAocGFyZW50IGluc3RhbmNlb2YgYmFzZUxvZGFzaCkge1xuICAgIHZhciBjbG9uZSA9IHdyYXBwZXJDbG9uZShwYXJlbnQpO1xuICAgIGNsb25lLl9faW5kZXhfXyA9IDA7XG4gICAgY2xvbmUuX192YWx1ZXNfXyA9IHVuZGVmaW5lZDtcbiAgICBpZiAocmVzdWx0KSB7XG4gICAgICBwcmV2aW91cy5fX3dyYXBwZWRfXyA9IGNsb25lO1xuICAgIH0gZWxzZSB7XG4gICAgICByZXN1bHQgPSBjbG9uZTtcbiAgICB9XG4gICAgdmFyIHByZXZpb3VzID0gY2xvbmU7XG4gICAgcGFyZW50ID0gcGFyZW50Ll9fd3JhcHBlZF9fO1xuICB9XG4gIHByZXZpb3VzLl9fd3JhcHBlZF9fID0gdmFsdWU7XG4gIHJldHVybiByZXN1bHQ7XG59XG5cbmV4cG9ydCBkZWZhdWx0IHdyYXBwZXJQbGFudDtcbiJdLCJ2ZXJzaW9uIjozfQ==

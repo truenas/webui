@@ -1,0 +1,27 @@
+f8469aa851e75b1e4d45a8bb3f72fcfb
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CrontabExplanationPipe = void 0;
+const core_1 = require("@angular/core");
+const i18n_1 = __importDefault(require("cronstrue/i18n"));
+let CrontabExplanationPipe = class CrontabExplanationPipe {
+    transform(crontab) {
+        return i18n_1.default.toString(crontab);
+    }
+};
+exports.CrontabExplanationPipe = CrontabExplanationPipe;
+exports.CrontabExplanationPipe = CrontabExplanationPipe = __decorate([
+    (0, core_1.Pipe)({
+        name: 'crontabExplanation',
+    })
+], CrontabExplanationPipe);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvc2NoZWR1bGVyL3BpcGVzL2Nyb250YWItZXhwbGFuYXRpb24ucGlwZS50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7QUFBQSx3Q0FBb0Q7QUFDcEQsMERBQXVDO0FBS2hDLElBQU0sc0JBQXNCLEdBQTVCLE1BQU0sc0JBQXNCO0lBQ2pDLFNBQVMsQ0FBQyxPQUFlO1FBQ3ZCLE9BQU8sY0FBUyxDQUFDLFFBQVEsQ0FBQyxPQUFPLENBQUMsQ0FBQztJQUNyQyxDQUFDO0NBQ0YsQ0FBQTtBQUpZLHdEQUFzQjtpQ0FBdEIsc0JBQXNCO0lBSGxDLElBQUEsV0FBSSxFQUFDO1FBQ0osSUFBSSxFQUFFLG9CQUFvQjtLQUMzQixDQUFDO0dBQ1csc0JBQXNCLENBSWxDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9tb2R1bGVzL3NjaGVkdWxlci9waXBlcy9jcm9udGFiLWV4cGxhbmF0aW9uLnBpcGUudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgUGlwZSwgUGlwZVRyYW5zZm9ybSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IGNyb25zdHJ1ZSBmcm9tICdjcm9uc3RydWUvaTE4bic7XG5cbkBQaXBlKHtcbiAgbmFtZTogJ2Nyb250YWJFeHBsYW5hdGlvbicsXG59KVxuZXhwb3J0IGNsYXNzIENyb250YWJFeHBsYW5hdGlvblBpcGUgaW1wbGVtZW50cyBQaXBlVHJhbnNmb3JtIHtcbiAgdHJhbnNmb3JtKGNyb250YWI6IHN0cmluZyk6IHN0cmluZyB7XG4gICAgcmV0dXJuIGNyb25zdHJ1ZS50b1N0cmluZyhjcm9udGFiKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

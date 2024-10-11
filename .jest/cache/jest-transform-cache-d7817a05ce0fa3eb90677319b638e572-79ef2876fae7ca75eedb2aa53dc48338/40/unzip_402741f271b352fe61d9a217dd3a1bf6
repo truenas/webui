@@ -1,0 +1,49 @@
+530b591e6b1c177ddff3af8c5c3e77a4
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayFilter_js_1 = __importDefault(require("./_arrayFilter.js"));
+const _arrayMap_js_1 = __importDefault(require("./_arrayMap.js"));
+const _baseProperty_js_1 = __importDefault(require("./_baseProperty.js"));
+const _baseTimes_js_1 = __importDefault(require("./_baseTimes.js"));
+const isArrayLikeObject_js_1 = __importDefault(require("./isArrayLikeObject.js"));
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
+/**
+ * This method is like `_.zip` except that it accepts an array of grouped
+ * elements and creates an array regrouping the elements to their pre-zip
+ * configuration.
+ *
+ * @static
+ * @memberOf _
+ * @since 1.2.0
+ * @category Array
+ * @param {Array} array The array of grouped elements to process.
+ * @returns {Array} Returns the new array of regrouped elements.
+ * @example
+ *
+ * var zipped = _.zip(['a', 'b'], [1, 2], [true, false]);
+ * // => [['a', 1, true], ['b', 2, false]]
+ *
+ * _.unzip(zipped);
+ * // => [['a', 'b'], [1, 2], [true, false]]
+ */
+function unzip(array) {
+    if (!(array && array.length)) {
+        return [];
+    }
+    var length = 0;
+    array = (0, _arrayFilter_js_1.default)(array, function (group) {
+        if ((0, isArrayLikeObject_js_1.default)(group)) {
+            length = nativeMax(group.length, length);
+            return true;
+        }
+    });
+    return (0, _baseTimes_js_1.default)(length, function (index) {
+        return (0, _arrayMap_js_1.default)(array, (0, _baseProperty_js_1.default)(index));
+    });
+}
+exports.default = unzip;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3VuemlwLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsd0VBQTRDO0FBQzVDLGtFQUFzQztBQUN0QywwRUFBOEM7QUFDOUMsb0VBQXdDO0FBQ3hDLGtGQUF1RDtBQUV2RCx3RkFBd0Y7QUFDeEYsSUFBSSxTQUFTLEdBQUcsSUFBSSxDQUFDLEdBQUcsQ0FBQztBQUV6Qjs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBa0JHO0FBQ0gsU0FBUyxLQUFLLENBQUMsS0FBSztJQUNsQixJQUFJLENBQUMsQ0FBQyxLQUFLLElBQUksS0FBSyxDQUFDLE1BQU0sQ0FBQyxFQUFFLENBQUM7UUFDN0IsT0FBTyxFQUFFLENBQUM7SUFDWixDQUFDO0lBQ0QsSUFBSSxNQUFNLEdBQUcsQ0FBQyxDQUFDO0lBQ2YsS0FBSyxHQUFHLElBQUEseUJBQVcsRUFBQyxLQUFLLEVBQUUsVUFBUyxLQUFLO1FBQ3ZDLElBQUksSUFBQSw4QkFBaUIsRUFBQyxLQUFLLENBQUMsRUFBRSxDQUFDO1lBQzdCLE1BQU0sR0FBRyxTQUFTLENBQUMsS0FBSyxDQUFDLE1BQU0sRUFBRSxNQUFNLENBQUMsQ0FBQztZQUN6QyxPQUFPLElBQUksQ0FBQztRQUNkLENBQUM7SUFDSCxDQUFDLENBQUMsQ0FBQztJQUNILE9BQU8sSUFBQSx1QkFBUyxFQUFDLE1BQU0sRUFBRSxVQUFTLEtBQUs7UUFDckMsT0FBTyxJQUFBLHNCQUFRLEVBQUMsS0FBSyxFQUFFLElBQUEsMEJBQVksRUFBQyxLQUFLLENBQUMsQ0FBQyxDQUFDO0lBQzlDLENBQUMsQ0FBQyxDQUFDO0FBQ0wsQ0FBQztBQUVELGtCQUFlLEtBQUssQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvdW56aXAuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGFycmF5RmlsdGVyIGZyb20gJy4vX2FycmF5RmlsdGVyLmpzJztcbmltcG9ydCBhcnJheU1hcCBmcm9tICcuL19hcnJheU1hcC5qcyc7XG5pbXBvcnQgYmFzZVByb3BlcnR5IGZyb20gJy4vX2Jhc2VQcm9wZXJ0eS5qcyc7XG5pbXBvcnQgYmFzZVRpbWVzIGZyb20gJy4vX2Jhc2VUaW1lcy5qcyc7XG5pbXBvcnQgaXNBcnJheUxpa2VPYmplY3QgZnJvbSAnLi9pc0FycmF5TGlrZU9iamVjdC5qcyc7XG5cbi8qIEJ1aWx0LWluIG1ldGhvZCByZWZlcmVuY2VzIGZvciB0aG9zZSB3aXRoIHRoZSBzYW1lIG5hbWUgYXMgb3RoZXIgYGxvZGFzaGAgbWV0aG9kcy4gKi9cbnZhciBuYXRpdmVNYXggPSBNYXRoLm1heDtcblxuLyoqXG4gKiBUaGlzIG1ldGhvZCBpcyBsaWtlIGBfLnppcGAgZXhjZXB0IHRoYXQgaXQgYWNjZXB0cyBhbiBhcnJheSBvZiBncm91cGVkXG4gKiBlbGVtZW50cyBhbmQgY3JlYXRlcyBhbiBhcnJheSByZWdyb3VwaW5nIHRoZSBlbGVtZW50cyB0byB0aGVpciBwcmUtemlwXG4gKiBjb25maWd1cmF0aW9uLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMS4yLjBcbiAqIEBjYXRlZ29yeSBBcnJheVxuICogQHBhcmFtIHtBcnJheX0gYXJyYXkgVGhlIGFycmF5IG9mIGdyb3VwZWQgZWxlbWVudHMgdG8gcHJvY2Vzcy5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUgbmV3IGFycmF5IG9mIHJlZ3JvdXBlZCBlbGVtZW50cy5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIHppcHBlZCA9IF8uemlwKFsnYScsICdiJ10sIFsxLCAyXSwgW3RydWUsIGZhbHNlXSk7XG4gKiAvLyA9PiBbWydhJywgMSwgdHJ1ZV0sIFsnYicsIDIsIGZhbHNlXV1cbiAqXG4gKiBfLnVuemlwKHppcHBlZCk7XG4gKiAvLyA9PiBbWydhJywgJ2InXSwgWzEsIDJdLCBbdHJ1ZSwgZmFsc2VdXVxuICovXG5mdW5jdGlvbiB1bnppcChhcnJheSkge1xuICBpZiAoIShhcnJheSAmJiBhcnJheS5sZW5ndGgpKSB7XG4gICAgcmV0dXJuIFtdO1xuICB9XG4gIHZhciBsZW5ndGggPSAwO1xuICBhcnJheSA9IGFycmF5RmlsdGVyKGFycmF5LCBmdW5jdGlvbihncm91cCkge1xuICAgIGlmIChpc0FycmF5TGlrZU9iamVjdChncm91cCkpIHtcbiAgICAgIGxlbmd0aCA9IG5hdGl2ZU1heChncm91cC5sZW5ndGgsIGxlbmd0aCk7XG4gICAgICByZXR1cm4gdHJ1ZTtcbiAgICB9XG4gIH0pO1xuICByZXR1cm4gYmFzZVRpbWVzKGxlbmd0aCwgZnVuY3Rpb24oaW5kZXgpIHtcbiAgICByZXR1cm4gYXJyYXlNYXAoYXJyYXksIGJhc2VQcm9wZXJ0eShpbmRleCkpO1xuICB9KTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgdW56aXA7XG4iXSwidmVyc2lvbiI6M30=

@@ -1,0 +1,2 @@
+2a450bee37959af276a49b562cbfb3a0
+module.exports="<div class=\"linked-select\">\n  <div class=\"link-wrapper\">\n    <a\n      class=\"link\"\n      ixTest=\"manage-certificates\"\n      [routerLink]=\"['/', 'credentials', 'certificates']\"\n    >\n      {{ 'Manage Certificates' | translate }}\n    </a>\n  </div>\n  <ng-content></ng-content>\n</div>\n"

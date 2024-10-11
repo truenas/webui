@@ -1,0 +1,26 @@
+32649fb109893e11e380a076f2e1a5f4
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _getWrapDetails_js_1 = __importDefault(require("./_getWrapDetails.js"));
+const _insertWrapDetails_js_1 = __importDefault(require("./_insertWrapDetails.js"));
+const _setToString_js_1 = __importDefault(require("./_setToString.js"));
+const _updateWrapDetails_js_1 = __importDefault(require("./_updateWrapDetails.js"));
+/**
+ * Sets the `toString` method of `wrapper` to mimic the source of `reference`
+ * with wrapper details in a comment at the top of the source body.
+ *
+ * @private
+ * @param {Function} wrapper The function to modify.
+ * @param {Function} reference The reference function.
+ * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
+ * @returns {Function} Returns `wrapper`.
+ */
+function setWrapToString(wrapper, reference, bitmask) {
+    var source = (reference + '');
+    return (0, _setToString_js_1.default)(wrapper, (0, _insertWrapDetails_js_1.default)(source, (0, _updateWrapDetails_js_1.default)((0, _getWrapDetails_js_1.default)(source), bitmask)));
+}
+exports.default = setWrapToString;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19zZXRXcmFwVG9TdHJpbmcuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSw4RUFBa0Q7QUFDbEQsb0ZBQXdEO0FBQ3hELHdFQUE0QztBQUM1QyxvRkFBd0Q7QUFFeEQ7Ozs7Ozs7OztHQVNHO0FBQ0gsU0FBUyxlQUFlLENBQUMsT0FBTyxFQUFFLFNBQVMsRUFBRSxPQUFPO0lBQ2xELElBQUksTUFBTSxHQUFHLENBQUMsU0FBUyxHQUFHLEVBQUUsQ0FBQyxDQUFDO0lBQzlCLE9BQU8sSUFBQSx5QkFBVyxFQUFDLE9BQU8sRUFBRSxJQUFBLCtCQUFpQixFQUFDLE1BQU0sRUFBRSxJQUFBLCtCQUFpQixFQUFDLElBQUEsNEJBQWMsRUFBQyxNQUFNLENBQUMsRUFBRSxPQUFPLENBQUMsQ0FBQyxDQUFDLENBQUM7QUFDN0csQ0FBQztBQUVELGtCQUFlLGVBQWUsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvX3NldFdyYXBUb1N0cmluZy5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgZ2V0V3JhcERldGFpbHMgZnJvbSAnLi9fZ2V0V3JhcERldGFpbHMuanMnO1xuaW1wb3J0IGluc2VydFdyYXBEZXRhaWxzIGZyb20gJy4vX2luc2VydFdyYXBEZXRhaWxzLmpzJztcbmltcG9ydCBzZXRUb1N0cmluZyBmcm9tICcuL19zZXRUb1N0cmluZy5qcyc7XG5pbXBvcnQgdXBkYXRlV3JhcERldGFpbHMgZnJvbSAnLi9fdXBkYXRlV3JhcERldGFpbHMuanMnO1xuXG4vKipcbiAqIFNldHMgdGhlIGB0b1N0cmluZ2AgbWV0aG9kIG9mIGB3cmFwcGVyYCB0byBtaW1pYyB0aGUgc291cmNlIG9mIGByZWZlcmVuY2VgXG4gKiB3aXRoIHdyYXBwZXIgZGV0YWlscyBpbiBhIGNvbW1lbnQgYXQgdGhlIHRvcCBvZiB0aGUgc291cmNlIGJvZHkuXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7RnVuY3Rpb259IHdyYXBwZXIgVGhlIGZ1bmN0aW9uIHRvIG1vZGlmeS5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IHJlZmVyZW5jZSBUaGUgcmVmZXJlbmNlIGZ1bmN0aW9uLlxuICogQHBhcmFtIHtudW1iZXJ9IGJpdG1hc2sgVGhlIGJpdG1hc2sgZmxhZ3MuIFNlZSBgY3JlYXRlV3JhcGAgZm9yIG1vcmUgZGV0YWlscy5cbiAqIEByZXR1cm5zIHtGdW5jdGlvbn0gUmV0dXJucyBgd3JhcHBlcmAuXG4gKi9cbmZ1bmN0aW9uIHNldFdyYXBUb1N0cmluZyh3cmFwcGVyLCByZWZlcmVuY2UsIGJpdG1hc2spIHtcbiAgdmFyIHNvdXJjZSA9IChyZWZlcmVuY2UgKyAnJyk7XG4gIHJldHVybiBzZXRUb1N0cmluZyh3cmFwcGVyLCBpbnNlcnRXcmFwRGV0YWlscyhzb3VyY2UsIHVwZGF0ZVdyYXBEZXRhaWxzKGdldFdyYXBEZXRhaWxzKHNvdXJjZSksIGJpdG1hc2spKSk7XG59XG5cbmV4cG9ydCBkZWZhdWx0IHNldFdyYXBUb1N0cmluZztcbiJdLCJ2ZXJzaW9uIjozfQ==

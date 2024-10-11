@@ -1,0 +1,29 @@
+087f0e8a2f1b896c7a4094c5665aa4b4
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const eq_js_1 = __importDefault(require("./eq.js"));
+/**
+ * The base implementation of `_.sortedUniq` and `_.sortedUniqBy` without
+ * support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {Function} [iteratee] The iteratee invoked per element.
+ * @returns {Array} Returns the new duplicate free array.
+ */
+function baseSortedUniq(array, iteratee) {
+    var index = -1, length = array.length, resIndex = 0, result = [];
+    while (++index < length) {
+        var value = array[index], computed = iteratee ? iteratee(value) : value;
+        if (!index || !(0, eq_js_1.default)(computed, seen)) {
+            var seen = computed;
+            result[resIndex++] = value === 0 ? 0 : value;
+        }
+    }
+    return result;
+}
+exports.default = baseSortedUniq;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlU29ydGVkVW5pcS5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLG9EQUF5QjtBQUV6Qjs7Ozs7Ozs7R0FRRztBQUNILFNBQVMsY0FBYyxDQUFDLEtBQUssRUFBRSxRQUFRO0lBQ3JDLElBQUksS0FBSyxHQUFHLENBQUMsQ0FBQyxFQUNWLE1BQU0sR0FBRyxLQUFLLENBQUMsTUFBTSxFQUNyQixRQUFRLEdBQUcsQ0FBQyxFQUNaLE1BQU0sR0FBRyxFQUFFLENBQUM7SUFFaEIsT0FBTyxFQUFFLEtBQUssR0FBRyxNQUFNLEVBQUUsQ0FBQztRQUN4QixJQUFJLEtBQUssR0FBRyxLQUFLLENBQUMsS0FBSyxDQUFDLEVBQ3BCLFFBQVEsR0FBRyxRQUFRLENBQUMsQ0FBQyxDQUFDLFFBQVEsQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDO1FBRWxELElBQUksQ0FBQyxLQUFLLElBQUksQ0FBQyxJQUFBLGVBQUUsRUFBQyxRQUFRLEVBQUUsSUFBSSxDQUFDLEVBQUUsQ0FBQztZQUNsQyxJQUFJLElBQUksR0FBRyxRQUFRLENBQUM7WUFDcEIsTUFBTSxDQUFDLFFBQVEsRUFBRSxDQUFDLEdBQUcsS0FBSyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxLQUFLLENBQUM7UUFDL0MsQ0FBQztJQUNILENBQUM7SUFDRCxPQUFPLE1BQU0sQ0FBQztBQUNoQixDQUFDO0FBRUQsa0JBQWUsY0FBYyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9fYmFzZVNvcnRlZFVuaXEuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGVxIGZyb20gJy4vZXEuanMnO1xuXG4vKipcbiAqIFRoZSBiYXNlIGltcGxlbWVudGF0aW9uIG9mIGBfLnNvcnRlZFVuaXFgIGFuZCBgXy5zb3J0ZWRVbmlxQnlgIHdpdGhvdXRcbiAqIHN1cHBvcnQgZm9yIGl0ZXJhdGVlIHNob3J0aGFuZHMuXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBhcnJheSB0byBpbnNwZWN0LlxuICogQHBhcmFtIHtGdW5jdGlvbn0gW2l0ZXJhdGVlXSBUaGUgaXRlcmF0ZWUgaW52b2tlZCBwZXIgZWxlbWVudC5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUgbmV3IGR1cGxpY2F0ZSBmcmVlIGFycmF5LlxuICovXG5mdW5jdGlvbiBiYXNlU29ydGVkVW5pcShhcnJheSwgaXRlcmF0ZWUpIHtcbiAgdmFyIGluZGV4ID0gLTEsXG4gICAgICBsZW5ndGggPSBhcnJheS5sZW5ndGgsXG4gICAgICByZXNJbmRleCA9IDAsXG4gICAgICByZXN1bHQgPSBbXTtcblxuICB3aGlsZSAoKytpbmRleCA8IGxlbmd0aCkge1xuICAgIHZhciB2YWx1ZSA9IGFycmF5W2luZGV4XSxcbiAgICAgICAgY29tcHV0ZWQgPSBpdGVyYXRlZSA/IGl0ZXJhdGVlKHZhbHVlKSA6IHZhbHVlO1xuXG4gICAgaWYgKCFpbmRleCB8fCAhZXEoY29tcHV0ZWQsIHNlZW4pKSB7XG4gICAgICB2YXIgc2VlbiA9IGNvbXB1dGVkO1xuICAgICAgcmVzdWx0W3Jlc0luZGV4KytdID0gdmFsdWUgPT09IDAgPyAwIDogdmFsdWU7XG4gICAgfVxuICB9XG4gIHJldHVybiByZXN1bHQ7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGJhc2VTb3J0ZWRVbmlxO1xuIl0sInZlcnNpb24iOjN9

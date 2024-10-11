@@ -1,0 +1,2 @@
+249c0aa7c3bec03b8f1bd49b86acc83f
+module.exports="@if (label()) {\n  <label class=\"label\">\n    <span [innerHTML]=\"label()\"></span>\n    @if (required()) {\n      <span class=\"required\">*</span>\n    }\n  </label>\n}\n\n@if (tooltip()) {\n  <ix-tooltip\n    class=\"tooltip\"\n    [header]=\"label()\"\n    [message]=\"tooltip()\"\n  ></ix-tooltip>\n}\n"

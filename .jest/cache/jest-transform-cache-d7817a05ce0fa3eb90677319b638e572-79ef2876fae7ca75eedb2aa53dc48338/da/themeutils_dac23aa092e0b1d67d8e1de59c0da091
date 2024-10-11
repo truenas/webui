@@ -1,0 +1,61 @@
+a03a1ba523307355f759a422baa0d321
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ThemeUtils = void 0;
+const tinycolor_1 = require("@ctrl/tinycolor");
+/**
+ * @deprecated Just use TinyColor https://www.npmjs.com/package/@ctrl/tinycolor
+ */
+class ThemeUtils {
+    textContrast(cssVar, bgVar) {
+        let txtColor = '';
+        const rgb = new tinycolor_1.TinyColor(cssVar).toRgb();
+        // Find the average value to determine brightness
+        const brightest = (rgb.r + rgb.b + rgb.g) / 3;
+        // Find a good threshold for when to have light text color
+        if (brightest < 144) {
+            txtColor = '#ffffff';
+        }
+        else if (brightest > 191) {
+            txtColor = '#333333';
+        }
+        else {
+            // RGB averages between 144-197 are to be
+            // matched to bg2 css variable.
+            const backgroundRgb = new tinycolor_1.TinyColor(bgVar).toRgb();
+            const bgAvg = (backgroundRgb.r + backgroundRgb.g + backgroundRgb.b) / 3;
+            if (bgAvg < 127) {
+                txtColor = '#333333';
+            }
+            else {
+                txtColor = '#ffffff';
+            }
+        }
+        return txtColor;
+    }
+    getValueType(value) {
+        let valueType;
+        if (value.startsWith('var')) {
+            valueType = 'cssVar';
+        }
+        else if (value.startsWith('#')) {
+            valueType = 'hex';
+        }
+        else if (value.startsWith('rgb(')) {
+            valueType = 'rgb';
+        }
+        else if (value.startsWith('rgba(')) {
+            valueType = 'rgba';
+        }
+        else {
+            valueType = 'unknown';
+        }
+        return valueType;
+    }
+    colorFromMeta(meta) {
+        const trimFront = meta.replace('var(--', '');
+        return trimFront.replace(')', '');
+    }
+}
+exports.ThemeUtils = ThemeUtils;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2NvcmUvY2xhc3Nlcy90aGVtZS11dGlscy90aGVtZS11dGlscy50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSwrQ0FBNEM7QUFFNUM7O0dBRUc7QUFDSCxNQUFhLFVBQVU7SUFDckIsWUFBWSxDQUFDLE1BQWMsRUFBRSxLQUFhO1FBQ3hDLElBQUksUUFBUSxHQUFHLEVBQUUsQ0FBQztRQUNsQixNQUFNLEdBQUcsR0FBRyxJQUFJLHFCQUFTLENBQUMsTUFBTSxDQUFDLENBQUMsS0FBSyxFQUFFLENBQUM7UUFFMUMsaURBQWlEO1FBQ2pELE1BQU0sU0FBUyxHQUFHLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxHQUFHLENBQUMsQ0FBQyxHQUFHLEdBQUcsQ0FBQyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUM7UUFDOUMsMERBQTBEO1FBQzFELElBQUksU0FBUyxHQUFHLEdBQUcsRUFBRSxDQUFDO1lBQ3BCLFFBQVEsR0FBRyxTQUFTLENBQUM7UUFDdkIsQ0FBQzthQUFNLElBQUksU0FBUyxHQUFHLEdBQUcsRUFBRSxDQUFDO1lBQzNCLFFBQVEsR0FBRyxTQUFTLENBQUM7UUFDdkIsQ0FBQzthQUFNLENBQUM7WUFDTix5Q0FBeUM7WUFDekMsK0JBQStCO1lBQy9CLE1BQU0sYUFBYSxHQUFHLElBQUkscUJBQVMsQ0FBQyxLQUFLLENBQUMsQ0FBQyxLQUFLLEVBQUUsQ0FBQztZQUNuRCxNQUFNLEtBQUssR0FBRyxDQUFDLGFBQWEsQ0FBQyxDQUFDLEdBQUcsYUFBYSxDQUFDLENBQUMsR0FBRyxhQUFhLENBQUMsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxDQUFDO1lBQ3hFLElBQUksS0FBSyxHQUFHLEdBQUcsRUFBRSxDQUFDO2dCQUNoQixRQUFRLEdBQUcsU0FBUyxDQUFDO1lBQ3ZCLENBQUM7aUJBQU0sQ0FBQztnQkFDTixRQUFRLEdBQUcsU0FBUyxDQUFDO1lBQ3ZCLENBQUM7UUFDSCxDQUFDO1FBRUQsT0FBTyxRQUFRLENBQUM7SUFDbEIsQ0FBQztJQUVELFlBQVksQ0FBQyxLQUFhO1FBQ3hCLElBQUksU0FBaUIsQ0FBQztRQUN0QixJQUFJLEtBQUssQ0FBQyxVQUFVLENBQUMsS0FBSyxDQUFDLEVBQUUsQ0FBQztZQUM1QixTQUFTLEdBQUcsUUFBUSxDQUFDO1FBQ3ZCLENBQUM7YUFBTSxJQUFJLEtBQUssQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLEVBQUUsQ0FBQztZQUNqQyxTQUFTLEdBQUcsS0FBSyxDQUFDO1FBQ3BCLENBQUM7YUFBTSxJQUFJLEtBQUssQ0FBQyxVQUFVLENBQUMsTUFBTSxDQUFDLEVBQUUsQ0FBQztZQUNwQyxTQUFTLEdBQUcsS0FBSyxDQUFDO1FBQ3BCLENBQUM7YUFBTSxJQUFJLEtBQUssQ0FBQyxVQUFVLENBQUMsT0FBTyxDQUFDLEVBQUUsQ0FBQztZQUNyQyxTQUFTLEdBQUcsTUFBTSxDQUFDO1FBQ3JCLENBQUM7YUFBTSxDQUFDO1lBQ04sU0FBUyxHQUFHLFNBQVMsQ0FBQztRQUN4QixDQUFDO1FBRUQsT0FBTyxTQUFTLENBQUM7SUFDbkIsQ0FBQztJQUVELGFBQWEsQ0FBQyxJQUFZO1FBQ3hCLE1BQU0sU0FBUyxHQUFHLElBQUksQ0FBQyxPQUFPLENBQUMsUUFBUSxFQUFFLEVBQUUsQ0FBQyxDQUFDO1FBQzdDLE9BQU8sU0FBUyxDQUFDLE9BQU8sQ0FBQyxHQUFHLEVBQUUsRUFBRSxDQUFDLENBQUM7SUFDcEMsQ0FBQztDQUNGO0FBaERELGdDQWdEQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvY29yZS9jbGFzc2VzL3RoZW1lLXV0aWxzL3RoZW1lLXV0aWxzLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IFRpbnlDb2xvciB9IGZyb20gJ0BjdHJsL3Rpbnljb2xvcic7XG5cbi8qKlxuICogQGRlcHJlY2F0ZWQgSnVzdCB1c2UgVGlueUNvbG9yIGh0dHBzOi8vd3d3Lm5wbWpzLmNvbS9wYWNrYWdlL0BjdHJsL3Rpbnljb2xvclxuICovXG5leHBvcnQgY2xhc3MgVGhlbWVVdGlscyB7XG4gIHRleHRDb250cmFzdChjc3NWYXI6IHN0cmluZywgYmdWYXI6IHN0cmluZyk6IHN0cmluZyB7XG4gICAgbGV0IHR4dENvbG9yID0gJyc7XG4gICAgY29uc3QgcmdiID0gbmV3IFRpbnlDb2xvcihjc3NWYXIpLnRvUmdiKCk7XG5cbiAgICAvLyBGaW5kIHRoZSBhdmVyYWdlIHZhbHVlIHRvIGRldGVybWluZSBicmlnaHRuZXNzXG4gICAgY29uc3QgYnJpZ2h0ZXN0ID0gKHJnYi5yICsgcmdiLmIgKyByZ2IuZykgLyAzO1xuICAgIC8vIEZpbmQgYSBnb29kIHRocmVzaG9sZCBmb3Igd2hlbiB0byBoYXZlIGxpZ2h0IHRleHQgY29sb3JcbiAgICBpZiAoYnJpZ2h0ZXN0IDwgMTQ0KSB7XG4gICAgICB0eHRDb2xvciA9ICcjZmZmZmZmJztcbiAgICB9IGVsc2UgaWYgKGJyaWdodGVzdCA+IDE5MSkge1xuICAgICAgdHh0Q29sb3IgPSAnIzMzMzMzMyc7XG4gICAgfSBlbHNlIHtcbiAgICAgIC8vIFJHQiBhdmVyYWdlcyBiZXR3ZWVuIDE0NC0xOTcgYXJlIHRvIGJlXG4gICAgICAvLyBtYXRjaGVkIHRvIGJnMiBjc3MgdmFyaWFibGUuXG4gICAgICBjb25zdCBiYWNrZ3JvdW5kUmdiID0gbmV3IFRpbnlDb2xvcihiZ1ZhcikudG9SZ2IoKTtcbiAgICAgIGNvbnN0IGJnQXZnID0gKGJhY2tncm91bmRSZ2IuciArIGJhY2tncm91bmRSZ2IuZyArIGJhY2tncm91bmRSZ2IuYikgLyAzO1xuICAgICAgaWYgKGJnQXZnIDwgMTI3KSB7XG4gICAgICAgIHR4dENvbG9yID0gJyMzMzMzMzMnO1xuICAgICAgfSBlbHNlIHtcbiAgICAgICAgdHh0Q29sb3IgPSAnI2ZmZmZmZic7XG4gICAgICB9XG4gICAgfVxuXG4gICAgcmV0dXJuIHR4dENvbG9yO1xuICB9XG5cbiAgZ2V0VmFsdWVUeXBlKHZhbHVlOiBzdHJpbmcpOiBzdHJpbmcge1xuICAgIGxldCB2YWx1ZVR5cGU6IHN0cmluZztcbiAgICBpZiAodmFsdWUuc3RhcnRzV2l0aCgndmFyJykpIHtcbiAgICAgIHZhbHVlVHlwZSA9ICdjc3NWYXInO1xuICAgIH0gZWxzZSBpZiAodmFsdWUuc3RhcnRzV2l0aCgnIycpKSB7XG4gICAgICB2YWx1ZVR5cGUgPSAnaGV4JztcbiAgICB9IGVsc2UgaWYgKHZhbHVlLnN0YXJ0c1dpdGgoJ3JnYignKSkge1xuICAgICAgdmFsdWVUeXBlID0gJ3JnYic7XG4gICAgfSBlbHNlIGlmICh2YWx1ZS5zdGFydHNXaXRoKCdyZ2JhKCcpKSB7XG4gICAgICB2YWx1ZVR5cGUgPSAncmdiYSc7XG4gICAgfSBlbHNlIHtcbiAgICAgIHZhbHVlVHlwZSA9ICd1bmtub3duJztcbiAgICB9XG5cbiAgICByZXR1cm4gdmFsdWVUeXBlO1xuICB9XG5cbiAgY29sb3JGcm9tTWV0YShtZXRhOiBzdHJpbmcpOiBzdHJpbmcge1xuICAgIGNvbnN0IHRyaW1Gcm9udCA9IG1ldGEucmVwbGFjZSgndmFyKC0tJywgJycpO1xuICAgIHJldHVybiB0cmltRnJvbnQucmVwbGFjZSgnKScsICcnKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

@@ -1,0 +1,12 @@
+e15cf46f9a339de6d75587485d38cdd7
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LoginResult = void 0;
+var LoginResult;
+(function (LoginResult) {
+    LoginResult["Success"] = "success";
+    LoginResult["IncorrectDetails"] = "incorrect_details";
+    LoginResult["NoAccess"] = "no_access";
+    LoginResult["NoToken"] = "no_token";
+})(LoginResult || (exports.LoginResult = LoginResult = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2xvZ2luLXJlc3VsdC5lbnVtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLElBQVksV0FLWDtBQUxELFdBQVksV0FBVztJQUNyQixrQ0FBbUIsQ0FBQTtJQUNuQixxREFBc0MsQ0FBQTtJQUN0QyxxQ0FBc0IsQ0FBQTtJQUN0QixtQ0FBb0IsQ0FBQTtBQUN0QixDQUFDLEVBTFcsV0FBVywyQkFBWCxXQUFXLFFBS3RCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9lbnVtcy9sb2dpbi1yZXN1bHQuZW51bS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZW51bSBMb2dpblJlc3VsdCB7XG4gIFN1Y2Nlc3MgPSAnc3VjY2VzcycsXG4gIEluY29ycmVjdERldGFpbHMgPSAnaW5jb3JyZWN0X2RldGFpbHMnLFxuICBOb0FjY2VzcyA9ICdub19hY2Nlc3MnLFxuICBOb1Rva2VuID0gJ25vX3Rva2VuJyxcbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

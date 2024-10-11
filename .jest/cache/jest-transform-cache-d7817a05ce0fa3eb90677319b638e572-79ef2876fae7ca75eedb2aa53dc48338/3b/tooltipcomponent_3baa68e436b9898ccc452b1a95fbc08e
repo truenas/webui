@@ -1,0 +1,67 @@
+23b60dad4f4dcfe6c8d3edc40c5d593c
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TooltipComponent = void 0;
+const core_1 = require("@angular/core");
+const core_2 = require("@ngx-translate/core");
+const ngx_popperjs_1 = require("ngx-popperjs");
+const ix_icon_component_1 = require("app/modules/ix-icon/ix-icon.component");
+const cast_pipe_1 = require("app/modules/pipes/cast/cast.pipe");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+const i0 = __importStar(require("@angular/core"));
+let TooltipComponent = class TooltipComponent {
+    constructor() {
+        this.message = (0, core_1.input)();
+        this.header = (0, core_1.input)();
+    }
+};
+exports.TooltipComponent = TooltipComponent;
+TooltipComponent.propDecorators = {
+    message: [{ type: i0.Input, args: [{ isSignal: true, alias: "message", required: false, transform: undefined },] }],
+    header: [{ type: i0.Input, args: [{ isSignal: true, alias: "header", required: false, transform: undefined },] }]
+};
+exports.TooltipComponent = TooltipComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-tooltip',
+        template: require("./tooltip.component.html"),
+        standalone: true,
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        imports: [
+            ngx_popperjs_1.NgxPopperjsModule,
+            core_2.TranslateModule,
+            ix_icon_component_1.IxIconComponent,
+            cast_pipe_1.CastPipe,
+            test_directive_1.TestDirective,
+        ],
+    })
+], TooltipComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvdG9vbHRpcC90b29sdGlwLmNvbXBvbmVudC50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUFBLHdDQUV1QjtBQUN2Qiw4Q0FBc0Q7QUFDdEQsK0NBQWlEO0FBQ2pELDZFQUF3RTtBQUN4RSxnRUFBNEQ7QUFDNUQsdUVBQW1FOztBQWdCNUQsSUFBTSxnQkFBZ0IsR0FBdEIsTUFBTSxnQkFBZ0I7SUFBdEI7dUJBQ2MsSUFBQSxZQUFLLEdBQVU7c0JBQ2hCLElBQUEsWUFBSyxHQUFVO0tBQ2xDOztBQUhZLDRDQUFnQjs7Ozs7MkJBQWhCLGdCQUFnQjtJQWQ1QixJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsWUFBWTtRQUV0Qiw2Q0FBdUM7UUFDdkMsVUFBVSxFQUFFLElBQUk7UUFDaEIsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07UUFDL0MsT0FBTyxFQUFFO1lBQ1AsZ0NBQWlCO1lBQ2pCLHNCQUFlO1lBQ2YsbUNBQWU7WUFDZixvQkFBUTtZQUNSLDhCQUFhO1NBQ2Q7S0FDRixDQUFDO0dBQ1csZ0JBQWdCLENBRzVCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9tb2R1bGVzL3Rvb2x0aXAvdG9vbHRpcC5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcbiAgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCwgaW5wdXQsXG59IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgVHJhbnNsYXRlTW9kdWxlIH0gZnJvbSAnQG5neC10cmFuc2xhdGUvY29yZSc7XG5pbXBvcnQgeyBOZ3hQb3BwZXJqc01vZHVsZSB9IGZyb20gJ25neC1wb3BwZXJqcyc7XG5pbXBvcnQgeyBJeEljb25Db21wb25lbnQgfSBmcm9tICdhcHAvbW9kdWxlcy9peC1pY29uL2l4LWljb24uY29tcG9uZW50JztcbmltcG9ydCB7IENhc3RQaXBlIH0gZnJvbSAnYXBwL21vZHVsZXMvcGlwZXMvY2FzdC9jYXN0LnBpcGUnO1xuaW1wb3J0IHsgVGVzdERpcmVjdGl2ZSB9IGZyb20gJ2FwcC9tb2R1bGVzL3Rlc3QtaWQvdGVzdC5kaXJlY3RpdmUnO1xuXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC10b29sdGlwJyxcbiAgc3R5bGVVcmxzOiBbJy4vdG9vbHRpcC5jb21wb25lbnQuc2NzcyddLFxuICB0ZW1wbGF0ZVVybDogJy4vdG9vbHRpcC5jb21wb25lbnQuaHRtbCcsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICBpbXBvcnRzOiBbXG4gICAgTmd4UG9wcGVyanNNb2R1bGUsXG4gICAgVHJhbnNsYXRlTW9kdWxlLFxuICAgIEl4SWNvbkNvbXBvbmVudCxcbiAgICBDYXN0UGlwZSxcbiAgICBUZXN0RGlyZWN0aXZlLFxuICBdLFxufSlcbmV4cG9ydCBjbGFzcyBUb29sdGlwQ29tcG9uZW50IHtcbiAgcmVhZG9ubHkgbWVzc2FnZSA9IGlucHV0PHN0cmluZz4oKTtcbiAgcmVhZG9ubHkgaGVhZGVyID0gaW5wdXQ8c3RyaW5nPigpO1xufVxuIl0sInZlcnNpb24iOjN9

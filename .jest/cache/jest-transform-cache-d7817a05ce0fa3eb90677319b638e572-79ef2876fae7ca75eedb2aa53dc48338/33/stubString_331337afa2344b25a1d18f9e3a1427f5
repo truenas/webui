@@ -1,0 +1,21 @@
+ce1b8079445248c6526b6f8d605fab30
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * This method returns an empty string.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.13.0
+ * @category Util
+ * @returns {string} Returns the empty string.
+ * @example
+ *
+ * _.times(2, _.stubString);
+ * // => ['', '']
+ */
+function stubString() {
+    return '';
+}
+exports.default = stubString;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3N0dWJTdHJpbmcuanMiLCJtYXBwaW5ncyI6Ijs7QUFBQTs7Ozs7Ozs7Ozs7O0dBWUc7QUFDSCxTQUFTLFVBQVU7SUFDakIsT0FBTyxFQUFFLENBQUM7QUFDWixDQUFDO0FBRUQsa0JBQWUsVUFBVSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9zdHViU3RyaW5nLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8qKlxuICogVGhpcyBtZXRob2QgcmV0dXJucyBhbiBlbXB0eSBzdHJpbmcuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSA0LjEzLjBcbiAqIEBjYXRlZ29yeSBVdGlsXG4gKiBAcmV0dXJucyB7c3RyaW5nfSBSZXR1cm5zIHRoZSBlbXB0eSBzdHJpbmcuXG4gKiBAZXhhbXBsZVxuICpcbiAqIF8udGltZXMoMiwgXy5zdHViU3RyaW5nKTtcbiAqIC8vID0+IFsnJywgJyddXG4gKi9cbmZ1bmN0aW9uIHN0dWJTdHJpbmcoKSB7XG4gIHJldHVybiAnJztcbn1cblxuZXhwb3J0IGRlZmF1bHQgc3R1YlN0cmluZztcbiJdLCJ2ZXJzaW9uIjozfQ==

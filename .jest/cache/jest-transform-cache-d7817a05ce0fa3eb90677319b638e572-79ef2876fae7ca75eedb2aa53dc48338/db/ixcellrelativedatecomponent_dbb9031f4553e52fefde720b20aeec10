@@ -1,0 +1,2 @@
+e0de0b2b1699a2d269d7b7bc72e224bb
+module.exports="<span\n  [matTooltip]=\"dateTooltip\"\n  [ixTest]=\"[title, uniqueRowTag(row()), 'row-relative-date']\"\n  [class.error]=\"isInvalidDate\"\n>{{ date }}</span>\n"

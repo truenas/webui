@@ -1,0 +1,20 @@
+f469bf4b39cf736af574a8b1d32796b4
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arraySample_js_1 = __importDefault(require("./_arraySample.js"));
+const values_js_1 = __importDefault(require("./values.js"));
+/**
+ * The base implementation of `_.sample`.
+ *
+ * @private
+ * @param {Array|Object} collection The collection to sample.
+ * @returns {*} Returns the random element.
+ */
+function baseSample(collection) {
+    return (0, _arraySample_js_1.default)((0, values_js_1.default)(collection));
+}
+exports.default = baseSample;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlU2FtcGxlLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsd0VBQTRDO0FBQzVDLDREQUFpQztBQUVqQzs7Ozs7O0dBTUc7QUFDSCxTQUFTLFVBQVUsQ0FBQyxVQUFVO0lBQzVCLE9BQU8sSUFBQSx5QkFBVyxFQUFDLElBQUEsbUJBQU0sRUFBQyxVQUFVLENBQUMsQ0FBQyxDQUFDO0FBQ3pDLENBQUM7QUFFRCxrQkFBZSxVQUFVLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlU2FtcGxlLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBhcnJheVNhbXBsZSBmcm9tICcuL19hcnJheVNhbXBsZS5qcyc7XG5pbXBvcnQgdmFsdWVzIGZyb20gJy4vdmFsdWVzLmpzJztcblxuLyoqXG4gKiBUaGUgYmFzZSBpbXBsZW1lbnRhdGlvbiBvZiBgXy5zYW1wbGVgLlxuICpcbiAqIEBwcml2YXRlXG4gKiBAcGFyYW0ge0FycmF5fE9iamVjdH0gY29sbGVjdGlvbiBUaGUgY29sbGVjdGlvbiB0byBzYW1wbGUuXG4gKiBAcmV0dXJucyB7Kn0gUmV0dXJucyB0aGUgcmFuZG9tIGVsZW1lbnQuXG4gKi9cbmZ1bmN0aW9uIGJhc2VTYW1wbGUoY29sbGVjdGlvbikge1xuICByZXR1cm4gYXJyYXlTYW1wbGUodmFsdWVzKGNvbGxlY3Rpb24pKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgYmFzZVNhbXBsZTtcbiJdLCJ2ZXJzaW9uIjozfQ==

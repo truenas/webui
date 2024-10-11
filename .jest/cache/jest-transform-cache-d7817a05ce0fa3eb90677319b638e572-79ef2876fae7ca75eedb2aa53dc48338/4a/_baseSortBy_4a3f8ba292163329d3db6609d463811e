@@ -1,0 +1,23 @@
+d138e974e8792a3e134125bedd8dce6f
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * The base implementation of `_.sortBy` which uses `comparer` to define the
+ * sort order of `array` and replaces criteria objects with their corresponding
+ * values.
+ *
+ * @private
+ * @param {Array} array The array to sort.
+ * @param {Function} comparer The function to define sort order.
+ * @returns {Array} Returns `array`.
+ */
+function baseSortBy(array, comparer) {
+    var length = array.length;
+    array.sort(comparer);
+    while (length--) {
+        array[length] = array[length].value;
+    }
+    return array;
+}
+exports.default = baseSortBy;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlU29ydEJ5LmpzIiwibWFwcGluZ3MiOiI7O0FBQUE7Ozs7Ozs7OztHQVNHO0FBQ0gsU0FBUyxVQUFVLENBQUMsS0FBSyxFQUFFLFFBQVE7SUFDakMsSUFBSSxNQUFNLEdBQUcsS0FBSyxDQUFDLE1BQU0sQ0FBQztJQUUxQixLQUFLLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDO0lBQ3JCLE9BQU8sTUFBTSxFQUFFLEVBQUUsQ0FBQztRQUNoQixLQUFLLENBQUMsTUFBTSxDQUFDLEdBQUcsS0FBSyxDQUFDLE1BQU0sQ0FBQyxDQUFDLEtBQUssQ0FBQztJQUN0QyxDQUFDO0lBQ0QsT0FBTyxLQUFLLENBQUM7QUFDZixDQUFDO0FBRUQsa0JBQWUsVUFBVSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9fYmFzZVNvcnRCeS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIFRoZSBiYXNlIGltcGxlbWVudGF0aW9uIG9mIGBfLnNvcnRCeWAgd2hpY2ggdXNlcyBgY29tcGFyZXJgIHRvIGRlZmluZSB0aGVcbiAqIHNvcnQgb3JkZXIgb2YgYGFycmF5YCBhbmQgcmVwbGFjZXMgY3JpdGVyaWEgb2JqZWN0cyB3aXRoIHRoZWlyIGNvcnJlc3BvbmRpbmdcbiAqIHZhbHVlcy5cbiAqXG4gKiBAcHJpdmF0ZVxuICogQHBhcmFtIHtBcnJheX0gYXJyYXkgVGhlIGFycmF5IHRvIHNvcnQuXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBjb21wYXJlciBUaGUgZnVuY3Rpb24gdG8gZGVmaW5lIHNvcnQgb3JkZXIuXG4gKiBAcmV0dXJucyB7QXJyYXl9IFJldHVybnMgYGFycmF5YC5cbiAqL1xuZnVuY3Rpb24gYmFzZVNvcnRCeShhcnJheSwgY29tcGFyZXIpIHtcbiAgdmFyIGxlbmd0aCA9IGFycmF5Lmxlbmd0aDtcblxuICBhcnJheS5zb3J0KGNvbXBhcmVyKTtcbiAgd2hpbGUgKGxlbmd0aC0tKSB7XG4gICAgYXJyYXlbbGVuZ3RoXSA9IGFycmF5W2xlbmd0aF0udmFsdWU7XG4gIH1cbiAgcmV0dXJuIGFycmF5O1xufVxuXG5leHBvcnQgZGVmYXVsdCBiYXNlU29ydEJ5O1xuIl0sInZlcnNpb24iOjN9
