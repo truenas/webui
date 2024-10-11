@@ -228,6 +228,7 @@ export class DiskListComponent implements OnInit {
         selectedDisks: this.prepareDisks(disks),
         diskIdsWithSmart: Object.keys(this.smartDiskChoices),
       } as ManualTestDialogParams,
+      width: '600px',
     });
   }
 
@@ -295,8 +296,9 @@ export class DiskListComponent implements OnInit {
 
   private prepareDisks(disks: DiskUi[]): Disk[] {
     return disks.map((disk) => {
-      delete disk.selected;
-      return disk as Disk;
+      const newDisk = { ...disk };
+      delete newDisk.selected;
+      return newDisk as Disk;
     });
   }
 }

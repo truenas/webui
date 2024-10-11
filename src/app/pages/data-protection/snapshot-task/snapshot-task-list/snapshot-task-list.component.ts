@@ -12,7 +12,6 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -20,6 +19,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
@@ -110,27 +110,20 @@ export class SnapshotTaskListComponent implements OnInit {
       propertyName: 'frequency',
       getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
     }),
-    textColumn({
+    relativeDateColumn({
       hidden: true,
       title: this.translate.instant('Next Run'),
       getValue: (task) => {
         if (task.enabled) {
-          return task.schedule
-            ? formatDistanceToNowShortened(this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)))
-            : this.translate.instant('N/A');
+          return this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule));
         }
         return this.translate.instant('Disabled');
       },
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
       hidden: true,
-      getValue: (row) => {
-        if (row.state?.datetime?.$date) {
-          return formatDistanceToNowShortened(row.state?.datetime?.$date);
-        }
-        return this.translate.instant('N/A');
-      },
+      getValue: (row) => row.state?.datetime?.$date,
     }),
     textColumn({
       title: this.translate.instant('Keep snapshot for'),

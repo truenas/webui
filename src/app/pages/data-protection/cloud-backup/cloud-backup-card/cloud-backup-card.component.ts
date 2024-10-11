@@ -14,7 +14,6 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
@@ -26,6 +25,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
@@ -96,14 +96,9 @@ export class CloudBackupCardComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (row) => {
-        if (row.job?.time_finished) {
-          return formatDistanceToNowShortened(row.job?.time_finished.$date);
-        }
-        return this.translate.instant('N/A');
-      },
+      getValue: (row) => row.job?.time_finished?.$date,
     }),
     actionsColumn({
       cssClass: 'wide-actions',

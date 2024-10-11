@@ -12,7 +12,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -21,6 +20,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   stateButtonColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
@@ -137,14 +137,9 @@ export class ReplicationListComponent implements OnInit {
       propertyName: 'auto',
       hidden: true,
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (row) => {
-        if (row.state?.datetime?.$date) {
-          return formatDistanceToNowShortened(row.state?.datetime?.$date);
-        }
-        return this.translate.instant('N/A');
-      },
+      getValue: (row) => row.state?.datetime?.$date,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),

@@ -877,6 +877,7 @@ export interface ApiCallDirectory {
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
   'vm.device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
+  'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
   'vm.device.nic_attach_choices': { params: void; response: Choices };
   'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
