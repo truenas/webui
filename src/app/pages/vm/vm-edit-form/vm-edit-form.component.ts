@@ -6,7 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, forkJoin, map, of, switchMap,
+  forkJoin, of, switchMap,
   tap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -141,37 +141,14 @@ export class VmEditFormComponent implements OnInit {
     }
 
     const gpusIds = this.form.value.gpus;
-    let updateVmRequest$: Observable<unknown>;
 
-    if (gpusIds.length) {
-      updateVmRequest$ = this.ws.call('system.advanced.update_gpu_pci_ids', [gpusIds]).pipe(
-        switchMap(() => this.ws.call('system.advanced.get_gpu_pci_choices')),
-        map((choices) => {
-          const pciIds: string[] = [];
-          const gpuOptions = this.gpuOptions();
-          const selectedGpusDesc: string[] = gpuOptions.filter(
-            (gpuOption) => gpusIds.includes(gpuOption.value.toString()),
-          ).map(
-            (option) => `${option.label} [${option.value}]`,
-          );
-
-          for (const selectedGpuDesc of selectedGpusDesc) {
-            pciIds.push(choices[selectedGpuDesc]);
-          }
-
-          return pciIds.flat();
-        }),
-        switchMap((pciIds) => forkJoin([
-          this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
-          this.vmGpuService.updateVmGpus(this.existingVm, pciIds),
-          this.gpuService.addIsolatedGpuPciIds(pciIds),
-        ])),
-      );
-    } else {
-      updateVmRequest$ = this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]);
-    }
-
-    updateVmRequest$.pipe(untilDestroyed(this)).subscribe({
+    this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
+      switchMap(() => forkJoin([
+        this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
+        this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
+      ])),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
         this.isLoading = false;
         this.cdr.markForCheck();

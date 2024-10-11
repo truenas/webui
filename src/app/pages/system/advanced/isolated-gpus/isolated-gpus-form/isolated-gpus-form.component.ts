@@ -5,12 +5,11 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
+import { map, take } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -33,7 +32,11 @@ export class IsolatedGpusFormComponent implements OnInit {
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });
-  readonly options$ = this.gpuService.getGpuOptions();
+  readonly options$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(map((choices) => {
+    return Object.entries(choices).map(
+      ([value, label]) => ({ value: label, label: value }),
+    );
+  }));
 
   constructor(
     protected ws: WebSocketService,
@@ -42,7 +45,6 @@ export class IsolatedGpusFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private gpuValidator: IsolatedGpuValidatorService,
-    private gpuService: GpuService,
     private snackbar: SnackbarService,
     private chainedRef: ChainedRef<unknown>,
   ) { }
