@@ -5,12 +5,14 @@ import {
 } from 'rxjs';
 import {
   map, shareReplay, switchMap, take,
+  tap,
 } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @Injectable({
@@ -82,8 +84,11 @@ export class GpuService {
           return EMPTY;
         }
 
-        return this.ws.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]);
+        return this.ws.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]).pipe(
+          tap(() => this.store$.dispatch(advancedConfigUpdated())),
+        );
       }),
+
     );
   }
 }
