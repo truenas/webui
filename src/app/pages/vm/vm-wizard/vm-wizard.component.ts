@@ -12,7 +12,7 @@ import { pick } from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
-import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
+import { catchError, defaultIfEmpty } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -285,17 +285,9 @@ export class VmWizardComponent implements OnInit {
   private getGpuRequests(vm: VirtualMachine): Observable<unknown> {
     const gpusIds = this.gpuForm.gpus as unknown as string[];
 
-    const pciIdsRequests$ = gpusIds.map((gpu) => {
-      return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
-    });
-
-    return forkJoin(pciIdsRequests$).pipe(
+    return this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
       defaultIfEmpty([]),
-      map((pciIds) => pciIds.flat()),
-      switchMap((pciIds) => forkJoin([
-        this.vmGpuService.updateVmGpus(vm, gpusIds.concat(pciIds)),
-        this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
-      ])),
+      switchMap(() => this.vmGpuService.updateVmGpus(vm, gpusIds)),
     );
   }
 
