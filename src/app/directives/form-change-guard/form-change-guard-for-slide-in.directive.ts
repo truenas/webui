@@ -17,7 +17,7 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 export class FormChangeGuardForSlideInDirective<T> implements OnInit {
   @Input() formGroup: FormGroup;
 
-  private formChanged = false;
+  formChanged = false;
 
   constructor(
     private translate: TranslateService,
@@ -28,6 +28,23 @@ export class FormChangeGuardForSlideInDirective<T> implements OnInit {
   ngOnInit(): void {
     this.trackFormChanges();
     this.overrideSlideInClose();
+  }
+
+  closeWithConfirmation(response?: T): Observable<boolean> {
+    if (!this.formChanged) {
+      this.emitClose(response);
+      return of(true);
+    }
+
+    return this.showConfirmDialog().pipe(
+      switchMap((shouldClose) => {
+        if (shouldClose) {
+          this.formChanged = false;
+          this.emitClose(response);
+        }
+        return of(shouldClose);
+      }),
+    );
   }
 
   private trackFormChanges(): void {
@@ -45,23 +62,6 @@ export class FormChangeGuardForSlideInDirective<T> implements OnInit {
     this.slideInRef.close = (response?: T) => this.closeWithConfirmation(response)
       .pipe(untilDestroyed(this))
       .subscribe();
-  }
-
-  private closeWithConfirmation(response?: T): Observable<boolean> {
-    if (!this.formChanged) {
-      this.emitClose(response);
-      return of(true);
-    }
-
-    return this.showConfirmDialog().pipe(
-      switchMap((shouldClose) => {
-        if (shouldClose) {
-          this.formChanged = false;
-          this.emitClose(response);
-        }
-        return of(shouldClose);
-      }),
-    );
   }
 
   private showConfirmDialog(): Observable<boolean> {
