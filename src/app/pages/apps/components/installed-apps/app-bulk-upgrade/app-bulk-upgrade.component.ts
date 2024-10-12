@@ -1,4 +1,4 @@
-import { KeyValue } from '@angular/common';
+import { KeyValue, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,21 +7,34 @@ import {
   TrackByFunction,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatAccordion } from '@angular/material/expansion';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
+} from '@angular/material/dialog';
+import {
+  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
+} from '@angular/material/expansion';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
   filter, map, Observable, of, pairwise, startWith,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
+import { LetDirective } from 'app/directives/app-let.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { App, AppUpgradeParams } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -31,6 +44,27 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './app-bulk-upgrade.component.html',
   styleUrls: ['./app-bulk-upgrade.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    MatDialogTitle,
+    MatAccordion,
+    MatDialogClose,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    FakeProgressBarComponent,
+    MatExpansionPanelTitle,
+    BulkListItemComponent,
+    IxIconComponent,
+    ImgFallbackModule,
+    KeyValuePipe,
+    IxSelectComponent,
+    RequiresRolesDirective,
+    TestDirective,
+    LetDirective,
+    MatButton,
+  ],
 })
 export class AppBulkUpgradeComponent {
   @ViewChild(MatAccordion) accordion: MatAccordion;

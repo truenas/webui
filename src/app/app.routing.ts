@@ -74,7 +74,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'apps',
-        loadChildren: () => import('app/pages/apps/apps.module').then((module) => module.AppsModule),
+        loadChildren: () => import('app/pages/apps/apps.routes').then((module) => module.appsRoutes),
         data: { title: T('Applications'), breadcrumb: T('Applications') },
       },
       {

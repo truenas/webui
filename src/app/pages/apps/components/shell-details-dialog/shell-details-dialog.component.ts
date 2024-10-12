@@ -2,11 +2,15 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, FormGroup, Validators,
+  FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle,
+} from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { ShellDetailsDialogData } from 'app/interfaces/shell-details-dialog.interface';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
@@ -15,6 +19,15 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
   selector: 'ix-shell-details-dialog',
   templateUrl: './shell-details-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatDialogTitle,
+    TranslateModule,
+    IxInputComponent,
+    MatDialogContent,
+    MatDialogActions,
+  ],
 })
 export class ShellDetailsDialogComponent {
   private tailLines = 500;
