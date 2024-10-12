@@ -70,6 +70,7 @@ export class FormChangeGuardForSlideInDirective<T> implements OnInit {
       message: this.translate.instant('You have unsaved changes. Are you sure you want to close?'),
       cancelText: this.translate.instant('No'),
       buttonText: this.translate.instant('Yes'),
+      buttonColor: 'red',
       hideCheckbox: true,
     });
   }
