@@ -6,7 +6,9 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
+import {
+  MatStepper, MatStep, MatStepLabel, MatStepperIcon,
+} from '@angular/material/stepper';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -22,6 +24,9 @@ import {
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -74,6 +79,8 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     ReviewWizardStepComponent,
     TranslateModule,
     AsyncPipe,
+    MatStepperIcon,
+    UseIxIconsInStepperComponent,
   ],
   providers: [
     PoolManagerValidationService,

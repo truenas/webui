@@ -1,13 +1,13 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
   ></ix-label>
 }
 
-<div class="star-rating" [attr.aria-label]="label">
-  @for (rating of ratings; track index; let index = $index) {
+<div class="star-rating" [attr.aria-label]="label()">
+  @for (rating of ratings(); track index; let index = $index) {
     <div>
       <button
         mat-icon-button
@@ -18,10 +18,10 @@
         (click)="onValueChanged(index + 1)"
         (blur)="onTouch()"
       >
-        <ix-icon [name]="value >= index + 1 ? 'mdi-star' : 'mdi-star-outline'"></ix-icon>
+        <ix-icon [name]="value >= index + 1 ? iconMarker('mdi-star') : iconMarker('mdi-star-outline')"></ix-icon>
       </button>
     </div>
   }
 </div>
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
