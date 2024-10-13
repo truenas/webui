@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -45,6 +46,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       SshCredentialsSelectComponent,
     ],
     providers: [
+      CdkStepper,
       mockAuth(),
       mockWebSocket([
         mockCall('replication.query', [

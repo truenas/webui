@@ -4,10 +4,11 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent, MockComponents } from 'ng-mocks';
+import { MockComponent, MockComponents, MockDirective } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -56,12 +57,11 @@ describe('CloudBackupListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       SearchInput1Component,
-    ],
-    declarations: [
       MockComponents(
         CloudBackupListComponent,
         CloudBackupDetailsComponent,
       ),
+      MockDirective(IxDetailsHeightDirective),
     ],
     providers: [
       mockAuth(),

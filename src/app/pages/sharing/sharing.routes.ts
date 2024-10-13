@@ -1,5 +1,4 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
@@ -9,7 +8,7 @@ import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiat
 import { IscsiComponent } from './iscsi/iscsi.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
 
-export const routes: Routes = [
+export const sharingRoutes: Routes = [
   {
     path: '',
     data: { title: T('Shares') },
@@ -97,5 +96,3 @@ export const routes: Routes = [
     ],
   },
 ];
-
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

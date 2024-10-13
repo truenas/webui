@@ -15,7 +15,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
+import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
@@ -49,7 +49,6 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    SearchInputModule,
     MatButton,
     TestDirective,
     RequiresRolesDirective,
@@ -62,6 +61,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
     AsyncPipe,
     PageHeaderComponent,
+    SearchInputComponent,
   ],
 })
 export class PrivilegeListComponent implements OnInit {

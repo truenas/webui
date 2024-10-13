@@ -7,7 +7,6 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { Role } from 'app/enums/role.enum';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -44,7 +43,6 @@ describe('PrivilegeListComponent', () => {
     component: PrivilegeListComponent,
     imports: [
       PageHeaderComponent,
-      SearchInputModule,
     ],
     providers: [
       mockWebSocket([
