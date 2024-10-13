@@ -53,11 +53,13 @@ export const datasetSyncLabels = new Map<DatasetSync, string>([
 export enum DatasetSnapdir {
   Visible = 'VISIBLE',
   Hidden = 'HIDDEN',
+  Disabled = 'DISABLED',
 }
 
 export const datasetSnapdirLabels = new Map<DatasetSnapdir, string>([
   [DatasetSnapdir.Visible, T('Visible')],
   [DatasetSnapdir.Hidden, T('Invisible')],
+  [DatasetSnapdir.Disabled, T('Disabled')],
 ]);
 
 export enum DatasetSnapdev {
