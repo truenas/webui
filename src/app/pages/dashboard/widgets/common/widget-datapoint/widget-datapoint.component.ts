@@ -1,6 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { TranslateModule } from '@ngx-translate/core';
+import { Ng2FittextModule } from 'ng2-fittext';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 
 @Component({
@@ -8,6 +11,13 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
   templateUrl: './widget-datapoint.component.html',
   styleUrl: './widget-datapoint.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    Ng2FittextModule,
+    TranslateModule,
+  ],
 })
 export class WidgetDatapointComponent {
   size = input.required<SlotSize>();

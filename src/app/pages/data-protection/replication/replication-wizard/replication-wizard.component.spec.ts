@@ -21,7 +21,6 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
@@ -78,7 +77,6 @@ describe('ReplicationWizardComponent', () => {
     imports: [
       ReactiveFormsModule,
       MatStepperModule,
-      SchedulerModule,
     ],
     declarations: [
       ReplicationWhatAndWhereComponent,

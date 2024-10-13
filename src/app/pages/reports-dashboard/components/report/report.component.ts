@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, KeyValuePipe } from '@angular/common';
 import {
   Component,
   Input,
@@ -6,9 +6,13 @@ import {
   OnChanges,
   OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
   add, isToday, sub,
@@ -28,7 +32,12 @@ import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
 import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
@@ -50,6 +59,26 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatToolbarRow,
+    MatCardTitle,
+    MatButton,
+    MatTooltip,
+    TestDirective,
+    IxIconComponent,
+    MatCardContent,
+    LineChartComponent,
+    IxDateComponent,
+    EmptyComponent,
+    TranslateModule,
+    MapValuePipe,
+    KeyValuePipe,
+  ],
+  providers: [
+    FormatDateTimePipe,
+  ],
 })
 export class ReportComponent implements OnInit, OnChanges {
   @Input() localControls?: boolean = true;
