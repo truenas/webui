@@ -48,19 +48,17 @@
             </div>
             @if (app().state === AppState.Running || app().state === AppState.Deploying) {
               <div class="container-action">
-                @if (container.state === AppContainerState.Running) {
-                  <button
-                    *ixRequiresRoles="requiredRoles"
-                    mat-icon-button
-                    matTooltipPosition="above"
-                    [attr.aria-label]="'Shell' | translate"
-                    [ixTest]="[container.service_name, 'shell']"
-                    [matTooltip]="'Shell' | translate"
-                    (click)="shellButtonPressed(container.id)"
-                  >
-                    <ix-icon name="mdi-console"></ix-icon>
-                  </button>
-                }
+                <button
+                  *ixRequiresRoles="requiredRoles"
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'Shell' | translate"
+                  [ixTest]="[container.service_name, 'shell']"
+                  [matTooltip]="'Shell' | translate"
+                  (click)="shellButtonPressed(container.id)"
+                >
+                  <ix-icon name="mdi-console"></ix-icon>
+                </button>
                 <button
                   mat-icon-button
                   matTooltipPosition="above"
