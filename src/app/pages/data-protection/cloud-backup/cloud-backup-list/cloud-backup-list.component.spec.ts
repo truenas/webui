@@ -4,10 +4,11 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent, MockComponents } from 'ng-mocks';
+import { MockComponent, MockComponents, MockDirective } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -26,7 +27,8 @@ import {
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudBackupListComponent', () => {
   let spectator: Spectator<CloudBackupListComponent>;
@@ -55,12 +57,11 @@ describe('CloudBackupListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       SearchInput1Component,
-    ],
-    declarations: [
       MockComponents(
         CloudBackupListComponent,
         CloudBackupDetailsComponent,
       ),
+      MockDirective(IxDetailsHeightDirective),
     ],
     providers: [
       mockAuth(),
@@ -86,7 +87,7 @@ describe('CloudBackupListComponent', () => {
             value: {},
           },
           {
-            selector: selectAdvancedConfig,
+            selector: selectPreferences,
             value: {},
           },
           {

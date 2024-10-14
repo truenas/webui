@@ -5,6 +5,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { invalidDate } from 'app/constants/invalid-date';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -76,8 +77,7 @@ describe('CronCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
-        getTaskNextRun: jest.fn(() => 'in about 10 hours'),
+        getTaskNextTime: jest.fn(() => invalidDate),
       }),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -95,7 +95,7 @@ describe('CronCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Users', 'Command', 'Description', 'Schedule', 'Enabled', 'Next Run', ''],
-      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', 'in 1 day', ''],
+      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', 'Invalid Date', ''],
     ];
 
     const cells = await table.getCellTexts();

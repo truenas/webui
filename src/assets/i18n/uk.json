@@ -3378,6 +3378,7 @@
   "Internal identifier of the certificate. Only alphanumeric characters, dash (<b>-</b>), and underline (<b>_</b>) are allowed.": "Внутрішній ідентифікатор сертифіката. Дозволені лише буквено-цифрові символи, тире (<b>-</b>) та підкреслення (<b>_ </b>).",
   "Internal identifier of the certificate. Only alphanumeric, \"_\" and \"-\" are allowed.": "Внутрішній ідентифікатор сертифіката. Дозволені лише буквено-цифрові символи, \"_\" і \"-\".",
   "Internetwork control": "Мережевий контроль",
+  "Invalid Date": "Недійсна дата",
   "Invalid IP address": "Невірна IP-адреса",
   "Invalid Pod name": "Недійсне ім'я Pod-y",
   "Invalid cron expression": "Недійсний вираз cron",

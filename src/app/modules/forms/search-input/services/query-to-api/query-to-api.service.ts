@@ -10,7 +10,9 @@ import {
 } from 'app/modules/forms/search-input/services/query-parser/query-parsing-result.interface';
 import { PropertyType, SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class QueryToApiService<T> {
   private builder: ParamsBuilder<T>;
   private searchProperties: SearchProperty<T>[];

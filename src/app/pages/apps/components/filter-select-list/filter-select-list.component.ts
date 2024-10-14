@@ -4,7 +4,10 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 type IxSelectListValue = string | number | (string | number)[];
 
@@ -14,6 +17,12 @@ type IxSelectListValue = string | number | (string | number)[];
   styleUrls: ['./filter-select-list.component.scss'],
   templateUrl: './filter-select-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxIconComponent,
+    IxErrorsComponent,
+    TranslateModule,
+  ],
 })
 export class FilterSelectListComponent implements ControlValueAccessor {
   label = input<string>();

@@ -76,7 +76,7 @@ describe('LdapComponent', () => {
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(null),
+          afterClosed: () => of({}),
         })),
       }),
       mockProvider(SnackbarService),
@@ -136,7 +136,7 @@ describe('LdapComponent', () => {
     const rebuildCacheButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rebuild Directory Service Cache' }));
     await rebuildCacheButton.click();
 
-    expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextLdap.ldap_custactions_clearcache_dialog_message,
     );
