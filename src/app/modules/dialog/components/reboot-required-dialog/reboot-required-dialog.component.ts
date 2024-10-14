@@ -12,7 +12,7 @@ import { map } from 'rxjs';
 import { RebootRequiredReasons } from 'app/interfaces/reboot-info.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { FipsService } from 'app/services/fips.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 
 @UntilDestroy()
@@ -46,7 +46,7 @@ export class RebootRequiredDialogComponent {
   });
 
   constructor(
-    private store$: Store<AppsState>,
+    private store$: Store<AppState>,
     private fips: FipsService,
     private fb: FormBuilder,
   ) {}

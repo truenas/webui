@@ -42,7 +42,7 @@ import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { AppsState } from 'app/store';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
@@ -103,7 +103,7 @@ export class TopbarComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private matDialog: MatDialog,
     private store$: Store<AlertSlice>,
-    private appStore$: Store<AppsState>,
+    private appStore$: Store<AppState>,
     private cdr: ChangeDetectorRef,
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
