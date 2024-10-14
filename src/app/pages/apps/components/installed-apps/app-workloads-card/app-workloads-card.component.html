@@ -46,7 +46,7 @@
             <div class="container-state">
               {{ container.state | mapValue: appContainerStateLabels | translate  }}
             </div>
-            @if (app().state === AppState.Running || app().state === AppState.Deploying) {
+            @if (app().state === AppState.Running || app().state === AppState.Deploying || app().state === AppState.Crashed) {
               <div class="container-action">
                 <button
                   *ixRequiresRoles="requiredRoles"
