@@ -120,7 +120,6 @@ export interface ZfsProperties {
   version: ZfsProperty<string>;
   volsize: ZfsProperty<string>;
   written: ZfsProperty<string>;
-  xattr: ZfsProperty<string>;
 }
 
 export interface TemperatureAgg {

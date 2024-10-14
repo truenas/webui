@@ -4,6 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -23,13 +24,19 @@ describe('GpuStepComponent', () => {
       CdkStepper,
       mockProvider(GpuService, {
         getGpuOptions: () => of([
-          { label: 'GeForce GTX 1080', value: '0000:03:00.0' },
-          { label: 'GeForce GTX 1080 Ti', value: '0000:04:00.0' },
+          { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },
+          { label: 'GeForce GTX 1080 Ti [0000:04:00.0]', value: '0000:04:00.0' },
         ]),
       }),
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),
       }),
+      mockWebSocket([
+        mockCall('system.advanced.get_gpu_pci_choices', {
+          'GeForce GTX 1080 [0000:03:00.0]': '0000:03:00.0',
+          'GeForce GTX 1080 Ti [0000:04:00.0]': '0000:04:00.0',
+        }),
+      ]),
     ],
   });
 
@@ -43,7 +50,7 @@ describe('GpuStepComponent', () => {
     await form.fillForm({
       'Hide from MSR': true,
       'Ensure Display Device': true,
-      GPUs: ['GeForce GTX 1080 Ti'],
+      GPUs: ['GeForce GTX 1080 Ti [0000:04:00.0]'],
     });
   }
 

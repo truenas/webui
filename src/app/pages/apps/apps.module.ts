@@ -81,6 +81,7 @@ import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/dock
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
+import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppNotesCardComponent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
@@ -96,7 +97,6 @@ import { ContainerShellComponent } from 'app/pages/apps/components/installed-app
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
-import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
@@ -178,7 +178,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatExpansionModule,
     MatTooltipModule,
     MatMenuModule,
-    CustomFormsModule,
     GalleryModule,
     LightboxModule,
     MarkdownModule,
@@ -226,6 +225,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     TestDirective,
     PageHeaderComponent,
     TerminalComponent,
+    FilterSelectListComponent,
     IxIpInputWithNetmaskComponent,
     IxListComponent,
     IxListItemComponent,

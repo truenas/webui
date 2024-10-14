@@ -18,8 +18,6 @@ describe('SearchInputComponent', () => {
     component: SearchInputComponent<User>,
     imports: [
       FormsModule,
-    ],
-    declarations: [
       BasicSearchComponent,
       AdvancedSearchComponent,
     ],

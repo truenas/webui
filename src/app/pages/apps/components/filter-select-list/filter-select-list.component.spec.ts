@@ -6,7 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { FilterSelectListComponent } from 'app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.component';
+import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
 
 describe('FilterSelectListComponent', () => {
   let spectator: SpectatorHost<FilterSelectListComponent>;

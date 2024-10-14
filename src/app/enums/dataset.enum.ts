@@ -104,9 +104,3 @@ export const datasetPresetLabels = new Map<DatasetPreset, string>([
   [DatasetPreset.Apps, T('Apps')],
   [DatasetPreset.Multiprotocol, T('Multiprotocol')],
 ]);
-
-export enum DatasetXattr {
-  Inherit = 'INHERIT',
-  On = 'ON',
-  Sa = 'SA',
-}

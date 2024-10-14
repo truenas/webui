@@ -89,6 +89,7 @@ export class SmartInfoCardComponent implements OnChanges {
         selectedDisks: [disk],
         diskIdsWithSmart: [disk.identifier],
       } as ManualTestDialogParams,
+      width: '600px',
     });
     testDialog
       .afterClosed()
