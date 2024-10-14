@@ -32,6 +32,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: null,
+      power_on_hours_ago: 1,
     },
     {
       num: 2,
@@ -42,6 +43,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: 50,
+      power_on_hours_ago: 25,
     },
     {
       num: 3,
@@ -52,6 +54,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: null,
+      power_on_hours_ago: 49,
     }],
   }, {
     disk: 'sdb',
@@ -64,6 +67,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: null,
+      power_on_hours_ago: 1,
     },
     {
       num: 2,
@@ -74,6 +78,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: 0.5,
+      power_on_hours_ago: 25,
     },
     {
       num: 3,
@@ -84,6 +89,7 @@ describe('SmartTestResultListComponent', () => {
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
       remaining: 0,
+      power_on_hours_ago: 49,
     }],
   }];
 
@@ -114,13 +120,13 @@ describe('SmartTestResultListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Disk', 'Description', 'Status', 'Remaining', 'Lifetime', 'LBA of First Error'],
-      ['sda', 'Background long', 'SUCCESS', '0%', '15959', 'No errors'],
-      ['sda', 'Background short', 'SUCCESS', '50%', '15929', 'No errors'],
-      ['sda', 'Background short', 'SUCCESS', 'Completed', '16939', 'No errors'],
-      ['sdb', 'Background long', 'SUCCESS', 'Completed', '15959', 'No errors'],
-      ['sdb', 'Background short', 'SUCCESS', '0.5%', '15929', 'No errors'],
-      ['sdb', 'Background short', 'SUCCESS', '0%', '16939', 'No errors'],
+      ['Disk', 'Description', 'Status', 'Remaining', expect.stringContaining('Power On Hours Ago'), 'LBA of First Error'],
+      ['sda', 'Background long', 'SUCCESS', '0%', '1', 'No errors'],
+      ['sda', 'Background short', 'SUCCESS', '50%', '25', 'No errors'],
+      ['sda', 'Background short', 'SUCCESS', 'Completed', '49', 'No errors'],
+      ['sdb', 'Background long', 'SUCCESS', 'Completed', '1', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', '0.5%', '25', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', '0%', '49', 'No errors'],
     ];
 
     const cells = await table.getCellTexts();
