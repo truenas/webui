@@ -4,7 +4,7 @@
   flex-direction: column;
   justify-content: space-between;
 
-  @media (min-width: $breakpoint-sm) {
+  @media (min-width: $breakpoint-xs) {
     flex-direction: row;
   }
 
@@ -19,16 +19,19 @@
       display: none;
     }
 
-    @media (min-width: $breakpoint-sm) {
+    @media (min-width: $breakpoint-xs) {
       flex: 1;
       flex-direction: column;
       height: 100%;
-      justify-content: space-around;
       padding: 6px 0 6px 8px;
 
       small {
         display: inline;
       }
+    }
+
+    h4 {
+      font-size: 14px;
     }
 
     h4,
@@ -43,6 +46,12 @@
 
     .in-out {
       font-size: 12px;
+
+      @media (max-width: $breakpoint-xs) {
+        display: flex;
+        flex-flow: row;
+        gap: 8px;
+      }
     }
 
     .in-out-row {
@@ -56,7 +65,7 @@
   .chart-graph {
     max-width: 100%;
 
-    @media (min-width: $breakpoint-sm) {
+    @media (min-width: $breakpoint-xs) {
       max-width: auto;
     }
 

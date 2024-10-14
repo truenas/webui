@@ -1,9 +1,7 @@
 :host {
   background: var(--bg1);
   display: inline-flex;
-  flex: 1 1 70%;
   flex-direction: column;
-  max-width: 70%;
 
   .app-header {
     align-items: baseline;

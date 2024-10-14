@@ -5,35 +5,35 @@
       <ix-app-controls [app]="app() | async"></ix-app-controls>
     </div>
 
-    <div [class]="['container', size()]">
-      <div class="app-header-row">
-        <ix-app-card-logo [url]="application?.metadata?.icon"></ix-app-card-logo>
-        <ix-app-card-info [app]="app() | async" [job]="job() | async"></ix-app-card-info>
-      </div>
+    <div [class]="['container', 'grid', size()]">
+      <ix-app-card-logo
+        [url]="application?.metadata?.icon"
+      ></ix-app-card-logo>
 
-      <div class="app-stats">
-        <ix-app-cpu-info
-          class="square"
-          [stats]="stats() | async"
-        ></ix-app-cpu-info>
+      <ix-app-card-info
+        [app]="app() | async"
+        [job]="job() | async"
+      ></ix-app-card-info>
 
-        <ix-app-memory-info
-          class="square"
-          [stats]="stats() | async"
-        ></ix-app-memory-info>
+      <ix-app-cpu-info
+        class="square"
+        [stats]="stats() | async"
+      ></ix-app-cpu-info>
 
-        <ix-app-network-info
-          class="rectangle"
-          [stats]="stats() | async"
-          [aspectRatio]="aspectRatio()"
-        ></ix-app-network-info>
+      <ix-app-network-info
+        class="rectangle"
+        [stats]="stats() | async"
+      ></ix-app-network-info>
 
-        <ix-app-disk-info
-          class="rectangle"
-          [stats]="stats() | async"
-          [aspectRatio]="aspectRatio()"
-        ></ix-app-disk-info>
-      </div>
+      <ix-app-memory-info
+        class="square"
+        [stats]="stats() | async"
+      ></ix-app-memory-info>
+
+      <ix-app-disk-info
+        class="rectangle"
+        [stats]="stats() | async"
+      ></ix-app-disk-info>
     </div>
   </mat-card-content>
 </mat-card>
