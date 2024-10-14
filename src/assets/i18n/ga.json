@@ -18,6 +18,7 @@
   "CPU Overview": "",
   "CPU Temperature Per Core": "",
   "CPU Usage Per Core": "",
+  "Cannot be enabled for built-in users.": "",
   "Check for docker image updates": "",
   "Choose Shell Details": "",
   "Click \"Add\" to specify NFS client hosts for this share. If both networks and hosts are empty the share will be exported to everyone.": "",
