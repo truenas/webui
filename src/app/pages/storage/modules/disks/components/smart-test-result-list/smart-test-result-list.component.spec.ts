@@ -121,12 +121,12 @@ describe('SmartTestResultListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Disk', 'Description', 'Status', 'Remaining', expect.stringContaining('Power On Hours Ago'), 'LBA of First Error'],
-      ['sda', 'Background long', 'SUCCESS', '0%', 'N/A', 'No errors'],
-      ['sda', 'Background short', 'SUCCESS', '50%', 'N/A', 'No errors'],
-      ['sda', 'Background short', 'SUCCESS', 'Completed', 'N/A', 'No errors'],
-      ['sdb', 'Background long', 'SUCCESS', 'Completed', 'N/A', 'No errors'],
-      ['sdb', 'Background short', 'SUCCESS', '0.5%', 'N/A', 'No errors'],
-      ['sdb', 'Background short', 'SUCCESS', '0%', 'N/A', 'No errors'],
+      ['sda', 'Background long', 'SUCCESS', '0%', '1', 'No errors'],
+      ['sda', 'Background short', 'SUCCESS', '50%', '25', 'No errors'],
+      ['sda', 'Background short', 'SUCCESS', 'Completed', '49', 'No errors'],
+      ['sdb', 'Background long', 'SUCCESS', 'Completed', '1', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', '0.5%', '25', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', '0%', '49', 'No errors'],
     ];
 
     const cells = await table.getCellTexts();
