@@ -18,7 +18,7 @@
     matTooltipPosition="above"
     [attr.aria-label]="'Restart App' | translate"
     [matTooltip]="'Restart App' | translate"
-    [disabled]="isRestarting()"
+    [disabled]="app.state === appState.Deploying"
     (click)="onRestartApp(app)"
   >
     <ix-icon name="mdi-restart"></ix-icon>

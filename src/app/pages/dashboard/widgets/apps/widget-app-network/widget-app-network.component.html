@@ -7,7 +7,10 @@
 
     <div [class]="['container', size()]">
       <ix-app-card-logo [url]="application?.metadata?.icon"></ix-app-card-logo>
-      <ix-app-network-info [stats]="stats() | async"></ix-app-network-info>
+      <ix-app-network-info
+        [stats]="stats() | async"
+        [aspectRatio]="aspectRatio()"
+      ></ix-app-network-info>
     </div>
   </mat-card-content>
 </mat-card>

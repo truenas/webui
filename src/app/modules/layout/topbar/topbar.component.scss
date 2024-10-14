@@ -78,24 +78,19 @@
   }
 
   .mobile-logo-container {
+    align-items: center;
+    display: flex;
+    gap: 10px;
     height: 48px;
     position: relative;
     width: 200px;
   }
 
   .logomark {
-    bottom: 10px;
-    left: 10px;
-    position: absolute;
-    top: 10px;
     width: 40px;
   }
 
   .logotype {
-    bottom: 9px;
-    left: 58px;
-    position: absolute;
-    top: 10px;
     width: 96px;
   }
 }

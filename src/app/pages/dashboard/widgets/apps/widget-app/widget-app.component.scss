@@ -86,9 +86,15 @@ ix-app-card-logo {
 }
 
 .app-stats {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 6px 8px;
+  grid-template-columns: 50% 50%;
+  height: 100%;
+  max-width: calc(100% - 8px);
+
+  @media (min-width: $breakpoint-sm) {
+    grid-template-columns: 25% 75%;
+  }
 }
 
 .app-stats-row {
@@ -105,25 +111,34 @@ ix-app-card-logo {
   }
 }
 
-.slot {
+.square {
+  align-items: center;
   background: var(--bg1);
   display: inline-flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  order: 1;
+  padding: 12px 0;
+  text-align: center;
 
-  &.square {
-    align-items: center;
-    aspect-ratio: 1;
-    flex: 1 1 20%;
-    flex-direction: column;
-    justify-content: space-evenly;
-    max-width: 20%;
-    text-align: center;
+  @media (min-width: $breakpoint-sm) {
+    & + & {
+      order: 3;
+    }
   }
+}
 
-  &.rectangle {
-    align-items: center;
-    aspect-ratio: 4;
-    flex: 1 1 80%;
-    max-width: 80%;
+.rectangle {
+  align-items: center;
+  background: var(--bg1);
+  display: inline-flex;
+  order: 2;
+
+  @media (min-width: $breakpoint-sm) {
     place-content: center center;
+
+    & + & {
+      order: 4;
+    }
   }
 }
