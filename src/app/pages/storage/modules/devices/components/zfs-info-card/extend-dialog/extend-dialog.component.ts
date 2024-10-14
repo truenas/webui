@@ -58,7 +58,7 @@ export class ExtendDialogComponent {
 
     this.dialogService.jobDialog(
       this.ws.job('pool.attach', [this.data.poolId, payload]),
-      { title: this.translate.instant('Extending VDEV') },
+      { title: this.translate.instant('Extending VDEV'), canMinimize: true },
     )
       .afterClosed()
       .pipe(
