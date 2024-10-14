@@ -120,7 +120,7 @@ describe('SmartTestResultListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Disk', 'Description', 'Status', 'Remaining', 'Power On Hours Ago', 'LBA of First Error'],
+      ['Disk', 'Description', 'Status', 'Remaining', expect.stringContaining('Power On Hours Ago'), 'LBA of First Error'],
       ['sda', 'Background long', 'SUCCESS', '0%', 'N/A', 'No errors'],
       ['sda', 'Background short', 'SUCCESS', '50%', 'N/A', 'No errors'],
       ['sda', 'Background short', 'SUCCESS', 'Completed', 'N/A', 'No errors'],

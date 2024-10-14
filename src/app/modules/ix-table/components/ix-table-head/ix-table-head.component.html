@@ -14,7 +14,8 @@
           @if (column.headerTooltip) {
             <ix-tooltip
                 class="tooltip"
-                [message]="column.headerTooltip | translate">
+                [message]="column.headerTooltip | translate"
+                (click)="$event.stopPropagation()">
             </ix-tooltip>
           }
         </div>
