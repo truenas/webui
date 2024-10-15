@@ -173,7 +173,10 @@ export class VmEditFormComponent implements OnInit {
         ])),
       );
     } else {
-      updateVmRequest$ = this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]);
+      updateVmRequest$ = forkJoin([
+        this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
+        this.vmGpuService.updateVmGpus(this.existingVm, []),
+      ]);
     }
 
     updateVmRequest$.pipe(untilDestroyed(this)).subscribe({
