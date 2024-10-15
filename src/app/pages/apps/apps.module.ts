@@ -25,6 +25,7 @@ import { LetDirective } from 'app/directives/app-let.directive';
 import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -229,6 +230,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     IxIpInputWithNetmaskComponent,
     IxListComponent,
     IxListItemComponent,
+    MobileBackButtonComponent,
   ],
 })
 export class AppsModule { }

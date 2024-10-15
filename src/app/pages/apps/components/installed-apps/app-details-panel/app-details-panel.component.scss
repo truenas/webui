@@ -33,19 +33,6 @@
       display: none;
     }
   }
-
-  a.mobile-back-button {
-    cursor: pointer;
-    display: none;
-    padding: 5px 10px;
-
-    @media (max-width: $breakpoint-hidden) {
-      display: inline-block;
-      left: 2px;
-      position: relative;
-      top: 3px;
-    }
-  }
 }
 
 .cards {
