@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,6 +8,9 @@ import {
   OnInit, output,
   ViewChild,
 } from '@angular/core';
+import { MatCard } from '@angular/material/card';
+import { MatCalendar } from '@angular/material/datepicker';
+import { MatTooltip } from '@angular/material/tooltip';
 import {
   autocompletion, closeBrackets, CompletionContext, startCompletion,
 } from '@codemirror/autocomplete';
@@ -15,6 +19,7 @@ import { EditorState, StateEffect, StateField } from '@codemirror/state';
 import {
   EditorView, keymap, placeholder,
 } from '@codemirror/view';
+import { TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchAutocompleteService } from 'app/modules/forms/search-input/services/advanced-search-autocomplete.service';
@@ -22,6 +27,8 @@ import { QueryParserService } from 'app/modules/forms/search-input/services/quer
 import { QueryParsingError } from 'app/modules/forms/search-input/services/query-parser/query-parsing-result.interface';
 import { QueryToApiService } from 'app/modules/forms/search-input/services/query-to-api/query-to-api.service';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 const setDiagnostics = StateEffect.define<unknown[] | null>();
 
@@ -30,6 +37,16 @@ const setDiagnostics = StateEffect.define<unknown[] | null>();
   templateUrl: './advanced-search.component.html',
   styleUrls: ['./advanced-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatTooltip,
+    IxIconComponent,
+    MatCard,
+    MatCalendar,
+    TestDirective,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class AdvancedSearchComponent<T> implements OnInit {
   @Input() query: QueryFilters<T> = [];

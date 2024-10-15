@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
-  [title]="'Custom App' | translate"
-  [loading]="isLoading"
+  [title]="isNew() ? ('Add Custom App' | translate) : ('Edit Custom App' | translate)"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card>
@@ -15,12 +15,13 @@
         formControlName="release_name"
         [required]="true"
         [label]="'Name' | translate"
+        [readonly]="!isNew()"
       ></ix-input>
       <ix-code-editor
         formControlName="custom_compose_config_string"
         [language]="CodeEditorLanguage.Yaml"
         [label]="'Custom Config' | translate"
-        [tooltip]="tooltip"
+        [tooltip]="'Custom app config in YAML format.' | translate"
         [required]="true"
       ></ix-code-editor>
       <ix-form-actions>
@@ -30,7 +31,7 @@
           mat-button
           color="primary"
           ixTest="save"
-          [disabled]="!form.valid || isLoading"
+          [disabled]="!form.valid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

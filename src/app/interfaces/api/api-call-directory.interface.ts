@@ -44,7 +44,7 @@ import {
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
 import {
-  Catalog, CatalogApp,
+  CatalogConfig, CatalogApp,
   CatalogUpdate, GetItemDetailsParams,
 } from 'app/interfaces/catalog.interface';
 import {
@@ -77,7 +77,6 @@ import {
   CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
-import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
@@ -357,8 +356,8 @@ export interface ApiCallDirectory {
   // Catalog
   'catalog.get_app_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
   'catalog.trains': { params: void; response: string[] };
-  'catalog.update': { params: [CatalogUpdate]; response: Catalog };
-  'catalog.config': { params: void; response: Catalog };
+  'catalog.update': { params: [CatalogUpdate]; response: CatalogConfig };
+  'catalog.config': { params: void; response: CatalogConfig };
 
   // Certificate
   'certificate.acme_server_choices': { params: void; response: Choices };
@@ -411,7 +410,6 @@ export interface ApiCallDirectory {
   'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
 
   // Container
-  'container.config': { params: void; response: ContainerConfig };
   'app.image.delete': { params: DeleteContainerImageParams; response: boolean };
   'app.image.dockerhub_rate_limit': { params: void; response: DockerHubRateLimit };
   'app.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
@@ -881,6 +879,7 @@ export interface ApiCallDirectory {
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
   'vm.device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
+  'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
   'vm.device.nic_attach_choices': { params: void; response: Choices };
   'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };

@@ -2,27 +2,32 @@ import {
   ChangeDetectionStrategy, Component, computed, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  FormArray, FormBuilder, FormControl, FormGroup, Validators,
+} from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { of, switchMap } from 'rxjs';
+import {
+  combineLatest, forkJoin, of, switchMap,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { Catalog, CatalogUpdate } from 'app/interfaces/catalog.interface';
+import { CatalogUpdate } from 'app/interfaces/catalog.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-catalog-settings',
-  templateUrl: './catalog-settings.component.html',
-  styleUrls: ['./catalog-settings.component.scss'],
+  selector: 'ix-apps-settings',
+  templateUrl: './apps-settings.component.html',
+  styleUrls: ['./apps-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CatalogSettingsComponent implements OnInit {
+export class AppsSettingsComponent implements OnInit {
   protected nvidiaDriversInstalled = toSignal(this.dockerStore.nvidiaDriversInstalled$);
   protected lacksNvidiaDrivers = toSignal(this.dockerStore.lacksNvidiaDrivers$);
   protected isFormLoading = signal(false);
@@ -31,6 +36,11 @@ export class CatalogSettingsComponent implements OnInit {
   protected form = this.fb.group({
     preferred_trains: [[] as string[], Validators.required],
     nvidia: [null as boolean],
+    enable_image_updates: [true],
+    address_pools: new FormArray<FormGroup<{
+      base: FormControl<string>;
+      size: FormControl<number>;
+    }>>([]),
   });
 
   protected allTrains$ = this.ws.call('catalog.trains').pipe(
@@ -47,9 +57,9 @@ export class CatalogSettingsComponent implements OnInit {
   };
 
   constructor(
-    protected dockerStore: DockerStore,
+    private dockerStore: DockerStore,
     private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<CatalogSettingsComponent>,
+    private slideInRef: IxSlideInRef<AppsSettingsComponent>,
     private errorHandler: FormErrorHandlerService,
     private fb: FormBuilder,
     private appsStore: AppsStore,
@@ -60,15 +70,22 @@ export class CatalogSettingsComponent implements OnInit {
   }
 
   setupForm(): void {
-    this.ws.call('catalog.config').pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (config: Catalog) => {
-        this.form.patchValue({
-          preferred_trains: config.preferred_trains,
+    combineLatest([
+      this.ws.call('catalog.config'),
+      this.dockerStore.dockerConfig$,
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(([catalogConfig, dockerConfig]) => {
+        dockerConfig.address_pools.forEach(() => {
+          this.addAddressPool();
         });
-      },
-    });
+
+        this.form.patchValue({
+          preferred_trains: catalogConfig.preferred_trains,
+          enable_image_updates: dockerConfig.enable_image_updates,
+          address_pools: dockerConfig.address_pools,
+        });
+      });
 
     if (this.nvidiaDriversInstalled()) {
       this.form.patchValue({
@@ -77,14 +94,36 @@ export class CatalogSettingsComponent implements OnInit {
     }
   }
 
+  addAddressPool(): void {
+    const control = this.fb.group({
+      base: ['', [Validators.required, ipv4or6cidrValidator()]],
+      size: [null as number, [Validators.required]],
+    });
+
+    this.form.controls.address_pools.push(control);
+  }
+
+  removeAddressPool(index: number): void {
+    this.form.controls.address_pools.removeAt(index);
+  }
+
   onSubmit(): void {
-    const { preferred_trains: preferredTrains, nvidia } = this.form.value;
+    const values = this.form.getRawValue();
 
     this.isFormLoading.set(true);
-    this.ws.call('catalog.update', [{ preferred_trains: preferredTrains } as CatalogUpdate])
+    forkJoin([
+      this.ws.call('catalog.update', [{ preferred_trains: values.preferred_trains } as CatalogUpdate]),
+      this.ws.job('docker.update', [{
+        enable_image_updates: values.enable_image_updates,
+        address_pools: values.address_pools,
+      }]),
+    ])
       .pipe(
-        switchMap(() => (nvidia !== null ? this.dockerStore.setDockerNvidia(nvidia) : of(nvidia))),
-        switchMap(() => this.appsStore.loadCatalog()),
+        switchMap(() => (values.nvidia !== null ? this.dockerStore.setDockerNvidia(values.nvidia) : of(values.nvidia))),
+        switchMap(() => forkJoin([
+          this.dockerStore.reloadDockerConfig(),
+          this.appsStore.loadCatalog(),
+        ])),
         untilDestroyed(this),
       )
       .subscribe({
@@ -98,4 +137,6 @@ export class CatalogSettingsComponent implements OnInit {
         },
       });
   }
+
+  protected readonly helptext = helptextApps;
 }

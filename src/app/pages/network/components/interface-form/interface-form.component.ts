@@ -44,7 +44,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { NgxOrderedListboxModule } from 'app/modules/lists/ordered-list/ordered-list.module';
+import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -81,7 +81,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     IxSelectComponent,
     IxInputComponent,
     IxCheckboxComponent,
-    NgxOrderedListboxModule,
+    OrderedListboxComponent,
     IxListComponent,
     IxListItemComponent,
     IxIpInputWithNetmaskComponent,

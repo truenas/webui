@@ -168,6 +168,7 @@ export class DeviceFormComponent implements OnInit {
   readonly resolutions$ = this.ws.call('vm.resolution_choices').pipe(choicesToOptions());
   readonly nicOptions$ = this.ws.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
   readonly nicTypes$ = of(mapToOptions(vmNicTypeLabels, this.translate));
+
   readonly passthroughProvider = new SimpleAsyncComboboxProvider(
     this.ws.call('vm.device.passthrough_device_choices').pipe(
       map((passthroughDevices) => {

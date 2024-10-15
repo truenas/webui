@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isNull, omitBy } from 'lodash-es';
 import { of } from 'rxjs';
 import { CompressionType, compressionTypeNames } from 'app/enums/compression-type.enum';
@@ -14,6 +14,11 @@ import { helptextReplication } from 'app/helptext/data-protection/replication/re
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { newOption } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 
 @UntilDestroy()
@@ -21,6 +26,16 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
   selector: 'ix-replication-transport-section',
   templateUrl: './transport-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxFieldsetComponent,
+    ReactiveFormsModule,
+    SshCredentialsSelectComponent,
+    IxSelectComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    TranslateModule,
+  ],
 })
 export class TransportSectionComponent implements OnChanges {
   @Input() replication: ReplicationTask;

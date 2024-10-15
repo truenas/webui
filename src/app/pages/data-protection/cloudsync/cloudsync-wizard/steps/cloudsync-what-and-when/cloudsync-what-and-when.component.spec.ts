@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -34,11 +35,10 @@ describe('CloudSyncWhatAndWhenComponent', () => {
     imports: [
       ReactiveFormsModule,
       SchedulerModule,
-    ],
-    declarations: [
       TransferModeExplanationComponent,
     ],
     providers: [
+      CdkStepper,
       mockProvider(ChainedRef, chainedRef),
       mockAuth(),
       mockWebSocket([

@@ -10,7 +10,7 @@ tr {
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    @media(max-width: $breakpoint-sm) {
+    @media (max-width: $breakpoint-sm) {
       padding: 0 8px;
     }
 
@@ -27,4 +27,13 @@ tr {
       width: 14px;
     }
   }
+}
+
+.title {
+  align-items: center;
+  display: flex;
+}
+
+ix-tooltip {
+  margin-left: 8px;
 }
