@@ -1,0 +1,38 @@
+:host {
+  align-items: center;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--lines);
+  box-sizing: border-box;
+  color: var(--fg1);
+  display: flex;
+  flex-gap: 8px;
+  height: 64px;
+  justify-content: space-between;
+  left: 0;
+  min-height: 64px;
+  padding: 0 40px;
+  position: sticky;
+  top: 0;
+  word-break: break-all;
+  z-index: 1;
+
+  .header,
+  .actions {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+  }
+
+  .actions {
+    flex-direction: row-reverse;
+  }
+
+  .close-icon {
+    order: 1;
+  }
+
+  .title {
+    color: var(--fg1);
+    word-break: break-all;
+  }
+}

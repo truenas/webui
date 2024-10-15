@@ -1,0 +1,18 @@
+<div class="header">
+  <h3 class="title">{{ title() | translate }}</h3>
+</div>
+
+<div class="actions">
+  <button
+    mat-button
+    ixTest="ix-close-icon"
+    id="ix-close-icon"
+    type="button"
+    class="close-icon"
+    [attr.aria-label]="'Close {formType} Form' | translate: { formType: title() }"
+    (click)="close()"
+    (keydown.enter)="close()"
+  >{{ 'Cancel' | translate }}</button>
+
+  <ng-content></ng-content>
+</div>
