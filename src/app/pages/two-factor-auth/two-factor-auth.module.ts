@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { QrCodeModule } from 'ng-qrcode';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-viewer/qr-viewer.component';
@@ -34,6 +35,7 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
     AsyncPipe,
     UiSearchDirective,
     TestDirective,
+    CopyButtonComponent,
   ],
   declarations: [
     TwoFactorComponent,
