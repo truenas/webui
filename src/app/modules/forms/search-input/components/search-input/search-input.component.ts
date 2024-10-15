@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchComponent } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import {
   AdvancedSearchQuery,
@@ -18,6 +19,8 @@ import {
   templateUrl: './search-input.component.html',
   styleUrls: ['./search-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [AdvancedSearchComponent, BasicSearchComponent],
 })
 export class SearchInputComponent<T> implements OnChanges {
   @Input() allowAdvanced = true;

@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -22,6 +23,7 @@ describe('InstallationMediaStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      CdkStepper,
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of('/mnt/iso/new-windows.iso')),

@@ -23,8 +23,6 @@ describe('CloudSyncRestoreDialogComponent', () => {
     component: CloudSyncRestoreDialogComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    declarations: [
       TransferModeExplanationComponent,
     ],
     providers: [

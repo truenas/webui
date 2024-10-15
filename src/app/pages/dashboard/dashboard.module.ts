@@ -33,7 +33,9 @@ import {
   IxModalHeader2Component,
 } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
+import { IxDragDirective } from 'app/modules/ix-drop-grid/ix-drag.directive';
+import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
+import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import {
@@ -138,7 +140,6 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
         opacity: '0.25',
       },
     }),
-    IxDropGridModule,
     MatListModule,
     EmptyComponent,
     ImgFallbackModule,
@@ -177,6 +178,9 @@ import { PoolUsageGaugeComponent } from './widgets/storage/widget-pool/common/po
     WithLoadingStateDirective,
     PageHeaderComponent,
     GaugeChartComponent,
+    IxDropGridDirective,
+    IxDropGridItemDirective,
+    IxDragDirective,
   ],
 })
 export class DashboardModule {

@@ -43,6 +43,10 @@ describe('IsolatedGpuPcisFormComponent', () => {
       }),
       mockWebSocket([
         mockCall('system.advanced.update_gpu_pci_ids'),
+        mockCall('system.advanced.get_gpu_pci_choices', {
+          'Fake HD Graphics [0000:00:01.0]': '0000:00:01.0',
+          'Intel Corporation HD Graphics 510 [0000:00:02.0]': '0000:00:02.0',
+        }),
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(IxChainedSlideInService, {
@@ -76,14 +80,14 @@ describe('IsolatedGpuPcisFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      GPUs: ['Intel Corporation HD Graphics 510'],
+      GPUs: ['Intel Corporation HD Graphics 510 [0000:00:02.0]'],
     });
   });
 
   it('saves updated settings when Save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      GPUs: 'Fake HD Graphics',
+      GPUs: 'Fake HD Graphics [0000:00:01.0]',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

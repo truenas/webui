@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -27,11 +28,10 @@ describe('GeneralWizardStepComponent', () => {
     component: GeneralWizardStepComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    declarations: [
       PoolWarningsComponent,
     ],
     providers: [
+      CdkStepper,
       mockWebSocket([
         mockCall('pool.query', []),
         mockCall('pool.validate_name', true),

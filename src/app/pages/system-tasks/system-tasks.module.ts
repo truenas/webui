@@ -27,7 +27,7 @@ import { systemTasksRoutes } from 'app/pages/system-tasks/system-tasks.routing';
     TranslateModule,
     RouterModule.forChild(systemTasksRoutes),
     CopyrightLineComponent,
+    RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent,
   ],
-  declarations: [RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent],
 })
 export class SystemTasksModule { }

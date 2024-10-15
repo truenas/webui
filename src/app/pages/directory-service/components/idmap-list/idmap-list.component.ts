@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatToolbar } from '@angular/material/toolbar';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -56,8 +56,8 @@ import { WebSocketService } from 'app/services/ws.service';
     MatButton,
     TestDirective,
     UiSearchDirective,
-    MatToolbar,
     RouterLink,
+    MatToolbarRow,
     IxIconComponent,
     IxTableComponent,
     IxTableEmptyDirective,

@@ -124,20 +124,23 @@ export class LdapComponent implements OnInit {
 
   onRebuildCachePressed(): void {
     this.isLoading = true;
-    this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.snackbar.success(
-          this.translate.instant(helptextLdap.ldap_custactions_clearcache_dialog_message),
-        );
-        this.cdr.markForCheck();
-      },
-      error: (error: unknown) => {
-        this.isLoading = false;
-        this.dialogService.error(this.errorHandler.parseError(error));
-        this.cdr.markForCheck();
-      },
-    });
+    this.dialogService
+      .jobDialog(this.systemGeneralService.refreshDirServicesCache())
+      .afterClosed()
+      .pipe(untilDestroyed(this)).subscribe({
+        next: ({ description }) => {
+          this.isLoading = false;
+          this.snackbar.success(
+            this.translate.instant(description || helptextLdap.ldap_custactions_clearcache_dialog_message),
+          );
+          this.cdr.markForCheck();
+        },
+        error: (error: unknown) => {
+          this.isLoading = false;
+          this.dialogService.error(this.errorHandler.parseError(error));
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   onSubmit(): void {

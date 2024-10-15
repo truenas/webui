@@ -1,7 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import {
+  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
+} from '@angular/material/card';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { TaskService } from 'app/services/task.service';
@@ -11,6 +14,14 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './cloud-backup-schedule.component.html',
   styleUrl: './cloud-backup-schedule.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    TranslateModule,
+  ],
 })
 export class CloudBackupScheduleComponent {
   readonly backup = input.required<CloudBackup>();

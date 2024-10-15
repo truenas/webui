@@ -19,16 +19,20 @@ describe('WidgetInterfaceIpComponent', () => {
           value: [
             {
               name: 'eth0',
-              aliases: [
-                { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.1' },
-                { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.2' },
-              ],
+              state: {
+                aliases: [
+                  { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.1' },
+                  { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.2' },
+                ],
+              },
             },
             {
               name: 'eth1',
-              aliases: [
-                { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
-              ],
+              state: {
+                aliases: [
+                  { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
+                ],
+              },
             },
             {
               name: 'eth2',

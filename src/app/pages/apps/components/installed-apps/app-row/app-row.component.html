@@ -70,9 +70,20 @@
       [disabled]="inProgress()"
       (click)="start(); $event.stopPropagation()"
     >
-      <ix-icon name="mdi-play"></ix-icon>
+      <ix-icon name="mdi-play-circle"></ix-icon>
     </button>
   } @else {
+    <button
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[app().name, 'restart']"
+      [attr.aria-label]="'Restart App' | translate"
+      [matTooltip]="'Restart App' | translate"
+      (click)="restart(); $event.stopPropagation()"
+    >
+      <ix-icon name="mdi-restart"></ix-icon>
+    </button>
+
     <button
       mat-icon-button
       matTooltipPosition="above"
@@ -80,7 +91,7 @@
       [matTooltip]="'Stop' | translate"
       (click)="stop(); $event.stopPropagation()"
     >
-      <ix-icon name="mdi-stop"></ix-icon>
+      <ix-icon name="mdi-stop-circle"></ix-icon>
     </button>
   }
 </div>

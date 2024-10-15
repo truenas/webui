@@ -1,14 +1,27 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatListItemLine } from '@angular/material/list';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { unionBy } from 'lodash-es';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -24,6 +37,24 @@ interface InitiatorItem {
   templateUrl: './initiator-form.component.html',
   styleUrls: ['./initiator-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatProgressBar,
+    ReactiveFormsModule,
+    MatCardContent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    MatButton,
+    TestDirective,
+    IxIconComponent,
+    DualListboxComponent,
+    MatListItemLine,
+    MatCardActions,
+    RequiresRolesDirective,
+    TranslateModule,
+  ],
 })
 export class InitiatorFormComponent implements OnInit {
   protected readonly searchableElements = initiatorFormElements;

@@ -39,6 +39,7 @@ import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/rep
 import { DownloadService } from 'app/services/download.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 const tasks = [{
@@ -133,6 +134,10 @@ describe('ReplicationListComponent', () => {
           },
           {
             selector: selectSystemConfigState,
+            value: {},
+          },
+          {
+            selector: selectPreferences,
             value: {},
           },
         ],

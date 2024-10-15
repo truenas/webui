@@ -79,15 +79,24 @@ describe('VmEditFormComponent', () => {
         }),
         mockCall('vm.update'),
         mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
+        mockCall('system.advanced.update_gpu_pci_ids'),
+        mockCall('system.advanced.get_gpu_pci_choices', {
+          'GeForce [0000:02:00.0]': '0000:02:00.0',
+          'Intel Arc [0000:03:00.0]': '0000:03:00.0',
+        }),
       ]),
       mockAuth(),
       mockProvider(DialogService),
       mockProvider(GpuService, {
-        getGpuOptions: () => of([
-          { label: 'GeForce', value: '0000:02:00.0' },
-          { label: 'Intel Arc', value: '0000:03:00.0' },
-        ]),
-        getAllGpus: () => of([
+        getGpuOptions: jest.fn(() => of([
+          { label: 'GeForce [0000:02:00.0]', value: '0000:02:00.0' },
+          { label: 'Intel Arc [0000:03:00.0]', value: '0000:03:00.0' },
+        ])),
+        addIsolatedGpuPciIds: jest.fn(() => of({})),
+        getIsolatedGpuPciIds: jest.fn(() => of([
+          '0000:02:00.0',
+        ])),
+        getAllGpus: jest.fn(() => of([
           {
             addr: {
               pci_slot: '0000:02:00.0',
@@ -112,8 +121,7 @@ describe('VmEditFormComponent', () => {
               },
             ],
           },
-        ]),
-        addIsolatedGpuPciIds: jest.fn(() => of(undefined)),
+        ])),
       }),
       mockProvider(VmGpuService, {
         updateVmGpus: jest.fn(() => of(undefined)),
@@ -166,7 +174,7 @@ describe('VmEditFormComponent', () => {
 
       'Hide from MSR': false,
       'Ensure Display Device': true,
-      GPUs: ['GeForce'],
+      GPUs: ['GeForce [0000:02:00.0]'],
     });
   });
 
@@ -244,13 +252,15 @@ describe('VmEditFormComponent', () => {
 
   it('updates GPU devices when form is edited and saved', async () => {
     await form.fillForm({
-      GPUs: ['Intel Arc'],
+      GPUs: ['Intel Arc [0000:03:00.0]'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0', '10DE:1401']);
-    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0', '10DE:1401']);
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(
+      ['0000:03:00.0'],
+    );
+    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0']);
   });
 });

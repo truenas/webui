@@ -1,4 +1,4 @@
 export interface Package {
-  operation: string;
   name: string;
+  operation: string;
 }

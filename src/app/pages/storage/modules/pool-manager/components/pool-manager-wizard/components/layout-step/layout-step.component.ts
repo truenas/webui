@@ -8,6 +8,8 @@ import {
   PoolManagerStore,
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { AutomatedDiskSelectionComponent } from './automated-disk-selection/automated-disk-selection.component';
+import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-layout-applied.component';
 
 @UntilDestroy()
 @Component({
@@ -15,6 +17,8 @@ import {
   templateUrl: './layout-step.component.html',
   styleUrls: ['./layout-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [AutomatedDiskSelectionComponent, CustomLayoutAppliedComponent],
 })
 export class LayoutStepComponent implements OnInit {
   @Input() isStepActive: boolean;

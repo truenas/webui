@@ -117,6 +117,7 @@ describe('SmartInfoCardComponent', () => {
           selectedDisks: [disk],
           diskIdsWithSmart: ['disk-1'],
         },
+        width: '600px',
       },
     );
   });

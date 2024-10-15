@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -25,8 +26,9 @@ describe('CsrIdentifierAndTypeComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      CdkStepper,
       mockWebSocket([
-        mockCall('webui.crypto.certificate_profiles', {
+        mockCall('webui.crypto.csr_profiles', {
           'HTTPS ECC Certificate': httpsProfile,
           'Openvpn Client Certificate': openvpnProfile,
         }),

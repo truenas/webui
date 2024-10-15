@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -25,6 +26,7 @@ describe('CertificateConstraintsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      CdkStepper,
       mockWebSocket([
         mockCall('certificate.extended_key_usage_choices', {
           CLIENT_AUTH: 'CLIENT_AUTH',

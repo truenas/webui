@@ -14,8 +14,8 @@ import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
-import { IxFilterSelectListHarness } from 'app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.harness';
-import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
+import { IxFilterSelectListHarness } from 'app/pages/apps/components/filter-select-list/filter-select-list.harness';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -33,7 +33,7 @@ describe('AvailableAppsHeaderComponent', () => {
     component: AvailableAppsHeaderComponent,
     imports: [
       ReactiveFormsModule,
-      CustomFormsModule,
+      FilterSelectListComponent,
     ],
     providers: [
       mockAuth(),

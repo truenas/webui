@@ -103,15 +103,15 @@ export class WebSocketService {
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
-  subscribe<K extends ApiEventMethod = ApiEventMethod>(method: K): Observable<ApiEventTyped<K>> {
-    if (this.eventSubscribers.has(method)) {
-      return this.eventSubscribers.get(method);
+  subscribe<K extends ApiEventMethod = ApiEventMethod>(method: K | `${K}:${string}`): Observable<ApiEventTyped<K>> {
+    if (this.eventSubscribers.has(method as K)) {
+      return this.eventSubscribers.get(method as K);
     }
     const observable$ = new Observable((trigger: Subscriber<ApiEventTyped<K>>) => {
-      const subscription = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method).subscribe(trigger);
+      const subscription = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method as K).subscribe(trigger);
       return () => {
         subscription.unsubscribe();
-        this.eventSubscribers.delete(method);
+        this.eventSubscribers.delete(method as K);
       };
     }).pipe(
       switchMap((apiEvent) => {
@@ -126,7 +126,7 @@ export class WebSocketService {
       takeUntil(this.clearSubscriptions$),
     );
 
-    this.eventSubscribers.set(method, observable$);
+    this.eventSubscribers.set(method as K, observable$);
     return observable$;
   }
 

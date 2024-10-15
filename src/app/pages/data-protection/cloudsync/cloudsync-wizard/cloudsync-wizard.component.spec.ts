@@ -7,20 +7,16 @@ import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/step
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { Direction } from 'app/enums/direction.enum';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
-import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
-import { CloudSyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
-import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
-import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CloudSyncWizardComponent } from './cloudsync-wizard.component';
@@ -42,14 +38,6 @@ describe('CloudSyncWizardComponent', () => {
       ReactiveFormsModule,
       MatStepperModule,
       SchedulerModule,
-      CloudCredentialsSelectModule,
-      CloudSyncProviderDescriptionComponent,
-    ],
-    declarations: [
-      CloudSyncProviderComponent,
-      CloudSyncWhatAndWhenComponent,
-      TransferModeExplanationComponent,
-      GooglePhotosProviderFormComponent,
       StorjProviderFormComponent,
     ],
     providers: [
@@ -116,7 +104,7 @@ describe('CloudSyncWizardComponent', () => {
       create_empty_src_dirs: false,
       credentials: 1,
       description: 'Sync Google Photos - TestUser',
-      direction: 'PULL',
+      direction: Direction.Pull,
       enabled: true,
       encryption: false,
       exclude: [],
@@ -133,7 +121,7 @@ describe('CloudSyncWizardComponent', () => {
         month: '*',
       },
       snapshot: false,
-      transfer_mode: 'COPY',
+      transfer_mode: TransferMode.Copy,
       transfers: 4,
     }]);
 

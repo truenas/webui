@@ -3,6 +3,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
 import { isValid } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
@@ -39,6 +40,10 @@ export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {
 
   get isTimezoneDifference(): boolean {
     return this.machineTime < this.value || this.machineTime > this.value;
+  }
+
+  get isInvalidDate(): boolean {
+    return this.translate.instant(this.date) === this.translate.instant(invalidDate);
   }
 
   get date(): string {

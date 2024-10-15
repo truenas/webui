@@ -2,7 +2,6 @@
   @for (column of displayedColumns; track column; let idx = $index) {
     <th
       [ngClass]="column.cssClass || ''"
-      [matTooltip]="column.title"
       (click)="onSort(idx)"
     >
       <div class="title-container" [ngStyle]="{ cursor: !column.disableSorting ? 'pointer' : 'auto' }">
@@ -12,6 +11,13 @@
             [dataProvider]="dataProvider"
             [column]="column"
           ></ng-template>
+          @if (column.headerTooltip) {
+            <ix-tooltip
+                class="tooltip"
+                [message]="column.headerTooltip | translate"
+                (click)="$event.stopPropagation()">
+            </ix-tooltip>
+          }
         </div>
         @if (!column.disableSorting) {
           <div>
