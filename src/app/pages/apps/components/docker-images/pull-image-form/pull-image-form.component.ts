@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -31,6 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
     IxModalHeaderComponent,
     MatCard,
     MatCardContent,
+    MatButton,
     IxFieldsetComponent,
     IxInputComponent,
     FormActionsComponent,
