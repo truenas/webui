@@ -10,7 +10,6 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
-import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -64,7 +63,6 @@ describe('AuditComponent', () => {
   const createComponent = createComponentFactory({
     component: AuditComponent,
     imports: [
-      SearchInputModule,
       IxTableCellDirective,
       MatButtonToggleModule,
     ],

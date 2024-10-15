@@ -5,6 +5,7 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
 export abstract class ColumnComponent<T> {
   propertyName?: keyof T;
   title?: string;
+  headerTooltip?: string;
   cssClass?: string;
   uniqueRowTag: (row: T) => string;
   ariaLabels: (row: T) => string[];

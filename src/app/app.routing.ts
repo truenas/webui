@@ -79,7 +79,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'sharing',
-        loadChildren: () => import('./pages/sharing/sharing.module').then((module) => module.SharingModule),
+        loadChildren: () => import('./pages/sharing/sharing.routes').then((module) => module.sharingRoutes),
         data: { title: T('Shares'), breadcrumb: T('Shares') },
       },
       {
@@ -114,7 +114,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'data-protection',
-        loadChildren: () => import('./pages/data-protection/data-protection.module').then((module) => module.DataProtectionModule),
+        loadChildren: () => import('./pages/data-protection/data-protection.routes').then((module) => module.dataProtectionRoutes),
         data: { title: T('Data Protection'), breadcrumb: T('Data Protection') },
       },
       {

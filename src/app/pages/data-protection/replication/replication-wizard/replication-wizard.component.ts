@@ -4,8 +4,10 @@ import {
   Component,
   ViewChild,
 } from '@angular/core';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge } from 'lodash-es';
 import {
   catchError, EMPTY, forkJoin, map, Observable, of, switchMap, tap,
@@ -31,6 +33,7 @@ import { Schedule } from 'app/interfaces/schedule.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -49,6 +52,18 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./replication-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
+  standalone: true,
+  imports: [
+    IxModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    MatStepper,
+    MatStep,
+    MatStepLabel,
+    ReplicationWhatAndWhereComponent,
+    ReplicationWhenComponent,
+    TranslateModule,
+  ],
 })
 export class ReplicationWizardComponent {
   @ViewChild(ReplicationWhatAndWhereComponent) whatAndWhere: ReplicationWhatAndWhereComponent;

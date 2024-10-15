@@ -35,7 +35,9 @@ const regexMap = {
   containsWhitespace: /\s/,
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AdvancedSearchAutocompleteService<T> {
   private properties: SearchProperty<T>[] = [];
   private editorView: EditorView;

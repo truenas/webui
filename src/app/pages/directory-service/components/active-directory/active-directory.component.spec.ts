@@ -83,7 +83,7 @@ describe('ActiveDirectoryComponent', () => {
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(null),
+          afterClosed: () => of({}),
         })),
       }),
       mockProvider(SnackbarService),

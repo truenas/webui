@@ -2,14 +2,15 @@ import { NgClass, NgStyle } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableHeaderCellDirective } from 'app/modules/ix-table/directives/ix-header-cell.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @UntilDestroy()
 @Component({
@@ -20,11 +21,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
   imports: [
     NgClass,
-    MatTooltip,
     NgStyle,
     IxTableHeaderCellDirective,
     IxIconComponent,
     TestDirective,
+    TooltipComponent,
+    TranslateModule,
   ],
 })
 export class IxTableHeadComponent<T> implements AfterViewInit {

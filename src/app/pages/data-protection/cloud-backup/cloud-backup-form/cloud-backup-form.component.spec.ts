@@ -82,8 +82,6 @@ describe('CloudBackupFormComponent', () => {
       SchedulerModule,
       CloudCredentialsSelectComponent,
       ReactiveFormsModule,
-    ],
-    declarations: [
       TransferModeExplanationComponent,
     ],
     providers: [
