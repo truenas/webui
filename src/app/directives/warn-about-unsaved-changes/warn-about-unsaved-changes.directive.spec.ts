@@ -2,24 +2,20 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   createHostFactory, SpectatorHost, mockProvider,
 } from '@ngneat/spectator/jest';
-import { TranslateService } from '@ngx-translate/core';
 import { of, Subject } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { FormChangeGuardForSlideInDirective } from './form-change-guard-for-slide-in.directive';
+import { WarnAboutUnsavedChangesDirective } from './warn-about-unsaved-changes.directive';
 
-describe('FormChangeGuardForSlideInDirective', () => {
-  let spectator: SpectatorHost<FormChangeGuardForSlideInDirective<unknown>>;
+describe('WarnAboutUnsavedChangesDirective', () => {
+  let spectator: SpectatorHost<WarnAboutUnsavedChangesDirective<unknown>>;
 
   const createHost = createHostFactory({
-    component: FormChangeGuardForSlideInDirective,
+    component: WarnAboutUnsavedChangesDirective,
     imports: [ReactiveFormsModule],
     providers: [
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(TranslateService, {
-        instant: jest.fn((key: string) => key),
       }),
       {
         provide: IxSlideInRef,
@@ -33,7 +29,7 @@ describe('FormChangeGuardForSlideInDirective', () => {
 
   beforeEach(() => {
     spectator = createHost(`
-      <form [formGroup]="form" formChangeGuardForSlideIn></form>
+      <form [formGroup]="form" warnAboutUnsavedChanges></form>
     `, {
       hostProps: {
         form: new FormGroup({}),

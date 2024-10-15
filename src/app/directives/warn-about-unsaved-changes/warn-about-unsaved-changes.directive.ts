@@ -11,10 +11,10 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 
 @UntilDestroy()
 @Directive({
-  selector: '[formChangeGuardForSlideIn]',
+  selector: '[warnAboutUnsavedChanges]',
   standalone: true,
 })
-export class FormChangeGuardForSlideInDirective<T> implements OnInit {
+export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
   @Input() formGroup: FormGroup;
 
   formChanged = false;
