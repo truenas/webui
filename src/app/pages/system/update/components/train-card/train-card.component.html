@@ -65,7 +65,7 @@
   <div class="train-card-row">
     @if ((updateService.status$ | async) === SystemUpdateStatus.RebootRequired) {
       <div>
-        {{ 'An update is already applied. Please reboot the system.' | translate }}
+        {{ 'An update is already applied. Please restart the system.' | translate }}
       </div>
     }
 

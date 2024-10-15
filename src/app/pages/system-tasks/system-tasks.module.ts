@@ -11,7 +11,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
 import { FailoverComponent } from 'app/pages/system-tasks/failover/failover.component';
-import { RebootComponent } from 'app/pages/system-tasks/reboot/reboot.component';
+import { RestartComponent } from 'app/pages/system-tasks/restart/restart.component';
 import { ShutdownComponent } from 'app/pages/system-tasks/shutdown/shutdown.component';
 import { systemTasksRoutes } from 'app/pages/system-tasks/system-tasks.routing';
 
@@ -27,7 +27,7 @@ import { systemTasksRoutes } from 'app/pages/system-tasks/system-tasks.routing';
     TranslateModule,
     RouterModule.forChild(systemTasksRoutes),
     CopyrightLineComponent,
-    RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent,
+    RestartComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent,
   ],
 })
 export class SystemTasksModule { }

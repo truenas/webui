@@ -15,9 +15,9 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-reboot',
-  templateUrl: './reboot.component.html',
-  styleUrls: ['./reboot.component.scss'],
+  selector: 'ix-restart',
+  templateUrl: './restart.component.html',
+  styleUrls: ['./restart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -28,7 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
   ],
 })
-export class RebootComponent implements OnInit {
+export class RestartComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
     private wsManager: WebSocketConnectionService,
@@ -42,19 +42,19 @@ export class RebootComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Replace URL so that we don't reboot again if page is refreshed.
+    // Replace URL so that we don't restart again if page is refreshed.
     this.location.replaceState('/signin');
 
     this.matDialog.closeAll();
     this.ws.job('system.reboot').pipe(untilDestroyed(this)).subscribe({
-      error: (error: unknown) => { // error on reboot
+      error: (error: unknown) => { // error on restart
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/signin']);
           });
       },
-      complete: () => { // show reboot screen
+      complete: () => { // show restart screen
         this.wsManager.prepareShutdown();
         this.wsManager.closeWebSocketConnection();
         setTimeout(() => {

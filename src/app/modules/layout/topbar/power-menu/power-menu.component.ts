@@ -54,7 +54,7 @@ export class PowerMenuComponent {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+      this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
     });
   }
 
