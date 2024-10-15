@@ -35,6 +35,10 @@
       [required]="true"
     ></ix-checkbox>
 
+    <button mat-button type="button" matDialogClose ixTest="cancel">
+      {{ 'Cancel' | translate }}
+    </button>
+
     @if(thisNodeRebootReasons().length) {
       <button
         mat-button

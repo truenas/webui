@@ -10,7 +10,6 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents, MockModule } from 'ng-mocks';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -59,7 +58,6 @@ describe('TopbarComponent', () => {
       MockModule(TruecommandModule),
     ],
     providers: [
-      mockWebSocket([]),
       mockProvider(ThemeService),
       mockProvider(SystemGeneralService, {
         updateRunningNoticeSent: new EventEmitter<string>(),

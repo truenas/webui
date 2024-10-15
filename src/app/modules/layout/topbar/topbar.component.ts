@@ -208,7 +208,7 @@ export class TopbarComponent implements OnInit {
           || !!otherNodeRebootInfo?.reboot_required_reasons?.length;
       }),
       tap(() => this.hasRebootRequiredReasons.set(true)),
-      switchMap(() => this.matDialog.open(RebootRequiredDialogComponent).afterClosed()),
+      switchMap(() => this.matDialog.open(RebootRequiredDialogComponent, { minWidth: '400px' }).afterClosed()),
     );
   }
 }

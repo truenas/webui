@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialogActions, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -24,11 +24,9 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
   standalone: true,
   imports: [
     CdkScrollable,
-    MatDialogContent,
-    MatDialogTitle,
     TranslateModule,
     ReactiveFormsModule,
-    MatDialogActions,
+    MatDialogModule,
     IxCheckboxComponent,
     MatButton,
   ],
