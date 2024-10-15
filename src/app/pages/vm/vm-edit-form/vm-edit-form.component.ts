@@ -104,6 +104,7 @@ export class VmEditFormComponent implements OnInit {
   gpuOptions$ = this.gpuService.getGpuOptions();
 
   readonly helptext = helptextVmWizard;
+  previouslySetGpuPciIds: string[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -173,10 +174,13 @@ export class VmEditFormComponent implements OnInit {
         ])),
       );
     } else {
-      updateVmRequest$ = forkJoin([
+      const requests$: Observable<unknown>[] = [
         this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
-        this.vmGpuService.updateVmGpus(this.existingVm, []),
-      ]);
+      ];
+      if (this.previouslySetGpuPciIds.length) {
+        requests$.push(this.vmGpuService.updateVmGpus(this.existingVm, []));
+      }
+      updateVmRequest$ = forkJoin(requests$);
     }
 
     updateVmRequest$.pipe(untilDestroyed(this)).subscribe({
@@ -203,6 +207,7 @@ export class VmEditFormComponent implements OnInit {
       const vmGpus = allGpus.filter(byVmPciSlots(vmPciSlots));
 
       const vmGpuPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
+      this.previouslySetGpuPciIds = vmGpuPciSlots;
       this.form.controls.gpus.setValue(vmGpuPciSlots, { emitEvent: false });
     });
   }
