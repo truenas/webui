@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { WINDOW } from 'app/helpers/window.helper';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @Component({
@@ -12,13 +11,4 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   imports: [IxIconComponent, TranslateModule],
 })
 export class InsecureConnectionComponent {
-  connectionText = '';
-
-  constructor(
-    @Inject(WINDOW) private window: Window,
-    private translate: TranslateService,
-  ) {
-    const replacedUrl = this.window.location.href.replace('http://', 'https://');
-    this.connectionText = this.translate.instant('You are using an insecure connection. <a href="{url}">Switch to HTTPS</a> for secure access.', { url: replacedUrl });
-  }
 }
