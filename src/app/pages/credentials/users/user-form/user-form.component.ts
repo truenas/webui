@@ -16,6 +16,7 @@ import {
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { WarnAboutUnsavedChangesDirective } from 'app/directives/warn-about-unsaved-changes/warn-about-unsaved-changes.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextUsers } from 'app/helptext/account/user-form';
@@ -88,6 +89,7 @@ const defaultHomePath = '/var/empty';
     MatButton,
     TestDirective,
     TranslateModule,
+    WarnAboutUnsavedChangesDirective,
   ],
 })
 export class UserFormComponent implements OnInit {
