@@ -4,6 +4,7 @@ import {
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
@@ -24,6 +25,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
     ReactiveFormsModule,
     MatDialogTitle,
     TranslateModule,
+    MatButton,
     IxInputComponent,
     MatDialogContent,
     MatDialogActions,

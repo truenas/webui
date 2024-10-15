@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import { MatAnchor, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -44,6 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
     ReactiveFormsModule,
     IxInputComponent,
     MatButton,
+    MatAnchor,
     IxChipsComponent,
     IxIconComponent,
     TranslateModule,

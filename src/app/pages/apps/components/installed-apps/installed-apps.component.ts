@@ -10,7 +10,7 @@ import {
   Inject, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
+import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -91,6 +91,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     IxIconComponent,
     AppSettingsButtonComponent,
     RouterLink,
+    MatAnchor,
     UiSearchDirective,
     MatMenuTrigger,
     MatMenu,

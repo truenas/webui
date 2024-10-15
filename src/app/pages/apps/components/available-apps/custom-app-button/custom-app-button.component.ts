@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -33,6 +33,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
     UiSearchDirective,
     TranslateModule,
     MatMenu,
+    MatMenuItem,
     IxIconComponent,
     AsyncPipe,
     MatIconButton,
