@@ -1,16 +1,9 @@
 <div class="header">
   <h3 class="title" [class.no-buttons]="dataset().locked || isZvol()">
     <div class="mobile-prefix">
-      <a
-        tabindex="0"
-        class="mobile-back-button"
-        ixTest="details-back-button"
-        [attr.aria-label]="'Back' | translate"
-        (click)="onCloseMobileDetails()"
-        (keydown.enter)="onCloseMobileDetails()"
-      >
-        <ix-icon name="mdi-chevron-left"></ix-icon>
-      </a>
+      <ix-mobile-back-button
+        (onClose)="onCloseMobileDetails()"
+      ></ix-mobile-back-button>
       {{ 'Details for' | translate }}
     </div>
 

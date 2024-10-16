@@ -17,6 +17,7 @@ import { IxDetailsHeightDirective } from 'app/directives/details-height/details-
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -120,6 +121,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     TestDirective,
     PageHeaderComponent,
     PermissionsCardComponent,
+    MobileBackButtonComponent,
   ],
   declarations: [
     DatasetsManagementComponent,
