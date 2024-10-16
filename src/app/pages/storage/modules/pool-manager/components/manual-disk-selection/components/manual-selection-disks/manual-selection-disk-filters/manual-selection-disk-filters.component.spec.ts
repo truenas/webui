@@ -66,7 +66,7 @@ describe('ManualSelectionDiskFiltersComponent', () => {
 
   it('shows disk type select with available disk types', async () => {
     const select = await form.getControl('Filter by Disk Type') as IxSelectHarness;
-    expect(await select.getOptionLabels()).toEqual(['--', 'HDD', 'SSD']);
+    expect(await select.getOptionLabels()).toEqual(['--', 'SSD', 'HDD']);
   });
 
   it('emits (filtersUpdated) when disk type select is changed', async () => {
