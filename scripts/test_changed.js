@@ -30,9 +30,7 @@ function findTestFiles(directory) {
   const entries = readdirSync(directory, { withFileTypes: true });
   for (let entry of entries) {
     const entryPath = path.join(directory, entry.name);
-    if (entry.isDirectory()) {
-      testFiles.push(...findTestFiles(entryPath));
-    } else if (entry.isFile() && entry.name.match(/\.spec\.ts$/)) {
+    if (entry.isFile() && entry.name.match(/\.spec\.ts$/)) {
       testFiles.push(entryPath);
     }
   }

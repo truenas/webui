@@ -1,14 +1,17 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, debounceTime, distinctUntilChanged, map, of,
   switchMap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -18,13 +21,25 @@ import { helptextCloudBackup } from 'app/helptext/data-protection/cloud-backup/c
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -37,10 +52,35 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   templateUrl: './cloud-backup-form.component.html',
   styleUrls: ['./cloud-backup-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxExplorerComponent,
+    CloudCredentialsSelectComponent,
+    IxSelectComponent,
+    IxInputComponent,
+    SchedulerComponent,
+    IxCheckboxComponent,
+    IxTextareaComponent,
+    IxChipsComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class CloudBackupFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
+  }
+
+  get isNewBucketOptionSelected(): boolean {
+    return this.form.value.bucket === newOption;
   }
 
   get title(): string {
@@ -245,7 +285,7 @@ export class CloudBackupFormComponent implements OnInit {
     this.isLoading = true;
 
     let createBucket$: Observable<unknown> = of(null);
-    if (!!this.form.value.bucket_input && this.form.value.bucket === newOption) {
+    if (!!this.form.value.bucket_input && this.isNewBucketOptionSelected) {
       createBucket$ = this.ws.call('cloudsync.create_bucket', [this.form.value.credentials, this.form.value.bucket_input]);
     }
 
@@ -279,7 +319,7 @@ export class CloudBackupFormComponent implements OnInit {
   private prepareData(formValue: FormValue): CloudBackupUpdate {
     const attributes: CloudBackupUpdate['attributes'] = {
       folder: formValue.folder,
-      bucket: this.form.value.bucket_input && this.form.value.bucket === newOption
+      bucket: this.form.value.bucket_input && this.isNewBucketOptionSelected
         ? this.form.value.bucket_input
         : formValue.bucket,
     };

@@ -1,9 +1,12 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
@@ -11,6 +14,8 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -22,6 +27,17 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-service-extra-actions',
   templateUrl: './service-extra-actions.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatIconButton,
+    TestDirective,
+    MatMenuTrigger,
+    IxIconComponent,
+    MatMenu,
+    RequiresRolesDirective,
+    MatMenuItem,
+    TranslateModule,
+  ],
 })
 export class ServiceExtraActionsComponent {
   readonly service = input.required<Service>();

@@ -26,7 +26,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'system-tasks',
-        loadChildren: () => import('app/pages/system-tasks/system-tasks.module').then((module) => module.SystemTasksModule),
+        loadChildren: () => import('app/pages/system-tasks/system-tasks.routes').then((module) => module.systemTasksRoutes),
         data: { title: T('Others'), breadcrumb: T('Others') },
       },
     ],
@@ -39,12 +39,12 @@ export const rootRouterConfig: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () => import('app/pages/dashboard/dashboard.module').then((module) => module.DashboardModule),
+        loadComponent: () => import('app/pages/dashboard/components/dashboard/dashboard.component').then((module) => module.DashboardComponent),
         data: { title: T('Dashboard'), breadcrumb: T('Dashboard') },
       },
       {
         path: 'system',
-        loadChildren: () => import('./pages/system/system.module').then((module) => module.SystemModule),
+        loadChildren: () => import('./pages/system/system.routes').then((module) => module.systemRoutes),
         data: { title: T('System'), breadcrumb: T('System') },
       },
       {
@@ -69,7 +69,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'vm',
-        loadChildren: () => import('./pages/vm/vm.module').then((module) => module.VmModule),
+        loadChildren: () => import('app/pages/vm/vm.routes').then((module) => module.vmRoutes),
         data: { title: T('Virtual Machines'), breadcrumb: T('Virtual Machines') },
       },
       {
@@ -79,7 +79,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'sharing',
-        loadChildren: () => import('./pages/sharing/sharing.module').then((module) => module.SharingModule),
+        loadChildren: () => import('./pages/sharing/sharing.routes').then((module) => module.sharingRoutes),
         data: { title: T('Shares'), breadcrumb: T('Shares') },
       },
       {
@@ -89,12 +89,12 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'storage',
-        loadChildren: () => import('./pages/storage/storage.module').then((module) => module.StorageModule),
+        loadChildren: () => import('./pages/storage/storage.routes').then((module) => module.storageRoutes),
         data: { title: T('Storage'), breadcrumb: T('Storage') },
       },
       {
         path: 'reportsdashboard',
-        loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.module').then((module) => module.ReportsDashboardModule),
+        loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.routes').then((module) => module.reportsDashboardRoutes),
         data: { title: T('Reporting'), breadcrumb: T('Reporting') },
       },
       {
@@ -114,22 +114,22 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'data-protection',
-        loadChildren: () => import('./pages/data-protection/data-protection.module').then((module) => module.DataProtectionModule),
+        loadChildren: () => import('./pages/data-protection/data-protection.routes').then((module) => module.dataProtectionRoutes),
         data: { title: T('Data Protection'), breadcrumb: T('Data Protection') },
       },
       {
         path: 'credentials',
-        loadChildren: () => import('./pages/credentials/credentials.module').then((module) => module.CredentialsModule),
+        loadChildren: () => import('app/pages/credentials/credentials.routes').then((module) => module.credentialsRoutes),
         data: { title: T('Credentials'), breadcrumb: T('Credentials') },
       },
       {
         path: 'jobs',
-        loadChildren: () => import('./pages/jobs/jobs-list.module').then((module) => module.JobsListModule),
+        loadComponent: () => import('./pages/jobs/jobs-list.component').then((module) => module.JobsListComponent),
         data: { title: T('Jobs'), breadcrumb: T('Jobs') },
       },
       {
         path: 'system/audit',
-        loadComponent: () => import('./pages/audit/audit.component').then((module) => module.AuditComponent),
+        loadChildren: () => import('./pages/audit/audit.routes').then((module) => module.auditRoutes),
       },
     ],
   },

@@ -1,0 +1,33 @@
+:host ::ng-deep {
+  .trains {
+    fieldset {
+      padding: 0 0 10px;
+    }
+
+    ix-label {
+      padding-left: 10px;
+    }
+  }
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+.address-pools {
+  margin-bottom: 0;
+}
+
+.address-pool {
+  align-items: baseline;
+  column-gap: 20px;
+  display: flex;
+
+  .base {
+    flex-grow: 1;
+  }
+
+  .size {
+    width: 80px;
+  }
+}

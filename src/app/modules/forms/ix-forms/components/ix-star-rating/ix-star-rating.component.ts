@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
@@ -7,6 +7,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -27,16 +28,18 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxStarRatingComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() maxRating = 5;
+  readonly label = input('');
+  readonly hint = input('');
+  readonly tooltip = input('');
+  readonly required = input(false);
+  readonly maxRating = input(5);
 
   isDisabled = false;
   value: number;
 
-  protected readonly ratings = Array.from({ length: this.maxRating });
+  protected readonly ratings = computed(() => {
+    return Array.from({ length: this.maxRating() });
+  });
 
   constructor(
     public controlDirective: NgControl,
@@ -49,7 +52,7 @@ export class IxStarRatingComponent implements ControlValueAccessor {
   onTouch: () => void = (): void => {};
 
   writeValue(value: number): void {
-    this.value = value > this.maxRating ? this.maxRating : value;
+    this.value = value > this.maxRating() ? this.maxRating() : value;
     this.cdr.markForCheck();
   }
 
@@ -67,7 +70,9 @@ export class IxStarRatingComponent implements ControlValueAccessor {
   }
 
   onValueChanged(value: number): void {
-    this.value = value > this.maxRating ? this.maxRating : value;
+    this.value = value > this.maxRating() ? this.maxRating() : value;
     this.onChange(this.value);
   }
+
+  protected readonly iconMarker = iconMarker;
 }

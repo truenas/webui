@@ -1,14 +1,17 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, filter, of, switchMap, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
@@ -19,11 +22,23 @@ import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -37,6 +52,27 @@ import { ServicesState } from 'app/store/services/services.reducer';
   templateUrl: './nfs-form.component.html',
   styleUrls: ['./nfs-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxExplorerComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    IxComboboxComponent,
+    IxSelectComponent,
+    IxListComponent,
+    IxListItemComponent,
+    IxIpInputWithNetmaskComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class NfsFormComponent implements OnInit {
   existingNfsShare: NfsShare;

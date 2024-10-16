@@ -20,7 +20,7 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 const components = [
@@ -36,7 +36,6 @@ const components = [
   imports: [
     TranslateModule,
     ReactiveFormsModule,
-    SchedulerModule,
     MatDividerModule,
     CastPipe,
     TooltipComponent,
@@ -52,6 +51,7 @@ const components = [
     IxIpInputWithNetmaskComponent,
     IxFieldsetComponent,
     AsyncPipe,
+    SchedulerComponent,
   ],
   exports: [
     ...components,

@@ -1,17 +1,20 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { find, findIndex, isArray } from 'lodash-es';
 import { Observable, forkJoin, of } from 'rxjs';
 import {
   filter, map, pairwise, startWith, tap,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -29,17 +32,30 @@ import { newOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
+import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -55,6 +71,28 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   styleUrls: ['./cloudsync-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
+  standalone: true,
+  imports: [
+    IxModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    TransferModeExplanationComponent,
+    IxExplorerComponent,
+    TestDirective,
+    IxIconComponent,
+    CloudCredentialsSelectComponent,
+    IxCheckboxComponent,
+    SchedulerComponent,
+    IxTextareaComponent,
+    IxChipsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TranslateModule,
+  ],
 })
 export class CloudSyncFormComponent implements OnInit {
   get isNew(): boolean {

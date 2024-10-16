@@ -75,7 +75,7 @@ describe('OtherOptionsSectionComponent', () => {
       source: ZfsPropertySource.Inherited,
     },
     snapdir: {
-      value: DatasetSnapdir.Visible,
+      value: DatasetSnapdir.Disabled,
       source: ZfsPropertySource.Inherited,
     },
     snapdev: {
@@ -235,6 +235,10 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
+      await form.fillForm({
+        'Snapshot Directory': 'Visible',
+      });
+
       expect(await form.getValues()).toEqual({
         Comments: '',
         'Compression Level': 'LZJB',
@@ -273,7 +277,7 @@ describe('OtherOptionsSectionComponent', () => {
         readonly: OnOff.Off,
         recordsize: inherit,
         snapdev: DatasetSnapdev.Hidden,
-        snapdir: DatasetSnapdir.Visible,
+        snapdir: DatasetSnapdir.Disabled,
         special_small_block_size: inherit,
         aclmode: AclMode.Discard,
         acltype: DatasetAclType.Posix,

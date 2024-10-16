@@ -1,10 +1,15 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -14,6 +19,15 @@ import { TaskService } from 'app/services/task.service';
   selector: 'ix-replication-schedule-section',
   templateUrl: './schedule-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxFieldsetComponent,
+    ReactiveFormsModule,
+    IxCheckboxComponent,
+    SchedulerComponent,
+    IxSelectComponent,
+    TranslateModule,
+  ],
 })
 export class ScheduleSectionComponent implements OnChanges {
   @Input() replication: ReplicationTask;

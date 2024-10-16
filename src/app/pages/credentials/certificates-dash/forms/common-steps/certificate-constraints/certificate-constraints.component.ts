@@ -1,9 +1,11 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { omit } from 'lodash-es';
 import { of } from 'rxjs';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
@@ -18,7 +20,12 @@ import {
 } from 'app/interfaces/certificate-authority.interface';
 import { CertificateCreate, CertificateExtension } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   extensionsToSelectValues,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions-to-select-values.utils';
@@ -35,6 +42,19 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-certificate-constraints',
   templateUrl: './certificate-constraints.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxCheckboxComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperPrevious,
+    TestDirective,
+    MatStepperNext,
+    TranslateModule,
+  ],
 })
 export class CertificateConstraintsComponent implements OnInit, SummaryProvider {
   hasAuthorityKeyIdentifier = input(false);

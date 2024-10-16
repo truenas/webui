@@ -1,13 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { sortBy, uniqBy } from 'lodash-es';
 import {
   BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, pairwise, switchMap,
 } from 'rxjs';
 import { SimilarIssue } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -15,6 +19,13 @@ import { FeedbackService } from 'app/modules/feedback/services/feedback.service'
   styleUrls: ['./similar-issues.component.scss'],
   templateUrl: './similar-issues.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TestDirective,
+    IxIconComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class SimilarIssuesComponent {
   @Input() set query(value: string) {

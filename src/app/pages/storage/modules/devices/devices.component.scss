@@ -1,0 +1,29 @@
+@import '../../../../../assets/styles/scss-imports/variables';
+@import '../../../../../assets/styles/mixins/layout';
+
+@include tree-node-with-details-container;
+
+:host {
+  display: block;
+}
+
+ix-disk-details-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.disk-tree {
+  border-top: 2px solid var(--lines);
+}
+
+.vdev-group-toggle {
+  height: 25px;
+  line-height: 0;
+  margin-right: 18px;
+  width: 25px;
+}
+
+.spacer-root {
+  width: 30px;
+}

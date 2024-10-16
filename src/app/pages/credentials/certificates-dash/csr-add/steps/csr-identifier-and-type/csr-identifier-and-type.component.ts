@@ -1,9 +1,11 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { pick } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
@@ -13,8 +15,12 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -23,6 +29,17 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-csr-identifier-and-type',
   templateUrl: './csr-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxInputComponent,
+    IxSelectComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperNext,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   readonly profileSelected = output<CertificateProfile>();
@@ -89,7 +106,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   }
 
   private loadProfiles(): void {
-    this.ws.call('webui.crypto.certificate_profiles')
+    this.ws.call('webui.crypto.csr_profiles')
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((profiles) => {
         this.profiles = profiles;

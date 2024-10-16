@@ -53,11 +53,13 @@ export const datasetSyncLabels = new Map<DatasetSync, string>([
 export enum DatasetSnapdir {
   Visible = 'VISIBLE',
   Hidden = 'HIDDEN',
+  Disabled = 'DISABLED',
 }
 
 export const datasetSnapdirLabels = new Map<DatasetSnapdir, string>([
   [DatasetSnapdir.Visible, T('Visible')],
   [DatasetSnapdir.Hidden, T('Invisible')],
+  [DatasetSnapdir.Disabled, T('Disabled')],
 ]);
 
 export enum DatasetSnapdev {
@@ -104,9 +106,3 @@ export const datasetPresetLabels = new Map<DatasetPreset, string>([
   [DatasetPreset.Apps, T('Apps')],
   [DatasetPreset.Multiprotocol, T('Multiprotocol')],
 ]);
-
-export enum DatasetXattr {
-  Inherit = 'INHERIT',
-  On = 'ON',
-  Sa = 'SA',
-}

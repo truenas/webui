@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -56,6 +57,7 @@ describe('DatasetDetailsPanelComponent', () => {
         DatasetCapacityManagementCardComponent,
         DataProtectionCardComponent,
         RolesCardComponent,
+        MobileBackButtonComponent,
       ),
     ],
     providers: [

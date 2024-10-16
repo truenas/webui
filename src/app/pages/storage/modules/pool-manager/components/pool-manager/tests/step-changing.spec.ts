@@ -13,7 +13,7 @@ import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
 import {
-  commonDeclarations, commonImports,
+  commonImports,
   commonProviders,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/common.utils';
 import {
@@ -31,10 +31,7 @@ describe('PoolManagerComponent – step changing', () => {
     imports: [
       ...commonImports,
     ],
-    declarations: [
-      ...commonDeclarations,
-    ],
-    providers: [
+    componentProviders: [
       ...commonProviders,
       mockWebSocket([
         mockCall('pool.validate_name', true),
@@ -141,7 +138,7 @@ describe('PoolManagerComponent – step changing', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    store = spectator.inject(PoolManagerStore);
+    store = spectator.inject(PoolManagerStore, true);
     wizard = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, PoolManagerHarness);
   });
 

@@ -1,11 +1,17 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -13,7 +19,12 @@ import { Role } from 'app/enums/role.enum';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -23,6 +34,24 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './alert-config-form.component.html',
   styleUrls: ['./alert-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatProgressBar,
+    EmptyComponent,
+    MatButton,
+    TestDirective,
+    MatMenuTrigger,
+    IxIconComponent,
+    MatMenu,
+    MatMenuItem,
+    ReactiveFormsModule,
+    FormsModule,
+    IxSelectComponent,
+    TestOverrideDirective,
+    RequiresRolesDirective,
+    TranslateModule,
+  ],
 })
 export class AlertConfigFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];

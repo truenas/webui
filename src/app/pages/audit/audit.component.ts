@@ -35,7 +35,7 @@ import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
+import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import {
   AdvancedSearchQuery,
@@ -85,7 +85,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     RouterLink,
     MatCard,
     FakeProgressBarComponent,
-    SearchInputModule,
     MatButtonToggle,
     NgTemplateOutlet,
     IxTableBodyComponent,
@@ -102,6 +101,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     MatButton,
     TranslateModule,
     AsyncPipe,
+    SearchInputComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

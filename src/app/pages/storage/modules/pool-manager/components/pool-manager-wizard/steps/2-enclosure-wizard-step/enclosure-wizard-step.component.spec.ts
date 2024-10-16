@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -19,6 +20,7 @@ describe('EnclosureWizardStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      CdkStepper,
       mockProvider(PoolManagerStore, {
         startOver$,
         enclosures$: of([{

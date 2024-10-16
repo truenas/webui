@@ -1,19 +1,26 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatOptionSelectionChange } from '@angular/material/core';
+import {
+  ControlValueAccessor, NgControl, ReactiveFormsModule, FormsModule,
+} from '@angular/forms';
+import { MatOptionSelectionChange, MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
 import {
   SchedulerModalComponent,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.component';
+import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { CronPresetValue, getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +28,18 @@ import { CronPresetValue, getDefaultCrontabPresets } from 'app/modules/scheduler
   templateUrl: './scheduler.component.html',
   styleUrls: ['./scheduler.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    MatSelect,
+    ReactiveFormsModule,
+    TestDirective,
+    FormsModule,
+    MatOption,
+    IxErrorsComponent,
+    TranslateModule,
+    CrontabExplanationPipe,
+  ],
 })
 export class SchedulerComponent implements ControlValueAccessor {
   @Input() label: string;

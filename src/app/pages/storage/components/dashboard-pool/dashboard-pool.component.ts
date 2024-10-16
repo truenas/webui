@@ -2,10 +2,15 @@ import {
   ChangeDetectionStrategy, Component, Input,
   OnChanges,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
@@ -18,6 +23,7 @@ import { searchDelayConst } from 'app/modules/global-search/constants/delay.cons
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.elements';
 import {
   ExportDisconnectModalComponent,
@@ -25,6 +31,10 @@ import {
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
+import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
+import { TopologyCardComponent } from './topology-card/topology-card.component';
+import { ZfsHealthCardComponent } from './zfs-health-card/zfs-health-card.component';
 
 @UntilDestroy()
 @Component({
@@ -32,6 +42,21 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './dashboard-pool.component.html',
   styleUrls: ['./dashboard-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    UiSearchDirective,
+    TopologyCardComponent,
+    PoolUsageCardComponent,
+    ZfsHealthCardComponent,
+    DiskHealthCardComponent,
+    NgxSkeletonLoaderModule,
+    MatCard,
+    MatCardContent,
+    TranslateModule,
+  ],
 })
 export class DashboardPoolComponent implements OnChanges {
   @Input() pool: Pool;

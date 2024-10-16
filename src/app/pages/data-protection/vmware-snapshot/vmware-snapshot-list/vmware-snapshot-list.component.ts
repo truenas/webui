@@ -1,21 +1,36 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-cell.component';
 
 @UntilDestroy()
 @Component({
@@ -23,6 +38,25 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './vmware-snapshot-list.component.html',
   styleUrls: ['./vmware-snapshot-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    SearchInput1Component,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    IxTableComponent,
+    UiSearchDirective,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableCellDirective,
+    VmwareStatusCellComponent,
+    IxTableDetailsRowDirective,
+    IxTablePagerComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class VmwareSnapshotListComponent implements OnInit {
   protected readonly searchableElements = vmwareSnapshotListElements;

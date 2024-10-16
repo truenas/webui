@@ -1,21 +1,33 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,6 +38,24 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './target-form.component.html',
   styleUrls: ['./target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxListComponent,
+    IxListItemComponent,
+    IxIpInputWithNetmaskComponent,
+    IxSelectComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class TargetFormComponent implements OnInit {
   get isNew(): boolean {

@@ -1,15 +1,22 @@
+import { DecimalPipe, AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import {
+  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
+} from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { RouterLink } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
 import {
   Observable,
 } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
@@ -17,6 +24,8 @@ import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-s
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
+import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
@@ -28,6 +37,21 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './smart-info-card.component.html',
   styleUrls: ['./smart-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    WithLoadingStateDirective,
+    RouterLink,
+    TranslateModule,
+    DecimalPipe,
+    AsyncPipe,
+  ],
 })
 export class SmartInfoCardComponent implements OnChanges {
   topologyDisk = input<TopologyDisk>();
@@ -65,6 +89,7 @@ export class SmartInfoCardComponent implements OnChanges {
         selectedDisks: [disk],
         diskIdsWithSmart: [disk.identifier],
       } as ManualTestDialogParams,
+      width: '600px',
     });
     testDialog
       .afterClosed()

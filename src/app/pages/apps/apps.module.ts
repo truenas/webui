@@ -25,6 +25,7 @@ import { LetDirective } from 'app/directives/app-let.directive';
 import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -36,6 +37,11 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   IxModalHeaderComponent,
@@ -70,12 +76,13 @@ import {
 import { AppJsonDetailsCardComponent } from 'app/pages/apps/components/app-detail-view/app-json-details-card/app-json-details-card.component';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
-import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
+import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
+import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppNotesCardComponent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
@@ -91,7 +98,6 @@ import { ContainerShellComponent } from 'app/pages/apps/components/installed-app
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
-import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
@@ -145,7 +151,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CategoryViewComponent,
     CustomAppButtonComponent,
     DockerStatusComponent,
-    CatalogSettingsComponent,
+    AppsSettingsComponent,
     DockerImagesListComponent,
     DockerImageDeleteDialogComponent,
     PullImageFormComponent,
@@ -173,7 +179,6 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     MatExpansionModule,
     MatTooltipModule,
     MatMenuModule,
-    CustomFormsModule,
     GalleryModule,
     LightboxModule,
     MarkdownModule,
@@ -221,6 +226,11 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     TestDirective,
     PageHeaderComponent,
     TerminalComponent,
+    FilterSelectListComponent,
+    IxIpInputWithNetmaskComponent,
+    IxListComponent,
+    IxListItemComponent,
+    MobileBackButtonComponent,
   ],
 })
 export class AppsModule { }

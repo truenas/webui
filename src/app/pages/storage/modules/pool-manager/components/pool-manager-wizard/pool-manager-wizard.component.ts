@@ -1,20 +1,33 @@
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, ViewChild,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatStepper } from '@angular/material/stepper';
+import {
+  MatStepper, MatStep, MatStepLabel, MatStepperIcon,
+} from '@angular/material/stepper';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
+import { StepActivationDirective } from 'app/directives/step-activation.directive';
 import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
@@ -28,6 +41,15 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
+import { GeneralWizardStepComponent } from './steps/1-general-wizard-step/general-wizard-step.component';
+import { EnclosureWizardStepComponent } from './steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { DataWizardStepComponent } from './steps/3-data-wizard-step/data-wizard-step.component';
+import { LogWizardStepComponent } from './steps/4-log-wizard-step/log-wizard-step.component';
+import { SpareWizardStepComponent } from './steps/5-spare-wizard-step/spare-wizard-step.component';
+import { CacheWizardStepComponent } from './steps/6-cache-wizard-step/cache-wizard-step.component';
+import { MetadataWizardStepComponent } from './steps/7-metadata-wizard-step/metadata-wizard-step.component';
+import { DedupWizardStepComponent } from './steps/8-dedup-wizard-step/dedup-wizard-step.component';
+import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-wizard-step.component';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +57,38 @@ import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.sel
   templateUrl: './pool-manager-wizard.component.html',
   styleUrls: ['./pool-manager-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    FakeProgressBarComponent,
+    ReactiveFormsModule,
+    MatStepper,
+    MatStep,
+    StepActivationDirective,
+    MatStepLabel,
+    IxIconComponent,
+    MatTooltip,
+    GeneralWizardStepComponent,
+    EnclosureWizardStepComponent,
+    DataWizardStepComponent,
+    LogWizardStepComponent,
+    SpareWizardStepComponent,
+    CacheWizardStepComponent,
+    MetadataWizardStepComponent,
+    DedupWizardStepComponent,
+    ReviewWizardStepComponent,
+    TranslateModule,
+    AsyncPipe,
+    MatStepperIcon,
+    UseIxIconsInStepperComponent,
+  ],
+  providers: [
+    PoolManagerValidationService,
+    {
+      provide: STEPPER_GLOBAL_OPTIONS,
+      useValue: { showError: true },
+    },
+  ],
 })
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   protected existingPool: Pool = null;

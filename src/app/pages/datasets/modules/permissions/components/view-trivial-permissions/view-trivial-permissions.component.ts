@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { parseApiMode } from 'app/helpers/mode.helper';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { PermissionsItemComponent } from 'app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component';
 import {
   PermissionItem,
   PermissionsItemType,
@@ -15,6 +16,8 @@ import {
   templateUrl: 'view-trivial-permissions.component.html',
   styleUrls: ['./view-trivial-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [PermissionsItemComponent, TranslateModule],
 })
 export class ViewTrivialPermissionsComponent {
   @Input()

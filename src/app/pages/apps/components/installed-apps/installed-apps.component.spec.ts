@@ -98,6 +98,7 @@ describe('InstalledAppsComponent', () => {
         events: of(),
       }),
       mockProvider(ApplicationsService, {
+        restartApplication: jest.fn(() => of()),
         startApplication: jest.fn(() => of()),
         stopApplication: jest.fn(() => of()),
         getInstalledAppsStatusUpdates: jest.fn(() => of({
@@ -148,6 +149,11 @@ describe('InstalledAppsComponent', () => {
   it('stops application', () => {
     spectator.query(AppRowComponent).stopApp.emit();
     expect(spectator.inject(ApplicationsService).stopApplication).toHaveBeenCalledWith('test-app');
+  });
+
+  it('restarts application', () => {
+    spectator.query(AppRowComponent).restartApp.emit();
+    expect(spectator.inject(ApplicationsService).restartApplication).toHaveBeenCalledWith('test-app');
   });
 
   it('removes selected applications', async () => {

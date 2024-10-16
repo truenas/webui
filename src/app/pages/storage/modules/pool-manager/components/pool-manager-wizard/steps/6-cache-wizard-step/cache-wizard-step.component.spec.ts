@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -7,7 +8,7 @@ import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/comp
 import { CacheWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/6-cache-wizard-step/cache-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-describe('DataWizardStepComponent', () => {
+describe('CacheWizardStepComponent', () => {
   let spectator: Spectator<CacheWizardStepComponent>;
 
   const fakeInventory = [
@@ -31,12 +32,11 @@ describe('DataWizardStepComponent', () => {
 
   const createComponent = createComponentFactory({
     component: CacheWizardStepComponent,
-    imports: [
-    ],
     declarations: [
       MockComponent(LayoutStepComponent),
     ],
     providers: [
+      CdkStepper,
       mockProvider(PoolManagerStore, {
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
       }),

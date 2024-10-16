@@ -1,16 +1,29 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import {
+  MatStepper, MatStep, MatStepLabel, MatStepperPrevious, MatStepperNext,
+} from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge } from 'lodash-es';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   CertificateIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
@@ -35,6 +48,29 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './certificate-add.component.html',
   styleUrls: ['./certificate-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    MatStepper,
+    MatStep,
+    MatStepLabel,
+    CertificateIdentifierAndTypeComponent,
+    CertificateImportComponent,
+    CertificateOptionsComponent,
+    CertificateSubjectComponent,
+    CertificateConstraintsComponent,
+    SummaryComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperPrevious,
+    TestDirective,
+    RequiresRolesDirective,
+    MatStepperNext,
+    TranslateModule,
+    UseIxIconsInStepperComponent,
+  ],
 })
 export class CertificateAddComponent {
   @ViewChild(CertificateIdentifierAndTypeComponent) identifierAndType: CertificateIdentifierAndTypeComponent;

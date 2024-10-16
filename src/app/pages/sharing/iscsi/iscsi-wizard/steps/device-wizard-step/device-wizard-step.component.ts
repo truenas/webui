@@ -1,14 +1,18 @@
 import {
   ChangeDetectionStrategy, Component, input, OnInit,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of, switchMap } from 'rxjs';
 import { IscsiExtentType, iscsiExtentUseforMap } from 'app/enums/iscsi.enum';
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -19,6 +23,14 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-device-wizard-step',
   templateUrl: './device-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxInputComponent,
+    IxSelectComponent,
+    IxExplorerComponent,
+    TranslateModule,
+  ],
 })
 export class DeviceWizardStepComponent implements OnInit {
   readonly form = input<IscsiWizardComponent['form']['controls']['device']>();

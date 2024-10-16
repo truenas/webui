@@ -3,10 +3,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, Subscription, catchError, filter, of, switchMap, tap,
+  Observable, Subscription, catchError, delay, filter, of, repeat, switchMap, tap,
   withLatestFrom,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -42,6 +43,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   ) {
     super(initialState);
     this.initialize();
+    this.getStats();
   }
 
   readonly initialize = this.effect((triggers$: Observable<void>) => {
@@ -61,6 +63,18 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     );
   });
 
+  readonly getStats = this.effect(() => {
+    return this.installedApps$.pipe(
+      filter((apps) => apps.length > 0),
+      tapOnce(() => this.appsStats.subscribeToUpdates()),
+      catchError((error: unknown) => {
+        this.handleError(error);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    );
+  });
+
   private handleError(error: unknown): void {
     this.errorHandler.showErrorModal(error);
     this.patchState({
@@ -68,12 +82,11 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     });
   }
 
-  private loadInstalledApps(): Observable<unknown> {
+  private loadInstalledApps(): Observable<App[]> {
     return this.dockerStore.isLoading$.pipe(
       withLatestFrom(this.dockerStore.isDockerStarted$),
       filter(([isLoading, isDockerStarted]) => !isLoading && isDockerStarted !== null),
       switchMap(([, isDockerStarted]) => {
-        this.appsStats.subscribeToUpdates();
         this.subscribeToInstalledAppsUpdates();
 
         if (!isDockerStarted) {
@@ -81,10 +94,17 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         }
 
         return this.appsService.getAllApps().pipe(
-          tap((installedApps) => {
-            this.patchState({
-              installedApps: [...installedApps],
-            });
+          tap((installedApps) => this.patchState({ installedApps })),
+          repeat({
+            // TODO: NAS-131676. Remove this workaround after the bug is fixed.
+            delay: () => this.appsService.getInstalledAppsUpdates().pipe(
+              filter((event) => {
+                return (event.msg === IncomingApiMessageType.Added && !('fields' in event))
+                 || (event.msg === IncomingApiMessageType.Changed && event.fields.custom_app);
+              }),
+              tap(() => this.patchState({ isLoading: true })),
+              delay(2000),
+            ),
           }),
         );
       }),
@@ -150,6 +170,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   private handleAddedOrUpdatedEvent(apiEvent: ApiEvent<App>): void {
     const app = apiEvent.fields;
     if (!app) {
+      console.error('No app data in API event');
       return;
     }
 

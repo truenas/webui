@@ -78,6 +78,7 @@ export interface ApiJobDirectory {
   'app.update': { params: [string, AppUpdate]; response: App };
   'app.start': { params: AppStartQueryParams; response: void };
   'app.stop': { params: AppStartQueryParams; response: void };
+  'app.redeploy': { params: AppStartQueryParams; response: void };
   'app.delete': { params: AppDeleteParams; response: boolean };
   'app.upgrade': { params: AppUpgradeParams; response: App };
   'app.rollback': { params: AppRollbackParams; response: App };
@@ -167,8 +168,8 @@ export interface ApiJobDirectory {
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
 
   // System
-  'system.reboot': { params: { delay?: number }; response: void };
-  'system.shutdown': { params: { delay?: number }; response: void };
+  'system.reboot': { params: { delay?: number; reason?: string }; response: void };
+  'system.shutdown': { params: { delay?: number; reason?: string }; response: void };
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
 
   // SystemDataset

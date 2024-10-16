@@ -1,9 +1,15 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, ChangeDetectorRef,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import {
+  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
+} from '@angular/material/card';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
@@ -13,6 +19,12 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ViewNfsPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-nfs-permissions/view-nfs-permissions.component';
+import { ViewPosixPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-posix-permissions/view-posix-permissions.component';
+import { ViewTrivialPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-trivial-permissions/view-trivial-permissions.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -23,6 +35,26 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   templateUrl: 'permissions-card.component.html',
   styleUrls: ['./permissions-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    NgxSkeletonLoaderModule,
+    ViewTrivialPermissionsComponent,
+    ViewPosixPermissionsComponent,
+    ViewNfsPermissionsComponent,
+    EmptyComponent,
+    TranslateModule,
+    CastPipe,
+  ],
+  providers: [
+    PermissionsCardStore,
+  ],
 })
 export class PermissionsCardComponent implements OnInit, OnChanges {
   @Input() dataset: DatasetDetails;

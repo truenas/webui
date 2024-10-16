@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -9,7 +10,6 @@ import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 
 describe('ReplicationWhenComponent', () => {
@@ -21,9 +21,9 @@ describe('ReplicationWhenComponent', () => {
     component: ReplicationWhenComponent,
     imports: [
       ReactiveFormsModule,
-      SchedulerModule,
     ],
     providers: [
+      CdkStepper,
       mockAuth(),
       mockWebSocket(),
     ],

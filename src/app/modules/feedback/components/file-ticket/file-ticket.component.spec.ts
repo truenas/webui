@@ -9,8 +9,8 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/components/oauth-button/oauth-button.component';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
+import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
@@ -32,7 +32,6 @@ describe('FileTicketComponent', () => {
       ReactiveFormsModule,
     ],
     declarations: [
-      MockComponent(OauthButtonComponent),
       MockComponent(SimilarIssuesComponent),
     ],
     providers: [

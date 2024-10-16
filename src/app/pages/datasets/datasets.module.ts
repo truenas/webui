@@ -17,6 +17,7 @@ import { IxDetailsHeightDirective } from 'app/directives/details-height/details-
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -57,7 +58,9 @@ import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/rol
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { routing } from 'app/pages/datasets/datasets.routing';
 import { EncryptionModule } from 'app/pages/datasets/modules/encryption/encryption.module';
-import { PermissionsModule } from 'app/pages/datasets/modules/permissions/permissions.module';
+import {
+  PermissionsCardComponent,
+} from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { SnapshotsModule } from 'app/pages/datasets/modules/snapshots/snapshots.module';
 import { DatasetCapacityManagementCardComponent } from './components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from './components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
@@ -81,7 +84,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatSlideToggleModule,
     MatRippleModule,
     MatProgressSpinnerModule,
-    PermissionsModule,
     EncryptionModule,
     ReactiveFormsModule,
     TreeModule,
@@ -118,6 +120,8 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     FakeProgressBarComponent,
     TestDirective,
     PageHeaderComponent,
+    PermissionsCardComponent,
+    MobileBackButtonComponent,
   ],
   declarations: [
     DatasetsManagementComponent,

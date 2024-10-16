@@ -1,9 +1,11 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { VmCpuMode, vmCpuModeLabels } from 'app/enums/vm.enum';
@@ -11,9 +13,14 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { WebSocketService } from 'app/services/ws.service';
@@ -25,6 +32,19 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./cpu-and-memory-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CpuValidatorService],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxInputComponent,
+    IxCheckboxComponent,
+    IxSelectComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperPrevious,
+    TestDirective,
+    MatStepperNext,
+    TranslateModule,
+  ],
 })
 export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
   form = this.formBuilder.group({

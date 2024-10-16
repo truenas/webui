@@ -1,6 +1,6 @@
 <mat-dialog-content>
   <div class="jobs-header">
-    <h3>{{ 'Jobs' | translate }}</h3>
+    <h3>{{ 'Running Jobs' | translate }}</h3>
 
     <div class="badges">
       <div
@@ -51,7 +51,7 @@
       } @else {
         <div class="no-jobs">
           <ix-icon name="info"></ix-icon>
-          <h4 class="message">{{ 'There are no tasks.' | translate }}</h4>
+          <h4 class="message">{{ 'No jobs running.' | translate }}</h4>
         </div>
       }
     </div>
@@ -75,6 +75,6 @@
     ixTest="history"
     (click)="goToJobs()"
   >
-    {{ 'History' | translate }}
+    {{ 'Go to Jobs Page' | translate }}
   </button>
 </mat-dialog-actions>

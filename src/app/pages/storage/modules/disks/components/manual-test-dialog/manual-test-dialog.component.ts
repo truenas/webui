@@ -1,21 +1,26 @@
+import { PercentPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  signal,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import {
-  map, of, takeWhile,
-} from 'rxjs';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
+} from '@angular/material/dialog';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
-import { IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
 import { Disk } from 'app/interfaces/disk.interface';
-import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { IxTestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface ManualTestDialogParams {
@@ -29,11 +34,30 @@ export interface ManualTestDialogParams {
   templateUrl: './manual-test-dialog.component.html',
   styleUrls: ['./manual-test-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    ReactiveFormsModule,
+    IxSelectComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    MatDialogClose,
+    RequiresRolesDirective,
+    MatProgressBar,
+    TranslateModule,
+    FormatDateTimePipe,
+    PercentPipe,
+    IxTestProgressRowComponent,
+  ],
 })
 export class ManualTestDialogComponent {
   form = this.formBuilder.group({
     type: [SmartTestType.Long],
   });
+
+  isSubmitted = signal<boolean>(false);
+  startedTests = signal<boolean>(false);
 
   testTypes$ = of([
     {
@@ -54,33 +78,27 @@ export class ManualTestDialogComponent {
     },
   ]);
 
-  supportedDisks: Disk[] = [];
-  unsupportedDisks: Disk[] = [];
-  startedTests: ManualSmartTest[] = [];
+  selectedDisksWithSmartSupport: (Disk & { error: string })[] = [];
+  selectedDisksWithoutSmartSupport: Disk[] = [];
   endedTests = false;
   progressTotalPercent = 0;
-
-  get hasStartedTests(): boolean {
-    return Boolean(this.startedTests.length);
-  }
 
   protected readonly Role = Role;
 
   constructor(
-    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
     public dialogRef: MatDialogRef<ManualTestDialogComponent>,
+    private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.setDisksBySupport();
   }
 
   onSubmit(): void {
-    const params = this.supportedDisks.map((disk) => ({
+    this.isSubmitted.set(true);
+    const params = this.selectedDisksWithSmartSupport.map((disk) => ({
       identifier: disk.identifier,
       type: this.form.value.type,
     }));
@@ -89,34 +107,17 @@ export class ManualTestDialogComponent {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (startedTests) => {
-          this.startedTests = startedTests;
-          this.ws.subscribe('smart.test.progress').pipe(
-            map((event) => event.fields),
-            takeWhile((result) => {
-              const condition = result
-                && (result as unknown as IncomingWebSocketMessage).msg === IncomingApiMessageType.NoSub;
-              this.endedTests = condition;
-              return !condition;
-            }),
-            untilDestroyed(this),
-          ).subscribe({
-            next: (result) => {
-              if (result?.progress) {
-                this.progressTotalPercent = result.progress.percent / 100;
-              }
-              this.cdr.markForCheck();
-            },
-            complete: () => {
-              this.cdr.markForCheck();
-            },
+          const disksWithErrors = startedTests.filter(
+            (test) => test.error,
+          ).map(
+            (test) => ({ disk: test.disk, error: test.error }),
+          );
+          this.selectedDisksWithSmartSupport = this.selectedDisksWithSmartSupport.map((disk) => {
+            disk.error = disksWithErrors.find((errorDisk) => errorDisk.disk === disk.name)?.error;
+            return disk;
           });
-
           this.cdr.markForCheck();
-        },
-        error: (error: unknown) => {
-          this.dialogRef.close();
-          this.dialogService.error(this.errorHandler.parseError(error));
-          this.cdr.markForCheck();
+          this.startedTests.set(true);
         },
       });
   }
@@ -125,9 +126,9 @@ export class ManualTestDialogComponent {
     this.params.selectedDisks.forEach((disk) => {
       const isSmartSupported = this.params.diskIdsWithSmart.includes(disk.identifier);
       if (isSmartSupported) {
-        this.supportedDisks.push(disk);
+        this.selectedDisksWithSmartSupport.push({ ...disk, error: null });
       } else {
-        this.unsupportedDisks.push(disk);
+        this.selectedDisksWithoutSmartSupport.push(disk);
       }
     });
   }

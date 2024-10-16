@@ -1,9 +1,14 @@
+import { NgClass } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input,
   computed,
   HostBinding,
 } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 
 @Component({
@@ -11,6 +16,14 @@ import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/p
   templateUrl: './product-image.component.html',
   styleUrls: ['./product-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgClass,
+    MatTooltip,
+    IxIconComponent,
+    NgxSkeletonLoaderModule,
+    TranslateModule,
+  ],
 })
 export class ProductImageComponent {
   @HostBinding('class.ix-logo') get isIxLogo(): boolean {

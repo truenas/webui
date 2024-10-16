@@ -84,8 +84,6 @@ describe('NormalSelectionComponent', () => {
     component: NormalSelectionComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    declarations: [
       DiskSizeSelectsComponent,
     ],
     providers: [

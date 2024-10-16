@@ -5,6 +5,7 @@ import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-mana
 
 @Pipe({
   name: 'ixTopologyCategoryDescription',
+  standalone: true,
 })
 export class TopologyCategoryDescriptionPipe implements PipeTransform {
   constructor(

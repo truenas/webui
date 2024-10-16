@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
@@ -10,7 +10,15 @@ import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snaps
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -26,6 +34,19 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     PropertiesOverrideValidatorService,
+  ],
+  standalone: true,
+  imports: [
+    IxFieldsetComponent,
+    ReactiveFormsModule,
+    IxExplorerComponent,
+    IxCheckboxComponent,
+    IxChipsComponent,
+    IxSelectComponent,
+    SchedulerComponent,
+    IxRadioGroupComponent,
+    IxInputComponent,
+    TranslateModule,
   ],
 })
 export class SourceSectionComponent implements OnChanges {

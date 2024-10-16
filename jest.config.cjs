@@ -26,6 +26,7 @@ module.exports = {
   coverageReporters: ['html', 'json'],
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
+  cacheDirectory: "<rootDir>/.jest/cache",
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}),
   transformIgnorePatterns: [
     `node_modules/(?!(${esmPatterns.join('|')}))`

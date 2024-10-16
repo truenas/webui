@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, output,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -12,6 +13,9 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -23,6 +27,14 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   selector: 'ix-disk-size-dropdowns',
   templateUrl: './disk-size-selects.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxSelectComponent,
+    TestOverrideDirective,
+    IxCheckboxComponent,
+    TranslateModule,
+  ],
 })
 export class DiskSizeSelectsComponent implements OnChanges {
   @Input({ required: true }) layout: CreateVdevLayout;

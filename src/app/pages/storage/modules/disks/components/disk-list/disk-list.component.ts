@@ -1,13 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, forkJoin, map, take,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -16,11 +20,23 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
@@ -40,6 +56,26 @@ interface DiskUi extends Disk {
   templateUrl: './disk-list.component.html',
   styleUrls: ['./disk-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    SearchInput1Component,
+    IxTableColumnsSelectorComponent,
+    UiSearchDirective,
+    MatButton,
+    TestDirective,
+    IxIconComponent,
+    RequiresRolesDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableDetailsRowDirective,
+    IxTableDetailsRowComponent,
+    IxTablePagerComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class DiskListComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
@@ -78,7 +114,8 @@ export class DiskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Disk Size'),
       propertyName: 'size',
-      getValue: (row) => (buildNormalizedFileSize(row.size)),
+      getValue: (disk) => buildNormalizedFileSize(disk.size),
+      sortBy: (disk) => disk.size,
     }),
     textColumn({
       title: this.translate.instant('Pool'),
@@ -191,6 +228,7 @@ export class DiskListComponent implements OnInit {
         selectedDisks: this.prepareDisks(disks),
         diskIdsWithSmart: Object.keys(this.smartDiskChoices),
       } as ManualTestDialogParams,
+      width: '600px',
     });
   }
 
@@ -258,8 +296,9 @@ export class DiskListComponent implements OnInit {
 
   private prepareDisks(disks: DiskUi[]): Disk[] {
     return disks.map((disk) => {
-      delete disk.selected;
-      return disk as Disk;
+      const newDisk = { ...disk };
+      delete newDisk.selected;
+      return newDisk as Disk;
     });
   }
 }

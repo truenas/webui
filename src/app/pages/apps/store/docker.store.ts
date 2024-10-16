@@ -14,7 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 export interface DockerConfigState {
   isLoading: boolean;
-  pool: string;
+  dockerConfig: DockerConfig;
   nvidiaDriversInstalled: boolean;
   lacksNvidiaDrivers: boolean;
   statusData: DockerStatusData;
@@ -22,7 +22,7 @@ export interface DockerConfigState {
 
 const initialState: DockerConfigState = {
   isLoading: false,
-  pool: null,
+  dockerConfig: null,
   nvidiaDriversInstalled: false,
   lacksNvidiaDrivers: false,
   statusData: {
@@ -34,7 +34,8 @@ const initialState: DockerConfigState = {
 @Injectable()
 export class DockerStore extends ComponentStore<DockerConfigState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
-  readonly selectedPool$ = this.select((state) => state.pool);
+  readonly dockerConfig$ = this.select((state) => state.dockerConfig);
+  readonly selectedPool$ = this.select((state) => state.dockerConfig?.pool || null);
   readonly nvidiaDriversInstalled$ = this.select((state) => state.nvidiaDriversInstalled);
   readonly lacksNvidiaDrivers$ = this.select((state) => state.lacksNvidiaDrivers);
   readonly isDockerStarted$ = this.select((state) => DockerStatus.Running === state.statusData.status);
@@ -65,7 +66,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       tap(
         ([dockerConfig, statusData, lacksNvidiaDrivers]: [DockerConfig, DockerStatusData, boolean]) => {
           this.patchState({
-            pool: dockerConfig.pool,
+            dockerConfig,
             nvidiaDriversInstalled: dockerConfig.nvidia,
             lacksNvidiaDrivers,
             statusData,
@@ -97,17 +98,33 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       .pipe(
         tap((job) => {
           if (job.state === JobState.Success) {
-            this.patchState({
-              pool: poolName,
-            });
+            this.patchState((state) => ({
+              ...state,
+              dockerConfig: {
+                ...state.dockerConfig,
+                pool: poolName,
+              },
+            }));
           } else if ([JobState.Failed, JobState.Aborted, JobState.Error].includes(job.state)) {
-            this.patchState({
-              pool: null,
-            });
+            this.patchState((state) => ({
+              ...state,
+              dockerConfig: {
+                ...state.dockerConfig,
+                pool: null,
+              },
+            }));
           }
         }),
         this.errorHandler.catchError(),
       );
+  }
+
+  reloadDockerConfig(): Observable<DockerConfig> {
+    return this.getDockerConfig().pipe(
+      tap((dockerConfig) => {
+        this.patchState({ dockerConfig });
+      }),
+    );
   }
 
   setDockerNvidia(nvidiaDriversInstalled: boolean): Observable<Job<DockerConfig>> {

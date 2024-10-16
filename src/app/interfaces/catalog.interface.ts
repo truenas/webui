@@ -3,7 +3,7 @@ import {
 } from 'app/interfaces/app.interface';
 import { AppMaintainer } from 'app/interfaces/available-app.interface';
 
-export interface Catalog {
+export interface CatalogConfig {
   id: string;
   label: string;
   location: string;
@@ -14,8 +14,6 @@ export interface CatalogUpdate {
   preferred_trains: string[];
   nvidia?: boolean;
 }
-
-export type CatalogTrain = Record<string, CatalogApp>;
 
 export interface CatalogApp {
   app_readme: string;

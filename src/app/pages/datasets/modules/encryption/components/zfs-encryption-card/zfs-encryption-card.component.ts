@@ -7,10 +7,10 @@ import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import {
   EncryptionOptionsDialogData,
-} from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog-data.interface';
+} from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog-data.interface';
 import {
   EncryptionOptionsDialogComponent,
-} from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
+} from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
 import {
   ExportDatasetKeyDialogComponent,

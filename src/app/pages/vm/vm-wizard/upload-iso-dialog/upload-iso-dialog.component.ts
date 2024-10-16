@@ -1,17 +1,23 @@
 import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, of, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
@@ -22,6 +28,19 @@ import { UploadService } from 'app/services/upload.service';
   templateUrl: './upload-iso-dialog.component.html',
   styleUrls: ['./upload-iso-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    ReactiveFormsModule,
+    IxExplorerComponent,
+    IxFileInputComponent,
+    FormActionsComponent,
+    MatButton,
+    MatDialogClose,
+    TestDirective,
+    RequiresRolesDirective,
+    TranslateModule,
+  ],
 })
 export class UploadIsoDialogComponent {
   form = this.formBuilder.group({

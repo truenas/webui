@@ -1,15 +1,21 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+import {
+  MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious,
+} from '@angular/material/stepper';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   lastValueFrom, forkJoin,
 } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
   IscsiAuthMethod,
@@ -39,15 +45,23 @@ import {
 import { newOption } from 'app/interfaces/option.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
+import { DeviceWizardStepComponent } from './steps/device-wizard-step/device-wizard-step.component';
+import { InitiatorWizardStepComponent } from './steps/initiator-wizard-step/initiator-wizard-step.component';
+import { PortalWizardStepComponent } from './steps/portal-wizard-step/portal-wizard-step.component';
 
 @UntilDestroy()
 @Component({
@@ -55,6 +69,25 @@ import { ServicesState } from 'app/store/services/services.reducer';
   templateUrl: './iscsi-wizard.component.html',
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeaderComponent,
+    MatCard,
+    ReactiveFormsModule,
+    MatStepper,
+    MatStep,
+    MatStepLabel,
+    DeviceWizardStepComponent,
+    MatButton,
+    MatStepperNext,
+    TestDirective,
+    PortalWizardStepComponent,
+    MatStepperPrevious,
+    InitiatorWizardStepComponent,
+    RequiresRolesDirective,
+    TranslateModule,
+    UseIxIconsInStepperComponent,
+  ],
 })
 export class IscsiWizardComponent implements OnInit {
   isLoading = false;

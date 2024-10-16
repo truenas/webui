@@ -1,18 +1,27 @@
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   Component, Input, output,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
+import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -23,6 +32,21 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./file-ticket.component.scss'],
   templateUrl: './file-ticket.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CdkScrollable,
+    MatDialogContent,
+    ReactiveFormsModule,
+    IxInputComponent,
+    SimilarIssuesComponent,
+    IxTextareaComponent,
+    IxCheckboxComponent,
+    IxFileInputComponent,
+    MatDialogActions,
+    FormActionsComponent,
+    OauthButtonComponent,
+    TranslateModule,
+  ],
 })
 export class FileTicketComponent {
   @Input() type: FeedbackType.Bug | FeedbackType.Suggestion;

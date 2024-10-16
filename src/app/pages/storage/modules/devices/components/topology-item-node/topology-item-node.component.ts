@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
@@ -11,6 +12,7 @@ import { Disk } from 'app/interfaces/disk.interface';
 import {
   TopologyDisk, TopologyItem,
 } from 'app/interfaces/storage.interface';
+import { TopologyItemIconComponent } from 'app/pages/storage/modules/devices/components/topology-item-icon/topology-item-icon.component';
 
 @UntilDestroy()
 @Component({
@@ -18,6 +20,8 @@ import {
   templateUrl: './topology-item-node.component.html',
   styleUrls: ['./topology-item-node.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [TopologyItemIconComponent, NgClass],
 })
 export class TopologyItemNodeComponent {
   readonly topologyItem = input.required<TopologyItem>();

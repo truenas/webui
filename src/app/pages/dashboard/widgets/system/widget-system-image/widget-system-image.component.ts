@@ -2,13 +2,16 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
+import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { systemImageWidget } from 'app/pages/dashboard/widgets/system/widget-system-image/widget-system-image.definition';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -19,6 +22,13 @@ import { selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware } fro
   templateUrl: './widget-system-image.component.html',
   styleUrls: ['./widget-system-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    ProductImageComponent,
+    TranslateModule,
+  ],
 })
 export class WidgetSystemImageComponent implements WidgetComponent {
   size = input.required<SlotSize>();

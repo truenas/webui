@@ -1,8 +1,12 @@
+import { KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
+import {
+  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
+} from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
 import {
   CreateVdevLayout, TopologyItemType, VdevType, vdevTypeLabels,
@@ -11,6 +15,10 @@ import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { TopologyCategoryDescriptionPipe } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import { PoolManagerTopology, PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 const defaultCategory: PoolManagerTopologyCategory = {
@@ -31,6 +39,19 @@ const defaultCategory: PoolManagerTopologyCategory = {
   templateUrl: './existing-configuration-preview.component.html',
   styleUrls: ['./existing-configuration-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    TranslateModule,
+    CastPipe,
+    FileSizePipe,
+    MapValuePipe,
+    KeyValuePipe,
+    TopologyCategoryDescriptionPipe,
+  ],
 })
 export class ExistingConfigurationPreviewComponent implements OnChanges {
   @Input() name: string;

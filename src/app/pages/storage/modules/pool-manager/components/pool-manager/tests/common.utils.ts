@@ -98,9 +98,6 @@ export const commonImports = [
   CastPipe,
   IxWarningComponent,
   FakeProgressBarComponent,
-];
-
-export const commonDeclarations = [
   ConfigurationPreviewComponent,
   ExistingConfigurationPreviewComponent,
   InspectVdevsDialogComponent,

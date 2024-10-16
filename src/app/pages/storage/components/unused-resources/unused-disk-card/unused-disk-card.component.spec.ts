@@ -19,11 +19,9 @@ describe('UnusedDiskCardComponent', () => {
     component: UnusedDiskCardComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    providers: [mockAuth()],
-    declarations: [
       ManageUnusedDiskDialogComponent,
     ],
+    providers: [mockAuth()],
   });
 
   beforeEach(() => {

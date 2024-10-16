@@ -1,35 +1,49 @@
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
+import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
   toggleColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -42,6 +56,25 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './cloud-backup-list.component.html',
   styleUrl: './cloud-backup-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    SearchInput1Component,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    UiSearchDirective,
+    NgTemplateOutlet,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableBodyComponent,
+    IxTablePagerComponent,
+    IxDetailsHeightDirective,
+    CloudBackupDetailsComponent,
+    IxTableHeadComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class CloudBackupListComponent implements OnInit {
   cloudBackups: CloudBackup[] = [];
@@ -73,14 +106,9 @@ export class CloudBackupListComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (row) => {
-        if (row.job?.time_finished) {
-          return formatDistanceToNowShortened(row.job?.time_finished.$date);
-        }
-        return this.translate.instant('N/A');
-      },
+      getValue: (row) => row.job?.time_finished?.$date,
     }),
     actionsColumn({
       cssClass: 'wide-actions',
@@ -91,7 +119,7 @@ export class CloudBackupListComponent implements OnInit {
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: iconMarker('play_arrow'),
+          iconName: iconMarker('mdi-play-circle'),
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
