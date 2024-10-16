@@ -67,6 +67,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     [CaCreateType.Intermediate, this.translate.instant('Intermediate CA')],
     [CaCreateType.Import, this.translate.instant('Import CA')],
   ]);
+
   readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
 
   constructor(

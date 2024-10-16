@@ -12,7 +12,7 @@ export interface IxIconGroupFilters extends BaseHarnessFilters {
 }
 
 export class IxIconGroupHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-icon-group';
+  static readonly hostSelector = 'ix-icon-group';
 
   static with(options: IxIconGroupFilters): HarnessPredicate<IxIconGroupHarness> {
     return new HarnessPredicate(IxIconGroupHarness, options)
@@ -49,8 +49,6 @@ export class IxIconGroupHarness extends ComponentHarness implements IxFormContro
     const buttons = await this.getButtons();
     const inputState = await parallel(() => buttons.map((control) => control.isDisabled()));
 
-    return new Promise((resolve) => {
-      resolve(inputState.every(Boolean));
-    });
+    return inputState.every(Boolean);
   }
 }

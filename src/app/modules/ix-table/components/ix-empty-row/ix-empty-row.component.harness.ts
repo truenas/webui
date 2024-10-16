@@ -4,7 +4,7 @@ export interface IxEmptyRowHarnessFilters extends BaseHarnessFilters {
   title?: string;
 }
 export class IxEmptyRowHarness extends ComponentHarness {
-  static hostSelector = 'ix-empty-row';
+  static readonly hostSelector = 'ix-empty-row';
 
   static with(options: IxEmptyRowHarnessFilters): HarnessPredicate<IxEmptyRowHarness> {
     return new HarnessPredicate(IxEmptyRowHarness, options)

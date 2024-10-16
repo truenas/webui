@@ -41,6 +41,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     this.interfaces(),
     (interfaces) => getNetworkInterface(interfaces, this.interfaceId()),
   ));
+
   protected interfaceUsage = toSignal(toObservable(this.interface).pipe(
     filter((state) => Boolean(!state.isLoading && state.value)),
     map((state) => state.value.name),
@@ -64,6 +65,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
   protected linkState = computed(() => {
     return this.interfaceUsage() ? this.interfaceUsage().link_state : this.interface().value.state.link_state;
   });
+
   protected isLinkStateUp = computed(() => this.linkState() === LinkState.Up);
   protected linkStateLabel = computed(() => linkStateLabelMap.get(this.linkState()));
   protected bitsIn = computed(() => this.interfaceUsage().received_bytes_rate * 8);
@@ -89,6 +91,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
       return (update.data as number[][]).map((row) => (row = row.slice(1).map((value) => value * kb)));
     }),
   ));
+
   protected cachedNetworkStats = signal<number[][]>([]);
   protected networkStats = computed(() => {
     const cachedStats = this.cachedNetworkStats();

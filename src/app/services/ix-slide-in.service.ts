@@ -63,14 +63,18 @@ export class IxSlideInService {
   }
 
   closeLast(): void {
-    if (!this.isSlideInOpen) { return; }
+    if (!this.isSlideInOpen) {
+      return;
+    }
 
     const lastSlideInRef = Array.from(this.slideInRefMap.values()).pop();
     lastSlideInRef.close();
   }
 
   closeAll(): void {
-    if (!this.isSlideInOpen) { return; }
+    if (!this.isSlideInOpen) {
+      return;
+    }
 
     this.slideInRefMap.forEach((ref) => ref.close());
   }

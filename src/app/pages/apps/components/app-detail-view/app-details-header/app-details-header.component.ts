@@ -74,21 +74,23 @@ export class AppDetailsHeaderComponent {
     return this.authService.user$.pipe(
       take(1),
       switchMap((user) => {
-        return user.attributes.appsAgreement ? of(true) : this.dialogService.confirm({
-          title: this.translate.instant('Warning'),
-          message: this.translate.instant(`Using 3rd party applications with TrueNAS extends its
-            functionality beyond standard NAS use, which can introduce risks like data loss or system disruption. <br /><br />
-            iXsystems does not guarantee application safety or reliability, and such applications may not
-            be covered by support contracts. Issues with core NAS functionality may be closed without
-            further investigation if the same data or filesystems are accessed by these applications.`),
-          buttonText: this.translate.instant('Agree'),
-          cancelText: this.translate.instant('Go Back'),
-          disableClose: true,
-        }).pipe(
-          filter(Boolean),
-          switchMap(() => this.ws.call('auth.set_attribute', ['appsAgreement', true])),
-          switchMap(() => this.authService.refreshUser()),
-        );
+        return user.attributes.appsAgreement
+          ? of(true)
+          : this.dialogService.confirm({
+            title: this.translate.instant('Warning'),
+            message: this.translate.instant(`Using 3rd party applications with TrueNAS extends its
+              functionality beyond standard NAS use, which can introduce risks like data loss or system disruption. <br /><br />
+              iXsystems does not guarantee application safety or reliability, and such applications may not
+              be covered by support contracts. Issues with core NAS functionality may be closed without
+              further investigation if the same data or filesystems are accessed by these applications.`),
+            buttonText: this.translate.instant('Agree'),
+            cancelText: this.translate.instant('Go Back'),
+            disableClose: true,
+          }).pipe(
+            filter(Boolean),
+            switchMap(() => this.ws.call('auth.set_attribute', ['appsAgreement', true])),
+            switchMap(() => this.authService.refreshUser()),
+          );
       }),
 
     );

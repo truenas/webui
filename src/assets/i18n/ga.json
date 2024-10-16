@@ -97,7 +97,7 @@
   "This dataset is used to store apps config and other container related data": "",
   "Update Members": "",
   "Updating custom app": "",
-  "Using 3rd party applications with TrueNAS extends its\n            functionality beyond standard NAS use, which can introduce risks like data loss or system disruption. <br /><br />\n            iXsystems does not guarantee application safety or reliability, and such applications may not\n            be covered by support contracts. Issues with core NAS functionality may be closed without\n            further investigation if the same data or filesystems are accessed by these applications.": "",
+  "Using 3rd party applications with TrueNAS extends its\n              functionality beyond standard NAS use, which can introduce risks like data loss or system disruption. <br /><br />\n              iXsystems does not guarantee application safety or reliability, and such applications may not\n              be covered by support contracts. Issues with core NAS functionality may be closed without\n              further investigation if the same data or filesystems are accessed by these applications.": "",
   "VMware: Extent block size 512b, TPC enabled, no Xen compat mode, SSD speed": "",
   "Validate effective ACL": "",
   "View Logs": "",

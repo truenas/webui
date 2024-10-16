@@ -28,6 +28,7 @@ class TestComponent {
   ) {
     this.text = value;
   }
+
   close(): void {
     this.slideInRef.close();
   }

@@ -54,10 +54,12 @@ export class SigninStore extends ComponentStore<SigninState> {
   failoverAllowsLogin$ = this.select((state) => {
     return [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status);
   });
+
   canLogin$ = combineLatest([this.wsManager.isConnected$, this.failoverAllowsLogin$]).pipe(
     map(([isConnected, failoverAllowsLogin]) => isConnected && failoverAllowsLogin),
     distinctUntilChanged(),
   );
+
   hasFailover$ = this.select((state) => {
     // Do not simplify to optional chaining.
     return state.failover && state.failover.status !== FailoverStatus.Single;

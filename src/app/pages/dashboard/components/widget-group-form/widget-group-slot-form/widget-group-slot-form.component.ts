@@ -286,7 +286,6 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
             },
             (errors: ValidationErrors): void => {
               if (!errors) {
-                errors = {} as ValidationErrors;
                 return;
               }
               this.validityChange.emit([this.slot().slotPosition, errors]);

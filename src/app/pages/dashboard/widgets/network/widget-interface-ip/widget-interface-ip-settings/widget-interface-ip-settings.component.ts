@@ -33,6 +33,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
     startWith([]),
     idNameArrayToOptions(),
   );
+
   private firstOption = toSignal(this.networkInterfaceOptions$.pipe(map((opts) => opts[0]?.value)));
 
   private readonly formFieldNames = ['interface'];

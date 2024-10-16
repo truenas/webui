@@ -79,6 +79,7 @@ export class ReportComponent implements OnInit, OnChanges {
     '1M': null as number,
     '6M': null as number,
   };
+
   currentStartDate: number;
   currentEndDate: number;
   customZoom = false;
@@ -92,6 +93,7 @@ export class ReportComponent implements OnInit, OnChanges {
     { timespan: ReportZoomLevel.Day, timeformat: '%a %H:%M', culling: 4 },
     { timespan: ReportZoomLevel.Hour, timeformat: '%H:%M', culling: 6 },
   ];
+
   readonly zoomLevelLabels = zoomLevelLabels;
 
   get reportTitle(): string {

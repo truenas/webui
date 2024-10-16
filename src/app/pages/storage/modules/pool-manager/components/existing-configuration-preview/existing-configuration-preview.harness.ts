@@ -1,7 +1,7 @@
 import { ComponentHarness } from '@angular/cdk/testing';
 
 export class ExistingConfigurationPreviewHarness extends ComponentHarness {
-  static hostSelector = 'ix-existing-configuration-preview';
+  static readonly hostSelector = 'ix-existing-configuration-preview';
 
   async getItems(): Promise<Record<string, string>> {
     const itemTexts: Record<string, string> = {};

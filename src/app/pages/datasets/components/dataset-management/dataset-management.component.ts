@@ -120,12 +120,14 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.isExpandable,
     { trackBy: (dataset: DatasetDetails) => dataset.id as unknown as DatasetDetails },
   );
+
   treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails>(
     (dataset) => dataset,
     this.getLevel,
     this.isExpandable,
     () => ([]),
   );
+
   dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
   trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;

@@ -103,11 +103,13 @@ export class EmailFormComponent implements OnInit {
       value: SendMethod.Gmail,
     },
   ]);
+
   readonly securityOptions$ = of([
     { label: this.translate.instant('Plain (No Encryption)'), value: MailSecurity.Plain },
     { label: this.translate.instant('SSL (Implicit TLS)'), value: MailSecurity.Ssl },
     { label: this.translate.instant('TLS (STARTTLS)'), value: MailSecurity.Tls },
   ]);
+
   readonly helptext = helptextSystemEmail;
 
   private oauthCredentials: GmailOauthConfig | Record<string, never>;

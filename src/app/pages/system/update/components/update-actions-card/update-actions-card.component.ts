@@ -199,8 +199,8 @@ export class UpdateActionsCardComponent implements OnInit {
               packages.push({
                 operation: 'Upgrade',
                 name: change.old.name + '-' + change.old.version
-                + ' -> ' + change.new.name + '-'
-                + change.new.version,
+                  + ' -> ' + change.new.name + '-'
+                  + change.new.version,
               });
             } else if (change.operation === SystemUpdateOperationType.Install) {
               packages.push({

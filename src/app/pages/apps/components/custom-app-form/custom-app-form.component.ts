@@ -36,6 +36,7 @@ export class CustomAppFormComponent implements OnInit {
     release_name: ['', Validators.required],
     custom_compose_config_string: ['\n\n', Validators.required],
   });
+
   protected isLoading = signal(false);
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 

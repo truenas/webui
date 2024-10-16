@@ -16,11 +16,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
   from: ListSelection<T>; to: ListSelection<T>;
 } => ({
-    from: new ListSelection(
-      from.totalItems.filter((item) => !from.isSelected(item)),
-    ),
-    to: new ListSelection([...from.selectedItems, ...to.totalItems]),
-  });
+  from: new ListSelection(
+    from.totalItems.filter((item) => !from.isSelected(item)),
+  ),
+  to: new ListSelection([...from.selectedItems, ...to.totalItems]),
+});
 
 @Component({
   selector: 'ix-dual-listbox',

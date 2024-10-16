@@ -72,6 +72,7 @@ export class NtpServerFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingServer;
   }
+
   get title(): string {
     return this.isNew ? this.translate.instant('Add NTP Server') : this.translate.instant('Edit NTP Server');
   }

@@ -28,5 +28,6 @@ export class SchedulerDateExamplesComponent {
       this.localeService.timezone,
     );
   });
+
   protected readonly slice = slice;
 }

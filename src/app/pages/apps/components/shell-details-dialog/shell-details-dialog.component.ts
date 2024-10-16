@@ -28,6 +28,7 @@ export class ShellDetailsDialogComponent {
     command?: FormControl<string>;
     tail_lines?: FormControl<number>;
   }>;
+
   title: string;
   hasPool = true;
 

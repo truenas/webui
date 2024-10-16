@@ -53,6 +53,7 @@ export class AppInfoCardComponent {
     this.isRollbackPossible.set(false);
     this.updateRollbackSetup(app.name);
   }, { allowSignalWrites: true });
+
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
     return ['/apps', 'available', app.metadata.train, app.id];

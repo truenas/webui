@@ -159,10 +159,10 @@ export class SnapshotTaskFormComponent implements OnInit {
       ...values,
       schedule: this.isTimeMode
         ? {
-          begin: values.begin,
-          end: values.end,
-          ...crontabToSchedule(this.form.value.schedule),
-        }
+            begin: values.begin,
+            end: values.end,
+            ...crontabToSchedule(this.form.value.schedule),
+          }
         : crontabToSchedule(this.form.value.schedule),
     };
     delete params.begin;

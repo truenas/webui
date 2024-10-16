@@ -74,6 +74,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
   private set iconLigature(iconName: string) {
     this._elementRef.nativeElement.innerText = iconName;
   }
+
   private get iconLigature(): string {
     return this._elementRef?.nativeElement?.innerText;
   }

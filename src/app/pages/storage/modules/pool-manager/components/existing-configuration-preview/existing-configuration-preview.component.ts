@@ -132,7 +132,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
       }
       const firstDisk = cloneDeep(allCategoryVdevsDisks[0]);
       poolManagerTopology[value].hasCustomDiskSelection = poolManagerTopology[value].hasCustomDiskSelection
-        || allCategoryVdevsDisks.some((disk) => disk.size !== firstDisk.size || disk.type !== firstDisk.type);
+      || allCategoryVdevsDisks.some((disk) => disk.size !== firstDisk.size || disk.type !== firstDisk.type);
       if (!poolManagerTopology[value].hasCustomDiskSelection) {
         poolManagerTopology[value].diskSize = firstDisk.size;
         poolManagerTopology[value].diskType = firstDisk.type;

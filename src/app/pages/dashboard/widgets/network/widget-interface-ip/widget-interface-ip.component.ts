@@ -30,6 +30,7 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     }
     return mapLoadedValue(this.interfaces(), (nics) => nics[0].name)?.value;
   });
+
   protected interfaceType = computed(() => {
     return this.settings()?.widgetName?.includes('v6') ? NetworkInterfaceAliasType.Inet6 : NetworkInterfaceAliasType.Inet;
   });

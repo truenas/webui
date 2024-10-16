@@ -53,6 +53,7 @@ export class WidgetSysInfoActiveComponent {
     const [, timeValue] = this.localeService.getDateAndTime();
     return `${timeValue.split(':')[0]}:${timeValue.split(':')[1]}`;
   });
+
   isLoaded = computed(() => this.systemInfo());
 
   constructor(
@@ -65,6 +66,7 @@ export class WidgetSysInfoActiveComponent {
 
   isFirstRender = true;
 
+  // eslint-disable-next-line sonarjs/no-invariant-returns
   rendered(): string {
     if (!this.isFirstRender) {
       return '';

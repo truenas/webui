@@ -27,6 +27,7 @@ export class WidgetGroupFormComponent {
   protected group = signal<WidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
   );
+
   selectedSlot = signal<WidgetGroupSlot<object>>({
     slotPosition: 0,
     slotSize: SlotSize.Full,

@@ -88,6 +88,7 @@ export class ShellService {
 
     try {
       data = JSON.parse(msg.data as string) as { id?: string; msg: IncomingApiMessageType };
+      // eslint-disable-next-line unused-imports/no-unused-vars
     } catch (error: unknown) {
       // TODO: Figure out why we need this.
       data = { msg: IncomingApiMessageType.Discard } as { id?: string; msg: IncomingApiMessageType };

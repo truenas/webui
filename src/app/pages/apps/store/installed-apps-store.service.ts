@@ -100,7 +100,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
             delay: () => this.appsService.getInstalledAppsUpdates().pipe(
               filter((event) => {
                 return (event.msg === IncomingApiMessageType.Added && !('fields' in event))
-                 || (event.msg === IncomingApiMessageType.Changed && event.fields.custom_app);
+                  || (event.msg === IncomingApiMessageType.Changed && event.fields.custom_app);
               }),
               tap(() => this.patchState({ isLoading: true })),
               delay(2000),

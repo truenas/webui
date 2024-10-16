@@ -176,6 +176,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       !this.isNew && this.form.controls.path.value !== this.existingSmbShare?.path
     );
   }
+
   hostsAllowTooltip = this.translate.instant('Enter a list of allowed hostnames or IP addresses.\
     Separate entries by pressing <code>Enter</code>. A more detailed description \
     with examples can be found \

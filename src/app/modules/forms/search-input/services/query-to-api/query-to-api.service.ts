@@ -59,7 +59,7 @@ export class QueryToApiService<T> {
       }
     } else {
       // Right AND
-      // eslint-disable-next-line no-lonely-if
+      // eslint-disable-next-line no-lonely-if,sonarjs/no-lonely-if
       if (isConditionGroup(conditionGroup.right)) {
         paramsGroup.andGroup((rightGroup) => {
           this.buildGroup(rightGroup, conditionGroup.right as ConditionGroup);

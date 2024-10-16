@@ -149,7 +149,10 @@ export class ReplicationWizardComponent {
       switchMap((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
           return this.runReplicationOnce(createdReplication).pipe(
-            catchError((err) => { this.handleError(err); return EMPTY; }),
+            catchError((err) => {
+              this.handleError(err);
+              return EMPTY;
+            }),
             switchMap(() => of(createdReplication)),
           );
         }

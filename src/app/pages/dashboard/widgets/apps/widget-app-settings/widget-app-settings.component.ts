@@ -29,6 +29,7 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
     startWith([]),
     idNameArrayToOptions(),
   );
+
   private firstOption = toSignal(this.installedApps$.pipe(map((opts) => opts[0]?.value)));
 
   private readonly formFieldNames = ['appName'];
