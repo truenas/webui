@@ -39,7 +39,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -66,7 +66,7 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
     TransferModeExplanationComponent,
     IxExplorerComponent,
     IxInputComponent,
-    SchedulerModule,
+    SchedulerComponent,
     FormActionsComponent,
     MatButton,
     MatStepperPrevious,

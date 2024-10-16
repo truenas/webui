@@ -12,7 +12,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
@@ -34,7 +33,6 @@ describe('CloudSyncWhatAndWhenComponent', () => {
     component: CloudSyncWhatAndWhenComponent,
     imports: [
       ReactiveFormsModule,
-      SchedulerModule,
       TransferModeExplanationComponent,
     ],
     providers: [

@@ -1,17 +1,22 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
 import { of } from 'rxjs';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { Option } from 'app/interfaces/option.interface';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
@@ -20,8 +25,11 @@ import {
   CrontabPartValidatorService,
 } from 'app/modules/scheduler/services/crontab-part-validator.service';
 import { getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
+import { SchedulerPreviewColumnComponent } from './scheduler-preview-column/scheduler-preview-column.component';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +37,19 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   templateUrl: './scheduler-modal.component.html',
   styleUrls: ['./scheduler-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxSelectComponent,
+    TooltipComponent,
+    IxInputComponent,
+    MatCheckbox,
+    TestDirective,
+    MatButton,
+    SchedulerPreviewColumnComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class SchedulerModalComponent implements OnInit {
   protected form = this.formBuilder.group({

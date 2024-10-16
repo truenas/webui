@@ -326,6 +326,7 @@ describe('UserFormComponent', () => {
         'Home Directory': true,
         'Primary Group': true,
         Username: true,
+        'SMB User': true,
       }));
     });
   });

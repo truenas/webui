@@ -3,8 +3,10 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, map, startWith, tap,
 } from 'rxjs';
@@ -23,6 +25,12 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './widget-cpu-usage-recent.component.html',
   styleUrls: ['./widget-cpu-usage-recent.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgxSkeletonLoaderModule,
+    BaseChartDirective,
+    TranslateModule,
+  ],
 })
 export class WidgetCpuUsageRecentComponent implements WidgetComponent {
   size = input.required<SlotSize>();

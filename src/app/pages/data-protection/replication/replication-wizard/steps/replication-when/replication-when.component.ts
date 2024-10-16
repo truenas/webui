@@ -20,7 +20,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -35,7 +35,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     ReactiveFormsModule,
     IxRadioGroupComponent,
-    SchedulerModule,
+    SchedulerComponent,
     IxCheckboxComponent,
     IxInputComponent,
     IxSelectComponent,

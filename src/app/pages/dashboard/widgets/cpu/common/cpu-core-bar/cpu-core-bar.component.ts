@@ -7,6 +7,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TinyColor } from '@ctrl/tinycolor';
 import { Store } from '@ngrx/store';
 import { ChartData, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map } from 'rxjs';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { GaugeData } from 'app/modules/charts/view-chart-gauge/view-chart-gauge.component';
@@ -19,6 +21,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   selector: 'ix-cpu-core-bar',
   templateUrl: './cpu-core-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgxSkeletonLoaderModule, BaseChartDirective],
 })
 export class CpuCoreBarComponent {
   hideTemperature = input<boolean>(false);

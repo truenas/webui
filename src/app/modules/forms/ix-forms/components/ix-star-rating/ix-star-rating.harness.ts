@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 
 export interface IxStarRatingFilters extends BaseHarnessFilters {
   label?: string;
@@ -30,8 +31,8 @@ export class IxStarRatingHarness extends ComponentHarness implements IxFormContr
   }
 
   async getValue(): Promise<number> {
-    // TODO: Infinite loop.
-    return this.getValue();
+    const selectedIcons = await this.locatorForAll(IxIconHarness.with({ name: 'mdi-star' }))();
+    return selectedIcons.length;
   }
 
   async setValue(value: number): Promise<void> {

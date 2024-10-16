@@ -31,7 +31,7 @@ import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -60,7 +60,7 @@ import { WebSocketService } from 'app/services/ws.service';
     IxSlideToggleComponent,
     SshCredentialsSelectComponent,
     IxCheckboxComponent,
-    SchedulerModule,
+    SchedulerComponent,
     IxChipsComponent,
     RequiresRolesDirective,
     MatButton,

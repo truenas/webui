@@ -106,6 +106,10 @@ export class UserFormComponent implements OnInit {
     return this.isNewUser ? this.translate.instant('Add User') : this.translate.instant('Edit User');
   }
 
+  get isEditingBuiltinUser(): boolean {
+    return !this.isNewUser && this.editingUser.builtin;
+  }
+
   form = this.fb.group({
     full_name: ['', [Validators.required]],
     username: ['', [
@@ -165,6 +169,7 @@ export class UserFormComponent implements OnInit {
     shell: helptextUsers.user_form_shell_tooltip,
     locked: helptextUsers.user_form_lockuser_tooltip,
     smb: helptextUsers.user_form_smb_tooltip,
+    smbBuiltin: helptextUsers.smbBuiltin,
   };
 
   readonly groupOptions$ = this.ws.call('group.query').pipe(
@@ -451,6 +456,10 @@ export class UserFormComponent implements OnInit {
       this.form.controls.home.disable();
       this.form.controls.home_create.disable();
       this.form.controls.username.disable();
+    }
+
+    if (user.builtin) {
+      this.form.controls.smb.disable();
     }
 
     this.setNamesInUseValidator(user.username);

@@ -1,3 +1,4 @@
+import { NgComponentOutlet, AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,6 +28,8 @@ type OutletParams = {
   templateUrl: './widget-group.component.html',
   styleUrls: ['./widget-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgComponentOutlet, AsyncPipe],
 })
 export class WidgetGroupComponent {
   group = input.required<WidgetGroup>();

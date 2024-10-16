@@ -13,7 +13,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
 import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
@@ -37,7 +36,6 @@ describe('CloudSyncWizardComponent', () => {
     imports: [
       ReactiveFormsModule,
       MatStepperModule,
-      SchedulerModule,
       StorjProviderFormComponent,
     ],
     providers: [

@@ -619,6 +619,7 @@
   "Cancel any pending Key synchronization.": "",
   "Canceled Resilver on {date}": "",
   "Canceled Scrub on {date}": "",
+  "Cannot be enabled for built-in users.": "",
   "Capabilities": "",
   "Capacity": "",
   "Capacity Settings": "",

@@ -1,4 +1,4 @@
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,15 +8,22 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Option } from 'app/interfaces/option.interface';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { reportingElements } from 'app/pages/reports-dashboard/reports-dashboard.elements';
+import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
+import { SmoothPlotterService } from 'app/pages/reports-dashboard/services/smooth-plotter.service';
 import { LayoutService } from 'app/services/layout.service';
+import { ReportComponent } from './components/report/report.component';
+import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 import { ReportsService } from './reports.service';
 
 @UntilDestroy()
@@ -25,6 +32,23 @@ import { ReportsService } from './reports.service';
   styleUrls: ['./reports-dashboard.component.scss'],
   templateUrl: './reports-dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    ReportsGlobalControlsComponent,
+    UiSearchDirective,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    CdkVirtualForOf,
+    ReportComponent,
+    MatCard,
+  ],
+  providers: [
+    {
+      provide: PlotterService,
+      useClass: SmoothPlotterService,
+    },
+  ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;

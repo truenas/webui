@@ -15,7 +15,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { GmailOauthConfig, MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
-import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
+import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -59,7 +59,7 @@ enum SendMethod {
     IxSelectComponent,
     IxCheckboxComponent,
     IxIconComponent,
-    OauthButtonModule,
+    OauthButtonComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,

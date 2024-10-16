@@ -17,7 +17,6 @@ import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   TransferModeExplanationComponent,
@@ -86,7 +85,6 @@ describe('CloudSyncFormComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudSyncFormComponent,
     imports: [
-      SchedulerModule,
       CloudCredentialsSelectComponent,
       ReactiveFormsModule,
       TransferModeExplanationComponent,
