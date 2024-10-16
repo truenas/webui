@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { MockComponent, MockModule } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -277,8 +277,10 @@ describe('AppWizardComponent', () => {
       ReactiveFormsModule,
       IxDynamicFormModule,
       MockComponent(DockerHubRateInfoDialogComponent),
-      MockModule(MatDialogModule),
       MockComponent(PageHeaderComponent),
+    ],
+    componentProviders: [
+      mockProvider(MatDialog),
     ],
     providers: [
       mockProvider(IxSlideInService),
@@ -308,7 +310,6 @@ describe('AppWizardComponent', () => {
       mockProvider(DockerStore, {
         selectedPool$: of('pool set'),
       }),
-      mockProvider(MatDialog),
       mockProvider(IxSlideInRef),
       mockProvider(Router),
       mockAuth(),
@@ -516,7 +517,7 @@ describe('AppWizardComponent', () => {
     });
 
     it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
+      expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
         data: {
           total_pull_limit: 13,
           total_time_limit_in_secs: 21600,
