@@ -48,20 +48,17 @@
             </div>
             @if (app().state === AppState.Running || app().state === AppState.Deploying) {
               <div class="container-action">
-                <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-130392 -->
-                @if (container.state === AppContainerState.Running) {
-                  <button
-                    *ixRequiresRoles="requiredRoles"
-                    mat-icon-button
-                    matTooltipPosition="above"
-                    [attr.aria-label]="'Shell' | translate"
-                    [ixTest]="[container.service_name, 'shell']"
-                    [matTooltip]="'Shell' | translate"
-                    (click)="shellButtonPressed(container.id)"
-                  >
-                    <ix-icon name="mdi-console"></ix-icon>
-                  </button>
-                }
+                <button
+                  *ixRequiresRoles="requiredRoles"
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'Shell' | translate"
+                  [ixTest]="[container.service_name, 'shell']"
+                  [matTooltip]="'Shell' | translate"
+                  (click)="shellButtonPressed(container.id)"
+                >
+                  <ix-icon name="mdi-console"></ix-icon>
+                </button>
                 <button
                   mat-icon-button
                   matTooltipPosition="above"
@@ -72,7 +69,7 @@
                 >
                   <ix-icon name="mdi-folder-outline"></ix-icon>
                 </button>
-                
+
 
                 <button
                   mat-icon-button
@@ -85,7 +82,7 @@
                   <ix-icon name="mdi-text-box"></ix-icon>
                 </button>
 
-                
+
               </div>
             }
           </div>
