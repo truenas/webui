@@ -1,7 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
+import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AppJsonDetailsCardComponent } from './app-json-details-card.component';
 
 interface JsonDetails { key: string; value: string }
@@ -16,6 +16,7 @@ describe('AppJsonDetailsCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppJsonDetailsCardComponent<JsonDetails>,
+    imports: [NgxSkeletonLoaderModule],
     declarations: [
       MockComponents(
         NgxSkeletonLoaderComponent,
