@@ -31,6 +31,9 @@ import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/m
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
+import { SnapshotEffects } from 'app/pages/datasets/modules/snapshots/store/snapshot.effects';
+import { snapshotReducer } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
+import { snapshotStateKey } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
@@ -96,6 +99,8 @@ import { AuthGuardService } from './services/auth/auth-guard.service';
       serializer: CustomRouterStateSerializer,
     }),
     EffectsModule.forRoot(rootEffects),
+    EffectsModule.forFeature([SnapshotEffects]),
+    StoreModule.forFeature(snapshotStateKey, snapshotReducer),
     MatDialogModule,
     SnackbarModule,
     NgxSkeletonLoaderModule.forRoot({
