@@ -6,9 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import {
-  Observable, forkJoin, of, switchMap,
-} from 'rxjs';
+import { forkJoin, of, switchMap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -164,26 +162,13 @@ export class VmEditFormComponent implements OnInit {
     }
 
     const gpusIds = this.form.value.gpus;
-    let updateVmRequest$: Observable<unknown>;
-
-    if (gpusIds.length) {
-      updateVmRequest$ = this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
-        switchMap(() => forkJoin([
-          this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
-          this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
-        ])),
-      );
-    } else {
-      const requests$: Observable<unknown>[] = [
+    this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
+      switchMap(() => forkJoin([
         this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
-      ];
-      if (this.previouslySetGpuPciIds.length) {
-        requests$.push(this.vmGpuService.updateVmGpus(this.existingVm, []));
-      }
-      updateVmRequest$ = forkJoin(requests$);
-    }
-
-    updateVmRequest$.pipe(untilDestroyed(this)).subscribe({
+        this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
+      ])),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
         this.isLoading = false;
         this.cdr.markForCheck();
