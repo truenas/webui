@@ -34,6 +34,9 @@ import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.inte
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -63,6 +66,7 @@ import { WebSocketService } from 'app/services/ws.service';
     ReplicationWhatAndWhereComponent,
     ReplicationWhenComponent,
     TranslateModule,
+    UseIxIconsInStepperComponent,
   ],
 })
 export class ReplicationWizardComponent {

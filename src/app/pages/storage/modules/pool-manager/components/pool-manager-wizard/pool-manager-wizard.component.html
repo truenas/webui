@@ -2,6 +2,8 @@
   <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
   <form (keydown.enter)="$event.preventDefault()">
     <mat-vertical-stepper #stepper>
+      <ix-use-ix-icons-in-stepper></ix-use-ix-icons-in-stepper>
+
       <mat-step
         ixStepActivation
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.General)"
