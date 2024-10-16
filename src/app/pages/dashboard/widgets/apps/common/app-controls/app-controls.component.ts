@@ -1,7 +1,6 @@
 import { KeyValuePipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input,
-  computed,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -13,7 +12,6 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { App } from 'app/interfaces/app.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -39,10 +37,7 @@ import { RedirectService } from 'app/services/redirect.service';
 })
 export class AppControlsComponent {
   app = input.required<LoadingState<App>>();
-
-  protected isRestarting = computed(() => {
-    return mapLoadedValue(this.app(), (app) => app.state === AppState.Deploying);
-  });
+  appState = AppState;
 
   constructor(
     private translate: TranslateService,

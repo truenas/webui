@@ -29,7 +29,9 @@ import { ThemeService } from 'app/services/theme/theme.service';
 })
 export class AppDiskInfoComponent {
   stats = input.required<LoadingState<AppStats>>();
+  aspectRatio = input<number>(3);
 
+  isLoading = computed(() => this.stats().isLoading);
   protected readonly initialDiskStats = Array.from({ length: 60 }, () => ([0, 0]));
   protected readonly cachedDiskStats = signal<number[][]>([]);
   readonly diskStats = computed(() => {

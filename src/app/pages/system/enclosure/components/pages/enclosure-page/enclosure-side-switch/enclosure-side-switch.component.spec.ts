@@ -8,11 +8,14 @@ import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclos
 
 describe('EnclosureSideSwitchComponent', () => {
   let spectator: Spectator<EnclosureSideSwitchComponent>;
+  let hasMoreThanOneSide = false;
+
   const createComponent = createComponentFactory({
     component: EnclosureSideSwitchComponent,
     providers: [
       mockProvider(EnclosureStore, {
         selectSide: jest.fn(),
+        hasMoreThanOneSide: () => hasMoreThanOneSide,
       }),
     ],
   });
@@ -29,6 +32,7 @@ describe('EnclosureSideSwitchComponent', () => {
 
   it('does not show side buttons if there is only one side in enclosure', () => {
     expect(spectator.query('button')).toBeNull();
+    hasMoreThanOneSide = true;
   });
 
   it('shows button for Front when there is a front side and another one', () => {

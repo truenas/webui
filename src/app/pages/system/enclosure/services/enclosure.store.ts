@@ -86,6 +86,15 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));
 
+  readonly hasMoreThanOneSide = computed(() => {
+    return [
+      this.selectedEnclosure().front_loaded,
+      this.selectedEnclosure().top_loaded,
+      this.selectedEnclosure().rear_slots > 0,
+      this.selectedEnclosure().internal_slots > 0,
+    ].filter(Boolean).length > 1;
+  });
+
   constructor(
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,

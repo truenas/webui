@@ -16,7 +16,10 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
 @Component({
   selector: 'ix-widget-app-network',
   templateUrl: './widget-app-network.component.html',
-  styleUrls: ['./widget-app-network.component.scss'],
+  styleUrls: [
+    '../widget-app/widget-app.component.scss',
+    './widget-app-network.component.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
