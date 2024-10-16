@@ -55,7 +55,11 @@ ix-fake-progress-bar {
 
     ::ng-deep {
       .enclosure-image {
-        max-height: 250px;
+        max-height: 350px;
+
+        &.has-side-switch {
+          max-height: 300px;
+        }
       }
     }
   }
