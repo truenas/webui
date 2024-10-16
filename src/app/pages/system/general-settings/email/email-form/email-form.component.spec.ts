@@ -15,7 +15,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { GmailOauthConfig, MailConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { User } from 'app/interfaces/user.interface';
-import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
+import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -49,7 +49,7 @@ describe('EmailFormComponent', () => {
     component: EmailFormComponent,
     imports: [
       ReactiveFormsModule,
-      OauthButtonModule,
+      OauthButtonComponent,
     ],
     providers: [
       provideMockStore({

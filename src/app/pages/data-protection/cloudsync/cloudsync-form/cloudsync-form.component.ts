@@ -46,7 +46,7 @@ import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/i
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -86,7 +86,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     IxIconComponent,
     CloudCredentialsSelectComponent,
     IxCheckboxComponent,
-    SchedulerModule,
+    SchedulerComponent,
     IxTextareaComponent,
     IxChipsComponent,
     RequiresRolesDirective,

@@ -26,7 +26,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'system-tasks',
-        loadChildren: () => import('app/pages/system-tasks/system-tasks.module').then((module) => module.SystemTasksModule),
+        loadChildren: () => import('app/pages/system-tasks/system-tasks.routes').then((module) => module.systemTasksRoutes),
         data: { title: T('Others'), breadcrumb: T('Others') },
       },
     ],
@@ -39,7 +39,7 @@ export const rootRouterConfig: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () => import('app/pages/dashboard/dashboard.module').then((module) => module.DashboardModule),
+        loadComponent: () => import('app/pages/dashboard/components/dashboard/dashboard.component').then((module) => module.DashboardComponent),
         data: { title: T('Dashboard'), breadcrumb: T('Dashboard') },
       },
       {
@@ -94,7 +94,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'reportsdashboard',
-        loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.module').then((module) => module.ReportsDashboardModule),
+        loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.routes').then((module) => module.reportsDashboardRoutes),
         data: { title: T('Reporting'), breadcrumb: T('Reporting') },
       },
       {

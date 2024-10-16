@@ -6,6 +6,7 @@
   <div class="image-container">
     <ix-enclosure-side
       class="enclosure-image"
+      [class.has-side-switch]="hasMoreThanOneSide()"
       [enclosure]="enclosure()"
       [side]="selectedSide()"
       [slotTintFn]="diskStatusTint"
@@ -14,10 +15,12 @@
     ></ix-enclosure-side>
   </div>
 
-  <ix-enclosure-side-switch
-    class="side-switch"
-    [enclosure]="enclosure()"
-  ></ix-enclosure-side-switch>
+  @if (hasMoreThanOneSide()) {
+    <ix-enclosure-side-switch
+      class="side-switch"
+      [enclosure]="enclosure()"
+    ></ix-enclosure-side-switch>
+  }
 </div>
 
 <div class="right-column">

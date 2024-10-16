@@ -12,6 +12,8 @@ import {
 } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxDragDirective } from 'app/modules/ix-drop-grid/ix-drag.directive';
+import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -24,6 +26,7 @@ import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-grou
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
+import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
@@ -42,25 +45,27 @@ describe('DashboardComponent', () => {
     component: DashboardComponent,
     imports: [
       NgTemplateOutlet,
-    ],
-    declarations: [
       WidgetGroupControlsComponent,
       MockComponent(PageHeaderComponent),
-      MockComponent(NgxSkeletonLoaderComponent),
       MockComponent(WidgetGroupComponent),
       MockDirective(IxDropGridDirective),
+      MockDirective(IxDropGridItemDirective),
+      MockDirective(IxDragDirective),
       NewFeatureIndicatorDirective,
       DisableFocusableElementsDirective,
     ],
-    providers: [
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
+    componentProviders: [
+      mockProvider(WidgetResourcesService),
       mockProvider(DashboardStore, {
         groups$,
         isLoading$,
         entered: jest.fn(),
         save: jest.fn(() => of(undefined)),
+      }),
+    ],
+    providers: [
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of({ error: false, response: groupA })),
@@ -82,7 +87,7 @@ describe('DashboardComponent', () => {
 
   describe('loading', () => {
     it('initializes store when user enters the dashboard', () => {
-      expect(spectator.inject(DashboardStore).entered).toHaveBeenCalled();
+      expect(spectator.inject(DashboardStore, true).entered).toHaveBeenCalled();
     });
 
     it('shows skeleton loader when loading for first time', () => {
@@ -170,7 +175,7 @@ describe('DashboardComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith(getDefaultWidgets());
+      expect(spectator.inject(DashboardStore, true).save).toHaveBeenCalledWith(getDefaultWidgets());
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
 
@@ -181,7 +186,7 @@ describe('DashboardComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith([groupB, groupC, groupD]);
+      expect(spectator.inject(DashboardStore, true).save).toHaveBeenCalledWith([groupB, groupC, groupD]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
 

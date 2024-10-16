@@ -1,7 +1,11 @@
+import { NgComponentOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 
 /**
@@ -15,6 +19,13 @@ import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-grou
   styleUrls: ['./widget-editor-group.component.scss'],
   templateUrl: './widget-editor-group.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TestDirective,
+    WidgetErrorComponent,
+    NgComponentOutlet,
+    TranslateModule,
+  ],
 })
 export class WidgetEditorGroupComponent extends WidgetGroupComponent {
   readonly selectedSlot = input(0);

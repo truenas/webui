@@ -5,7 +5,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
-import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
+import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 
@@ -25,7 +25,7 @@ export interface OauthProviderData {
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,
-    OauthButtonModule,
+    OauthButtonComponent,
     IxInputComponent,
     TranslateModule,
   ],

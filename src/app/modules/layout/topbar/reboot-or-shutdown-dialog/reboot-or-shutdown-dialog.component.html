@@ -1,0 +1,41 @@
+<h3 mat-dialog-title>{{ title }}</h3>
+
+<div mat-dialog-content>
+  <ix-select
+    [formControl]="form.controls.reason"
+    [label]="'Reason' | translate"
+    [options]="reasonOptions$"
+    [required]="true"
+  ></ix-select>
+  @if(form.controls.customReason.enabled) {
+    <ix-input
+      [formControl]="form.controls.customReason"
+      [label]="'Custom Reason' | translate"
+      [required]="true"
+    ></ix-input>
+  }
+</div>
+
+<ix-form-actions mat-dialog-actions class="form-actions">
+  <ix-checkbox
+    class="confirm"
+    [formControl]="form.controls.confirm"
+    [label]="'Confirm' | translate"
+    [required]="true"
+  ></ix-checkbox>
+
+  <button mat-button type="button" matDialogClose ixTest="cancel">
+    {{ 'Cancel' | translate }}
+  </button>
+
+  <button
+    mat-button
+    type="submit"
+    color="primary"
+    ixTest="submit"
+    [disabled]="form.invalid"
+    (click)="onSubmit()"
+  >
+    {{ buttonText }}
+  </button>
+</ix-form-actions>

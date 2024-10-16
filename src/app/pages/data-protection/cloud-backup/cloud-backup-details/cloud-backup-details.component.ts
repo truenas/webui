@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudBackupExcludedPathsComponent } from './cloud-backup-excluded-paths/cloud-backup-excluded-paths.component';
@@ -24,6 +25,7 @@ import { CloudBackupStatsComponent } from './cloud-backup-stats/cloud-backup-sta
     CloudBackupExcludedPathsComponent,
     CloudBackupSnapshotsComponent,
     TranslateModule,
+    MobileBackButtonComponent,
   ],
 })
 export class CloudBackupDetailsComponent {

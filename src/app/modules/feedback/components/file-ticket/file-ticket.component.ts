@@ -12,7 +12,7 @@ import { MiB } from 'app/constants/bytes.constant';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
-import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
+import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
@@ -44,7 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
     IxFileInputComponent,
     MatDialogActions,
     FormActionsComponent,
-    OauthButtonModule,
+    OauthButtonComponent,
     TranslateModule,
   ],
 })

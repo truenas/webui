@@ -49,6 +49,9 @@ import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -83,6 +86,7 @@ import { PortalWizardStepComponent } from './steps/portal-wizard-step/portal-wiz
     InitiatorWizardStepComponent,
     RequiresRolesDirective,
     TranslateModule,
+    UseIxIconsInStepperComponent,
   ],
 })
 export class IscsiWizardComponent implements OnInit {

@@ -1,13 +1,15 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnDestroy, output,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { MatButton } from '@angular/material/button';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GmailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { OauthJiraMessage } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { OauthProviderData } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 
 @Component({
@@ -15,6 +17,12 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   templateUrl: './oauth-button.component.html',
   styleUrls: ['./oauth-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class OauthButtonComponent implements OnDestroy {
   @Input() oauthType: OauthButtonType;
