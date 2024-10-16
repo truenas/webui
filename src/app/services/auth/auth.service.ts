@@ -41,6 +41,7 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 export class AuthService {
   @LocalStorage() private token: string;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
+  hasTwoFactor$ = new BehaviorSubject<boolean>(null);
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -132,7 +133,7 @@ export class AuthService {
   login(username: string, password: string, otp: string = null): Observable<LoginResult> {
     return this.makeRequest('auth.login', otp ? [username, password, otp] : [username, password]).pipe(
       switchMap((wasLoggedIn) => {
-        return this.processLoginResult(wasLoggedIn).pipe(
+        return this.processLoginResult(wasLoggedIn, username, password).pipe(
           switchMap((loginResult) => {
             if (loginResult === LoginResult.Success) {
               return this.authToken$.pipe(
@@ -191,6 +192,7 @@ export class AuthService {
         this.clearAuthToken();
         this.ws.clearSubscriptions();
         this.isLoggedIn$.next(false);
+        this.hasTwoFactor$.next(null);
       }),
     );
   }
@@ -202,17 +204,27 @@ export class AuthService {
     );
   }
 
-  private processLoginResult(wasLoggedIn: boolean): Observable<LoginResult> {
+  private processLoginResult(wasLoggedIn: boolean, username?: string, password?: string): Observable<LoginResult> {
     return of(wasLoggedIn).pipe(
       switchMap((loggedIn) => {
-        if (!loggedIn) {
-          this.isLoggedIn$.next(false);
-          return of(LoginResult.IncorrectDetails);
-        }
+        return combineLatest([
+          this.hasTwoFactor$,
+          this.loggedInUser$,
+        ]).pipe(
+          take(1),
+          switchMap(([hasTwoFactor, loggedInUser]) => {
+            return combineLatest([
+              hasTwoFactor === null && !loggedIn ? this.getTwoFactor(username, password) : of(hasTwoFactor),
+              loggedInUser === null && loggedIn ? this.getLoggedInUserInformation() : of(loggedInUser),
+            ]);
+          }),
+          switchMap(([hasTwoFactor, user]) => {
+            if (!loggedIn) {
+              this.isLoggedIn$.next(false);
+              return hasTwoFactor ? of(LoginResult.NoOtp) : of(LoginResult.IncorrectDetails);
+            }
 
-        // Check if user has access to webui.
-        return this.getLoggedInUserInformation().pipe(
-          switchMap((user) => {
+            // Check if user has access to webui.
             if (!user?.privilege?.webui_access) {
               this.isLoggedIn$.next(false);
               return of(LoginResult.NoAccess);
@@ -279,6 +291,14 @@ export class AuthService {
         tap((token) => this.latestTokenGenerated$.next(token)),
       ).subscribe();
     }
+  }
+
+  private getTwoFactor(username: string, password: string): Observable<boolean> {
+    return this.ws.call('auth.two_factor_auth', [username, password]).pipe(
+      tap((hasTwoFactor) => {
+        this.hasTwoFactor$.next(hasTwoFactor);
+      }),
+    );
   }
 
   private getLoggedInUserInformation(): Observable<LoggedInUser> {
