@@ -379,6 +379,7 @@
   "Canceled Resilver on {date}": "",
   "Canceled Scrub on {date}": "",
   "Cannot Edit while HA is Enabled": "",
+  "Cannot be enabled for built-in users.": "",
   "Cannot edit while HA is enabled.": "",
   "Capabilities": "",
   "Capacity": "",
