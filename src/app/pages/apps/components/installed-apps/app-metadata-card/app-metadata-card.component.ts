@@ -16,10 +16,10 @@ import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app
   standalone: true,
   imports: [
     MatCard,
+    MatCardContent,
     MatCardHeader,
     MatCardTitle,
     TranslateModule,
-    MatCardContent,
     AppSectionExpandCollapseComponent,
   ],
 })
