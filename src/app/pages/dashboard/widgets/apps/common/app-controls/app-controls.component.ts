@@ -1,6 +1,5 @@
 import {
   Component, ChangeDetectionStrategy, input,
-  computed,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,7 +8,6 @@ import { AppState } from 'app/enums/app-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { App } from 'app/interfaces/app.interface';
-import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -23,10 +21,7 @@ import { RedirectService } from 'app/services/redirect.service';
 })
 export class AppControlsComponent {
   app = input.required<LoadingState<App>>();
-
-  protected isRestarting = computed(() => {
-    return mapLoadedValue(this.app(), (app) => app.state === AppState.Deploying);
-  });
+  appState = AppState;
 
   constructor(
     private translate: TranslateService,

@@ -9,7 +9,10 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
 @Component({
   selector: 'ix-widget-app-cpu',
   templateUrl: './widget-app-cpu.component.html',
-  styleUrls: ['./widget-app-cpu.component.scss'],
+  styleUrls: [
+    '../widget-app/widget-app.component.scss',
+    './widget-app-cpu.component.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetAppCpuComponent implements WidgetComponent<WidgetAppSettings> {

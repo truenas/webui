@@ -9,7 +9,10 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
 @Component({
   selector: 'ix-widget-app-memory',
   templateUrl: './widget-app-memory.component.html',
-  styleUrls: ['./widget-app-memory.component.scss'],
+  styleUrls: [
+    '../widget-app/widget-app.component.scss',
+    './widget-app-memory.component.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetAppMemoryComponent implements WidgetComponent<WidgetAppSettings> {

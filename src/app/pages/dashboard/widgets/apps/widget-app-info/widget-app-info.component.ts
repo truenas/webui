@@ -9,7 +9,7 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
 @Component({
   selector: 'ix-widget-app-info',
   templateUrl: './widget-app-info.component.html',
-  styleUrls: ['./widget-app-info.component.scss'],
+  styleUrls: ['../widget-app/widget-app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetAppInfoComponent implements WidgetComponent<WidgetAppSettings> {
