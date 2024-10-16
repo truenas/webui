@@ -41,6 +41,7 @@ describe('PoolsViewComponent', () => {
         selectedEnclosure: () => ({}) as DashboardEnclosure,
         selectedEnclosureSlots: () => ([]) as DashboardEnclosureSlot[],
         selectedSide: () => EnclosureSide.Front,
+        hasMoreThanOneSide: () => true,
         poolColors: () => ({
           pool1: 'red',
           pool2: 'green',

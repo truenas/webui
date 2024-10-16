@@ -5,22 +5,35 @@
       <ix-app-controls [app]="app() | async"></ix-app-controls>
     </div>
 
-    <div [class]="['container', size()]">
-      <div class="app-header-row">
-        <ix-app-card-logo [url]="application?.metadata?.icon"></ix-app-card-logo>
-        <ix-app-card-info [app]="app() | async" [job]="job() | async"></ix-app-card-info>
-      </div>
+    <div [class]="['container', 'grid', size()]">
+      <ix-app-card-logo
+        [url]="application?.metadata?.icon"
+      ></ix-app-card-logo>
 
-      <div class="app-stats">
-        <div class="app-stats-row">
-          <ix-app-cpu-info class="slot square" [stats]="stats() | async"></ix-app-cpu-info>
-          <ix-app-network-info class="slot rectangle" [stats]="stats() | async"></ix-app-network-info>
-        </div>
-        <div class="app-stats-row">
-          <ix-app-memory-info class="slot square" [stats]="stats() | async"></ix-app-memory-info>
-          <ix-app-disk-info class="slot rectangle" [stats]="stats() | async"></ix-app-disk-info>
-        </div>
-      </div>
+      <ix-app-card-info
+        [app]="app() | async"
+        [job]="job() | async"
+      ></ix-app-card-info>
+
+      <ix-app-cpu-info
+        class="square"
+        [stats]="stats() | async"
+      ></ix-app-cpu-info>
+
+      <ix-app-network-info
+        class="rectangle"
+        [stats]="stats() | async"
+      ></ix-app-network-info>
+
+      <ix-app-memory-info
+        class="square"
+        [stats]="stats() | async"
+      ></ix-app-memory-info>
+
+      <ix-app-disk-info
+        class="rectangle"
+        [stats]="stats() | async"
+      ></ix-app-disk-info>
     </div>
   </mat-card-content>
 </mat-card>

@@ -69,6 +69,7 @@
     ixDropGrid
     [ixDropGridModel]="renderedGroups()"
     [ixUiSearch]="searchableElements.elements.dashboard"
+    [cdkDropListGroupDisabled]="!isEditing()"
     (ixDropGridModelChange)="onGroupsReordered($event)"
   >
     @if (renderedGroups().length > 0) {

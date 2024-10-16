@@ -17,7 +17,7 @@
   <small>{{ '1m Average' | translate }}</small>
 </div>
 <div class="chart-graph">
-  @if (stats().isLoading) {
+  @if (isLoading()) {
     <ngx-skeleton-loader
       class="skeleton"
       [theme]="{
@@ -32,7 +32,7 @@
     <ix-network-chart
       [showLegend]="false"
       [data]="diskChartData()"
-      [aspectRatio]="3"
+      [aspectRatio]="aspectRatio()"
     ></ix-network-chart>
   }
 </div>
