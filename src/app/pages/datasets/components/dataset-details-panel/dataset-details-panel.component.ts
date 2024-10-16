@@ -13,6 +13,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -40,6 +41,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   imports: [
     TestDirective,
     AsyncPipe,
+    MobileBackButtonComponent,
     IxIconComponent,
     TranslateModule,
     DatasetIconComponent,
