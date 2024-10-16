@@ -1,10 +1,9 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 
-export const routes: Routes = [
+export const reportsDashboardRoutes: Routes = [
   {
     path: '',
     pathMatch: 'full',
@@ -59,5 +58,3 @@ export const routes: Routes = [
     component: ReportsDashboardComponent,
   },
 ];
-
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);
