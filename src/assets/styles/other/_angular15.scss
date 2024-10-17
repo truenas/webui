@@ -53,13 +53,7 @@ table td .mdc-icon-button {
   white-space: pre;
 }
 
-.cdk-overlay-pane {
-  .mat-bottom-sheet-container-large,
-  .mat-bottom-sheet-container-xlarge {
-    max-height: 85vh;
-    max-width: 100%;
-    min-height: 85vh;
-    min-width: 85vw;
-    padding: 0 0 32px;
-  }
+.cdk-overlay-pane .mat-bottom-sheet-container {
+  padding: 0;
+  transition: max-width ease-in 0.3s;
 }
