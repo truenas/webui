@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import {
-  App, AppContainerDetails, AppContainerState, appContainerStateLabels,
+  App, AppContainerDetails, appContainerStateLabels,
 } from 'app/interfaces/app.interface';
 import { ShellDetailsDialogFormValue } from 'app/interfaces/shell-details-dialog.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -53,7 +53,6 @@ export class AppWorkloadsCardComponent {
   readonly app = input.required<App>();
 
   readonly AppState = AppState;
-  readonly AppContainerState = AppContainerState;
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly appContainerStateLabels = appContainerStateLabels;
