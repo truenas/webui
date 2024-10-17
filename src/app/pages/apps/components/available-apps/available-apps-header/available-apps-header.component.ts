@@ -41,7 +41,6 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   searchControl = this.fb.control('');
   showFilters = false;
-  isFirstLoad = true;
   availableApps$ = this.applicationsStore.availableApps$;
   areLoaded$ = new BehaviorSubject(false);
   installedApps$ = this.installedAppsStore.installedApps$;

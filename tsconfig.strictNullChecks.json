@@ -121,7 +121,6 @@
     "./src/app/enums/rsync-mode.enum.ts",
     "./src/app/enums/schedule-method.enum.ts",
     "./src/app/enums/schema.enum.ts",
-    "./src/app/enums/screen-type.enum.ts",
     "./src/app/enums/sed-user.enum.ts",
     "./src/app/enums/service-name.enum.ts",
     "./src/app/enums/service-status.enum.ts",

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -78,7 +78,6 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private replicationService: ReplicationService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   get hasEncryption(): boolean {

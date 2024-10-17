@@ -14,7 +14,6 @@ import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface'
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,10 +32,6 @@ export class ApplicationsService {
 
   getPoolList(): Observable<Pool[]> {
     return this.ws.call('pool.query');
-  }
-
-  getInterfaces(): Observable<NetworkInterface[]> {
-    return this.ws.call('interface.query');
   }
 
   getCatalogAppDetails(name: string, train: string): Observable<CatalogApp> {

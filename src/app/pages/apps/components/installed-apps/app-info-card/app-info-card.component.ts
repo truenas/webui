@@ -7,7 +7,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { isEmpty } from 'lodash-es';
 import {
   filter, map, switchMap, take, tap,
 } from 'rxjs';
@@ -46,7 +45,6 @@ export class AppInfoCardComponent {
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
   protected readonly imagePlaceholder = appImagePlaceholder;
-  protected readonly isEmpty = isEmpty;
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
   protected rollbackUpdateButtonSetEffect = effect(() => {
     const app = this.app();
