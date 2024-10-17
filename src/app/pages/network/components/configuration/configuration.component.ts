@@ -311,7 +311,7 @@ export class NetworkConfigurationComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = { ...this.form.value };
     let activity: NetworkConfigurationActivity;
 
     if ([NetworkActivityType.Allow, NetworkActivityType.Deny].includes(values.outbound_network_activity)) {
