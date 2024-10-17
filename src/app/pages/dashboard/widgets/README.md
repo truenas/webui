@@ -4,7 +4,7 @@
 2. Create new component under `widgets` in an appropriate category.
 3. If your widget has custom settings in the edit form, create a component for them as well (see `WidgetSettingsComponent`).
 4. Write widget definition with `dashboardWidget()`
-5. Connect widget definition to `widgetComponents` and `widgetRegistry`.
+5. Connect widget definition to `widgetRegistry`.
 
 ## Guidelines for widgets
 ### Fluid

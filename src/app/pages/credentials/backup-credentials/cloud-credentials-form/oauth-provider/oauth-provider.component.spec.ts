@@ -6,7 +6,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
+import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   OauthProviderComponent, OauthProviderData,
@@ -19,7 +19,7 @@ describe('OauthProviderComponent', () => {
     component: OauthProviderComponent,
     imports: [
       ReactiveFormsModule,
-      OauthButtonModule,
+      OauthButtonComponent,
     ],
     providers: [
       mockWindow({

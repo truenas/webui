@@ -20,7 +20,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -43,7 +43,7 @@ import { WebSocketService } from 'app/services/ws.service';
     IxFieldsetComponent,
     IxInputComponent,
     IxComboboxComponent,
-    SchedulerModule,
+    SchedulerComponent,
     IxCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,

@@ -6,23 +6,37 @@ import {
   ChangeDetectionStrategy, Component, HostListener, OnInit, computed, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
+import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { IxDragDirective } from 'app/modules/ix-drop-grid/ix-drag.directive';
+import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
+import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
+import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
+import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { WidgetGroupControlsComponent } from './widget-group-controls/widget-group-controls.component';
 
 @UntilDestroy()
 @Component({
@@ -39,6 +53,27 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
         ]),
       ]),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    NewFeatureIndicatorDirective,
+    MatButton,
+    TestDirective,
+    UiSearchDirective,
+    NgxSkeletonLoaderModule,
+    IxDropGridDirective,
+    IxDropGridItemDirective,
+    IxDragDirective,
+    WidgetGroupControlsComponent,
+    DisableFocusableElementsDirective,
+    WidgetGroupComponent,
+    EmptyComponent,
+    TranslateModule,
+  ],
+  providers: [
+    WidgetResourcesService,
+    DashboardStore,
   ],
 })
 export class DashboardComponent implements OnInit {

@@ -31,6 +31,7 @@ export class PoolsViewComponent {
   readonly selectedSlot = this.store.selectedSlot;
   readonly selectedSide = this.store.selectedSide;
   readonly poolColors = this.store.poolColors;
+  readonly hasMoreThanOneSide = this.store.hasMoreThanOneSide;
 
   constructor(
     private store: EnclosureStore,

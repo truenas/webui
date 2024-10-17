@@ -169,6 +169,7 @@ export interface ApiJobDirectory {
   // System
   'system.reboot': { params: { delay?: number; reason: string }; response: void };
   'system.shutdown': { params: { delay?: number; reason: string }; response: void };
+
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
 
   // SystemDataset

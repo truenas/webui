@@ -18,7 +18,6 @@ import {
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -66,7 +65,6 @@ describe('RsyncTaskFormComponent', () => {
   const createComponent = createComponentFactory({
     component: RsyncTaskFormComponent,
     imports: [
-      SchedulerModule,
       ReactiveFormsModule,
       SshCredentialsSelectComponent,
     ],

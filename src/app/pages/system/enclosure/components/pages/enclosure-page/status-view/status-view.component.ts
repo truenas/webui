@@ -27,6 +27,7 @@ export class StatusViewComponent {
   readonly selectedSlot = this.store.selectedSlot;
   readonly selectedEnclosureSlots = this.store.selectedEnclosureSlots;
   readonly selectedSide = this.store.selectedSide;
+  readonly hasMoreThanOneSide = this.store.hasMoreThanOneSide;
 
   constructor(
     private store: EnclosureStore,

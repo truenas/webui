@@ -1,9 +1,11 @@
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
@@ -15,6 +17,12 @@ import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/
   templateUrl: './widget-arbitrary-text-settings.component.html',
   styleUrl: './widget-arbitrary-text-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxInputComponent,
+    TranslateModule,
+  ],
 })
 export class WidgetArbitraryTextSettingsComponent implements
   WidgetSettingsComponent<WidgetArbitraryTextSettings>, OnInit {

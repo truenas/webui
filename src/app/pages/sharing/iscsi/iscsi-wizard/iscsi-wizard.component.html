@@ -7,6 +7,8 @@
 <mat-card class="card">
   <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">
     <mat-vertical-stepper #stepper>
+      <ix-use-ix-icons-in-stepper></ix-use-ix-icons-in-stepper>
+
       <mat-step #matStepInstance>
         <ng-template matStepLabel>{{ 'Create or Choose Block Device' | translate }}</ng-template>
         <ix-device-wizard-step [form]="form.controls.device"></ix-device-wizard-step>

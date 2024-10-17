@@ -16,6 +16,7 @@ import {
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { WarnAboutUnsavedChangesDirective } from 'app/directives/warn-about-unsaved-changes/warn-about-unsaved-changes.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextUsers } from 'app/helptext/account/user-form';
@@ -88,6 +89,7 @@ const defaultHomePath = '/var/empty';
     MatButton,
     TestDirective,
     TranslateModule,
+    WarnAboutUnsavedChangesDirective,
   ],
 })
 export class UserFormComponent implements OnInit {
@@ -102,6 +104,10 @@ export class UserFormComponent implements OnInit {
 
   get title(): string {
     return this.isNewUser ? this.translate.instant('Add User') : this.translate.instant('Edit User');
+  }
+
+  get isEditingBuiltinUser(): boolean {
+    return !this.isNewUser && this.editingUser.builtin;
   }
 
   form = this.fb.group({
@@ -163,6 +169,7 @@ export class UserFormComponent implements OnInit {
     shell: helptextUsers.user_form_shell_tooltip,
     locked: helptextUsers.user_form_lockuser_tooltip,
     smb: helptextUsers.user_form_smb_tooltip,
+    smbBuiltin: helptextUsers.smbBuiltin,
   };
 
   readonly groupOptions$ = this.ws.call('group.query').pipe(
@@ -449,6 +456,10 @@ export class UserFormComponent implements OnInit {
       this.form.controls.home.disable();
       this.form.controls.home_create.disable();
       this.form.controls.username.disable();
+    }
+
+    if (user.builtin) {
+      this.form.controls.smb.disable();
     }
 
     this.setNamesInUseValidator(user.username);

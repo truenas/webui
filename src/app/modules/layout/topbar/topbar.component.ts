@@ -38,7 +38,7 @@ import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-po
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
+import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -64,7 +64,6 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     GlobalSearchTriggerComponent,
     RouterLink,
     IxLogoComponent,
-    TruecommandModule,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
     HaStatusIconComponent,
@@ -78,6 +77,7 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     LetDirective,
     UiSearchDirective,
     TestDirective,
+    TruecommandButtonComponent,
   ],
 })
 export class TopbarComponent implements OnInit {

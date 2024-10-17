@@ -25,7 +25,7 @@ import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import {
   crontabToScheduleWithoutMinutes,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -49,7 +49,7 @@ import { WebSocketService } from 'app/services/ws.service';
     IxCheckboxComponent,
     IxSelectComponent,
     IxInputComponent,
-    SchedulerModule,
+    SchedulerComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
