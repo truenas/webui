@@ -1,16 +1,26 @@
+import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, computed,
 } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import {
+  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
+} from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   App, AppContainerDetails, appContainerStateLabels,
 } from 'app/interfaces/app.interface';
 import { ShellDetailsDialogFormValue } from 'app/interfaces/shell-details-dialog.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   VolumeMountsDialogComponent,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
@@ -23,6 +33,21 @@ import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
   templateUrl: './app-workloads-card.component.html',
   styleUrls: ['./app-workloads-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    TranslateModule,
+    MatTooltip,
+    RequiresRolesDirective,
+    TestDirective,
+    IxIconComponent,
+    MapValuePipe,
+    MatIconButton,
+    MatCardContent,
+    DecimalPipe,
+  ],
 })
 export class AppWorkloadsCardComponent {
   readonly app = input.required<App>();

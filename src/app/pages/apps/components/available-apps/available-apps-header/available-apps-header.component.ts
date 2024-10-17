@@ -1,15 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatAnchor, MatButton } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   BehaviorSubject,
   debounceTime, distinctUntilChanged, filter, map, Observable, of, take,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -17,7 +21,12 @@ import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -30,6 +39,22 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './available-apps-header.component.html',
   styleUrls: ['./available-apps-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxInputComponent,
+    MatButton,
+    MatAnchor,
+    IxChipsComponent,
+    IxIconComponent,
+    TranslateModule,
+    NgxSkeletonLoaderModule,
+    AsyncPipe,
+    TestDirective,
+    RequiresRolesDirective,
+    FilterSelectListComponent,
+    RouterLink,
+  ],
 })
 export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
@@ -65,7 +90,6 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     private ws: WebSocketService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
     private dialogService: DialogService,
     protected applicationsStore: AppsStore,
     protected appsFilterStore: AppsFilterStore,

@@ -1,18 +1,30 @@
-import { KeyValue } from '@angular/common';
+import { KeyValue, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component, Inject,
 } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogContent } from '@angular/material/dialog';
+import {
+  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { MatFormField } from '@angular/material/form-field';
+import { MatOption, MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { ChartContainerImage } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -24,6 +36,25 @@ type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_availab
   styleUrls: ['./app-upgrade-dialog.component.scss'],
   templateUrl: './app-upgrade-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogContent,
+    ImgFallbackModule,
+    MatFormField,
+    MatSelect,
+    TestDirective,
+    FormsModule,
+    KeyValuePipe,
+    MatOption,
+    TranslateModule,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    FormActionsComponent,
+    MatButton,
+    RequiresRolesDirective,
+  ],
 })
 export class AppUpgradeDialogComponent {
   dialogConfig: AppUpgradeDialogConfig;

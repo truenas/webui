@@ -3,6 +3,8 @@ import {
   input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 
 @UntilDestroy()
@@ -11,6 +13,11 @@ import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.he
   templateUrl: './app-json-details-card.component.html',
   styleUrls: ['./app-json-details-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgxSkeletonLoaderModule,
+    TranslateModule,
+  ],
 })
 export class AppJsonDetailsCardComponent<T> {
   readonly isLoading = input<boolean>();

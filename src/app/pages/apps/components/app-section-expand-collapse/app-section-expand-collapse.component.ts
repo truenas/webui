@@ -9,12 +9,21 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-app-section-expand-collapse',
   templateUrl: './app-section-expand-collapse.component.html',
   styleUrls: ['./app-section-expand-collapse.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    MatButton,
+    TestDirective,
+  ],
 })
 export class AppSectionExpandCollapseComponent implements OnChanges {
   section = viewChild<ElementRef<HTMLElement>>('section');
