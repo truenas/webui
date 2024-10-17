@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { BottomSheetService } from 'app/services/bottom-sheet.service';
 
 @Component({
@@ -11,10 +12,11 @@ import { BottomSheetService } from 'app/services/bottom-sheet.service';
   styleUrls: ['./form-header-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [TranslateModule, MatButtonModule],
+  imports: [TranslateModule, MatButtonModule, FakeProgressBarComponent],
 })
 export class FormHeaderActionsComponent {
   title = input<string>('');
+  isLoading = input(false);
 
   constructor(private bottomSheet: BottomSheetService) {}
 

@@ -9,7 +9,6 @@
   justify-content: space-between;
   left: 0;
   min-height: 64px;
-  min-height: 64px;
   padding: 0 40px;
   position: sticky;
   top: 0;
@@ -34,5 +33,14 @@
   .title {
     color: var(--fg1);
     word-break: break-all;
+  }
+
+  .loader {
+    bottom: 0;
+    height: 2px;
+    left: -20px;
+    position: absolute;
+    width: calc(100% + 40px);
+    z-index: 10005;
   }
 }

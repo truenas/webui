@@ -1,6 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, OnInit,
   computed,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
@@ -91,6 +92,7 @@ const defaultHomePath = '/var/empty';
   ],
 })
 export class UserFormComponent implements OnInit {
+  isLoading = signal(false);
   isFormLoading = false;
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
@@ -344,8 +346,7 @@ export class UserFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.isFormLoading = true;
-        this.cdr.markForCheck();
+        this.isLoading.set(true);
 
         let request$: Observable<number>;
         let nextRequest$: Observable<number>;
@@ -386,14 +387,12 @@ export class UserFormComponent implements OnInit {
               this.snackbar.success(this.translate.instant('User updated'));
               this.store$.dispatch(userChanged({ user }));
             }
-            this.isFormLoading = false;
+            this.isLoading.set(false);
             this.bottomSheetRef.dismiss();
-            this.cdr.markForCheck();
           },
           error: (error: unknown) => {
-            this.isFormLoading = false;
+            this.isLoading.set(false);
             this.errorHandler.handleWsFormError(error, this.form);
-            this.cdr.markForCheck();
           },
         });
       },
