@@ -40,5 +40,6 @@ export class VmwareStatusCellComponent {
   @HostBinding('class') get hostClasses(): string[] {
     return ['status', this.state?.state.toLowerCase()];
   }
+
   constructor(private translate: TranslateService) { }
 }

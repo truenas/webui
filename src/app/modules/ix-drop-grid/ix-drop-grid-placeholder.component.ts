@@ -23,7 +23,9 @@ export class IxDropGridPlaceholderComponent implements AfterViewInit {
   ) { }
 
   ngAfterViewInit(): void {
-    if (!this.parentGrid) { return; }
+    if (!this.parentGrid) {
+      return;
+    }
 
     const phElement = this.itemInstance.element.nativeElement;
     phElement.style.display = 'none';

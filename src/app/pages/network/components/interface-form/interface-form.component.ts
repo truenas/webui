@@ -162,6 +162,7 @@ export class InterfaceFormComponent implements OnInit {
     { value: 6, label: this.translate.instant('Internetwork control') },
     { value: 7, label: this.translate.instant('Network control (highest)') },
   ]);
+
   vlanParentInterfaces$ = this.networkService.getVlanParentInterfaceChoices().pipe(choicesToOptions());
 
   failoverGroups$ = of(range(1, 32)).pipe(singleArrayToOptions());

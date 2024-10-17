@@ -54,6 +54,7 @@ export class ConfigurationPreviewComponent {
       return newTopology;
     }),
   );
+
   protected totalCapacity$ = this.store.totalUsableCapacity$;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 

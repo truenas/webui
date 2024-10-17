@@ -23,6 +23,7 @@ export class CopyrightLineComponent {
     startWith(ProductType.Scale),
     map((type) => productTypeLabels.get(type)),
   ));
+
   readonly copyrightYear = toSignal(this.store$.select(selectBuildYear));
 
   constructor(

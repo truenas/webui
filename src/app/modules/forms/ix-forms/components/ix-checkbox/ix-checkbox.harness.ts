@@ -8,7 +8,7 @@ export interface IxCheckboxHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxCheckboxHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-checkbox';
+  static readonly hostSelector = 'ix-checkbox';
 
   static with(options: IxCheckboxHarnessFilters): HarnessPredicate<IxCheckboxHarness> {
     return new HarnessPredicate(IxCheckboxHarness, options)

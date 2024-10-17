@@ -120,63 +120,65 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   }
 
   activateTab(activeTab: ReportTab): void {
-    const reportCategories = activeTab.value === ReportType.Disk ? this.diskReports : this.otherReports.filter(
-      (report) => {
-        const graphName = report.name;
-        let condition;
-        switch (activeTab.value) {
-          case ReportType.Cpu:
-            condition = [
-              ReportingGraphName.Cpu,
-              ReportingGraphName.CpuTemp,
-              ReportingGraphName.SystemLoad,
-              ReportingGraphName.Processes,
-            ].includes(graphName);
-            break;
-          case ReportType.Memory:
-            condition = [ReportingGraphName.Memory].includes(graphName);
-            break;
-          case ReportType.Network:
-            condition = ReportingGraphName.NetworkInterface === graphName;
-            break;
-          case ReportType.Nfs:
-            condition = [
-              ReportingGraphName.NfsStat,
-              ReportingGraphName.NfsStatBytes,
-            ].includes(graphName);
-            break;
-          case ReportType.Partition:
-            condition = ReportingGraphName.Partition === graphName;
-            break;
-          case ReportType.System:
-            condition = [
-              ReportingGraphName.Processes,
-              ReportingGraphName.Uptime,
-            ].includes(graphName);
-            break;
-          case ReportType.Target:
-            condition = ReportingGraphName.Target === graphName;
-            break;
-          case ReportType.Ups:
-            condition = graphName.startsWith(ReportingGraphName.Ups);
-            break;
-          case ReportType.Zfs:
-            condition = [
-              ReportingGraphName.ZfsArcSize,
-              ReportingGraphName.ZfsArcRatio,
-              ReportingGraphName.ZfsArcResult,
-              ReportingGraphName.ZfsArcActualRate,
-              ReportingGraphName.ZfsArcRate,
-            ].includes(graphName);
-            break;
-          default:
-            condition = true;
-            break;
-        }
+    const reportCategories = activeTab.value === ReportType.Disk
+      ? this.diskReports
+      : this.otherReports.filter(
+        (report) => {
+          const graphName = report.name;
+          let condition;
+          switch (activeTab.value) {
+            case ReportType.Cpu:
+              condition = [
+                ReportingGraphName.Cpu,
+                ReportingGraphName.CpuTemp,
+                ReportingGraphName.SystemLoad,
+                ReportingGraphName.Processes,
+              ].includes(graphName);
+              break;
+            case ReportType.Memory:
+              condition = [ReportingGraphName.Memory].includes(graphName);
+              break;
+            case ReportType.Network:
+              condition = ReportingGraphName.NetworkInterface === graphName;
+              break;
+            case ReportType.Nfs:
+              condition = [
+                ReportingGraphName.NfsStat,
+                ReportingGraphName.NfsStatBytes,
+              ].includes(graphName);
+              break;
+            case ReportType.Partition:
+              condition = ReportingGraphName.Partition === graphName;
+              break;
+            case ReportType.System:
+              condition = [
+                ReportingGraphName.Processes,
+                ReportingGraphName.Uptime,
+              ].includes(graphName);
+              break;
+            case ReportType.Target:
+              condition = ReportingGraphName.Target === graphName;
+              break;
+            case ReportType.Ups:
+              condition = graphName.startsWith(ReportingGraphName.Ups);
+              break;
+            case ReportType.Zfs:
+              condition = [
+                ReportingGraphName.ZfsArcSize,
+                ReportingGraphName.ZfsArcRatio,
+                ReportingGraphName.ZfsArcResult,
+                ReportingGraphName.ZfsArcActualRate,
+                ReportingGraphName.ZfsArcRate,
+              ].includes(graphName);
+              break;
+            default:
+              condition = true;
+              break;
+          }
 
-        return condition;
-      },
-    );
+          return condition;
+        },
+      );
 
     this.activeReports = this.flattenReports(reportCategories);
 

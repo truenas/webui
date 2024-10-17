@@ -36,10 +36,10 @@ export class MockEnclosureGenerator {
       system_manufacturer: 'iXsystems',
       remote_info: response.remote_info
         ? {
-          ...response.remote_info,
-          platform: `TRUENAS-${this.config.controllerModel}`,
-          system_product: `TRUENAS-${this.config.controllerModel}`,
-        }
+            ...response.remote_info,
+            platform: `TRUENAS-${this.config.controllerModel}`,
+            system_product: `TRUENAS-${this.config.controllerModel}`,
+          }
         : null,
     };
   }

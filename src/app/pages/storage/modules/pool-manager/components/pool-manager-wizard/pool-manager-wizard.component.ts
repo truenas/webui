@@ -100,6 +100,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
   );
+
   usesDraidLayout$ = this.store.usesDraidLayout$;
 
   activeStep: PoolCreationWizardStep = PoolCreationWizardStep.General;
@@ -299,7 +300,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: () => {
         if (!this.existingPool) {
-          this.createPool(); return;
+          this.createPool();
+          return;
         }
         this.updatePool();
       },

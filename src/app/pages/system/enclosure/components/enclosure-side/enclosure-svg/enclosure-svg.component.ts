@@ -84,6 +84,7 @@ export class EnclosureSvgComponent implements OnDestroy {
         untilDestroyed(this),
       )
       .subscribe((svg) => {
+        // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
         this.svg.set(this.sanitizer.bypassSecurityTrustHtml(svg));
       });
   }, { allowSignalWrites: true });

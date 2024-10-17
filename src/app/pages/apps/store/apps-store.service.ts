@@ -45,6 +45,7 @@ export class AppsStore extends ComponentStore<AppsState> {
     AppExtraCategory.NewAndUpdated,
     AppExtraCategory.Recommended,
   ]);
+
   readonly availableApps$ = this.select((state) => state.availableApps);
 
   constructor(

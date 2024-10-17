@@ -60,6 +60,7 @@ export class AppRowComponent {
   readonly isAppStopped = computed(() => {
     return this.app().state === AppState.Stopped || this.app().state === AppState.Crashed;
   });
+
   readonly hasStats = computed(() => {
     return this.app().state === AppState.Running && this.stats();
   });

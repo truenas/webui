@@ -85,6 +85,7 @@ export class OpenstackSwiftProviderFormComponent extends BaseProviderFormCompone
       this.cdr.detectChanges();
     });
   }
+
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,

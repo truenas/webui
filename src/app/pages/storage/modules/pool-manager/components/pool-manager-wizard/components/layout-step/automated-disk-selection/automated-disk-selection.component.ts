@@ -87,7 +87,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
       next: () => {
         if (
           (!this.canChangeLayout && !this.isDataVdev)
-            && (this.type && this.limitLayouts.length)
+          && (this.type && this.limitLayouts.length)
         ) {
           this.store.setTopologyCategoryLayout(this.type, this.limitLayouts[0]);
         }

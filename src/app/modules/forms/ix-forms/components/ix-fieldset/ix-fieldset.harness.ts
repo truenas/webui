@@ -13,7 +13,7 @@ export interface IxFieldsetHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxFieldsetHarness extends ComponentHarness {
-  static hostSelector = 'ix-fieldset';
+  static readonly hostSelector = 'ix-fieldset';
 
   static with(options: IxFieldsetHarnessFilters): HarnessPredicate<IxFieldsetHarness> {
     return new HarnessPredicate(IxFieldsetHarness, options)

@@ -73,6 +73,7 @@ export class ManualSelectionVdevComponent implements OnChanges {
       && (this.enclosuresDisks.size > 1
         || !!this.nonEnclosureDisks.length);
   }
+
   constructor(
     private cdr: ChangeDetectorRef,
     protected store$: ManualDiskSelectionStore,

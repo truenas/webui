@@ -62,6 +62,7 @@ export class SnapshotListComponent implements OnInit {
     this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading)),
     this.loadingExtraColumns$,
   ]).pipe(map(([isLoading, loadingExtraColumns]) => isLoading || loadingExtraColumns));
+
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
     this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0)),
@@ -80,6 +81,7 @@ export class SnapshotListComponent implements OnInit {
       }
     }),
   );
+
   columns = createTable<ZfsSnapshotUi>([
     checkboxColumn({
       propertyName: 'selected',

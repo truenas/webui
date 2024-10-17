@@ -65,6 +65,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.comboboxProviderHandler = new IxComboboxProviderManager(comboboxProvider);
     this.cdr.markForCheck();
   }
+
   private comboboxProviderHandler: IxComboboxProviderManager;
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;

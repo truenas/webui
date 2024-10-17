@@ -28,7 +28,7 @@ export class RolesCardComponent {
   protected readonly smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   readonly isApplications = computed(() => {
-    return this.dataset().name && this.dataset().name.endsWith(ixAppsDataset);
+    return this.dataset().name?.endsWith(ixAppsDataset);
   });
 
   readonly appNames = computed(() => {

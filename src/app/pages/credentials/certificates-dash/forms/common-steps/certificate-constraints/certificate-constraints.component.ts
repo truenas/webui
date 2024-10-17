@@ -132,12 +132,12 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
         },
         AuthorityKeyIdentifier: this.hasAuthorityKeyIdentifier()
           ? {
-            enabled: authorityKeyIdentifier.enabled,
-            authority_cert_issuer: authorityKeyIdentifier.AuthorityKeyIdentifier
-              .includes(AuthorityKeyIdentifier.AuthorityCertIssuer),
-            extension_critical: authorityKeyIdentifier.AuthorityKeyIdentifier
-              .includes(AuthorityKeyIdentifier.ExtensionCritical),
-          }
+              enabled: authorityKeyIdentifier.enabled,
+              authority_cert_issuer: authorityKeyIdentifier.AuthorityKeyIdentifier
+                .includes(AuthorityKeyIdentifier.AuthorityCertIssuer),
+              extension_critical: authorityKeyIdentifier.AuthorityKeyIdentifier
+                .includes(AuthorityKeyIdentifier.ExtensionCritical),
+            }
           : {} as AuthorityKeyIdentifiers,
         ExtendedKeyUsage: {
           enabled: extendedKeyUsage.enabled,

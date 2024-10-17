@@ -8,7 +8,7 @@ export interface IxSlideToggleHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxSlideToggleHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-slide-toggle';
+  static readonly hostSelector = 'ix-slide-toggle';
 
   static with(options: IxSlideToggleHarnessFilters): HarnessPredicate<IxSlideToggleHarness> {
     return new HarnessPredicate(IxSlideToggleHarness, options)

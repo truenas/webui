@@ -154,6 +154,7 @@ export class DeviceFormComponent implements OnInit {
       return options;
     }),
   );
+
   readonly usbControllerOptions$ = this.ws.call('vm.device.usb_controller_choices').pipe(
     map((usbControllers) => {
       return Object.entries(usbControllers).map(([key, controller]) => {
@@ -164,6 +165,7 @@ export class DeviceFormComponent implements OnInit {
       });
     }),
   );
+
   readonly bindOptions$ = this.ws.call('vm.device.bind_choices').pipe(choicesToOptions());
   readonly resolutions$ = this.ws.call('vm.resolution_choices').pipe(choicesToOptions());
   readonly nicOptions$ = this.ws.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
@@ -181,6 +183,7 @@ export class DeviceFormComponent implements OnInit {
       }),
     ),
   );
+
   readonly zvolProvider = new SimpleAsyncComboboxProvider(
     this.ws.call('vm.device.disk_choices').pipe(choicesToOptions()),
   );
@@ -198,12 +201,12 @@ export class DeviceFormComponent implements OnInit {
   ]);
 
   get typeSpecificForm(): DeviceFormComponent['cdromForm']
-  | DeviceFormComponent['diskForm']
-  | DeviceFormComponent['nicForm']
-  | DeviceFormComponent['rawFileForm']
-  | DeviceFormComponent['pciForm']
-  | DeviceFormComponent['usbForm']
-  | DeviceFormComponent['displayForm'] {
+    | DeviceFormComponent['diskForm']
+    | DeviceFormComponent['nicForm']
+    | DeviceFormComponent['rawFileForm']
+    | DeviceFormComponent['pciForm']
+    | DeviceFormComponent['usbForm']
+    | DeviceFormComponent['displayForm'] {
     switch (this.typeControl.value) {
       case VmDeviceType.Cdrom:
         return this.cdromForm;

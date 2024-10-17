@@ -82,10 +82,12 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
   ]);
 
   get retentionPolicyOptions$(): Observable<Option[]> {
-    return this.isCustomRetentionVisible ? of([
-      ...this.defaultRetentionPolicyOptions,
-      { label: this.translate.instant('Custom'), value: RetentionPolicy.Custom },
-    ]) : of(this.defaultRetentionPolicyOptions);
+    return this.isCustomRetentionVisible
+      ? of([
+        ...this.defaultRetentionPolicyOptions,
+        { label: this.translate.instant('Custom'), value: RetentionPolicy.Custom },
+      ])
+      : of(this.defaultRetentionPolicyOptions);
   }
 
   constructor(

@@ -54,6 +54,7 @@ export class IsolatedGpusFormComponent implements OnInit {
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });
+
   readonly options$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(map((choices) => {
     return Object.entries(choices).map(
       ([value, label]) => ({ value: label, label: value }),

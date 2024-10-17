@@ -18,7 +18,7 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { WebSocketService } from 'app/services/ws.service';
 
-const newOption = 'NEW' as const;
+const newOption = 'NEW';
 
 @UntilDestroy()
 @Component({

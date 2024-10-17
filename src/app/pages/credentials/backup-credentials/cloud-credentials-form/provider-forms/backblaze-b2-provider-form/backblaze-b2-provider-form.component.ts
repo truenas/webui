@@ -35,6 +35,7 @@ export class BackblazeB2ProviderFormComponent extends BaseProviderFormComponent 
       this.cdr.detectChanges();
     });
   }
+
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,

@@ -15,7 +15,7 @@ describe('datasetNameSortComparer', () => {
       { name: '/pårent' },
     ] as DatasetDetails[];
 
-    const sortedFilepaths = filepaths.sort(datasetNameSortComparer);
+    const sortedFilepaths = filepaths.toSorted(datasetNameSortComparer);
 
     expect(sortedFilepaths).toEqual([
       { name: '/parent' },

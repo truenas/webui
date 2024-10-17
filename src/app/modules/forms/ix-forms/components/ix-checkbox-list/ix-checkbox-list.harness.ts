@@ -11,7 +11,7 @@ export interface IxCheckboxListHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxCheckboxListHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-checkbox-list';
+  static readonly hostSelector = 'ix-checkbox-list';
 
   static with(options: IxCheckboxListHarnessFilters): HarnessPredicate<IxCheckboxListHarness> {
     return new HarnessPredicate(IxCheckboxListHarness, options)
@@ -59,8 +59,6 @@ export class IxCheckboxListHarness extends ComponentHarness implements IxFormCon
     const checkboxes = await this.getCheckboxes();
     const inputState = await parallel(() => checkboxes.map((control) => control.isDisabled()));
 
-    return new Promise((resolve) => {
-      resolve(inputState.every(Boolean));
-    });
+    return inputState.every(Boolean);
   }
 }

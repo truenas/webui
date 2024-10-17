@@ -523,7 +523,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       return;
     }
     const suggestName = source.length > 3
-      ? `${source[0]},...,${source[source.length - 1]} - ${target}` : `${source.join(',')} - ${target}`;
+      ? `${source[0]},...,${source[source.length - 1]} - ${target}`
+      : `${source.join(',')} - ${target}`;
     this.form.controls.name.setValue(suggestName);
   }
 

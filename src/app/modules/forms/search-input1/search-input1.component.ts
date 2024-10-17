@@ -36,6 +36,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class SearchInput1Component implements OnInit, OnChanges {
   @HostBinding('class.disabled')
   @Input() disabled = false;
+
   @Input() value = '';
   @Input() maxLength = 524288;
 

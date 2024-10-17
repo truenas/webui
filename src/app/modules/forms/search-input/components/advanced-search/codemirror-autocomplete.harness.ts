@@ -1,7 +1,7 @@
 import { ComponentHarness, parallel } from '@angular/cdk/testing';
 
 export class CodemirrorAutocompleteHarness extends ComponentHarness {
-  static hostSelector = '.cm-tooltip-autocomplete';
+  static readonly hostSelector = '.cm-tooltip-autocomplete';
 
   private getOptionElements = this.locatorForAll('li');
 

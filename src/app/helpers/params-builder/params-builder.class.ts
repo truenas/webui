@@ -187,6 +187,6 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
 }
 
 export type ParamsBuilderGroup<T, ExtraOptions = Record<string, unknown>> = Pick<
-ParamsBuilder<T, ExtraOptions>,
-'filter' | 'andFilter' | 'orFilter' | 'group' | 'andGroup' | 'orGroup' | 'mergeWith' | 'getFilters'
+  ParamsBuilder<T, ExtraOptions>,
+  'filter' | 'andFilter' | 'orFilter' | 'group' | 'andGroup' | 'orGroup' | 'mergeWith' | 'getFilters'
 >;

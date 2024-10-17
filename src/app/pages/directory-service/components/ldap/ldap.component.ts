@@ -95,6 +95,7 @@ export class LdapComponent implements OnInit {
       }));
     }),
   );
+
   readonly kerberosPrincipals$ = this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
   readonly sslOptions$ = this.ws.call('ldap.ssl_choices').pipe(singleArrayToOptions());
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());

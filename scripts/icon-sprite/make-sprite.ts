@@ -42,6 +42,7 @@ async function makeSprite(): Promise<void> {
 
     fs.writeFileSync(targetPath, buffer);
 
+    // eslint-disable-next-line sonarjs/hashing
     const hash = crypto.createHash('md5').update(buffer).digest('hex').slice(0, 10);
     const versionedUrl = `assets/icons/sprite.svg?v=${hash}`;
 

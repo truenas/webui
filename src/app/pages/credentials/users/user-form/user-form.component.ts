@@ -175,6 +175,7 @@ export class UserFormComponent implements OnInit {
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
+
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);

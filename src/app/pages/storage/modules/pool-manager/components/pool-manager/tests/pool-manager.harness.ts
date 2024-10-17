@@ -13,7 +13,7 @@ import { NewDevicesConfigurationPreviewHarness } from 'app/pages/storage/modules
 import { ReviewWizardStepHarness } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.harness';
 
 export class PoolManagerHarness extends ComponentHarness {
-  static hostSelector = 'ix-pool-manager';
+  static readonly hostSelector = 'ix-pool-manager';
 
   getStepper = this.locatorFor(MatStepperHarness);
   getStartOverButton = this.locatorFor(MatButtonHarness.with({ text: 'Start Over' }));

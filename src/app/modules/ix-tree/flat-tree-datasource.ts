@@ -35,8 +35,9 @@ export class FlatTreeDataSource<T, F> extends DataSource<F> {
   get data(): T[] {
     return this._data.value;
   }
+
   set data(value: T[]) {
-    this._data.next(this.sortComparer ? value.sort(this.sortComparer) : value);
+    this._data.next(this.sortComparer ? value.toSorted(this.sortComparer) : value);
     this.flatNodes();
   }
 

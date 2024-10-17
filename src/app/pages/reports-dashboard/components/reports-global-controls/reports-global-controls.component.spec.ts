@@ -43,7 +43,7 @@ describe('ReportsGlobalControlsComponent', () => {
         },
       }),
       mockProvider(ReportsService, {
-        getReportTabs: () => ([({ value: ReportType.System, label: 'system' } as ReportTab)] as ReportTab[]),
+        getReportTabs: () => ([{ value: ReportType.System, label: 'system' } as ReportTab] as ReportTab[]),
         getReportGraphs: () => of([]),
       }),
       provideMockStore({

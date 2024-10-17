@@ -6,7 +6,7 @@ import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 
 export class IxFilterSelectListHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-filter-select-list';
+  static readonly hostSelector = 'ix-filter-select-list';
 
   getItems = this.locatorForAll('.item');
   getIcons = this.locatorForAll(IxIconHarness);

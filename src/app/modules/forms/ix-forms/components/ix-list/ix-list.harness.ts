@@ -11,7 +11,7 @@ export interface IxListHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxListHarness extends ComponentHarness {
-  static hostSelector = 'ix-list';
+  static readonly hostSelector = 'ix-list';
 
   getListItems = this.locatorForAll(IxListItemHarness);
 

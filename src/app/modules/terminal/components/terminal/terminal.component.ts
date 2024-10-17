@@ -106,7 +106,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe(() => {
       if (this.shellConnected) {
-        setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
+        setTimeout(() => {
+          this.resizeTerm();
+        }, this.waitParentChanges);
       }
     });
   }
@@ -114,7 +116,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onWindowResized(): void {
     if (this.shellConnected) {
-      setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
+      setTimeout(() => {
+        this.resizeTerm();
+      }, this.waitParentChanges);
     }
   }
 
@@ -154,7 +158,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     font.load().then(() => {
       this.xterm.options.fontFamily = this.fontName;
       this.drawTerminal();
-    }, (error) => {
+    }, (error: unknown) => {
       this.drawTerminal();
       console.error('Font is not available', error);
     });

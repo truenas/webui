@@ -42,9 +42,9 @@ describe('AppStateCellComponent', () => {
     expect(spectator.query('span')).toHaveText('Deploying');
   });
 
-  it.skip('checks state for stopping app', () => {
+  it('checks state for stopping app', () => {
     setupTest(
-      { state: AppState.Running } as App,
+      { state: AppState.Stopping } as App,
     );
 
     expect(spectator.query('span')).toHaveText('Stopping');

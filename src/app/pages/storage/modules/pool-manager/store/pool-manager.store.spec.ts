@@ -120,7 +120,7 @@ describe('PoolManagerStore', () => {
 
       const inventory = await firstValueFrom(spectator.service.getInventoryForStep(VdevType.Data));
       expect(inventory).toHaveLength(2);
-      const diskNames = inventory.map((disk) => disk.devname).sort();
+      const diskNames = inventory.map((disk) => disk.devname).sort((a, b) => a.localeCompare(b));
       expect(diskNames).toEqual(['sdb', 'sdc']);
     });
   });

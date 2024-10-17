@@ -37,6 +37,7 @@ export class FtpProviderFormComponent extends BaseProviderFormComponent implemen
       this.cdr.detectChanges();
     });
   }
+
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,

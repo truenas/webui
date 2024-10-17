@@ -305,7 +305,7 @@ export class QueryParserService<T> {
       }
 
       if (element.length === 3 && typeof element[1] === 'string') {
-        return this.conditionToStringFromQueryFilter(element as QueryFilter<T>, properties);
+        return this.conditionToStringFromQueryFilter(element, properties);
       }
 
       return this.parseArrayFromQueryFilter(element as QueryFilter<T>[], 'AND', properties);

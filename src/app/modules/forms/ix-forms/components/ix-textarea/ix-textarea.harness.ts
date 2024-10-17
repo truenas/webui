@@ -9,7 +9,7 @@ export interface IxInputHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxTextareaHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-textarea';
+  static readonly hostSelector = 'ix-textarea';
 
   static with(options: IxInputHarnessFilters): HarnessPredicate<IxTextareaHarness> {
     return new HarnessPredicate(IxTextareaHarness, options)

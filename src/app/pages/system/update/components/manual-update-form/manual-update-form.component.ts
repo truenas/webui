@@ -223,14 +223,14 @@ export class ManualUpdateFormComponent implements OnInit {
 
     const params: UploadOptions = this.isHaLicensed
       ? {
-        method: 'failover.upgrade',
-        file: files[0],
-      }
+          method: 'failover.upgrade',
+          file: files[0],
+        }
       : {
-        method: 'update.file',
-        params: [{ destination: fileLocation }],
-        file: files[0],
-      };
+          method: 'update.file',
+          params: [{ destination: fileLocation }],
+          file: files[0],
+        };
 
     const job$ = this.upload.uploadAsJob(params);
     this.dialogService

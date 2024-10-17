@@ -7,11 +7,11 @@ export function moveToNextFocusableElement(): void {
     (element: HTMLElement) => !(element as HTMLButtonElement).disabled && element.tabIndex >= 0,
   );
 
-  const sortedFocusableElements = focusableElements.sort((a: HTMLElement, b: HTMLElement) => a.tabIndex - b.tabIndex);
-  const currentIndex = sortedFocusableElements.indexOf(document.activeElement as HTMLElement);
-  const nextIndex = (currentIndex + 1) % sortedFocusableElements.length;
+  const sortedElements = focusableElements.toSorted((a: HTMLElement, b: HTMLElement) => a.tabIndex - b.tabIndex);
+  const currentIndex = sortedElements.indexOf(document.activeElement as HTMLElement);
+  const nextIndex = (currentIndex + 1) % sortedElements.length;
 
-  (sortedFocusableElements[nextIndex] as HTMLElement)?.focus();
+  (sortedElements[nextIndex] as HTMLElement)?.focus();
 }
 
 export function moveToPreviousFocusableElement(): void {
@@ -23,9 +23,9 @@ export function moveToPreviousFocusableElement(): void {
     (element: HTMLElement) => !(element as HTMLButtonElement).disabled && element.tabIndex >= 0,
   );
 
-  const sortedFocusableElements = focusableElements.sort((a: HTMLElement, b: HTMLElement) => a.tabIndex - b.tabIndex);
-  const currentIndex = sortedFocusableElements.indexOf(document.activeElement as HTMLElement);
-  const previousIndex = (currentIndex - 1 + sortedFocusableElements.length) % sortedFocusableElements.length;
+  const sortedElements = focusableElements.toSorted((a: HTMLElement, b: HTMLElement) => a.tabIndex - b.tabIndex);
+  const currentIndex = sortedElements.indexOf(document.activeElement as HTMLElement);
+  const previousIndex = (currentIndex - 1 + sortedElements.length) % sortedElements.length;
 
-  (sortedFocusableElements[previousIndex] as HTMLElement)?.focus();
+  (sortedElements[previousIndex] as HTMLElement)?.focus();
 }

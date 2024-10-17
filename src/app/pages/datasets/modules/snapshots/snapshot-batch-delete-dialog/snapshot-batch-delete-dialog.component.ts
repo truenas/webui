@@ -31,6 +31,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
   });
+
   total = this.snapshots.length;
   dialogData: SnapshotDialogData;
   jobSuccess: boolean[] = [];

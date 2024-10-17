@@ -54,6 +54,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   form = this.fb.group({
     dev: ['', Validators.required],
   });
+
   protected readonly Role = Role;
 
   constructor(

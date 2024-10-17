@@ -9,7 +9,7 @@ export interface IxCodeEditorFilters extends BaseHarnessFilters {
 }
 
 export class IxCodeEditorHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-code-editor';
+  static readonly hostSelector = 'ix-code-editor';
 
   static with(options: IxCodeEditorFilters): HarnessPredicate<IxCodeEditorHarness> {
     return new HarnessPredicate(IxCodeEditorHarness, options)
@@ -26,6 +26,7 @@ export class IxCodeEditorHarness extends ComponentHarness implements IxFormContr
     }
     return label.getLabel();
   }
+
   getInputArea = this.locatorFor('.cm-content');
 
   async getValue(): Promise<string> {

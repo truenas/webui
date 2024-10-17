@@ -32,6 +32,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     recursive: ['' as RollbackRecursiveType],
     force: [false, [Validators.requiredTrue]],
   });
+
   publicSnapshot: ZfsSnapshot;
 
   readonly recursive = {

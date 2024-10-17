@@ -35,6 +35,7 @@ export class HttpProviderFormComponent extends BaseProviderFormComponent impleme
       this.cdr.detectChanges();
     });
   }
+
   constructor(
     public formatter: IxFormatterService,
     private formBuilder: FormBuilder,

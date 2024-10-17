@@ -42,7 +42,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 const minAllowedRange = 1000;
 const maxAllowedRange = 2147483647;
-const customIdmapName = 'custom' as const;
+const customIdmapName = 'custom';
 
 @UntilDestroy()
 @Component({
@@ -139,20 +139,24 @@ export class IdmapFormComponent implements OnInit {
     { label: this.translate.instant('LDAP - Primary Domain'), value: IdmapName.DsTypeLdap },
     { label: this.translate.instant('Custom Value'), value: customIdmapName },
   ]);
+
   readonly createIdmapNames$ = of([
     { label: this.translate.instant('SMB - Primary Domain'), value: IdmapName.DsTypeDefaultDomain },
     { label: this.translate.instant('Custom Value'), value: customIdmapName },
   ]);
+
   readonly schemaModes$ = of([
     { label: 'RFC2307', value: IdmapSchemaMode.Rfc2307 },
     { label: 'SFU', value: IdmapSchemaMode.Sfu },
     { label: 'SFU20', value: IdmapSchemaMode.Sfu20 },
   ]);
+
   readonly sslModes$ = of([
     { label: this.translate.instant('Off'), value: IdmapSslEncryptionMode.Off },
     { label: this.translate.instant('On'), value: IdmapSslEncryptionMode.On },
     { label: 'StartTLS', value: IdmapSslEncryptionMode.StartTls },
   ]);
+
   readonly linkedServices$ = of([
     { label: this.translate.instant('Local Account'), value: IdmapLinkedService.LocalAccount },
     { label: 'LDAP', value: IdmapLinkedService.Ldap },

@@ -47,15 +47,18 @@ export class BootPoolDeleteDialogComponent {
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
   });
+
   isJobCompleted = false;
   bulkItems = new Map<string, BulkListItem<Bootenv>>();
 
   get successCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Success).length;
   }
+
   get failedCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Error).length;
   }
+
   readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<Bootenv>>> = (_, entry) => entry.key;
 
   constructor(

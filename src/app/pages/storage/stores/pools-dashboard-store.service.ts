@@ -190,7 +190,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       disk.alerts = [];
     }
     for (const alert of alerts) {
-      const alertArgs = ((alert.args) as { device: string; message: string });
+      const alertArgs = (alert.args) as { device: string; message: string };
       const alertDevice = alertArgs.device.split('/').reverse()[0];
       const alertDisk = disks.find((disk) => disk.name === alertDevice);
       alertDisk.alerts.push(alert);

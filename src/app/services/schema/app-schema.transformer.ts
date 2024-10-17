@@ -64,7 +64,9 @@ export function transformIntSchemaType(
 ): DynamicFormSchemaInput | DynamicFormSchemaEnum | DynamicFormSchemaSelect {
   const { schema } = payload;
 
-  if (schema.enum) { return transformEnumSchemaType(payload); }
+  if (schema.enum) {
+    return transformEnumSchemaType(payload);
+  }
 
   const inputSchema: DynamicFormSchemaInput = {
     ...buildCommonSchemaBase(payload),
@@ -109,7 +111,9 @@ export function transformStringSchemaType(
 ): DynamicFormSchemaInput | DynamicFormSchemaEnum | DynamicFormSchemaSelect {
   const { schema } = payload;
 
-  if (schema.enum) { return transformEnumSchemaType(payload); }
+  if (schema.enum) {
+    return transformEnumSchemaType(payload);
+  }
 
   const inputSchema: DynamicFormSchemaInput = {
     ...buildCommonSchemaBase(payload),

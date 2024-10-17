@@ -164,7 +164,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
       error: (error: WebSocketError) => {
         this.isLoading = false;
         this.datastoreOptions$ = of([]);
-        if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
+        if (error.reason?.includes('[ETIMEDOUT]')) {
           this.dialogService.error({
             title: helptextVmwareSnapshot.connect_err_dialog.title,
             message: helptextVmwareSnapshot.connect_err_dialog.msg,

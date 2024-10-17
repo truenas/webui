@@ -49,9 +49,11 @@ export class ServiceExtraActionsComponent {
       ? this.translate.instant('Turn Off Service')
       : this.translate.instant('Turn On Service');
   });
+
   readonly hasSessions = computed<boolean>(() => {
     return [ServiceName.Nfs, ServiceName.Cifs].includes(this.service().service);
   });
+
   readonly hasLogs = computed<boolean>(() => this.service().service === ServiceName.Cifs);
 
   constructor(

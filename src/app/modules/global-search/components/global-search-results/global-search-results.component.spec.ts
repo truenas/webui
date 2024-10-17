@@ -55,7 +55,7 @@ describe('GlobalSearchResultsComponent', () => {
     router = spectator.inject(Router);
   });
 
-  it('should emit selected event and navigate on result click', (() => {
+  it('should emit selected event and navigate on result click', () => {
     const mockResults: UiSearchableElement[] = [mockedUiElement];
 
     spectator.setInput('results', mockResults);
@@ -69,9 +69,9 @@ describe('GlobalSearchResultsComponent', () => {
 
     expect(navigateSpy).toHaveBeenCalledWith(mockResults[0].anchorRouterLink);
     expect(searchProvider.select).toHaveBeenCalledWith(mockResults[0]);
-  }));
+  });
 
-  it('should open link in new window on element clicked if "targetHref" specified', (() => {
+  it('should open link in new window on element clicked if "targetHref" specified', () => {
     const mockResults: UiSearchableElement[] = [mockedHelpElement];
 
     spectator.setInput('searchTerm', 'Item');
@@ -86,7 +86,7 @@ describe('GlobalSearchResultsComponent', () => {
     expect(window.open).toHaveBeenCalledWith(mockResults[0].targetHref, '_blank');
 
     window.open.mockRestore();
-  }));
+  });
 
   it('should display 2 sections when input results belong to different sections', () => {
     const mockResults: UiSearchableElement[] = [mockedUiElement, mockedHelpElement];

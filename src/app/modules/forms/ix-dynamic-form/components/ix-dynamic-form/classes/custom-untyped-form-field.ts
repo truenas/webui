@@ -3,5 +3,5 @@ import { CustomUntypedFormControl } from 'app/modules/forms/ix-dynamic-form/comp
 import { CustomUntypedFormGroup } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
 
 export type CustomUntypedFormField = CustomUntypedFormArray
-| CustomUntypedFormControl
-| CustomUntypedFormGroup;
+  | CustomUntypedFormControl
+  | CustomUntypedFormGroup;

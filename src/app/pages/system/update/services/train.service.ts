@@ -138,8 +138,8 @@ export class TrainService {
               packages.push({
                 operation: 'Upgrade',
                 name: change.old.name + '-' + change.old.version
-                + ' -> ' + change.new.name + '-'
-                + change.new.version,
+                  + ' -> ' + change.new.name + '-'
+                  + change.new.version,
               });
             } else if (change.operation === SystemUpdateOperationType.Install) {
               packages.push({
@@ -171,7 +171,7 @@ export class TrainService {
             this.updateService.releaseNotesUrl$.next(update.release_notes_url);
           }
         }
-        if (currentTrainDescription && currentTrainDescription.includes('[release]')) {
+        if (currentTrainDescription?.includes('[release]')) {
           this.releaseTrain$.next(true);
           this.preReleaseTrain$.next(false);
           this.nightlyTrain$.next(false);

@@ -65,6 +65,7 @@ export class AvailableAppsComponent implements OnInit {
       return !!searchQuery || isFilterApplied;
     }),
   );
+
   isLoading$ = this.applicationsStore.isLoading$;
   isFiltering$ = this.appsFilterStore.isFiltering$;
 

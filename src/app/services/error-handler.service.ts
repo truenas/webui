@@ -78,10 +78,10 @@ export class ErrorHandlerService implements ErrorHandler {
 
   isJobError(obj: unknown): obj is Job {
     return typeof obj === 'object'
-    && ('state' in obj
-      && 'error' in obj
-      && 'exception' in obj
-      && 'exc_info' in obj);
+      && ('state' in obj
+        && 'error' in obj
+        && 'exception' in obj
+        && 'exc_info' in obj);
   }
 
   isHttpError(obj: unknown): obj is HttpErrorResponse {
@@ -217,7 +217,7 @@ export class ErrorHandlerService implements ErrorHandler {
         }
         return {
           title: this.translate?.instant('Error ({code})', { code: error.status })
-              || `Error (${error.status})`,
+            || `Error (${error.status})`,
           message: String(error.error),
         };
       }

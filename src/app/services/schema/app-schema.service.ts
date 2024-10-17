@@ -85,7 +85,9 @@ export class AppSchemaService {
       schema, chartSchemaNode, isNew, isParentImmutable, newSchema,
     };
 
-    if (schema.hidden) { return newSchema; }
+    if (schema.hidden) {
+      return newSchema;
+    }
 
     if (isCommonSchemaType(schema.type)) {
       switch (schema.type) {
@@ -319,7 +321,9 @@ export class AppSchemaService {
         newConfig, formConfig, keyConfig, valueConfig,
       };
 
-      if (!formConfig) { continue; }
+      if (!formConfig) {
+        continue;
+      }
 
       if (valueConfig && this.checkIsValidSchedule(valueConfig as Schedule)) {
         newConfig[keyConfig] = scheduleToCrontab(valueConfig as Schedule);
@@ -536,7 +540,7 @@ export class AppSchemaService {
   private handleAddFormControlWithSchemaHidden(payload: CommonSchemaAddControl): void {
     const { formGroup, chartSchemaNode } = payload;
 
-    const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+    const formField = formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField;
 
     /**
      * There's no need to emit it as hidden$ = true since it's static and cannot be changed.
@@ -575,7 +579,7 @@ export class AppSchemaService {
     } = payload;
 
     if (!isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
-      const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+      const formField = formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField;
       if (!formField.hidden$) {
         formField.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -585,14 +589,14 @@ export class AppSchemaService {
     }
 
     subscription.add(formGroup.controls[relation.fieldName].valueChanges.pipe(debounceTime(0)).subscribe((value) => {
-      const parentControl = (formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField);
+      const parentControl = formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField;
       if (!parentControl.hidden$) {
         parentControl.hidden$ = new BehaviorSubject<boolean>(false);
       }
 
       parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
         if (!isParentHidden) {
-          const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+          const formField = formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField;
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);
           }
@@ -618,7 +622,7 @@ export class AppSchemaService {
     } = payload;
 
     if (isEqual(formGroup.controls[relation.fieldName].value, relation.operatorValue)) {
-      const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+      const formField = formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField;
       if (!formField.hidden$) {
         formField.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -628,14 +632,14 @@ export class AppSchemaService {
     }
 
     subscription.add(formGroup.controls[relation.fieldName].valueChanges.pipe(debounceTime(0)).subscribe((value) => {
-      const parentControl = (formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField);
+      const parentControl = formGroup.controls[chartSchemaNode.variable].parent as CustomUntypedFormField;
       if (!parentControl.hidden$) {
         parentControl.hidden$ = new BehaviorSubject<boolean>(false);
       }
 
       parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
         if (!isParentHidden) {
-          const formField = (formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField);
+          const formField = formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormField;
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);
           }
@@ -700,7 +704,7 @@ export class AppSchemaService {
 
         parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
           if (!isParentHidden) {
-            const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
+            const formField = formGroup.controls[subquestion.variable] as CustomUntypedFormField;
             this.toggleFieldHiddenOrDisabled({
               formField,
               value,

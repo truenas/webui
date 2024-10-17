@@ -118,10 +118,6 @@ describe('DockerImageDeleteDialogComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
-    // expect(spectator.fixture.nativeElement).toHaveText('2 docker images has been deleted.');
-
-    // const closeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
-    // await closeButton.click();
   });
 
   it('checks deleting failures of docker images when form is submitted', async () => {

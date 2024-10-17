@@ -31,9 +31,9 @@ export interface ApiEvent<T = unknown> {
   fields: T;
   id: number | string;
   msg: IncomingApiMessageType.Changed
-  | IncomingApiMessageType.Added
-  | IncomingApiMessageType.Removed
-  | IncomingApiMessageType.NoSub;
+    | IncomingApiMessageType.Added
+    | IncomingApiMessageType.Removed
+    | IncomingApiMessageType.NoSub;
 }
 
 export type ApiEventMethod = keyof ApiEventDirectory;

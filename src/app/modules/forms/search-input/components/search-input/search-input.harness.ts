@@ -3,7 +3,7 @@ import { AdvancedSearchHarness } from 'app/modules/forms/search-input/components
 import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 
 export class SearchInputHarness extends ComponentHarness {
-  static hostSelector = 'ix-search-input2';
+  static readonly hostSelector = 'ix-search-input2';
 
   async getActiveModeHarness(): Promise<BasicSearchHarness | AdvancedSearchHarness> {
     const harnesses = await this.locatorForAll(BasicSearchHarness, AdvancedSearchHarness)();

@@ -66,7 +66,7 @@ function mockGlobalStoreService<
       return this.getResponse(mockResponses?.callAndSubscribe);
     }
 
-    invalidate(): void {}
+    invalidate(): void { /* Not needed */ }
 
     private getResponse<R>(mockResponse: R): Observable<R> {
       if (mockResponse === undefined) {

@@ -70,7 +70,6 @@
     "./src/app/enums/disk-wipe-method.enum.ts",
     "./src/app/enums/dns-authenticator-type.enum.ts",
     "./src/app/enums/dynamic-form-schema-type.enum.ts",
-    "./src/app/enums/ec-curve.enum.ts",
     "./src/app/enums/empty-type.enum.ts",
     "./src/app/enums/enclosure-slot-status.enum.ts",
     "./src/app/enums/encryption-key-format.enum.ts",

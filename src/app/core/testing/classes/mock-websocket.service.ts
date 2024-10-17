@@ -101,6 +101,7 @@ export class MockWebSocketService extends WebSocketService {
       .calledWith(method, anyArgument as unknown as ApiCallParams<ApiCallMethod>)
       .mockReturnValueOnce(of(response));
   }
+
   mockJob<M extends ApiJobMethod>(method: M, response: JobResponseOrFactory<M>): void {
     const getJobResponse = (params: ApiJobParams<M> = undefined): Job<ApiJobResponse<M>> => {
       let job: Job;

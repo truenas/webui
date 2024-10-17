@@ -53,14 +53,17 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     const elements = this.selectedEnclosure().elements[EnclosureElementType.ArrayDeviceSlot];
     return elements[this.stateAsSignal().selectedSlotNumber];
   });
+
   readonly selectedEnclosure = computed(() => {
     const state = this.stateAsSignal();
     return state.enclosures[state.selectedEnclosureIndex];
   });
+
   readonly selectedEnclosureSlots = computed(() => {
     const slots = this.selectedEnclosure()?.elements?.[EnclosureElementType.ArrayDeviceSlot] || {};
     return Object.values(slots);
   });
+
   readonly selectedView = computed(() => this.stateAsSignal().selectedView);
   readonly selectedSide = computed(() => this.stateAsSignal().selectedSide);
   readonly enclosures = computed(() => this.stateAsSignal().enclosures);

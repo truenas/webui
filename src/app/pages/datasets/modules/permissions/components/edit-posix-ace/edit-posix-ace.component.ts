@@ -118,8 +118,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
       },
     } as PosixAclItem;
 
-    if (this.isUserTag) { ace.who = formValues.user; }
-    if (this.isGroupTag) { ace.who = formValues.group; }
+    if (this.isUserTag) {
+      ace.who = formValues.user;
+    } else if (this.isGroupTag) {
+      ace.who = formValues.group;
+    }
 
     return ace;
   }
@@ -131,8 +134,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     userField.clearValidators();
     groupField.clearValidators();
 
-    if (this.isUserTag) { userField.addValidators(Validators.required); }
-    if (this.isGroupTag) { groupField.addValidators(Validators.required); }
+    if (this.isUserTag) {
+      userField.addValidators(Validators.required);
+    } else if (this.isGroupTag) {
+      groupField.addValidators(Validators.required);
+    }
 
     const formValues = {
       tag: this.ace.tag,

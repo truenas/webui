@@ -27,8 +27,8 @@ export function vdevCapacity({
   }
 
   const smallestDiskSize = vdev.reduce((smallest, disk) => {
-    return smallest.size < disk.size ? smallest : disk;
-  }).size;
+    return smallest?.size < disk.size ? smallest : disk;
+  }, undefined).size;
 
   const totalSize = smallestDiskSize * vdev.length;
 

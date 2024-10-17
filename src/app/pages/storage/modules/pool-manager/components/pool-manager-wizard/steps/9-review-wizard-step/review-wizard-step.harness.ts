@@ -1,7 +1,7 @@
 import { ComponentHarness } from '@angular/cdk/testing';
 
 export class ReviewWizardStepHarness extends ComponentHarness {
-  static hostSelector = 'ix-review-wizard-step';
+  static readonly hostSelector = 'ix-review-wizard-step';
 
   async getConfigurationItems(): Promise<Record<string, string>> {
     const itemTexts: Record<string, string> = {};

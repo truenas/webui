@@ -38,6 +38,8 @@ export class FreeSpaceValidatorService {
     const freeSpaceInPath$ = this.getFreeSpaceInPath(path);
 
     return freeSpaceInPath$.pipe(
+      // TODO: Refactor to fix linter rule.
+      // eslint-disable-next-line sonarjs/no-invariant-returns
       map((freeSpace) => {
         this.previousPath = path;
         form.controls.volsize.setErrors(null);

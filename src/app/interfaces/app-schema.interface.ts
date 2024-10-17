@@ -56,8 +56,8 @@ export interface KeysRestoredFromFormGroup {
 }
 
 export type SerializeFormValue = HierarchicalObjectMap<ChartFormValue>
-| HierarchicalObjectMap<ChartFormValue>[]
-| ChartFormValue;
+  | HierarchicalObjectMap<ChartFormValue>[]
+  | ChartFormValue;
 
 export type TransformNodeFunction = (
   chartSchemaNode: ChartSchemaNode,

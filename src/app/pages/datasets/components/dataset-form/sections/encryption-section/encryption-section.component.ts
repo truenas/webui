@@ -59,6 +59,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     { label: T('Key'), value: DatasetEncryptionType.Default },
     { label: T('Passphrase'), value: DatasetEncryptionType.Passphrase },
   ]);
+
   algorithmOptions$ = this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(choicesToOptions());
 
   constructor(

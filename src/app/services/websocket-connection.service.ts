@@ -188,8 +188,7 @@ export class WebSocketConnectionService {
   }
 
   setupConnectionUrl(protocol: string, remote: string): void {
-    this.connectionUrl = (protocol === 'https:' ? 'wss://' : 'ws://')
-      + remote + '/websocket';
+    this.connectionUrl = (protocol === 'https:' ? 'wss://' : 'ws://') + remote + '/websocket';
   }
 
   private subscribeToConnectionStatus(): void {

@@ -12,7 +12,7 @@ export interface IxIpInputWithNetmaskHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxIpInputWithNetmaskHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-ip-input-with-netmask';
+  static readonly hostSelector = 'ix-ip-input-with-netmask';
 
   static with(options: IxIpInputWithNetmaskHarnessFilters): HarnessPredicate<IxIpInputWithNetmaskHarness> {
     return new HarnessPredicate(IxIpInputWithNetmaskHarness, options)

@@ -83,6 +83,7 @@ export class TargetFormComponent implements OnInit {
       return opts;
     }),
   );
+
   readonly initiators$ = this.iscsiService.getInitiators().pipe(
     map((initiators) => {
       const opts: Option[] = [];
@@ -96,6 +97,7 @@ export class TargetFormComponent implements OnInit {
       return opts;
     }),
   );
+
   readonly authmethods$ = of(this.helptext.target_form_enum_authmethod);
   readonly auths$ = this.iscsiService.getAuth().pipe(
     map((auths) => {

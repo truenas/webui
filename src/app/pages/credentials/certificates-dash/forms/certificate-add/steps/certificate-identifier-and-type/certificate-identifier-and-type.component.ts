@@ -67,6 +67,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
     [CertificateCreateType.CreateInternal, this.translate.instant('Internal Certificate')],
     [CertificateCreateType.Import, this.translate.instant('Import Certificate')],
   ]);
+
   readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
 
   constructor(

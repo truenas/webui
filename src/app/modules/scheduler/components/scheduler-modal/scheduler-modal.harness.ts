@@ -5,7 +5,7 @@ import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 
 export class SchedulerModalHarness extends ComponentHarness {
-  static hostSelector = 'ix-scheduler-modal';
+  static readonly hostSelector = 'ix-scheduler-modal';
 
   getMinutesInput = this.locatorFor(IxInputHarness.with({ label: 'Minutes' }));
   getHoursInput = this.locatorFor(IxInputHarness.with({ label: 'Hours' }));

@@ -44,11 +44,13 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       ? this.translate.instant('Edit User Quota')
       : this.translate.instant('Edit Group Quota');
   }
+
   get nameLabel(): string {
     return this.quotaType === DatasetQuotaType.User
       ? helpTextQuotas.users.dialog.placeholder
       : helpTextQuotas.groups.dialog.placeholder;
   }
+
   get dataQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
       ? this.getUserDataQuotaLabel()
@@ -70,6 +72,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       ? helpTextQuotas.users.obj_quota.placeholder
       : helpTextQuotas.groups.obj_quota.placeholder;
   }
+
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
       ? this.getUserDataQuotaTooltip()

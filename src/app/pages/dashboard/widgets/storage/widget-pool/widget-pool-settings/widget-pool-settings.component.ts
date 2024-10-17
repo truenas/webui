@@ -35,6 +35,7 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
   protected poolOptions$ = this.resources.pools$.pipe(
     map((pools) => pools.map((pool) => ({ label: pool.name, value: pool.id.toString() }))),
   );
+
   private firstOption = toSignal(this.poolOptions$.pipe(map((opts) => opts[0]?.value)));
 
   private readonly formFieldNames = ['poolId'];

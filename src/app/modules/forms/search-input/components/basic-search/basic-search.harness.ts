@@ -2,7 +2,7 @@ import { ComponentHarness } from '@angular/cdk/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 
 export class BasicSearchHarness extends ComponentHarness {
-  static hostSelector = 'ix-basic-search';
+  static readonly hostSelector = 'ix-basic-search';
 
   getResetIcon = this.locatorFor('.reset-icon');
   getInput = this.locatorFor(MatInputHarness);

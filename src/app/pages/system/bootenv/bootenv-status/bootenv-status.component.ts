@@ -79,6 +79,7 @@ export class BootStatusListComponent implements OnInit {
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
+
   poolInstance: PoolInstance;
   readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => {
     return Boolean(node?.children?.length);

@@ -104,10 +104,12 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       services: { ssh: values.ssh },
       window: values.window,
     };
-    const confirmation$ = shouldWarn ? this.dialogService.confirm({
-      title: this.translate.instant('Warning!'),
-      message: this.translate.instant('Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?'),
-    }) : of(true);
+    const confirmation$ = shouldWarn
+      ? this.dialogService.confirm({
+        title: this.translate.instant('Warning!'),
+        message: this.translate.instant('Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?'),
+      })
+      : of(true);
     confirmation$.pipe(
       filter(Boolean),
       switchMap(() => {

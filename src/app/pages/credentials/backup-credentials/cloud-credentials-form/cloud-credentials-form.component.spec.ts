@@ -44,10 +44,12 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
       formPatcher$ = {
         next: jest.fn(),
       };
+
       getFormSetter$ = jest.fn(() => this.formPatcher$);
       getSubmitAttributes = jest.fn(() => ({
         s3attribute: 's3 value',
       })) as BaseProviderFormComponent['getSubmitAttributes'];
+
       beforeSubmit = jest.fn(() => of(true)) as BaseProviderFormComponent['beforeSubmit'];
       form = {
         get invalid(): boolean {

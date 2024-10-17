@@ -48,7 +48,7 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
 
   readonly sizeOptions$ = this.store$.inventory$.pipe(
     map((disks) => {
-      const diskSizes = disks.sort((a, b) => a.size - b.size).map((disk) => disk.size);
+      const diskSizes = disks.toSorted((a, b) => a.size - b.size).map((disk) => disk.size);
       const sizeLabels = diskSizes.map((size) => buildNormalizedFileSize(size));
       const uniqueLabels = uniq(sizeLabels);
       return uniqueLabels.map((size: string) => ({ label: size, value: size }));

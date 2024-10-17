@@ -345,7 +345,7 @@ export class ZvolFormComponent implements OnInit {
     const inheritTr = this.translate.instant('Inherit');
     if (
       parent.sync.source === ZfsPropertySource.Inherited
-        || parent.sync.source === ZfsPropertySource.Default
+      || parent.sync.source === ZfsPropertySource.Default
     ) {
       this.syncOptions.unshift({ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: parentDataset[0].sync.value });
     } else {
@@ -393,7 +393,7 @@ export class ZvolFormComponent implements OnInit {
     const inheritTr = this.translate.instant('Inherit');
     if (
       parent.deduplication.source === ZfsPropertySource.Inherited
-        || parent.deduplication.source === ZfsPropertySource.Default
+      || parent.deduplication.source === ZfsPropertySource.Default
     ) {
       this.deduplicationOptions.unshift({ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: parentDataset[0].deduplication.value });
     } else {
@@ -409,7 +409,7 @@ export class ZvolFormComponent implements OnInit {
     this.snapdevOptions.unshift({ label: `${inheritTr} (${parentDataset[0].snapdev.rawvalue})`, value: inherit });
     if (
       parent.snapdev.source === ZfsPropertySource.Inherited
-        || parent.snapdev.source === ZfsPropertySource.Default
+      || parent.snapdev.source === ZfsPropertySource.Default
     ) {
       this.form.controls.snapdev.setValue(inherit);
     } else {

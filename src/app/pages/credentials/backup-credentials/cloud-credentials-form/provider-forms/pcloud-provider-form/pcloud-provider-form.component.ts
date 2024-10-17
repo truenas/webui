@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
+  ChangeDetectionStrategy, Component, ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -42,9 +42,9 @@ export class PcloudProviderFormComponent extends BaseProviderFormComponent imple
       this.oauthComponent.form.patchValue(values);
     });
   }
+
   constructor(
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
   ) {
     super();
   }

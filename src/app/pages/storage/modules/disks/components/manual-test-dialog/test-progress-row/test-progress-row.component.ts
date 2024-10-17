@@ -112,7 +112,7 @@ export class IxTestProgressRowComponent implements OnInit {
       takeWhile((result) => {
         const isNoSubMsg = result && result.msg === IncomingApiMessageType.NoSub;
         const testProgress = this.test().progressPercentage;
-        let isProgressing = true;
+        let isProgressing: boolean;
         if (result.fields.progress == null) {
           isProgressing = false;
         } else if (testProgress == null) {

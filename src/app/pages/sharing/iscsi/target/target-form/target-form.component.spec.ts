@@ -222,7 +222,10 @@ describe('TargetFormComponent', () => {
     });
 
     it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {
-      let portal; let initiator; let auth: Option[];
+      let portal;
+      let initiator;
+      let auth: Option[];
+
       spectator.component.portals$.subscribe((options) => portal = options);
       spectator.component.initiators$.subscribe((options) => initiator = options);
       spectator.component.auths$.subscribe((options) => auth = options);

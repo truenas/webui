@@ -53,7 +53,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   value: (string | number)[];
 
   get orderedValue(): (string | number)[] {
-    return this.items.filter((item) => this.value.includes(item.value)).map(((item) => item.value));
+    return this.items.filter((item) => this.value.includes(item.value)).map((item) => item.value);
   }
 
   constructor(
@@ -112,7 +112,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   }
 
   orderOptions(): void {
-    this.value.reverse().forEach((value) => {
+    this.value.toReversed().forEach((value) => {
       const idx = this.items.findIndex((option) => option.value === value);
       this.items.unshift(...this.items.splice(idx, 1));
     });

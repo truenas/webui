@@ -27,7 +27,7 @@ export type CreateBootenvParams = [{
 
 export type UpdateBootenvParams = [
   name: string,
-  updates:{ name: string },
+  updates: { name: string },
 ];
 
 export interface BootenvTooltip {
