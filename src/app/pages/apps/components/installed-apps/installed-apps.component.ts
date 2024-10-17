@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
-import { Location } from '@angular/common';
+import { AsyncPipe, Location } from '@angular/common';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -10,18 +10,27 @@ import {
   Inject, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { Sort } from '@angular/material/sort';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
+import { MatColumnDef } from '@angular/material/table';
+import { MatTooltip } from '@angular/material/tooltip';
 import {
   ActivatedRoute, NavigationEnd, NavigationStart, Router,
+  RouterLink,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter,
   Observable,
 } from 'rxjs';
+import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -32,11 +41,20 @@ import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
+import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
+import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
+import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
@@ -62,6 +80,35 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   templateUrl: './installed-apps.component.html',
   styleUrls: ['./installed-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    PageHeaderComponent,
+    DockerStatusComponent,
+    MatButton,
+    RequiresRolesDirective,
+    TestDirective,
+    IxIconComponent,
+    AppSettingsButtonComponent,
+    RouterLink,
+    MatAnchor,
+    UiSearchDirective,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    FakeProgressBarComponent,
+    SearchInput1Component,
+    MatSort,
+    AsyncPipe,
+    MatCheckbox,
+    MatColumnDef,
+    MatSortHeader,
+    AppRowComponent,
+    EmptyComponent,
+    MatTooltip,
+    IxDetailsHeightDirective,
+    AppDetailsPanelComponent,
+  ],
 })
 export class InstalledAppsComponent implements OnInit, AfterViewInit {
   protected readonly searchableElements = installedAppsElements;
@@ -165,7 +212,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private store$: Store<WebuiAppState>,
     private location: Location,
     private appsStats: AppsStatsService,
-    private loader: AppLoaderService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events

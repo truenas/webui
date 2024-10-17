@@ -2,16 +2,24 @@ import {
   ChangeDetectionStrategy, Component, computed, input, ViewContainerRef,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, map, Observable, of, switchMap, take,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -24,6 +32,18 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './app-details-header.component.html',
   styleUrls: ['./app-details-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    AppCardLogoComponent,
+    MatButton,
+    CleanLinkPipe,
+    MatTooltip,
+    RequiresRolesDirective,
+    TestDirective,
+    NgxSkeletonLoaderModule,
+    OrNotAvailablePipe,
+  ],
 })
 export class AppDetailsHeaderComponent {
   readonly app = input.required<AvailableApp>();

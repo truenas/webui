@@ -8,6 +8,7 @@ import {
 import { ShellDetailsDialogFormValue } from 'app/interfaces/shell-details-dialog.interface';
 import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/terminal.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 
@@ -16,6 +17,10 @@ import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
   selector: 'ix-container-shell',
   template: '<ix-terminal [conf]="this"></ix-terminal>',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TerminalComponent,
+  ],
 })
 export class ContainerShellComponent implements TerminalConfiguration {
   reconnectShell$ = new Subject<void>();

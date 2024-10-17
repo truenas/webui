@@ -1,11 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, OnInit,
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map, throttleTime } from 'rxjs';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -15,6 +19,13 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './app-resources-card.component.html',
   styleUrls: ['./app-resources-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    NgxSkeletonLoaderModule,
+    FileSizePipe,
+    AsyncPipe,
+  ],
 })
 export class AppResourcesCardComponent implements OnInit {
   readonly isLoading = input<boolean>();
