@@ -37,7 +37,7 @@ export function matchOthersFgValidator(
     if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
-    fg.get(controlName).setErrors(prevErrors);
+    fg.get(controlName).setErrors(prevErrors, { emitEvent: false });
     return null;
   };
 }
