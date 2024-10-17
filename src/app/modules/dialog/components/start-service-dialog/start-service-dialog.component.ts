@@ -108,7 +108,7 @@ export class StartServiceDialogComponent implements OnInit {
           if (result.startAutomatically) {
             this.snackbar.success(
               this.translate.instant(
-                'The {service} service is running and will auto-start after a system reboot.',
+                'The {service} service is running and will auto-start after a system restart.',
                 { service: this.serviceHumanName },
               ),
             );

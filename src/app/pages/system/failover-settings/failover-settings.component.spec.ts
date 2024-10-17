@@ -83,7 +83,7 @@ describe('FailoverComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sync To Peer' }));
     await saveButton.click();
 
-    const rebootCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Reboot standby TrueNAS controller' }));
+    const rebootCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Restart standby TrueNAS controller' }));
     await rebootCheckbox.check();
     const confirmCheckbox = await rootLoader.getHarness(MatCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.check();

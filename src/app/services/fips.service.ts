@@ -38,7 +38,7 @@ export class FipsService {
       .pipe(
         tap((approved) => {
           if (approved) {
-            this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+            this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
           }
         }),
       );

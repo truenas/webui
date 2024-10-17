@@ -52,6 +52,6 @@ describe('UploadConfigDialogComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({ file, method: 'config.upload' });
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/reboot'], { skipLocationChange: true });
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/restart'], { skipLocationChange: true });
   });
 });

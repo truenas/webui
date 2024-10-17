@@ -5,7 +5,7 @@
   height: 100%;
 }
 
-#reboot-card {
+#restart-card {
   align-items: center;
   box-sizing: content-box;
   display: flex;
@@ -33,7 +33,7 @@
 }
 
 @media screen and (max-height: 700px) {
-  #reboot-card {
+  #restart-card {
     font-size: 80%;
     width: 225px;
   }

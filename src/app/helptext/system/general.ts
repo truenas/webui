@@ -131,7 +131,7 @@ export const helptextSystemGeneral = {
 
   upload_config_form: {
     message: T(
-      '<p>The system will reboot to perform this operation!</p>\
+      '<p>The system will restart to perform this operation!</p>\
  <p><font color="red">All passwords are reset when the \
  uploaded configuration database file was saved \
  without the Password Secret Seed. </font></p>',

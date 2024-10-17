@@ -31,7 +31,7 @@ export const helptextSystemAdvanced = {
  hardware issues.'),
 
   debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
-  reboot.'),
+  restart.'),
 
   max_parallel_replication_tasks_tooltip: T('Maximum number of replication tasks being executed \
 simultaneously.'),

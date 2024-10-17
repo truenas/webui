@@ -2,16 +2,16 @@ import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
 import { FailoverComponent } from 'app/pages/system-tasks/failover/failover.component';
-import { RebootComponent } from 'app/pages/system-tasks/reboot/reboot.component';
+import { RestartComponent } from 'app/pages/system-tasks/restart/restart.component';
 import { ShutdownComponent } from 'app/pages/system-tasks/shutdown/shutdown.component';
 
 export const systemTasksRoutes: Routes = [
   {
     path: '',
     children: [{
-      path: 'reboot',
-      component: RebootComponent,
-      data: { title: T('Reboot'), breadcrumb: T('Reboot') },
+      path: 'restart',
+      component: RestartComponent,
+      data: { title: T('Restart'), breadcrumb: T('Restart') },
     }, {
       path: 'shutdown',
       component: ShutdownComponent,

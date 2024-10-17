@@ -105,7 +105,7 @@ export class SystemSecurityFormComponent implements OnInit {
         take(1),
         switchMap((isHaLicensed) => {
           if (isHaLicensed) {
-            // Reboot will be handled in response to failover.disabled.reasons event in HaFipsEffects.
+            // Restart will be handled in response to failover.disabled.reasons event in HaFipsEffects.
             return EMPTY;
           }
 

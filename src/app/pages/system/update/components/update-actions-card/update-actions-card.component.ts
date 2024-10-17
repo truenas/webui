@@ -154,7 +154,7 @@ export class UpdateActionsCardComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+        this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
       });
   }
 
@@ -333,7 +333,7 @@ export class UpdateActionsCardComponent implements OnInit {
       case UpdateType.ApplyPending: {
         const message = this.isHaLicensed
           ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
-          : this.translate.instant('The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?');
+          : this.translate.instant('The system will restart and be briefly unavailable while applying updates. Apply updates and restart?');
         this.dialogService.confirm({
           title: this.translate.instant('Apply Pending Updates'),
           message: this.translate.instant(message),
