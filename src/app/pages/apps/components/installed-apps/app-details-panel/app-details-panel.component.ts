@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { App } from 'app/interfaces/app.interface';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
@@ -21,6 +22,7 @@ import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-a
     AppWorkloadsCardComponent,
     IxIconComponent,
     AppNotesCardComponent,
+    MobileBackButtonComponent,
     AppMetadataCardComponent,
   ],
 })
