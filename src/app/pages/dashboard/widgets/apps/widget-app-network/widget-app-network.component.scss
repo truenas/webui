@@ -1,80 +1,9 @@
 @import 'scss-imports/cssvars';
 
-:host ::ng-deep ix-with-loading-state-error {
-  align-items: center;
-  box-sizing: border-box;
-  display: flex;
-  flex: 1;
-  font-size: 24px;
-  font-weight: bold;
-  height: 100%;
-  padding: 16px;
-  place-content: center center;
-  text-align: center;
-  width: 100%;
-}
-
-.card {
-  height: 100%;
-
-  ::ng-deep > ix-with-loading-state-loader {
-    align-items: center;
-    box-sizing: border-box;
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .header {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    min-height: 54px;
-    padding: 16px 8px 8px 16px;
-  }
-
-  .card-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
-  gap: 8px;
-  overflow: hidden;
-
-  &.full {
-    padding-bottom: 8px;
-    padding-top: 8px;
-  }
-
-  &.empty {
-    align-items: center;
-    place-content: center center;
-    text-align: center;
-
-    ix-icon {
-      height: 48px;
-      width: 48px;
-    }
-
-    &.full {
-      padding: 0 16px 48px;
-    }
-  }
-}
-
 ix-app-card-logo {
   align-items: center;
   background: var(--bg1);
   display: inline-flex;
-  flex: 1 1 25%;
-  max-width: 25%;
   padding: 0;
   place-content: center center;
 }
@@ -83,7 +12,5 @@ ix-app-network-info {
   align-items: center;
   background: var(--bg1);
   display: inline-flex;
-  flex: 1 1 75%;
-  max-width: 75%;
   place-content: center center;
 }

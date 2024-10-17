@@ -16,6 +16,9 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -37,6 +40,7 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
     MatStepperModule,
     TranslateModule,
     AsyncPipe,
+    UseIxIconsInStepperComponent,
   ],
 })
 export class CloudSyncWizardComponent {

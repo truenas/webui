@@ -31,6 +31,7 @@ describe('StatusViewComponent', () => {
         selectedSlot: () => ({}) as DashboardEnclosureSlot,
         selectedEnclosureSlots: () => ([]) as DashboardEnclosureSlot[],
         selectedSide: () => EnclosureSide.Front,
+        hasMoreThanOneSide: () => true,
       }),
     ],
   });

@@ -2,9 +2,13 @@ import {
   ChangeDetectionStrategy, Component, OnChanges,
   input, signal,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 @UntilDestroy()
@@ -13,6 +17,14 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
   templateUrl: './app-details-similar.component.html',
   styleUrls: ['./app-details-similar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    NgxSkeletonLoaderModule,
+    AppCardComponent,
+    RouterLink,
+    TestDirective,
+  ],
 })
 export class AppDetailsSimilarComponent implements OnChanges {
   readonly app = input.required< AvailableApp>();

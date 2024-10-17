@@ -9,7 +9,7 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -24,7 +24,7 @@ import { TaskService } from 'app/services/task.service';
     IxFieldsetComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
-    SchedulerModule,
+    SchedulerComponent,
     IxSelectComponent,
     TranslateModule,
   ],

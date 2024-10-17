@@ -1,17 +1,25 @@
+import { KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, effect, Inject, input, output,
   signal,
   WritableSignal,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import {
+  MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
+} from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { MatTooltip } from '@angular/material/tooltip';
+import { Router, RouterLink } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEmpty } from 'lodash-es';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
   filter, map, switchMap, take, tap,
 } from 'rxjs';
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -19,12 +27,17 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
+import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -36,6 +49,26 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './app-info-card.component.html',
   styleUrls: ['./app-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatButton,
+    TestDirective,
+    RequiresRolesDirective,
+    MatCardContent,
+    ImgFallbackModule,
+    OrNotAvailablePipe,
+    KeyValuePipe,
+    MatCardActions,
+    CleanLinkPipe,
+    AppVersionPipe,
+    MatTooltip,
+    IxIconComponent,
+    RouterLink,
+  ],
 })
 export class AppInfoCardComponent {
   readonly app = input<App>();

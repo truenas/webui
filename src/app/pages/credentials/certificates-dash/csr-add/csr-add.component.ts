@@ -17,6 +17,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
@@ -66,6 +69,7 @@ import { WebSocketService } from 'app/services/ws.service';
     RequiresRolesDirective,
     MatStepperNext,
     TranslateModule,
+    UseIxIconsInStepperComponent,
   ],
 })
 export class CsrAddComponent {

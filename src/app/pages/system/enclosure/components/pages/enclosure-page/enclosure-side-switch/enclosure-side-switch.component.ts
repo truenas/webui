@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,15 +23,7 @@ import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclos
 export class EnclosureSideSwitchComponent {
   readonly enclosure = input.required<DashboardEnclosure>();
 
-  protected readonly hasMoreThanOneSide = computed(() => {
-    return [
-      this.enclosure().front_loaded,
-      this.enclosure().top_loaded,
-      this.enclosure().rear_slots > 0,
-      this.enclosure().internal_slots > 0,
-    ].filter(Boolean).length > 1;
-  });
-
+  protected readonly hasMoreThanOneSide = this.store.hasMoreThanOneSide;
   protected readonly EnclosureSide = EnclosureSide;
 
   constructor(

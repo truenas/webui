@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
@@ -16,6 +17,10 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
     DockerStore,
     AppsStore,
     AppsStatsService,
+  ],
+  standalone: true,
+  imports: [
+    RouterOutlet,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

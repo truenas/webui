@@ -1,14 +1,21 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { latestVersion } from 'app/constants/catalog.constants';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -18,6 +25,20 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './pull-image-form.component.html',
   styleUrls: ['./pull-image-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    MatButton,
+    IxFieldsetComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    TestDirective,
+  ],
 })
 export class PullImageFormComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
@@ -44,7 +65,6 @@ export class PullImageFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
-    private matDialog: MatDialog,
     private translate: TranslateService,
     private dialogService: DialogService,
   ) {}
