@@ -8,6 +8,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-viewer/qr-viewer.component';
@@ -25,6 +26,7 @@ describe('TwoFactorComponent', () => {
     declarations: [
       MockComponent(IxWarningComponent),
       MockComponent(QrViewerComponent),
+      MockComponent(CopyButtonComponent),
     ],
     providers: [
       mockProvider(DialogService, {
@@ -41,7 +43,7 @@ describe('TwoFactorComponent', () => {
           },
         } as LoggedInUser),
         userTwoFactorConfig$: of({
-          provisioning_uri: 'provisioning_uri',
+          provisioning_uri: 'somepath://here/iXsystems:first-test?secret=KYC123',
           interval: 30,
           otp_digits: 6,
           secret_configured: true,
@@ -55,6 +57,33 @@ describe('TwoFactorComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
+  });
+
+  it('shows the QR code viewer with correct provisioning URI when 2FA is configured', () => {
+    spectator.component.userTwoFactorAuthConfigured = true;
+    spectator.detectChanges();
+
+    const qrViewer = spectator.query(QrViewerComponent);
+    expect(qrViewer).toBeTruthy();
+    expect(qrViewer).toHaveProperty('qrInfo', 'somepath://here/iXsystems:first-test?secret=KYC123');
+  });
+
+  it('displays the secret from provisioning URI in the component', () => {
+    spectator.component.userTwoFactorAuthConfigured = true;
+    spectator.detectChanges();
+
+    const secretElement = spectator.query('.secret p');
+    expect(secretElement).toBeTruthy();
+    expect(secretElement).toHaveText('KYC123');
+  });
+
+  it('shows a copy button with the correct secret', () => {
+    spectator.component.userTwoFactorAuthConfigured = true;
+    spectator.detectChanges();
+
+    const copyButton = spectator.query(CopyButtonComponent);
+    expect(copyButton).toBeTruthy();
+    expect(copyButton).toHaveProperty('text', 'KYC123');
   });
 
   it('shows warning when global setting is disabled', () => {
