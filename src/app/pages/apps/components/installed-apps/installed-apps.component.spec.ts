@@ -167,7 +167,7 @@ describe('InstalledAppsComponent', () => {
       title: 'Delete',
       message: 'Delete test-app?',
       secondaryCheckbox: true,
-      secondaryCheckboxText: 'Remove iX Volumes',
+      secondaryCheckboxText: 'Remove iXVolumes',
     });
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
