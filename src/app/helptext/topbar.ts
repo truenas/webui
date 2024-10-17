@@ -18,7 +18,7 @@ export const helptextTopbar = {
     tc_connect: T('Connecting to TrueCommand'),
     tc_status: T('Status of TrueCommand'),
     update: T('Update in Progress'),
-    upgrade_waiting: T('Upgrade Waiting to Finish'),
+    reboot_info: T('Reboot Required'),
     pending_network_changes: T('Pending Network Changes'),
     directory_services_monitor: T('Directory Services Monitor'),
     resilvering: T('Resilvering'),

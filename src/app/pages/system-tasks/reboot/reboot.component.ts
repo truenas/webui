@@ -43,7 +43,7 @@ export class RebootComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const reason = this.route.snapshot.queryParamMap.get('reason');
+    const reason = this.route.snapshot.queryParamMap.get('reason') || 'Unknown Reason';
 
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/signin');

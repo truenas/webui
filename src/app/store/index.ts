@@ -17,7 +17,6 @@ import { HaFipsEffects } from 'app/store/ha-fips/ha-fips.effects';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
 import { haInfoReducer, HaInfoState } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
-import { HaUpgradeEffects } from 'app/store/ha-upgrade/ha-upgrade.effects';
 import { NetworkInterfacesEffects } from 'app/store/network-interfaces/network-interfaces.effects';
 import {
   networkInterfacesReducer,
@@ -27,6 +26,9 @@ import { networkInterfacesKey } from 'app/store/network-interfaces/network-inter
 import { PreferencesEffects } from 'app/store/preferences/preferences.effects';
 import { preferencesReducer, PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { preferencesStateKey } from 'app/store/preferences/preferences.selectors';
+import { RebootInfoEffects } from 'app/store/reboot-info/reboot-info.effects';
+import { rebootInfoReducer, RebootInfoState } from 'app/store/reboot-info/reboot-info.reducer';
+import { rebootInfoStateKey } from 'app/store/reboot-info/reboot-info.selectors';
 import { CustomRouterState } from 'app/store/router/custom-router-serializer';
 import { ServicesEffects } from 'app/store/services/services.effects';
 import { servicesReducer, ServicesState } from 'app/store/services/services.reducer';
@@ -45,6 +47,7 @@ export interface AppState {
   [haInfoStateKey]: HaInfoState;
   [servicesStateKey]: ServicesState;
   [networkInterfacesKey]: NetworkInterfacesState;
+  [rebootInfoStateKey]: RebootInfoState;
   [jobStateKey]: JobsState;
   [alertStateKey]: AlertsState;
   [userStateKey]: UsersState;
@@ -59,6 +62,7 @@ export const rootReducers: ActionReducerMap<AppState> = {
   [haInfoStateKey]: haInfoReducer,
   [servicesStateKey]: servicesReducer,
   [networkInterfacesKey]: networkInterfacesReducer,
+  [rebootInfoStateKey]: rebootInfoReducer,
   [jobStateKey]: jobReducer,
   [alertStateKey]: alertReducer,
   [userStateKey]: userReducer,
@@ -71,10 +75,10 @@ export const rootEffects = [
   SystemInfoEffects,
   HaInfoEffects,
   EulaEffects,
-  HaUpgradeEffects,
   ServicesEffects,
   NetworkInterfacesEffects,
   HaFipsEffects,
+  RebootInfoEffects,
   JobEffects,
   AlertEffects,
   UserEffects,

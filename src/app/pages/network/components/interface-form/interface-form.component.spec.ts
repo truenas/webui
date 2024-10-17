@@ -75,7 +75,6 @@ describe('InterfaceFormComponent', () => {
               reasons: [],
             },
             isHaLicensed: true,
-            isUpgradePending: false,
           },
         },
       }),

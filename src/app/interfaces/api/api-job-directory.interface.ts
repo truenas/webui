@@ -111,7 +111,6 @@ export interface ApiJobDirectory {
   // Failover
   'failover.reboot.other_node': { params: void; response: void };
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
-  'failover.upgrade_finish': { params: void; response: boolean };
 
   // Filesystem
   'filesystem.put': { params: FilesystemPutParams; response: boolean };
@@ -168,8 +167,9 @@ export interface ApiJobDirectory {
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
 
   // System
-  'system.reboot': { params: { delay?: number; reason?: string }; response: void };
-  'system.shutdown': { params: { delay?: number; reason?: string }; response: void };
+  'system.reboot': { params: { delay?: number; reason: string }; response: void };
+  'system.shutdown': { params: { delay?: number; reason: string }; response: void };
+
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
 
   // SystemDataset
