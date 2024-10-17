@@ -93,7 +93,6 @@ const defaultHomePath = '/var/empty';
 })
 export class UserFormComponent implements OnInit {
   isLoading = signal(false);
-  isFormLoading = false;
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
   protected readonly requiredRoles = [Role.AccountWrite];
