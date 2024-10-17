@@ -1,9 +1,8 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SnapshotListComponent } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 
-export const routes: Routes = [
+export const snapshotsRoutes: Routes = [
   {
     path: 'snapshots',
     data: { title: T('Snapshots'), breadcrumb: T('Snapshots') },
@@ -21,5 +20,3 @@ export const routes: Routes = [
     ],
   },
 ];
-
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

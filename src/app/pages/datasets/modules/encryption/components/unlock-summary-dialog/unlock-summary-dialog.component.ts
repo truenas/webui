@@ -2,10 +2,16 @@ import {
   ChangeDetectionStrategy,
   Component,
 } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
+import { TranslateModule } from '@ngx-translate/core';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DatasetUnlockComponent,
 } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
@@ -15,6 +21,17 @@ import {
   templateUrl: './unlock-summary-dialog.component.html',
   styleUrls: ['./unlock-summary-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    TranslateModule,
+    MatDialogContent,
+    MatDivider,
+    TestDirective,
+    IxIconComponent,
+    FormActionsComponent,
+    MatButton,
+  ],
 })
 export class UnlockSummaryDialogComponent {
   title: string = helptextUnlock.unlock_dataset_dialog.title;
