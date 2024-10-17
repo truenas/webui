@@ -322,6 +322,7 @@ export interface ApiCallDirectory {
   'audit.config': { params: void; response: AuditConfig };
   'audit.query': { params: [AuditQueryParams]; response: AuditEntry[] };
   'audit.update': { params: [AuditConfig]; response: AuditEntry[] };
+  'audit.download_report': { params: [{ report_name?: string }]; response: string[] };
 
   // Auth
   'auth.generate_token': { params: void; response: string };
