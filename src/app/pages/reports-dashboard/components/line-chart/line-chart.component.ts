@@ -173,10 +173,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       case label.toLowerCase().includes('bits'):
         units = 'bits';
         break;
-    }
-
-    if (typeof units === 'undefined') {
-      console.warn('Could not infer units from ' + this.labelY);
+      default:
+        console.warn('Could not infer units from ' + this.labelY);
     }
 
     return units;

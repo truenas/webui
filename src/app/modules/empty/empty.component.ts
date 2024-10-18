@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -61,6 +62,8 @@ export class EmptyComponent {
         case EmptyType.NoSearchResults:
           icon = iconMarker('mdi-magnify-scan');
           break;
+        default:
+          assertUnreachable(this.conf.type);
       }
     }
     return icon;
