@@ -157,8 +157,11 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
       type: formValues.type,
     } as NfsAclItem;
 
-    if (this.isUserTag) { ace.who = formValues.user; }
-    if (this.isGroupTag) { ace.who = formValues.group; }
+    if (this.isUserTag) {
+      ace.who = formValues.user;
+    } else if (this.isGroupTag) {
+      ace.who = formValues.group;
+    }
 
     if (formValues.permissionType === NfsFormPermsType.Basic) {
       if (!formValues.basicPermission) {
@@ -190,8 +193,11 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     userField.clearValidators();
     groupField.clearValidators();
 
-    if (this.isUserTag) { userField.addValidators(Validators.required); }
-    if (this.isGroupTag) { groupField.addValidators(Validators.required); }
+    if (this.isUserTag) {
+      userField.addValidators(Validators.required);
+    } else if (this.isGroupTag) {
+      groupField.addValidators(Validators.required);
+    }
 
     const formValues = {
       tag: this.ace.tag,

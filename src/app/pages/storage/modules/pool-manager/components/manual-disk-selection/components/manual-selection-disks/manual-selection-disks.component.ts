@@ -40,7 +40,7 @@ interface EnclosureGroup {
 
 type DiskOrGroup = EnclosureDisk | EnclosureGroup;
 
-const noEnclosureId = 'no-enclosure' as const;
+const noEnclosureId = 'no-enclosure';
 
 @UntilDestroy()
 @Component({
@@ -163,10 +163,10 @@ export class ManualSelectionDisksComponent implements OnInit {
       const diskNameNormalized = disk.name?.toLowerCase().trim() || '';
       const searchMatches = filterValues.search
         ? (
-          diskModalStringNormalized.includes(searchStringNormalized)
-          || diskSerialStringNormalized.includes(searchStringNormalized)
-          || diskNameNormalized.includes(searchStringNormalized)
-        )
+            diskModalStringNormalized.includes(searchStringNormalized)
+            || diskSerialStringNormalized.includes(searchStringNormalized)
+            || diskNameNormalized.includes(searchStringNormalized)
+          )
         : true;
 
       return typeMatches && sizeMatches && searchMatches;

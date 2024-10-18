@@ -34,10 +34,10 @@ export interface EnclosureOld {
 export interface EnclosureOldElements {
   'Array Device Slot': Record<number, EnclosureOldSlot>;
   'SAS Expander'?: Record<number, EnclosureElement>;
-  'Enclosure'?: Record<number, EnclosureElement>;
-  'Temperature'?: Record<number, EnclosureElement>;
+  Enclosure?: Record<number, EnclosureElement>;
+  Temperature?: Record<number, EnclosureElement>;
   'Voltage Sensor'?: Record<number, EnclosureElement>;
-  'Cooling'?: Record<number, EnclosureElement>;
+  Cooling?: Record<number, EnclosureElement>;
 }
 
 /**

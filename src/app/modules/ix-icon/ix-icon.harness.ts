@@ -2,7 +2,7 @@ import { HarnessPredicate } from '@angular/cdk/testing';
 import { IconHarnessFilters, MatIconHarness } from '@angular/material/icon/testing';
 
 export class IxIconHarness extends MatIconHarness {
-  static override hostSelector = '.ix-icon';
+  static override readonly hostSelector = '.ix-icon';
   /**
    * Gets a `HarnessPredicate` that can be used to search for a tree with specific attributes.
    * @param options Options for narrowing the search

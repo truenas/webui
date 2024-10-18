@@ -25,7 +25,7 @@ function getNodePredicate<T extends TreeNodeHarness>(
 }
 
 export class TreeNodeHarness extends MatTreeNodeHarness {
-  static override hostSelector = '.ix-tree-node, .ix-nested-tree-node';
+  static override readonly hostSelector = '.ix-tree-node, .ix-nested-tree-node';
   override _toggle = this.locatorForOptional('[treeNodeToggle]');
 
   /**

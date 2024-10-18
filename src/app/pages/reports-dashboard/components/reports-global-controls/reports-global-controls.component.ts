@@ -59,6 +59,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
     devices: [[] as string[]],
     metrics: [[] as string[]],
   });
+
   activeTab: ReportTab;
   allTabs: ReportTab[];
   diskDevices$ = this.reportsService.getDiskDevices();

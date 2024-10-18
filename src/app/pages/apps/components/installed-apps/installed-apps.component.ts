@@ -127,6 +127,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     active: SortableField.Application,
     direction: SortDirection.Asc,
   };
+
   readonly sortableField = SortableField;
 
   entityEmptyConf: EmptyConfig = {

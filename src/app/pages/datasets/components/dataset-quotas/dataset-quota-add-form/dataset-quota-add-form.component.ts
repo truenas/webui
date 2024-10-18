@@ -37,25 +37,31 @@ export class DatasetQuotaAddFormComponent implements OnInit {
       ? this.translate.instant('Add User Quotas')
       : this.translate.instant('Add Group Quotas');
   }
+
   get dataQuotaLabel(): string {
-    return this.quotaType === DatasetQuotaType.User
-      ? this.translate.instant(helpTextQuotas.users.data_quota.placeholder)
-        + this.translate.instant(helptextGlobal.human_readable.suggestion_label)
-      : this.translate.instant(helpTextQuotas.groups.data_quota.placeholder)
+    if (this.quotaType === DatasetQuotaType.User) {
+      return this.translate.instant(helpTextQuotas.users.data_quota.placeholder)
         + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+    }
+
+    return this.translate.instant(helpTextQuotas.groups.data_quota.placeholder)
+      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
+
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
       ? helpTextQuotas.users.obj_quota.placeholder
       : helpTextQuotas.groups.obj_quota.placeholder;
   }
+
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
       ? this.translate.instant(helpTextQuotas.users.data_quota.tooltip)
-        + ' ' + this.translate.instant(helpTextQuotas.field_accepts_tooltip)
+      + ' ' + this.translate.instant(helpTextQuotas.field_accepts_tooltip)
       : this.translate.instant(helpTextQuotas.groups.data_quota.tooltip)
         + ' ' + this.translate.instant(helpTextQuotas.field_accepts_tooltip);
   }
+
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
       ? helpTextQuotas.users.obj_quota.tooltip

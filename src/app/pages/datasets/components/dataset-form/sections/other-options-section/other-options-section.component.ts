@@ -109,6 +109,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     { label: '2', value: 2 },
     { label: '3', value: 3 },
   ]);
+
   recordsizeOptions$: Observable<Option[]>;
   caseSensitivityOptions$ = of(mapToOptions(datasetCaseSensitivityLabels, this.translate));
   specialSmallBlockSizeOptions$: Observable<Option[]>;
@@ -118,6 +119,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     { label: this.translate.instant('SMB/NFSv4'), value: DatasetAclType.Nfsv4 },
     { label: this.translate.instant('POSIX'), value: DatasetAclType.Posix },
   ]);
+
   aclModeOptions$ = of(mapToOptions(aclModeLabels, this.translate));
 
   private readonly defaultSyncOptions$ = of(mapToOptions(datasetSyncLabels, this.translate));
@@ -127,11 +129,13 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private defaultChecksumOptions$ = this.ws.call('pool.dataset.checksum_choices').pipe(
     choicesToOptions(),
   );
+
   private onOffOptions$ = of(mapToOptions(onOffLabels, this.translate));
   private defaultSnapdevOptions$ = of(mapToOptions(datasetSnapdevLabels, this.translate));
   private defaultRecordSizeOptions$ = this.ws.call('pool.dataset.recordsize_choices').pipe(
     singleArrayToOptions(),
   );
+
   private defaultSpecialSmallBlockSizeOptions$ = of(specialSmallBlockSizeOptions);
 
   readonly helptext = helptextDatasetForm;
@@ -218,6 +222,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
+      // eslint-disable-next-line sonarjs/sonar-prefer-optional-chain,@typescript-eslint/prefer-optional-chain
       if (!systemInfo.license || !systemInfo.license.features.includes(LicenseFeature.Dedup)) {
         return;
       }
@@ -466,9 +471,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         const recordsize = this.formatter.memorySizeParsing(recordsizeAsString);
         const recommended = this.formatter.memorySizeParsing(recommendedAsString);
 
-        this.hasRecordsizeWarning = recordsize && recommended
+        this.hasRecordsizeWarning = (recordsize
+          && recommended
           && recordsizeAsString !== inherit
-          && recordsize < recommended;
+          && recordsize < recommended);
+
         this.minimumRecommendedRecordsize = recommendedAsString;
 
         if (this.hasRecordsizeWarning) {

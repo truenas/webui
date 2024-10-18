@@ -42,6 +42,7 @@ export class RequiresRolesDirective extends HasAccessDirective {
   override get elementClass(): string {
     return this.cssClassList.join(' ');
   }
+
   override set elementClass(val: string) {
     this.cssClassList = val.split(' ');
   }

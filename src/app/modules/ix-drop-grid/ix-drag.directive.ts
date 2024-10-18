@@ -37,6 +37,7 @@ import {
 export class IxDragDirective extends CdkDrag {
   @ContentChildren(ixDragHandleDirectiveToken, { descendants: true }) _ixHandles: QueryList<IxDragHandleDirective>;
 
+  // eslint-disable-next-line sonarjs/sonar-max-params
   constructor(
     ngZone: NgZone,
     element: ElementRef<HTMLElement>,

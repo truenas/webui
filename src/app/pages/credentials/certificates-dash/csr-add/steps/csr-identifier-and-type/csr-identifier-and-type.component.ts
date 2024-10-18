@@ -65,6 +65,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     [CertificateCreateType.CreateCsr, this.translate.instant('Certificate Signing Request')],
     [CertificateCreateType.ImportCsr, this.translate.instant('Import Certificate Signing Request')],
   ]);
+
   readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
 
   constructor(

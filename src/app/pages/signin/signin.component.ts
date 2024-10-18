@@ -70,6 +70,7 @@ export class SigninComponent implements OnInit {
     delay(1000),
     switchMap(() => this.isConnected$),
   );
+
   readonly hasLoadingIndicator$ = combineLatest([
     this.signinStore.isLoading$,
     this.isConnected$,

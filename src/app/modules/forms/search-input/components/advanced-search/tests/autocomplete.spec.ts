@@ -222,6 +222,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
     });
 
     // TODO: Broken after package update. Actually functionality is working.
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     it.skip('inserts a suggestion when Enter is pressed', async () => {
       await searchHarness.setValue('User');
 
