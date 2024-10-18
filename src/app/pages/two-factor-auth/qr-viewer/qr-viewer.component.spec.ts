@@ -1,6 +1,6 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
-import { QrCodeComponent } from 'ng-qrcode';
+import { MockComponent, MockModule } from 'ng-mocks';
+import { QrCodeComponent, QrCodeModule } from 'ng-qrcode';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
@@ -12,7 +12,9 @@ describe('QrViewerComponent', () => {
     component: QrViewerComponent,
     declarations: [
       MockComponent(IxWarningComponent),
-      MockComponent(QrCodeComponent),
+    ],
+    imports: [
+      MockModule(QrCodeModule),
     ],
   });
 
