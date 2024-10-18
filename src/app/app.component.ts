@@ -1,10 +1,14 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Inject, OnInit,
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter, tap } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
+import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -12,13 +16,14 @@ import { DetectBrowserService } from 'app/services/detect-browser.service';
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   isAuthenticated = false;
   constructor(
     public title: Title,
     private router: Router,
     private authService: AuthService,
     private detectBrowser: DetectBrowserService,
+    private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.authService.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
@@ -56,6 +61,10 @@ export class AppComponent {
     };
   }
 
+  ngOnInit(): void {
+    this.setupScrollToTopOnNavigation();
+  }
+
   private setFavicon(isDarkMode: boolean): void {
     let path = 'assets/images/truenas_scale_favicon.png';
     if (isDarkMode) {
@@ -73,5 +82,13 @@ export class AppComponent {
       link.href = path;
       document.getElementsByTagName('head')[0].appendChild(link);
     }
+  }
+
+  private setupScrollToTopOnNavigation(): void {
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      tap(() => this.layoutService.getContentContainer()?.scrollTo(0, 0)),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }
