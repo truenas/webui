@@ -115,7 +115,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     filter((response) => !!response.length),
     map((response) => {
       const [update] = response;
-      return (update.data as number[][]).map((row) => (row = row.slice(1).map((value) => value * kb)));
+      return (update.data as number[][]).map((row) => row.slice(1).map((value) => value * kb));
     }),
   ));
 

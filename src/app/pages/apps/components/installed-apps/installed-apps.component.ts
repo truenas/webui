@@ -281,7 +281,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  showLoadStatus(type: EmptyType): void {
+  showLoadStatus(type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults): void {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:

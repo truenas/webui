@@ -329,6 +329,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   // Continues the update (based on its type) after the Save Config dialog is closed
   continueUpdate(): void {
+    // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (this.updateType) {
       case UpdateType.ApplyPending: {
         const message = this.isHaLicensed

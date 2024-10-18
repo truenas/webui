@@ -127,67 +127,75 @@ export class BootEnvironmentFormComponent implements OnInit {
   onSubmit(): void {
     this.isFormLoading = true;
     switch (this.operation) {
-      case this.Operations.Create: {
-        const createParams: CreateBootenvParams = [{
-          name: this.formGroup.value.name,
-        }];
-
-        this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe({
-          next: () => {
-            this.isFormLoading = false;
-            this.slideInRef.close(true);
-          },
-          error: (error: unknown) => {
-            this.isFormLoading = false;
-            this.slideInRef.close(false);
-            this.errorHandler.handleWsFormError(error, this.formGroup);
-          },
-        });
-
+      case this.Operations.Create:
+        this.createEnvironment();
         break;
-      }
-      case this.Operations.Rename: {
-        const renameParams: UpdateBootenvParams = [
-          this.currentName,
-          {
-            name: this.formGroup.value.name,
-          },
-        ];
-
-        this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe({
-          next: () => {
-            this.isFormLoading = false;
-            this.slideInRef.close(true);
-          },
-          error: (error: unknown) => {
-            this.isFormLoading = false;
-            this.slideInRef.close(false);
-            this.errorHandler.handleWsFormError(error, this.formGroup);
-          },
-        });
-
+      case this.Operations.Rename:
+        this.renameEnvironment();
         break;
-      }
-      case this.Operations.Clone: {
-        const cloneParams: CreateBootenvParams = [{
-          name: this.formGroup.value.name,
-          source: this.currentName,
-        }];
-
-        this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe({
-          next: () => {
-            this.isFormLoading = false;
-            this.slideInRef.close(true);
-          },
-          error: (error: unknown) => {
-            this.isFormLoading = false;
-            this.slideInRef.close(false);
-            this.errorHandler.handleWsFormError(error, this.formGroup);
-          },
-        });
-
+      case this.Operations.Clone:
+        this.cloneEnvironment();
         break;
-      }
+      default:
+        console.error('Unsupported operation');
     }
+  }
+
+  private createEnvironment(): void {
+    const createParams: CreateBootenvParams = [{
+      name: this.formGroup.value.name,
+    }];
+
+    this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.slideInRef.close(true);
+      },
+      error: (error: unknown) => {
+        this.isFormLoading = false;
+        this.slideInRef.close(false);
+        this.errorHandler.handleWsFormError(error, this.formGroup);
+      },
+    });
+  }
+
+  private renameEnvironment(): void {
+    const renameParams: UpdateBootenvParams = [
+      this.currentName,
+      {
+        name: this.formGroup.value.name,
+      },
+    ];
+
+    this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.slideInRef.close(true);
+      },
+      error: (error: unknown) => {
+        this.isFormLoading = false;
+        this.slideInRef.close(false);
+        this.errorHandler.handleWsFormError(error, this.formGroup);
+      },
+    });
+  }
+
+  private cloneEnvironment(): void {
+    const cloneParams: CreateBootenvParams = [{
+      name: this.formGroup.value.name,
+      source: this.currentName,
+    }];
+
+    this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isFormLoading = false;
+        this.slideInRef.close(true);
+      },
+      error: (error: unknown) => {
+        this.isFormLoading = false;
+        this.slideInRef.close(false);
+        this.errorHandler.handleWsFormError(error, this.formGroup);
+      },
+    });
   }
 }

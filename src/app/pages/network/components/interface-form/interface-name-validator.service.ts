@@ -51,6 +51,8 @@ export class InterfaceNameValidatorService {
       case NetworkInterfaceType.Vlan:
         interfaceName = this.translate.instant('VLAN interface');
         break;
+      default:
+        console.error('Unsupported interface type', type);
     }
 
     return this.translate.instant(

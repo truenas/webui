@@ -422,7 +422,8 @@ export class ReplicationWizardComponent {
       if (requestsTasks.length) {
         return forkJoin(requestsTasks).pipe(
           map((createdSnapshotTasks) => {
-            return this.createdSnapshotTasks = (createdSnapshotTasks || []).filter((task) => !!task);
+            this.createdSnapshotTasks = (createdSnapshotTasks || []).filter((task) => !!task);
+            return this.createdSnapshotTasks;
           }),
         );
       }
