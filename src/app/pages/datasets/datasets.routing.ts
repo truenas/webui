@@ -38,6 +38,7 @@ export const datasetRoutes: Routes = [
         data: { title: T('Edit ACL'), breadcrumb: null },
         pathMatch: 'full',
       },
+      ...snapshotsRoutes,
       {
         path: ':datasetId',
         data: { breadcrumb: T('Datasets') },
@@ -80,7 +81,6 @@ export const datasetRoutes: Routes = [
         component: DatasetQuotasListComponent,
         data: { title: T('Group Quotas'), breadcrumb: null, ...groupQuotasData },
       },
-      ...snapshotsRoutes,
       {
         path: '**',
         redirectTo: '/datasets/',
