@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PreloadAllModules, Router, RouterModule } from '@angular/router';
@@ -30,7 +30,6 @@ import { createTranslateLoader } from 'app/core/classes/icu-translations-loader'
 import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
-import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
@@ -97,7 +96,6 @@ import { AuthGuardService } from './services/auth/auth-guard.service';
     }),
     EffectsModule.forRoot(rootEffects),
     MatDialogModule,
-    SnackbarModule,
     NgxSkeletonLoaderModule.forRoot({
       theme: {
         'background-color': 'var(--alt-bg2)',
@@ -114,6 +112,13 @@ import { AuthGuardService } from './services/auth/auth-guard.service';
     provideNgxWebstorage(
       withLocalStorage(),
     ),
+    {
+      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
+      useValue: {
+        verticalPosition: 'top',
+        duration: 3000,
+      } as MatSnackBarConfig,
+    },
     {
       provide: ErrorHandler,
       useClass: ErrorHandlerService,

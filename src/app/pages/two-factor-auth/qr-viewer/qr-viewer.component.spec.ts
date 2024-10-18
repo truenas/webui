@@ -3,7 +3,7 @@ import { MockComponent } from 'ng-mocks';
 import { QrCodeComponent } from 'ng-qrcode';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
-import { QrViewerComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-viewer/qr-viewer.component';
+import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 
 describe('QrViewerComponent', () => {
   let spectator: Spectator<QrViewerComponent>;

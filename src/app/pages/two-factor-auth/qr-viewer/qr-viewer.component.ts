@@ -2,7 +2,10 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { QrCodeModule } from 'ng-qrcode';
 import { helptext2fa } from 'app/helptext/system/2fa';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 
 @UntilDestroy()
 @Component({
@@ -10,6 +13,12 @@ import { helptext2fa } from 'app/helptext/system/2fa';
   templateUrl: './qr-viewer.component.html',
   styleUrls: ['./qr-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxWarningComponent,
+    QrCodeModule,
+    TranslateModule,
+  ],
 })
 export class QrViewerComponent {
   readonly qrInfo = input.required<string>();

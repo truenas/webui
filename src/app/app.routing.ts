@@ -109,7 +109,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'two-factor-auth',
-        loadChildren: () => import('./pages/two-factor-auth/two-factor-auth.module').then((module) => module.TwoFactorAuthModule),
+        loadComponent: () => import('./pages/two-factor-auth/two-factor.component').then((module) => module.TwoFactorComponent),
         data: { title: T('Two-Factor Authentication'), breadcrumb: T('Two-Factor Authentication') },
       },
       {

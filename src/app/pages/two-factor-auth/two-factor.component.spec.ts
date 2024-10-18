@@ -10,8 +10,8 @@ import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
-import { QrViewerComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-viewer/qr-viewer.component';
-import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
+import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
+import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 

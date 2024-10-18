@@ -366,6 +366,7 @@ module.exports = {
         "import/no-default-export": "error",
         "@typescript-eslint/consistent-indexed-object-style": "error",
         "@angular-eslint/prefer-on-push-component-change-detection": "error",
+        "@angular-eslint/prefer-standalone": "error",
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {
