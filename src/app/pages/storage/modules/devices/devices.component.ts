@@ -34,8 +34,13 @@ import {
 } from 'app/interfaces/storage.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
+import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
+import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
+import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
+import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
+import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
-import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -65,7 +70,6 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     LetDirective,
     FakeProgressBarComponent,
     SearchInput1Component,
-    TreeModule,
     RouterLinkActive,
     TopologyItemNodeComponent,
     IxIconComponent,
@@ -76,6 +80,12 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     TranslateModule,
     CastPipe,
     AsyncPipe,
+    TreeViewComponent,
+    TreeNodeComponent,
+    NestedTreeNodeComponent,
+    TreeNodeDefDirective,
+    TreeNodeToggleDirective,
+    TreeNodeOutletDirective,
   ],
   providers: [
     DevicesStore,

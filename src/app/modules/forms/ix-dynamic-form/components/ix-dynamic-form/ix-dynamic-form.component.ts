@@ -3,7 +3,10 @@ import {
 } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxDynamicFormItemComponent } from './ix-dynamic-form-item/ix-dynamic-form-item.component';
 
 @UntilDestroy()
 @Component({
@@ -11,6 +14,12 @@ import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/in
   styleUrls: ['./ix-dynamic-form.component.scss'],
   templateUrl: './ix-dynamic-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxFieldsetComponent,
+    IxDynamicFormItemComponent,
+    TranslateModule,
+  ],
 })
 
 export class IxDynamicFormComponent {

@@ -19,7 +19,9 @@ import {
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
+import {
+  IxDynamicFormComponent,
+} from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -50,12 +52,12 @@ interface DnsAuthenticatorList {
     IxFieldsetComponent,
     IxInputComponent,
     IxSelectComponent,
-    IxDynamicFormModule,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
     TranslateModule,
+    IxDynamicFormComponent,
   ],
 })
 export class AcmednsFormComponent implements OnInit {

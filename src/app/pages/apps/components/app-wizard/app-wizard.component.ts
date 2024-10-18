@@ -50,7 +50,9 @@ import { Option } from 'app/interfaces/option.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
+import {
+  IxDynamicWizardComponent,
+} from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-wizard/ix-dynamic-wizard.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -80,7 +82,6 @@ import { WebSocketService } from 'app/services/ws.service';
     PageHeaderComponent,
     ReadOnlyComponent,
     IxInputComponent,
-    IxDynamicFormModule,
     AppMetadataCardComponent,
     MatButton,
     RequiresRolesDirective,
@@ -89,6 +90,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TestDirective,
     ReactiveFormsModule,
     IxIconComponent,
+    IxDynamicWizardComponent,
   ],
 })
 export class AppWizardComponent implements OnInit, OnDestroy {

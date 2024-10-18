@@ -12,7 +12,6 @@ import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authen
 import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -37,7 +36,6 @@ describe('AcmednsFormComponent', () => {
   const createComponent = createComponentFactory({
     component: AcmednsFormComponent,
     imports: [
-      IxDynamicFormModule,
       ReactiveFormsModule,
     ],
     providers: [

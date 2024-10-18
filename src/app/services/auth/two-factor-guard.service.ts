@@ -16,7 +16,9 @@ import { AppState } from 'app/store';
 import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class TwoFactorGuardService implements CanActivateChild {
   constructor(
     private router: Router,

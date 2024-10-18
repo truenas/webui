@@ -10,6 +10,7 @@ import {
 @Directive({
   selector: '[treeNodeOutlet]',
   providers: [{ provide: CdkTreeNodeOutlet, useExisting: TreeNodeOutletDirective }],
+  standalone: true,
 })
 export class TreeNodeOutletDirective<T> implements CdkTreeNodeOutlet {
   constructor(

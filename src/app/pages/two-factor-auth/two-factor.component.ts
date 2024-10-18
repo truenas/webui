@@ -1,10 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardActions } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   Observable, forkJoin, of,
 } from 'rxjs';
@@ -12,12 +18,16 @@ import {
   catchError,
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { twoFactorElements } from 'app/pages/two-factor-auth/components/two-factor/two-factor.elements';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
+import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -27,6 +37,21 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './two-factor.component.html',
   styleUrls: ['./two-factor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    MatProgressBar,
+    MatCardActions,
+    NgxSkeletonLoaderModule,
+    IxWarningComponent,
+    MatButton,
+    TestDirective,
+    QrViewerComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class TwoFactorComponent implements OnInit, OnDestroy {
   protected readonly searchableElements = twoFactorElements;

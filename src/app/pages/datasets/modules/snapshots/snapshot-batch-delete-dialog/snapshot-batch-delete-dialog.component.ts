@@ -2,7 +2,7 @@ import {
   Component, ChangeDetectionStrategy, Inject, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import { MatAnchor, MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
@@ -51,6 +51,7 @@ import { AppState } from 'app/store';
     MatDialogClose,
     FormActionsComponent,
     RouterLink,
+    MatAnchor,
   ],
 })
 export class SnapshotBatchDeleteDialogComponent implements OnInit {

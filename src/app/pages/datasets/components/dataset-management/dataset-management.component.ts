@@ -23,7 +23,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, NavigationStart, Router,
-  RouterLink,
+  RouterLink, RouterLinkActive,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -51,9 +51,14 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
+import {
+  TreeVirtualScrollViewComponent,
+} from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
+import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
+import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
-import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
@@ -75,7 +80,6 @@ import { WebSocketService } from 'app/services/ws.service';
     EmptyComponent,
     FakeProgressBarComponent,
     SearchInput1Component,
-    TreeModule,
     DatasetNodeComponent,
     IxIconComponent,
     RouterLink,
@@ -86,6 +90,11 @@ import { WebSocketService } from 'app/services/ws.service';
     DatasetDetailsPanelComponent,
     AsyncPipe,
     TranslateModule,
+    TreeVirtualScrollViewComponent,
+    TreeNodeComponent,
+    TreeNodeDefDirective,
+    RouterLinkActive,
+    TreeNodeToggleDirective,
   ],
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {

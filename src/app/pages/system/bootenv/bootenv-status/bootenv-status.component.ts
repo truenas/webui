@@ -21,8 +21,13 @@ import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
+import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
+import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
+import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
+import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
+import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
-import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
@@ -61,7 +66,6 @@ export interface BootPoolActionEvent {
     MatExpansionPanelTitle,
     MatList,
     MatListItem,
-    TreeModule,
     BootenvNodeItemComponent,
     MatIconButton,
     TestDirective,
@@ -69,6 +73,12 @@ export interface BootPoolActionEvent {
     TranslateModule,
     FormatDateTimePipe,
     AsyncPipe,
+    TreeViewComponent,
+    TreeNodeComponent,
+    TreeNodeDefDirective,
+    TreeNodeToggleDirective,
+    NestedTreeNodeComponent,
+    TreeNodeOutletDirective,
   ],
 })
 export class BootStatusListComponent implements OnInit {

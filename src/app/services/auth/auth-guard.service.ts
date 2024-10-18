@@ -5,7 +5,9 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthGuardService {
   isAuthenticated = false;
   constructor(

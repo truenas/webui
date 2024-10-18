@@ -12,6 +12,7 @@ import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
   styleUrls: ['./tree-node.component.scss'],
   exportAs: 'ixTreeNode',
   providers: [{ provide: CdkTreeNode, useExisting: TreeNodeComponent }],
+  standalone: true,
 })
 export class TreeNodeComponent<T, K = T> extends CdkTreeNode<T, K> {
   @HostBinding('class.ix-tree-node') get getClass(): boolean { return true; }

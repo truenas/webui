@@ -5,7 +5,7 @@ import {
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -77,6 +77,7 @@ import { selectService } from 'app/store/services/services.selectors';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    RouterLink,
   ],
 })
 export class SmbListComponent implements OnInit {

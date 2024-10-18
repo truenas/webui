@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -11,6 +11,8 @@ import { DetectBrowserService } from 'app/services/detect-browser.service';
   selector: 'ix-root',
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [RouterOutlet],
 })
 export class AppComponent {
   isAuthenticated = false;

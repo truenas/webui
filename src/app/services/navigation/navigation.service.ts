@@ -15,7 +15,9 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectHasEnclosureSupport, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class NavigationService {
   readonly hasFailover$ = this.store$.select(selectIsHaLicensed);
   readonly hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);

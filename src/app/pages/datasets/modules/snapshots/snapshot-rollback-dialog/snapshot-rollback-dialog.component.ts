@@ -2,9 +2,9 @@ import {
   Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, OnInit,
 } from '@angular/core';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import { MatAnchor, MatButton } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogTitle,
+  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
@@ -52,6 +52,8 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogClose,
     FormActionsComponent,
     RouterLink,
+    MatDialogActions,
+    MatAnchor,
   ],
 })
 export class SnapshotRollbackDialogComponent implements OnInit {
