@@ -16,6 +16,7 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -77,9 +78,13 @@ describe('AuthService', () => {
       switch (method) {
         case 'auth.generate_token':
           return of('DUMMY_TOKEN');
-        case 'auth.login':
-        case 'auth.login_with_token':
-          return of(true);
+        case 'auth.login_ex':
+          return of({
+            response_type: LoginExResponseType.Success,
+            user_info: {
+              privilege: { webui_access: true },
+            },
+          } as LoginExResponse);
         default:
           return of(null);
       }

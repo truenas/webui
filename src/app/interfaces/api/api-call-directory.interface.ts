@@ -35,7 +35,7 @@ import {
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { LoginQuery } from 'app/interfaces/auth.interface';
+import { LoginExQuery, LoginExResponse } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
@@ -328,15 +328,13 @@ export interface ApiCallDirectory {
 
   // Auth
   'auth.generate_token': { params: void; response: string };
-  'auth.login': { params: LoginQuery; response: boolean };
-  'auth.login_with_token': { params: [token: string]; response: boolean };
+  'auth.login_ex': { params: [LoginExQuery]; response: LoginExResponse };
   'auth.logout': { params: void; response: void };
   'auth.me': { params: void; response: LoggedInUser };
   'auth.sessions': { params: QueryParams<AuthSession>; response: AuthSession[] };
   'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
   'auth.terminate_other_sessions': { params: void; response: void };
   'auth.terminate_session': { params: [id: string]; response: void };
-  'auth.two_factor_auth': { params: [string, string]; response: boolean };
   'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
 

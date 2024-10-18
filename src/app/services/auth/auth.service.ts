@@ -27,6 +27,7 @@ import {
   ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
 import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import { LoginExQuery, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
@@ -130,20 +131,12 @@ export class AuthService {
   }
 
   login(username: string, password: string, otp: string = null): Observable<LoginResult> {
-    return this.makeRequest('auth.login', otp ? [username, password, otp] : [username, password]).pipe(
-      switchMap((wasLoggedIn) => {
-        return this.processLoginResult(wasLoggedIn).pipe(
-          switchMap((loginResult) => {
-            if (loginResult === LoginResult.Success) {
-              return this.authToken$.pipe(
-                map(() => LoginResult.Success),
-              );
-            }
+    const payload: LoginExQuery = otp
+      ? { mechanism: 'OTP_TOKEN', otp_token: otp }
+      : { mechanism: 'PASSWORD_PLAIN', username, password };
 
-            return of(loginResult);
-          }),
-        );
-      }),
+    return this.makeRequest('auth.login_ex', [payload]).pipe(
+      switchMap((loginResult) => this.processLoginResult(loginResult)),
     );
   }
 
@@ -153,10 +146,8 @@ export class AuthService {
     }
 
     performance.mark('Login Start');
-    return this.makeRequest('auth.login_with_token', [this.token]).pipe(
-      switchMap((wasLoggedIn) => {
-        return this.processLoginResult(wasLoggedIn);
-      }),
+    return this.makeRequest('auth.login_ex', [{ mechanism: 'TOKEN_PLAIN', token: this.token }]).pipe(
+      switchMap((loginResult) => this.processLoginResult(loginResult)),
     );
   }
 
@@ -202,30 +193,30 @@ export class AuthService {
     );
   }
 
-  private processLoginResult(wasLoggedIn: boolean): Observable<LoginResult> {
-    return of(wasLoggedIn).pipe(
-      switchMap((loggedIn) => {
-        if (!loggedIn) {
-          this.isLoggedIn$.next(false);
-          return of(LoginResult.IncorrectDetails);
+  private processLoginResult(loginResult: LoginExResponse): Observable<LoginResult> {
+    return of(loginResult).pipe(
+      switchMap((result) => {
+        if (result.response_type === LoginExResponseType.Success) {
+          this.loggedInUser$.next(result.user_info);
+
+          if (!result.user_info?.privilege?.webui_access) {
+            this.isLoggedIn$.next(false);
+            return of(LoginResult.NoAccess);
+          }
+
+          this.isLoggedIn$.next(true);
+          this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
+          return this.authToken$.pipe(
+            take(1),
+            map(() => LoginResult.Success),
+          );
         }
+        this.isLoggedIn$.next(false);
 
-        // Check if user has access to webui.
-        return this.getLoggedInUserInformation().pipe(
-          switchMap((user) => {
-            if (!user?.privilege?.webui_access) {
-              this.isLoggedIn$.next(false);
-              return of(LoginResult.NoAccess);
-            }
-
-            this.isLoggedIn$.next(true);
-            this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
-            return this.authToken$.pipe(
-              take(1),
-              map(() => LoginResult.Success),
-            );
-          }),
-        );
+        if (result.response_type === LoginExResponseType.OtpRequired) {
+          return of(LoginResult.NoOtp);
+        }
+        return of(LoginResult.IncorrectDetails);
       }),
     );
   }
@@ -265,7 +256,12 @@ export class AuthService {
   private getFilteredWebSocketResponse<T>(uuid: string): Observable<T> {
     return this.wsManager.websocket$.pipe(
       filter((data: IncomingWebSocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      map((data: ResultMessage<T>) => data.result),
+      map((data: ResultMessage<T>) => {
+        if (data.error) {
+          throw data.error as unknown;
+        }
+        return data.result;
+      }),
       take(1),
     );
   }
