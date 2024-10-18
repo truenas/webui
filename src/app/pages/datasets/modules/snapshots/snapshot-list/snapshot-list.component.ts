@@ -88,7 +88,6 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
     IxTableDetailsRowDirective,
     SnapshotDetailsRowComponent,
     IxTablePagerComponent,
-    // NgTemplateOutlet
   ],
 })
 export class SnapshotListComponent implements OnInit {
