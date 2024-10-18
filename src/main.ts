@@ -24,7 +24,7 @@ import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
-import { rootRouterConfig } from 'app/app.routing';
+import { rootRoutes } from 'app/app.routes';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
@@ -120,6 +120,6 @@ bootstrapApplication(AppComponent, {
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
-    provideRouter(rootRouterConfig, withPreloading(PreloadAllModules), withComponentInputBinding()),
+    provideRouter(rootRoutes, withPreloading(PreloadAllModules), withComponentInputBinding()),
   ],
 });
