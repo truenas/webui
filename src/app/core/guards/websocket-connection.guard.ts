@@ -46,10 +46,10 @@ export class WebSocketConnectionGuard {
   }
 
   private showAccessRestrictedDialog(): void {
-    this.dialogService.fullScreenDialog(
-      this.translate.instant('Access restricted'),
-      this.translate.instant('Access from your IP is restricted'),
-    ).pipe(untilDestroyed(this)).subscribe(() => {
+    this.dialogService.fullScreenDialog({
+      title: this.translate.instant('Access restricted'),
+      message: this.translate.instant('Access from your IP is restricted'),
+    }).pipe(untilDestroyed(this)).subscribe(() => {
       this.wsManager.reconnect();
     });
   }

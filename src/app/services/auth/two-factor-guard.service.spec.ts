@@ -27,7 +27,7 @@ describe('TwoFactorGuardService', () => {
         hasRole: jest.fn(() => hasRole$),
       }),
       mockProvider(DialogService, {
-        fullScreenDialog: jest.fn(() => of(true)),
+        fullScreenDialog: jest.fn(() => of(undefined)),
       }),
       provideMockStore({
         selectors: [

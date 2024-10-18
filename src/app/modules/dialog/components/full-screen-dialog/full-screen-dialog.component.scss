@@ -31,8 +31,7 @@
     overflow: auto;
 
     &.pre {
-      unicode-bidi: isolate;
-      white-space: pre;
+      white-space: pre-line;
     }
   }
 }
