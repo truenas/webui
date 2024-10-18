@@ -1269,6 +1269,7 @@
   "If downloading a file returns the error \"This file has been identified as malware or spam and cannot be downloaded\" with the error code \"cannotDownloadAbusiveFile\" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.": "",
   "If set, the value will be used to override the default DNS domain name for NFSv4. Specifies the \"Domain\" idmapd.conf setting.": "",
   "If the <i>Hex key</i> type is chosen, an encryption key will be auto-generated.": "",
+  "If you can't use QR code, use this text code instead": "",
   "Ignore Builtin": "",
   "Ignore List": "",
   "Image ID": "",

@@ -518,6 +518,7 @@
   "Idmap Backend": "",
   "If URL above fails to open, it may be due to the unavailability of Basic HTTP authentication in your browser.": "",
   "If automatic login has failed, please try the following credentials manually.": "",
+  "If you can't use QR code, use this text code instead": "",
   "Ignore Builtin": "",
   "Ignore List": "",
   "Import Config": "",

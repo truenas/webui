@@ -12,17 +12,21 @@
   max-width: 960px;
 }
 
-.secret {
-  align-items: center;
-  display: flex;
+.secret-actions {
+  display: block;
   padding-top: 0;
-
-  ix-copy-button {
-    margin-left: 5px;
-  }
 
   p {
     margin: 0;
+  }
+
+  .secret {
+    align-items: center;
+    display: flex;
+
+    ix-copy-button {
+      margin-left: 5px;
+    }
   }
 }
 

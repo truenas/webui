@@ -1089,6 +1089,7 @@
   "If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.": "",
   "If downloading a file returns the error \"This file has been identified as malware or spam and cannot be downloaded\" with the error code \"cannotDownloadAbusiveFile\" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.": "",
   "If set, the value will be used to override the default DNS domain name for NFSv4. Specifies the \"Domain\" idmapd.conf setting.": "",
+  "If you can't use QR code, use this text code instead": "",
   "If {vmName} is still running, the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop After Timeout</i> option to stop the VM.": "",
   "Ignore Builtin": "",
   "Ignore List": "",

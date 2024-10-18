@@ -40,12 +40,18 @@
     </mat-card-actions>
 
     @if (getProvisioningUriSecret(qrInfo?.provisioning_uri); as secret) {
-      <mat-card-actions class="secret">
+      <mat-card-actions class="secret-actions">
         <p>
-          {{ secret }}
+          {{ 'If you can\'t use QR code, use this text code instead' | translate }}
         </p>
 
-        <ix-copy-button [text]="secret"></ix-copy-button>
+        <div class="secret">
+          <p>
+            {{ secret }}
+          </p>
+
+          <ix-copy-button [text]="secret"></ix-copy-button>
+        </div>
       </mat-card-actions>
     }
   }
