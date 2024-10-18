@@ -99,7 +99,7 @@ export class ProactiveComponent implements OnInit {
           this.slideInRef.close();
 
           this.snackbar.success(
-            this.translate.instant(helptext.proactive.dialog_mesage),
+            this.translate.instant(helptext.proactive.dialog_message),
           );
         },
         error: (error: unknown) => {

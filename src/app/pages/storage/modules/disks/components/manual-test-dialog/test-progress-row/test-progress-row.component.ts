@@ -66,7 +66,7 @@ export class IxTestProgressRowComponent implements OnInit {
       wsError: null,
       finished: false,
       progressPercentage: null,
-      esimatedEnd: null,
+      estimatedEnd: null,
     });
   }
 

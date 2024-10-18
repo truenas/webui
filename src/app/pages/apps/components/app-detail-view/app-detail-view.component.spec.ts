@@ -77,7 +77,6 @@ describe('AppDetailViewComponent', () => {
         mockJob('app.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
         mockCall('app.query', [{} as App]),
-        mockCall('service.started', true),
       ]),
       mockProvider(AuthService, {
         user$: of({ attributes: { appsAgreement: true } }),

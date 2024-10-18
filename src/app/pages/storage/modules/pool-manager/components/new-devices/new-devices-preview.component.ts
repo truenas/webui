@@ -6,7 +6,7 @@ import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -43,6 +43,5 @@ export class NewDevicesPreviewComponent {
 
   constructor(
     private store: PoolManagerStore,
-    private translate: TranslateService,
   ) {}
 }
