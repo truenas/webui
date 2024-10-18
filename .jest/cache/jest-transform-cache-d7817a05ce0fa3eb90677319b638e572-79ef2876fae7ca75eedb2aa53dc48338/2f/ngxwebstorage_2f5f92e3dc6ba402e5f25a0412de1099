@@ -1,0 +1,609 @@
+732b6e61b4e3e0e3341d18fe822df966
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var ngx_webstorage_exports = {};
+__export(ngx_webstorage_exports, {
+  AsyncStorage: () => AsyncStorage,
+  CompatHelper: () => CompatHelper,
+  InMemoryStorageStrategy: () => InMemoryStorageStrategy,
+  InternalNgxWebstorageFeatureKind: () => InternalNgxWebstorageFeatureKind,
+  InvalidStrategyError: () => InvalidStrategyError,
+  LIB_CONFIG: () => LIB_CONFIG,
+  LOCAL_STORAGE: () => LOCAL_STORAGE,
+  LocalStorage: () => LocalStorage,
+  LocalStorageService: () => LocalStorageService,
+  LocalStorageStrategy: () => LocalStorageStrategy,
+  SESSION_STORAGE: () => SESSION_STORAGE,
+  STORAGE_STRATEGIES: () => STORAGE_STRATEGIES,
+  SessionStorage: () => SessionStorage,
+  SessionStorageService: () => SessionStorageService,
+  SessionStorageStrategy: () => SessionStorageStrategy,
+  StorageStrategies: () => StorageStrategies,
+  StorageStrategyStub: () => StorageStrategyStub,
+  StorageStrategyStubName: () => StorageStrategyStubName,
+  StorageStub: () => StorageStub,
+  StrategyCacheService: () => StrategyCacheService,
+  StrategyIndex: () => StrategyIndex,
+  SyncStorage: () => SyncStorage,
+  makeNgxWebstorageFeature: () => makeNgxWebstorageFeature,
+  provideNgxWebstorage: () => provideNgxWebstorage,
+  withLocalStorage: () => withLocalStorage,
+  withNgxWebstorageConfig: () => withNgxWebstorageConfig,
+  withSessionStorage: () => withSessionStorage
+});
+module.exports = __toCommonJS(ngx_webstorage_exports);
+var import_operators = require("rxjs/operators");
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_rxjs = require("rxjs");
+var import_common = require("@angular/common");
+var StorageStrategies;
+(function(StorageStrategies2) {
+  StorageStrategies2["Local"] = "local_strategy";
+  StorageStrategies2["Session"] = "session_strategy";
+  StorageStrategies2["InMemory"] = "in_memory_strategy";
+})(StorageStrategies || (StorageStrategies = {}));
+class CompatHelper {
+  static isStorageAvailable(storage) {
+    let available = true;
+    try {
+      if (typeof storage === "object") {
+        storage.setItem("test-storage", "foobar");
+        storage.removeItem("test-storage");
+      } else
+        available = false;
+    } catch (e) {
+      available = false;
+    }
+    return available;
+  }
+}
+function noop() {
+}
+const DefaultPrefix = "ngx-webstorage";
+const DefaultSeparator = "|";
+const DefaultIsCaseSensitive = false;
+const _StorageKeyManager = class _StorageKeyManager {
+  static normalize(raw) {
+    raw = _StorageKeyManager.isCaseSensitive ? raw : raw.toLowerCase();
+    return `${_StorageKeyManager.prefix}${_StorageKeyManager.separator}${raw}`;
+  }
+  static isNormalizedKey(key) {
+    return key.indexOf(_StorageKeyManager.prefix + _StorageKeyManager.separator) === 0;
+  }
+  static setPrefix(prefix) {
+    _StorageKeyManager.prefix = prefix;
+  }
+  static setSeparator(separator) {
+    _StorageKeyManager.separator = separator;
+  }
+  static setCaseSensitive(enable) {
+    _StorageKeyManager.isCaseSensitive = enable;
+  }
+  static consumeConfiguration(config) {
+    if ("prefix" in config)
+      this.setPrefix(config.prefix);
+    if ("separator" in config)
+      this.setSeparator(config.separator);
+    if ("caseSensitive" in config)
+      this.setCaseSensitive(config.caseSensitive);
+  }
+};
+_StorageKeyManager.prefix = DefaultPrefix;
+_StorageKeyManager.separator = DefaultSeparator;
+_StorageKeyManager.isCaseSensitive = DefaultIsCaseSensitive;
+let StorageKeyManager = _StorageKeyManager;
+class SyncStorage {
+  constructor(strategy) {
+    this.strategy = strategy;
+  }
+  retrieve(key) {
+    let value;
+    this.strategy.get(StorageKeyManager.normalize(key)).subscribe((result) => value = typeof result === "undefined" ? null : result);
+    return value;
+  }
+  store(key, value) {
+    this.strategy.set(StorageKeyManager.normalize(key), value).subscribe(noop);
+    return value;
+  }
+  clear(key) {
+    if (key !== void 0)
+      this.strategy.del(StorageKeyManager.normalize(key)).subscribe(noop);
+    else
+      this.strategy.clear().subscribe(noop);
+  }
+  getStrategyName() {
+    return this.strategy.name;
+  }
+  observe(key) {
+    key = StorageKeyManager.normalize(key);
+    return this.strategy.keyChanges.pipe((0, import_operators.filter)((changed) => changed === null || changed === key), (0, import_operators.switchMap)(() => this.strategy.get(key)), (0, import_operators.distinctUntilChanged)(), (0, import_operators.shareReplay)({ refCount: true, bufferSize: 1 }));
+  }
+}
+class AsyncStorage {
+  constructor(strategy) {
+    this.strategy = strategy;
+  }
+  retrieve(key) {
+    return this.strategy.get(StorageKeyManager.normalize(key)).pipe((0, import_operators.map)((value) => typeof value === "undefined" ? null : value));
+  }
+  store(key, value) {
+    return this.strategy.set(StorageKeyManager.normalize(key), value);
+  }
+  clear(key) {
+    return key !== void 0 ? this.strategy.del(StorageKeyManager.normalize(key)) : this.strategy.clear();
+  }
+  getStrategyName() {
+    return this.strategy.name;
+  }
+  observe(key) {
+    key = StorageKeyManager.normalize(key);
+    return this.strategy.keyChanges.pipe((0, import_operators.filter)((changed) => changed === null || changed === key), (0, import_operators.switchMap)(() => this.strategy.get(key)), (0, import_operators.distinctUntilChanged)(), (0, import_operators.shareReplay)({ refCount: true, bufferSize: 1 }));
+  }
+}
+const _StrategyCacheService = class _StrategyCacheService {
+  constructor() {
+    this.caches = {};
+  }
+  get(strategyName, key) {
+    return this.getCacheStore(strategyName)[key];
+  }
+  set(strategyName, key, value) {
+    this.getCacheStore(strategyName)[key] = value;
+  }
+  del(strategyName, key) {
+    delete this.getCacheStore(strategyName)[key];
+  }
+  clear(strategyName) {
+    this.caches[strategyName] = {};
+  }
+  getCacheStore(strategyName) {
+    if (strategyName in this.caches)
+      return this.caches[strategyName];
+    return this.caches[strategyName] = {};
+  }
+};
+_StrategyCacheService.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _StrategyCacheService, deps: [], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_StrategyCacheService.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _StrategyCacheService, providedIn: "root" });
+let StrategyCacheService = _StrategyCacheService;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: StrategyCacheService, decorators: [{
+  type: import_core.Injectable,
+  args: [{ providedIn: "root" }]
+}] });
+const LOCAL_STORAGE = new import_core.InjectionToken("window_local_storage");
+function getLocalStorage() {
+  return typeof window !== "undefined" ? window.localStorage : null;
+}
+const LocalStorageProvider = { provide: LOCAL_STORAGE, useFactory: getLocalStorage };
+const SESSION_STORAGE = new import_core.InjectionToken("window_session_storage");
+function getSessionStorage() {
+  return typeof window !== "undefined" ? window.sessionStorage : null;
+}
+const SessionStorageProvider = { provide: SESSION_STORAGE, useFactory: getSessionStorage };
+class BaseSyncStorageStrategy {
+  constructor(storage, cache) {
+    this.storage = storage;
+    this.cache = cache;
+    this.keyChanges = new import_rxjs.Subject();
+  }
+  get isAvailable() {
+    if (this._isAvailable === void 0)
+      this._isAvailable = CompatHelper.isStorageAvailable(this.storage);
+    return this._isAvailable;
+  }
+  get(key) {
+    let data = this.cache.get(this.name, key);
+    if (data !== void 0)
+      return (0, import_rxjs.of)(data);
+    try {
+      const item = this.storage.getItem(key);
+      if (item !== null) {
+        data = JSON.parse(item);
+        this.cache.set(this.name, key, data);
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+    return (0, import_rxjs.of)(data);
+  }
+  set(key, value) {
+    const data = JSON.stringify(value);
+    this.storage.setItem(key, data);
+    this.cache.set(this.name, key, value);
+    this.keyChanges.next(key);
+    return (0, import_rxjs.of)(value);
+  }
+  del(key) {
+    this.storage.removeItem(key);
+    this.cache.del(this.name, key);
+    this.keyChanges.next(key);
+    return (0, import_rxjs.of)(null);
+  }
+  clear() {
+    this.storage.clear();
+    this.cache.clear(this.name);
+    this.keyChanges.next(null);
+    return (0, import_rxjs.of)(null);
+  }
+}
+const _LocalStorageStrategy = class _LocalStorageStrategy extends BaseSyncStorageStrategy {
+  constructor(storage, cache, platformId, zone) {
+    super(storage, cache);
+    this.storage = storage;
+    this.cache = cache;
+    this.platformId = platformId;
+    this.zone = zone;
+    this.name = _LocalStorageStrategy.strategyName;
+    if ((0, import_common.isPlatformBrowser)(this.platformId))
+      this.listenExternalChanges();
+  }
+  listenExternalChanges() {
+    window.addEventListener("storage", (event) => this.zone.run(() => {
+      if (event.storageArea !== this.storage)
+        return;
+      const key = event.key;
+      if (key !== null)
+        this.cache.del(this.name, event.key);
+      else
+        this.cache.clear(this.name);
+      this.keyChanges.next(key);
+    }));
+  }
+};
+_LocalStorageStrategy.strategyName = StorageStrategies.Local;
+_LocalStorageStrategy.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _LocalStorageStrategy, deps: [{ token: LOCAL_STORAGE }, { token: StrategyCacheService }, { token: import_core.PLATFORM_ID }, { token: i0.NgZone }], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_LocalStorageStrategy.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _LocalStorageStrategy });
+let LocalStorageStrategy = _LocalStorageStrategy;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: LocalStorageStrategy, decorators: [{
+  type: import_core.Injectable
+}], ctorParameters: () => [{ type: void 0, decorators: [{
+  type: import_core.Inject,
+  args: [LOCAL_STORAGE]
+}] }, { type: StrategyCacheService }, { type: void 0, decorators: [{
+  type: import_core.Inject,
+  args: [import_core.PLATFORM_ID]
+}] }, { type: i0.NgZone }] });
+const _SessionStorageStrategy = class _SessionStorageStrategy extends BaseSyncStorageStrategy {
+  constructor(storage, cache, platformId, zone) {
+    super(storage, cache);
+    this.storage = storage;
+    this.cache = cache;
+    this.platformId = platformId;
+    this.zone = zone;
+    this.name = _SessionStorageStrategy.strategyName;
+    if ((0, import_common.isPlatformBrowser)(this.platformId))
+      this.listenExternalChanges();
+  }
+  listenExternalChanges() {
+    window.addEventListener("storage", (event) => this.zone.run(() => {
+      if (event.storageArea !== this.storage)
+        return;
+      const key = event.key;
+      if (event.key !== null)
+        this.cache.del(this.name, event.key);
+      else
+        this.cache.clear(this.name);
+      this.keyChanges.next(key);
+    }));
+  }
+};
+_SessionStorageStrategy.strategyName = StorageStrategies.Session;
+_SessionStorageStrategy.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _SessionStorageStrategy, deps: [{ token: SESSION_STORAGE }, { token: StrategyCacheService }, { token: import_core.PLATFORM_ID }, { token: i0.NgZone }], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_SessionStorageStrategy.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _SessionStorageStrategy });
+let SessionStorageStrategy = _SessionStorageStrategy;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: SessionStorageStrategy, decorators: [{
+  type: import_core.Injectable
+}], ctorParameters: () => [{ type: void 0, decorators: [{
+  type: import_core.Inject,
+  args: [SESSION_STORAGE]
+}] }, { type: StrategyCacheService }, { type: void 0, decorators: [{
+  type: import_core.Inject,
+  args: [import_core.PLATFORM_ID]
+}] }, { type: i0.NgZone }] });
+const _InMemoryStorageStrategy = class _InMemoryStorageStrategy {
+  constructor(cache) {
+    this.cache = cache;
+    this.keyChanges = new import_rxjs.Subject();
+    this.isAvailable = true;
+    this.name = _InMemoryStorageStrategy.strategyName;
+  }
+  get(key) {
+    return (0, import_rxjs.of)(this.cache.get(this.name, key));
+  }
+  set(key, value) {
+    this.cache.set(this.name, key, value);
+    this.keyChanges.next(key);
+    return (0, import_rxjs.of)(value);
+  }
+  del(key) {
+    this.cache.del(this.name, key);
+    this.keyChanges.next(key);
+    return (0, import_rxjs.of)(null);
+  }
+  clear() {
+    this.cache.clear(this.name);
+    this.keyChanges.next(null);
+    return (0, import_rxjs.of)(null);
+  }
+};
+_InMemoryStorageStrategy.strategyName = StorageStrategies.InMemory;
+_InMemoryStorageStrategy.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _InMemoryStorageStrategy, deps: [{ token: StrategyCacheService }], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_InMemoryStorageStrategy.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _InMemoryStorageStrategy });
+let InMemoryStorageStrategy = _InMemoryStorageStrategy;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: InMemoryStorageStrategy, decorators: [{
+  type: import_core.Injectable
+}], ctorParameters: () => [{ type: StrategyCacheService, decorators: [{
+  type: import_core.Inject,
+  args: [StrategyCacheService]
+}] }] });
+const STORAGE_STRATEGIES = new import_core.InjectionToken("STORAGE_STRATEGIES");
+const Strategies = [
+  { provide: STORAGE_STRATEGIES, useClass: InMemoryStorageStrategy, multi: true },
+  { provide: STORAGE_STRATEGIES, useClass: LocalStorageStrategy, multi: true },
+  { provide: STORAGE_STRATEGIES, useClass: SessionStorageStrategy, multi: true }
+];
+const [InMemoryStorageStrategyProvider, LocalStorageStrategyProvider, SessionStorageStrategyProvider] = Strategies;
+const StorageStrategyStubName = "stub_strategy";
+class StorageStrategyStub {
+  constructor(name) {
+    this.keyChanges = new import_rxjs.Subject();
+    this.store = {};
+    this._available = true;
+    this.name = name || StorageStrategyStubName;
+  }
+  get isAvailable() {
+    return this._available;
+  }
+  get(key) {
+    return (0, import_rxjs.of)(this.store[key]);
+  }
+  set(key, value) {
+    this.store[key] = value;
+    this.keyChanges.next(key);
+    return (0, import_rxjs.of)(value);
+  }
+  del(key) {
+    delete this.store[key];
+    this.keyChanges.next(key);
+    return (0, import_rxjs.of)(null);
+  }
+  clear() {
+    this.store = {};
+    this.keyChanges.next(null);
+    return (0, import_rxjs.of)(null);
+  }
+}
+class StorageStub {
+  constructor() {
+    this.store = {};
+  }
+  get length() {
+    return Object.keys(this.store).length;
+  }
+  clear() {
+    this.store = {};
+  }
+  getItem(key) {
+    return this.store[key] || null;
+  }
+  key(index) {
+    return Object.keys(this.store)[index];
+  }
+  removeItem(key) {
+    delete this.store[key];
+  }
+  setItem(key, value) {
+    this.store[key] = value;
+  }
+}
+const InvalidStrategyError = "invalid_strategy";
+const _StrategyIndex = class _StrategyIndex {
+  constructor(strategies) {
+    this.strategies = strategies;
+    this.registration$ = new import_rxjs.Subject();
+    if (!strategies)
+      strategies = [];
+    this.strategies = strategies.reverse().map((strategy, index, arr) => strategy.name).map((name, index, arr) => arr.indexOf(name) === index ? index : null).filter((index) => index !== null).map((index) => strategies[index]);
+  }
+  static get(name) {
+    if (!this.isStrategyRegistered(name))
+      throw Error(InvalidStrategyError);
+    let strategy = this.index[name];
+    if (!strategy.isAvailable) {
+      strategy = this.index[StorageStrategies.InMemory];
+    }
+    return strategy;
+  }
+  static set(name, strategy) {
+    this.index[name] = strategy;
+  }
+  static clear(name) {
+    if (name !== void 0)
+      delete this.index[name];
+    else
+      this.index = {};
+  }
+  static isStrategyRegistered(name) {
+    return name in this.index;
+  }
+  static hasRegistredStrategies() {
+    return Object.keys(this.index).length > 0;
+  }
+  getStrategy(name) {
+    return _StrategyIndex.get(name);
+  }
+  indexStrategies() {
+    this.strategies.forEach((strategy) => this.register(strategy.name, strategy));
+  }
+  indexStrategy(name, overrideIfExists = false) {
+    if (_StrategyIndex.isStrategyRegistered(name) && !overrideIfExists)
+      return _StrategyIndex.get(name);
+    const strategy = this.strategies.find((strategy2) => strategy2.name === name);
+    if (!strategy)
+      throw new Error(InvalidStrategyError);
+    this.register(name, strategy, overrideIfExists);
+    return strategy;
+  }
+  register(name, strategy, overrideIfExists = false) {
+    if (!_StrategyIndex.isStrategyRegistered(name) || overrideIfExists) {
+      _StrategyIndex.set(name, strategy);
+      this.registration$.next(name);
+    }
+  }
+};
+_StrategyIndex.index = {};
+_StrategyIndex.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _StrategyIndex, deps: [{ token: STORAGE_STRATEGIES, optional: true }], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_StrategyIndex.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: _StrategyIndex, providedIn: "root" });
+let StrategyIndex = _StrategyIndex;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.0.2", ngImport: i0, type: StrategyIndex, decorators: [{
+  type: import_core.Injectable,
+  args: [{ providedIn: "root" }]
+}], ctorParameters: () => [{ type: void 0, decorators: [{
+  type: import_core.Optional
+}, {
+  type: import_core.Inject,
+  args: [STORAGE_STRATEGIES]
+}] }] });
+class LocalStorageService extends SyncStorage {
+}
+function buildService$1(index) {
+  const strategy = index.indexStrategy(StorageStrategies.Local);
+  return new SyncStorage(strategy);
+}
+const LocalStorageServiceProvider = {
+  provide: LocalStorageService,
+  useFactory: buildService$1,
+  deps: [StrategyIndex]
+};
+class SessionStorageService extends SyncStorage {
+}
+function buildService(index) {
+  const strategy = index.indexStrategy(StorageStrategies.Session);
+  return new SyncStorage(strategy);
+}
+const SessionStorageServiceProvider = {
+  provide: SessionStorageService,
+  useFactory: buildService,
+  deps: [StrategyIndex]
+};
+class DecoratorBuilder {
+  static buildSyncStrategyDecorator(strategyName, prototype, propName, key, defaultValue = null) {
+    const rawKey = key || propName;
+    let storageKey;
+    Object.defineProperty(prototype, propName, {
+      get: function() {
+        let value;
+        StrategyIndex.get(strategyName).get(getKey()).subscribe((result) => value = result);
+        return value === void 0 ? defaultValue : value;
+      },
+      set: function(value) {
+        StrategyIndex.get(strategyName).set(getKey(), value).subscribe(noop);
+      }
+    });
+    function getKey() {
+      if (storageKey !== void 0)
+        return storageKey;
+      return storageKey = StorageKeyManager.normalize(rawKey);
+    }
+  }
+}
+function LocalStorage(key, defaultValue) {
+  return function(prototype, propName) {
+    DecoratorBuilder.buildSyncStrategyDecorator(StorageStrategies.Local, prototype, propName, key, defaultValue);
+  };
+}
+function SessionStorage(key, defaultValue) {
+  return function(prototype, propName) {
+    DecoratorBuilder.buildSyncStrategyDecorator(StorageStrategies.Session, prototype, propName, key, defaultValue);
+  };
+}
+const LIB_CONFIG = new import_core.InjectionToken("ngx_webstorage_config");
+var InternalNgxWebstorageFeatureKind;
+(function(InternalNgxWebstorageFeatureKind2) {
+  InternalNgxWebstorageFeatureKind2[InternalNgxWebstorageFeatureKind2["Config"] = 1] = "Config";
+  InternalNgxWebstorageFeatureKind2[InternalNgxWebstorageFeatureKind2["LocalStorage"] = 2] = "LocalStorage";
+  InternalNgxWebstorageFeatureKind2[InternalNgxWebstorageFeatureKind2["SessionStorage"] = 3] = "SessionStorage";
+})(InternalNgxWebstorageFeatureKind || (InternalNgxWebstorageFeatureKind = {}));
+function appInit() {
+  const config = (0, import_core.inject)(LIB_CONFIG);
+  const index = (0, import_core.inject)(StrategyIndex);
+  return () => {
+    StorageKeyManager.consumeConfiguration(config);
+    index.indexStrategies();
+  };
+}
+function provideNgxWebstorage(...features) {
+  const { configProvider, featureProviders } = parseFeatures(features);
+  return (0, import_core.makeEnvironmentProviders)([
+    configProvider,
+    InMemoryStorageStrategyProvider,
+    { provide: import_core.APP_INITIALIZER, useFactory: appInit, multi: true },
+    ...featureProviders
+  ]);
+}
+function parseFeatures(features) {
+  let configProvider;
+  const featureProviders = [];
+  const parsedFeatures = /* @__PURE__ */ new Set();
+  for (const feature of features) {
+    if (parsedFeatures.has(feature.kind))
+      throw new Error(`Feature ${feature.kind} is already provided.`);
+    if (feature.kind === InternalNgxWebstorageFeatureKind.Config) {
+      configProvider = feature.providers[0];
+    } else
+      featureProviders.push(...feature.providers);
+    parsedFeatures.add(feature.kind);
+  }
+  return {
+    configProvider: configProvider != null ? configProvider : {
+      provide: LIB_CONFIG,
+      useValue: { prefix: DefaultPrefix, separator: DefaultSeparator, caseSensitive: DefaultIsCaseSensitive }
+    },
+    featureProviders
+  };
+}
+function makeNgxWebstorageFeature(kind, providers) {
+  return { kind, providers };
+}
+function withNgxWebstorageConfig(config) {
+  return makeNgxWebstorageFeature(InternalNgxWebstorageFeatureKind.Config, [{ provide: LIB_CONFIG, useValue: config }]);
+}
+function withLocalStorage() {
+  return makeNgxWebstorageFeature(InternalNgxWebstorageFeatureKind.LocalStorage, [
+    LocalStorageProvider,
+    LocalStorageServiceProvider,
+    LocalStorageStrategyProvider
+  ]);
+}
+function withSessionStorage() {
+  return makeNgxWebstorageFeature(InternalNgxWebstorageFeatureKind.SessionStorage, [
+    SessionStorageProvider,
+    SessionStorageServiceProvider,
+    SessionStorageStrategyProvider
+  ]);
+}

@@ -1,0 +1,2 @@
+7ca862f2efb1795553aa21b87c5c04ae
+module.exports="<fieldset>\n  @if (title()) {\n    <div class=\"title-container\">\n      <legend class=\"title\">\n        {{ title() | translate }}\n      </legend>\n\n      @if (tooltip()) {\n        <ix-tooltip\n          class=\"tooltip\"\n          [header]=\"title() | translate\"\n          [message]=\"tooltip() | translate\"\n        ></ix-tooltip>\n      }\n    </div>\n  }\n\n  <ng-content></ng-content>\n\n  @if (divider()) {\n    <mat-divider class=\"divider\" inset></mat-divider>\n  }\n</fieldset>\n"

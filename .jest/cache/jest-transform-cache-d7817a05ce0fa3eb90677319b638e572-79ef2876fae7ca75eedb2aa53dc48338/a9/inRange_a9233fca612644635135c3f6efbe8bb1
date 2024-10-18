@@ -1,0 +1,61 @@
+0865621882498e04b91fa9120cdef909
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseInRange_js_1 = __importDefault(require("./_baseInRange.js"));
+const toFinite_js_1 = __importDefault(require("./toFinite.js"));
+const toNumber_js_1 = __importDefault(require("./toNumber.js"));
+/**
+ * Checks if `n` is between `start` and up to, but not including, `end`. If
+ * `end` is not specified, it's set to `start` with `start` then set to `0`.
+ * If `start` is greater than `end` the params are swapped to support
+ * negative ranges.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.3.0
+ * @category Number
+ * @param {number} number The number to check.
+ * @param {number} [start=0] The start of the range.
+ * @param {number} end The end of the range.
+ * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
+ * @see _.range, _.rangeRight
+ * @example
+ *
+ * _.inRange(3, 2, 4);
+ * // => true
+ *
+ * _.inRange(4, 8);
+ * // => true
+ *
+ * _.inRange(4, 2);
+ * // => false
+ *
+ * _.inRange(2, 2);
+ * // => false
+ *
+ * _.inRange(1.2, 2);
+ * // => true
+ *
+ * _.inRange(5.2, 4);
+ * // => false
+ *
+ * _.inRange(-3, -2, -6);
+ * // => true
+ */
+function inRange(number, start, end) {
+    start = (0, toFinite_js_1.default)(start);
+    if (end === undefined) {
+        end = start;
+        start = 0;
+    }
+    else {
+        end = (0, toFinite_js_1.default)(end);
+    }
+    number = (0, toNumber_js_1.default)(number);
+    return (0, _baseInRange_js_1.default)(number, start, end);
+}
+exports.default = inRange;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2luUmFuZ2UuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSx3RUFBNEM7QUFDNUMsZ0VBQXFDO0FBQ3JDLGdFQUFxQztBQUVyQzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXFDRztBQUNILFNBQVMsT0FBTyxDQUFDLE1BQU0sRUFBRSxLQUFLLEVBQUUsR0FBRztJQUNqQyxLQUFLLEdBQUcsSUFBQSxxQkFBUSxFQUFDLEtBQUssQ0FBQyxDQUFDO0lBQ3hCLElBQUksR0FBRyxLQUFLLFNBQVMsRUFBRSxDQUFDO1FBQ3RCLEdBQUcsR0FBRyxLQUFLLENBQUM7UUFDWixLQUFLLEdBQUcsQ0FBQyxDQUFDO0lBQ1osQ0FBQztTQUFNLENBQUM7UUFDTixHQUFHLEdBQUcsSUFBQSxxQkFBUSxFQUFDLEdBQUcsQ0FBQyxDQUFDO0lBQ3RCLENBQUM7SUFDRCxNQUFNLEdBQUcsSUFBQSxxQkFBUSxFQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQzFCLE9BQU8sSUFBQSx5QkFBVyxFQUFDLE1BQU0sRUFBRSxLQUFLLEVBQUUsR0FBRyxDQUFDLENBQUM7QUFDekMsQ0FBQztBQUVELGtCQUFlLE9BQU8sQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvaW5SYW5nZS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZUluUmFuZ2UgZnJvbSAnLi9fYmFzZUluUmFuZ2UuanMnO1xuaW1wb3J0IHRvRmluaXRlIGZyb20gJy4vdG9GaW5pdGUuanMnO1xuaW1wb3J0IHRvTnVtYmVyIGZyb20gJy4vdG9OdW1iZXIuanMnO1xuXG4vKipcbiAqIENoZWNrcyBpZiBgbmAgaXMgYmV0d2VlbiBgc3RhcnRgIGFuZCB1cCB0bywgYnV0IG5vdCBpbmNsdWRpbmcsIGBlbmRgLiBJZlxuICogYGVuZGAgaXMgbm90IHNwZWNpZmllZCwgaXQncyBzZXQgdG8gYHN0YXJ0YCB3aXRoIGBzdGFydGAgdGhlbiBzZXQgdG8gYDBgLlxuICogSWYgYHN0YXJ0YCBpcyBncmVhdGVyIHRoYW4gYGVuZGAgdGhlIHBhcmFtcyBhcmUgc3dhcHBlZCB0byBzdXBwb3J0XG4gKiBuZWdhdGl2ZSByYW5nZXMuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSAzLjMuMFxuICogQGNhdGVnb3J5IE51bWJlclxuICogQHBhcmFtIHtudW1iZXJ9IG51bWJlciBUaGUgbnVtYmVyIHRvIGNoZWNrLlxuICogQHBhcmFtIHtudW1iZXJ9IFtzdGFydD0wXSBUaGUgc3RhcnQgb2YgdGhlIHJhbmdlLlxuICogQHBhcmFtIHtudW1iZXJ9IGVuZCBUaGUgZW5kIG9mIHRoZSByYW5nZS5cbiAqIEByZXR1cm5zIHtib29sZWFufSBSZXR1cm5zIGB0cnVlYCBpZiBgbnVtYmVyYCBpcyBpbiB0aGUgcmFuZ2UsIGVsc2UgYGZhbHNlYC5cbiAqIEBzZWUgXy5yYW5nZSwgXy5yYW5nZVJpZ2h0XG4gKiBAZXhhbXBsZVxuICpcbiAqIF8uaW5SYW5nZSgzLCAyLCA0KTtcbiAqIC8vID0+IHRydWVcbiAqXG4gKiBfLmluUmFuZ2UoNCwgOCk7XG4gKiAvLyA9PiB0cnVlXG4gKlxuICogXy5pblJhbmdlKDQsIDIpO1xuICogLy8gPT4gZmFsc2VcbiAqXG4gKiBfLmluUmFuZ2UoMiwgMik7XG4gKiAvLyA9PiBmYWxzZVxuICpcbiAqIF8uaW5SYW5nZSgxLjIsIDIpO1xuICogLy8gPT4gdHJ1ZVxuICpcbiAqIF8uaW5SYW5nZSg1LjIsIDQpO1xuICogLy8gPT4gZmFsc2VcbiAqXG4gKiBfLmluUmFuZ2UoLTMsIC0yLCAtNik7XG4gKiAvLyA9PiB0cnVlXG4gKi9cbmZ1bmN0aW9uIGluUmFuZ2UobnVtYmVyLCBzdGFydCwgZW5kKSB7XG4gIHN0YXJ0ID0gdG9GaW5pdGUoc3RhcnQpO1xuICBpZiAoZW5kID09PSB1bmRlZmluZWQpIHtcbiAgICBlbmQgPSBzdGFydDtcbiAgICBzdGFydCA9IDA7XG4gIH0gZWxzZSB7XG4gICAgZW5kID0gdG9GaW5pdGUoZW5kKTtcbiAgfVxuICBudW1iZXIgPSB0b051bWJlcihudW1iZXIpO1xuICByZXR1cm4gYmFzZUluUmFuZ2UobnVtYmVyLCBzdGFydCwgZW5kKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgaW5SYW5nZTtcbiJdLCJ2ZXJzaW9uIjozfQ==

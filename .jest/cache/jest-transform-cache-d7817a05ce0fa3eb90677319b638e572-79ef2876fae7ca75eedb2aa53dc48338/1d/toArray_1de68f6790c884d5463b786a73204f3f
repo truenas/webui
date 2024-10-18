@@ -1,0 +1,58 @@
+f58616356fc926ad6598897ae4fbbe84
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _Symbol_js_1 = __importDefault(require("./_Symbol.js"));
+const _copyArray_js_1 = __importDefault(require("./_copyArray.js"));
+const _getTag_js_1 = __importDefault(require("./_getTag.js"));
+const isArrayLike_js_1 = __importDefault(require("./isArrayLike.js"));
+const isString_js_1 = __importDefault(require("./isString.js"));
+const _iteratorToArray_js_1 = __importDefault(require("./_iteratorToArray.js"));
+const _mapToArray_js_1 = __importDefault(require("./_mapToArray.js"));
+const _setToArray_js_1 = __importDefault(require("./_setToArray.js"));
+const _stringToArray_js_1 = __importDefault(require("./_stringToArray.js"));
+const values_js_1 = __importDefault(require("./values.js"));
+/** `Object#toString` result references. */
+var mapTag = '[object Map]', setTag = '[object Set]';
+/** Built-in value references. */
+var symIterator = _Symbol_js_1.default ? _Symbol_js_1.default.iterator : undefined;
+/**
+ * Converts `value` to an array.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {Array} Returns the converted array.
+ * @example
+ *
+ * _.toArray({ 'a': 1, 'b': 2 });
+ * // => [1, 2]
+ *
+ * _.toArray('abc');
+ * // => ['a', 'b', 'c']
+ *
+ * _.toArray(1);
+ * // => []
+ *
+ * _.toArray(null);
+ * // => []
+ */
+function toArray(value) {
+    if (!value) {
+        return [];
+    }
+    if ((0, isArrayLike_js_1.default)(value)) {
+        return (0, isString_js_1.default)(value) ? (0, _stringToArray_js_1.default)(value) : (0, _copyArray_js_1.default)(value);
+    }
+    if (symIterator && value[symIterator]) {
+        return (0, _iteratorToArray_js_1.default)(value[symIterator]());
+    }
+    var tag = (0, _getTag_js_1.default)(value), func = tag == mapTag ? _mapToArray_js_1.default : (tag == setTag ? _setToArray_js_1.default : values_js_1.default);
+    return func(value);
+}
+exports.default = toArray;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RvQXJyYXkuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSw4REFBa0M7QUFDbEMsb0VBQXdDO0FBQ3hDLDhEQUFrQztBQUNsQyxzRUFBMkM7QUFDM0MsZ0VBQXFDO0FBQ3JDLGdGQUFvRDtBQUNwRCxzRUFBMEM7QUFDMUMsc0VBQTBDO0FBQzFDLDRFQUFnRDtBQUNoRCw0REFBaUM7QUFFakMsMkNBQTJDO0FBQzNDLElBQUksTUFBTSxHQUFHLGNBQWMsRUFDdkIsTUFBTSxHQUFHLGNBQWMsQ0FBQztBQUU1QixpQ0FBaUM7QUFDakMsSUFBSSxXQUFXLEdBQUcsb0JBQU0sQ0FBQyxDQUFDLENBQUMsb0JBQU0sQ0FBQyxRQUFRLENBQUMsQ0FBQyxDQUFDLFNBQVMsQ0FBQztBQUV2RDs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXNCRztBQUNILFNBQVMsT0FBTyxDQUFDLEtBQUs7SUFDcEIsSUFBSSxDQUFDLEtBQUssRUFBRSxDQUFDO1FBQ1gsT0FBTyxFQUFFLENBQUM7SUFDWixDQUFDO0lBQ0QsSUFBSSxJQUFBLHdCQUFXLEVBQUMsS0FBSyxDQUFDLEVBQUUsQ0FBQztRQUN2QixPQUFPLElBQUEscUJBQVEsRUFBQyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsSUFBQSwyQkFBYSxFQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyxJQUFBLHVCQUFTLEVBQUMsS0FBSyxDQUFDLENBQUM7SUFDbkUsQ0FBQztJQUNELElBQUksV0FBVyxJQUFJLEtBQUssQ0FBQyxXQUFXLENBQUMsRUFBRSxDQUFDO1FBQ3RDLE9BQU8sSUFBQSw2QkFBZSxFQUFDLEtBQUssQ0FBQyxXQUFXLENBQUMsRUFBRSxDQUFDLENBQUM7SUFDL0MsQ0FBQztJQUNELElBQUksR0FBRyxHQUFHLElBQUEsb0JBQU0sRUFBQyxLQUFLLENBQUMsRUFDbkIsSUFBSSxHQUFHLEdBQUcsSUFBSSxNQUFNLENBQUMsQ0FBQyxDQUFDLHdCQUFVLENBQUMsQ0FBQyxDQUFDLENBQUMsR0FBRyxJQUFJLE1BQU0sQ0FBQyxDQUFDLENBQUMsd0JBQVUsQ0FBQyxDQUFDLENBQUMsbUJBQU0sQ0FBQyxDQUFDO0lBRTlFLE9BQU8sSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDO0FBQ3JCLENBQUM7QUFFRCxrQkFBZSxPQUFPLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RvQXJyYXkuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IFN5bWJvbCBmcm9tICcuL19TeW1ib2wuanMnO1xuaW1wb3J0IGNvcHlBcnJheSBmcm9tICcuL19jb3B5QXJyYXkuanMnO1xuaW1wb3J0IGdldFRhZyBmcm9tICcuL19nZXRUYWcuanMnO1xuaW1wb3J0IGlzQXJyYXlMaWtlIGZyb20gJy4vaXNBcnJheUxpa2UuanMnO1xuaW1wb3J0IGlzU3RyaW5nIGZyb20gJy4vaXNTdHJpbmcuanMnO1xuaW1wb3J0IGl0ZXJhdG9yVG9BcnJheSBmcm9tICcuL19pdGVyYXRvclRvQXJyYXkuanMnO1xuaW1wb3J0IG1hcFRvQXJyYXkgZnJvbSAnLi9fbWFwVG9BcnJheS5qcyc7XG5pbXBvcnQgc2V0VG9BcnJheSBmcm9tICcuL19zZXRUb0FycmF5LmpzJztcbmltcG9ydCBzdHJpbmdUb0FycmF5IGZyb20gJy4vX3N0cmluZ1RvQXJyYXkuanMnO1xuaW1wb3J0IHZhbHVlcyBmcm9tICcuL3ZhbHVlcy5qcyc7XG5cbi8qKiBgT2JqZWN0I3RvU3RyaW5nYCByZXN1bHQgcmVmZXJlbmNlcy4gKi9cbnZhciBtYXBUYWcgPSAnW29iamVjdCBNYXBdJyxcbiAgICBzZXRUYWcgPSAnW29iamVjdCBTZXRdJztcblxuLyoqIEJ1aWx0LWluIHZhbHVlIHJlZmVyZW5jZXMuICovXG52YXIgc3ltSXRlcmF0b3IgPSBTeW1ib2wgPyBTeW1ib2wuaXRlcmF0b3IgOiB1bmRlZmluZWQ7XG5cbi8qKlxuICogQ29udmVydHMgYHZhbHVlYCB0byBhbiBhcnJheS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAc2luY2UgMC4xLjBcbiAqIEBtZW1iZXJPZiBfXG4gKiBAY2F0ZWdvcnkgTGFuZ1xuICogQHBhcmFtIHsqfSB2YWx1ZSBUaGUgdmFsdWUgdG8gY29udmVydC5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUgY29udmVydGVkIGFycmF5LlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLnRvQXJyYXkoeyAnYSc6IDEsICdiJzogMiB9KTtcbiAqIC8vID0+IFsxLCAyXVxuICpcbiAqIF8udG9BcnJheSgnYWJjJyk7XG4gKiAvLyA9PiBbJ2EnLCAnYicsICdjJ11cbiAqXG4gKiBfLnRvQXJyYXkoMSk7XG4gKiAvLyA9PiBbXVxuICpcbiAqIF8udG9BcnJheShudWxsKTtcbiAqIC8vID0+IFtdXG4gKi9cbmZ1bmN0aW9uIHRvQXJyYXkodmFsdWUpIHtcbiAgaWYgKCF2YWx1ZSkge1xuICAgIHJldHVybiBbXTtcbiAgfVxuICBpZiAoaXNBcnJheUxpa2UodmFsdWUpKSB7XG4gICAgcmV0dXJuIGlzU3RyaW5nKHZhbHVlKSA/IHN0cmluZ1RvQXJyYXkodmFsdWUpIDogY29weUFycmF5KHZhbHVlKTtcbiAgfVxuICBpZiAoc3ltSXRlcmF0b3IgJiYgdmFsdWVbc3ltSXRlcmF0b3JdKSB7XG4gICAgcmV0dXJuIGl0ZXJhdG9yVG9BcnJheSh2YWx1ZVtzeW1JdGVyYXRvcl0oKSk7XG4gIH1cbiAgdmFyIHRhZyA9IGdldFRhZyh2YWx1ZSksXG4gICAgICBmdW5jID0gdGFnID09IG1hcFRhZyA/IG1hcFRvQXJyYXkgOiAodGFnID09IHNldFRhZyA/IHNldFRvQXJyYXkgOiB2YWx1ZXMpO1xuXG4gIHJldHVybiBmdW5jKHZhbHVlKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgdG9BcnJheTtcbiJdLCJ2ZXJzaW9uIjozfQ==

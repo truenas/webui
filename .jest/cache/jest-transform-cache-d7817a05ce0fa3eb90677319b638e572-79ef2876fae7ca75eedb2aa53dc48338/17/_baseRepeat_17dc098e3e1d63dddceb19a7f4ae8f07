@@ -1,0 +1,35 @@
+34ea7d8f580b36ed13dcf85738163eda
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeFloor = Math.floor;
+/**
+ * The base implementation of `_.repeat` which doesn't coerce arguments.
+ *
+ * @private
+ * @param {string} string The string to repeat.
+ * @param {number} n The number of times to repeat the string.
+ * @returns {string} Returns the repeated string.
+ */
+function baseRepeat(string, n) {
+    var result = '';
+    if (!string || n < 1 || n > MAX_SAFE_INTEGER) {
+        return result;
+    }
+    // Leverage the exponentiation by squaring algorithm for a faster repeat.
+    // See https://en.wikipedia.org/wiki/Exponentiation_by_squaring for more details.
+    do {
+        if (n % 2) {
+            result += string;
+        }
+        n = nativeFloor(n / 2);
+        if (n) {
+            string += string;
+        }
+    } while (n);
+    return result;
+}
+exports.default = baseRepeat;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlUmVwZWF0LmpzIiwibWFwcGluZ3MiOiI7O0FBQUEseURBQXlEO0FBQ3pELElBQUksZ0JBQWdCLEdBQUcsZ0JBQWdCLENBQUM7QUFFeEMsd0ZBQXdGO0FBQ3hGLElBQUksV0FBVyxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUM7QUFFN0I7Ozs7Ozs7R0FPRztBQUNILFNBQVMsVUFBVSxDQUFDLE1BQU0sRUFBRSxDQUFDO0lBQzNCLElBQUksTUFBTSxHQUFHLEVBQUUsQ0FBQztJQUNoQixJQUFJLENBQUMsTUFBTSxJQUFJLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxHQUFHLGdCQUFnQixFQUFFLENBQUM7UUFDN0MsT0FBTyxNQUFNLENBQUM7SUFDaEIsQ0FBQztJQUNELHlFQUF5RTtJQUN6RSxpRkFBaUY7SUFDakYsR0FBRyxDQUFDO1FBQ0YsSUFBSSxDQUFDLEdBQUcsQ0FBQyxFQUFFLENBQUM7WUFDVixNQUFNLElBQUksTUFBTSxDQUFDO1FBQ25CLENBQUM7UUFDRCxDQUFDLEdBQUcsV0FBVyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQztRQUN2QixJQUFJLENBQUMsRUFBRSxDQUFDO1lBQ04sTUFBTSxJQUFJLE1BQU0sQ0FBQztRQUNuQixDQUFDO0lBQ0gsQ0FBQyxRQUFRLENBQUMsRUFBRTtJQUVaLE9BQU8sTUFBTSxDQUFDO0FBQ2hCLENBQUM7QUFFRCxrQkFBZSxVQUFVLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlUmVwZWF0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8qKiBVc2VkIGFzIHJlZmVyZW5jZXMgZm9yIHZhcmlvdXMgYE51bWJlcmAgY29uc3RhbnRzLiAqL1xudmFyIE1BWF9TQUZFX0lOVEVHRVIgPSA5MDA3MTk5MjU0NzQwOTkxO1xuXG4vKiBCdWlsdC1pbiBtZXRob2QgcmVmZXJlbmNlcyBmb3IgdGhvc2Ugd2l0aCB0aGUgc2FtZSBuYW1lIGFzIG90aGVyIGBsb2Rhc2hgIG1ldGhvZHMuICovXG52YXIgbmF0aXZlRmxvb3IgPSBNYXRoLmZsb29yO1xuXG4vKipcbiAqIFRoZSBiYXNlIGltcGxlbWVudGF0aW9uIG9mIGBfLnJlcGVhdGAgd2hpY2ggZG9lc24ndCBjb2VyY2UgYXJndW1lbnRzLlxuICpcbiAqIEBwcml2YXRlXG4gKiBAcGFyYW0ge3N0cmluZ30gc3RyaW5nIFRoZSBzdHJpbmcgdG8gcmVwZWF0LlxuICogQHBhcmFtIHtudW1iZXJ9IG4gVGhlIG51bWJlciBvZiB0aW1lcyB0byByZXBlYXQgdGhlIHN0cmluZy5cbiAqIEByZXR1cm5zIHtzdHJpbmd9IFJldHVybnMgdGhlIHJlcGVhdGVkIHN0cmluZy5cbiAqL1xuZnVuY3Rpb24gYmFzZVJlcGVhdChzdHJpbmcsIG4pIHtcbiAgdmFyIHJlc3VsdCA9ICcnO1xuICBpZiAoIXN0cmluZyB8fCBuIDwgMSB8fCBuID4gTUFYX1NBRkVfSU5URUdFUikge1xuICAgIHJldHVybiByZXN1bHQ7XG4gIH1cbiAgLy8gTGV2ZXJhZ2UgdGhlIGV4cG9uZW50aWF0aW9uIGJ5IHNxdWFyaW5nIGFsZ29yaXRobSBmb3IgYSBmYXN0ZXIgcmVwZWF0LlxuICAvLyBTZWUgaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvRXhwb25lbnRpYXRpb25fYnlfc3F1YXJpbmcgZm9yIG1vcmUgZGV0YWlscy5cbiAgZG8ge1xuICAgIGlmIChuICUgMikge1xuICAgICAgcmVzdWx0ICs9IHN0cmluZztcbiAgICB9XG4gICAgbiA9IG5hdGl2ZUZsb29yKG4gLyAyKTtcbiAgICBpZiAobikge1xuICAgICAgc3RyaW5nICs9IHN0cmluZztcbiAgICB9XG4gIH0gd2hpbGUgKG4pO1xuXG4gIHJldHVybiByZXN1bHQ7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGJhc2VSZXBlYXQ7XG4iXSwidmVyc2lvbiI6M30=

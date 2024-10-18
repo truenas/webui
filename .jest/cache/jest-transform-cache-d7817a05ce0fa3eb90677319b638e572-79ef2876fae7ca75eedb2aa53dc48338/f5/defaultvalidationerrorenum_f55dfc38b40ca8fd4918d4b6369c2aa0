@@ -1,0 +1,20 @@
+5a540eaae2803cf35cd9af0944331e53
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DefaultValidationError = void 0;
+var DefaultValidationError;
+(function (DefaultValidationError) {
+    DefaultValidationError["Min"] = "min";
+    DefaultValidationError["Max"] = "max";
+    DefaultValidationError["Required"] = "required";
+    DefaultValidationError["Email"] = "email";
+    DefaultValidationError["MaxLength"] = "maxlength";
+    DefaultValidationError["Range"] = "range";
+    DefaultValidationError["MinLength"] = "minlength";
+    DefaultValidationError["Pattern"] = "pattern";
+    DefaultValidationError["Forbidden"] = "forbidden";
+    DefaultValidationError["Number"] = "number";
+    DefaultValidationError["Cron"] = "cron";
+    DefaultValidationError["Ip2"] = "ip2";
+})(DefaultValidationError || (exports.DefaultValidationError = DefaultValidationError = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2RlZmF1bHQtdmFsaWRhdGlvbi1lcnJvci5lbnVtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLElBQVksc0JBYVg7QUFiRCxXQUFZLHNCQUFzQjtJQUNoQyxxQ0FBVyxDQUFBO0lBQ1gscUNBQVcsQ0FBQTtJQUNYLCtDQUFxQixDQUFBO0lBQ3JCLHlDQUFlLENBQUE7SUFDZixpREFBdUIsQ0FBQTtJQUN2Qix5Q0FBZSxDQUFBO0lBQ2YsaURBQXVCLENBQUE7SUFDdkIsNkNBQW1CLENBQUE7SUFDbkIsaURBQXVCLENBQUE7SUFDdkIsMkNBQWlCLENBQUE7SUFDakIsdUNBQWEsQ0FBQTtJQUNiLHFDQUFXLENBQUE7QUFDYixDQUFDLEVBYlcsc0JBQXNCLHNDQUF0QixzQkFBc0IsUUFhakMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2RlZmF1bHQtdmFsaWRhdGlvbi1lcnJvci5lbnVtLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBlbnVtIERlZmF1bHRWYWxpZGF0aW9uRXJyb3Ige1xuICBNaW4gPSAnbWluJyxcbiAgTWF4ID0gJ21heCcsXG4gIFJlcXVpcmVkID0gJ3JlcXVpcmVkJyxcbiAgRW1haWwgPSAnZW1haWwnLFxuICBNYXhMZW5ndGggPSAnbWF4bGVuZ3RoJyxcbiAgUmFuZ2UgPSAncmFuZ2UnLFxuICBNaW5MZW5ndGggPSAnbWlubGVuZ3RoJyxcbiAgUGF0dGVybiA9ICdwYXR0ZXJuJyxcbiAgRm9yYmlkZGVuID0gJ2ZvcmJpZGRlbicsXG4gIE51bWJlciA9ICdudW1iZXInLFxuICBDcm9uID0gJ2Nyb24nLFxuICBJcDIgPSAnaXAyJyxcbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

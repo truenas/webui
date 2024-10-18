@@ -1,0 +1,107 @@
+4edadc2d03bd2fed7c90f46749915066
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.nfsAdvancedFlagLabels = exports.NfsAdvancedFlag = exports.nfsBasicFlagLabels = exports.NfsBasicFlag = exports.nfsAdvancedPermissionLabels = exports.NfsAdvancedPermission = exports.nfsBasicPermissionLabels = exports.NfsBasicPermission = exports.nfsAclTypeLabels = exports.NfsAclType = exports.smbAclTagLabels = exports.nfsAclTagLabels = exports.NfsAclTag = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+var NfsAclTag;
+(function (NfsAclTag) {
+    NfsAclTag["Owner"] = "owner@";
+    NfsAclTag["Group"] = "group@";
+    NfsAclTag["Everyone"] = "everyone@";
+    NfsAclTag["User"] = "USER";
+    NfsAclTag["UserGroup"] = "GROUP";
+    NfsAclTag["Both"] = "BOTH";
+})(NfsAclTag || (exports.NfsAclTag = NfsAclTag = {}));
+exports.nfsAclTagLabels = new Map([
+    [NfsAclTag.User, (0, ngx_translate_extract_marker_1.marker)('User')],
+    [NfsAclTag.UserGroup, (0, ngx_translate_extract_marker_1.marker)('Group')],
+    [NfsAclTag.Owner, (0, ngx_translate_extract_marker_1.marker)('owner@')],
+    [NfsAclTag.Group, (0, ngx_translate_extract_marker_1.marker)('group@')],
+    [NfsAclTag.Everyone, (0, ngx_translate_extract_marker_1.marker)('everyone@')],
+]);
+exports.smbAclTagLabels = new Map([
+    [NfsAclTag.User, (0, ngx_translate_extract_marker_1.marker)('User')],
+    [NfsAclTag.UserGroup, (0, ngx_translate_extract_marker_1.marker)('Group')],
+    [NfsAclTag.Both, (0, ngx_translate_extract_marker_1.marker)('Unknown')],
+    [NfsAclTag.Everyone, (0, ngx_translate_extract_marker_1.marker)('everyone@')],
+]);
+var NfsAclType;
+(function (NfsAclType) {
+    NfsAclType["Allow"] = "ALLOW";
+    NfsAclType["Deny"] = "DENY";
+})(NfsAclType || (exports.NfsAclType = NfsAclType = {}));
+exports.nfsAclTypeLabels = new Map([
+    [NfsAclType.Allow, (0, ngx_translate_extract_marker_1.marker)('Allow')],
+    [NfsAclType.Deny, (0, ngx_translate_extract_marker_1.marker)('Deny')],
+]);
+var NfsBasicPermission;
+(function (NfsBasicPermission) {
+    NfsBasicPermission["FullControl"] = "FULL_CONTROL";
+    NfsBasicPermission["Modify"] = "MODIFY";
+    NfsBasicPermission["Read"] = "READ";
+    NfsBasicPermission["Traverse"] = "TRAVERSE";
+})(NfsBasicPermission || (exports.NfsBasicPermission = NfsBasicPermission = {}));
+exports.nfsBasicPermissionLabels = new Map([
+    [NfsBasicPermission.Read, (0, ngx_translate_extract_marker_1.marker)('Read')],
+    [NfsBasicPermission.Modify, (0, ngx_translate_extract_marker_1.marker)('Modify')],
+    [NfsBasicPermission.Traverse, (0, ngx_translate_extract_marker_1.marker)('Traverse')],
+    [NfsBasicPermission.FullControl, (0, ngx_translate_extract_marker_1.marker)('Full Control')],
+]);
+var NfsAdvancedPermission;
+(function (NfsAdvancedPermission) {
+    NfsAdvancedPermission["ReadData"] = "READ_DATA";
+    NfsAdvancedPermission["WriteData"] = "WRITE_DATA";
+    NfsAdvancedPermission["AppendData"] = "APPEND_DATA";
+    NfsAdvancedPermission["ReadNamedAttrs"] = "READ_NAMED_ATTRS";
+    NfsAdvancedPermission["WriteNamedAttrs"] = "WRITE_NAMED_ATTRS";
+    NfsAdvancedPermission["Execute"] = "EXECUTE";
+    NfsAdvancedPermission["DeleteChild"] = "DELETE_CHILD";
+    NfsAdvancedPermission["ReadAttributes"] = "READ_ATTRIBUTES";
+    NfsAdvancedPermission["WriteAttributes"] = "WRITE_ATTRIBUTES";
+    NfsAdvancedPermission["Delete"] = "DELETE";
+    NfsAdvancedPermission["ReadAcl"] = "READ_ACL";
+    NfsAdvancedPermission["WriteAcl"] = "WRITE_ACL";
+    NfsAdvancedPermission["WriteOwner"] = "WRITE_OWNER";
+    NfsAdvancedPermission["Synchronize"] = "SYNCHRONIZE";
+})(NfsAdvancedPermission || (exports.NfsAdvancedPermission = NfsAdvancedPermission = {}));
+exports.nfsAdvancedPermissionLabels = new Map([
+    [NfsAdvancedPermission.ReadData, (0, ngx_translate_extract_marker_1.marker)('Read Data')],
+    [NfsAdvancedPermission.WriteData, (0, ngx_translate_extract_marker_1.marker)('Write Data')],
+    [NfsAdvancedPermission.AppendData, (0, ngx_translate_extract_marker_1.marker)('Append Data')],
+    [NfsAdvancedPermission.ReadNamedAttrs, (0, ngx_translate_extract_marker_1.marker)('Read Named Attributes')],
+    [NfsAdvancedPermission.WriteNamedAttrs, (0, ngx_translate_extract_marker_1.marker)('Write Named Attributes')],
+    [NfsAdvancedPermission.Execute, (0, ngx_translate_extract_marker_1.marker)('Execute')],
+    [NfsAdvancedPermission.DeleteChild, (0, ngx_translate_extract_marker_1.marker)('Delete Children')],
+    [NfsAdvancedPermission.ReadAttributes, (0, ngx_translate_extract_marker_1.marker)('Read Attributes')],
+    [NfsAdvancedPermission.WriteAttributes, (0, ngx_translate_extract_marker_1.marker)('Write Attributes')],
+    [NfsAdvancedPermission.Delete, (0, ngx_translate_extract_marker_1.marker)('Delete')],
+    [NfsAdvancedPermission.ReadAcl, (0, ngx_translate_extract_marker_1.marker)('Read ACL')],
+    [NfsAdvancedPermission.WriteAcl, (0, ngx_translate_extract_marker_1.marker)('Write ACL')],
+    [NfsAdvancedPermission.WriteOwner, (0, ngx_translate_extract_marker_1.marker)('Write Owner')],
+    [NfsAdvancedPermission.Synchronize, (0, ngx_translate_extract_marker_1.marker)('Synchronize')],
+]);
+var NfsBasicFlag;
+(function (NfsBasicFlag) {
+    NfsBasicFlag["Inherit"] = "INHERIT";
+    NfsBasicFlag["NoInherit"] = "NOINHERIT";
+})(NfsBasicFlag || (exports.NfsBasicFlag = NfsBasicFlag = {}));
+exports.nfsBasicFlagLabels = new Map([
+    [NfsBasicFlag.Inherit, (0, ngx_translate_extract_marker_1.marker)('Inherit')],
+    [NfsBasicFlag.NoInherit, (0, ngx_translate_extract_marker_1.marker)('No Inherit')],
+]);
+var NfsAdvancedFlag;
+(function (NfsAdvancedFlag) {
+    NfsAdvancedFlag["FileInherit"] = "FILE_INHERIT";
+    NfsAdvancedFlag["DirectoryInherit"] = "DIRECTORY_INHERIT";
+    NfsAdvancedFlag["NoPropagateInherit"] = "NO_PROPAGATE_INHERIT";
+    NfsAdvancedFlag["InheritOnly"] = "INHERIT_ONLY";
+    NfsAdvancedFlag["Inherited"] = "INHERITED";
+})(NfsAdvancedFlag || (exports.NfsAdvancedFlag = NfsAdvancedFlag = {}));
+exports.nfsAdvancedFlagLabels = new Map([
+    [NfsAdvancedFlag.FileInherit, (0, ngx_translate_extract_marker_1.marker)('File Inherit')],
+    [NfsAdvancedFlag.DirectoryInherit, (0, ngx_translate_extract_marker_1.marker)('Directory Inherit')],
+    [NfsAdvancedFlag.NoPropagateInherit, (0, ngx_translate_extract_marker_1.marker)('No Propagate Inherit')],
+    [NfsAdvancedFlag.InheritOnly, (0, ngx_translate_extract_marker_1.marker)('Inherit Only')],
+    [NfsAdvancedFlag.Inherited, (0, ngx_translate_extract_marker_1.marker)('Inherited')],
+]);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL25mcy1hY2wuZW51bS50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSwwRkFBc0U7QUFFdEUsSUFBWSxTQU9YO0FBUEQsV0FBWSxTQUFTO0lBQ25CLDZCQUFnQixDQUFBO0lBQ2hCLDZCQUFnQixDQUFBO0lBQ2hCLG1DQUFzQixDQUFBO0lBQ3RCLDBCQUFhLENBQUE7SUFDYixnQ0FBbUIsQ0FBQTtJQUNuQiwwQkFBYSxDQUFBO0FBQ2YsQ0FBQyxFQVBXLFNBQVMseUJBQVQsU0FBUyxRQU9wQjtBQUVZLFFBQUEsZUFBZSxHQUFHLElBQUksR0FBRyxDQUFvQjtJQUN4RCxDQUFDLFNBQVMsQ0FBQyxJQUFJLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQzNCLENBQUMsU0FBUyxDQUFDLFNBQVMsRUFBRSxJQUFBLHFDQUFDLEVBQUMsT0FBTyxDQUFDLENBQUM7SUFDakMsQ0FBQyxTQUFTLENBQUMsS0FBSyxFQUFFLElBQUEscUNBQUMsRUFBQyxRQUFRLENBQUMsQ0FBQztJQUM5QixDQUFDLFNBQVMsQ0FBQyxLQUFLLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFFBQVEsQ0FBQyxDQUFDO0lBQzlCLENBQUMsU0FBUyxDQUFDLFFBQVEsRUFBRSxJQUFBLHFDQUFDLEVBQUMsV0FBVyxDQUFDLENBQUM7Q0FDckMsQ0FBQyxDQUFDO0FBRVUsUUFBQSxlQUFlLEdBQUcsSUFBSSxHQUFHLENBQW9CO0lBQ3hELENBQUMsU0FBUyxDQUFDLElBQUksRUFBRSxJQUFBLHFDQUFDLEVBQUMsTUFBTSxDQUFDLENBQUM7SUFDM0IsQ0FBQyxTQUFTLENBQUMsU0FBUyxFQUFFLElBQUEscUNBQUMsRUFBQyxPQUFPLENBQUMsQ0FBQztJQUNqQyxDQUFDLFNBQVMsQ0FBQyxJQUFJLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFNBQVMsQ0FBQyxDQUFDO0lBQzlCLENBQUMsU0FBUyxDQUFDLFFBQVEsRUFBRSxJQUFB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QUFFLElBQUEscUNBQUMsRUFBQyxzQkFBc0IsQ0FBQyxDQUFDO0lBQy9ELENBQUMsZUFBZSxDQUFDLFdBQVcsRUFBRSxJQUFBLHFDQUFDLEVBQUMsY0FBYyxDQUFDLENBQUM7SUFDaEQsQ0FBQyxlQUFlLENBQUMsU0FBUyxFQUFFLElBQUEscUNBQUMsRUFBQyxXQUFXLENBQUMsQ0FBQztDQUM1QyxDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL25mcy1hY2wuZW51bS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5cbmV4cG9ydCBlbnVtIE5mc0FjbFRhZyB7XG4gIE93bmVyID0gJ293bmVyQCcsXG4gIEdyb3VwID0gJ2dyb3VwQCcsXG4gIEV2ZXJ5b25lID0gJ2V2ZXJ5b25lQCcsXG4gIFVzZXIgPSAnVVNFUicsXG4gIFVzZXJHcm91cCA9ICdHUk9VUCcsXG4gIEJvdGggPSAnQk9USCcsIC8vIG1pZGRsZXdhcmUgcmV0dXJucyBgSURfVFlQRV9CT1RIYCB3aGVuIGl0IGlzIG5vdCBwb3NzaWJsZSB0byBkZXRlcm1pbmUgd2hldGhlciBhbiBBRCBlbnRpdHkgaXMgYSB1c2VyIG9yIGEgZ3JvdXBcbn1cblxuZXhwb3J0IGNvbnN0IG5mc0FjbFRhZ0xhYmVscyA9IG5ldyBNYXA8TmZzQWNsVGFnLCBzdHJpbmc+KFtcbiAgW05mc0FjbFRhZy5Vc2VyLCBUKCdVc2VyJyldLFxuICBbTmZzQWNsVGFnLlVzZXJHcm91cCwgVCgnR3JvdXAnKV0sXG4gIFtOZnNBY2xUYWcuT3duZXIsIFQoJ293bmVyQCcpXSxcbiAgW05mc0FjbFRhZy5Hcm91cCwgVCgnZ3JvdXBAJyldLFxuICBbTmZzQWNsVGFnLkV2ZXJ5b25lLCBUKCdldmVyeW9uZUAnKV0sXG5dKTtcblxuZXhwb3J0IGNvbnN0IHNtYkFjbFRhZ0xhYmVscyA9IG5ldyBNYXA8TmZzQWNsVGFnLCBzdHJpbmc+KFtcbiAgW05mc0FjbFRhZy5Vc2VyLCBUKCdVc2VyJyldLFxuICBbTmZzQWNsVGFnLlVzZXJHcm91cCwgVCgnR3JvdXAnKV0sXG4gIFtOZnNBY2xUYWcuQm90aCwgVCgnVW5rbm93bicpXSxcbiAgW05mc0FjbFRhZy5FdmVyeW9uZSwgVCgnZXZlcnlvbmVAJyldLFxuXSk7XG5cbmV4cG9ydCBlbnVtIE5mc0FjbFR5cGUge1xuICBBbGxvdyA9ICdBTExPVycsXG4gIERlbnkgPSAnREVOWScsXG59XG5cbmV4cG9ydCBjb25zdCBuZnNBY2xUeXBlTGFiZWxzID0gbmV3IE1hcDxOZnNBY2xUeXBlLCBzdHJpbmc+KFtcbiAgW05mc0FjbFR5cGUuQWxsb3csIFQoJ0FsbG93JyldLFxuICBbTmZzQWNsVHlwZS5EZW55LCBUKCdEZW55JyldLFxuXSk7XG5cbmV4cG9ydCBlbnVtIE5mc0Jhc2ljUGVybWlzc2lvbiB7XG4gIEZ1bGxDb250cm9sID0gJ0ZVTExfQ09OVFJPTCcsXG4gIE1vZGlmeSA9ICdNT0RJRlknLFxuICBSZWFkID0gJ1JFQUQnLFxuICBUcmF2ZXJzZSA9ICdUUkFWRVJTRScsXG59XG5cbmV4cG9ydCBjb25zdCBuZnNCYXNpY1Blcm1pc3Npb25MYWJlbHMgPSBuZXcgTWFwPE5mc0Jhc2ljUGVybWlzc2lvbiwgc3RyaW5nPihbXG4gIFtOZnNCYXNpY1Blcm1pc3Npb24uUmVhZCwgVCgnUmVhZCcpXSxcbiAgW05mc0Jhc2ljUGVybWlzc2lvbi5Nb2RpZnksIFQoJ01vZGlmeScpXSxcbiAgW05mc0Jhc2ljUGVybWlzc2lvbi5UcmF2ZXJzZSwgVCgnVHJhdmVyc2UnKV0sXG4gIFtOZnNCYXNpY1Blcm1pc3Npb24uRnVsbENvbnRyb2wsIFQoJ0Z1bGwgQ29udHJvbCcpXSxcbl0pO1xuXG5leHBvcnQgZW51bSBOZnNBZHZhbmNlZFBlcm1pc3Npb24ge1xuICBSZWFkRGF0YSA9ICdSRUFEX0RBVEEnLFxuICBXcml0ZURhdGEgPSAnV1JJVEVfREFUQScsXG4gIEFwcGVuZERhdGEgPSAnQVBQRU5EX0RBVEEnLFxuICBSZWFkTmFtZWRBdHRycyA9ICdSRUFEX05BTUVEX0FUVFJTJyxcbiAgV3JpdGVOYW1lZEF0dHJzID0gJ1dSSVRFX05BTUVEX0FUVFJTJyxcbiAgRXhlY3V0ZSA9ICdFWEVDVVRFJyxcbiAgRGVsZXRlQ2hpbGQgPSAnREVMRVRFX0NISUxEJyxcbiAgUmVhZEF0dHJpYnV0ZXMgPSAnUkVBRF9BVFRSSUJVVEVTJyxcbiAgV3JpdGVBdHRyaWJ1dGVzID0gJ1dSSVRFX0FUVFJJQlVURVMnLFxuICBEZWxldGUgPSAnREVMRVRFJyxcbiAgUmVhZEFjbCA9ICdSRUFEX0FDTCcsXG4gIFdyaXRlQWNsID0gJ1dSSVRFX0FDTCcsXG4gIFdyaXRlT3duZXIgPSAnV1JJVEVfT1dORVInLFxuICBTeW5jaHJvbml6ZSA9ICdTWU5DSFJPTklaRScsXG59XG5cbmV4cG9ydCBjb25zdCBuZnNBZHZhbmNlZFBlcm1pc3Npb25MYWJlbHMgPSBuZXcgTWFwPE5mc0FkdmFuY2VkUGVybWlzc2lvbiwgc3RyaW5nPihbXG4gIFtOZnNBZHZhbmNlZFBlcm1pc3Npb24uUmVhZERhdGEsIFQoJ1JlYWQgRGF0YScpXSxcbiAgW05mc0FkdmFuY2VkUGVybWlzc2lvbi5Xcml0ZURhdGEsIFQoJ1dyaXRlIERhdGEnKV0sXG4gIFtOZnNBZHZhbmNlZFBlcm1pc3Npb24uQXBwZW5kRGF0YSwgVCgnQXBwZW5kIERhdGEnKV0sXG4gIFtOZnNBZHZhbmNlZFBlcm1pc3Npb24uUmVhZE5hbWVkQXR0cnMsIFQoJ1JlYWQgTmFtZWQgQXR0cmlidXRlcycpXSxcbiAgW05mc0FkdmFuY2VkUGVybWlzc2lvbi5Xcml0ZU5hbWVkQXR0cnMsIFQoJ1dyaXRlIE5hbWVkIEF0dHJpYnV0ZXMnKV0sXG4gIFtOZnNBZHZhbmNlZFBlcm1pc3Npb24uRXhlY3V0ZSwgVCgnRXhlY3V0ZScpXSxcbiAgW05mc0FkdmFuY2VkUGVybWlzc2lvbi5EZWxldGVDaGlsZCwgVCgnRGVsZXRlIENoaWxkcmVuJyldLFxuICBbTmZzQWR2YW5jZWRQZXJtaXNzaW9uLlJlYWRBdHRyaWJ1dGVzLCBUKCdSZWFkIEF0dHJpYnV0ZXMnKV0sXG4gIFtOZnNBZHZhbmNlZFBlcm1pc3Npb24uV3JpdGVBdHRyaWJ1dGVzLCBUKCdXcml0ZSBBdHRyaWJ1dGVzJyldLFxuICBbTmZzQWR2YW5jZWRQZXJtaXNzaW9uLkRlbGV0ZSwgVCgnRGVsZXRlJyldLFxuICBbTmZzQWR2YW5jZWRQZXJtaXNzaW9uLlJlYWRBY2wsIFQoJ1JlYWQgQUNMJyldLFxuICBbTmZzQWR2YW5jZWRQZXJtaXNzaW9uLldyaXRlQWNsLCBUKCdXcml0ZSBBQ0wnKV0sXG4gIFtOZnNBZHZhbmNlZFBlcm1pc3Npb24uV3JpdGVPd25lciwgVCgnV3JpdGUgT3duZXInKV0sXG4gIFtOZnNBZHZhbmNlZFBlcm1pc3Npb24uU3luY2hyb25pemUsIFQoJ1N5bmNocm9uaXplJyldLFxuXSk7XG5cbmV4cG9ydCBlbnVtIE5mc0Jhc2ljRmxhZyB7XG4gIEluaGVyaXQgPSAnSU5IRVJJVCcsXG4gIE5vSW5oZXJpdCA9ICdOT0lOSEVSSVQnLFxufVxuXG5leHBvcnQgY29uc3QgbmZzQmFzaWNGbGFnTGFiZWxzID0gbmV3IE1hcDxOZnNCYXNpY0ZsYWcsIHN0cmluZz4oW1xuICBbTmZzQmFzaWNGbGFnLkluaGVyaXQsIFQoJ0luaGVyaXQnKV0sXG4gIFtOZnNCYXNpY0ZsYWcuTm9Jbmhlcml0LCBUKCdObyBJbmhlcml0JyldLFxuXSk7XG5cbmV4cG9ydCBlbnVtIE5mc0FkdmFuY2VkRmxhZyB7XG4gIEZpbGVJbmhlcml0ID0gJ0ZJTEVfSU5IRVJJVCcsXG4gIERpcmVjdG9yeUluaGVyaXQgPSAnRElSRUNUT1JZX0lOSEVSSVQnLFxuICBOb1Byb3BhZ2F0ZUluaGVyaXQgPSAnTk9fUFJPUEFHQVRFX0lOSEVSSVQnLFxuICBJbmhlcml0T25seSA9ICdJTkhFUklUX09OTFknLFxuICBJbmhlcml0ZWQgPSAnSU5IRVJJVEVEJyxcbn1cblxuZXhwb3J0IGNvbnN0IG5mc0FkdmFuY2VkRmxhZ0xhYmVscyA9IG5ldyBNYXA8TmZzQWR2YW5jZWRGbGFnLCBzdHJpbmc+KFtcbiAgW05mc0FkdmFuY2VkRmxhZy5GaWxlSW5oZXJpdCwgVCgnRmlsZSBJbmhlcml0JyldLFxuICBbTmZzQWR2YW5jZWRGbGFnLkRpcmVjdG9yeUluaGVyaXQsIFQoJ0RpcmVjdG9yeSBJbmhlcml0JyldLFxuICBbTmZzQWR2YW5jZWRGbGFnLk5vUHJvcGFnYXRlSW5oZXJpdCwgVCgnTm8gUHJvcGFnYXRlIEluaGVyaXQnKV0sXG4gIFtOZnNBZHZhbmNlZEZsYWcuSW5oZXJpdE9ubHksIFQoJ0luaGVyaXQgT25seScpXSxcbiAgW05mc0FkdmFuY2VkRmxhZy5Jbmhlcml0ZWQsIFQoJ0luaGVyaXRlZCcpXSxcbl0pO1xuIl0sInZlcnNpb24iOjN9

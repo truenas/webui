@@ -1,0 +1,2 @@
+f11060400b07db50f6b39e441dc99c70
+module.exports="<h6 class=\"title\">{{ title | translate }}</h6>\n<div mat-dialog-content class=\"spinner-container\">\n  <mat-spinner></mat-spinner>\n</div>\n"

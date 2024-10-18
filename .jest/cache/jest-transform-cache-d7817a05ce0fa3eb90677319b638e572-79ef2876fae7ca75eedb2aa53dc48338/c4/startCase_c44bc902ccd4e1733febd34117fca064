@@ -1,0 +1,34 @@
+4193fa5f031d97e0040d3aea3e5fe3f2
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _createCompounder_js_1 = __importDefault(require("./_createCompounder.js"));
+const upperFirst_js_1 = __importDefault(require("./upperFirst.js"));
+/**
+ * Converts `string` to
+ * [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
+ *
+ * @static
+ * @memberOf _
+ * @since 3.1.0
+ * @category String
+ * @param {string} [string=''] The string to convert.
+ * @returns {string} Returns the start cased string.
+ * @example
+ *
+ * _.startCase('--foo-bar--');
+ * // => 'Foo Bar'
+ *
+ * _.startCase('fooBar');
+ * // => 'Foo Bar'
+ *
+ * _.startCase('__FOO_BAR__');
+ * // => 'FOO BAR'
+ */
+var startCase = (0, _createCompounder_js_1.default)(function (result, word, index) {
+    return result + (index ? ' ' : '') + (0, upperFirst_js_1.default)(word);
+});
+exports.default = startCase;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3N0YXJ0Q2FzZS5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLGtGQUFzRDtBQUN0RCxvRUFBeUM7QUFFekM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBb0JHO0FBQ0gsSUFBSSxTQUFTLEdBQUcsSUFBQSw4QkFBZ0IsRUFBQyxVQUFTLE1BQU0sRUFBRSxJQUFJLEVBQUUsS0FBSztJQUMzRCxPQUFPLE1BQU0sR0FBRyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQyxFQUFFLENBQUMsR0FBRyxJQUFBLHVCQUFVLEVBQUMsSUFBSSxDQUFDLENBQUM7QUFDeEQsQ0FBQyxDQUFDLENBQUM7QUFFSCxrQkFBZSxTQUFTLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3N0YXJ0Q2FzZS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgY3JlYXRlQ29tcG91bmRlciBmcm9tICcuL19jcmVhdGVDb21wb3VuZGVyLmpzJztcbmltcG9ydCB1cHBlckZpcnN0IGZyb20gJy4vdXBwZXJGaXJzdC5qcyc7XG5cbi8qKlxuICogQ29udmVydHMgYHN0cmluZ2AgdG9cbiAqIFtzdGFydCBjYXNlXShodHRwczovL2VuLndpa2lwZWRpYS5vcmcvd2lraS9MZXR0ZXJfY2FzZSNTdHlsaXN0aWNfb3Jfc3BlY2lhbGlzZWRfdXNhZ2UpLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMy4xLjBcbiAqIEBjYXRlZ29yeSBTdHJpbmdcbiAqIEBwYXJhbSB7c3RyaW5nfSBbc3RyaW5nPScnXSBUaGUgc3RyaW5nIHRvIGNvbnZlcnQuXG4gKiBAcmV0dXJucyB7c3RyaW5nfSBSZXR1cm5zIHRoZSBzdGFydCBjYXNlZCBzdHJpbmcuXG4gKiBAZXhhbXBsZVxuICpcbiAqIF8uc3RhcnRDYXNlKCctLWZvby1iYXItLScpO1xuICogLy8gPT4gJ0ZvbyBCYXInXG4gKlxuICogXy5zdGFydENhc2UoJ2Zvb0JhcicpO1xuICogLy8gPT4gJ0ZvbyBCYXInXG4gKlxuICogXy5zdGFydENhc2UoJ19fRk9PX0JBUl9fJyk7XG4gKiAvLyA9PiAnRk9PIEJBUidcbiAqL1xudmFyIHN0YXJ0Q2FzZSA9IGNyZWF0ZUNvbXBvdW5kZXIoZnVuY3Rpb24ocmVzdWx0LCB3b3JkLCBpbmRleCkge1xuICByZXR1cm4gcmVzdWx0ICsgKGluZGV4ID8gJyAnIDogJycpICsgdXBwZXJGaXJzdCh3b3JkKTtcbn0pO1xuXG5leHBvcnQgZGVmYXVsdCBzdGFydENhc2U7XG4iXSwidmVyc2lvbiI6M30=

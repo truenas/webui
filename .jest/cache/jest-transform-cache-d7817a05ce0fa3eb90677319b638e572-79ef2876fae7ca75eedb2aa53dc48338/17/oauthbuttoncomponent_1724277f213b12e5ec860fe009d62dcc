@@ -1,0 +1,2 @@
+c7fc33af575e8e8f437eb7e42bc194fd
+module.exports="<button\n  mat-button\n  type=\"button\"\n  class=\"oauth-button\"\n  [ixTest]=\"testId\"\n  [disabled]=\"disabled\"\n  [color]=\"isLoggedIn ? 'accent' : 'primary'\"\n  (click)=\"onOauthClicked()\"\n>\n  {{ buttonText | translate }}\n</button>\n"

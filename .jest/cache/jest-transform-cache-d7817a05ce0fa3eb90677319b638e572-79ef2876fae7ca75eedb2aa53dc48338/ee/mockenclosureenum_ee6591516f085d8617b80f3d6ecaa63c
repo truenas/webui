@@ -1,0 +1,21 @@
+cf8821efc0fd4fdc4a39c51f3008e54d
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mockEnclosureScenarioLabels = exports.MockEnclosureScenario = void 0;
+var MockEnclosureScenario;
+(function (MockEnclosureScenario) {
+    MockEnclosureScenario["AllSlotsEmpty"] = "empty";
+    /**
+     * Some slots are empty, some slots are part of the pool.
+     */
+    MockEnclosureScenario["FillSomeSlots"] = "fill-some";
+    MockEnclosureScenario["FillAllSlots"] = "all-slots";
+    MockEnclosureScenario["DiskStatuses"] = "disk-statuses";
+})(MockEnclosureScenario || (exports.MockEnclosureScenario = MockEnclosureScenario = {}));
+exports.mockEnclosureScenarioLabels = new Map([
+    [MockEnclosureScenario.AllSlotsEmpty, 'All slots empty'],
+    [MockEnclosureScenario.FillSomeSlots, 'Add disks to some slots and add pools to some disks.'],
+    [MockEnclosureScenario.FillAllSlots, 'Add disks to all slots and add pools to all disks'],
+    [MockEnclosureScenario.DiskStatuses, 'Fill some slots and use all disk statuses'],
+]);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2NvcmUvdGVzdGluZy9tb2NrLWVuY2xvc3VyZS9lbnVtcy9tb2NrLWVuY2xvc3VyZS5lbnVtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLElBQVkscUJBUVg7QUFSRCxXQUFZLHFCQUFxQjtJQUMvQixnREFBdUIsQ0FBQTtJQUN2Qjs7T0FFRztJQUNILG9EQUEyQixDQUFBO0lBQzNCLG1EQUEwQixDQUFBO0lBQzFCLHVEQUE4QixDQUFBO0FBQ2hDLENBQUMsRUFSVyxxQkFBcUIscUNBQXJCLHFCQUFxQixRQVFoQztBQUVZLFFBQUEsMkJBQTJCLEdBQUcsSUFBSSxHQUFHLENBQWdDO0lBQ2hGLENBQUMscUJBQXFCLENBQUMsYUFBYSxFQUFFLGlCQUFpQixDQUFDO0lBQ3hELENBQUMscUJBQXFCLENBQUMsYUFBYSxFQUFFLHNEQUFzRCxDQUFDO0lBQzdGLENBQUMscUJBQXFCLENBQUMsWUFBWSxFQUFFLG1EQUFtRCxDQUFDO0lBQ3pGLENBQUMscUJBQXFCLENBQUMsWUFBWSxFQUFFLDJDQUEyQyxDQUFDO0NBQ2xGLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvY29yZS90ZXN0aW5nL21vY2stZW5jbG9zdXJlL2VudW1zL21vY2stZW5jbG9zdXJlLmVudW0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGVudW0gTW9ja0VuY2xvc3VyZVNjZW5hcmlvIHtcbiAgQWxsU2xvdHNFbXB0eSA9ICdlbXB0eScsXG4gIC8qKlxuICAgKiBTb21lIHNsb3RzIGFyZSBlbXB0eSwgc29tZSBzbG90cyBhcmUgcGFydCBvZiB0aGUgcG9vbC5cbiAgICovXG4gIEZpbGxTb21lU2xvdHMgPSAnZmlsbC1zb21lJyxcbiAgRmlsbEFsbFNsb3RzID0gJ2FsbC1zbG90cycsXG4gIERpc2tTdGF0dXNlcyA9ICdkaXNrLXN0YXR1c2VzJyxcbn1cblxuZXhwb3J0IGNvbnN0IG1vY2tFbmNsb3N1cmVTY2VuYXJpb0xhYmVscyA9IG5ldyBNYXA8TW9ja0VuY2xvc3VyZVNjZW5hcmlvLCBzdHJpbmc+KFtcbiAgW01vY2tFbmNsb3N1cmVTY2VuYXJpby5BbGxTbG90c0VtcHR5LCAnQWxsIHNsb3RzIGVtcHR5J10sXG4gIFtNb2NrRW5jbG9zdXJlU2NlbmFyaW8uRmlsbFNvbWVTbG90cywgJ0FkZCBkaXNrcyB0byBzb21lIHNsb3RzIGFuZCBhZGQgcG9vbHMgdG8gc29tZSBkaXNrcy4nXSxcbiAgW01vY2tFbmNsb3N1cmVTY2VuYXJpby5GaWxsQWxsU2xvdHMsICdBZGQgZGlza3MgdG8gYWxsIHNsb3RzIGFuZCBhZGQgcG9vbHMgdG8gYWxsIGRpc2tzJ10sXG4gIFtNb2NrRW5jbG9zdXJlU2NlbmFyaW8uRGlza1N0YXR1c2VzLCAnRmlsbCBzb21lIHNsb3RzIGFuZCB1c2UgYWxsIGRpc2sgc3RhdHVzZXMnXSxcbl0pO1xuIl0sInZlcnNpb24iOjN9

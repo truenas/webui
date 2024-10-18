@@ -1,0 +1,17 @@
+6fadb6b0b758ee47270022b94b99a493
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.twoFactorElements = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.twoFactorElements = {
+    hierarchy: [(0, ngx_translate_extract_marker_1.marker)('Credentials'), (0, ngx_translate_extract_marker_1.marker)('Two-Factor Authentication')],
+    anchorRouterLink: ['/credentials', 'two-factor'],
+    elements: {
+        twoFactor: {},
+        configure2FaSecret: {
+            hierarchy: [(0, ngx_translate_extract_marker_1.marker)('Configure 2FA Secret')],
+            anchor: 'configure-2fa-secret',
+        },
+    },
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL3R3by1mYWN0b3ItYXV0aC9jb21wb25lbnRzL3R3by1mYWN0b3IvdHdvLWZhY3Rvci5lbGVtZW50cy50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSwwRkFBc0U7QUFHekQsUUFBQSxpQkFBaUIsR0FBRztJQUMvQixTQUFTLEVBQUUsQ0FBQyxJQUFBLHFDQUFDLEVBQUMsYUFBYSxDQUFDLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLDJCQUEyQixDQUFDLENBQUM7SUFDN0QsZ0JBQWdCLEVBQUUsQ0FBQyxjQUFjLEVBQUUsWUFBWSxDQUFDO0lBQ2hELFFBQVEsRUFBRTtRQUNSLFNBQVMsRUFBRSxFQUFFO1FBQ2Isa0JBQWtCLEVBQUU7WUFDbEIsU0FBUyxFQUFFLENBQUMsSUFBQSxxQ0FBQyxFQUFDLHNCQUFzQixDQUFDLENBQUM7WUFDdEMsTUFBTSxFQUFFLHNCQUFzQjtTQUMvQjtLQUNGO0NBQzRCLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL3R3by1mYWN0b3ItYXV0aC9jb21wb25lbnRzL3R3by1mYWN0b3IvdHdvLWZhY3Rvci5lbGVtZW50cy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5pbXBvcnQgeyBVaVNlYXJjaGFibGVFbGVtZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvZ2xvYmFsLXNlYXJjaC9pbnRlcmZhY2VzL3VpLXNlYXJjaGFibGUtZWxlbWVudC5pbnRlcmZhY2UnO1xuXG5leHBvcnQgY29uc3QgdHdvRmFjdG9yRWxlbWVudHMgPSB7XG4gIGhpZXJhcmNoeTogW1QoJ0NyZWRlbnRpYWxzJyksIFQoJ1R3by1GYWN0b3IgQXV0aGVudGljYXRpb24nKV0sXG4gIGFuY2hvclJvdXRlckxpbms6IFsnL2NyZWRlbnRpYWxzJywgJ3R3by1mYWN0b3InXSxcbiAgZWxlbWVudHM6IHtcbiAgICB0d29GYWN0b3I6IHt9LFxuICAgIGNvbmZpZ3VyZTJGYVNlY3JldDoge1xuICAgICAgaGllcmFyY2h5OiBbVCgnQ29uZmlndXJlIDJGQSBTZWNyZXQnKV0sXG4gICAgICBhbmNob3I6ICdjb25maWd1cmUtMmZhLXNlY3JldCcsXG4gICAgfSxcbiAgfSxcbn0gc2F0aXNmaWVzIFVpU2VhcmNoYWJsZUVsZW1lbnQ7XG4iXSwidmVyc2lvbiI6M30=

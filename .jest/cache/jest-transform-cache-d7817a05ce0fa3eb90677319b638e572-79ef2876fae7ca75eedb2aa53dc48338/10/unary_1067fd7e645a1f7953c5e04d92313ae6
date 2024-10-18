@@ -1,0 +1,27 @@
+521ed758841ec31b84d930f1f2536d13
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ary_js_1 = __importDefault(require("./ary.js"));
+/**
+ * Creates a function that accepts up to one argument, ignoring any
+ * additional arguments.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Function
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ * @example
+ *
+ * _.map(['6', '8', '10'], _.unary(parseInt));
+ * // => [6, 8, 10]
+ */
+function unary(func) {
+    return (0, ary_js_1.default)(func, 1);
+}
+exports.default = unary;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3VuYXJ5LmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsc0RBQTJCO0FBRTNCOzs7Ozs7Ozs7Ozs7OztHQWNHO0FBQ0gsU0FBUyxLQUFLLENBQUMsSUFBSTtJQUNqQixPQUFPLElBQUEsZ0JBQUcsRUFBQyxJQUFJLEVBQUUsQ0FBQyxDQUFDLENBQUM7QUFDdEIsQ0FBQztBQUVELGtCQUFlLEtBQUssQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvdW5hcnkuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGFyeSBmcm9tICcuL2FyeS5qcyc7XG5cbi8qKlxuICogQ3JlYXRlcyBhIGZ1bmN0aW9uIHRoYXQgYWNjZXB0cyB1cCB0byBvbmUgYXJndW1lbnQsIGlnbm9yaW5nIGFueVxuICogYWRkaXRpb25hbCBhcmd1bWVudHMuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSA0LjAuMFxuICogQGNhdGVnb3J5IEZ1bmN0aW9uXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBmdW5jIFRoZSBmdW5jdGlvbiB0byBjYXAgYXJndW1lbnRzIGZvci5cbiAqIEByZXR1cm5zIHtGdW5jdGlvbn0gUmV0dXJucyB0aGUgbmV3IGNhcHBlZCBmdW5jdGlvbi5cbiAqIEBleGFtcGxlXG4gKlxuICogXy5tYXAoWyc2JywgJzgnLCAnMTAnXSwgXy51bmFyeShwYXJzZUludCkpO1xuICogLy8gPT4gWzYsIDgsIDEwXVxuICovXG5mdW5jdGlvbiB1bmFyeShmdW5jKSB7XG4gIHJldHVybiBhcnkoZnVuYywgMSk7XG59XG5cbmV4cG9ydCBkZWZhdWx0IHVuYXJ5O1xuIl0sInZlcnNpb24iOjN9

@@ -1,0 +1,6 @@
+876b8bbe947a7bcd28d0bef481662def
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.nameValidatorRegex = void 0;
+exports.nameValidatorRegex = /^[^/ *'"?@!#$%^&()+=~<>;`\\]+$/;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2NvbnN0YW50cy9uYW1lLXZhbGlkYXRvci5jb25zdGFudC50cyIsIm1hcHBpbmdzIjoiOzs7QUFBYSxRQUFBLGtCQUFrQixHQUFHLGdDQUFnQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9jb25zdGFudHMvbmFtZS12YWxpZGF0b3IuY29uc3RhbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNvbnN0IG5hbWVWYWxpZGF0b3JSZWdleCA9IC9eW14vIConXCI/QCEjJCVeJigpKz1+PD47YFxcXFxdKyQvO1xuIl0sInZlcnNpb24iOjN9

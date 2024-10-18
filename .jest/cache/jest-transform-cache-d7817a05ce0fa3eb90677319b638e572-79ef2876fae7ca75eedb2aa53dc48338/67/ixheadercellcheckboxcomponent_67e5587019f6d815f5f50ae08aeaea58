@@ -1,0 +1,2 @@
+8593e8a846428133953eea1cc287ec07
+module.exports="<mat-checkbox\n  color=\"primary\"\n  ixTest=\"header-checkbox\"\n  [checked]=\"allChecked$ | async\"\n  (change)=\"onCheckboxChange($event)\"\n  (click)=\"$event.stopPropagation()\"\n></mat-checkbox>\n<span>{{ title | translate }}</span>\n"

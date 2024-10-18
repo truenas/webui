@@ -1,0 +1,61 @@
+67ab584c36458428dc4462bd302cb9c2
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _apply_js_1 = __importDefault(require("./_apply.js"));
+const _arrayMap_js_1 = __importDefault(require("./_arrayMap.js"));
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+/** Error message constants. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+/**
+ * Creates a function that iterates over `pairs` and invokes the corresponding
+ * function of the first predicate to return truthy. The predicate-function
+ * pairs are invoked with the `this` binding and arguments of the created
+ * function.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Util
+ * @param {Array} pairs The predicate-function pairs.
+ * @returns {Function} Returns the new composite function.
+ * @example
+ *
+ * var func = _.cond([
+ *   [_.matches({ 'a': 1 }),           _.constant('matches A')],
+ *   [_.conforms({ 'b': _.isNumber }), _.constant('matches B')],
+ *   [_.stubTrue,                      _.constant('no match')]
+ * ]);
+ *
+ * func({ 'a': 1, 'b': 2 });
+ * // => 'matches A'
+ *
+ * func({ 'a': 0, 'b': 1 });
+ * // => 'matches B'
+ *
+ * func({ 'a': '1', 'b': '2' });
+ * // => 'no match'
+ */
+function cond(pairs) {
+    var length = pairs == null ? 0 : pairs.length, toIteratee = _baseIteratee_js_1.default;
+    pairs = !length ? [] : (0, _arrayMap_js_1.default)(pairs, function (pair) {
+        if (typeof pair[1] != 'function') {
+            throw new TypeError(FUNC_ERROR_TEXT);
+        }
+        return [toIteratee(pair[0]), pair[1]];
+    });
+    return (0, _baseRest_js_1.default)(function (args) {
+        var index = -1;
+        while (++index < length) {
+            var pair = pairs[index];
+            if ((0, _apply_js_1.default)(pair[0], this, args)) {
+                return (0, _apply_js_1.default)(pair[1], this, args);
+            }
+        }
+    });
+}
+exports.default = cond;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2NvbmQuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSw0REFBZ0M7QUFDaEMsa0VBQXNDO0FBQ3RDLDBFQUE4QztBQUM5QyxrRUFBc0M7QUFFdEMsK0JBQStCO0FBQy9CLElBQUksZUFBZSxHQUFHLHFCQUFxQixDQUFDO0FBRTVDOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBNEJHO0FBQ0gsU0FBUyxJQUFJLENBQUMsS0FBSztJQUNqQixJQUFJLE1BQU0sR0FBRyxLQUFLLElBQUksSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLEtBQUssQ0FBQyxNQUFNLEVBQ3pDLFVBQVUsR0FBRywwQkFBWSxDQUFDO0lBRTlCLEtBQUssR0FBRyxDQUFDLE1BQU0sQ0FBQyxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQyxJQUFBLHNCQUFRLEVBQUMsS0FBSyxFQUFFLFVBQVMsSUFBSTtRQUNsRCxJQUFJLE9BQU8sSUFBSSxDQUFDLENBQUMsQ0FBQyxJQUFJLFVBQVUsRUFBRSxDQUFDO1lBQ2pDLE1BQU0sSUFBSSxTQUFTLENBQUMsZUFBZSxDQUFDLENBQUM7UUFDdkMsQ0FBQztRQUNELE9BQU8sQ0FBQyxVQUFVLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDLEVBQUUsSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUM7SUFDeEMsQ0FBQyxDQUFDLENBQUM7SUFFSCxPQUFPLElBQUEsc0JBQVEsRUFBQyxVQUFTLElBQUk7UUFDM0IsSUFBSSxLQUFLLEdBQUcsQ0FBQyxDQUFDLENBQUM7UUFDZixPQUFPLEVBQUUsS0FBSyxHQUFHLE1BQU0sRUFBRSxDQUFDO1lBQ3hCLElBQUksSUFBSSxHQUFHLEtBQUssQ0FBQyxLQUFLLENBQUMsQ0FBQztZQUN4QixJQUFJLElBQUEsbUJBQUssRUFBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLEVBQUUsSUFBSSxFQUFFLElBQUksQ0FBQyxFQUFFLENBQUM7Z0JBQy9CLE9BQU8sSUFBQSxtQkFBSyxFQUFDLElBQUksQ0FBQyxDQUFDLENBQUMsRUFBRSxJQUFJLEVBQUUsSUFBSSxDQUFDLENBQUM7WUFDcEMsQ0FBQztRQUNILENBQUM7SUFDSCxDQUFDLENBQUMsQ0FBQztBQUNMLENBQUM7QUFFRCxrQkFBZSxJQUFJLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2NvbmQuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGFwcGx5IGZyb20gJy4vX2FwcGx5LmpzJztcbmltcG9ydCBhcnJheU1hcCBmcm9tICcuL19hcnJheU1hcC5qcyc7XG5pbXBvcnQgYmFzZUl0ZXJhdGVlIGZyb20gJy4vX2Jhc2VJdGVyYXRlZS5qcyc7XG5pbXBvcnQgYmFzZVJlc3QgZnJvbSAnLi9fYmFzZVJlc3QuanMnO1xuXG4vKiogRXJyb3IgbWVzc2FnZSBjb25zdGFudHMuICovXG52YXIgRlVOQ19FUlJPUl9URVhUID0gJ0V4cGVjdGVkIGEgZnVuY3Rpb24nO1xuXG4vKipcbiAqIENyZWF0ZXMgYSBmdW5jdGlvbiB0aGF0IGl0ZXJhdGVzIG92ZXIgYHBhaXJzYCBhbmQgaW52b2tlcyB0aGUgY29ycmVzcG9uZGluZ1xuICogZnVuY3Rpb24gb2YgdGhlIGZpcnN0IHByZWRpY2F0ZSB0byByZXR1cm4gdHJ1dGh5LiBUaGUgcHJlZGljYXRlLWZ1bmN0aW9uXG4gKiBwYWlycyBhcmUgaW52b2tlZCB3aXRoIHRoZSBgdGhpc2AgYmluZGluZyBhbmQgYXJndW1lbnRzIG9mIHRoZSBjcmVhdGVkXG4gKiBmdW5jdGlvbi5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgVXRpbFxuICogQHBhcmFtIHtBcnJheX0gcGFpcnMgVGhlIHByZWRpY2F0ZS1mdW5jdGlvbiBwYWlycy5cbiAqIEByZXR1cm5zIHtGdW5jdGlvbn0gUmV0dXJucyB0aGUgbmV3IGNvbXBvc2l0ZSBmdW5jdGlvbi5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIGZ1bmMgPSBfLmNvbmQoW1xuICogICBbXy5tYXRjaGVzKHsgJ2EnOiAxIH0pLCAgICAgICAgICAgXy5jb25zdGFudCgnbWF0Y2hlcyBBJyldLFxuICogICBbXy5jb25mb3Jtcyh7ICdiJzogXy5pc051bWJlciB9KSwgXy5jb25zdGFudCgnbWF0Y2hlcyBCJyldLFxuICogICBbXy5zdHViVHJ1ZSwgICAgICAgICAgICAgICAgICAgICAgXy5jb25zdGFudCgnbm8gbWF0Y2gnKV1cbiAqIF0pO1xuICpcbiAqIGZ1bmMoeyAnYSc6IDEsICdiJzogMiB9KTtcbiAqIC8vID0+ICdtYXRjaGVzIEEnXG4gKlxuICogZnVuYyh7ICdhJzogMCwgJ2InOiAxIH0pO1xuICogLy8gPT4gJ21hdGNoZXMgQidcbiAqXG4gKiBmdW5jKHsgJ2EnOiAnMScsICdiJzogJzInIH0pO1xuICogLy8gPT4gJ25vIG1hdGNoJ1xuICovXG5mdW5jdGlvbiBjb25kKHBhaXJzKSB7XG4gIHZhciBsZW5ndGggPSBwYWlycyA9PSBudWxsID8gMCA6IHBhaXJzLmxlbmd0aCxcbiAgICAgIHRvSXRlcmF0ZWUgPSBiYXNlSXRlcmF0ZWU7XG5cbiAgcGFpcnMgPSAhbGVuZ3RoID8gW10gOiBhcnJheU1hcChwYWlycywgZnVuY3Rpb24ocGFpcikge1xuICAgIGlmICh0eXBlb2YgcGFpclsxXSAhPSAnZnVuY3Rpb24nKSB7XG4gICAgICB0aHJvdyBuZXcgVHlwZUVycm9yKEZVTkNfRVJST1JfVEVYVCk7XG4gICAgfVxuICAgIHJldHVybiBbdG9JdGVyYXRlZShwYWlyWzBdKSwgcGFpclsxXV07XG4gIH0pO1xuXG4gIHJldHVybiBiYXNlUmVzdChmdW5jdGlvbihhcmdzKSB7XG4gICAgdmFyIGluZGV4ID0gLTE7XG4gICAgd2hpbGUgKCsraW5kZXggPCBsZW5ndGgpIHtcbiAgICAgIHZhciBwYWlyID0gcGFpcnNbaW5kZXhdO1xuICAgICAgaWYgKGFwcGx5KHBhaXJbMF0sIHRoaXMsIGFyZ3MpKSB7XG4gICAgICAgIHJldHVybiBhcHBseShwYWlyWzFdLCB0aGlzLCBhcmdzKTtcbiAgICAgIH1cbiAgICB9XG4gIH0pO1xufVxuXG5leHBvcnQgZGVmYXVsdCBjb25kO1xuIl0sInZlcnNpb24iOjN9

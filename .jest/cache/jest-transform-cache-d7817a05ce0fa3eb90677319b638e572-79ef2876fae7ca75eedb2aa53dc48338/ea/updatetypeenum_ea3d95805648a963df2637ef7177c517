@@ -1,0 +1,11 @@
+7f358657bbc8cced875b9051dbe7ba6c
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UpdateType = void 0;
+var UpdateType;
+(function (UpdateType) {
+    UpdateType["ApplyPending"] = "applyPending";
+    UpdateType["Manual"] = "manual";
+    UpdateType["Standard"] = "standard";
+})(UpdateType || (exports.UpdateType = UpdateType = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL3N5c3RlbS91cGRhdGUvZW51bXMvdXBkYXRlLXR5cGUuZW51bS50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSxJQUFZLFVBSVg7QUFKRCxXQUFZLFVBQVU7SUFDcEIsMkNBQTZCLENBQUE7SUFDN0IsK0JBQWlCLENBQUE7SUFDakIsbUNBQXFCLENBQUE7QUFDdkIsQ0FBQyxFQUpXLFVBQVUsMEJBQVYsVUFBVSxRQUlyQiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvc3lzdGVtL3VwZGF0ZS9lbnVtcy91cGRhdGUtdHlwZS5lbnVtLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBlbnVtIFVwZGF0ZVR5cGUge1xuICBBcHBseVBlbmRpbmcgPSAnYXBwbHlQZW5kaW5nJyxcbiAgTWFudWFsID0gJ21hbnVhbCcsXG4gIFN0YW5kYXJkID0gJ3N0YW5kYXJkJyxcbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

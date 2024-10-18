@@ -1,0 +1,69 @@
+1253e48f96d89b04fbb1b4bdab0f0f2c
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxListItemComponent = void 0;
+const core_1 = require("@angular/core");
+const button_1 = require("@angular/material/button");
+const core_2 = require("@ngx-translate/core");
+const ix_icon_component_1 = require("app/modules/ix-icon/ix-icon.component");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+const i0 = __importStar(require("@angular/core"));
+let IxListItemComponent = class IxListItemComponent {
+    constructor() {
+        this.canDelete = (0, core_1.input)(true);
+        this.delete = (0, core_1.output)();
+    }
+    deleteItem() {
+        this.delete.emit();
+    }
+};
+exports.IxListItemComponent = IxListItemComponent;
+IxListItemComponent.propDecorators = {
+    canDelete: [{ type: i0.Input, args: [{ isSignal: true, alias: "canDelete", required: false, transform: undefined },] }],
+    label: [{ type: core_1.Input }],
+    delete: [{ type: i0.Output, args: ["delete",] }]
+};
+exports.IxListItemComponent = IxListItemComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-list-item',
+        template: require("./ix-list-item.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            button_1.MatIconButton,
+            ix_icon_component_1.IxIconComponent,
+            core_2.TranslateModule,
+            test_directive_1.TestDirective,
+        ],
+    })
+], IxListItemComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1saXN0L2l4LWxpc3QtaXRlbS9peC1saXN0LWl0ZW0uY29tcG9uZW50LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQUEsd0NBR3VCO0FBQ3ZCLHFEQUF5RDtBQUN6RCw4Q0FBc0Q7QUFDdEQsNkVBQXdFO0FBQ3hFLHVFQUFtRTs7QUFlNUQsSUFBTSxtQkFBbUIsR0FBekIsTUFBTSxtQkFBbUI7SUFBekI7eUJBQ2dCLElBQUEsWUFBSyxFQUFDLElBQUksQ0FBQztRQUd2QixXQUFNLEdBQUcsSUFBQSxhQUFNLEdBQUU7S0FLM0I7SUFIQyxVQUFVO1FBQ1IsSUFBSSxDQUFDLE1BQU0sQ0FBQyxJQUFJLEVBQUUsQ0FBQztJQUNyQixDQUFDOztBQVJVLGtEQUFtQjs7O29CQUU3QixZQUFLOzs7OEJBRkssbUJBQW1CO0lBYi9CLElBQUEsZ0JBQVMsRUFBQztRQUNULFFBQVEsRUFBRSxjQUFjO1FBQ3hCLGtEQUE0QztRQUU1QyxlQUFlLEVBQUUsOEJBQXVCLENBQUMsTUFBTTtRQUMvQyxVQUFVLEVBQUUsSUFBSTtRQUNoQixPQUFPLEVBQUU7WUFDUCxzQkFBYTtZQUNiLG1DQUFlO1lBQ2Ysc0JBQWU7WUFDZiw4QkFBYTtTQUNkO0tBQ0YsQ0FBQztHQUNXLG1CQUFtQixDQVMvQiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvbW9kdWxlcy9mb3Jtcy9peC1mb3Jtcy9jb21wb25lbnRzL2l4LWxpc3QvaXgtbGlzdC1pdGVtL2l4LWxpc3QtaXRlbS5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcbiAgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksXG4gIENvbXBvbmVudCwgSW5wdXQsIGlucHV0LCBvdXRwdXQsXG59IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgTWF0SWNvbkJ1dHRvbiB9IGZyb20gJ0Bhbmd1bGFyL21hdGVyaWFsL2J1dHRvbic7XG5pbXBvcnQgeyBUcmFuc2xhdGVNb2R1bGUgfSBmcm9tICdAbmd4LXRyYW5zbGF0ZS9jb3JlJztcbmltcG9ydCB7IEl4SWNvbkNvbXBvbmVudCB9IGZyb20gJ2FwcC9tb2R1bGVzL2l4LWljb24vaXgtaWNvbi5jb21wb25lbnQnO1xuaW1wb3J0IHsgVGVzdERpcmVjdGl2ZSB9IGZyb20gJ2FwcC9tb2R1bGVzL3Rlc3QtaWQvdGVzdC5kaXJlY3RpdmUnO1xuXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC1saXN0LWl0ZW0nLFxuICB0ZW1wbGF0ZVVybDogJy4vaXgtbGlzdC1pdGVtLmNvbXBvbmVudC5odG1sJyxcbiAgc3R5bGVVcmxzOiBbJy4vaXgtbGlzdC1pdGVtLmNvbXBvbmVudC5zY3NzJ10sXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICBzdGFuZGFsb25lOiB0cnVlLFxuICBpbXBvcnRzOiBbXG4gICAgTWF0SWNvbkJ1dHRvbixcbiAgICBJeEljb25Db21wb25lbnQsXG4gICAgVHJhbnNsYXRlTW9kdWxlLFxuICAgIFRlc3REaXJlY3RpdmUsXG4gIF0sXG59KVxuZXhwb3J0IGNsYXNzIEl4TGlzdEl0ZW1Db21wb25lbnQge1xuICByZWFkb25seSBjYW5EZWxldGUgPSBpbnB1dCh0cnVlKTtcbiAgQElucHV0KCkgbGFiZWw/OiBzdHJpbmc7XG5cbiAgcmVhZG9ubHkgZGVsZXRlID0gb3V0cHV0KCk7XG5cbiAgZGVsZXRlSXRlbSgpOiB2b2lkIHtcbiAgICB0aGlzLmRlbGV0ZS5lbWl0KCk7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

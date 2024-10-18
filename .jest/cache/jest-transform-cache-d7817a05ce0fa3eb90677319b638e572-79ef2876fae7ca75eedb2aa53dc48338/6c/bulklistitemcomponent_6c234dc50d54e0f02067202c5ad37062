@@ -1,0 +1,65 @@
+db936fedc7a2525fb5bf0e4f892df12b
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BulkListItemComponent = void 0;
+const core_1 = require("@angular/core");
+const progress_spinner_1 = require("@angular/material/progress-spinner");
+const tooltip_1 = require("@angular/material/tooltip");
+const core_2 = require("@ngx-translate/core");
+const ix_icon_component_1 = require("app/modules/ix-icon/ix-icon.component");
+const bulk_list_item_interface_1 = require("app/modules/lists/bulk-list-item/bulk-list-item.interface");
+const i0 = __importStar(require("@angular/core"));
+let BulkListItemComponent = class BulkListItemComponent {
+    constructor() {
+        this.item = core_1.input.required();
+        this.State = bulk_list_item_interface_1.BulkListItemState;
+    }
+};
+exports.BulkListItemComponent = BulkListItemComponent;
+BulkListItemComponent.propDecorators = {
+    item: [{ type: i0.Input, args: [{ isSignal: true, alias: "item", required: true, transform: undefined },] }]
+};
+exports.BulkListItemComponent = BulkListItemComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-bulk-list-item',
+        template: require("./bulk-list-item.component.html"),
+        standalone: true,
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        imports: [
+            ix_icon_component_1.IxIconComponent,
+            core_2.TranslateModule,
+            tooltip_1.MatTooltip,
+            progress_spinner_1.MatProgressSpinner,
+        ],
+    })
+], BulkListItemComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvbGlzdHMvYnVsay1saXN0LWl0ZW0vYnVsay1saXN0LWl0ZW0uY29tcG9uZW50LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQUEsd0NBQTBFO0FBQzFFLHlFQUF3RTtBQUN4RSx1REFBdUQ7QUFDdkQsOENBQXNEO0FBQ3RELDZFQUF3RTtBQUN4RSx3R0FHbUU7O0FBZTVELElBQU0scUJBQXFCLEdBQTNCLE1BQU0scUJBQXFCO0lBQTNCO29CQUNXLFlBQUssQ0FBQyxRQUFRLEVBQW1CO1FBRXhDLFVBQUssR0FBRyw0Q0FBaUIsQ0FBQztLQUNwQzs7QUFKWSxzREFBcUI7Ozs7Z0NBQXJCLHFCQUFxQjtJQWJqQyxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsbUJBQW1CO1FBQzdCLG9EQUE4QztRQUU5QyxVQUFVLEVBQUUsSUFBSTtRQUNoQixlQUFlLEVBQUUsOEJBQXVCLENBQUMsTUFBTTtRQUMvQyxPQUFPLEVBQUU7WUFDUCxtQ0FBZTtZQUNmLHNCQUFlO1lBQ2Ysb0JBQVU7WUFDVixxQ0FBa0I7U0FDbkI7S0FDRixDQUFDO0dBQ1cscUJBQXFCLENBSWpDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9tb2R1bGVzL2xpc3RzL2J1bGstbGlzdC1pdGVtL2J1bGstbGlzdC1pdGVtLmNvbXBvbmVudC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgQ29tcG9uZW50LCBpbnB1dCB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgTWF0UHJvZ3Jlc3NTcGlubmVyIH0gZnJvbSAnQGFuZ3VsYXIvbWF0ZXJpYWwvcHJvZ3Jlc3Mtc3Bpbm5lcic7XG5pbXBvcnQgeyBNYXRUb29sdGlwIH0gZnJvbSAnQGFuZ3VsYXIvbWF0ZXJpYWwvdG9vbHRpcCc7XG5pbXBvcnQgeyBUcmFuc2xhdGVNb2R1bGUgfSBmcm9tICdAbmd4LXRyYW5zbGF0ZS9jb3JlJztcbmltcG9ydCB7IEl4SWNvbkNvbXBvbmVudCB9IGZyb20gJ2FwcC9tb2R1bGVzL2l4LWljb24vaXgtaWNvbi5jb21wb25lbnQnO1xuaW1wb3J0IHtcbiAgQnVsa0xpc3RJdGVtLFxuICBCdWxrTGlzdEl0ZW1TdGF0ZSxcbn0gZnJvbSAnYXBwL21vZHVsZXMvbGlzdHMvYnVsay1saXN0LWl0ZW0vYnVsay1saXN0LWl0ZW0uaW50ZXJmYWNlJztcblxuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnaXgtYnVsay1saXN0LWl0ZW0nLFxuICB0ZW1wbGF0ZVVybDogJy4vYnVsay1saXN0LWl0ZW0uY29tcG9uZW50Lmh0bWwnLFxuICBzdHlsZVVybHM6IFsnLi9idWxrLWxpc3QtaXRlbS5jb21wb25lbnQuc2NzcyddLFxuICBzdGFuZGFsb25lOiB0cnVlLFxuICBjaGFuZ2VEZXRlY3Rpb246IENoYW5nZURldGVjdGlvblN0cmF0ZWd5Lk9uUHVzaCxcbiAgaW1wb3J0czogW1xuICAgIEl4SWNvbkNvbXBvbmVudCxcbiAgICBUcmFuc2xhdGVNb2R1bGUsXG4gICAgTWF0VG9vbHRpcCxcbiAgICBNYXRQcm9ncmVzc1NwaW5uZXIsXG4gIF0sXG59KVxuZXhwb3J0IGNsYXNzIEJ1bGtMaXN0SXRlbUNvbXBvbmVudDxUPiB7XG4gIHJlYWRvbmx5IGl0ZW0gPSBpbnB1dC5yZXF1aXJlZDxCdWxrTGlzdEl0ZW08VD4+KCk7XG5cbiAgcmVhZG9ubHkgU3RhdGUgPSBCdWxrTGlzdEl0ZW1TdGF0ZTtcbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

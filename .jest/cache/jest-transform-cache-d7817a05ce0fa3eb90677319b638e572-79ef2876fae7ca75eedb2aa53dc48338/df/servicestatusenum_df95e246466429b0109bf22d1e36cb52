@@ -1,0 +1,11 @@
+7a74addf55cb09826a2f42110897ba8a
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ServiceStatus = void 0;
+var ServiceStatus;
+(function (ServiceStatus) {
+    ServiceStatus["Running"] = "RUNNING";
+    ServiceStatus["Stopped"] = "STOPPED";
+    ServiceStatus["Loading"] = "LOADING";
+})(ServiceStatus || (exports.ServiceStatus = ServiceStatus = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3NlcnZpY2Utc3RhdHVzLmVudW0udHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsSUFBWSxhQUlYO0FBSkQsV0FBWSxhQUFhO0lBQ3ZCLG9DQUFtQixDQUFBO0lBQ25CLG9DQUFtQixDQUFBO0lBQ25CLG9DQUFtQixDQUFBO0FBQ3JCLENBQUMsRUFKVyxhQUFhLDZCQUFiLGFBQWEsUUFJeEIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3NlcnZpY2Utc3RhdHVzLmVudW0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGVudW0gU2VydmljZVN0YXR1cyB7XG4gIFJ1bm5pbmcgPSAnUlVOTklORycsXG4gIFN0b3BwZWQgPSAnU1RPUFBFRCcsXG4gIExvYWRpbmcgPSAnTE9BRElORycsIC8vIGV4dHJhIHN0YXRlIGZvciBVSVxufVxuIl0sInZlcnNpb24iOjN9

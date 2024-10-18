@@ -1,0 +1,30 @@
+c2639902f9d478a3857f0d3d29a3b862
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TestOverrideDirective = void 0;
+const core_1 = require("@angular/core");
+/**
+ * Overrides nested ixTest attribute.
+ *
+ * Example usage: put on ix-input to override nested ixTest directive on <input>
+ */
+let TestOverrideDirective = class TestOverrideDirective {
+};
+exports.TestOverrideDirective = TestOverrideDirective;
+TestOverrideDirective.propDecorators = {
+    overrideDescription: [{ type: core_1.Input, args: ['ixTestOverride',] }],
+    keepLastPart: [{ type: core_1.Input }]
+};
+exports.TestOverrideDirective = TestOverrideDirective = __decorate([
+    (0, core_1.Directive)({
+        selector: '[ixTestOverride]',
+        standalone: true,
+    })
+], TestOverrideDirective);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvdGVzdC1pZC90ZXN0LW92ZXJyaWRlL3Rlc3Qtb3ZlcnJpZGUuZGlyZWN0aXZlLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUFBLHdDQUd1QjtBQUV2Qjs7OztHQUlHO0FBS0ksSUFBTSxxQkFBcUIsR0FBM0IsTUFBTSxxQkFBcUI7O0FBQXJCLHNEQUFxQjs7a0NBQy9CLFlBQUssU0FBQyxnQkFBZ0I7MkJBQ3RCLFlBQUs7O2dDQUZLLHFCQUFxQjtJQUpqQyxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsa0JBQWtCO1FBQzVCLFVBQVUsRUFBRSxJQUFJO0tBQ2pCLENBQUM7R0FDVyxxQkFBcUIsQ0FHakMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvdGVzdC1pZC90ZXN0LW92ZXJyaWRlL3Rlc3Qtb3ZlcnJpZGUuZGlyZWN0aXZlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7XG4gIERpcmVjdGl2ZSxcbiAgSW5wdXQsXG59IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuXG4vKipcbiAqIE92ZXJyaWRlcyBuZXN0ZWQgaXhUZXN0IGF0dHJpYnV0ZS5cbiAqXG4gKiBFeGFtcGxlIHVzYWdlOiBwdXQgb24gaXgtaW5wdXQgdG8gb3ZlcnJpZGUgbmVzdGVkIGl4VGVzdCBkaXJlY3RpdmUgb24gPGlucHV0PlxuICovXG5ARGlyZWN0aXZlKHtcbiAgc2VsZWN0b3I6ICdbaXhUZXN0T3ZlcnJpZGVdJyxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbn0pXG5leHBvcnQgY2xhc3MgVGVzdE92ZXJyaWRlRGlyZWN0aXZlIHtcbiAgQElucHV0KCdpeFRlc3RPdmVycmlkZScpIG92ZXJyaWRlRGVzY3JpcHRpb246IG51bWJlciB8IHN0cmluZyB8IChzdHJpbmcgfCBudW1iZXIpW107XG4gIEBJbnB1dCgpIGtlZXBMYXN0UGFydD86IGJvb2xlYW47XG59XG4iXSwidmVyc2lvbiI6M30=

@@ -1,0 +1,132 @@
+c1624ca9372d31f9014cffe2f4d1a48a
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helptextSystemGeneral = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.helptextSystemGeneral = {
+    fieldset_gui: (0, ngx_translate_extract_marker_1.marker)('GUI'),
+    fieldset_other: (0, ngx_translate_extract_marker_1.marker)('Other Options'),
+    ui_certificate: {
+        label: (0, ngx_translate_extract_marker_1.marker)('GUI SSL Certificate'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('The system uses a self-signed certificate \
+ to enable encrypted web interface connections. To change \
+ the default certificate, select a different certificate \
+ that was created or imported in the <b>Certificates</b> menu.'),
+    },
+    ui_address: {
+        label: (0, ngx_translate_extract_marker_1.marker)('Web Interface IPv4 Address'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Choose a recent IP address to limit the usage when\
+ accessing the administrative GUI. The built-in HTTP\
+ server binds to the wildcard address of <i>0.0.0.0</i>\
+ (any address) and issues an alert if the specified\
+ address becomes unavailable.'),
+    },
+    ui_v6address: {
+        label: (0, ngx_translate_extract_marker_1.marker)('Web Interface IPv6 Address'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Choose a recent IPv6 address to limit the usage when\
+ accessing the administrative GUI. The built-in HTTP\
+ server binds to the wildcard address of <i>0.0.0.0</i>\
+ (any address) and issues an alert if the specified\
+ address becomes unavailable.'),
+    },
+    ui_port: {
+        label: (0, ngx_translate_extract_marker_1.marker)('Web Interface HTTP Port'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Allow configuring a non-standard port to access the GUI\
+ over <i>HTTP</i>. Changing this setting might require\
+ changing a <a\
+ href="https://support.mozilla.org/en-US/kb/connection-settings-firefox"\
+ target="_blank">Firefox configuration setting</a>.'),
+    },
+    ui_httpsport: {
+        label: (0, ngx_translate_extract_marker_1.marker)('Web Interface HTTPS Port'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Allow configuring a non-standard port to access the GUI\
+ over <i>HTTPS</i>.'),
+    },
+    ui_httpsprotocols: {
+        label: (0, ngx_translate_extract_marker_1.marker)('HTTPS Protocols'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Cryptographic protocols for securing client/server connections. Select which\
+ <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">Transport Layer Security (TLS)</a>\
+ versions TrueNAS can use for connection security.'),
+    },
+    ui_httpsredirect: {
+        label: (0, ngx_translate_extract_marker_1.marker)('Web Interface HTTP -> HTTPS Redirect'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A \
+ <i>GUI SSL Certificate</i> is required for <i>HTTPS</i>. Activating \
+ this also sets the <a \
+ href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security" \
+ target="_blank">HTTP Strict Transport Security (HSTS)</a> maximum age \
+ to <i>31536000</i> seconds (one year). This means that after a \
+ browser connects to the web interface for the first time, the browser \
+ continues to use HTTPS and renews this setting every year.'),
+    },
+    stg_language: {
+        placeholder: (0, ngx_translate_extract_marker_1.marker)('Language'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Select a language from the drop-down menu.'),
+        hint: (0, ngx_translate_extract_marker_1.marker)('Languages other than <i>English</i> are provided by \
+     the community and may be incomplete. \
+     <a href="https://github.com/truenas/webui/blob/master/TRANSLATING.md" target="_blank">Learn how to contribute.</a>'),
+    },
+    stg_kbdmap: {
+        placeholder: (0, ngx_translate_extract_marker_1.marker)('Console Keyboard Map'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Select a keyboard layout.'),
+    },
+    stg_timezone: {
+        placeholder: (0, ngx_translate_extract_marker_1.marker)('Timezone'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Select a time zone.'),
+    },
+    date_format: {
+        placeholder: (0, ngx_translate_extract_marker_1.marker)('Date Format'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Choose a date format.'),
+    },
+    time_format: {
+        placeholder: (0, ngx_translate_extract_marker_1.marker)('Time Format'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Choose a time format.'),
+    },
+    usage_collection: {
+        label: (0, ngx_translate_extract_marker_1.marker)('Usage collection'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Enable sending anonymous usage statistics to iXsystems.'),
+    },
+    ui_consolemsg: {
+        label: (0, ngx_translate_extract_marker_1.marker)('Show Console Messages'),
+        tooltip: (0, ngx_translate_extract_marker_1.marker)('Display console messages in real time at the bottom of the browser.'),
+    },
+    save_config_form: {
+        message: (0, ngx_translate_extract_marker_1.marker)('<b>WARNING:</b> The configuration file contains\
+ sensitive data like system passwords. However, SSH keys that are stored\
+ in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.\
+ Additional sensitive information can be included in the configuration file.<br />'),
+        warning: (0, ngx_translate_extract_marker_1.marker)('<p>Including the Password Secret Seed allows using this\
+ configuration file with a new boot device. This also\
+ decrypts all system passwords for reuse when the\
+ configuration file is uploaded.</p>\
+ <br /><b>Keep the configuration file safe and protect it\
+ from unauthorized access!</b>'),
+    },
+    upload_config_form: {
+        message: (0, ngx_translate_extract_marker_1.marker)('<p>The system will restart to perform this operation!</p>\
+ <p><font color="red">All passwords are reset when the \
+ uploaded configuration database file was saved \
+ without the Password Secret Seed. </font></p>'),
+    },
+    reset_config_form: {
+        title: (0, ngx_translate_extract_marker_1.marker)('Reset Configuration'),
+        button_text: (0, ngx_translate_extract_marker_1.marker)('Reset Config'),
+        message: (0, ngx_translate_extract_marker_1.marker)('Reset system configuration to default settings. The system \
+ will restart to complete this operation. You will be required to reset your password.'),
+    },
+    redirect_confirm_title: (0, ngx_translate_extract_marker_1.marker)('Enable HTTPS Redirect'),
+    redirect_confirm_message: (0, ngx_translate_extract_marker_1.marker)('Enabling redirect will require all URLs served from current\
+ host to be served via HTTPS regardless of port used. This may make some App portals\
+ inaccessible if they don\'t use HTTPS. Do you wish to continue?'),
+    dialog_confirm_title: (0, ngx_translate_extract_marker_1.marker)('Restart Web Service'),
+    dialog_confirm_message: (0, ngx_translate_extract_marker_1.marker)('The web service must restart for the protocol changes to take effect. The UI will be temporarily unavailable. Restart the service?'),
+    dialog_error_title: (0, ngx_translate_extract_marker_1.marker)('Error restarting web service'),
+    enabled: (0, ngx_translate_extract_marker_1.marker)('Enabled'),
+    disabled: (0, ngx_translate_extract_marker_1.marker)('Disabled'),
+    default: (0, ngx_translate_extract_marker_1.marker)('Default'),
+    localeTitle: (0, ngx_translate_extract_marker_1.marker)('Localization'),
+    guiTitle: (0, ngx_translate_extract_marker_1.marker)('GUI'),
+    guiPageTitle: (0, ngx_translate_extract_marker_1.marker)('GUI Settings'),
+    ntpTitle: (0, ngx_translate_extract_marker_1.marker)('NTP Servers'),
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L3N5c3RlbS9nZW5lcmFsLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLDBGQUFzRTtBQUV6RCxRQUFBLHFCQUFxQixHQUFHO0lBQ25DLFlBQVksRUFBRSxJQUFBLHFDQUFDLEVBQUMsS0FBSyxDQUFDO0lBQ3RCLGNBQWMsRUFBRSxJQUFBLHFDQUFDLEVBQUMsZUFBZSxDQUFDO0lBRWxDLGNBQWMsRUFBRTtRQUNkLEtBQUssRUFBRSxJQUFBLHFDQUFDLEVBQUMscUJBQXFCLENBQUM7UUFDL0IsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQzs7OytEQUdnRCxDQUFDO0tBQzdEO0lBRUQsVUFBVSxFQUFFO1FBQ1YsS0FBSyxFQUFFLElBQUEscUNBQUMsRUFBQyw0QkFBNEIsQ0FBQztRQUN0QyxPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUNSOzs7OzhCQUl3QixDQUN6QjtLQUNGO0lBRUQsWUFBWSxFQUFFO1FBQ1osS0FBSyxFQUFFLElBQUEscUNBQUMsRUFBQyw0QkFBNEIsQ0FBQztRQUN0QyxPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUNSOzs7OzhCQUl3QixDQUN6QjtLQUNGO0lBRUQsT0FBTyxFQUFFO1FBQ1AsS0FBSyxFQUFFLElBQUEscUNBQUMsRUFBQyx5QkFBeUIsQ0FBQztRQUNuQyxPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUNSOzs7O29EQUk4QyxDQUMvQztLQUNGO0lBRUQsWUFBWSxFQUFFO1FBQ1osS0FBSyxFQUFFLElBQUEscUNBQUMsRUFBQywwQkFBMEIsQ0FBQztRQUNwQyxPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUNSO29CQUNjLENBQ2Y7S0FDRjtJQUVELGlCQUFpQixFQUFFO1FBQ2pCLEtBQUssRUFBRSxJQUFBLHFDQUFDLEVBQUMsaUJBQWlCLENBQUM7UUFDM0IsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQzs7bURBRW9DLENBQUM7S0FDakQ7SUFFRCxnQkFBZ0IsRUFBRTtR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bWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvaGVscHRleHQvc3lzdGVtL2dlbmVyYWwudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgbWFya2VyIGFzIFQgfSBmcm9tICdAYmllc2JqZXJnL25neC10cmFuc2xhdGUtZXh0cmFjdC1tYXJrZXInO1xuXG5leHBvcnQgY29uc3QgaGVscHRleHRTeXN0ZW1HZW5lcmFsID0ge1xuICBmaWVsZHNldF9ndWk6IFQoJ0dVSScpLFxuICBmaWVsZHNldF9vdGhlcjogVCgnT3RoZXIgT3B0aW9ucycpLFxuXG4gIHVpX2NlcnRpZmljYXRlOiB7XG4gICAgbGFiZWw6IFQoJ0dVSSBTU0wgQ2VydGlmaWNhdGUnKSxcbiAgICB0b29sdGlwOiBUKCdUaGUgc3lzdGVtIHVzZXMgYSBzZWxmLXNpZ25lZCBjZXJ0aWZpY2F0ZSBcXFxuIHRvIGVuYWJsZSBlbmNyeXB0ZWQgd2ViIGludGVyZmFjZSBjb25uZWN0aW9ucy4gVG8gY2hhbmdlIFxcXG4gdGhlIGRlZmF1bHQgY2VydGlmaWNhdGUsIHNlbGVjdCBhIGRpZmZlcmVudCBjZXJ0aWZpY2F0ZSBcXFxuIHRoYXQgd2FzIGNyZWF0ZWQgb3IgaW1wb3J0ZWQgaW4gdGhlIDxiPkNlcnRpZmljYXRlczwvYj4gbWVudS4nKSxcbiAgfSxcblxuICB1aV9hZGRyZXNzOiB7XG4gICAgbGFiZWw6IFQoJ1dlYiBJbnRlcmZhY2UgSVB2NCBBZGRyZXNzJyksXG4gICAgdG9vbHRpcDogVChcbiAgICAgICdDaG9vc2UgYSByZWNlbnQgSVAgYWRkcmVzcyB0byBsaW1pdCB0aGUgdXNhZ2Ugd2hlblxcXG4gYWNjZXNzaW5nIHRoZSBhZG1pbmlzdHJhdGl2ZSBHVUkuIFRoZSBidWlsdC1pbiBIVFRQXFxcbiBzZXJ2ZXIgYmluZHMgdG8gdGhlIHdpbGRjYXJkIGFkZHJlc3Mgb2YgPGk+MC4wLjAuMDwvaT5cXFxuIChhbnkgYWRkcmVzcykgYW5kIGlzc3VlcyBhbiBhbGVydCBpZiB0aGUgc3BlY2lmaWVkXFxcbiBhZGRyZXNzIGJlY29tZXMgdW5hdmFpbGFibGUuJyxcbiAgICApLFxuICB9LFxuXG4gIHVpX3Y2YWRkcmVzczoge1xuICAgIGxhYmVsOiBUKCdXZWIgSW50ZXJmYWNlIElQdjYgQWRkcmVzcycpLFxuICAgIHRvb2x0aXA6IFQoXG4gICAgICAnQ2hvb3NlIGEgcmVjZW50IElQdjYgYWRkcmVzcyB0byBsaW1pdCB0aGUgdXNhZ2Ugd2hlblxcXG4gYWNjZXNzaW5nIHRoZSBhZG1pbmlzdHJhdGl2ZSBHVUkuIFRoZSBidWlsdC1pbiBIVFRQXFxcbiBzZXJ2ZXIgYmluZHMgdG8gdGhlIHdpbGRjYXJkIGFkZHJlc3Mgb2YgPGk+MC4wLjAuMDwvaT5cXFxuIChhbnkgYWRkcmVzcykgYW5kIGlzc3VlcyBhbiBhbGVydCBpZiB0aGUgc3BlY2lmaWVkXFxcbiBhZGRyZXNzIGJlY29tZXMgdW5hdmFpbGFibGUuJyxcbiAgICApLFxuICB9LFxuXG4gIHVpX3BvcnQ6IHtcbiAgICBsYWJlbDogVCgnV2ViIEludGVyZmFjZSBIVFRQIFBvcnQnKSxcbiAgICB0b29sdGlwOiBUKFxuICAgICAgJ0FsbG93IGNvbmZpZ3VyaW5nIGEgbm9uLXN0YW5kYXJkIHBvcnQgdG8gYWNjZXNzIHRoZSBHVUlcXFxuIG92ZXIgPGk+SFRUUDwvaT4uIENoYW5naW5nIHRoaXMgc2V0dGluZyBtaWdodCByZXF1aXJlXFxcbiBjaGFuZ2luZyBhIDxhXFxcbiBocmVmPVwiaHR0cHM6Ly9zdXBwb3J0Lm1vemlsbGEub3JnL2VuLVVTL2tiL2Nvbm5lY3Rpb24tc2V0dGluZ3MtZmlyZWZveFwiXFxcbiB0YXJnZXQ9XCJfYmxhbmtcIj5GaXJlZm94IGNvbmZpZ3VyYXRpb24gc2V0dGluZzwvYT4uJyxcbiAgICApLFxuICB9LFxuXG4gIHVpX2h0dHBzcG9ydDoge1xuICAgIGxhYmVsOiBUKCdXZWIgSW50ZXJmYWNlIEhUVFBTIFBvcnQnKSxcbiAgICB0b29sdGlwOiBUKFxuICAgICAgJ0FsbG93IGNvbmZpZ3VyaW5nIGEgbm9uLXN0YW5kYXJkIHBvcnQgdG8gYWNjZXNzIHRoZSBHVUlcXFxuIG92ZXIgPGk+SFRUUFM8L2k+LicsXG4gICAgKSxcbiAgfSxcblxuICB1aV9odHRwc3Byb3RvY29sczoge1xuICAgIGxhYmVsOiBUKCdIVFRQUyBQcm90b2NvbHMnKSxcbiAgICB0b29sdGlwOiBUKCdDcnlwdG9ncmFwaGljIHByb3RvY29scyBmb3Igc2VjdXJpbmcgY2xpZW50L3NlcnZlciBjb25uZWN0aW9ucy4gU2VsZWN0IHdoaWNoXFxcbiA8YSBocmVmPVwiaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvVHJhbnNwb3J0X0xheWVyX1NlY3VyaXR5XCIgdGFyZ2V0PVwiX2JsYW5rXCI+VHJhbnNwb3J0IExheWVyIFNlY3VyaXR5IChUTFMpPC9hPlxcXG4gdmVyc2lvbnMgVHJ1ZU5BUyBjYW4gdXNlIGZvciBjb25uZWN0aW9uIHNlY3VyaXR5LicpLFxuICB9LFxuXG4gIHVpX2h0dHBzcmVkaXJlY3Q6IHtcbiAgICBsYWJlbDogVCgnV2ViIEludGVyZmFjZSBIVFRQIC0+IEhUVFBTIFJlZGlyZWN0JyksXG4gICAgdG9vbHRpcDogVChcbiAgICAgICdSZWRpcmVjdCA8aT5IVFRQPC9pPiBjb25uZWN0aW9ucyB0byA8aT5IVFRQUzwvaT4uIEEgXFxcbiA8aT5HVUkgU1NMIENlcnRpZmljYXRlPC9pPiBpcyByZXF1aXJlZCBmb3IgPGk+SFRUUFM8L2k+LiBBY3RpdmF0aW5nIFxcXG4gdGhpcyBhbHNvIHNldHMgdGhlIDxhIFxcXG4gaHJlZj1cImh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL0hUVFBfU3RyaWN0X1RyYW5zcG9ydF9TZWN1cml0eVwiIFxcXG4gdGFyZ2V0PVwiX2JsYW5rXCI+SFRUUCBTdHJpY3QgVHJhbnNwb3J0IFNlY3VyaXR5IChIU1RTKTwvYT4gbWF4aW11bSBhZ2UgXFxcbiB0byA8aT4zMTUzNjAwMDwvaT4gc2Vjb25kcyAob25lIHllYXIpLiBUaGlzIG1lYW5zIHRoYXQgYWZ0ZXIgYSBcXFxuIGJyb3dzZXIgY29ubmVjdHMgdG8gdGhlIHdlYiBpbnRlcmZhY2UgZm9yIHRoZSBmaXJzdCB0aW1lLCB0aGUgYnJvd3NlciBcXFxuIGNvbnRpbnVlcyB0byB1c2UgSFRUUFMgYW5kIHJlbmV3cyB0aGlzIHNldHRpbmcgZXZlcnkgeWVhci4nLFxuICAgICksXG4gIH0sXG5cbiAgc3RnX2xhbmd1YWdlOiB7XG4gICAgcGxhY2Vob2xkZXI6IFQoJ0xhbmd1YWdlJyksXG4gICAgdG9vbHRpcDogVCgnU2VsZWN0IGEgbGFuZ3VhZ2UgZnJvbSB0aGUgZHJvcC1kb3duIG1lbnUuJyksXG4gICAgaGludDogVCgnTGFuZ3VhZ2VzIG90aGVyIHRoYW4gPGk+RW5nbGlzaDwvaT4gYXJlIHByb3ZpZGVkIGJ5IFxcXG4gICAgIHRoZSBjb21tdW5pdHkgYW5kIG1heSBiZSBpbmNvbXBsZXRlLiBcXFxuICAgICA8YSBocmVmPVwiaHR0cHM6Ly9naXRodWIuY29tL3RydWVuYXMvd2VidWkvYmxvYi9tYXN0ZXIvVFJBTlNMQVRJTkcubWRcIiB0YXJnZXQ9XCJfYmxhbmtcIj5MZWFybiBob3cgdG8gY29udHJpYnV0ZS48L2E+JyksXG4gIH0sXG5cbiAgc3RnX2tiZG1hcDoge1xuICAgIHBsYWNlaG9sZGVyOiBUKCdDb25zb2xlIEtleWJvYXJkIE1hcCcpLFxuICAgIHRvb2x0aXA6IFQoJ1NlbGVjdCBhIGtleWJvYXJkIGxheW91dC4nKSxcbiAgfSxcblxuICBzdGdfdGltZXpvbmU6IHtcbiAgICBwbGFjZWhvbGRlcjogVCgnVGltZXpvbmUnKSxcbiAgICB0b29sdGlwOiBUKCdTZWxlY3QgYSB0aW1lIHpvbmUuJyksXG4gIH0sXG5cbiAgZGF0ZV9mb3JtYXQ6IHtcbiAgICBwbGFjZWhvbGRlcjogVCgnRGF0ZSBGb3JtYXQnKSxcbiAgICB0b29sdGlwOiBUKCdDaG9vc2UgYSBkYXRlIGZvcm1hdC4nKSxcbiAgfSxcblxuICB0aW1lX2Zvcm1hdDoge1xuICAgIHBsYWNlaG9sZGVyOiBUKCdUaW1lIEZvcm1hdCcpLFxuICAgIHRvb2x0aXA6IFQoJ0Nob29zZSBhIHRpbWUgZm9ybWF0LicpLFxuICB9LFxuXG4gIHVzYWdlX2NvbGxlY3Rpb246IHtcbiAgICBsYWJlbDogVCgnVXNhZ2UgY29sbGVjdGlvbicpLFxuICAgIHRvb2x0aXA6IFQoJ0VuYWJsZSBzZW5kaW5nIGFub255bW91cyB1c2FnZSBzdGF0aXN0aWNzIHRvIGlYc3lzdGVtcy4nKSxcbiAgfSxcblxuICB1aV9jb25zb2xlbXNnOiB7XG4gICAgbGFiZWw6IFQoJ1Nob3cgQ29uc29sZSBNZXNzYWdlcycpLFxuICAgIHRvb2x0aXA6IFQoJ0Rpc3BsYXkgY29uc29sZSBtZXNzYWdlcyBpbiByZWFsIHRpbWUgYXQgdGhlIGJvdHRvbSBvZiB0aGUgYnJvd3Nlci4nKSxcbiAgfSxcblxuICBzYXZlX2NvbmZpZ19mb3JtOiB7XG4gICAgbWVzc2FnZTogVChcbiAgICAgICc8Yj5XQVJOSU5HOjwvYj4gVGhlIGNvbmZpZ3VyYXRpb24gZmlsZSBjb250YWluc1xcXG4gc2Vuc2l0aXZlIGRhdGEgbGlrZSBzeXN0ZW0gcGFzc3dvcmRzLiBIb3dldmVyLCBTU0gga2V5cyB0aGF0IGFyZSBzdG9yZWRcXFxuIGluIDxzYW1wPi9yb290Ly5zc2g8L3NhbXA+IGFyZSA8Yj5OT1Q8L2I+IGJhY2tlZCB1cCBieSB0aGlzIG9wZXJhdGlvbi5cXFxuIEFkZGl0aW9uYWwgc2Vuc2l0aXZlIGluZm9ybWF0aW9uIGNhbiBiZSBpbmNsdWRlZCBpbiB0aGUgY29uZmlndXJhdGlvbiBmaWxlLjxiciAvPicsXG4gICAgKSxcbiAgICB3YXJuaW5nOiBUKFxuICAgICAgJzxwPkluY2x1ZGluZyB0aGUgUGFzc3dvcmQgU2VjcmV0IFNlZWQgYWxsb3dzIHVzaW5nIHRoaXNcXFxuIGNvbmZpZ3VyYXRpb24gZmlsZSB3aXRoIGEgbmV3IGJvb3QgZGV2aWNlLiBUaGlzIGFsc29cXFxuIGRlY3J5cHRzIGFsbCBzeXN0ZW0gcGFzc3dvcmRzIGZvciByZXVzZSB3aGVuIHRoZVxcXG4gY29uZmlndXJhdGlvbiBmaWxlIGlzIHVwbG9hZGVkLjwvcD5cXFxuIDxiciAvPjxiPktlZXAgdGhlIGNvbmZpZ3VyYXRpb24gZmlsZSBzYWZlIGFuZCBwcm90ZWN0IGl0XFxcbiBmcm9tIHVuYXV0aG9yaXplZCBhY2Nlc3MhPC9iPicsXG4gICAgKSxcbiAgfSxcblxuICB1cGxvYWRfY29uZmlnX2Zvcm06IHtcbiAgICBtZXNzYWdlOiBUKFxuICAgICAgJzxwPlRoZSBzeXN0ZW0gd2lsbCByZXN0YXJ0IHRvIHBlcmZvcm0gdGhpcyBvcGVyYXRpb24hPC9wPlxcXG4gPHA+PGZvbnQgY29sb3I9XCJyZWRcIj5BbGwgcGFzc3dvcmRzIGFyZSByZXNldCB3aGVuIHRoZSBcXFxuIHVwbG9hZGVkIGNvbmZpZ3VyYXRpb24gZGF0YWJhc2UgZmlsZSB3YXMgc2F2ZWQgXFxcbiB3aXRob3V0IHRoZSBQYXNzd29yZCBTZWNyZXQgU2VlZC4gPC9mb250PjwvcD4nLFxuICAgICksXG4gIH0sXG5cbiAgcmVzZXRfY29uZmlnX2Zvcm06IHtcbiAgICB0aXRsZTogVCgnUmVzZXQgQ29uZmlndXJhdGlvbicpLFxuICAgIGJ1dHRvbl90ZXh0OiBUKCdSZXNldCBDb25maWcnKSxcbiAgICBtZXNzYWdlOiBUKCdSZXNldCBzeXN0ZW0gY29uZmlndXJhdGlvbiB0byBkZWZhdWx0IHNldHRpbmdzLiBUaGUgc3lzdGVtIFxcXG4gd2lsbCByZXN0YXJ0IHRvIGNvbXBsZXRlIHRoaXMgb3BlcmF0aW9uLiBZb3Ugd2lsbCBiZSByZXF1aXJlZCB0byByZXNldCB5b3VyIHBhc3N3b3JkLicpLFxuICB9LFxuXG4gIHJlZGlyZWN0X2NvbmZpcm1fdGl0bGU6IFQoJ0VuYWJsZSBIVFRQUyBSZWRpcmVjdCcpLFxuICByZWRpcmVjdF9jb25maXJtX21lc3NhZ2U6IFQoJ0VuYWJsaW5nIHJlZGlyZWN0IHdpbGwgcmVxdWlyZSBhbGwgVVJMcyBzZXJ2ZWQgZnJvbSBjdXJyZW50XFxcbiBob3N0IHRvIGJlIHNlcnZlZCB2aWEgSFRUUFMgcmVnYXJkbGVzcyBvZiBwb3J0IHVzZWQuIFRoaXMgbWF5IG1ha2Ugc29tZSBBcHAgcG9ydGFsc1xcXG4gaW5hY2Nlc3NpYmxlIGlmIHRoZXkgZG9uXFwndCB1c2UgSFRUUFMuIERvIHlvdSB3aXNoIHRvIGNvbnRpbnVlPycpLFxuXG4gIGRpYWxvZ19jb25maXJtX3RpdGxlOiBUKCdSZXN0YXJ0IFdlYiBTZXJ2aWNlJyksXG4gIGRpYWxvZ19jb25maXJtX21lc3NhZ2U6IFQoJ1RoZSB3ZWIgc2VydmljZSBtdXN0IHJlc3RhcnQgZm9yIHRoZSBwcm90b2NvbCBjaGFuZ2VzIHRvIHRha2UgZWZmZWN0LiBUaGUgVUkgd2lsbCBiZSB0ZW1wb3JhcmlseSB1bmF2YWlsYWJsZS4gUmVzdGFydCB0aGUgc2VydmljZT8nKSxcblxuICBkaWFsb2dfZXJyb3JfdGl0bGU6IFQoJ0Vycm9yIHJlc3RhcnRpbmcgd2ViIHNlcnZpY2UnKSxcblxuICBlbmFibGVkOiBUKCdFbmFibGVkJyksXG4gIGRpc2FibGVkOiBUKCdEaXNhYmxlZCcpLFxuICBkZWZhdWx0OiBUKCdEZWZhdWx0JyksXG4gIGxvY2FsZVRpdGxlOiBUKCdMb2NhbGl6YXRpb24nKSxcbiAgZ3VpVGl0bGU6IFQoJ0dVSScpLFxuICBndWlQYWdlVGl0bGU6IFQoJ0dVSSBTZXR0aW5ncycpLFxuICBudHBUaXRsZTogVCgnTlRQIFNlcnZlcnMnKSxcbn07XG4iXSwidmVyc2lvbiI6M30=

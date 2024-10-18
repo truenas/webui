@@ -1,0 +1,54 @@
+2bf0dad7097df1f6a9ba572282373adc
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RedirectDialogComponent = void 0;
+const scrolling_1 = require("@angular/cdk/scrolling");
+const core_1 = require("@angular/core");
+const button_1 = require("@angular/material/button");
+const dialog_1 = require("@angular/material/dialog");
+const core_2 = require("@ngx-translate/core");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+const redirect_dialog_data_interface_1 = require("./redirect-dialog-data.interface");
+let RedirectDialogComponent = class RedirectDialogComponent {
+    constructor(dialogRef, data) {
+        this.dialogRef = dialogRef;
+        this.data = data;
+    }
+    copyToClipboard() {
+        this.el.nativeElement.focus();
+        this.el.nativeElement.select();
+        document.execCommand('copy');
+    }
+};
+exports.RedirectDialogComponent = RedirectDialogComponent;
+RedirectDialogComponent.ctorParameters = () => [
+    { type: dialog_1.MatDialogRef },
+    { type: redirect_dialog_data_interface_1.RedirectDialogData, decorators: [{ type: core_1.Inject, args: [dialog_1.MAT_DIALOG_DATA,] }] }
+];
+RedirectDialogComponent.propDecorators = {
+    el: [{ type: core_1.ViewChild, args: ['el', { static: false },] }]
+};
+exports.RedirectDialogComponent = RedirectDialogComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-redirect-dialog',
+        template: require("./redirect-dialog.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            dialog_1.MatDialogTitle,
+            scrolling_1.CdkScrollable,
+            dialog_1.MatDialogContent,
+            dialog_1.MatDialogActions,
+            button_1.MatButton,
+            core_2.TranslateModule,
+            test_directive_1.TestDirective,
+        ],
+    })
+], RedirectDialogComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZGlhbG9nL2NvbXBvbmVudHMvcmVkaXJlY3QtZGlhbG9nL3JlZGlyZWN0LWRpYWxvZy5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7O0FBQUEsc0RBQXVEO0FBQ3ZELHdDQUV1QjtBQUN2QixxREFBcUQ7QUFDckQscURBRWtDO0FBQ2xDLDhDQUFzRDtBQUN0RCx1RUFBbUU7QUFDbkUscUZBRTBDO0FBa0JuQyxJQUFNLHVCQUF1QixHQUE3QixNQUFNLHVCQUF1QjtJQUdsQyxZQUNTLFNBQWdELEVBQ3ZCLElBQXdCO1FBRGpELGNBQVMsR0FBVCxTQUFTLENBQXVDO1FBQ3ZCLFNBQUksR0FBSixJQUFJLENBQW9CO0lBQ3ZELENBQUM7SUFFSixlQUFlO1FBQ2IsSUFBSSxDQUFDLEVBQUUsQ0FBQyxhQUFhLENBQUMsS0FBSyxFQUFFLENBQUM7UUFDOUIsSUFBSSxDQUFDLEVBQUUsQ0FBQyxhQUFhLENBQUMsTUFBTSxFQUFFLENBQUM7UUFDL0IsUUFBUSxDQUFDLFdBQVcsQ0FBQyxNQUFNLENBQUMsQ0FBQztJQUMvQixDQUFDOztBQVpVLDBEQUF1Qjs7O3NGQUsvQixhQUFNLFNBQUMsd0JBQWU7OztpQkFKeEIsZ0JBQVMsU0FBQyxJQUFJLEVBQUUsRUFBRSxNQUFNLEVBQUUsS0FBSyxFQUFFOztrQ0FEdkIsdUJBQXVCO0lBaEJuQyxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsb0JBQW9CO1FBQzlCLHFEQUErQztRQUUvQyxlQUFlLEVBQUUsOEJBQXVCLENBQUMsTUFBTTtRQUMvQyxVQUFVLEVBQUUsSUFBSTtRQUNoQixPQUFPLEVBQUU7WUFDUCx1QkFBYztZQUNkLHlCQUFhO1lBQ2IseUJBQWdCO1lBQ2hCLHlCQUFnQjtZQUNoQixrQkFBUztZQUNULHNCQUFlO1lBQ2YsOEJBQWE7U0FDZDtLQUNGLENBQUM7R0FDVyx1QkFBdUIsQ0FhbkMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZGlhbG9nL2NvbXBvbmVudHMvcmVkaXJlY3QtZGlhbG9nL3JlZGlyZWN0LWRpYWxvZy5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ2RrU2Nyb2xsYWJsZSB9IGZyb20gJ0Bhbmd1bGFyL2Nkay9zY3JvbGxpbmcnO1xuaW1wb3J0IHtcbiAgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCwgRWxlbWVudFJlZiwgSW5qZWN0LCBWaWV3Q2hpbGQsXG59IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgTWF0QnV0dG9uIH0gZnJvbSAnQGFuZ3VsYXIvbWF0ZXJpYWwvYnV0dG9uJztcbmltcG9ydCB7XG4gIE1hdERpYWxvZ1JlZiwgTUFUX0RJQUxPR19EQVRBLCBNYXREaWFsb2dUaXRsZSwgTWF0RGlhbG9nQ29udGVudCwgTWF0RGlhbG9nQWN0aW9ucyxcbn0gZnJvbSAnQGFuZ3VsYXIvbWF0ZXJpYWwvZGlhbG9nJztcbmltcG9ydCB7IFRyYW5zbGF0ZU1vZHVsZSB9IGZyb20gJ0BuZ3gtdHJhbnNsYXRlL2NvcmUnO1xuaW1wb3J0IHsgVGVzdERpcmVjdGl2ZSB9IGZyb20gJ2FwcC9tb2R1bGVzL3Rlc3QtaWQvdGVzdC5kaXJlY3RpdmUnO1xuaW1wb3J0IHtcbiAgUmVkaXJlY3REaWFsb2dEYXRhLFxufSBmcm9tICcuL3JlZGlyZWN0LWRpYWxvZy1kYXRhLmludGVyZmFjZSc7XG5cbkBDb21wb25lbnQoe1xuICBzZWxlY3RvcjogJ2l4LXJlZGlyZWN0LWRpYWxvZycsXG4gIHRlbXBsYXRlVXJsOiAnLi9yZWRpcmVjdC1kaWFsb2cuY29tcG9uZW50Lmh0bWwnLFxuICBzdHlsZVVybHM6IFsnLi9yZWRpcmVjdC1kaWFsb2cuY29tcG9uZW50LnNjc3MnXSxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGltcG9ydHM6IFtcbiAgICBNYXREaWFsb2dUaXRsZSxcbiAgICBDZGtTY3JvbGxhYmxlLFxuICAgIE1hdERpYWxvZ0NvbnRlbnQsXG4gICAgTWF0RGlhbG9nQWN0aW9ucyxcbiAgICBNYXRCdXR0b24sXG4gICAgVHJhbnNsYXRlTW9kdWxlLFxuICAgIFRlc3REaXJlY3RpdmUsXG4gIF0sXG59KVxuZXhwb3J0IGNsYXNzIFJlZGlyZWN0RGlhbG9nQ29tcG9uZW50IHtcbiAgQFZpZXdDaGlsZCgnZWwnLCB7IHN0YXRpYzogZmFsc2UgfSkgZWw6IEVsZW1lbnRSZWY8SFRNTElucHV0RWxlbWVudD47XG5cbiAgY29uc3RydWN0b3IoXG4gICAgcHVibGljIGRpYWxvZ1JlZjogTWF0RGlhbG9nUmVmPFJlZGlyZWN0RGlhbG9nQ29tcG9uZW50PixcbiAgICBASW5qZWN0KE1BVF9ESUFMT0dfREFUQSkgcHVibGljIGRhdGE6IFJlZGlyZWN0RGlhbG9nRGF0YSxcbiAgKSB7fVxuXG4gIGNvcHlUb0NsaXBib2FyZCgpOiB2b2lkIHtcbiAgICB0aGlzLmVsLm5hdGl2ZUVsZW1lbnQuZm9jdXMoKTtcbiAgICB0aGlzLmVsLm5hdGl2ZUVsZW1lbnQuc2VsZWN0KCk7XG4gICAgZG9jdW1lbnQuZXhlY0NvbW1hbmQoJ2NvcHknKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

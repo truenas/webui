@@ -1,0 +1,33 @@
+2c4e6555577bbaffef9c4aafb7ae3ab9
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.dataProtectionCardElements = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.dataProtectionCardElements = {
+    hierarchy: [(0, ngx_translate_extract_marker_1.marker)('Datasets')],
+    synonyms: [(0, ngx_translate_extract_marker_1.marker)('Manage Datasets')],
+    anchorRouterLink: ['/datasets'],
+    elements: {
+        createSnapshot: {
+            hierarchy: [(0, ngx_translate_extract_marker_1.marker)('Create Snapshot')],
+            synonyms: [(0, ngx_translate_extract_marker_1.marker)('Take Snapshot')],
+        },
+        manageSnapshots: {
+            hierarchy: [(0, ngx_translate_extract_marker_1.marker)('Manage Snapshots')],
+            synonyms: [(0, ngx_translate_extract_marker_1.marker)('Snapshot Manager')],
+        },
+        manageSnapshotTasks: {
+            hierarchy: [(0, ngx_translate_extract_marker_1.marker)('Manage Snapshots Tasks')],
+            synonyms: [(0, ngx_translate_extract_marker_1.marker)('Snapshot Task Manager')],
+        },
+        manageReplicationTasks: {
+            hierarchy: [(0, ngx_translate_extract_marker_1.marker)('Manage Replication Tasks')],
+            synonyms: [(0, ngx_translate_extract_marker_1.marker)('Replication Task Manager')],
+        },
+        manageRsyncTasks: {
+            hierarchy: [(0, ngx_translate_extract_marker_1.marker)('Manage Rsync Tasks')],
+            synonyms: [(0, ngx_translate_extract_marker_1.marker)('Rsync Task Manager')],
+        },
+    },
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2RhdGFzZXRzL2NvbXBvbmVudHMvZGF0YS1wcm90ZWN0aW9uLWNhcmQvZGF0YS1wcm90ZWN0aW9uLWNhcmQuZWxlbWVudHMudHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMEZBQXNFO0FBR3pELFFBQUEsMEJBQTBCLEdBQUc7SUFDeEMsU0FBUyxFQUFFLENBQUMsSUFBQSxxQ0FBQyxFQUFDLFVBQVUsQ0FBQyxDQUFDO0lBQzFCLFFBQVEsRUFBRSxDQUFDLElBQUEscUNBQUMsRUFBQyxpQkFBaUIsQ0FBQyxDQUFDO0lBQ2hDLGdCQUFnQixFQUFFLENBQUMsV0FBVyxDQUFDO0lBQy9CLFFBQVEsRUFBRTtRQUNSLGNBQWMsRUFBRTtZQUNkLFNBQVMsRUFBRSxDQUFDLElBQUEscUNBQUMsRUFBQyxpQkFBaUIsQ0FBQyxDQUFDO1lBQ2pDLFFBQVEsRUFBRSxDQUFDLElBQUEscUNBQUMsRUFBQyxlQUFlLENBQUMsQ0FBQztTQUMvQjtRQUNELGVBQWUsRUFBRTtZQUNmLFNBQVMsRUFBRSxDQUFDLElBQUEscUNBQUMsRUFBQyxrQkFBa0IsQ0FBQyxDQUFDO1lBQ2xDLFFBQVEsRUFBRSxDQUFDLElBQUEscUNBQUMsRUFBQyxrQkFBa0IsQ0FBQyxDQUFDO1NBQ2xDO1FBQ0QsbUJBQW1CLEVBQUU7WUFDbkIsU0FBUyxFQUFFLENBQUMsSUFBQSxxQ0FBQyxFQUFDLHdCQUF3QixDQUFDLENBQUM7WUFDeEMsUUFBUSxFQUFFLENBQUMsSUFBQSxxQ0FBQyxFQUFDLHVCQUF1QixDQUFDLENBQUM7U0FDdkM7UUFDRCxzQkFBc0IsRUFBRTtZQUN0QixTQUFTLEVBQUUsQ0FBQyxJQUFBLHFDQUFDLEVBQUMsMEJBQTBCLENBQUMsQ0FBQztZQUMxQyxRQUFRLEVBQUUsQ0FBQyxJQUFBLHFDQUFDLEVBQUMsMEJBQTBCLENBQUMsQ0FBQztTQUMxQztRQUNELGdCQUFnQixFQUFFO1lBQ2hCLFNBQVMsRUFBRSxDQUFDLElBQUEscUNBQUMsRUFBQyxvQkFBb0IsQ0FBQyxDQUFDO1lBQ3BDLFFBQVEsRUFBRSxDQUFDLElBQUEscUNBQUMsRUFBQyxvQkFBb0IsQ0FBQyxDQUFDO1NBQ3BDO0tBQ0Y7Q0FDNEIsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvZGF0YXNldHMvY29tcG9uZW50cy9kYXRhLXByb3RlY3Rpb24tY2FyZC9kYXRhLXByb3RlY3Rpb24tY2FyZC5lbGVtZW50cy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5pbXBvcnQgeyBVaVNlYXJjaGFibGVFbGVtZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvZ2xvYmFsLXNlYXJjaC9pbnRlcmZhY2VzL3VpLXNlYXJjaGFibGUtZWxlbWVudC5pbnRlcmZhY2UnO1xuXG5leHBvcnQgY29uc3QgZGF0YVByb3RlY3Rpb25DYXJkRWxlbWVudHMgPSB7XG4gIGhpZXJhcmNoeTogW1QoJ0RhdGFzZXRzJyldLFxuICBzeW5vbnltczogW1QoJ01hbmFnZSBEYXRhc2V0cycpXSxcbiAgYW5jaG9yUm91dGVyTGluazogWycvZGF0YXNldHMnXSxcbiAgZWxlbWVudHM6IHtcbiAgICBjcmVhdGVTbmFwc2hvdDoge1xuICAgICAgaGllcmFyY2h5OiBbVCgnQ3JlYXRlIFNuYXBzaG90JyldLFxuICAgICAgc3lub255bXM6IFtUKCdUYWtlIFNuYXBzaG90JyldLFxuICAgIH0sXG4gICAgbWFuYWdlU25hcHNob3RzOiB7XG4gICAgICBoaWVyYXJjaHk6IFtUKCdNYW5hZ2UgU25hcHNob3RzJyldLFxuICAgICAgc3lub255bXM6IFtUKCdTbmFwc2hvdCBNYW5hZ2VyJyldLFxuICAgIH0sXG4gICAgbWFuYWdlU25hcHNob3RUYXNrczoge1xuICAgICAgaGllcmFyY2h5OiBbVCgnTWFuYWdlIFNuYXBzaG90cyBUYXNrcycpXSxcbiAgICAgIHN5bm9ueW1zOiBbVCgnU25hcHNob3QgVGFzayBNYW5hZ2VyJyldLFxuICAgIH0sXG4gICAgbWFuYWdlUmVwbGljYXRpb25UYXNrczoge1xuICAgICAgaGllcmFyY2h5OiBbVCgnTWFuYWdlIFJlcGxpY2F0aW9uIFRhc2tzJyldLFxuICAgICAgc3lub255bXM6IFtUKCdSZXBsaWNhdGlvbiBUYXNrIE1hbmFnZXInKV0sXG4gICAgfSxcbiAgICBtYW5hZ2VSc3luY1Rhc2tzOiB7XG4gICAgICBoaWVyYXJjaHk6IFtUKCdNYW5hZ2UgUnN5bmMgVGFza3MnKV0sXG4gICAgICBzeW5vbnltczogW1QoJ1JzeW5jIFRhc2sgTWFuYWdlcicpXSxcbiAgICB9LFxuICB9LFxufSBzYXRpc2ZpZXMgVWlTZWFyY2hhYmxlRWxlbWVudDtcbiJdLCJ2ZXJzaW9uIjozfQ==

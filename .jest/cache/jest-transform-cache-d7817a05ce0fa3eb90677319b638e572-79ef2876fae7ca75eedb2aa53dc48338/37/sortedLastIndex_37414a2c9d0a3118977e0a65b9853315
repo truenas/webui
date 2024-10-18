@@ -1,0 +1,30 @@
+d73aec7a8b8cb392868459d13bb42971
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseSortedIndex_js_1 = __importDefault(require("./_baseSortedIndex.js"));
+/**
+ * This method is like `_.sortedIndex` except that it returns the highest
+ * index at which `value` should be inserted into `array` in order to
+ * maintain its sort order.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Array
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ * @example
+ *
+ * _.sortedLastIndex([4, 5, 5, 5, 6], 5);
+ * // => 4
+ */
+function sortedLastIndex(array, value) {
+    return (0, _baseSortedIndex_js_1.default)(array, value, true);
+}
+exports.default = sortedLastIndex;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3NvcnRlZExhc3RJbmRleC5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLGdGQUFvRDtBQUVwRDs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FpQkc7QUFDSCxTQUFTLGVBQWUsQ0FBQyxLQUFLLEVBQUUsS0FBSztJQUNuQyxPQUFPLElBQUEsNkJBQWUsRUFBQyxLQUFLLEVBQUUsS0FBSyxFQUFFLElBQUksQ0FBQyxDQUFDO0FBQzdDLENBQUM7QUFFRCxrQkFBZSxlQUFlLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3NvcnRlZExhc3RJbmRleC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZVNvcnRlZEluZGV4IGZyb20gJy4vX2Jhc2VTb3J0ZWRJbmRleC5qcyc7XG5cbi8qKlxuICogVGhpcyBtZXRob2QgaXMgbGlrZSBgXy5zb3J0ZWRJbmRleGAgZXhjZXB0IHRoYXQgaXQgcmV0dXJucyB0aGUgaGlnaGVzdFxuICogaW5kZXggYXQgd2hpY2ggYHZhbHVlYCBzaG91bGQgYmUgaW5zZXJ0ZWQgaW50byBgYXJyYXlgIGluIG9yZGVyIHRvXG4gKiBtYWludGFpbiBpdHMgc29ydCBvcmRlci5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDMuMC4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBzb3J0ZWQgYXJyYXkgdG8gaW5zcGVjdC5cbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIGV2YWx1YXRlLlxuICogQHJldHVybnMge251bWJlcn0gUmV0dXJucyB0aGUgaW5kZXggYXQgd2hpY2ggYHZhbHVlYCBzaG91bGQgYmUgaW5zZXJ0ZWRcbiAqICBpbnRvIGBhcnJheWAuXG4gKiBAZXhhbXBsZVxuICpcbiAqIF8uc29ydGVkTGFzdEluZGV4KFs0LCA1LCA1LCA1LCA2XSwgNSk7XG4gKiAvLyA9PiA0XG4gKi9cbmZ1bmN0aW9uIHNvcnRlZExhc3RJbmRleChhcnJheSwgdmFsdWUpIHtcbiAgcmV0dXJuIGJhc2VTb3J0ZWRJbmRleChhcnJheSwgdmFsdWUsIHRydWUpO1xufVxuXG5leHBvcnQgZGVmYXVsdCBzb3J0ZWRMYXN0SW5kZXg7XG4iXSwidmVyc2lvbiI6M30=

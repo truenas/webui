@@ -1,0 +1,42 @@
+06aec7c2b35a6a4232826ebf0f41fb7a
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseSortedIndexBy_js_1 = __importDefault(require("./_baseSortedIndexBy.js"));
+const identity_js_1 = __importDefault(require("./identity.js"));
+const isSymbol_js_1 = __importDefault(require("./isSymbol.js"));
+/** Used as references for the maximum length and index of an array. */
+var MAX_ARRAY_LENGTH = 4294967295, HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
+/**
+ * The base implementation of `_.sortedIndex` and `_.sortedLastIndex` which
+ * performs a binary search of `array` to determine the index at which `value`
+ * should be inserted into `array` in order to maintain its sort order.
+ *
+ * @private
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @param {boolean} [retHighest] Specify returning the highest qualified index.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ */
+function baseSortedIndex(array, value, retHighest) {
+    var low = 0, high = array == null ? low : array.length;
+    if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
+        while (low < high) {
+            var mid = (low + high) >>> 1, computed = array[mid];
+            if (computed !== null && !(0, isSymbol_js_1.default)(computed) &&
+                (retHighest ? (computed <= value) : (computed < value))) {
+                low = mid + 1;
+            }
+            else {
+                high = mid;
+            }
+        }
+        return high;
+    }
+    return (0, _baseSortedIndexBy_js_1.default)(array, value, identity_js_1.default, retHighest);
+}
+exports.default = baseSortedIndex;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlU29ydGVkSW5kZXguanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxvRkFBd0Q7QUFDeEQsZ0VBQXFDO0FBQ3JDLGdFQUFxQztBQUVyQyx1RUFBdUU7QUFDdkUsSUFBSSxnQkFBZ0IsR0FBRyxVQUFVLEVBQzdCLHFCQUFxQixHQUFHLGdCQUFnQixLQUFLLENBQUMsQ0FBQztBQUVuRDs7Ozs7Ozs7Ozs7R0FXRztBQUNILFNBQVMsZUFBZSxDQUFDLEtBQUssRUFBRSxLQUFLLEVBQUUsVUFBVTtJQUMvQyxJQUFJLEdBQUcsR0FBRyxDQUFDLEVBQ1AsSUFBSSxHQUFHLEtBQUssSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDLE1BQU0sQ0FBQztJQUU5QyxJQUFJLE9BQU8sS0FBSyxJQUFJLFFBQVEsSUFBSSxLQUFLLEtBQUssS0FBSyxJQUFJLElBQUksSUFBSSxxQkFBcUIsRUFBRSxDQUFDO1FBQ2pGLE9BQU8sR0FBRyxHQUFHLElBQUksRUFBRSxDQUFDO1lBQ2xCLElBQUksR0FBRyxHQUFHLENBQUMsR0FBRyxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsRUFDeEIsUUFBUSxHQUFHLEtBQUssQ0FBQyxHQUFHLENBQUMsQ0FBQztZQUUxQixJQUFJLFFBQVEsS0FBSyxJQUFJLElBQUksQ0FBQyxJQUFBLHFCQUFRLEVBQUMsUUFBUSxDQUFDO2dCQUN4QyxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUMsQ0FBQyxRQUFRLElBQUksS0FBSyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsUUFBUSxHQUFHLEtBQUssQ0FBQyxDQUFDLEVBQUUsQ0FBQztnQkFDNUQsR0FBRyxHQUFHLEdBQUcsR0FBRyxDQUFDLENBQUM7WUFDaEIsQ0FBQztpQkFBTSxDQUFDO2dCQUNOLElBQUksR0FBRyxHQUFHLENBQUM7WUFDYixDQUFDO1FBQ0gsQ0FBQztRQUNELE9BQU8sSUFBSSxDQUFDO0lBQ2QsQ0FBQztJQUNELE9BQU8sSUFBQSwrQkFBaUIsRUFBQyxLQUFLLEVBQUUsS0FBSyxFQUFFLHFCQUFRLEVBQUUsVUFBVSxDQUFDLENBQUM7QUFDL0QsQ0FBQztBQUVELGtCQUFlLGVBQWUsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvX2Jhc2VTb3J0ZWRJbmRleC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZVNvcnRlZEluZGV4QnkgZnJvbSAnLi9fYmFzZVNvcnRlZEluZGV4QnkuanMnO1xuaW1wb3J0IGlkZW50aXR5IGZyb20gJy4vaWRlbnRpdHkuanMnO1xuaW1wb3J0IGlzU3ltYm9sIGZyb20gJy4vaXNTeW1ib2wuanMnO1xuXG4vKiogVXNlZCBhcyByZWZlcmVuY2VzIGZvciB0aGUgbWF4aW11bSBsZW5ndGggYW5kIGluZGV4IG9mIGFuIGFycmF5LiAqL1xudmFyIE1BWF9BUlJBWV9MRU5HVEggPSA0Mjk0OTY3Mjk1LFxuICAgIEhBTEZfTUFYX0FSUkFZX0xFTkdUSCA9IE1BWF9BUlJBWV9MRU5HVEggPj4+IDE7XG5cbi8qKlxuICogVGhlIGJhc2UgaW1wbGVtZW50YXRpb24gb2YgYF8uc29ydGVkSW5kZXhgIGFuZCBgXy5zb3J0ZWRMYXN0SW5kZXhgIHdoaWNoXG4gKiBwZXJmb3JtcyBhIGJpbmFyeSBzZWFyY2ggb2YgYGFycmF5YCB0byBkZXRlcm1pbmUgdGhlIGluZGV4IGF0IHdoaWNoIGB2YWx1ZWBcbiAqIHNob3VsZCBiZSBpbnNlcnRlZCBpbnRvIGBhcnJheWAgaW4gb3JkZXIgdG8gbWFpbnRhaW4gaXRzIHNvcnQgb3JkZXIuXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBzb3J0ZWQgYXJyYXkgdG8gaW5zcGVjdC5cbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIGV2YWx1YXRlLlxuICogQHBhcmFtIHtib29sZWFufSBbcmV0SGlnaGVzdF0gU3BlY2lmeSByZXR1cm5pbmcgdGhlIGhpZ2hlc3QgcXVhbGlmaWVkIGluZGV4LlxuICogQHJldHVybnMge251bWJlcn0gUmV0dXJucyB0aGUgaW5kZXggYXQgd2hpY2ggYHZhbHVlYCBzaG91bGQgYmUgaW5zZXJ0ZWRcbiAqICBpbnRvIGBhcnJheWAuXG4gKi9cbmZ1bmN0aW9uIGJhc2VTb3J0ZWRJbmRleChhcnJheSwgdmFsdWUsIHJldEhpZ2hlc3QpIHtcbiAgdmFyIGxvdyA9IDAsXG4gICAgICBoaWdoID0gYXJyYXkgPT0gbnVsbCA/IGxvdyA6IGFycmF5Lmxlbmd0aDtcblxuICBpZiAodHlwZW9mIHZhbHVlID09ICdudW1iZXInICYmIHZhbHVlID09PSB2YWx1ZSAmJiBoaWdoIDw9IEhBTEZfTUFYX0FSUkFZX0xFTkdUSCkge1xuICAgIHdoaWxlIChsb3cgPCBoaWdoKSB7XG4gICAgICB2YXIgbWlkID0gKGxvdyArIGhpZ2gpID4+PiAxLFxuICAgICAgICAgIGNvbXB1dGVkID0gYXJyYXlbbWlkXTtcblxuICAgICAgaWYgKGNvbXB1dGVkICE9PSBudWxsICYmICFpc1N5bWJvbChjb21wdXRlZCkgJiZcbiAgICAgICAgICAocmV0SGlnaGVzdCA/IChjb21wdXRlZCA8PSB2YWx1ZSkgOiAoY29tcHV0ZWQgPCB2YWx1ZSkpKSB7XG4gICAgICAgIGxvdyA9IG1pZCArIDE7XG4gICAgICB9IGVsc2Uge1xuICAgICAgICBoaWdoID0gbWlkO1xuICAgICAgfVxuICAgIH1cbiAgICByZXR1cm4gaGlnaDtcbiAgfVxuICByZXR1cm4gYmFzZVNvcnRlZEluZGV4QnkoYXJyYXksIHZhbHVlLCBpZGVudGl0eSwgcmV0SGlnaGVzdCk7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGJhc2VTb3J0ZWRJbmRleDtcbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,80 @@
+54995a4954b52581ff28436f7afb1332
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sentryCustomExceptionExtraction = exports.defaultExtractor = void 0;
+const http_1 = require("@angular/common/http");
+const utils_1 = require("@sentry/utils");
+const error_stack_parser_1 = __importDefault(require("error-stack-parser"));
+// https://github.com/angular/angular/blob/master/packages/core/src/util/errors.ts
+function tryToUnwrapZonejsError(error) {
+    // TODO: once Angular14 is the minimum requirement ERROR_ORIGINAL_ERROR and
+    //  getOriginalError from error.ts can be used directly.
+    return error && error.ngOriginalError
+        ? error.ngOriginalError
+        : error;
+}
+function extractHttpModuleError(error) {
+    // The `error` property of http exception can be either an `Error` object, which we can use directly...
+    if (isErrorOrErrorLikeObject(error.error)) {
+        return error.error;
+    }
+    // ... or an`ErrorEvent`, which can provide us with the message but no stack...
+    if (error.error instanceof ErrorEvent && error.error.message) {
+        return error.error.message;
+    }
+    // ...or the request body itself, which we can use as a message instead.
+    if (typeof error.error === 'string') {
+        return `Server returned code ${error.status} with body "${error.error}"`;
+    }
+    // If we don't have any detailed information, fallback to the request message itself.
+    return error.message;
+}
+function isErrorOrErrorLikeObject(value) {
+    if (value instanceof Error) {
+        return true;
+    }
+    if (value === null || typeof value !== 'object') {
+        return false;
+    }
+    const candidate = value;
+    return ((0, utils_1.isString)(candidate.name)
+        && (0, utils_1.isString)(candidate.message)
+        && (undefined === candidate.stack || (0, utils_1.isString)(candidate.stack)));
+}
+/**
+ * Default implementation of error extraction that handles default error wrapping,
+ * HTTP responses, ErrorEvent and few other known cases.
+ */
+const defaultExtractor = (errorCandidate) => {
+    const error = tryToUnwrapZonejsError(errorCandidate);
+    // If it's http module error, extract as much information from it as we can.
+    if (error instanceof http_1.HttpErrorResponse) {
+        return extractHttpModuleError(error);
+    }
+    // We can handle messages and Error objects directly.
+    if (typeof error === 'string' || isErrorOrErrorLikeObject(error)) {
+        return error;
+    }
+    // Nothing was extracted, fallback to default error message.
+    return null;
+};
+exports.defaultExtractor = defaultExtractor;
+const sentryCustomExceptionExtraction = (error) => {
+    const defaultExtractorResults = (0, exports.defaultExtractor)(error);
+    if (defaultExtractorResults) {
+        return defaultExtractorResults;
+    }
+    try {
+        const parsedErrorValue = error_stack_parser_1.default.parse(error);
+        if (parsedErrorValue) {
+            return parsedErrorValue;
+        }
+    }
+    catch (_a) { }
+    return error;
+};
+exports.sentryCustomExceptionExtraction = sentryCustomExceptionExtraction;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHBlcnMvZXJyb3ItcGFyc2VyLmhlbHBlci50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7QUFBQSwrQ0FBeUQ7QUFDekQseUNBQXlDO0FBQ3pDLDRFQUFrRDtBQUVsRCxrRkFBa0Y7QUFDbEYsU0FBUyxzQkFBc0IsQ0FBQyxLQUFjO0lBQzVDLDJFQUEyRTtJQUMzRSx3REFBd0Q7SUFDeEQsT0FBTyxLQUFLLElBQUssS0FBb0MsQ0FBQyxlQUFlO1FBQ25FLENBQUMsQ0FBRSxLQUFvQyxDQUFDLGVBQWU7UUFDdkQsQ0FBQyxDQUFDLEtBQUssQ0FBQztBQUNaLENBQUM7QUFFRCxTQUFTLHNCQUFzQixDQUFDLEtBQXdCO0lBQ3RELHVHQUF1RztJQUN2RyxJQUFJLHdCQUF3QixDQUFDLEtBQUssQ0FBQyxLQUFLLENBQUMsRUFBRSxDQUFDO1FBQzFDLE9BQU8sS0FBSyxDQUFDLEtBQUssQ0FBQztJQUNyQixDQUFDO0lBRUQsK0VBQStFO0lBQy9FLElBQUksS0FBSyxDQUFDLEtBQUssWUFBWSxVQUFVLElBQUksS0FBSyxDQUFDLEtBQUssQ0FBQyxPQUFPLEVBQUUsQ0FBQztRQUM3RCxPQUFPLEtBQUssQ0FBQyxLQUFLLENBQUMsT0FBTyxDQUFDO0lBQzdCLENBQUM7SUFFRCx3RUFBd0U7SUFDeEUsSUFBSSxPQUFPLEtBQUssQ0FBQyxLQUFLLEtBQUssUUFBUSxFQUFFLENBQUM7UUFDcEMsT0FBTyx3QkFBd0IsS0FBSyxDQUFDLE1BQU0sZUFBZSxLQUFLLENBQUMsS0FBSyxHQUFHLENBQUM7SUFDM0UsQ0FBQztJQUVELHFGQUFxRjtJQUNyRixPQUFPLEtBQUssQ0FBQyxPQUFPLENBQUM7QUFDdkIsQ0FBQztBQVFELFNBQVMsd0JBQXdCLENBQUMsS0FBYztJQUM5QyxJQUFJLEtBQUssWUFBWSxLQUFLLEVBQUUsQ0FBQztRQUMzQixPQUFPLElBQUksQ0FBQztJQUNkLENBQUM7SUFFRCxJQUFJLEtBQUssS0FBSyxJQUFJLElBQUksT0FBTyxLQUFLLEtBQUssUUFBUSxFQUFFLENBQUM7UUFDaEQsT0FBTyxLQUFLLENBQUM7SUFDZixDQUFDO0lBRUQsTUFBTSxTQUFTLEdBQUcsS0FBdUIsQ0FBQztJQUUxQyxPQUFPLENBQ0wsSUFBQSxnQkFBUSxFQUFDLFNBQVMsQ0FBQyxJQUFJLENBQUM7V0FDckIsSUFBQSxnQkFBUSxFQUFDLFNBQVMsQ0FBQyxPQUFPLENBQUM7V0FDM0IsQ0FBQyxTQUFTLEtBQUssU0FBUyxDQUFDLEtBQUssSUFBSSxJQUFBLGdCQUFRLEVBQUMsU0FBUyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQ2hFLENBQUM7QUFDSixDQUFDO0FBRUQ7OztHQUdHO0FBQ0ksTUFBTSxnQkFBZ0IsR0FBRyxDQUFDLGNBQXVCLEVBQVcsRUFBRTtJQUNuRSxNQUFNLEtBQUssR0FBRyxzQkFBc0IsQ0FBQyxjQUFjLENBQUMsQ0FBQztJQUVyRCw0RUFBNEU7SUFDNUUsSUFBSSxLQUFLLFlBQVksd0JBQWlCLEVBQUUsQ0FBQztRQUN2QyxPQUFPLHNCQUFzQixDQUFDLEtBQUssQ0FBQyxDQUFDO0lBQ3ZDLENBQUM7SUFFRCxxREFBcUQ7SUFDckQsSUFBSSxPQUFPLEtBQUssS0FBSyxRQUFRLElBQUksd0JBQXdCLENBQUMsS0FBSyxDQUFDLEVBQUUsQ0FBQztRQUNqRSxPQUFPLEtBQUssQ0FBQztJQUNmLENBQUM7SUFFRCw0REFBNEQ7SUFDNUQsT0FBTyxJQUFJLENBQUM7QUFDZCxDQUFDLENBQUM7QUFmVyxRQUFBLGdCQUFnQixvQkFlM0I7QUFFSyxNQUFNLCtCQUErQixHQUFHLENBQUMsS0FBYyxFQUFXLEVBQUU7SUFDekUsTUFBTSx1QkFBdUIsR0FBRyxJQUFBLHdCQUFnQixFQUFDLEtBQUssQ0FBQyxDQUFDO0lBQ3hELElBQUksdUJBQXVCLEVBQUUsQ0FBQztRQUM1QixPQUFPLHVCQUF1QixDQUFDO0lBQ2pDLENBQUM7SUFFRCxJQUFJLENBQUM7UUFDSCxNQUFNLGdCQUFnQixHQUFHLDRCQUFnQixDQUFDLEtBQUssQ0FBQyxLQUFjLENBQUMsQ0FBQztRQUVoRSxJQUFJLGdCQUFnQixFQUFFLENBQUM7WUFDckIsT0FBTyxnQkFBZ0IsQ0FBQztRQUMxQixDQUFDO0lBQ0gsQ0FBQztJQUFDLFdBQU0sQ0FBQyxDQUFBLENBQUM7SUFFVixPQUFPLEtBQUssQ0FBQztBQUNmLENBQUMsQ0FBQztBQWZXLFFBQUEsK0JBQStCLG1DQWUxQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvaGVscGVycy9lcnJvci1wYXJzZXIuaGVscGVyLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEh0dHBFcnJvclJlc3BvbnNlIH0gZnJvbSAnQGFuZ3VsYXIvY29tbW9uL2h0dHAnO1xuaW1wb3J0IHsgaXNTdHJpbmcgfSBmcm9tICdAc2VudHJ5L3V0aWxzJztcbmltcG9ydCBFcnJvclN0YWNrUGFyc2VyIGZyb20gJ2Vycm9yLXN0YWNrLXBhcnNlcic7XG5cbi8vIGh0dHBzOi8vZ2l0aHViLmNvbS9hbmd1bGFyL2FuZ3VsYXIvYmxvYi9tYXN0ZXIvcGFja2FnZXMvY29yZS9zcmMvdXRpbC9lcnJvcnMudHNcbmZ1bmN0aW9uIHRyeVRvVW53cmFwWm9uZWpzRXJyb3IoZXJyb3I6IHVua25vd24pOiB1bmtub3duIHtcbiAgLy8gVE9ETzogb25jZSBBbmd1bGFyMTQgaXMgdGhlIG1pbmltdW0gcmVxdWlyZW1lbnQgRVJST1JfT1JJR0lOQUxfRVJST1IgYW5kXG4gIC8vICBnZXRPcmlnaW5hbEVycm9yIGZyb20gZXJyb3IudHMgY2FuIGJlIHVzZWQgZGlyZWN0bHkuXG4gIHJldHVybiBlcnJvciAmJiAoZXJyb3IgYXMgeyBuZ09yaWdpbmFsRXJyb3I6IEVycm9yIH0pLm5nT3JpZ2luYWxFcnJvclxuICAgID8gKGVycm9yIGFzIHsgbmdPcmlnaW5hbEVycm9yOiBFcnJvciB9KS5uZ09yaWdpbmFsRXJyb3JcbiAgICA6IGVycm9yO1xufVxuXG5mdW5jdGlvbiBleHRyYWN0SHR0cE1vZHVsZUVycm9yKGVycm9yOiBIdHRwRXJyb3JSZXNwb25zZSk6IHN0cmluZyB8IEVycm9yIHtcbiAgLy8gVGhlIGBlcnJvcmAgcHJvcGVydHkgb2YgaHR0cCBleGNlcHRpb24gY2FuIGJlIGVpdGhlciBhbiBgRXJyb3JgIG9iamVjdCwgd2hpY2ggd2UgY2FuIHVzZSBkaXJlY3RseS4uLlxuICBpZiAoaXNFcnJvck9yRXJyb3JMaWtlT2JqZWN0KGVycm9yLmVycm9yKSkge1xuICAgIHJldHVybiBlcnJvci5lcnJvcjtcbiAgfVxuXG4gIC8vIC4uLiBvciBhbmBFcnJvckV2ZW50YCwgd2hpY2ggY2FuIHByb3ZpZGUgdXMgd2l0aCB0aGUgbWVzc2FnZSBidXQgbm8gc3RhY2suLi5cbiAgaWYgKGVycm9yLmVycm9yIGluc3RhbmNlb2YgRXJyb3JFdmVudCAmJiBlcnJvci5lcnJvci5tZXNzYWdlKSB7XG4gICAgcmV0dXJuIGVycm9yLmVycm9yLm1lc3NhZ2U7XG4gIH1cblxuICAvLyAuLi5vciB0aGUgcmVxdWVzdCBib2R5IGl0c2VsZiwgd2hpY2ggd2UgY2FuIHVzZSBhcyBhIG1lc3NhZ2UgaW5zdGVhZC5cbiAgaWYgKHR5cGVvZiBlcnJvci5lcnJvciA9PT0gJ3N0cmluZycpIHtcbiAgICByZXR1cm4gYFNlcnZlciByZXR1cm5lZCBjb2RlICR7ZXJyb3Iuc3RhdHVzfSB3aXRoIGJvZHkgXCIke2Vycm9yLmVycm9yfVwiYDtcbiAgfVxuXG4gIC8vIElmIHdlIGRvbid0IGhhdmUgYW55IGRldGFpbGVkIGluZm9ybWF0aW9uLCBmYWxsYmFjayB0byB0aGUgcmVxdWVzdCBtZXNzYWdlIGl0c2VsZi5cbiAgcmV0dXJuIGVycm9yLm1lc3NhZ2U7XG59XG5cbmludGVyZmFjZSBFcnJvckNhbmRpZGF0ZSB7XG4gIG5hbWU/OiB1bmtub3duO1xuICBtZXNzYWdlPzogdW5rbm93bjtcbiAgc3RhY2s/OiB1bmtub3duO1xufVxuXG5mdW5jdGlvbiBpc0Vycm9yT3JFcnJvckxpa2VPYmplY3QodmFsdWU6IHVua25vd24pOiB2YWx1ZSBpcyBFcnJvciB7XG4gIGlmICh2YWx1ZSBpbnN0YW5jZW9mIEVycm9yKSB7XG4gICAgcmV0dXJuIHRydWU7XG4gIH1cblxuICBpZiAodmFsdWUgPT09IG51bGwgfHwgdHlwZW9mIHZhbHVlICE9PSAnb2JqZWN0Jykge1xuICAgIHJldHVybiBmYWxzZTtcbiAgfVxuXG4gIGNvbnN0IGNhbmRpZGF0ZSA9IHZhbHVlIGFzIEVycm9yQ2FuZGlkYXRlO1xuXG4gIHJldHVybiAoXG4gICAgaXNTdHJpbmcoY2FuZGlkYXRlLm5hbWUpXG4gICAgJiYgaXNTdHJpbmcoY2FuZGlkYXRlLm1lc3NhZ2UpXG4gICAgJiYgKHVuZGVmaW5lZCA9PT0gY2FuZGlkYXRlLnN0YWNrIHx8IGlzU3RyaW5nKGNhbmRpZGF0ZS5zdGFjaykpXG4gICk7XG59XG5cbi8qKlxuICogRGVmYXVsdCBpbXBsZW1lbnRhdGlvbiBvZiBlcnJvciBleHRyYWN0aW9uIHRoYXQgaGFuZGxlcyBkZWZhdWx0IGVycm9yIHdyYXBwaW5nLFxuICogSFRUUCByZXNwb25zZXMsIEVycm9yRXZlbnQgYW5kIGZldyBvdGhlciBrbm93biBjYXNlcy5cbiAqL1xuZXhwb3J0IGNvbnN0IGRlZmF1bHRFeHRyYWN0b3IgPSAoZXJyb3JDYW5kaWRhdGU6IHVua25vd24pOiB1bmtub3duID0+IHtcbiAgY29uc3QgZXJyb3IgPSB0cnlUb1Vud3JhcFpvbmVqc0Vycm9yKGVycm9yQ2FuZGlkYXRlKTtcblxuICAvLyBJZiBpdCdzIGh0dHAgbW9kdWxlIGVycm9yLCBleHRyYWN0IGFzIG11Y2ggaW5mb3JtYXRpb24gZnJvbSBpdCBhcyB3ZSBjYW4uXG4gIGlmIChlcnJvciBpbnN0YW5jZW9mIEh0dHBFcnJvclJlc3BvbnNlKSB7XG4gICAgcmV0dXJuIGV4dHJhY3RIdHRwTW9kdWxlRXJyb3IoZXJyb3IpO1xuICB9XG5cbiAgLy8gV2UgY2FuIGhhbmRsZSBtZXNzYWdlcyBhbmQgRXJyb3Igb2JqZWN0cyBkaXJlY3RseS5cbiAgaWYgKHR5cGVvZiBlcnJvciA9PT0gJ3N0cmluZycgfHwgaXNFcnJvck9yRXJyb3JMaWtlT2JqZWN0KGVycm9yKSkge1xuICAgIHJldHVybiBlcnJvcjtcbiAgfVxuXG4gIC8vIE5vdGhpbmcgd2FzIGV4dHJhY3RlZCwgZmFsbGJhY2sgdG8gZGVmYXVsdCBlcnJvciBtZXNzYWdlLlxuICByZXR1cm4gbnVsbDtcbn07XG5cbmV4cG9ydCBjb25zdCBzZW50cnlDdXN0b21FeGNlcHRpb25FeHRyYWN0aW9uID0gKGVycm9yOiB1bmtub3duKTogdW5rbm93biA9PiB7XG4gIGNvbnN0IGRlZmF1bHRFeHRyYWN0b3JSZXN1bHRzID0gZGVmYXVsdEV4dHJhY3RvcihlcnJvcik7XG4gIGlmIChkZWZhdWx0RXh0cmFjdG9yUmVzdWx0cykge1xuICAgIHJldHVybiBkZWZhdWx0RXh0cmFjdG9yUmVzdWx0cztcbiAgfVxuXG4gIHRyeSB7XG4gICAgY29uc3QgcGFyc2VkRXJyb3JWYWx1ZSA9IEVycm9yU3RhY2tQYXJzZXIucGFyc2UoZXJyb3IgYXMgRXJyb3IpO1xuXG4gICAgaWYgKHBhcnNlZEVycm9yVmFsdWUpIHtcbiAgICAgIHJldHVybiBwYXJzZWRFcnJvclZhbHVlO1xuICAgIH1cbiAgfSBjYXRjaCB7fVxuXG4gIHJldHVybiBlcnJvcjtcbn07XG4iXSwidmVyc2lvbiI6M30=

@@ -1,0 +1,30 @@
+b8aaa0fa1e517fecf850509b81906aad
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helptextVmList = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.helptextVmList = {
+    memory_dialog: {
+        title: (0, ngx_translate_extract_marker_1.marker)('ERROR: Not Enough Memory'),
+        message: (0, ngx_translate_extract_marker_1.marker)('The VM could not start because the current configuration could potentially\
+ require more RAM than is available on the system. Memory overcommitment allows multiple VMs to be launched when there is\
+ not enough free memory for configured RAM of all VMs. Use with caution. Would you like to overcommit memory?'),
+        buttonMessage: (0, ngx_translate_extract_marker_1.marker)('Proceed'),
+        secondaryCheckboxMessage: (0, ngx_translate_extract_marker_1.marker)('Yes I understand the risks'),
+    },
+    delete_dialog: {
+        zvolsTooltip: (0, ngx_translate_extract_marker_1.marker)('Set to remove the data associated with this \
+ Virtual Machine (which will result in data loss if the data is not backed up). Unset to \
+ leave the data intact.'),
+        forceTooltip: (0, ngx_translate_extract_marker_1.marker)('Set to ignore the Virtual \
+ Machine status during the delete operation. Unset to prevent deleting \
+ the Virtual Machine when it is still active or has an undefined state.'),
+    },
+    stop_dialog: {
+        forceTooltip: (0, ngx_translate_extract_marker_1.marker)('Force the VM to stop if it has not already \
+ stopped within the specified shutdown timeout. Without this option selected, the VM will \
+ receive the shutdown signal, but may or may not complete the shutdown process.'),
+        successMessage: (0, ngx_translate_extract_marker_1.marker)('If {vmName} is still running, the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop After Timeout</i> option to stop the VM.'),
+    },
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L3ZtL3ZtLWxpc3QudHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMEZBQXNFO0FBRXpELFFBQUEsY0FBYyxHQUFHO0lBQzVCLGFBQWEsRUFBRTtRQUNiLEtBQUssRUFBRSxJQUFBLHFDQUFDLEVBQUMsMEJBQTBCLENBQUM7UUFDcEMsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQzs7OEdBRStGLENBQUM7UUFDM0csYUFBYSxFQUFFLElBQUEscUNBQUMsRUFBQyxTQUFTLENBQUM7UUFDM0Isd0JBQXdCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLDRCQUE0QixDQUFDO0tBQzFEO0lBRUQsYUFBYSxFQUFFO1FBQ2IsWUFBWSxFQUFFLElBQUEscUNBQUMsRUFBQzs7d0JBRUksQ0FBQztRQUNyQixZQUFZLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzt3RUFFb0QsQ0FBQztLQUN0RTtJQUVELFdBQVcsRUFBRTtRQUNYLFlBQVksRUFBRSxJQUFBLHFDQUFDLEVBQUM7O2dGQUU0RCxDQUFDO1FBQzdFLGNBQWMsRUFBRSxJQUFBLHFDQUFDLEVBQUMsOEtBQThLLENBQUM7S0FDbE07Q0FDRixDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9oZWxwdGV4dC92bS92bS1saXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IG1hcmtlciBhcyBUIH0gZnJvbSAnQGJpZXNiamVyZy9uZ3gtdHJhbnNsYXRlLWV4dHJhY3QtbWFya2VyJztcblxuZXhwb3J0IGNvbnN0IGhlbHB0ZXh0Vm1MaXN0ID0ge1xuICBtZW1vcnlfZGlhbG9nOiB7XG4gICAgdGl0bGU6IFQoJ0VSUk9SOiBOb3QgRW5vdWdoIE1lbW9yeScpLFxuICAgIG1lc3NhZ2U6IFQoJ1RoZSBWTSBjb3VsZCBub3Qgc3RhcnQgYmVjYXVzZSB0aGUgY3VycmVudCBjb25maWd1cmF0aW9uIGNvdWxkIHBvdGVudGlhbGx5XFxcbiByZXF1aXJlIG1vcmUgUkFNIHRoYW4gaXMgYXZhaWxhYmxlIG9uIHRoZSBzeXN0ZW0uIE1lbW9yeSBvdmVyY29tbWl0bWVudCBhbGxvd3MgbXVsdGlwbGUgVk1zIHRvIGJlIGxhdW5jaGVkIHdoZW4gdGhlcmUgaXNcXFxuIG5vdCBlbm91Z2ggZnJlZSBtZW1vcnkgZm9yIGNvbmZpZ3VyZWQgUkFNIG9mIGFsbCBWTXMuIFVzZSB3aXRoIGNhdXRpb24uIFdvdWxkIHlvdSBsaWtlIHRvIG92ZXJjb21taXQgbWVtb3J5PycpLFxuICAgIGJ1dHRvbk1lc3NhZ2U6IFQoJ1Byb2NlZWQnKSxcbiAgICBzZWNvbmRhcnlDaGVja2JveE1lc3NhZ2U6IFQoJ1llcyBJIHVuZGVyc3RhbmQgdGhlIHJpc2tzJyksXG4gIH0sXG5cbiAgZGVsZXRlX2RpYWxvZzoge1xuICAgIHp2b2xzVG9vbHRpcDogVCgnU2V0IHRvIHJlbW92ZSB0aGUgZGF0YSBhc3NvY2lhdGVkIHdpdGggdGhpcyBcXFxuIFZpcnR1YWwgTWFjaGluZSAod2hpY2ggd2lsbCByZXN1bHQgaW4gZGF0YSBsb3NzIGlmIHRoZSBkYXRhIGlzIG5vdCBiYWNrZWQgdXApLiBVbnNldCB0byBcXFxuIGxlYXZlIHRoZSBkYXRhIGludGFjdC4nKSxcbiAgICBmb3JjZVRvb2x0aXA6IFQoJ1NldCB0byBpZ25vcmUgdGhlIFZpcnR1YWwgXFxcbiBNYWNoaW5lIHN0YXR1cyBkdXJpbmcgdGhlIGRlbGV0ZSBvcGVyYXRpb24uIFVuc2V0IHRvIHByZXZlbnQgZGVsZXRpbmcgXFxcbiB0aGUgVmlydHVhbCBNYWNoaW5lIHdoZW4gaXQgaXMgc3RpbGwgYWN0aXZlIG9yIGhhcyBhbiB1bmRlZmluZWQgc3RhdGUuJyksXG4gIH0sXG5cbiAgc3RvcF9kaWFsb2c6IHtcbiAgICBmb3JjZVRvb2x0aXA6IFQoJ0ZvcmNlIHRoZSBWTSB0byBzdG9wIGlmIGl0IGhhcyBub3QgYWxyZWFkeSBcXFxuIHN0b3BwZWQgd2l0aGluIHRoZSBzcGVjaWZpZWQgc2h1dGRvd24gdGltZW91dC4gV2l0aG91dCB0aGlzIG9wdGlvbiBzZWxlY3RlZCwgdGhlIFZNIHdpbGwgXFxcbiByZWNlaXZlIHRoZSBzaHV0ZG93biBzaWduYWwsIGJ1dCBtYXkgb3IgbWF5IG5vdCBjb21wbGV0ZSB0aGUgc2h1dGRvd24gcHJvY2Vzcy4nKSxcbiAgICBzdWNjZXNzTWVzc2FnZTogVCgnSWYge3ZtTmFtZX0gaXMgc3RpbGwgcnVubmluZywgdGhlIEd1ZXN0IE9TIGRpZCBub3QgcmVzcG9uZCBhcyBleHBlY3RlZC4gSXQgaXMgcG9zc2libGUgdG8gdXNlIDxpPlBvd2VyIE9mZjwvaT4gb3IgdGhlIDxpPkZvcmNlIFN0b3AgQWZ0ZXIgVGltZW91dDwvaT4gb3B0aW9uIHRvIHN0b3AgdGhlIFZNLicpLFxuICB9LFxufTtcbiJdLCJ2ZXJzaW9uIjozfQ==

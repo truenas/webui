@@ -1,0 +1,2 @@
+5635179a3c2188df5522de5da82ea928
+module.exports="<div class=\"list-item\">\n  @if (canDelete()) {\n    <button\n      mat-icon-button\n      type=\"button\"\n      class=\"delete-btn\"\n      ixTest=\"remove-from-list\"\n      [attr.aria-label]=\"'Remove {label} item' | translate: { label }\"\n      (click)=\"deleteItem()\"\n    >\n      <ix-icon name=\"clear\"></ix-icon>\n    </button>\n  }\n  <ng-content></ng-content>\n</div>\n"

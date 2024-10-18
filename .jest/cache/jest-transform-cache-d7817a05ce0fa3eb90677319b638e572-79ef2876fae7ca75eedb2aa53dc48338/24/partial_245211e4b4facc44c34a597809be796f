@@ -1,0 +1,53 @@
+1cc4979793c0bae3f14c01992704b74f
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const _createWrap_js_1 = __importDefault(require("./_createWrap.js"));
+const _getHolder_js_1 = __importDefault(require("./_getHolder.js"));
+const _replaceHolders_js_1 = __importDefault(require("./_replaceHolders.js"));
+/** Used to compose bitmasks for function metadata. */
+var WRAP_PARTIAL_FLAG = 32;
+/**
+ * Creates a function that invokes `func` with `partials` prepended to the
+ * arguments it receives. This method is like `_.bind` except it does **not**
+ * alter the `this` binding.
+ *
+ * The `_.partial.placeholder` value, which defaults to `_` in monolithic
+ * builds, may be used as a placeholder for partially applied arguments.
+ *
+ * **Note:** This method doesn't set the "length" property of partially
+ * applied functions.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.2.0
+ * @category Function
+ * @param {Function} func The function to partially apply arguments to.
+ * @param {...*} [partials] The arguments to be partially applied.
+ * @returns {Function} Returns the new partially applied function.
+ * @example
+ *
+ * function greet(greeting, name) {
+ *   return greeting + ' ' + name;
+ * }
+ *
+ * var sayHelloTo = _.partial(greet, 'hello');
+ * sayHelloTo('fred');
+ * // => 'hello fred'
+ *
+ * // Partially applied with placeholders.
+ * var greetFred = _.partial(greet, _, 'fred');
+ * greetFred('hi');
+ * // => 'hi fred'
+ */
+var partial = (0, _baseRest_js_1.default)(function (func, partials) {
+    var holders = (0, _replaceHolders_js_1.default)(partials, (0, _getHolder_js_1.default)(partial));
+    return (0, _createWrap_js_1.default)(func, WRAP_PARTIAL_FLAG, undefined, partials, holders);
+});
+// Assign default placeholders.
+partial.placeholder = {};
+exports.default = partial;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3BhcnRpYWwuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxrRUFBc0M7QUFDdEMsc0VBQTBDO0FBQzFDLG9FQUF3QztBQUN4Qyw4RUFBa0Q7QUFFbEQsc0RBQXNEO0FBQ3RELElBQUksaUJBQWlCLEdBQUcsRUFBRSxDQUFDO0FBRTNCOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQWdDRztBQUNILElBQUksT0FBTyxHQUFHLElBQUEsc0JBQVEsRUFBQyxVQUFTLElBQUksRUFBRSxRQUFRO0lBQzVDLElBQUksT0FBTyxHQUFHLElBQUEsNEJBQWMsRUFBQyxRQUFRLEVBQUUsSUFBQSx1QkFBUyxFQUFDLE9BQU8sQ0FBQyxDQUFDLENBQUM7SUFDM0QsT0FBTyxJQUFBLHdCQUFVLEVBQUMsSUFBSSxFQUFFLGlCQUFpQixFQUFFLFNBQVMsRUFBRSxRQUFRLEVBQUUsT0FBTyxDQUFDLENBQUM7QUFDM0UsQ0FBQyxDQUFDLENBQUM7QUFFSCwrQkFBK0I7QUFDL0IsT0FBTyxDQUFDLFdBQVcsR0FBRyxFQUFFLENBQUM7QUFFekIsa0JBQWUsT0FBTyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9wYXJ0aWFsLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlUmVzdCBmcm9tICcuL19iYXNlUmVzdC5qcyc7XG5pbXBvcnQgY3JlYXRlV3JhcCBmcm9tICcuL19jcmVhdGVXcmFwLmpzJztcbmltcG9ydCBnZXRIb2xkZXIgZnJvbSAnLi9fZ2V0SG9sZGVyLmpzJztcbmltcG9ydCByZXBsYWNlSG9sZGVycyBmcm9tICcuL19yZXBsYWNlSG9sZGVycy5qcyc7XG5cbi8qKiBVc2VkIHRvIGNvbXBvc2UgYml0bWFza3MgZm9yIGZ1bmN0aW9uIG1ldGFkYXRhLiAqL1xudmFyIFdSQVBfUEFSVElBTF9GTEFHID0gMzI7XG5cbi8qKlxuICogQ3JlYXRlcyBhIGZ1bmN0aW9uIHRoYXQgaW52b2tlcyBgZnVuY2Agd2l0aCBgcGFydGlhbHNgIHByZXBlbmRlZCB0byB0aGVcbiAqIGFyZ3VtZW50cyBpdCByZWNlaXZlcy4gVGhpcyBtZXRob2QgaXMgbGlrZSBgXy5iaW5kYCBleGNlcHQgaXQgZG9lcyAqKm5vdCoqXG4gKiBhbHRlciB0aGUgYHRoaXNgIGJpbmRpbmcuXG4gKlxuICogVGhlIGBfLnBhcnRpYWwucGxhY2Vob2xkZXJgIHZhbHVlLCB3aGljaCBkZWZhdWx0cyB0byBgX2AgaW4gbW9ub2xpdGhpY1xuICogYnVpbGRzLCBtYXkgYmUgdXNlZCBhcyBhIHBsYWNlaG9sZGVyIGZvciBwYXJ0aWFsbHkgYXBwbGllZCBhcmd1bWVudHMuXG4gKlxuICogKipOb3RlOioqIFRoaXMgbWV0aG9kIGRvZXNuJ3Qgc2V0IHRoZSBcImxlbmd0aFwiIHByb3BlcnR5IG9mIHBhcnRpYWxseVxuICogYXBwbGllZCBmdW5jdGlvbnMuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSAwLjIuMFxuICogQGNhdGVnb3J5IEZ1bmN0aW9uXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBmdW5jIFRoZSBmdW5jdGlvbiB0byBwYXJ0aWFsbHkgYXBwbHkgYXJndW1lbnRzIHRvLlxuICogQHBhcmFtIHsuLi4qfSBbcGFydGlhbHNdIFRoZSBhcmd1bWVudHMgdG8gYmUgcGFydGlhbGx5IGFwcGxpZWQuXG4gKiBAcmV0dXJucyB7RnVuY3Rpb259IFJldHVybnMgdGhlIG5ldyBwYXJ0aWFsbHkgYXBwbGllZCBmdW5jdGlvbi5cbiAqIEBleGFtcGxlXG4gKlxuICogZnVuY3Rpb24gZ3JlZXQoZ3JlZXRpbmcsIG5hbWUpIHtcbiAqICAgcmV0dXJuIGdyZWV0aW5nICsgJyAnICsgbmFtZTtcbiAqIH1cbiAqXG4gKiB2YXIgc2F5SGVsbG9UbyA9IF8ucGFydGlhbChncmVldCwgJ2hlbGxvJyk7XG4gKiBzYXlIZWxsb1RvKCdmcmVkJyk7XG4gKiAvLyA9PiAnaGVsbG8gZnJlZCdcbiAqXG4gKiAvLyBQYXJ0aWFsbHkgYXBwbGllZCB3aXRoIHBsYWNlaG9sZGVycy5cbiAqIHZhciBncmVldEZyZWQgPSBfLnBhcnRpYWwoZ3JlZXQsIF8sICdmcmVkJyk7XG4gKiBncmVldEZyZWQoJ2hpJyk7XG4gKiAvLyA9PiAnaGkgZnJlZCdcbiAqL1xudmFyIHBhcnRpYWwgPSBiYXNlUmVzdChmdW5jdGlvbihmdW5jLCBwYXJ0aWFscykge1xuICB2YXIgaG9sZGVycyA9IHJlcGxhY2VIb2xkZXJzKHBhcnRpYWxzLCBnZXRIb2xkZXIocGFydGlhbCkpO1xuICByZXR1cm4gY3JlYXRlV3JhcChmdW5jLCBXUkFQX1BBUlRJQUxfRkxBRywgdW5kZWZpbmVkLCBwYXJ0aWFscywgaG9sZGVycyk7XG59KTtcblxuLy8gQXNzaWduIGRlZmF1bHQgcGxhY2Vob2xkZXJzLlxucGFydGlhbC5wbGFjZWhvbGRlciA9IHt9O1xuXG5leHBvcnQgZGVmYXVsdCBwYXJ0aWFsO1xuIl0sInZlcnNpb24iOjN9

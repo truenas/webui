@@ -1,0 +1,35 @@
+dc606b891fe7222d0b67150b69799761
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helptext2fa = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.helptext2fa = {
+    two_factor: {
+        secret: {
+            placeholder: (0, ngx_translate_extract_marker_1.marker)('Secret (Read only)'),
+            tooltip: (0, ngx_translate_extract_marker_1.marker)('The secret used to generate OTPs. The secret is produced by the system when Two-Factor \
+ Authentication is first activated.'),
+        },
+        uri: {
+            placeholder: (0, ngx_translate_extract_marker_1.marker)('Provisioning URI (includes Secret - Read only):'),
+            tooltip: (0, ngx_translate_extract_marker_1.marker)('The URI used to provision an OTP. The URI (which contains the secret) is encoded in a QR Code. \
+ To set up an OTP app like Google Authenticator, use the app to scan the QR code or enter the secret manually \
+ into the app. The URI is produced by the system when Two-Factor Authentication is first activated.'),
+        },
+        global_enabled_user_enabled: (0, ngx_translate_extract_marker_1.marker)('Two-Factor authentication has been configured.'),
+        global_enabled_user_disabled: (0, ngx_translate_extract_marker_1.marker)('Two-Factor authentication is required on this system, but it\'s not yet configured for your user. Please configure it now.'),
+        global_disabled: (0, ngx_translate_extract_marker_1.marker)('Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.'),
+        qrCodeMessage: (0, ngx_translate_extract_marker_1.marker)('Scan this QR Code with your authenticator app of choice. The next time you try to login, you will be asked to enter an One Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.'),
+        error: (0, ngx_translate_extract_marker_1.marker)('Error'),
+        renewSecret: {
+            title: (0, ngx_translate_extract_marker_1.marker)('Renew Secret'),
+            message: (0, ngx_translate_extract_marker_1.marker)('Renewing the secret will cause a new URI and a \
+    new QR code to be generated, making it necessary to update your two-factor device or app.'),
+            btn: (0, ngx_translate_extract_marker_1.marker)('Renew'),
+        },
+        card: {
+            toleranceWindowTooltip: (0, ngx_translate_extract_marker_1.marker)('Extends the validity of OTP by that many windows of intervals before and after the current interval'),
+        },
+    },
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L3N5c3RlbS8yZmEudHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMEZBQXNFO0FBRXpELFFBQUEsV0FBVyxHQUFHO0lBQ3pCLFVBQVUsRUFBRTtRQUNWLE1BQU0sRUFBRTtZQUNOLFdBQVcsRUFBRSxJQUFBLHFDQUFDLEVBQUMsb0JBQW9CLENBQUM7WUFDcEMsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQztvQ0FDbUIsQ0FBQztTQUNoQztRQUVELEdBQUcsRUFBRTtZQUNILFdBQVcsRUFBRSxJQUFBLHFDQUFDLEVBQUMsaURBQWlELENBQUM7WUFDakUsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQzs7b0dBRW1GLENBQUM7U0FDaEc7UUFFRCwyQkFBMkIsRUFBRSxJQUFBLHFDQUFDLEVBQUMsZ0RBQWdELENBQUM7UUFDaEYsNEJBQTRCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLDRIQUE0SCxDQUFDO1FBQzdKLGVBQWUsRUFBRSxJQUFBLHFDQUFDLEVBQUMsbU5BQW1OLENBQUM7UUFDdk8sYUFBYSxFQUFFLElBQUEscUNBQUMsRUFBQyxzUUFBc1EsQ0FBQztRQUV4UixLQUFLLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLE9BQU8sQ0FBQztRQUVqQixXQUFXLEVBQUU7WUFDWCxLQUFLLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLGNBQWMsQ0FBQztZQUN4QixPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzhGQUM2RSxDQUFDO1lBQ3pGLEdBQUcsRUFBRSxJQUFBLHFDQUFDLEVBQUMsT0FBTyxDQUFDO1NBQ2hCO1FBRUQsSUFBSSxFQUFFO1lBQ0osc0JBQXNCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLHFHQUFxRyxDQUFDO1NBQ2pJO0tBQ0Y7Q0FDRixDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9oZWxwdGV4dC9zeXN0ZW0vMmZhLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IG1hcmtlciBhcyBUIH0gZnJvbSAnQGJpZXNiamVyZy9uZ3gtdHJhbnNsYXRlLWV4dHJhY3QtbWFya2VyJztcblxuZXhwb3J0IGNvbnN0IGhlbHB0ZXh0MmZhID0ge1xuICB0d29fZmFjdG9yOiB7XG4gICAgc2VjcmV0OiB7XG4gICAgICBwbGFjZWhvbGRlcjogVCgnU2VjcmV0IChSZWFkIG9ubHkpJyksXG4gICAgICB0b29sdGlwOiBUKCdUaGUgc2VjcmV0IHVzZWQgdG8gZ2VuZXJhdGUgT1RQcy4gVGhlIHNlY3JldCBpcyBwcm9kdWNlZCBieSB0aGUgc3lzdGVtIHdoZW4gVHdvLUZhY3RvciBcXFxuIEF1dGhlbnRpY2F0aW9uIGlzIGZpcnN0IGFjdGl2YXRlZC4nKSxcbiAgICB9LFxuXG4gICAgdXJpOiB7XG4gICAgICBwbGFjZWhvbGRlcjogVCgnUHJvdmlzaW9uaW5nIFVSSSAoaW5jbHVkZXMgU2VjcmV0IC0gUmVhZCBvbmx5KTonKSxcbiAgICAgIHRvb2x0aXA6IFQoJ1RoZSBVUkkgdXNlZCB0byBwcm92aXNpb24gYW4gT1RQLiBUaGUgVVJJICh3aGljaCBjb250YWlucyB0aGUgc2VjcmV0KSBpcyBlbmNvZGVkIGluIGEgUVIgQ29kZS4gXFxcbiBUbyBzZXQgdXAgYW4gT1RQIGFwcCBsaWtlIEdvb2dsZSBBdXRoZW50aWNhdG9yLCB1c2UgdGhlIGFwcCB0byBzY2FuIHRoZSBRUiBjb2RlIG9yIGVudGVyIHRoZSBzZWNyZXQgbWFudWFsbHkgXFxcbiBpbnRvIHRoZSBhcHAuIFRoZSBVUkkgaXMgcHJvZHVjZWQgYnkgdGhlIHN5c3RlbSB3aGVuIFR3by1GYWN0b3IgQXV0aGVudGljYXRpb24gaXMgZmlyc3QgYWN0aXZhdGVkLicpLFxuICAgIH0sXG5cbiAgICBnbG9iYWxfZW5hYmxlZF91c2VyX2VuYWJsZWQ6IFQoJ1R3by1GYWN0b3IgYXV0aGVudGljYXRpb24gaGFzIGJlZW4gY29uZmlndXJlZC4nKSxcbiAgICBnbG9iYWxfZW5hYmxlZF91c2VyX2Rpc2FibGVkOiBUKCdUd28tRmFjdG9yIGF1dGhlbnRpY2F0aW9uIGlzIHJlcXVpcmVkIG9uIHRoaXMgc3lzdGVtLCBidXQgaXRcXCdzIG5vdCB5ZXQgY29uZmlndXJlZCBmb3IgeW91ciB1c2VyLiBQbGVhc2UgY29uZmlndXJlIGl0IG5vdy4nKSxcbiAgICBnbG9iYWxfZGlzYWJsZWQ6IFQoJ1R3by1GYWN0b3IgYXV0aGVudGljYXRpb24gaXMgbm90IGVuYWJsZWQgb24gdGhpcyB0aGlzIHN5c3RlbS4gWW91IGNhbiBjb25maWd1cmUgeW91ciBwZXJzb25hbCBzZXR0aW5ncywgYnV0IHRoZXkgd2lsbCBoYXZlIG5vIGVmZmVjdCB1bnRpbCB0d28tZmFjdG9yIGF1dGhlbnRpY2F0aW9uIGlzIGVuYWJsZWQgZ2xvYmFsbHkgYnkgc3lzdGVtIGFkbWluaXN0cmF0b3IuJyksXG4gICAgcXJDb2RlTWVzc2FnZTogVCgnU2NhbiB0aGlzIFFSIENvZGUgd2l0aCB5b3VyIGF1dGhlbnRpY2F0b3IgYXBwIG9mIGNob2ljZS4gVGhlIG5leHQgdGltZSB5b3UgdHJ5IHRvIGxvZ2luLCB5b3Ugd2lsbCBiZSBhc2tlZCB0byBlbnRlciBhbiBPbmUgVGltZSBQYXNzd29yZCAoT1RQKSBmcm9tIHlvdXIgYXV0aGVudGljYXRvciBhcHAuIFRoaXMgc3RlcCBpcyBleHRyZW1lbHkgaW1wb3J0YW50LiBXaXRob3V0IHRoZSBPVFAgeW91IHdpbGwgYmUgbG9ja2VkIG91dCBvZiB0aGlzIHN5c3RlbS4nKSxcblxuICAgIGVycm9yOiBUKCdFcnJvcicpLFxuXG4gICAgcmVuZXdTZWNyZXQ6IHtcbiAgICAgIHRpdGxlOiBUKCdSZW5ldyBTZWNyZXQnKSxcbiAgICAgIG1lc3NhZ2U6IFQoJ1JlbmV3aW5nIHRoZSBzZWNyZXQgd2lsbCBjYXVzZSBhIG5ldyBVUkkgYW5kIGEgXFxcbiAgICBuZXcgUVIgY29kZSB0byBiZSBnZW5lcmF0ZWQsIG1ha2luZyBpdCBuZWNlc3NhcnkgdG8gdXBkYXRlIHlvdXIgdHdvLWZhY3RvciBkZXZpY2Ugb3IgYXBwLicpLFxuICAgICAgYnRuOiBUKCdSZW5ldycpLFxuICAgIH0sXG5cbiAgICBjYXJkOiB7XG4gICAgICB0b2xlcmFuY2VXaW5kb3dUb29sdGlwOiBUKCdFeHRlbmRzIHRoZSB2YWxpZGl0eSBvZiBPVFAgYnkgdGhhdCBtYW55IHdpbmRvd3Mgb2YgaW50ZXJ2YWxzIGJlZm9yZSBhbmQgYWZ0ZXIgdGhlIGN1cnJlbnQgaW50ZXJ2YWwnKSxcbiAgICB9LFxuICB9LFxufTtcbiJdLCJ2ZXJzaW9uIjozfQ==

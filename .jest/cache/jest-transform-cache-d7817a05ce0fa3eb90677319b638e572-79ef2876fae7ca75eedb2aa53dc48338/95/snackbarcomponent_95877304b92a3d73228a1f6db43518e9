@@ -1,0 +1,2 @@
+662f707c26b5366f845e1b10430fa4bb
+module.exports="@if (config.icon) {\n  <ix-icon class=\"icon\" [name]=\"config.icon\" [style.color]=\"iconColor\"></ix-icon>\n}\n\n<div class=\"message\">{{ config.message | translate }}</div>\n\n@if (config.button) {\n  <div class=\"action\">\n    <button\n      mat-button\n      type=\"button\"\n      ixTest=\"snackbar-button\"\n      (click)=\"config.button.action()\"\n    >\n      {{ config.button.title | translate }}\n    </button>\n  </div>\n}\n"

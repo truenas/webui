@@ -1,0 +1,237 @@
+0e40b2cdba2821221a700043cab581fc
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from2, except, desc) => {
+  if (from2 && typeof from2 === "object" || typeof from2 === "function") {
+    for (let key of __getOwnPropNames(from2))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from2[key], enumerable: !(desc = __getOwnPropDesc(from2, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var ngneat_until_destroy_exports = {};
+__export(ngneat_until_destroy_exports, {
+  UntilDestroy: () => UntilDestroy,
+  untilDestroyed: () => untilDestroyed
+});
+module.exports = __toCommonJS(ngneat_until_destroy_exports);
+var import_rxjs = require("rxjs");
+var import_core = require("@angular/core");
+var import_operators = require("rxjs/operators");
+const NG_PIPE_DEF = import_core.\u0275NG_PIPE_DEF;
+function isPipe(target) {
+  return !!target[NG_PIPE_DEF];
+}
+const DESTROY = Symbol("__destroy");
+const DECORATOR_APPLIED = Symbol("__decoratorApplied");
+function getSymbol(destroyMethodName) {
+  if (typeof destroyMethodName === "string") {
+    return Symbol(`__destroy__${destroyMethodName}`);
+  } else {
+    return DESTROY;
+  }
+}
+function markAsDecorated(type) {
+  type.prototype[DECORATOR_APPLIED] = true;
+}
+function createSubjectOnTheInstance(instance, symbol) {
+  if (!instance[symbol]) {
+    instance[symbol] = new import_rxjs.Subject();
+  }
+}
+function completeSubjectOnTheInstance(instance, symbol) {
+  if (instance[symbol]) {
+    instance[symbol].next();
+    instance[symbol].complete();
+    instance[symbol] = null;
+  }
+}
+function unsubscribe(property) {
+  if (property instanceof import_rxjs.Subscription) {
+    property.unsubscribe();
+  }
+}
+function unsubscribeIfPropertyIsArrayLike(property) {
+  Array.isArray(property) && property.forEach(unsubscribe);
+}
+function decorateNgOnDestroy(ngOnDestroy, options) {
+  return function() {
+    var _a;
+    ngOnDestroy && ngOnDestroy.call(this);
+    completeSubjectOnTheInstance(this, getSymbol());
+    if (options.arrayName) {
+      unsubscribeIfPropertyIsArrayLike(this[options.arrayName]);
+    }
+    if (options.checkProperties) {
+      for (const property in this) {
+        if ((_a = options.blackList) == null ? void 0 : _a.includes(property)) {
+          continue;
+        }
+        unsubscribe(this[property]);
+      }
+    }
+  };
+}
+function decorateProviderDirectiveOrComponent(type, options) {
+  type.prototype.ngOnDestroy = decorateNgOnDestroy(type.prototype.ngOnDestroy, options);
+}
+function decoratePipe(type, options) {
+  const def = type.\u0275pipe;
+  def.onDestroy = decorateNgOnDestroy(def.onDestroy, options);
+}
+function UntilDestroy(options = {}) {
+  return (type) => {
+    if (isPipe(type)) {
+      decoratePipe(type, options);
+    } else {
+      decorateProviderDirectiveOrComponent(type, options);
+    }
+    markAsDecorated(type);
+  };
+}
+const CLEANUP = 7;
+const CheckerHasBeenSet = Symbol("CheckerHasBeenSet");
+function setupSubjectUnsubscribedChecker(instance, destroy$) {
+  if (instance[CheckerHasBeenSet] || isAngularInTestMode()) {
+    return;
+  }
+  runOutsideAngular(() => (0, import_rxjs.from)(Promise.resolve()).pipe(
+    (0, import_operators.mergeMap)(() => {
+      let lContext;
+      try {
+        lContext = (0, import_core.\u0275getLContext)(instance);
+      } catch (e) {
+        lContext = null;
+      }
+      const lView = lContext == null ? void 0 : lContext.lView;
+      if (lView == null) {
+        return import_rxjs.EMPTY;
+      }
+      const lCleanup = lView[CLEANUP] || (lView[CLEANUP] = []);
+      const cleanupHasBeenExecuted$ = new import_rxjs.Subject();
+      lCleanup.push(function untilDestroyedLCleanup() {
+        runOutsideAngular(() => {
+          cleanupHasBeenExecuted$.next();
+          cleanupHasBeenExecuted$.complete();
+        });
+      });
+      return cleanupHasBeenExecuted$;
+    }),
+    // We can't use `observeOn(asapScheduler)` because this might break the app's change detection.
+    // RxJS schedulers coalesce tasks and then flush the queue, which means our task might be scheduled
+    // within the root zone, and then all of the tasks (that were set up by developers in the Angular zone)
+    // will also be flushed in the root zone.
+    (0, import_operators.mergeMap)(() => Promise.resolve())
+  ).subscribe(() => {
+    var _a;
+    const observed = (_a = destroy$["observed"]) != null ? _a : destroy$["observers"].length > 0;
+    if (observed) {
+      console.warn(createMessage(instance));
+    }
+  }));
+  instance[CheckerHasBeenSet] = true;
+}
+function isAngularInTestMode() {
+  return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    typeof __karma__ !== "undefined" && !!__karma__ || // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    typeof jasmine !== "undefined" && !!jasmine || // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    typeof jest !== "undefined" && !!jest || // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    typeof Mocha !== "undefined" && !!Mocha || // Jest is not defined in ESM mode since it must be access only by importing from `@jest/globals`.
+    // There's no way to check if we're in Jest ESM mode or not, but we can check if the `process` is defined.
+    // Note: it's required to check for `[object process]` because someone might be running unit tests with
+    // Webpack and shimming `process`.
+    typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]"
+  );
+}
+function runOutsideAngular(fn) {
+  var _a;
+  const Zone = import_core.\u0275global.Zone;
+  const isNgZoneEnabled = !!Zone && typeof ((_a = Zone.root) == null ? void 0 : _a.run) === "function";
+  return isNgZoneEnabled ? Zone.root.run(fn) : fn();
+}
+function createMessage(instance) {
+  return `
+  The ${instance.constructor.name} still has subscriptions that haven't been unsubscribed.
+  This may happen if the class extends another class decorated with @UntilDestroy().
+  The child class implements its own ngOnDestroy() method but doesn't call super.ngOnDestroy().
+  Let's look at the following example:
+  @UntilDestroy()
+  @Directive()
+  export abstract class BaseDirective {}
+  @Component({ template: '' })
+  export class ConcreteComponent extends BaseDirective implements OnDestroy {
+    constructor() {
+      super();
+      someObservable$.pipe(untilDestroyed(this)).subscribe();
+    }
+    ngOnDestroy(): void {
+      // Some logic here...
+    }
+  }
+  The BaseDirective.ngOnDestroy() will not be called since Angular will call ngOnDestroy()
+  on the ConcreteComponent, but not on the BaseDirective.
+  One of the solutions is to declare an empty ngOnDestroy method on the BaseDirective:
+  @UntilDestroy()
+  @Directive()
+  export abstract class BaseDirective {
+    ngOnDestroy(): void {}
+  }
+  @Component({ template: '' })
+  export class ConcreteComponent extends BaseDirective implements OnDestroy {
+    constructor() {
+      super();
+      someObservable$.pipe(untilDestroyed(this)).subscribe();
+    }
+    ngOnDestroy(): void {
+      // Some logic here...
+      super.ngOnDestroy();
+    }
+  }
+  `;
+}
+const NG_DEV_MODE = typeof ngDevMode === "undefined" || ngDevMode;
+function overrideNonDirectiveInstanceMethod(instance, destroyMethodName, symbol) {
+  const originalDestroy = instance[destroyMethodName];
+  if (NG_DEV_MODE && typeof originalDestroy !== "function") {
+    throw new Error(`${instance.constructor.name} is using untilDestroyed but doesn't implement ${destroyMethodName}`);
+  }
+  createSubjectOnTheInstance(instance, symbol);
+  instance[destroyMethodName] = function() {
+    originalDestroy.apply(this, arguments);
+    completeSubjectOnTheInstance(this, symbol);
+    instance[destroyMethodName] = originalDestroy;
+  };
+}
+function untilDestroyed(instance, destroyMethodName) {
+  return (source) => {
+    const symbol = getSymbol(destroyMethodName);
+    if (typeof destroyMethodName === "string") {
+      overrideNonDirectiveInstanceMethod(instance, destroyMethodName, symbol);
+    } else {
+      NG_DEV_MODE && ensureClassIsDecorated(instance);
+      createSubjectOnTheInstance(instance, symbol);
+    }
+    const destroy$ = instance[symbol];
+    NG_DEV_MODE && setupSubjectUnsubscribedChecker(instance, destroy$);
+    return source.pipe((0, import_operators.takeUntil)(destroy$));
+  };
+}
+function ensureClassIsDecorated(instance) {
+  const prototype = Object.getPrototypeOf(instance);
+  const missingDecorator = !(DECORATOR_APPLIED in prototype);
+  if (missingDecorator) {
+    throw new Error("untilDestroyed operator cannot be used inside directives or components or providers that are not decorated with UntilDestroy decorator");
+  }
+}

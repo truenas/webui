@@ -1,0 +1,84 @@
+b59d19209a35f04f4bfd5859e919e145
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UploadConfigDialogComponent = void 0;
+const core_1 = require("@angular/core");
+const forms_1 = require("@angular/forms");
+const button_1 = require("@angular/material/button");
+const dialog_1 = require("@angular/material/dialog");
+const router_1 = require("@angular/router");
+const reactive_forms_1 = require("@ngneat/reactive-forms");
+const until_destroy_1 = require("@ngneat/until-destroy");
+const core_2 = require("@ngx-translate/core");
+const requires_roles_directive_1 = require("app/directives/requires-roles/requires-roles.directive");
+const role_enum_1 = require("app/enums/role.enum");
+const general_1 = require("app/helptext/system/general");
+const dialog_service_1 = require("app/modules/dialog/dialog.service");
+const form_actions_component_1 = require("app/modules/forms/ix-forms/components/form-actions/form-actions.component");
+const ix_file_input_component_1 = require("app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+const error_handler_service_1 = require("app/services/error-handler.service");
+const upload_service_1 = require("app/services/upload.service");
+let UploadConfigDialogComponent = class UploadConfigDialogComponent {
+    constructor(formBuilder, router, translate, upload, dialogService, errorHandler) {
+        this.formBuilder = formBuilder;
+        this.router = router;
+        this.translate = translate;
+        this.upload = upload;
+        this.dialogService = dialogService;
+        this.errorHandler = errorHandler;
+        this.requiredRoles = [role_enum_1.Role.FullAdmin];
+        this.form = this.formBuilder.group({
+            config: [null, forms_1.Validators.required],
+        });
+        this.helptext = general_1.helptextSystemGeneral;
+    }
+    onSubmit() {
+        this.dialogService
+            .jobDialog(this.upload.uploadAsJob({
+            file: this.form.value.config[0],
+            method: 'config.upload',
+        }), { title: this.translate.instant('Uploading and Applying Config') })
+            .afterClosed()
+            .pipe(this.errorHandler.catchError(), (0, until_destroy_1.untilDestroyed)(this))
+            .subscribe(() => {
+            this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
+        });
+    }
+};
+exports.UploadConfigDialogComponent = UploadConfigDialogComponent;
+UploadConfigDialogComponent.ctorParameters = () => [
+    { type: reactive_forms_1.FormBuilder },
+    { type: router_1.Router },
+    { type: core_2.TranslateService },
+    { type: upload_service_1.UploadService },
+    { type: dialog_service_1.DialogService },
+    { type: error_handler_service_1.ErrorHandlerService }
+];
+exports.UploadConfigDialogComponent = UploadConfigDialogComponent = __decorate([
+    (0, until_destroy_1.UntilDestroy)(),
+    (0, core_1.Component)({
+        selector: 'ix-upload-config-dialog',
+        template: require("./upload-config-dialog.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            dialog_1.MatDialogTitle,
+            forms_1.ReactiveFormsModule,
+            ix_file_input_component_1.IxFileInputComponent,
+            form_actions_component_1.FormActionsComponent,
+            button_1.MatButton,
+            test_directive_1.TestDirective,
+            dialog_1.MatDialogClose,
+            requires_roles_directive_1.RequiresRolesDirective,
+            core_2.TranslateModule,
+        ],
+    })
+], UploadConfigDialogComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL3N5c3RlbS9nZW5lcmFsLXNldHRpbmdzL3VwbG9hZC1jb25maWctZGlhbG9nL3VwbG9hZC1jb25maWctZGlhbG9nLmNvbXBvbmVudC50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7QUFBQSx3Q0FBbUU7QUFDbkUsMENBQWlFO0FBQ2pFLHFEQUFxRDtBQUNyRCxxREFBMEU7QUFDMUUsNENBQXlDO0FBQ3pDLDJEQUFxRDtBQUNyRCx5REFBcUU7QUFDckUsOENBQXdFO0FBQ3hFLHFHQUFnRztBQUNoRyxtREFBMkM7QUFDM0MseURBQWdGO0FBQ2hGLHNFQUFrRTtBQUNsRSxzSEFBaUg7QUFDakgseUhBQW1IO0FBQ25ILHVFQUFtRTtBQUNuRSw4RUFBeUU7QUFDekUsZ0VBQTREO0FBcUJyRCxJQUFNLDJCQUEyQixHQUFqQyxNQUFNLDJCQUEyQjtJQVN0QyxZQUNVLFdBQXdCLEVBQ3hCLE1BQWMsRUFDZCxTQUEyQixFQUMzQixNQUFxQixFQUNyQixhQUE0QixFQUM1QixZQUFpQztRQUxqQyxnQkFBVyxHQUFYLFdBQVcsQ0FBYTtRQUN4QixXQUFNLEdBQU4sTUFBTSxDQUFRO1FBQ2QsY0FBUyxHQUFULFNBQVMsQ0FBa0I7UUFDM0IsV0FBTSxHQUFOLE1BQU0sQ0FBZTtRQUNyQixrQkFBYSxHQUFiLGFBQWEsQ0FBZTtRQUM1QixpQkFBWSxHQUFaLFlBQVksQ0FBcUI7UUFkbEMsa0JBQWEsR0FBRyxDQUFDLGdCQUFJLENBQUMsU0FBUyxDQUFDLENBQUM7UUFFMUMsU0FBSSxHQUFHLElBQUksQ0FBQyxXQUFXLENBQUMsS0FBSyxDQUFDO1lBQzVCLE1BQU0sRUFBRSxDQUFDLElBQWMsRUFBRSxrQkFBVSxDQUFDLFFBQVEsQ0FBQztTQUM5QyxDQUFDLENBQUM7UUFFTSxhQUFRLEdBQUcsK0JBQVEsQ0FBQztJQVMxQixDQUFDO0lBRUosUUFBUTtRQUNOLElBQUksQ0FBQyxhQUFhO2FBQ2YsU0FBUyxDQUNSLElBQUksQ0FBQyxNQUFNLENBQUMsV0FBVyxDQUFDO1lBQ3RCLElBQUksRUFBRSxJQUFJLENBQUMsSUFBSSxDQUFDLEtBQUssQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDO1lBQy9CLE1BQU0sRUFBRSxlQUFlO1NBQ3hCLENBQUMsRUFDRixFQUFFLEtBQUssRUFBRSxJQUFJLENBQUMsU0FBUyxDQUFDLE9BQU8sQ0FBQywrQkFBK0IsQ0FBQyxFQUFFLENBQ25FO2FBQ0EsV0FBVyxFQUFFO2FBQ2IsSUFBSSxDQUNILElBQUksQ0FBQyxZQUFZLENBQUMsVUFBVSxFQUFFLEVBQzlCLElBQUEsOEJBQWMsRUFBQyxJQUFJLENBQUMsQ0FDckI7YUFDQSxTQUFTLENBQUMsR0FBRyxFQUFFO1lBQ2QsSUFBSSxDQUFDLE1BQU0sQ0FBQyxRQUFRLENBQUMsQ0FBQyx1QkFBdUIsQ0FBQyxFQUFFLEVBQUUsa0JBQWtCLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQztRQUNoRixDQUFDLENBQUMsQ0FBQztJQUNQLENBQUM7O0FBbkNVLGtFQUEyQjs7Ozs7Ozs7O3NDQUEzQiwyQkFBMkI7SUFuQnZDLElBQUEsNEJBQVksR0FBRTtJQUNkLElBQUEsZ0JBQVMsRUFBQztRQUNULFFBQVEsRUFBRSx5QkFBeUI7UUFDbkMsMERBQW9EO1FBRXBELGVBQWUsRUFBRSw4QkFBdUIsQ0FBQyxNQUFNO1FBQy9DLFVBQVUsRUFBRSxJQUFJO1FBQ2hCLE9BQU8sRUFBRTtZQUNQLHVCQUFjO1lBQ2QsMkJBQW1CO1lBQ25CLDhDQUFvQjtZQUNwQiw2Q0FBb0I7WUFDcEIsa0JBQVM7WUFDVCw4QkFBYTtZQUNiLHVCQUFjO1lBQ2QsaURBQXNCO1lBQ3RCLHNCQUFlO1NBQ2hCO0tBQ0YsQ0FBQztHQUNXLDJCQUEyQixDQW9DdkMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL3N5c3RlbS9nZW5lcmFsLXNldHRpbmdzL3VwbG9hZC1jb25maWctZGlhbG9nL3VwbG9hZC1jb25maWctZGlhbG9nLmNvbXBvbmVudC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgQ29tcG9uZW50IH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBWYWxpZGF0b3JzLCBSZWFjdGl2ZUZvcm1zTW9kdWxlIH0gZnJvbSAnQGFuZ3VsYXIvZm9ybXMnO1xuaW1wb3J0IHsgTWF0QnV0dG9uIH0gZnJvbSAnQGFuZ3VsYXIvbWF0ZXJpYWwvYnV0dG9uJztcbmltcG9ydCB7IE1hdERpYWxvZ1RpdGxlLCBNYXREaWFsb2dDbG9zZSB9IGZyb20gJ0Bhbmd1bGFyL21hdGVyaWFsL2RpYWxvZyc7XG5pbXBvcnQgeyBSb3V0ZXIgfSBmcm9tICdAYW5ndWxhci9yb3V0ZXInO1xuaW1wb3J0IHsgRm9ybUJ1aWxkZXIgfSBmcm9tICdAbmduZWF0L3JlYWN0aXZlLWZvcm1zJztcbmltcG9ydCB7IFVudGlsRGVzdHJveSwgdW50aWxEZXN0cm95ZWQgfSBmcm9tICdAbmduZWF0L3VudGlsLWRlc3Ryb3knO1xuaW1wb3J0IHsgVHJhbnNsYXRlU2VydmljZSwgVHJhbnNsYXRlTW9kdWxlIH0gZnJvbSAnQG5neC10cmFuc2xhdGUvY29yZSc7XG5pbXBvcnQgeyBSZXF1aXJlc1JvbGVzRGlyZWN0aXZlIH0gZnJvbSAnYXBwL2RpcmVjdGl2ZXMvcmVxdWlyZXMtcm9sZXMvcmVxdWlyZXMtcm9sZXMuZGlyZWN0aXZlJztcbmltcG9ydCB7IFJvbGUgfSBmcm9tICdhcHAvZW51bXMvcm9sZS5lbnVtJztcbmltcG9ydCB7IGhlbHB0ZXh0U3lzdGVtR2VuZXJhbCBhcyBoZWxwdGV4dCB9IGZyb20gJ2FwcC9oZWxwdGV4dC9zeXN0ZW0vZ2VuZXJhbCc7XG5pbXBvcnQgeyBEaWFsb2dTZXJ2aWNlIH0gZnJvbSAnYXBwL21vZHVsZXMvZGlhbG9nL2RpYWxvZy5zZXJ2aWNlJztcbmltcG9ydCB7IEZvcm1BY3Rpb25zQ29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9mb3JtLWFjdGlvbnMvZm9ybS1hY3Rpb25zLmNvbXBvbmVudCc7XG5pbXBvcnQgeyBJeEZpbGVJbnB1dENvbXBvbmVudCB9IGZyb20gJ2FwcC9tb2R1bGVzL2Zvcm1zL2l4LWZvcm1zL2NvbXBvbmVudHMvaXgtZmlsZS1pbnB1dC9peC1maWxlLWlucHV0LmNvbXBvbmVudCc7XG5pbXBvcnQgeyBUZXN0RGlyZWN0aXZlIH0gZnJvbSAnYXBwL21vZHVsZXMvdGVzdC1pZC90ZXN0LmRpcmVjdGl2ZSc7XG5pbXBvcnQgeyBFcnJvckhhbmRsZXJTZXJ2aWNlIH0gZnJvbSAnYXBwL3NlcnZpY2VzL2Vycm9yLWhhbmRsZXIuc2VydmljZSc7XG5pbXBvcnQgeyBVcGxvYWRTZXJ2aWNlIH0gZnJvbSAnYXBwL3NlcnZpY2VzL3VwbG9hZC5zZXJ2aWNlJztcblxuQFVudGlsRGVzdHJveSgpXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC11cGxvYWQtY29uZmlnLWRpYWxvZycsXG4gIHRlbXBsYXRlVXJsOiAnLi91cGxvYWQtY29uZmlnLWRpYWxvZy5jb21wb25lbnQuaHRtbCcsXG4gIHN0eWxlVXJsczogWycuL3VwbG9hZC1jb25maWctZGlhbG9nLmNvbXBvbmVudC5zY3NzJ10sXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICBzdGFuZGFsb25lOiB0cnVlLFxuICBpbXBvcnRzOiBbXG4gICAgTWF0RGlhbG9nVGl0bGUsXG4gICAgUmVhY3RpdmVGb3Jtc01vZHVsZSxcbiAgICBJeEZpbGVJbnB1dENvbXBvbmVudCxcbiAgICBGb3JtQWN0aW9uc0NvbXBvbmVudCxcbiAgICBNYXRCdXR0b24sXG4gICAgVGVzdERpcmVjdGl2ZSxcbiAgICBNYXREaWFsb2dDbG9zZSxcbiAgICBSZXF1aXJlc1JvbGVzRGlyZWN0aXZlLFxuICAgIFRyYW5zbGF0ZU1vZHVsZSxcbiAgXSxcbn0pXG5leHBvcnQgY2xhc3MgVXBsb2FkQ29uZmlnRGlhbG9nQ29tcG9uZW50IHtcbiAgcmVhZG9ubHkgcmVxdWlyZWRSb2xlcyA9IFtSb2xlLkZ1bGxBZG1pbl07XG5cbiAgZm9ybSA9IHRoaXMuZm9ybUJ1aWxkZXIuZ3JvdXAoe1xuICAgIGNvbmZpZzogW251bGwgYXMgRmlsZVtdLCBWYWxpZGF0b3JzLnJlcXVpcmVkXSxcbiAgfSk7XG5cbiAgcmVhZG9ubHkgaGVscHRleHQgPSBoZWxwdGV4dDtcblxuICBjb25zdHJ1Y3RvcihcbiAgICBwcml2YXRlIGZvcm1CdWlsZGVyOiBGb3JtQnVpbGRlcixcbiAgICBwcml2YXRlIHJvdXRlcjogUm91dGVyLFxuICAgIHByaXZhdGUgdHJhbnNsYXRlOiBUcmFuc2xhdGVTZXJ2aWNlLFxuICAgIHByaXZhdGUgdXBsb2FkOiBVcGxvYWRTZXJ2aWNlLFxuICAgIHByaXZhdGUgZGlhbG9nU2VydmljZTogRGlhbG9nU2VydmljZSxcbiAgICBwcml2YXRlIGVycm9ySGFuZGxlcjogRXJyb3JIYW5kbGVyU2VydmljZSxcbiAgKSB7fVxuXG4gIG9uU3VibWl0KCk6IHZvaWQge1xuICAgIHRoaXMuZGlhbG9nU2VydmljZVxuICAgICAgLmpvYkRpYWxvZyhcbiAgICAgICAgdGhpcy51cGxvYWQudXBsb2FkQXNKb2Ioe1xuICAgICAgICAgIGZpbGU6IHRoaXMuZm9ybS52YWx1ZS5jb25maWdbMF0sXG4gICAgICAgICAgbWV0aG9kOiAnY29uZmlnLnVwbG9hZCcsXG4gICAgICAgIH0pLFxuICAgICAgICB7IHRpdGxlOiB0aGlzLnRyYW5zbGF0ZS5pbnN0YW50KCdVcGxvYWRpbmcgYW5kIEFwcGx5aW5nIENvbmZpZycpIH0sXG4gICAgICApXG4gICAgICAuYWZ0ZXJDbG9zZWQoKVxuICAgICAgLnBpcGUoXG4gICAgICAgIHRoaXMuZXJyb3JIYW5kbGVyLmNhdGNoRXJyb3IoKSxcbiAgICAgICAgdW50aWxEZXN0cm95ZWQodGhpcyksXG4gICAgICApXG4gICAgICAuc3Vic2NyaWJlKCgpID0+IHtcbiAgICAgICAgdGhpcy5yb3V0ZXIubmF2aWdhdGUoWycvc3lzdGVtLXRhc2tzL3Jlc3RhcnQnXSwgeyBza2lwTG9jYXRpb25DaGFuZ2U6IHRydWUgfSk7XG4gICAgICB9KTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

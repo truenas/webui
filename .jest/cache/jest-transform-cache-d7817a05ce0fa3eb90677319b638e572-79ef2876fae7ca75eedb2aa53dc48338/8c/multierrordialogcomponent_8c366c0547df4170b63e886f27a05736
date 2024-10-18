@@ -1,0 +1,49 @@
+fc83120047661d95eb7bfdb4b814807f
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MultiErrorDialogComponent = void 0;
+const scrolling_1 = require("@angular/cdk/scrolling");
+const core_1 = require("@angular/core");
+const button_1 = require("@angular/material/button");
+const dialog_1 = require("@angular/material/dialog");
+const divider_1 = require("@angular/material/divider");
+const core_2 = require("@ngx-translate/core");
+const error_template_component_1 = require("app/modules/dialog/components/multi-error-dialog/error-template/error-template.component");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+let MultiErrorDialogComponent = class MultiErrorDialogComponent {
+    constructor(dialogRef, errors) {
+        this.dialogRef = dialogRef;
+        this.errors = errors;
+    }
+};
+exports.MultiErrorDialogComponent = MultiErrorDialogComponent;
+MultiErrorDialogComponent.ctorParameters = () => [
+    { type: dialog_1.MatDialogRef },
+    { type: Array, decorators: [{ type: core_1.Inject, args: [dialog_1.MAT_DIALOG_DATA,] }] }
+];
+exports.MultiErrorDialogComponent = MultiErrorDialogComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-multi-error-dialog',
+        template: require("./multi-error-dialog.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            dialog_1.MatDialogTitle,
+            scrolling_1.CdkScrollable,
+            dialog_1.MatDialogContent,
+            error_template_component_1.ErrorTemplateComponent,
+            divider_1.MatDivider,
+            dialog_1.MatDialogActions,
+            button_1.MatButton,
+            core_2.TranslateModule,
+            test_directive_1.TestDirective,
+        ],
+    })
+], MultiErrorDialogComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZGlhbG9nL2NvbXBvbmVudHMvbXVsdGktZXJyb3ItZGlhbG9nL211bHRpLWVycm9yLWRpYWxvZy5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7O0FBQUEsc0RBQXVEO0FBQ3ZELHdDQUEyRTtBQUMzRSxxREFBcUQ7QUFDckQscURBRWtDO0FBQ2xDLHVEQUF1RDtBQUN2RCw4Q0FBc0Q7QUFFdEQsdUlBQWtJO0FBQ2xJLHVFQUFtRTtBQW9CNUQsSUFBTSx5QkFBeUIsR0FBL0IsTUFBTSx5QkFBeUI7SUFDcEMsWUFDUyxTQUFrRCxFQUN6QixNQUFxQjtRQUQ5QyxjQUFTLEdBQVQsU0FBUyxDQUF5QztRQUN6QixXQUFNLEdBQU4sTUFBTSxDQUFlO0lBQ3BELENBQUM7O0FBSk8sOERBQXlCOzs7d0NBR2pDLGFBQU0sU0FBQyx3QkFBZTs7b0NBSGQseUJBQXlCO0lBbEJyQyxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsdUJBQXVCO1FBQ2pDLHdEQUFrRDtRQUVsRCxlQUFlLEVBQUUsOEJBQXVCLENBQUMsTUFBTTtRQUMvQyxVQUFVLEVBQUUsSUFBSTtRQUNoQixPQUFPLEVBQUU7WUFDUCx1QkFBYztZQUNkLHlCQUFhO1lBQ2IseUJBQWdCO1lBQ2hCLGlEQUFzQjtZQUN0QixvQkFBVTtZQUNWLHlCQUFnQjtZQUNoQixrQkFBUztZQUNULHNCQUFlO1lBQ2YsOEJBQWE7U0FDZDtLQUNGLENBQUM7R0FDVyx5QkFBeUIsQ0FLckMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZGlhbG9nL2NvbXBvbmVudHMvbXVsdGktZXJyb3ItZGlhbG9nL211bHRpLWVycm9yLWRpYWxvZy5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ2RrU2Nyb2xsYWJsZSB9IGZyb20gJ0Bhbmd1bGFyL2Nkay9zY3JvbGxpbmcnO1xuaW1wb3J0IHsgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCwgSW5qZWN0IH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBNYXRCdXR0b24gfSBmcm9tICdAYW5ndWxhci9tYXRlcmlhbC9idXR0b24nO1xuaW1wb3J0IHtcbiAgTWF0RGlhbG9nUmVmLCBNQVRfRElBTE9HX0RBVEEsIE1hdERpYWxvZ1RpdGxlLCBNYXREaWFsb2dDb250ZW50LCBNYXREaWFsb2dBY3Rpb25zLFxufSBmcm9tICdAYW5ndWxhci9tYXRlcmlhbC9kaWFsb2cnO1xuaW1wb3J0IHsgTWF0RGl2aWRlciB9IGZyb20gJ0Bhbmd1bGFyL21hdGVyaWFsL2RpdmlkZXInO1xuaW1wb3J0IHsgVHJhbnNsYXRlTW9kdWxlIH0gZnJvbSAnQG5neC10cmFuc2xhdGUvY29yZSc7XG5pbXBvcnQgeyBFcnJvclJlcG9ydCB9IGZyb20gJ2FwcC9pbnRlcmZhY2VzL2Vycm9yLXJlcG9ydC5pbnRlcmZhY2UnO1xuaW1wb3J0IHsgRXJyb3JUZW1wbGF0ZUNvbXBvbmVudCB9IGZyb20gJ2FwcC9tb2R1bGVzL2RpYWxvZy9jb21wb25lbnRzL211bHRpLWVycm9yLWRpYWxvZy9lcnJvci10ZW1wbGF0ZS9lcnJvci10ZW1wbGF0ZS5jb21wb25lbnQnO1xuaW1wb3J0IHsgVGVzdERpcmVjdGl2ZSB9IGZyb20gJ2FwcC9tb2R1bGVzL3Rlc3QtaWQvdGVzdC5kaXJlY3RpdmUnO1xuXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC1tdWx0aS1lcnJvci1kaWFsb2cnLFxuICB0ZW1wbGF0ZVVybDogJy4vbXVsdGktZXJyb3ItZGlhbG9nLmNvbXBvbmVudC5odG1sJyxcbiAgc3R5bGVVcmxzOiBbJy4vbXVsdGktZXJyb3ItZGlhbG9nLmNvbXBvbmVudC5zY3NzJ10sXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxuICBzdGFuZGFsb25lOiB0cnVlLFxuICBpbXBvcnRzOiBbXG4gICAgTWF0RGlhbG9nVGl0bGUsXG4gICAgQ2RrU2Nyb2xsYWJsZSxcbiAgICBNYXREaWFsb2dDb250ZW50LFxuICAgIEVycm9yVGVtcGxhdGVDb21wb25lbnQsXG4gICAgTWF0RGl2aWRlcixcbiAgICBNYXREaWFsb2dBY3Rpb25zLFxuICAgIE1hdEJ1dHRvbixcbiAgICBUcmFuc2xhdGVNb2R1bGUsXG4gICAgVGVzdERpcmVjdGl2ZSxcbiAgXSxcbn0pXG5leHBvcnQgY2xhc3MgTXVsdGlFcnJvckRpYWxvZ0NvbXBvbmVudCB7XG4gIGNvbnN0cnVjdG9yKFxuICAgIHB1YmxpYyBkaWFsb2dSZWY6IE1hdERpYWxvZ1JlZjxNdWx0aUVycm9yRGlhbG9nQ29tcG9uZW50PixcbiAgICBASW5qZWN0KE1BVF9ESUFMT0dfREFUQSkgcHVibGljIGVycm9yczogRXJyb3JSZXBvcnRbXSxcbiAgKSB7fVxufVxuIl0sInZlcnNpb24iOjN9

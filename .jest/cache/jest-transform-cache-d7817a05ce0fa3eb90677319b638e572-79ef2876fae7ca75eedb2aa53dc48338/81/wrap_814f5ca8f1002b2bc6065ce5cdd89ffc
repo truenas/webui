@@ -1,0 +1,35 @@
+ca94d972b4dc9e85be5335fa809e4937
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _castFunction_js_1 = __importDefault(require("./_castFunction.js"));
+const partial_js_1 = __importDefault(require("./partial.js"));
+/**
+ * Creates a function that provides `value` to `wrapper` as its first
+ * argument. Any additional arguments provided to the function are appended
+ * to those provided to the `wrapper`. The wrapper is invoked with the `this`
+ * binding of the created function.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {*} value The value to wrap.
+ * @param {Function} [wrapper=identity] The wrapper function.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var p = _.wrap(_.escape, function(func, text) {
+ *   return '<p>' + func(text) + '</p>';
+ * });
+ *
+ * p('fred, barney, & pebbles');
+ * // => '<p>fred, barney, &amp; pebbles</p>'
+ */
+function wrap(value, wrapper) {
+    return (0, partial_js_1.default)((0, _castFunction_js_1.default)(wrapper), value);
+}
+exports.default = wrap;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3dyYXAuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSwwRUFBOEM7QUFDOUMsOERBQW1DO0FBRW5DOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FxQkc7QUFDSCxTQUFTLElBQUksQ0FBQyxLQUFLLEVBQUUsT0FBTztJQUMxQixPQUFPLElBQUEsb0JBQU8sRUFBQyxJQUFBLDBCQUFZLEVBQUMsT0FBTyxDQUFDLEVBQUUsS0FBSyxDQUFDLENBQUM7QUFDL0MsQ0FBQztBQUVELGtCQUFlLElBQUksQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvd3JhcC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgY2FzdEZ1bmN0aW9uIGZyb20gJy4vX2Nhc3RGdW5jdGlvbi5qcyc7XG5pbXBvcnQgcGFydGlhbCBmcm9tICcuL3BhcnRpYWwuanMnO1xuXG4vKipcbiAqIENyZWF0ZXMgYSBmdW5jdGlvbiB0aGF0IHByb3ZpZGVzIGB2YWx1ZWAgdG8gYHdyYXBwZXJgIGFzIGl0cyBmaXJzdFxuICogYXJndW1lbnQuIEFueSBhZGRpdGlvbmFsIGFyZ3VtZW50cyBwcm92aWRlZCB0byB0aGUgZnVuY3Rpb24gYXJlIGFwcGVuZGVkXG4gKiB0byB0aG9zZSBwcm92aWRlZCB0byB0aGUgYHdyYXBwZXJgLiBUaGUgd3JhcHBlciBpcyBpbnZva2VkIHdpdGggdGhlIGB0aGlzYFxuICogYmluZGluZyBvZiB0aGUgY3JlYXRlZCBmdW5jdGlvbi5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDAuMS4wXG4gKiBAY2F0ZWdvcnkgRnVuY3Rpb25cbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIHdyYXAuXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBbd3JhcHBlcj1pZGVudGl0eV0gVGhlIHdyYXBwZXIgZnVuY3Rpb24uXG4gKiBAcmV0dXJucyB7RnVuY3Rpb259IFJldHVybnMgdGhlIG5ldyBmdW5jdGlvbi5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIHAgPSBfLndyYXAoXy5lc2NhcGUsIGZ1bmN0aW9uKGZ1bmMsIHRleHQpIHtcbiAqICAgcmV0dXJuICc8cD4nICsgZnVuYyh0ZXh0KSArICc8L3A+JztcbiAqIH0pO1xuICpcbiAqIHAoJ2ZyZWQsIGJhcm5leSwgJiBwZWJibGVzJyk7XG4gKiAvLyA9PiAnPHA+ZnJlZCwgYmFybmV5LCAmYW1wOyBwZWJibGVzPC9wPidcbiAqL1xuZnVuY3Rpb24gd3JhcCh2YWx1ZSwgd3JhcHBlcikge1xuICByZXR1cm4gcGFydGlhbChjYXN0RnVuY3Rpb24od3JhcHBlciksIHZhbHVlKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgd3JhcDtcbiJdLCJ2ZXJzaW9uIjozfQ==

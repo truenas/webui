@@ -1,0 +1,10 @@
+1430c6402666e05de450729f1dc3a84c
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AccountAttribute = void 0;
+var AccountAttribute;
+(function (AccountAttribute) {
+    AccountAttribute["Local"] = "LOCAL";
+    AccountAttribute["SysAdmin"] = "SYS_ADMIN";
+})(AccountAttribute || (exports.AccountAttribute = AccountAttribute = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2FjY291bnQtYXR0cmlidXRlLmVudW0udHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsSUFBWSxnQkFHWDtBQUhELFdBQVksZ0JBQWdCO0lBQzFCLG1DQUFlLENBQUE7SUFDZiwwQ0FBc0IsQ0FBQTtBQUN4QixDQUFDLEVBSFcsZ0JBQWdCLGdDQUFoQixnQkFBZ0IsUUFHM0IiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2FjY291bnQtYXR0cmlidXRlLmVudW0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGVudW0gQWNjb3VudEF0dHJpYnV0ZSB7XG4gIExvY2FsID0gJ0xPQ0FMJyxcbiAgU3lzQWRtaW4gPSAnU1lTX0FETUlOJyxcbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

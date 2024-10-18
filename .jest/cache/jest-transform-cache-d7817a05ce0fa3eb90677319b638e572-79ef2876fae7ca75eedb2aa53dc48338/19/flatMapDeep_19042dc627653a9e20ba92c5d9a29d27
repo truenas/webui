@@ -1,0 +1,35 @@
+5a83069575f12737aae25fa5e41fb35d
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseFlatten_js_1 = __importDefault(require("./_baseFlatten.js"));
+const map_js_1 = __importDefault(require("./map.js"));
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
+/**
+ * This method is like `_.flatMap` except that it recursively flattens the
+ * mapped results.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.7.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Array} Returns the new flattened array.
+ * @example
+ *
+ * function duplicate(n) {
+ *   return [[[n, n]]];
+ * }
+ *
+ * _.flatMapDeep([1, 2], duplicate);
+ * // => [1, 1, 2, 2]
+ */
+function flatMapDeep(collection, iteratee) {
+    return (0, _baseFlatten_js_1.default)((0, map_js_1.default)(collection, iteratee), INFINITY);
+}
+exports.default = flatMapDeep;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2ZsYXRNYXBEZWVwLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsd0VBQTRDO0FBQzVDLHNEQUEyQjtBQUUzQix5REFBeUQ7QUFDekQsSUFBSSxRQUFRLEdBQUcsQ0FBQyxHQUFHLENBQUMsQ0FBQztBQUVyQjs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQW1CRztBQUNILFNBQVMsV0FBVyxDQUFDLFVBQVUsRUFBRSxRQUFRO0lBQ3ZDLE9BQU8sSUFBQSx5QkFBVyxFQUFDLElBQUEsZ0JBQUcsRUFBQyxVQUFVLEVBQUUsUUFBUSxDQUFDLEVBQUUsUUFBUSxDQUFDLENBQUM7QUFDMUQsQ0FBQztBQUVELGtCQUFlLFdBQVcsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvZmxhdE1hcERlZXAuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VGbGF0dGVuIGZyb20gJy4vX2Jhc2VGbGF0dGVuLmpzJztcbmltcG9ydCBtYXAgZnJvbSAnLi9tYXAuanMnO1xuXG4vKiogVXNlZCBhcyByZWZlcmVuY2VzIGZvciB2YXJpb3VzIGBOdW1iZXJgIGNvbnN0YW50cy4gKi9cbnZhciBJTkZJTklUWSA9IDEgLyAwO1xuXG4vKipcbiAqIFRoaXMgbWV0aG9kIGlzIGxpa2UgYF8uZmxhdE1hcGAgZXhjZXB0IHRoYXQgaXQgcmVjdXJzaXZlbHkgZmxhdHRlbnMgdGhlXG4gKiBtYXBwZWQgcmVzdWx0cy5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuNy4wXG4gKiBAY2F0ZWdvcnkgQ29sbGVjdGlvblxuICogQHBhcmFtIHtBcnJheXxPYmplY3R9IGNvbGxlY3Rpb24gVGhlIGNvbGxlY3Rpb24gdG8gaXRlcmF0ZSBvdmVyLlxuICogQHBhcmFtIHtGdW5jdGlvbn0gW2l0ZXJhdGVlPV8uaWRlbnRpdHldIFRoZSBmdW5jdGlvbiBpbnZva2VkIHBlciBpdGVyYXRpb24uXG4gKiBAcmV0dXJucyB7QXJyYXl9IFJldHVybnMgdGhlIG5ldyBmbGF0dGVuZWQgYXJyYXkuXG4gKiBAZXhhbXBsZVxuICpcbiAqIGZ1bmN0aW9uIGR1cGxpY2F0ZShuKSB7XG4gKiAgIHJldHVybiBbW1tuLCBuXV1dO1xuICogfVxuICpcbiAqIF8uZmxhdE1hcERlZXAoWzEsIDJdLCBkdXBsaWNhdGUpO1xuICogLy8gPT4gWzEsIDEsIDIsIDJdXG4gKi9cbmZ1bmN0aW9uIGZsYXRNYXBEZWVwKGNvbGxlY3Rpb24sIGl0ZXJhdGVlKSB7XG4gIHJldHVybiBiYXNlRmxhdHRlbihtYXAoY29sbGVjdGlvbiwgaXRlcmF0ZWUpLCBJTkZJTklUWSk7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGZsYXRNYXBEZWVwO1xuIl0sInZlcnNpb24iOjN9

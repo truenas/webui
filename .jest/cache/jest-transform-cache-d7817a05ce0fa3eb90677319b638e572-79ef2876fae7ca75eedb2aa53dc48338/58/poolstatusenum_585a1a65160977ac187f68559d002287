@@ -1,0 +1,27 @@
+51899f74aea8965e9fdbe2279d5e6611
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.poolStatusLabels = exports.PoolStatus = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+var PoolStatus;
+(function (PoolStatus) {
+    PoolStatus["Online"] = "ONLINE";
+    PoolStatus["Degraded"] = "DEGRADED";
+    PoolStatus["Faulted"] = "FAULTED";
+    PoolStatus["Offline"] = "OFFLINE";
+    PoolStatus["Unavailable"] = "UNAVAIL";
+    PoolStatus["Removed"] = "REMOVED";
+    // TODO: Check if all of these statuses are actually coming from middleware as opposed to being added on frontend.
+    PoolStatus["Unknown"] = "UNKNOWN";
+    PoolStatus["Locked"] = "LOCKED";
+    PoolStatus["Healthy"] = "HEALTHY";
+})(PoolStatus || (exports.PoolStatus = PoolStatus = {}));
+exports.poolStatusLabels = new Map([
+    [PoolStatus.Online, (0, ngx_translate_extract_marker_1.marker)('Online')],
+    [PoolStatus.Degraded, (0, ngx_translate_extract_marker_1.marker)('Degraded')],
+    [PoolStatus.Faulted, (0, ngx_translate_extract_marker_1.marker)('Faulted')],
+    [PoolStatus.Offline, (0, ngx_translate_extract_marker_1.marker)('Offline')],
+    [PoolStatus.Unavailable, (0, ngx_translate_extract_marker_1.marker)('Unavailable')],
+    [PoolStatus.Removed, (0, ngx_translate_extract_marker_1.marker)('Removed')],
+]);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3Bvb2wtc3RhdHVzLmVudW0udHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMEZBQXNFO0FBRXRFLElBQVksVUFZWDtBQVpELFdBQVksVUFBVTtJQUNwQiwrQkFBaUIsQ0FBQTtJQUNqQixtQ0FBcUIsQ0FBQTtJQUNyQixpQ0FBbUIsQ0FBQTtJQUNuQixpQ0FBbUIsQ0FBQTtJQUNuQixxQ0FBdUIsQ0FBQTtJQUN2QixpQ0FBbUIsQ0FBQTtJQUVuQixrSEFBa0g7SUFDbEgsaUNBQW1CLENBQUE7SUFDbkIsK0JBQWlCLENBQUE7SUFDakIsaUNBQW1CLENBQUE7QUFDckIsQ0FBQyxFQVpXLFVBQVUsMEJBQVYsVUFBVSxRQVlyQjtBQUVZLFFBQUEsZ0JBQWdCLEdBQUcsSUFBSSxHQUFHLENBQUM7SUFDdEMsQ0FBQyxVQUFVLENBQUMsTUFBTSxFQUFFLElBQUEscUNBQUMsRUFBQyxRQUFRLENBQUMsQ0FBQztJQUNoQyxDQUFDLFVBQVUsQ0FBQyxRQUFRLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFVBQVUsQ0FBQyxDQUFDO0lBQ3BDLENBQUMsVUFBVSxDQUFDLE9BQU8sRUFBRSxJQUFBLHFDQUFDLEVBQUMsU0FBUyxDQUFDLENBQUM7SUFDbEMsQ0FBQyxVQUFVLENBQUMsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQyxTQUFTLENBQUMsQ0FBQztJQUNsQyxDQUFDLFVBQVUsQ0FBQyxXQUFXLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLGFBQWEsQ0FBQyxDQUFDO0lBQzFDLENBQUMsVUFBVSxDQUFDLE9BQU8sRUFBRSxJQUFBLHFDQUFDLEVBQUMsU0FBUyxDQUFDLENBQUM7Q0FDbkMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9lbnVtcy9wb29sLXN0YXR1cy5lbnVtLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IG1hcmtlciBhcyBUIH0gZnJvbSAnQGJpZXNiamVyZy9uZ3gtdHJhbnNsYXRlLWV4dHJhY3QtbWFya2VyJztcblxuZXhwb3J0IGVudW0gUG9vbFN0YXR1cyB7XG4gIE9ubGluZSA9ICdPTkxJTkUnLFxuICBEZWdyYWRlZCA9ICdERUdSQURFRCcsXG4gIEZhdWx0ZWQgPSAnRkFVTFRFRCcsXG4gIE9mZmxpbmUgPSAnT0ZGTElORScsXG4gIFVuYXZhaWxhYmxlID0gJ1VOQVZBSUwnLFxuICBSZW1vdmVkID0gJ1JFTU9WRUQnLFxuXG4gIC8vIFRPRE86IENoZWNrIGlmIGFsbCBvZiB0aGVzZSBzdGF0dXNlcyBhcmUgYWN0dWFsbHkgY29taW5nIGZyb20gbWlkZGxld2FyZSBhcyBvcHBvc2VkIHRvIGJlaW5nIGFkZGVkIG9uIGZyb250ZW5kLlxuICBVbmtub3duID0gJ1VOS05PV04nLFxuICBMb2NrZWQgPSAnTE9DS0VEJyxcbiAgSGVhbHRoeSA9ICdIRUFMVEhZJyxcbn1cblxuZXhwb3J0IGNvbnN0IHBvb2xTdGF0dXNMYWJlbHMgPSBuZXcgTWFwKFtcbiAgW1Bvb2xTdGF0dXMuT25saW5lLCBUKCdPbmxpbmUnKV0sXG4gIFtQb29sU3RhdHVzLkRlZ3JhZGVkLCBUKCdEZWdyYWRlZCcpXSxcbiAgW1Bvb2xTdGF0dXMuRmF1bHRlZCwgVCgnRmF1bHRlZCcpXSxcbiAgW1Bvb2xTdGF0dXMuT2ZmbGluZSwgVCgnT2ZmbGluZScpXSxcbiAgW1Bvb2xTdGF0dXMuVW5hdmFpbGFibGUsIFQoJ1VuYXZhaWxhYmxlJyldLFxuICBbUG9vbFN0YXR1cy5SZW1vdmVkLCBUKCdSZW1vdmVkJyldLFxuXSk7XG4iXSwidmVyc2lvbiI6M30=

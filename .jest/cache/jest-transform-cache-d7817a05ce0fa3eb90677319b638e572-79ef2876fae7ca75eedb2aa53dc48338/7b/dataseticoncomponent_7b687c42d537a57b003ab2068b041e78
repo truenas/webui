@@ -1,0 +1,65 @@
+333eb1902f2b63cf81155f768cd9ae3a
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DatasetIconComponent = void 0;
+const core_1 = require("@angular/core");
+const dataset_enum_1 = require("app/enums/dataset.enum");
+const dataset_utils_1 = require("app/pages/datasets/utils/dataset.utils");
+const i0 = __importStar(require("@angular/core"));
+let DatasetIconComponent = class DatasetIconComponent {
+    constructor() {
+        this.dataset = core_1.input.required();
+        this.isRoot = (0, core_1.computed)(() => (0, dataset_utils_1.isRootDataset)(this.dataset()));
+        this.isZvol = (0, core_1.computed)(() => this.dataset().type === dataset_enum_1.DatasetType.Volume);
+        this.iconName = (0, core_1.computed)(() => {
+            if (this.isRoot()) {
+                return 'ix-dataset-root';
+            }
+            if (this.isZvol()) {
+                return 'mdi-database';
+            }
+            return 'ix-dataset';
+        });
+    }
+};
+exports.DatasetIconComponent = DatasetIconComponent;
+DatasetIconComponent.propDecorators = {
+    dataset: [{ type: i0.Input, args: [{ isSignal: true, alias: "dataset", required: true, transform: undefined },] }]
+};
+exports.DatasetIconComponent = DatasetIconComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-dataset-icon',
+        template: require("./dataset-icon.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+    })
+], DatasetIconComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2RhdGFzZXRzL2NvbXBvbmVudHMvZGF0YXNldC1pY29uL2RhdGFzZXQtaWNvbi5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSx3Q0FFdUI7QUFDdkIseURBQXFEO0FBRXJELDBFQUF1RTs7QUFRaEUsSUFBTSxvQkFBb0IsR0FBMUIsTUFBTSxvQkFBb0I7SUFBMUI7dUJBQ2MsWUFBSyxDQUFDLFFBQVEsRUFBa0I7UUFFekMsV0FBTSxHQUFHLElBQUEsZUFBUSxFQUFDLEdBQUcsRUFBRSxDQUFDLElBQUEsNkJBQWEsRUFBQyxJQUFJLENBQUMsT0FBTyxFQUFFLENBQUMsQ0FBQyxDQUFDO1FBRXZELFdBQU0sR0FBRyxJQUFBLGVBQVEsRUFBQyxHQUFHLEVBQUUsQ0FBQyxJQUFJLENBQUMsT0FBTyxFQUFFLENBQUMsSUFBSSxLQUFLLDBCQUFXLENBQUMsTUFBTSxDQUFDLENBQUM7UUFFcEUsYUFBUSxHQUFHLElBQUEsZUFBUSxFQUFDLEdBQUcsRUFBRTtZQUNqQyxJQUFJLElBQUksQ0FBQyxNQUFNLEVBQUUsRUFBRSxDQUFDO2dCQUNsQixPQUFPLGlCQUFpQixDQUFDO1lBQzNCLENBQUM7WUFDRCxJQUFJLElBQUksQ0FBQyxNQUFNLEVBQUUsRUFBRSxDQUFDO2dCQUNsQixPQUFPLGNBQWMsQ0FBQztZQUN4QixDQUFDO1lBRUQsT0FBTyxZQUFZLENBQUM7UUFDdEIsQ0FBQyxDQUFDLENBQUM7S0FDSjs7QUFqQlksb0RBQW9COzs7OytCQUFwQixvQkFBb0I7SUFOaEMsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLGlCQUFpQjtRQUMzQixrREFBNEM7UUFFNUMsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07S0FDaEQsQ0FBQztHQUNXLG9CQUFvQixDQWlCaEMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2RhdGFzZXRzL2NvbXBvbmVudHMvZGF0YXNldC1pY29uL2RhdGFzZXQtaWNvbi5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcbiAgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCwgY29tcHV0ZWQsIGlucHV0LFxufSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7IERhdGFzZXRUeXBlIH0gZnJvbSAnYXBwL2VudW1zL2RhdGFzZXQuZW51bSc7XG5pbXBvcnQgeyBEYXRhc2V0RGV0YWlscyB9IGZyb20gJ2FwcC9pbnRlcmZhY2VzL2RhdGFzZXQuaW50ZXJmYWNlJztcbmltcG9ydCB7IGlzUm9vdERhdGFzZXQgfSBmcm9tICdhcHAvcGFnZXMvZGF0YXNldHMvdXRpbHMvZGF0YXNldC51dGlscyc7XG5cbkBDb21wb25lbnQoe1xuICBzZWxlY3RvcjogJ2l4LWRhdGFzZXQtaWNvbicsXG4gIHRlbXBsYXRlVXJsOiAnLi9kYXRhc2V0LWljb24uY29tcG9uZW50Lmh0bWwnLFxuICBzdHlsZVVybHM6IFsnLi9kYXRhc2V0LWljb24uY29tcG9uZW50LnNjc3MnXSxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG59KVxuZXhwb3J0IGNsYXNzIERhdGFzZXRJY29uQ29tcG9uZW50IHtcbiAgcmVhZG9ubHkgZGF0YXNldCA9IGlucHV0LnJlcXVpcmVkPERhdGFzZXREZXRhaWxzPigpO1xuXG4gIHByb3RlY3RlZCBpc1Jvb3QgPSBjb21wdXRlZCgoKSA9PiBpc1Jvb3REYXRhc2V0KHRoaXMuZGF0YXNldCgpKSk7XG5cbiAgcHJvdGVjdGVkIGlzWnZvbCA9IGNvbXB1dGVkKCgpID0+IHRoaXMuZGF0YXNldCgpLnR5cGUgPT09IERhdGFzZXRUeXBlLlZvbHVtZSk7XG5cbiAgcHJvdGVjdGVkIGljb25OYW1lID0gY29tcHV0ZWQoKCkgPT4ge1xuICAgIGlmICh0aGlzLmlzUm9vdCgpKSB7XG4gICAgICByZXR1cm4gJ2l4LWRhdGFzZXQtcm9vdCc7XG4gICAgfVxuICAgIGlmICh0aGlzLmlzWnZvbCgpKSB7XG4gICAgICByZXR1cm4gJ21kaS1kYXRhYmFzZSc7XG4gICAgfVxuXG4gICAgcmV0dXJuICdpeC1kYXRhc2V0JztcbiAgfSk7XG59XG4iXSwidmVyc2lvbiI6M30=

@@ -1,0 +1,43 @@
+dc7a44eb9587ecfb1d5dac75e837754e
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseClone_js_1 = __importDefault(require("./_baseClone.js"));
+/** Used to compose bitmasks for cloning. */
+var CLONE_DEEP_FLAG = 1, CLONE_SYMBOLS_FLAG = 4;
+/**
+ * This method is like `_.cloneWith` except that it recursively clones `value`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to recursively clone.
+ * @param {Function} [customizer] The function to customize cloning.
+ * @returns {*} Returns the deep cloned value.
+ * @see _.cloneWith
+ * @example
+ *
+ * function customizer(value) {
+ *   if (_.isElement(value)) {
+ *     return value.cloneNode(true);
+ *   }
+ * }
+ *
+ * var el = _.cloneDeepWith(document.body, customizer);
+ *
+ * console.log(el === document.body);
+ * // => false
+ * console.log(el.nodeName);
+ * // => 'BODY'
+ * console.log(el.childNodes.length);
+ * // => 20
+ */
+function cloneDeepWith(value, customizer) {
+    customizer = typeof customizer == 'function' ? customizer : undefined;
+    return (0, _baseClone_js_1.default)(value, CLONE_DEEP_FLAG | CLONE_SYMBOLS_FLAG, customizer);
+}
+exports.default = cloneDeepWith;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2Nsb25lRGVlcFdpdGguanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxvRUFBd0M7QUFFeEMsNENBQTRDO0FBQzVDLElBQUksZUFBZSxHQUFHLENBQUMsRUFDbkIsa0JBQWtCLEdBQUcsQ0FBQyxDQUFDO0FBRTNCOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0EyQkc7QUFDSCxTQUFTLGFBQWEsQ0FBQyxLQUFLLEVBQUUsVUFBVTtJQUN0QyxVQUFVLEdBQUcsT0FBTyxVQUFVLElBQUksVUFBVSxDQUFDLENBQUMsQ0FBQyxVQUFVLENBQUMsQ0FBQyxDQUFDLFNBQVMsQ0FBQztJQUN0RSxPQUFPLElBQUEsdUJBQVMsRUFBQyxLQUFLLEVBQUUsZUFBZSxHQUFHLGtCQUFrQixFQUFFLFVBQVUsQ0FBQyxDQUFDO0FBQzVFLENBQUM7QUFFRCxrQkFBZSxhQUFhLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2Nsb25lRGVlcFdpdGguanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VDbG9uZSBmcm9tICcuL19iYXNlQ2xvbmUuanMnO1xuXG4vKiogVXNlZCB0byBjb21wb3NlIGJpdG1hc2tzIGZvciBjbG9uaW5nLiAqL1xudmFyIENMT05FX0RFRVBfRkxBRyA9IDEsXG4gICAgQ0xPTkVfU1lNQk9MU19GTEFHID0gNDtcblxuLyoqXG4gKiBUaGlzIG1ldGhvZCBpcyBsaWtlIGBfLmNsb25lV2l0aGAgZXhjZXB0IHRoYXQgaXQgcmVjdXJzaXZlbHkgY2xvbmVzIGB2YWx1ZWAuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSA0LjAuMFxuICogQGNhdGVnb3J5IExhbmdcbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIHJlY3Vyc2l2ZWx5IGNsb25lLlxuICogQHBhcmFtIHtGdW5jdGlvbn0gW2N1c3RvbWl6ZXJdIFRoZSBmdW5jdGlvbiB0byBjdXN0b21pemUgY2xvbmluZy5cbiAqIEByZXR1cm5zIHsqfSBSZXR1cm5zIHRoZSBkZWVwIGNsb25lZCB2YWx1ZS5cbiAqIEBzZWUgXy5jbG9uZVdpdGhcbiAqIEBleGFtcGxlXG4gKlxuICogZnVuY3Rpb24gY3VzdG9taXplcih2YWx1ZSkge1xuICogICBpZiAoXy5pc0VsZW1lbnQodmFsdWUpKSB7XG4gKiAgICAgcmV0dXJuIHZhbHVlLmNsb25lTm9kZSh0cnVlKTtcbiAqICAgfVxuICogfVxuICpcbiAqIHZhciBlbCA9IF8uY2xvbmVEZWVwV2l0aChkb2N1bWVudC5ib2R5LCBjdXN0b21pemVyKTtcbiAqXG4gKiBjb25zb2xlLmxvZyhlbCA9PT0gZG9jdW1lbnQuYm9keSk7XG4gKiAvLyA9PiBmYWxzZVxuICogY29uc29sZS5sb2coZWwubm9kZU5hbWUpO1xuICogLy8gPT4gJ0JPRFknXG4gKiBjb25zb2xlLmxvZyhlbC5jaGlsZE5vZGVzLmxlbmd0aCk7XG4gKiAvLyA9PiAyMFxuICovXG5mdW5jdGlvbiBjbG9uZURlZXBXaXRoKHZhbHVlLCBjdXN0b21pemVyKSB7XG4gIGN1c3RvbWl6ZXIgPSB0eXBlb2YgY3VzdG9taXplciA9PSAnZnVuY3Rpb24nID8gY3VzdG9taXplciA6IHVuZGVmaW5lZDtcbiAgcmV0dXJuIGJhc2VDbG9uZSh2YWx1ZSwgQ0xPTkVfREVFUF9GTEFHIHwgQ0xPTkVfU1lNQk9MU19GTEFHLCBjdXN0b21pemVyKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgY2xvbmVEZWVwV2l0aDtcbiJdLCJ2ZXJzaW9uIjozfQ==

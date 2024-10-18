@@ -1,0 +1,48 @@
+d2d93648901fea89873376ddcb233a4f
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UpdateService = void 0;
+const core_1 = require("@angular/core");
+const operators_1 = require("rxjs/operators");
+const window_helper_1 = require("app/helpers/window.helper");
+const ws_service_1 = require("app/services/ws.service");
+let UpdateService = class UpdateService {
+    constructor(ws, window) {
+        this.ws = ws;
+        this.window = window;
+    }
+    /**
+     * Hard refresh is needed to load new html and js after the update.
+     */
+    hardRefreshIfNeeded() {
+        return this.ws.call('system.boot_id').pipe((0, operators_1.tap)((bootId) => {
+            if (!this.lastSeenBootId) {
+                // First boot.
+                this.lastSeenBootId = bootId;
+                return;
+            }
+            if (this.lastSeenBootId === bootId) {
+                // No update.
+                return;
+            }
+            this.window.location.reload();
+        }));
+    }
+};
+exports.UpdateService = UpdateService;
+UpdateService.ctorParameters = () => [
+    { type: ws_service_1.WebSocketService },
+    { type: Window, decorators: [{ type: core_1.Inject, args: [window_helper_1.WINDOW,] }] }
+];
+exports.UpdateService = UpdateService = __decorate([
+    (0, core_1.Injectable)({
+        providedIn: 'root',
+    })
+], UpdateService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3NlcnZpY2VzL3VwZGF0ZS5zZXJ2aWNlLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUFBLHdDQUFtRDtBQUVuRCw4Q0FBcUM7QUFDckMsNkRBQW1EO0FBQ25ELHdEQUEyRDtBQUtwRCxJQUFNLGFBQWEsR0FBbkIsTUFBTSxhQUFhO0lBR3hCLFlBQ1UsRUFBb0IsRUFDSixNQUFjO1FBRDlCLE9BQUUsR0FBRixFQUFFLENBQWtCO1FBQ0osV0FBTSxHQUFOLE1BQU0sQ0FBUTtJQUNyQyxDQUFDO0lBRUo7O09BRUc7SUFDSCxtQkFBbUI7UUFDakIsT0FBTyxJQUFJLENBQUMsRUFBRSxDQUFDLElBQUksQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDLElBQUksQ0FDeEMsSUFBQSxlQUFHLEVBQUMsQ0FBQyxNQUFNLEVBQUUsRUFBRTtZQUNiLElBQUksQ0FBQyxJQUFJLENBQUMsY0FBYyxFQUFFLENBQUM7Z0JBQ3pCLGNBQWM7Z0JBQ2QsSUFBSSxDQUFDLGNBQWMsR0FBRyxNQUFNLENBQUM7Z0JBQzdCLE9BQU87WUFDVCxDQUFDO1lBRUQsSUFBSSxJQUFJLENBQUMsY0FBYyxLQUFLLE1BQU0sRUFBRSxDQUFDO2dCQUNuQyxhQUFhO2dCQUNiLE9BQU87WUFDVCxDQUFDO1lBRUQsSUFBSSxDQUFDLE1BQU0sQ0FBQyxRQUFRLENBQUMsTUFBTSxFQUFFLENBQUM7UUFDaEMsQ0FBQyxDQUFDLENBQ0gsQ0FBQztJQUNKLENBQUM7O0FBNUJVLHNDQUFhOzs7eUNBS3JCLGFBQU0sU0FBQyxzQkFBTTs7d0JBTEwsYUFBYTtJQUh6QixJQUFBLGlCQUFVLEVBQUM7UUFDVixVQUFVLEVBQUUsTUFBTTtLQUNuQixDQUFDO0dBQ1csYUFBYSxDQTZCekIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3NlcnZpY2VzL3VwZGF0ZS5zZXJ2aWNlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEluamVjdCwgSW5qZWN0YWJsZSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgT2JzZXJ2YWJsZSB9IGZyb20gJ3J4anMnO1xuaW1wb3J0IHsgdGFwIH0gZnJvbSAncnhqcy9vcGVyYXRvcnMnO1xuaW1wb3J0IHsgV0lORE9XIH0gZnJvbSAnYXBwL2hlbHBlcnMvd2luZG93LmhlbHBlcic7XG5pbXBvcnQgeyBXZWJTb2NrZXRTZXJ2aWNlIH0gZnJvbSAnYXBwL3NlcnZpY2VzL3dzLnNlcnZpY2UnO1xuXG5ASW5qZWN0YWJsZSh7XG4gIHByb3ZpZGVkSW46ICdyb290Jyxcbn0pXG5leHBvcnQgY2xhc3MgVXBkYXRlU2VydmljZSB7XG4gIHByaXZhdGUgbGFzdFNlZW5Cb290SWQ6IHN0cmluZztcblxuICBjb25zdHJ1Y3RvcihcbiAgICBwcml2YXRlIHdzOiBXZWJTb2NrZXRTZXJ2aWNlLFxuICAgIEBJbmplY3QoV0lORE9XKSBwcml2YXRlIHdpbmRvdzogV2luZG93LFxuICApIHt9XG5cbiAgLyoqXG4gICAqIEhhcmQgcmVmcmVzaCBpcyBuZWVkZWQgdG8gbG9hZCBuZXcgaHRtbCBhbmQganMgYWZ0ZXIgdGhlIHVwZGF0ZS5cbiAgICovXG4gIGhhcmRSZWZyZXNoSWZOZWVkZWQoKTogT2JzZXJ2YWJsZTxzdHJpbmc+IHtcbiAgICByZXR1cm4gdGhpcy53cy5jYWxsKCdzeXN0ZW0uYm9vdF9pZCcpLnBpcGUoXG4gICAgICB0YXAoKGJvb3RJZCkgPT4ge1xuICAgICAgICBpZiAoIXRoaXMubGFzdFNlZW5Cb290SWQpIHtcbiAgICAgICAgICAvLyBGaXJzdCBib290LlxuICAgICAgICAgIHRoaXMubGFzdFNlZW5Cb290SWQgPSBib290SWQ7XG4gICAgICAgICAgcmV0dXJuO1xuICAgICAgICB9XG5cbiAgICAgICAgaWYgKHRoaXMubGFzdFNlZW5Cb290SWQgPT09IGJvb3RJZCkge1xuICAgICAgICAgIC8vIE5vIHVwZGF0ZS5cbiAgICAgICAgICByZXR1cm47XG4gICAgICAgIH1cblxuICAgICAgICB0aGlzLndpbmRvdy5sb2NhdGlvbi5yZWxvYWQoKTtcbiAgICAgIH0pLFxuICAgICk7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

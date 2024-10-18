@@ -1,0 +1,61 @@
+a4582735cfb5abcb586221051dada8c3
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AppDetailsPanelComponent = void 0;
+const core_1 = require("@angular/core");
+const i0 = __importStar(require("@angular/core"));
+let AppDetailsPanelComponent = class AppDetailsPanelComponent {
+    constructor() {
+        this.app = (0, core_1.input)();
+        this.startApp = (0, core_1.output)();
+        this.stopApp = (0, core_1.output)();
+        this.closeMobileDetails = (0, core_1.output)();
+    }
+    onCloseMobileDetails() {
+        this.closeMobileDetails.emit();
+    }
+};
+exports.AppDetailsPanelComponent = AppDetailsPanelComponent;
+AppDetailsPanelComponent.propDecorators = {
+    app: [{ type: i0.Input, args: [{ isSignal: true, alias: "app", required: false, transform: undefined },] }],
+    startApp: [{ type: i0.Output, args: ["startApp",] }],
+    stopApp: [{ type: i0.Output, args: ["stopApp",] }],
+    closeMobileDetails: [{ type: i0.Output, args: ["closeMobileDetails",] }]
+};
+exports.AppDetailsPanelComponent = AppDetailsPanelComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-app-details-panel',
+        template: require("./app-details-panel.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+    })
+], AppDetailsPanelComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2FwcHMvY29tcG9uZW50cy9pbnN0YWxsZWQtYXBwcy9hcHAtZGV0YWlscy1wYW5lbC9hcHAtZGV0YWlscy1wYW5lbC5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSx3Q0FFdUI7O0FBU2hCLElBQU0sd0JBQXdCLEdBQTlCLE1BQU0sd0JBQXdCO0lBQTlCO21CQUNVLElBQUEsWUFBSyxHQUFPO1FBRWxCLGFBQVEsR0FBRyxJQUFBLGFBQU0sR0FBRTtRQUNuQixZQUFPLEdBQUcsSUFBQSxhQUFNLEdBQUU7UUFDbEIsdUJBQWtCLEdBQUcsSUFBQSxhQUFNLEdBQUU7S0FLdkM7SUFIQyxvQkFBb0I7UUFDbEIsSUFBSSxDQUFDLGtCQUFrQixDQUFDLElBQUksRUFBRSxDQUFDO0lBQ2pDLENBQUM7O0FBVFUsNERBQXdCOzs7Ozs7O21DQUF4Qix3QkFBd0I7SUFOcEMsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLHNCQUFzQjtRQUNoQyx1REFBaUQ7UUFFakQsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07S0FDaEQsQ0FBQztHQUNXLHdCQUF3QixDQVVwQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvYXBwcy9jb21wb25lbnRzL2luc3RhbGxlZC1hcHBzL2FwcC1kZXRhaWxzLXBhbmVsL2FwcC1kZXRhaWxzLXBhbmVsLmNvbXBvbmVudC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge1xuICBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgQ29tcG9uZW50LCBpbnB1dCwgb3V0cHV0LFxufSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7IEFwcCB9IGZyb20gJ2FwcC9pbnRlcmZhY2VzL2FwcC5pbnRlcmZhY2UnO1xuXG5AQ29tcG9uZW50KHtcbiAgc2VsZWN0b3I6ICdpeC1hcHAtZGV0YWlscy1wYW5lbCcsXG4gIHRlbXBsYXRlVXJsOiAnLi9hcHAtZGV0YWlscy1wYW5lbC5jb21wb25lbnQuaHRtbCcsXG4gIHN0eWxlVXJsczogWycuL2FwcC1kZXRhaWxzLXBhbmVsLmNvbXBvbmVudC5zY3NzJ10sXG4gIGNoYW5nZURldGVjdGlvbjogQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3kuT25QdXNoLFxufSlcbmV4cG9ydCBjbGFzcyBBcHBEZXRhaWxzUGFuZWxDb21wb25lbnQge1xuICByZWFkb25seSBhcHAgPSBpbnB1dDxBcHA+KCk7XG5cbiAgcmVhZG9ubHkgc3RhcnRBcHAgPSBvdXRwdXQoKTtcbiAgcmVhZG9ubHkgc3RvcEFwcCA9IG91dHB1dCgpO1xuICByZWFkb25seSBjbG9zZU1vYmlsZURldGFpbHMgPSBvdXRwdXQoKTtcblxuICBvbkNsb3NlTW9iaWxlRGV0YWlscygpOiB2b2lkIHtcbiAgICB0aGlzLmNsb3NlTW9iaWxlRGV0YWlscy5lbWl0KCk7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

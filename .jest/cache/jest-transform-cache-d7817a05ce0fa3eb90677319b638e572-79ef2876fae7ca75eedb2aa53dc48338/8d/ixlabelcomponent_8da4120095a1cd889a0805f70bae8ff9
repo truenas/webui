@@ -1,0 +1,59 @@
+4eeda8d4f17a7bbd90b9f26acaf02d18
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxLabelComponent = void 0;
+const core_1 = require("@angular/core");
+const tooltip_component_1 = require("app/modules/tooltip/tooltip.component");
+const i0 = __importStar(require("@angular/core"));
+let IxLabelComponent = class IxLabelComponent {
+    constructor() {
+        this.label = (0, core_1.input)();
+        this.required = (0, core_1.input)(false);
+        this.tooltip = (0, core_1.input)();
+    }
+};
+exports.IxLabelComponent = IxLabelComponent;
+IxLabelComponent.propDecorators = {
+    label: [{ type: i0.Input, args: [{ isSignal: true, alias: "label", required: false, transform: undefined },] }],
+    required: [{ type: i0.Input, args: [{ isSignal: true, alias: "required", required: false, transform: undefined },] }],
+    tooltip: [{ type: i0.Input, args: [{ isSignal: true, alias: "tooltip", required: false, transform: undefined },] }]
+};
+exports.IxLabelComponent = IxLabelComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-label',
+        template: require("./ix-label.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [tooltip_component_1.TooltipComponent],
+    })
+], IxLabelComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1sYWJlbC9peC1sYWJlbC5jb21wb25lbnQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSx3Q0FHdUI7QUFDdkIsNkVBQXlFOztBQVVsRSxJQUFNLGdCQUFnQixHQUF0QixNQUFNLGdCQUFnQjtJQUF0QjtxQkFDWSxJQUFBLFlBQUssR0FBVTt3QkFDWixJQUFBLFlBQUssRUFBQyxLQUFLLENBQUM7dUJBQ2IsSUFBQSxZQUFLLEdBQVU7S0FDbkM7O0FBSlksNENBQWdCOzs7Ozs7MkJBQWhCLGdCQUFnQjtJQVI1QixJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsVUFBVTtRQUNwQiw4Q0FBd0M7UUFFeEMsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07UUFDL0MsVUFBVSxFQUFFLElBQUk7UUFDaEIsT0FBTyxFQUFFLENBQUMsb0NBQWdCLENBQUM7S0FDNUIsQ0FBQztHQUNXLGdCQUFnQixDQUk1QiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvbW9kdWxlcy9mb3Jtcy9peC1mb3Jtcy9jb21wb25lbnRzL2l4LWxhYmVsL2l4LWxhYmVsLmNvbXBvbmVudC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge1xuICBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgQ29tcG9uZW50LFxuICBpbnB1dCxcbn0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBUb29sdGlwQ29tcG9uZW50IH0gZnJvbSAnYXBwL21vZHVsZXMvdG9vbHRpcC90b29sdGlwLmNvbXBvbmVudCc7XG5cbkBDb21wb25lbnQoe1xuICBzZWxlY3RvcjogJ2l4LWxhYmVsJyxcbiAgdGVtcGxhdGVVcmw6ICcuL2l4LWxhYmVsLmNvbXBvbmVudC5odG1sJyxcbiAgc3R5bGVVcmxzOiBbJy4vaXgtbGFiZWwuY29tcG9uZW50LnNjc3MnXSxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGltcG9ydHM6IFtUb29sdGlwQ29tcG9uZW50XSxcbn0pXG5leHBvcnQgY2xhc3MgSXhMYWJlbENvbXBvbmVudCB7XG4gIHJlYWRvbmx5IGxhYmVsID0gaW5wdXQ8c3RyaW5nPigpO1xuICByZWFkb25seSByZXF1aXJlZCA9IGlucHV0KGZhbHNlKTtcbiAgcmVhZG9ubHkgdG9vbHRpcCA9IGlucHV0PHN0cmluZz4oKTtcbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,44 @@
+41ef1127130f33cf67c5782f7b278f7c
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseFlatten_js_1 = __importDefault(require("./_baseFlatten.js"));
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const _baseUniq_js_1 = __importDefault(require("./_baseUniq.js"));
+const isArrayLikeObject_js_1 = __importDefault(require("./isArrayLikeObject.js"));
+const last_js_1 = __importDefault(require("./last.js"));
+/**
+ * This method is like `_.union` except that it accepts `iteratee` which is
+ * invoked for each element of each `arrays` to generate the criterion by
+ * which uniqueness is computed. Result values are chosen from the first
+ * array in which the value occurs. The iteratee is invoked with one argument:
+ * (value).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {...Array} [arrays] The arrays to inspect.
+ * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @returns {Array} Returns the new array of combined values.
+ * @example
+ *
+ * _.unionBy([2.1], [1.2, 2.3], Math.floor);
+ * // => [2.1, 1.2]
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+ * // => [{ 'x': 1 }, { 'x': 2 }]
+ */
+var unionBy = (0, _baseRest_js_1.default)(function (arrays) {
+    var iteratee = (0, last_js_1.default)(arrays);
+    if ((0, isArrayLikeObject_js_1.default)(iteratee)) {
+        iteratee = undefined;
+    }
+    return (0, _baseUniq_js_1.default)((0, _baseFlatten_js_1.default)(arrays, 1, isArrayLikeObject_js_1.default, true), (0, _baseIteratee_js_1.default)(iteratee, 2));
+});
+exports.default = unionBy;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3VuaW9uQnkuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSx3RUFBNEM7QUFDNUMsMEVBQThDO0FBQzlDLGtFQUFzQztBQUN0QyxrRUFBc0M7QUFDdEMsa0ZBQXVEO0FBQ3ZELHdEQUE2QjtBQUU3Qjs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXNCRztBQUNILElBQUksT0FBTyxHQUFHLElBQUEsc0JBQVEsRUFBQyxVQUFTLE1BQU07SUFDcEMsSUFBSSxRQUFRLEdBQUcsSUFBQSxpQkFBSSxFQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQzVCLElBQUksSUFBQSw4QkFBaUIsRUFBQyxRQUFRLENBQUMsRUFBRSxDQUFDO1FBQ2hDLFFBQVEsR0FBRyxTQUFTLENBQUM7SUFDdkIsQ0FBQztJQUNELE9BQU8sSUFBQSxzQkFBUSxFQUFDLElBQUEseUJBQVcsRUFBQyxNQUFNLEVBQUUsQ0FBQyxFQUFFLDhCQUFpQixFQUFFLElBQUksQ0FBQyxFQUFFLElBQUEsMEJBQVksRUFBQyxRQUFRLEVBQUUsQ0FBQyxDQUFDLENBQUMsQ0FBQztBQUM5RixDQUFDLENBQUMsQ0FBQztBQUVILGtCQUFlLE9BQU8sQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvdW5pb25CeS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZUZsYXR0ZW4gZnJvbSAnLi9fYmFzZUZsYXR0ZW4uanMnO1xuaW1wb3J0IGJhc2VJdGVyYXRlZSBmcm9tICcuL19iYXNlSXRlcmF0ZWUuanMnO1xuaW1wb3J0IGJhc2VSZXN0IGZyb20gJy4vX2Jhc2VSZXN0LmpzJztcbmltcG9ydCBiYXNlVW5pcSBmcm9tICcuL19iYXNlVW5pcS5qcyc7XG5pbXBvcnQgaXNBcnJheUxpa2VPYmplY3QgZnJvbSAnLi9pc0FycmF5TGlrZU9iamVjdC5qcyc7XG5pbXBvcnQgbGFzdCBmcm9tICcuL2xhc3QuanMnO1xuXG4vKipcbiAqIFRoaXMgbWV0aG9kIGlzIGxpa2UgYF8udW5pb25gIGV4Y2VwdCB0aGF0IGl0IGFjY2VwdHMgYGl0ZXJhdGVlYCB3aGljaCBpc1xuICogaW52b2tlZCBmb3IgZWFjaCBlbGVtZW50IG9mIGVhY2ggYGFycmF5c2AgdG8gZ2VuZXJhdGUgdGhlIGNyaXRlcmlvbiBieVxuICogd2hpY2ggdW5pcXVlbmVzcyBpcyBjb21wdXRlZC4gUmVzdWx0IHZhbHVlcyBhcmUgY2hvc2VuIGZyb20gdGhlIGZpcnN0XG4gKiBhcnJheSBpbiB3aGljaCB0aGUgdmFsdWUgb2NjdXJzLiBUaGUgaXRlcmF0ZWUgaXMgaW52b2tlZCB3aXRoIG9uZSBhcmd1bWVudDpcbiAqICh2YWx1ZSkuXG4gKlxuICogQHN0YXRpY1xuICogQG1lbWJlck9mIF9cbiAqIEBzaW5jZSA0LjAuMFxuICogQGNhdGVnb3J5IEFycmF5XG4gKiBAcGFyYW0gey4uLkFycmF5fSBbYXJyYXlzXSBUaGUgYXJyYXlzIHRvIGluc3BlY3QuXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBbaXRlcmF0ZWU9Xy5pZGVudGl0eV0gVGhlIGl0ZXJhdGVlIGludm9rZWQgcGVyIGVsZW1lbnQuXG4gKiBAcmV0dXJucyB7QXJyYXl9IFJldHVybnMgdGhlIG5ldyBhcnJheSBvZiBjb21iaW5lZCB2YWx1ZXMuXG4gKiBAZXhhbXBsZVxuICpcbiAqIF8udW5pb25CeShbMi4xXSwgWzEuMiwgMi4zXSwgTWF0aC5mbG9vcik7XG4gKiAvLyA9PiBbMi4xLCAxLjJdXG4gKlxuICogLy8gVGhlIGBfLnByb3BlcnR5YCBpdGVyYXRlZSBzaG9ydGhhbmQuXG4gKiBfLnVuaW9uQnkoW3sgJ3gnOiAxIH1dLCBbeyAneCc6IDIgfSwgeyAneCc6IDEgfV0sICd4Jyk7XG4gKiAvLyA9PiBbeyAneCc6IDEgfSwgeyAneCc6IDIgfV1cbiAqL1xudmFyIHVuaW9uQnkgPSBiYXNlUmVzdChmdW5jdGlvbihhcnJheXMpIHtcbiAgdmFyIGl0ZXJhdGVlID0gbGFzdChhcnJheXMpO1xuICBpZiAoaXNBcnJheUxpa2VPYmplY3QoaXRlcmF0ZWUpKSB7XG4gICAgaXRlcmF0ZWUgPSB1bmRlZmluZWQ7XG4gIH1cbiAgcmV0dXJuIGJhc2VVbmlxKGJhc2VGbGF0dGVuKGFycmF5cywgMSwgaXNBcnJheUxpa2VPYmplY3QsIHRydWUpLCBiYXNlSXRlcmF0ZWUoaXRlcmF0ZWUsIDIpKTtcbn0pO1xuXG5leHBvcnQgZGVmYXVsdCB1bmlvbkJ5O1xuIl0sInZlcnNpb24iOjN9

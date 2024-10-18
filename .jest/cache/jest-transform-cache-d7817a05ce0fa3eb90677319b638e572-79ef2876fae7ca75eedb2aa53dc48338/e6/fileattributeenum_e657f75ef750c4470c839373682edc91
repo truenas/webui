@@ -1,0 +1,10 @@
+d05519cda32d7ca77674e5675821d52e
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FileAttribute = void 0;
+var FileAttribute;
+(function (FileAttribute) {
+    FileAttribute["MountRoot"] = "MOUNT_ROOT";
+    FileAttribute["Immutable"] = "IMMUTABLE";
+})(FileAttribute || (exports.FileAttribute = FileAttribute = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2ZpbGUtYXR0cmlidXRlLmVudW0udHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsSUFBWSxhQUdYO0FBSEQsV0FBWSxhQUFhO0lBQ3ZCLHlDQUF3QixDQUFBO0lBQ3hCLHdDQUF1QixDQUFBO0FBQ3pCLENBQUMsRUFIVyxhQUFhLDZCQUFiLGFBQWEsUUFHeEIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2ZpbGUtYXR0cmlidXRlLmVudW0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGVudW0gRmlsZUF0dHJpYnV0ZSB7XG4gIE1vdW50Um9vdCA9ICdNT1VOVF9ST09UJyxcbiAgSW1tdXRhYmxlID0gJ0lNTVVUQUJMRScsXG59XG4iXSwidmVyc2lvbiI6M30=

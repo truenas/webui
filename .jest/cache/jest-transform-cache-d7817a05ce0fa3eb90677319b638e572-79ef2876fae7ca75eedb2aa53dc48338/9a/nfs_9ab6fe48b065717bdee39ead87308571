@@ -1,0 +1,45 @@
+8a348e8683771d5b35e7d4350da92055
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helptextSharingNfs = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.helptextSharingNfs = {
+    root_level_warning: (0, ngx_translate_extract_marker_1.marker)('Configuring NFS exports of root-level datasets\
+ may lead to storage reconfiguration issues.\
+ Consider creating a dataset instead.'),
+    // NFSFormComponent
+    tooltip_path: (0, ngx_translate_extract_marker_1.marker)('Full path to the pool, dataset or directory to share. \
+  The path must reside within a pool. Mandatory.'),
+    error_alias: (0, ngx_translate_extract_marker_1.marker)('The <i>Alias</i> field can either be left empty or \
+ have an alias defined for each path in the share.'),
+    tooltip_comment: (0, ngx_translate_extract_marker_1.marker)('Provide helpful notations related to the share, e.g. ‘Shared to everybody’. \
+    Maximum length is 120 characters.'),
+    tooltip_alldirs: (0, ngx_translate_extract_marker_1.marker)('Set to allow the client to mount any\
+ subdirectory within the <b>Path</b>.'),
+    tooltip_ro: (0, ngx_translate_extract_marker_1.marker)('Set to prohibit writing to the share.'),
+    tooltip_quiet: (0, ngx_translate_extract_marker_1.marker)('Set to inhibit some syslog diagnostics\
+ to avoid error messages. See\
+ <a href="https://man7.org/linux/man-pages/man5/exports.5.html"\
+ target="_blank">exports(5)</a> for examples.'),
+    tooltip_enabled: (0, ngx_translate_extract_marker_1.marker)('Enable this NFS share. Unset to disable this NFS share \
+ without deleting it.'),
+    tooltip_networks_wrapper: (0, ngx_translate_extract_marker_1.marker)('Click "Add" to specify NFS client network ranges for this share.\
+ If both networks and hosts are empty the share will be exported to everyone.'),
+    tooltip_network: (0, ngx_translate_extract_marker_1.marker)('Allowed network in network/mask CIDR notation (example <i>1.2.3.4/24<i>).\
+     One entry per field. Leave empty to allow everybody.'),
+    tooltip_hosts: (0, ngx_translate_extract_marker_1.marker)('Allowed IP address or hostname. One entry per field. Leave empty to allow everybody.'),
+    tooltip_hosts_wrapper: (0, ngx_translate_extract_marker_1.marker)('Click "Add" to specify NFS client hosts for this share.\
+ If both networks and hosts are empty the share will be exported to everyone.'),
+    tooltip_maproot_user: (0, ngx_translate_extract_marker_1.marker)('When a user is selected, the <i>root</i> user is\
+ limited to the permissions of that user.'),
+    tooltip_maproot_group: (0, ngx_translate_extract_marker_1.marker)('When a group is selected, the <i>root</i> user is also\
+ limited to the permissions of that group.'),
+    tooltip_mapall_user: (0, ngx_translate_extract_marker_1.marker)('The specified permissions of that user are used\
+ by all clients.'),
+    tooltip_mapall_group: (0, ngx_translate_extract_marker_1.marker)('The specified permissions of that group are used\
+ by all clients.'),
+    tooltip_security: (0, ngx_translate_extract_marker_1.marker)('Specifies level of authentication and cryptographic protection.\
+ SYS or none should be used if no KDC is available. If a KDC is available, e.g. Active Directory, KRB5 is recommended.\
+ If desired KRB5I (integrity protection) and/or KRB5P (privacy protection) may be included with KRB5.'),
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L3NoYXJpbmcvbmZzL25mcy50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSwwRkFBc0U7QUFFekQsUUFBQSxrQkFBa0IsR0FBRztJQUNoQyxrQkFBa0IsRUFBRSxJQUFBLHFDQUFDLEVBQ25COztzQ0FFa0MsQ0FDbkM7SUFFRCxtQkFBbUI7SUFDbkIsWUFBWSxFQUFFLElBQUEscUNBQUMsRUFBQztpREFDK0IsQ0FBQztJQUNoRCxXQUFXLEVBQUUsSUFBQSxxQ0FBQyxFQUFDO21EQUNrQyxDQUFDO0lBQ2xELGVBQWUsRUFBRSxJQUFBLHFDQUFDLEVBQ2hCO3NDQUNrQyxDQUNuQztJQUNELGVBQWUsRUFBRSxJQUFBLHFDQUFDLEVBQ2hCO3NDQUNrQyxDQUNuQztJQUNELFVBQVUsRUFBRSxJQUFBLHFDQUFDLEVBQUMsdUNBQXVDLENBQUM7SUFDdEQsYUFBYSxFQUFFLElBQUEscUNBQUMsRUFDZDs7OzhDQUcwQyxDQUMzQztJQUNELGVBQWUsRUFBRSxJQUFBLHFDQUFDLEVBQUM7c0JBQ0MsQ0FBQztJQUNyQix3QkFBd0IsRUFBRSxJQUFBLHFDQUFDLEVBQ3pCOzhFQUMwRSxDQUMzRTtJQUNELGVBQWUsRUFBRSxJQUFBLHFDQUFDLEVBQ2hCOzBEQUNzRCxDQUN2RDtJQUNELGFBQWEsRUFBRSxJQUFBLHFDQUFDLEVBQ2Qsc0ZBQXNGLENBQ3ZGO0lBQ0QscUJBQXFCLEVBQUUsSUFBQSxxQ0FBQyxFQUN0Qjs4RUFDMEUsQ0FDM0U7SUFDRCxvQkFBb0IsRUFBRSxJQUFBLHFDQUFDLEVBQ3JCOzBDQUNzQyxDQUN2QztJQUNELHFCQUFxQixFQUFFLElBQUEscUNBQUMsRUFDdEI7MkNBQ3VDLENBQ3hDO0lBQ0QsbUJBQW1CLEVBQUUsSUFBQSxxQ0FBQyxFQUNwQjtpQkFDYSxDQUNkO0lBQ0Qsb0JBQW9CLEVBQUUsSUFBQSxxQ0FBQyxFQUNyQjtpQkFDYSxDQUNkO0lBQ0QsZ0JBQWdCLEVBQUUsSUFBQSxxQ0FBQyxFQUNqQjs7c0dBRWtHLENBQ25HO0NBQ0YsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvaGVscHRleHQvc2hhcmluZy9uZnMvbmZzLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IG1hcmtlciBhcyBUIH0gZnJvbSAnQGJpZXNiamVyZy9uZ3gtdHJhbnNsYXRlLWV4dHJhY3QtbWFya2VyJztcblxuZXhwb3J0IGNvbnN0IGhlbHB0ZXh0U2hhcmluZ05mcyA9IHtcbiAgcm9vdF9sZXZlbF93YXJuaW5nOiBUKFxuICAgICdDb25maWd1cmluZyBORlMgZXhwb3J0cyBvZiByb290LWxldmVsIGRhdGFzZXRzXFxcbiBtYXkgbGVhZCB0byBzdG9yYWdlIHJlY29uZmlndXJhdGlvbiBpc3N1ZXMuXFxcbiBDb25zaWRlciBjcmVhdGluZyBhIGRhdGFzZXQgaW5zdGVhZC4nLFxuICApLFxuXG4gIC8vIE5GU0Zvcm1Db21wb25lbnRcbiAgdG9vbHRpcF9wYXRoOiBUKCdGdWxsIHBhdGggdG8gdGhlIHBvb2wsIGRhdGFzZXQgb3IgZGlyZWN0b3J5IHRvIHNoYXJlLiBcXFxuICBUaGUgcGF0aCBtdXN0IHJlc2lkZSB3aXRoaW4gYSBwb29sLiBNYW5kYXRvcnkuJyksXG4gIGVycm9yX2FsaWFzOiBUKCdUaGUgPGk+QWxpYXM8L2k+IGZpZWxkIGNhbiBlaXRoZXIgYmUgbGVmdCBlbXB0eSBvciBcXFxuIGhhdmUgYW4gYWxpYXMgZGVmaW5lZCBmb3IgZWFjaCBwYXRoIGluIHRoZSBzaGFyZS4nKSxcbiAgdG9vbHRpcF9jb21tZW50OiBUKFxuICAgICdQcm92aWRlIGhlbHBmdWwgbm90YXRpb25zIHJlbGF0ZWQgdG8gdGhlIHNoYXJlLCBlLmcuIOKAmFNoYXJlZCB0byBldmVyeWJvZHnigJkuIFxcXG4gICAgTWF4aW11bSBsZW5ndGggaXMgMTIwIGNoYXJhY3RlcnMuJyxcbiAgKSxcbiAgdG9vbHRpcF9hbGxkaXJzOiBUKFxuICAgICdTZXQgdG8gYWxsb3cgdGhlIGNsaWVudCB0byBtb3VudCBhbnlcXFxuIHN1YmRpcmVjdG9yeSB3aXRoaW4gdGhlIDxiPlBhdGg8L2I+LicsXG4gICksXG4gIHRvb2x0aXBfcm86IFQoJ1NldCB0byBwcm9oaWJpdCB3cml0aW5nIHRvIHRoZSBzaGFyZS4nKSxcbiAgdG9vbHRpcF9xdWlldDogVChcbiAgICAnU2V0IHRvIGluaGliaXQgc29tZSBzeXNsb2cgZGlhZ25vc3RpY3NcXFxuIHRvIGF2b2lkIGVycm9yIG1lc3NhZ2VzLiBTZWVcXFxuIDxhIGhyZWY9XCJodHRwczovL21hbjcub3JnL2xpbnV4L21hbi1wYWdlcy9tYW41L2V4cG9ydHMuNS5odG1sXCJcXFxuIHRhcmdldD1cIl9ibGFua1wiPmV4cG9ydHMoNSk8L2E+IGZvciBleGFtcGxlcy4nLFxuICApLFxuICB0b29sdGlwX2VuYWJsZWQ6IFQoJ0VuYWJsZSB0aGlzIE5GUyBzaGFyZS4gVW5zZXQgdG8gZGlzYWJsZSB0aGlzIE5GUyBzaGFyZSBcXFxuIHdpdGhvdXQgZGVsZXRpbmcgaXQuJyksXG4gIHRvb2x0aXBfbmV0d29ya3Nfd3JhcHBlcjogVChcbiAgICAnQ2xpY2sgXCJBZGRcIiB0byBzcGVjaWZ5IE5GUyBjbGllbnQgbmV0d29yayByYW5nZXMgZm9yIHRoaXMgc2hhcmUuXFxcbiBJZiBib3RoIG5ldHdvcmtzIGFuZCBob3N0cyBhcmUgZW1wdHkgdGhlIHNoYXJlIHdpbGwgYmUgZXhwb3J0ZWQgdG8gZXZlcnlvbmUuJyxcbiAgKSxcbiAgdG9vbHRpcF9uZXR3b3JrOiBUKFxuICAgICdBbGxvd2VkIG5ldHdvcmsgaW4gbmV0d29yay9tYXNrIENJRFIgbm90YXRpb24gKGV4YW1wbGUgPGk+MS4yLjMuNC8yNDxpPikuXFxcbiAgICAgT25lIGVudHJ5IHBlciBmaWVsZC4gTGVhdmUgZW1wdHkgdG8gYWxsb3cgZXZlcnlib2R5LicsXG4gICksXG4gIHRvb2x0aXBfaG9zdHM6IFQoXG4gICAgJ0FsbG93ZWQgSVAgYWRkcmVzcyBvciBob3N0bmFtZS4gT25lIGVudHJ5IHBlciBmaWVsZC4gTGVhdmUgZW1wdHkgdG8gYWxsb3cgZXZlcnlib2R5LicsXG4gICksXG4gIHRvb2x0aXBfaG9zdHNfd3JhcHBlcjogVChcbiAgICAnQ2xpY2sgXCJBZGRcIiB0byBzcGVjaWZ5IE5GUyBjbGllbnQgaG9zdHMgZm9yIHRoaXMgc2hhcmUuXFxcbiBJZiBib3RoIG5ldHdvcmtzIGFuZCBob3N0cyBhcmUgZW1wdHkgdGhlIHNoYXJlIHdpbGwgYmUgZXhwb3J0ZWQgdG8gZXZlcnlvbmUuJyxcbiAgKSxcbiAgdG9vbHRpcF9tYXByb290X3VzZXI6IFQoXG4gICAgJ1doZW4gYSB1c2VyIGlzIHNlbGVjdGVkLCB0aGUgPGk+cm9vdDwvaT4gdXNlciBpc1xcXG4gbGltaXRlZCB0byB0aGUgcGVybWlzc2lvbnMgb2YgdGhhdCB1c2VyLicsXG4gICksXG4gIHRvb2x0aXBfbWFwcm9vdF9ncm91cDogVChcbiAgICAnV2hlbiBhIGdyb3VwIGlzIHNlbGVjdGVkLCB0aGUgPGk+cm9vdDwvaT4gdXNlciBpcyBhbHNvXFxcbiBsaW1pdGVkIHRvIHRoZSBwZXJtaXNzaW9ucyBvZiB0aGF0IGdyb3VwLicsXG4gICksXG4gIHRvb2x0aXBfbWFwYWxsX3VzZXI6IFQoXG4gICAgJ1RoZSBzcGVjaWZpZWQgcGVybWlzc2lvbnMgb2YgdGhhdCB1c2VyIGFyZSB1c2VkXFxcbiBieSBhbGwgY2xpZW50cy4nLFxuICApLFxuICB0b29sdGlwX21hcGFsbF9ncm91cDogVChcbiAgICAnVGhlIHNwZWNpZmllZCBwZXJtaXNzaW9ucyBvZiB0aGF0IGdyb3VwIGFyZSB1c2VkXFxcbiBieSBhbGwgY2xpZW50cy4nLFxuICApLFxuICB0b29sdGlwX3NlY3VyaXR5OiBUKFxuICAgICdTcGVjaWZpZXMgbGV2ZWwgb2YgYXV0aGVudGljYXRpb24gYW5kIGNyeXB0b2dyYXBoaWMgcHJvdGVjdGlvbi5cXFxuIFNZUyBvciBub25lIHNob3VsZCBiZSB1c2VkIGlmIG5vIEtEQyBpcyBhdmFpbGFibGUuIElmIGEgS0RDIGlzIGF2YWlsYWJsZSwgZS5nLiBBY3RpdmUgRGlyZWN0b3J5LCBLUkI1IGlzIHJlY29tbWVuZGVkLlxcXG4gSWYgZGVzaXJlZCBLUkI1SSAoaW50ZWdyaXR5IHByb3RlY3Rpb24pIGFuZC9vciBLUkI1UCAocHJpdmFjeSBwcm90ZWN0aW9uKSBtYXkgYmUgaW5jbHVkZWQgd2l0aCBLUkI1LicsXG4gICksXG59O1xuIl0sInZlcnNpb24iOjN9

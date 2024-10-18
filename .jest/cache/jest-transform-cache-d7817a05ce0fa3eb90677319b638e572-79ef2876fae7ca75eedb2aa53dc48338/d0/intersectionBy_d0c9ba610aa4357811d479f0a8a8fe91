@@ -1,0 +1,49 @@
+10c556221130ca3feed32ed34d09eed2
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayMap_js_1 = __importDefault(require("./_arrayMap.js"));
+const _baseIntersection_js_1 = __importDefault(require("./_baseIntersection.js"));
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+const _baseRest_js_1 = __importDefault(require("./_baseRest.js"));
+const _castArrayLikeObject_js_1 = __importDefault(require("./_castArrayLikeObject.js"));
+const last_js_1 = __importDefault(require("./last.js"));
+/**
+ * This method is like `_.intersection` except that it accepts `iteratee`
+ * which is invoked for each element of each `arrays` to generate the criterion
+ * by which they're compared. The order and references of result values are
+ * determined by the first array. The iteratee is invoked with one argument:
+ * (value).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {...Array} [arrays] The arrays to inspect.
+ * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @returns {Array} Returns the new array of intersecting values.
+ * @example
+ *
+ * _.intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+ * // => [2.1]
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+ * // => [{ 'x': 1 }]
+ */
+var intersectionBy = (0, _baseRest_js_1.default)(function (arrays) {
+    var iteratee = (0, last_js_1.default)(arrays), mapped = (0, _arrayMap_js_1.default)(arrays, _castArrayLikeObject_js_1.default);
+    if (iteratee === (0, last_js_1.default)(mapped)) {
+        iteratee = undefined;
+    }
+    else {
+        mapped.pop();
+    }
+    return (mapped.length && mapped[0] === arrays[0])
+        ? (0, _baseIntersection_js_1.default)(mapped, (0, _baseIteratee_js_1.default)(iteratee, 2))
+        : [];
+});
+exports.default = intersectionBy;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2ludGVyc2VjdGlvbkJ5LmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsa0VBQXNDO0FBQ3RDLGtGQUFzRDtBQUN0RCwwRUFBOEM7QUFDOUMsa0VBQXNDO0FBQ3RDLHdGQUE0RDtBQUM1RCx3REFBNkI7QUFFN0I7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FzQkc7QUFDSCxJQUFJLGNBQWMsR0FBRyxJQUFBLHNCQUFRLEVBQUMsVUFBUyxNQUFNO0lBQzNDLElBQUksUUFBUSxHQUFHLElBQUEsaUJBQUksRUFBQyxNQUFNLENBQUMsRUFDdkIsTUFBTSxHQUFHLElBQUEsc0JBQVEsRUFBQyxNQUFNLEVBQUUsaUNBQW1CLENBQUMsQ0FBQztJQUVuRCxJQUFJLFFBQVEsS0FBSyxJQUFBLGlCQUFJLEVBQUMsTUFBTSxDQUFDLEVBQUUsQ0FBQztRQUM5QixRQUFRLEdBQUcsU0FBUyxDQUFDO0lBQ3ZCLENBQUM7U0FBTSxDQUFDO1FBQ04sTUFBTSxDQUFDLEdBQUcsRUFBRSxDQUFDO0lBQ2YsQ0FBQztJQUNELE9BQU8sQ0FBQyxNQUFNLENBQUMsTUFBTSxJQUFJLE1BQU0sQ0FBQyxDQUFDLENBQUMsS0FBSyxNQUFNLENBQUMsQ0FBQyxDQUFDLENBQUM7UUFDL0MsQ0FBQyxDQUFDLElBQUEsOEJBQWdCLEVBQUMsTUFBTSxFQUFFLElBQUEsMEJBQVksRUFBQyxRQUFRLEVBQUUsQ0FBQyxDQUFDLENBQUM7UUFDckQsQ0FBQyxDQUFDLEVBQUUsQ0FBQztBQUNULENBQUMsQ0FBQyxDQUFDO0FBRUgsa0JBQWUsY0FBYyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9pbnRlcnNlY3Rpb25CeS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYXJyYXlNYXAgZnJvbSAnLi9fYXJyYXlNYXAuanMnO1xuaW1wb3J0IGJhc2VJbnRlcnNlY3Rpb24gZnJvbSAnLi9fYmFzZUludGVyc2VjdGlvbi5qcyc7XG5pbXBvcnQgYmFzZUl0ZXJhdGVlIGZyb20gJy4vX2Jhc2VJdGVyYXRlZS5qcyc7XG5pbXBvcnQgYmFzZVJlc3QgZnJvbSAnLi9fYmFzZVJlc3QuanMnO1xuaW1wb3J0IGNhc3RBcnJheUxpa2VPYmplY3QgZnJvbSAnLi9fY2FzdEFycmF5TGlrZU9iamVjdC5qcyc7XG5pbXBvcnQgbGFzdCBmcm9tICcuL2xhc3QuanMnO1xuXG4vKipcbiAqIFRoaXMgbWV0aG9kIGlzIGxpa2UgYF8uaW50ZXJzZWN0aW9uYCBleGNlcHQgdGhhdCBpdCBhY2NlcHRzIGBpdGVyYXRlZWBcbiAqIHdoaWNoIGlzIGludm9rZWQgZm9yIGVhY2ggZWxlbWVudCBvZiBlYWNoIGBhcnJheXNgIHRvIGdlbmVyYXRlIHRoZSBjcml0ZXJpb25cbiAqIGJ5IHdoaWNoIHRoZXkncmUgY29tcGFyZWQuIFRoZSBvcmRlciBhbmQgcmVmZXJlbmNlcyBvZiByZXN1bHQgdmFsdWVzIGFyZVxuICogZGV0ZXJtaW5lZCBieSB0aGUgZmlyc3QgYXJyYXkuIFRoZSBpdGVyYXRlZSBpcyBpbnZva2VkIHdpdGggb25lIGFyZ3VtZW50OlxuICogKHZhbHVlKS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7Li4uQXJyYXl9IFthcnJheXNdIFRoZSBhcnJheXMgdG8gaW5zcGVjdC5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IFtpdGVyYXRlZT1fLmlkZW50aXR5XSBUaGUgaXRlcmF0ZWUgaW52b2tlZCBwZXIgZWxlbWVudC5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUgbmV3IGFycmF5IG9mIGludGVyc2VjdGluZyB2YWx1ZXMuXG4gKiBAZXhhbXBsZVxuICpcbiAqIF8uaW50ZXJzZWN0aW9uQnkoWzIuMSwgMS4yXSwgWzIuMywgMy40XSwgTWF0aC5mbG9vcik7XG4gKiAvLyA9PiBbMi4xXVxuICpcbiAqIC8vIFRoZSBgXy5wcm9wZXJ0eWAgaXRlcmF0ZWUgc2hvcnRoYW5kLlxuICogXy5pbnRlcnNlY3Rpb25CeShbeyAneCc6IDEgfV0sIFt7ICd4JzogMiB9LCB7ICd4JzogMSB9XSwgJ3gnKTtcbiAqIC8vID0+IFt7ICd4JzogMSB9XVxuICovXG52YXIgaW50ZXJzZWN0aW9uQnkgPSBiYXNlUmVzdChmdW5jdGlvbihhcnJheXMpIHtcbiAgdmFyIGl0ZXJhdGVlID0gbGFzdChhcnJheXMpLFxuICAgICAgbWFwcGVkID0gYXJyYXlNYXAoYXJyYXlzLCBjYXN0QXJyYXlMaWtlT2JqZWN0KTtcblxuICBpZiAoaXRlcmF0ZWUgPT09IGxhc3QobWFwcGVkKSkge1xuICAgIGl0ZXJhdGVlID0gdW5kZWZpbmVkO1xuICB9IGVsc2Uge1xuICAgIG1hcHBlZC5wb3AoKTtcbiAgfVxuICByZXR1cm4gKG1hcHBlZC5sZW5ndGggJiYgbWFwcGVkWzBdID09PSBhcnJheXNbMF0pXG4gICAgPyBiYXNlSW50ZXJzZWN0aW9uKG1hcHBlZCwgYmFzZUl0ZXJhdGVlKGl0ZXJhdGVlLCAyKSlcbiAgICA6IFtdO1xufSk7XG5cbmV4cG9ydCBkZWZhdWx0IGludGVyc2VjdGlvbkJ5O1xuIl0sInZlcnNpb24iOjN9

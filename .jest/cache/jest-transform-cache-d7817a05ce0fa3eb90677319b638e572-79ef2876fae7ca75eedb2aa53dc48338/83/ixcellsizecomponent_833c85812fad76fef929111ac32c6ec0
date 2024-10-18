@@ -1,0 +1,2 @@
+d12198a3f92e8647310cab600906aff1
+module.exports="<span\n  [ixTest]=\"[title, uniqueRowTag(row()), 'row-size']\"\n>{{ size | ixFileSize }}</span>"

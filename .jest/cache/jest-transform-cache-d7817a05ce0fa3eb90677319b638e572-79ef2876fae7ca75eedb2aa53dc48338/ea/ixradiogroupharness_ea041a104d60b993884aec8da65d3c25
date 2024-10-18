@@ -1,0 +1,59 @@
+daf63b51e9720c45eb33a66ae103b628
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxRadioGroupHarness = void 0;
+const testing_1 = require("@angular/cdk/testing");
+const testing_2 = require("@angular/material/radio/testing");
+const ix_label_harness_1 = require("app/modules/forms/ix-forms/components/ix-label/ix-label.harness");
+const harness_utils_1 = require("app/modules/forms/ix-forms/utils/harness.utils");
+class IxRadioGroupHarness extends testing_1.ComponentHarness {
+    constructor() {
+        super(...arguments);
+        this.getMatRadioGroupHarness = this.locatorFor(testing_2.MatRadioGroupHarness);
+        this.getErrorText = harness_utils_1.getErrorText;
+    }
+    static with(options) {
+        return new testing_1.HarnessPredicate(IxRadioGroupHarness, options)
+            .addOption('label', options.label, (harness, label) => testing_1.HarnessPredicate.stringMatches(harness.getLabelText(), label));
+    }
+    getLabelText() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const label = yield this.locatorForOptional(ix_label_harness_1.IxLabelHarness)();
+            if (!label) {
+                return '';
+            }
+            return label.getLabel();
+        });
+    }
+    getValue() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const checkedRadio = yield (yield this.getMatRadioGroupHarness()).getCheckedRadioButton();
+            return checkedRadio === null || checkedRadio === void 0 ? void 0 : checkedRadio.getLabelText();
+        });
+    }
+    setValue(value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const harness = (yield this.getMatRadioGroupHarness());
+            return harness.checkRadioButton({ label: value });
+        });
+    }
+    isDisabled() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const radioButtons = yield (yield this.getMatRadioGroupHarness()).getRadioButtons();
+            const inputState = yield (0, testing_1.parallel)(() => radioButtons.map((control) => control.isDisabled()));
+            return inputState.every((control) => !!control);
+        });
+    }
+}
+exports.IxRadioGroupHarness = IxRadioGroupHarness;
+IxRadioGroupHarness.hostSelector = 'ix-radio-group';
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1yYWRpby1ncm91cC9peC1yYWRpby1ncm91cC5oYXJuZXNzLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OztBQUFBLGtEQUU4QjtBQUM5Qiw2REFBdUU7QUFDdkUsc0dBQWlHO0FBRWpHLGtGQUE4RTtBQU05RSxNQUFhLG1CQUFvQixTQUFRLDBCQUFnQjtJQUF6RDs7UUFRRSw0QkFBdUIsR0FBRyxJQUFJLENBQUMsVUFBVSxDQUFDLDhCQUFvQixDQUFDLENBQUM7UUFDaEUsaUJBQVksR0FBRyw0QkFBWSxDQUFDO0lBMEI5QixDQUFDO0lBaENDLE1BQU0sQ0FBQyxJQUFJLENBQUMsT0FBbUM7UUFDN0MsT0FBTyxJQUFJLDBCQUFnQixDQUFDLG1CQUFtQixFQUFFLE9BQU8sQ0FBQzthQUN0RCxTQUFTLENBQUMsT0FBTyxFQUFFLE9BQU8sQ0FBQyxLQUFLLEVBQUUsQ0FBQyxPQUFPLEVBQUUsS0FBSyxFQUFFLEVBQUUsQ0FBQywwQkFBZ0IsQ0FBQyxhQUFhLENBQUMsT0FBTyxDQUFDLFlBQVksRUFBRSxFQUFFLEtBQUssQ0FBQyxDQUFDLENBQUM7SUFDMUgsQ0FBQztJQUtLLFlBQVk7O1lBQ2hCLE1BQU0sS0FBSyxHQUFHLE1BQU0sSUFBSSxDQUFDLGtCQUFrQixDQUFDLGlDQUFjLENBQUMsRUFBRSxDQUFDO1lBQzlELElBQUksQ0FBQyxLQUFLLEVBQUUsQ0FBQztnQkFDWCxPQUFPLEVBQUUsQ0FBQztZQUNaLENBQUM7WUFDRCxPQUFPLEtBQUssQ0FBQyxRQUFRLEVBQUUsQ0FBQztRQUMxQixDQUFDO0tBQUE7SUFFSyxRQUFROztZQUNaLE1BQU0sWUFBWSxHQUFHLE1BQU0sQ0FBQyxNQUFNLElBQUksQ0FBQyx1QkFBdUIsRUFBRSxDQUFDLENBQUMscUJBQXFCLEVBQUUsQ0FBQztZQUMxRixPQUFPLFlBQVksYUFBWixZQUFZLHVCQUFaLFlBQVksQ0FBRSxZQUFZLEVBQUUsQ0FBQztRQUN0QyxDQUFDO0tBQUE7SUFFSyxRQUFRLENBQUMsS0FBYTs7WUFDMUIsTUFBTSxPQUFPLEdBQUcsQ0FBQyxNQUFNLElBQUksQ0FBQyx1QkFBdUIsRUFBRSxDQUFDLENBQUM7WUFDdkQsT0FBTyxPQUFPLENBQUMsZ0JBQWdCLENBQUMsRUFBRSxLQUFLLEVBQUUsS0FBSyxFQUFFLENBQUMsQ0FBQztRQUNwRCxDQUFDO0tBQUE7SUFFSyxVQUFVOztZQUNkLE1BQU0sWUFBWSxHQUFHLE1BQU0sQ0FBQyxNQUFNLElBQUksQ0FBQyx1QkFBdUIsRUFBRSxDQUFDLENBQUMsZUFBZSxFQUFFLENBQUM7WUFDcEYsTUFBTSxVQUFVLEdBQUcsTUFBTSxJQUFBLGtCQUFRLEVBQUMsR0FBRyxFQUFFLENBQUMsWUFBWSxDQUFDLEdBQUcsQ0FBQyxDQUFDLE9BQU8sRUFBRSxFQUFFLENBQUMsT0FBTyxDQUFDLFVBQVUsRUFBRSxDQUFDLENBQUMsQ0FBQztZQUU3RixPQUFPLFVBQVUsQ0FBQyxLQUFLLENBQUMsQ0FBQyxPQUFPLEVBQUUsRUFBRSxDQUFDLENBQUMsQ0FBQyxPQUFPLENBQUMsQ0FBQztRQUNsRCxDQUFDO0tBQUE7O0FBbENILGtEQW1DQztBQWxDaUIsZ0NBQVksR0FBRyxnQkFBZ0IsQUFBbkIsQ0FBb0IiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvZm9ybXMvaXgtZm9ybXMvY29tcG9uZW50cy9peC1yYWRpby1ncm91cC9peC1yYWRpby1ncm91cC5oYXJuZXNzLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7XG4gIEJhc2VIYXJuZXNzRmlsdGVycywgQ29tcG9uZW50SGFybmVzcywgSGFybmVzc1ByZWRpY2F0ZSwgcGFyYWxsZWwsXG59IGZyb20gJ0Bhbmd1bGFyL2Nkay90ZXN0aW5nJztcbmltcG9ydCB7IE1hdFJhZGlvR3JvdXBIYXJuZXNzIH0gZnJvbSAnQGFuZ3VsYXIvbWF0ZXJpYWwvcmFkaW8vdGVzdGluZyc7XG5pbXBvcnQgeyBJeExhYmVsSGFybmVzcyB9IGZyb20gJ2FwcC9tb2R1bGVzL2Zvcm1zL2l4LWZvcm1zL2NvbXBvbmVudHMvaXgtbGFiZWwvaXgtbGFiZWwuaGFybmVzcyc7XG5pbXBvcnQgeyBJeEZvcm1Db250cm9sSGFybmVzcyB9IGZyb20gJ2FwcC9tb2R1bGVzL2Zvcm1zL2l4LWZvcm1zL2ludGVyZmFjZXMvaXgtZm9ybS1jb250cm9sLWhhcm5lc3MuaW50ZXJmYWNlJztcbmltcG9ydCB7IGdldEVycm9yVGV4dCB9IGZyb20gJ2FwcC9tb2R1bGVzL2Zvcm1zL2l4LWZvcm1zL3V0aWxzL2hhcm5lc3MudXRpbHMnO1xuXG5leHBvcnQgaW50ZXJmYWNlIEl4UmFkaW9Hcm91cEhhcm5lc3NGaWx0ZXJzIGV4dGVuZHMgQmFzZUhhcm5lc3NGaWx0ZXJzIHtcbiAgbGFiZWw/OiBzdHJpbmc7XG59XG5cbmV4cG9ydCBjbGFzcyBJeFJhZGlvR3JvdXBIYXJuZXNzIGV4dGVuZHMgQ29tcG9uZW50SGFybmVzcyBpbXBsZW1lbnRzIEl4Rm9ybUNvbnRyb2xIYXJuZXNzIHtcbiAgc3RhdGljIHJlYWRvbmx5IGhvc3RTZWxlY3RvciA9ICdpeC1yYWRpby1ncm91cCc7XG5cbiAgc3RhdGljIHdpdGgob3B0aW9uczogSXhSYWRpb0dyb3VwSGFybmVzc0ZpbHRlcnMpOiBIYXJuZXNzUHJlZGljYXRlPEl4UmFkaW9Hcm91cEhhcm5lc3M+IHtcbiAgICByZXR1cm4gbmV3IEhhcm5lc3NQcmVkaWNhdGUoSXhSYWRpb0dyb3VwSGFybmVzcywgb3B0aW9ucylcbiAgICAgIC5hZGRPcHRpb24oJ2xhYmVsJywgb3B0aW9ucy5sYWJlbCwgKGhhcm5lc3MsIGxhYmVsKSA9PiBIYXJuZXNzUHJlZGljYXRlLnN0cmluZ01hdGNoZXMoaGFybmVzcy5nZXRMYWJlbFRleHQoKSwgbGFiZWwpKTtcbiAgfVxuXG4gIGdldE1hdFJhZGlvR3JvdXBIYXJuZXNzID0gdGhpcy5sb2NhdG9yRm9yKE1hdFJhZGlvR3JvdXBIYXJuZXNzKTtcbiAgZ2V0RXJyb3JUZXh0ID0gZ2V0RXJyb3JUZXh0O1xuXG4gIGFzeW5jIGdldExhYmVsVGV4dCgpOiBQcm9taXNlPHN0cmluZz4ge1xuICAgIGNvbnN0IGxhYmVsID0gYXdhaXQgdGhpcy5sb2NhdG9yRm9yT3B0aW9uYWwoSXhMYWJlbEhhcm5lc3MpKCk7XG4gICAgaWYgKCFsYWJlbCkge1xuICAgICAgcmV0dXJuICcnO1xuICAgIH1cbiAgICByZXR1cm4gbGFiZWwuZ2V0TGFiZWwoKTtcbiAgfVxuXG4gIGFzeW5jIGdldFZhbHVlKCk6IFByb21pc2U8c3RyaW5nIHwgdW5kZWZpbmVkPiB7XG4gICAgY29uc3QgY2hlY2tlZFJhZGlvID0gYXdhaXQgKGF3YWl0IHRoaXMuZ2V0TWF0UmFkaW9Hcm91cEhhcm5lc3MoKSkuZ2V0Q2hlY2tlZFJhZGlvQnV0dG9uKCk7XG4gICAgcmV0dXJuIGNoZWNrZWRSYWRpbz8uZ2V0TGFiZWxUZXh0KCk7XG4gIH1cblxuICBhc3luYyBzZXRWYWx1ZSh2YWx1ZTogc3RyaW5nKTogUHJvbWlzZTx2b2lkPiB7XG4gICAgY29uc3QgaGFybmVzcyA9IChhd2FpdCB0aGlzLmdldE1hdFJhZGlvR3JvdXBIYXJuZXNzKCkpO1xuICAgIHJldHVybiBoYXJuZXNzLmNoZWNrUmFkaW9CdXR0b24oeyBsYWJlbDogdmFsdWUgfSk7XG4gIH1cblxuICBhc3luYyBpc0Rpc2FibGVkKCk6IFByb21pc2U8Ym9vbGVhbj4ge1xuICAgIGNvbnN0IHJhZGlvQnV0dG9ucyA9IGF3YWl0IChhd2FpdCB0aGlzLmdldE1hdFJhZGlvR3JvdXBIYXJuZXNzKCkpLmdldFJhZGlvQnV0dG9ucygpO1xuICAgIGNvbnN0IGlucHV0U3RhdGUgPSBhd2FpdCBwYXJhbGxlbCgoKSA9PiByYWRpb0J1dHRvbnMubWFwKChjb250cm9sKSA9PiBjb250cm9sLmlzRGlzYWJsZWQoKSkpO1xuXG4gICAgcmV0dXJuIGlucHV0U3RhdGUuZXZlcnkoKGNvbnRyb2wpID0+ICEhY29udHJvbCk7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

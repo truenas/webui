@@ -1,0 +1,21 @@
+b63a892a4a6bdaf1bf31e06c7f1038f6
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseForRight_js_1 = __importDefault(require("./_baseForRight.js"));
+const keys_js_1 = __importDefault(require("./keys.js"));
+/**
+ * The base implementation of `_.forOwnRight` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Object} Returns `object`.
+ */
+function baseForOwnRight(object, iteratee) {
+    return object && (0, _baseForRight_js_1.default)(object, iteratee, keys_js_1.default);
+}
+exports.default = baseForOwnRight;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19iYXNlRm9yT3duUmlnaHQuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSwwRUFBOEM7QUFDOUMsd0RBQTZCO0FBRTdCOzs7Ozs7O0dBT0c7QUFDSCxTQUFTLGVBQWUsQ0FBQyxNQUFNLEVBQUUsUUFBUTtJQUN2QyxPQUFPLE1BQU0sSUFBSSxJQUFBLDBCQUFZLEVBQUMsTUFBTSxFQUFFLFFBQVEsRUFBRSxpQkFBSSxDQUFDLENBQUM7QUFDeEQsQ0FBQztBQUVELGtCQUFlLGVBQWUsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvX2Jhc2VGb3JPd25SaWdodC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZUZvclJpZ2h0IGZyb20gJy4vX2Jhc2VGb3JSaWdodC5qcyc7XG5pbXBvcnQga2V5cyBmcm9tICcuL2tleXMuanMnO1xuXG4vKipcbiAqIFRoZSBiYXNlIGltcGxlbWVudGF0aW9uIG9mIGBfLmZvck93blJpZ2h0YCB3aXRob3V0IHN1cHBvcnQgZm9yIGl0ZXJhdGVlIHNob3J0aGFuZHMuXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7T2JqZWN0fSBvYmplY3QgVGhlIG9iamVjdCB0byBpdGVyYXRlIG92ZXIuXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBpdGVyYXRlZSBUaGUgZnVuY3Rpb24gaW52b2tlZCBwZXIgaXRlcmF0aW9uLlxuICogQHJldHVybnMge09iamVjdH0gUmV0dXJucyBgb2JqZWN0YC5cbiAqL1xuZnVuY3Rpb24gYmFzZUZvck93blJpZ2h0KG9iamVjdCwgaXRlcmF0ZWUpIHtcbiAgcmV0dXJuIG9iamVjdCAmJiBiYXNlRm9yUmlnaHQob2JqZWN0LCBpdGVyYXRlZSwga2V5cyk7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGJhc2VGb3JPd25SaWdodDtcbiJdLCJ2ZXJzaW9uIjozfQ==

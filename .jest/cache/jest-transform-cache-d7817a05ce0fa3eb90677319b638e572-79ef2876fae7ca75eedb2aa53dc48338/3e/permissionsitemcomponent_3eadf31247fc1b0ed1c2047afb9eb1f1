@@ -1,0 +1,2 @@
+1cfee2ee88dc74d8e0e82250da9f626e
+module.exports="<div class=\"icon\">\n  @switch (item().type) {\n    @case (PermissionsItem.Group) {\n      <ix-icon name=\"people\"></ix-icon>\n    }\n    @case (PermissionsItem.Other) {\n      <ix-icon name=\"groups\"></ix-icon>\n    }\n    @default {\n      <ix-icon name=\"person\"></ix-icon>\n    }\n  }\n</div>\n<div class=\"name\">{{ item().name }}</div>\n<div class=\"permissions\">{{ item().description }}</div>\n"

@@ -1,0 +1,27 @@
+f138f72e33de47f1e92f269e92072e15
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+/** Used for built-in method references. */
+var arrayProto = Array.prototype;
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeJoin = arrayProto.join;
+/**
+ * Converts all elements in `array` into a string separated by `separator`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The array to convert.
+ * @param {string} [separator=','] The element separator.
+ * @returns {string} Returns the joined string.
+ * @example
+ *
+ * _.join(['a', 'b', 'c'], '~');
+ * // => 'a~b~c'
+ */
+function join(array, separator) {
+    return array == null ? '' : nativeJoin.call(array, separator);
+}
+exports.default = join;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2pvaW4uanMiLCJtYXBwaW5ncyI6Ijs7QUFBQSwyQ0FBMkM7QUFDM0MsSUFBSSxVQUFVLEdBQUcsS0FBSyxDQUFDLFNBQVMsQ0FBQztBQUVqQyx3RkFBd0Y7QUFDeEYsSUFBSSxVQUFVLEdBQUcsVUFBVSxDQUFDLElBQUksQ0FBQztBQUVqQzs7Ozs7Ozs7Ozs7Ozs7R0FjRztBQUNILFNBQVMsSUFBSSxDQUFDLEtBQUssRUFBRSxTQUFTO0lBQzVCLE9BQU8sS0FBSyxJQUFJLElBQUksQ0FBQyxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQyxVQUFVLENBQUMsSUFBSSxDQUFDLEtBQUssRUFBRSxTQUFTLENBQUMsQ0FBQztBQUNoRSxDQUFDO0FBRUQsa0JBQWUsSUFBSSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9qb2luLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8qKiBVc2VkIGZvciBidWlsdC1pbiBtZXRob2QgcmVmZXJlbmNlcy4gKi9cbnZhciBhcnJheVByb3RvID0gQXJyYXkucHJvdG90eXBlO1xuXG4vKiBCdWlsdC1pbiBtZXRob2QgcmVmZXJlbmNlcyBmb3IgdGhvc2Ugd2l0aCB0aGUgc2FtZSBuYW1lIGFzIG90aGVyIGBsb2Rhc2hgIG1ldGhvZHMuICovXG52YXIgbmF0aXZlSm9pbiA9IGFycmF5UHJvdG8uam9pbjtcblxuLyoqXG4gKiBDb252ZXJ0cyBhbGwgZWxlbWVudHMgaW4gYGFycmF5YCBpbnRvIGEgc3RyaW5nIHNlcGFyYXRlZCBieSBgc2VwYXJhdG9yYC5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBhcnJheSB0byBjb252ZXJ0LlxuICogQHBhcmFtIHtzdHJpbmd9IFtzZXBhcmF0b3I9JywnXSBUaGUgZWxlbWVudCBzZXBhcmF0b3IuXG4gKiBAcmV0dXJucyB7c3RyaW5nfSBSZXR1cm5zIHRoZSBqb2luZWQgc3RyaW5nLlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLmpvaW4oWydhJywgJ2InLCAnYyddLCAnficpO1xuICogLy8gPT4gJ2F+Yn5jJ1xuICovXG5mdW5jdGlvbiBqb2luKGFycmF5LCBzZXBhcmF0b3IpIHtcbiAgcmV0dXJuIGFycmF5ID09IG51bGwgPyAnJyA6IG5hdGl2ZUpvaW4uY2FsbChhcnJheSwgc2VwYXJhdG9yKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgam9pbjtcbiJdLCJ2ZXJzaW9uIjozfQ==

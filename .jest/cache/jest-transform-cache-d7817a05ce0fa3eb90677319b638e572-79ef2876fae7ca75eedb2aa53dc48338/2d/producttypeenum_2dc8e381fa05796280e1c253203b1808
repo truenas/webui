@@ -1,0 +1,14 @@
+809e1f3e85c9c063680676ab3366f539
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.productTypeLabels = exports.ProductType = void 0;
+var ProductType;
+(function (ProductType) {
+    ProductType["Scale"] = "SCALE";
+    ProductType["ScaleEnterprise"] = "SCALE_ENTERPRISE";
+})(ProductType || (exports.ProductType = ProductType = {}));
+exports.productTypeLabels = new Map([
+    [ProductType.Scale, 'SCALE'],
+    [ProductType.ScaleEnterprise, 'SCALE ENTERPRISE'],
+]);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3Byb2R1Y3QtdHlwZS5lbnVtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLElBQVksV0FHWDtBQUhELFdBQVksV0FBVztJQUNyQiw4QkFBZSxDQUFBO0lBQ2YsbURBQW9DLENBQUE7QUFDdEMsQ0FBQyxFQUhXLFdBQVcsMkJBQVgsV0FBVyxRQUd0QjtBQUVZLFFBQUEsaUJBQWlCLEdBQUcsSUFBSSxHQUFHLENBQXNCO0lBQzVELENBQUMsV0FBVyxDQUFDLEtBQUssRUFBRSxPQUFPLENBQUM7SUFDNUIsQ0FBQyxXQUFXLENBQUMsZUFBZSxFQUFFLGtCQUFrQixDQUFDO0NBQ2xELENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvZW51bXMvcHJvZHVjdC10eXBlLmVudW0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGVudW0gUHJvZHVjdFR5cGUge1xuICBTY2FsZSA9ICdTQ0FMRScsXG4gIFNjYWxlRW50ZXJwcmlzZSA9ICdTQ0FMRV9FTlRFUlBSSVNFJyxcbn1cblxuZXhwb3J0IGNvbnN0IHByb2R1Y3RUeXBlTGFiZWxzID0gbmV3IE1hcDxQcm9kdWN0VHlwZSwgc3RyaW5nPihbXG4gIFtQcm9kdWN0VHlwZS5TY2FsZSwgJ1NDQUxFJ10sXG4gIFtQcm9kdWN0VHlwZS5TY2FsZUVudGVycHJpc2UsICdTQ0FMRSBFTlRFUlBSSVNFJ10sXG5dKTtcbiJdLCJ2ZXJzaW9uIjozfQ==

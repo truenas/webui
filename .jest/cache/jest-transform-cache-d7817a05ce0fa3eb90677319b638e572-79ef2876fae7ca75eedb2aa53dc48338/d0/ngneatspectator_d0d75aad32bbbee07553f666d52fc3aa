@@ -1,0 +1,2124 @@
+1a853f3b4a7d7145ce31c2fb3362e08b
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
+var ngneat_spectator_exports = {};
+__export(ngneat_spectator_exports, {
+  ActivatedRouteStub: () => ActivatedRouteStub,
+  DOMSelector: () => DOMSelector,
+  HostComponent: () => HostComponent,
+  HostModule: () => HostModule,
+  HttpMethod: () => HttpMethod,
+  Spectator: () => Spectator,
+  SpectatorDirective: () => SpectatorDirective,
+  SpectatorHost: () => SpectatorHost,
+  SpectatorHttp: () => SpectatorHttp,
+  SpectatorPipe: () => SpectatorPipe,
+  SpectatorRouting: () => SpectatorRouting,
+  SpectatorService: () => SpectatorService,
+  byAltText: () => byAltText,
+  byLabel: () => byLabel,
+  byPlaceholder: () => byPlaceholder,
+  byRole: () => byRole,
+  byTestId: () => byTestId,
+  byText: () => byText,
+  byTextContent: () => byTextContent,
+  byTitle: () => byTitle,
+  byValue: () => byValue,
+  createComponentFactory: () => createComponentFactory,
+  createDirectiveFactory: () => createDirectiveFactory,
+  createFakeEvent: () => createFakeEvent,
+  createHostFactory: () => createHostFactory,
+  createHttpFactory: () => createHttpFactory,
+  createKeyboardEvent: () => createKeyboardEvent,
+  createMouseEvent: () => createMouseEvent,
+  createPipeFactory: () => createPipeFactory,
+  createRoutingFactory: () => createRoutingFactory,
+  createServiceFactory: () => createServiceFactory,
+  createSpyObject: () => createSpyObject,
+  createTouchEvent: () => createTouchEvent,
+  defineGlobalsInjections: () => defineGlobalsInjections,
+  dispatchEvent: () => dispatchEvent,
+  dispatchFakeEvent: () => dispatchFakeEvent,
+  dispatchKeyboardEvent: () => dispatchKeyboardEvent,
+  dispatchMouseEvent: () => dispatchMouseEvent,
+  dispatchTouchEvent: () => dispatchTouchEvent,
+  doesServiceImplementsOnDestroy: () => doesServiceImplementsOnDestroy,
+  initialSpectatorDirectiveModule: () => initialSpectatorDirectiveModule,
+  initialSpectatorModule: () => initialSpectatorModule,
+  initialSpectatorPipeModule: () => initialSpectatorPipeModule,
+  initialSpectatorWithHostModule: () => initialSpectatorWithHostModule,
+  installProtoMethods: () => installProtoMethods,
+  isHTMLOptionElementArray: () => isHTMLOptionElementArray,
+  isNumber: () => isNumber,
+  isObject: () => isObject,
+  isString: () => isString,
+  isType: () => isType,
+  mockProvider: () => mockProvider,
+  toBeChecked: () => toBeChecked,
+  toBeDisabled: () => toBeDisabled,
+  toBeEmpty: () => toBeEmpty,
+  toBeFocused: () => toBeFocused,
+  toBeHidden: () => toBeHidden,
+  toBeIndeterminate: () => toBeIndeterminate,
+  toBeMatchedBy: () => toBeMatchedBy,
+  toBePartial: () => toBePartial,
+  toBeSelected: () => toBeSelected,
+  toBeVisible: () => toBeVisible,
+  toContainProperty: () => toContainProperty,
+  toContainText: () => toContainText,
+  toContainValue: () => toContainValue,
+  toExist: () => toExist,
+  toHaveAttribute: () => toHaveAttribute,
+  toHaveClass: () => toHaveClass,
+  toHaveData: () => toHaveData,
+  toHaveDescendant: () => toHaveDescendant,
+  toHaveDescendantWithText: () => toHaveDescendantWithText,
+  toHaveExactText: () => toHaveExactText,
+  toHaveExactTrimmedText: () => toHaveExactTrimmedText,
+  toHaveId: () => toHaveId,
+  toHaveLength: () => toHaveLength,
+  toHaveProperty: () => toHaveProperty,
+  toHaveSelectedOptions: () => toHaveSelectedOptions,
+  toHaveStyle: () => toHaveStyle,
+  toHaveText: () => toHaveText,
+  toHaveValue: () => toHaveValue,
+  typeInElement: () => typeInElement
+});
+module.exports = __toCommonJS(ngneat_spectator_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_testing = require("@angular/core/testing");
+var import_platform_browser = require("@angular/platform-browser");
+var import_rxjs = require("rxjs");
+var import_dom = require("@testing-library/dom");
+var import_testing2 = require("@angular/platform-browser-dynamic/testing");
+var import_internals = require("@ngneat/spectator/internals");
+var import_jquery = __toESM(require("jquery"), 1);
+var import_animations = require("@angular/platform-browser/animations");
+var import_router = require("@angular/router");
+var import_operators = require("rxjs/operators");
+var import_testing3 = require("@angular/router/testing");
+var import_http = require("@angular/common/http");
+var import_testing4 = require("@angular/common/http/testing");
+function doesServiceImplementsOnDestroy(testedService) {
+  return "ngOnDestroy" in testedService && typeof testedService["ngOnDestroy"] === "function";
+}
+function isString(value) {
+  return typeof value === "string";
+}
+function isNumber(value) {
+  return typeof value === "number";
+}
+function isType(v) {
+  return typeof v === "function";
+}
+function isHTMLOptionElementArray(value) {
+  return Array.isArray(value) && !!value.length && value.every((item) => item instanceof HTMLOptionElement);
+}
+function isObject(v) {
+  return v && typeof v === "object";
+}
+const parseKeyOptions = (keyOrKeyCode) => {
+  if (isNumber(keyOrKeyCode) && keyOrKeyCode) {
+    return { key: false, keyCode: keyOrKeyCode, modifiers: {} };
+  }
+  if (isString(keyOrKeyCode) && keyOrKeyCode) {
+    return parseKey(keyOrKeyCode);
+  }
+  if (isObject(keyOrKeyCode)) {
+    const parsedKey = parseKey(keyOrKeyCode.key);
+    return __spreadProps(__spreadValues({}, parsedKey), {
+      keyCode: keyOrKeyCode.keyCode
+    });
+  }
+  throw new Error("keyboard.pressKey() requires a valid key or keyCode");
+};
+const parseKey = (keyStr) => {
+  if (keyStr.indexOf(".") < 0 || "." === keyStr) {
+    return { key: keyStr, keyCode: false, modifiers: {} };
+  }
+  const keyParts = keyStr.split(".");
+  const key = keyParts.pop();
+  const modifiers = keyParts.reduce((mods, part) => {
+    switch (part) {
+      case "control":
+      case "ctrl":
+        mods.control = true;
+        return mods;
+      case "shift":
+        mods.shift = true;
+        return mods;
+      case "alt":
+        mods.alt = true;
+        return mods;
+      case "meta":
+      case "cmd":
+      case "win":
+        mods.meta = true;
+        return mods;
+      default:
+        throw new Error(`invalid key modifier: ${part ? part : "undefined"}, keyStr: ${keyStr}`);
+    }
+  }, { alt: false, control: false, shift: false, meta: false });
+  return { key, keyCode: false, modifiers };
+};
+function createMouseEvent(type, x = 0, y = 0, button = 0) {
+  const event = document.createEvent("MouseEvent");
+  event.initMouseEvent(type, true, false, window, 0, x, y, x, y, false, false, false, false, button, null);
+  Object.defineProperty(event, "buttons", { get: () => 1 });
+  return event;
+}
+function createTouchEvent(type, pageX = 0, pageY = 0) {
+  const event = new UIEvent(type, {
+    bubbles: true,
+    cancelable: true,
+    view: window,
+    detail: 0
+  });
+  Object.defineProperties(event, {
+    touches: { value: [{ pageX, pageY }] }
+  });
+  return event;
+}
+function createKeyboardEvent(type, keyOrKeyCode, target) {
+  const { key, keyCode, modifiers } = parseKeyOptions(keyOrKeyCode);
+  const event = document.createEvent("KeyboardEvent");
+  const originalPreventDefault = event.preventDefault;
+  if (event.initKeyEvent) {
+    event.initKeyEvent(type, true, true, window, modifiers.control, modifiers.alt, modifiers.shift, modifiers.meta, keyCode);
+  } else {
+    const modifiersStr = (modifiers.control ? "Control " : "" + modifiers.alt ? "Alt " : "" + modifiers.shift ? "Shift " : "" + modifiers.meta ? "Meta" : "").trim();
+    event.initKeyboardEvent(
+      type,
+      true,
+      true,
+      window,
+      0,
+      key,
+      0,
+      modifiersStr,
+      false
+      /* repeat */
+    );
+  }
+  Object.defineProperties(event, {
+    code: { get: () => keyCode },
+    keyCode: { get: () => keyCode },
+    key: { get: () => key },
+    target: { get: () => target },
+    altKey: { get: () => !!modifiers.alt },
+    ctrlKey: { get: () => !!modifiers.control },
+    shiftKey: { get: () => !!modifiers.shift },
+    metaKey: { get: () => !!modifiers.meta }
+  });
+  event.preventDefault = function() {
+    Object.defineProperty(event, "defaultPrevented", { configurable: true, get: () => true });
+    return originalPreventDefault.apply(this, arguments);
+  };
+  return event;
+}
+function createFakeEvent(type, canBubble = false, cancelable = true) {
+  const event = document.createEvent("Event");
+  event.initEvent(type, canBubble, cancelable);
+  return event;
+}
+function dispatchEvent(node, event) {
+  node.dispatchEvent(event);
+  return event;
+}
+function dispatchFakeEvent(node, type, canBubble) {
+  return dispatchEvent(node, createFakeEvent(type, canBubble));
+}
+function dispatchKeyboardEvent(node, type, keyOrKeyCode, target) {
+  return dispatchEvent(node, createKeyboardEvent(type, keyOrKeyCode, target));
+}
+function dispatchMouseEvent(node, type, x = 0, y = 0, event = createMouseEvent(type, x, y)) {
+  return dispatchEvent(node, event);
+}
+function dispatchTouchEvent(node, type, x = 0, y = 0) {
+  return dispatchEvent(node, createTouchEvent(type, x, y));
+}
+class DOMSelector {
+  // Wrap selector functions in a class to make reflection easier in getChild
+  constructor(execute) {
+    this.execute = execute;
+  }
+}
+const byLabel = (matcher, options) => new DOMSelector((el) => import_dom.queries.queryAllByLabelText(el, matcher, options));
+const byPlaceholder = (matcher, options) => new DOMSelector((el) => import_dom.queries.queryAllByPlaceholderText(el, matcher, options));
+const byText = (matcher, options) => new DOMSelector((el) => import_dom.queries.queryAllByText(el, matcher, options));
+const byTextContent = (matcher, options) => {
+  let textContentMatcher;
+  const normalizer = (options == null ? void 0 : options.normalizer) || (0, import_dom.getDefaultNormalizer)(options);
+  const getTextContent = (elem) => {
+    var _a;
+    return normalizer((_a = elem == null ? void 0 : elem.textContent) != null ? _a : "");
+  };
+  if (typeof matcher === "string" || typeof matcher === "number") {
+    textContentMatcher = (_, elem) => {
+      if ((options == null ? void 0 : options.exact) === false) {
+        return getTextContent(elem).toLowerCase().indexOf(matcher.toString().toLowerCase()) >= 0;
+      }
+      return getTextContent(elem) === matcher.toString();
+    };
+  } else if (matcher instanceof RegExp) {
+    textContentMatcher = (_, elem) => matcher.test(getTextContent(elem));
+  } else if (typeof matcher === "function") {
+    textContentMatcher = (_, elem) => matcher(getTextContent(elem), elem);
+  } else {
+    throw new Error(`Matcher type not supported: ${typeof matcher}`);
+  }
+  return new DOMSelector((el) => import_dom.queries.queryAllByText(el, textContentMatcher, options));
+};
+const byAltText = (matcher, options) => new DOMSelector((el) => import_dom.queries.queryAllByAltText(el, matcher, options));
+const byTitle = (matcher, options) => new DOMSelector((el) => import_dom.queries.queryAllByTitle(el, matcher, options));
+const byTestId = (matcher, options) => new DOMSelector((el) => import_dom.queries.queryAllByTestId(el, matcher, options));
+const byValue = (matcher, options) => new DOMSelector((el) => import_dom.queries.queryAllByDisplayValue(el, matcher, options));
+const byRole = (matcher, options) => new DOMSelector((el) => import_dom.queries.queryAllByRole(el, matcher, options));
+function isRunningInJsDom() {
+  return navigator.userAgent.includes("Node.js") || navigator.userAgent.includes("jsdom");
+}
+function coerceArray(value) {
+  return Array.isArray(value) ? value : [value];
+}
+function declareInModule(moduleMetadata, type) {
+  if ((0, import_core.isStandalone)(type)) {
+    moduleMetadata.imports.push(type);
+  } else {
+    moduleMetadata.declarations.push(type);
+  }
+}
+const IS_FOCUS_PATCHED_PROP = Symbol("isFocusPatched");
+class FocusEventWatcher {
+  constructor(element) {
+    var _a;
+    this.element = element;
+    this._blurred = false;
+    this._focused = false;
+    this.element.addEventListener("focus", this);
+    this.priorActiveElement = element.ownerDocument.activeElement;
+    (_a = this.priorActiveElement) == null ? void 0 : _a.addEventListener("blur", this);
+  }
+  handleEvent({ type }) {
+    if (type === "focus") {
+      this._focused = true;
+    } else if (type === "blur") {
+      this._blurred = true;
+    }
+  }
+  /**
+   * If focus and blur events haven't occurred, fire fake ones.
+   */
+  ensureFocusEvents() {
+    var _a;
+    this.element.removeEventListener("focus", this);
+    (_a = this.priorActiveElement) == null ? void 0 : _a.removeEventListener("blur", this);
+    if (!this._blurred && this.priorActiveElement) {
+      dispatchFakeEvent(this.priorActiveElement, "blur");
+    }
+    if (!this._focused) {
+      dispatchFakeEvent(this.element, "focus");
+    }
+  }
+}
+function patchElementFocus(element) {
+  if (!isRunningInJsDom() && element[IS_FOCUS_PATCHED_PROP] === void 0) {
+    const originalFocus = element.focus.bind(element);
+    element.focus = (options) => {
+      const focusEventWatcher = new FocusEventWatcher(element);
+      originalFocus(options);
+      focusEventWatcher.ensureFocusEvents();
+    };
+    element.blur = () => dispatchFakeEvent(element, "blur");
+    element[IS_FOCUS_PATCHED_PROP] = true;
+  }
+}
+function getChildren(debugElementRoot) {
+  return (directiveOrSelector, options = { root: false, read: void 0 }) => {
+    if (directiveOrSelector instanceof DOMSelector) {
+      return directiveOrSelector.execute(debugElementRoot.nativeElement);
+    }
+    const debugElements = debugElementRoot.queryAll(isString(directiveOrSelector) ? import_platform_browser.By.css(directiveOrSelector) : import_platform_browser.By.directive(directiveOrSelector));
+    if (options.read) {
+      return debugElements.map((debug) => debug.injector.get(options.read));
+    }
+    if (isString(directiveOrSelector)) {
+      return debugElements.map((debug) => debug.nativeElement);
+    }
+    return debugElements.map((debug) => debug.injector.get(directiveOrSelector));
+  };
+}
+function setProps(componentRef, keyOrKeyValues, value) {
+  if (isString(keyOrKeyValues)) {
+    componentRef.setInput(keyOrKeyValues, value);
+  } else {
+    for (const p in keyOrKeyValues) {
+      componentRef.setInput(p, keyOrKeyValues[p]);
+    }
+  }
+  return componentRef.instance;
+}
+function setHostProps(componentRef, keyOrKeyValues, value) {
+  if (isString(keyOrKeyValues)) {
+    componentRef.instance[keyOrKeyValues] = value;
+  } else {
+    for (const p in keyOrKeyValues) {
+      componentRef.instance[p] = keyOrKeyValues[p];
+    }
+  }
+  return componentRef.instance;
+}
+function selectOption(options, element, config) {
+  if (!(element instanceof HTMLSelectElement)) {
+    return;
+  }
+  element.focus();
+  if (isString(options)) {
+    const option = element.querySelector(`option[value="${options}"]`);
+    if (!option) {
+      return;
+    }
+    setOptionSelected(option, element, config);
+  } else if (options instanceof HTMLOptionElement) {
+    setOptionSelected(options, element, config);
+  } else {
+    if (!element.multiple) {
+      return;
+    }
+    if (isHTMLOptionElementArray(options)) {
+      options.forEach((option) => setOptionSelected(option, element, config));
+    } else {
+      element.querySelectorAll("option").forEach((opt) => {
+        if (options.includes(opt.value)) {
+          setOptionSelected(opt, element, config);
+        }
+      });
+    }
+  }
+}
+function setOptionSelected(option, select, config) {
+  option.selected = true;
+  if (config.emitEvents) {
+    dispatchFakeEvent(select, "change", true);
+  }
+}
+function typeInElement(value, element) {
+  if (!(element instanceof HTMLInputElement) && !(element instanceof HTMLTextAreaElement)) {
+    return;
+  }
+  element.focus();
+  element.value = value;
+  dispatchFakeEvent(element, "input", true);
+}
+class BaseSpectator {
+  inject(token) {
+    return import_testing.TestBed.inject ? import_testing.TestBed.inject(token) : import_testing.TestBed.get(token);
+  }
+  /**
+   * Execute any pending effects.
+   */
+  flushEffects() {
+    import_testing.TestBed.flushEffects();
+  }
+}
+const KEY_UP = "keyup";
+class DomSpectator extends BaseSpectator {
+  constructor(fixture, debugElement, instance, element) {
+    super();
+    this.fixture = fixture;
+    this.debugElement = debugElement;
+    this.instance = instance;
+    this.element = element;
+  }
+  inject(token) {
+    return super.inject(token);
+  }
+  detectChanges() {
+    this.fixture.detectChanges();
+  }
+  query(directiveOrSelector, options) {
+    if ((options || {}).root) {
+      if (isString(directiveOrSelector)) {
+        return document.querySelector(directiveOrSelector);
+      }
+      if (directiveOrSelector instanceof DOMSelector) {
+        return directiveOrSelector.execute(document)[0] || null;
+      }
+      return getChildren(this.getRootDebugElement())(directiveOrSelector, options)[0] || null;
+    }
+    if (options == null ? void 0 : options.parentSelector) {
+      const debugElement = this.getDebugElement(options.parentSelector);
+      if (!debugElement) {
+        console.error(`${directiveOrSelector} does not exists`);
+        return null;
+      }
+      return getChildren(debugElement)(directiveOrSelector, {
+        root: options.root,
+        read: options.read
+      })[0] || null;
+    }
+    return getChildren(this.debugElement)(directiveOrSelector, options)[0] || null;
+  }
+  queryAll(directiveOrSelector, options) {
+    if ((options || {}).root) {
+      if (isString(directiveOrSelector)) {
+        return Array.from(document.querySelectorAll(directiveOrSelector));
+      }
+      if (directiveOrSelector instanceof DOMSelector) {
+        return directiveOrSelector.execute(document);
+      }
+      return getChildren(this.getRootDebugElement())(directiveOrSelector, options);
+    }
+    if (options == null ? void 0 : options.parentSelector) {
+      const debugElement = this.getDebugElement(options.parentSelector);
+      if (!debugElement) {
+        console.error(`${directiveOrSelector} does not exists`);
+        return [];
+      }
+      return getChildren(debugElement)(directiveOrSelector, {
+        root: options.root,
+        read: options.read
+      });
+    }
+    return getChildren(this.debugElement)(directiveOrSelector, options);
+  }
+  queryLast(directiveOrSelector, options) {
+    let result = [];
+    if ((options || {}).root) {
+      if (isString(directiveOrSelector)) {
+        result = Array.from(document.querySelectorAll(directiveOrSelector));
+      } else if (directiveOrSelector instanceof DOMSelector) {
+        result = directiveOrSelector.execute(document);
+      } else {
+        result = getChildren(this.getRootDebugElement())(directiveOrSelector, options);
+      }
+    } else if (options == null ? void 0 : options.parentSelector) {
+      const debugElement = this.getDebugElement(options.parentSelector);
+      if (!debugElement) {
+        console.error(`${directiveOrSelector} does not exists`);
+        result = [];
+      } else {
+        result = getChildren(debugElement)(directiveOrSelector, {
+          root: options.root,
+          read: options.read
+        });
+      }
+    } else {
+      result = getChildren(this.debugElement)(directiveOrSelector, options);
+    }
+    if (result && result.length) {
+      return result[result.length - 1];
+    }
+    return null;
+  }
+  output(output) {
+    const observable = this.instance[output];
+    if (!(observable instanceof import_rxjs.Observable)) {
+      throw new Error(`${String(output)} is not an @Output`);
+    }
+    return observable;
+  }
+  tick(millis) {
+    (0, import_testing.tick)(millis);
+    this.detectChanges();
+  }
+  click(selector = this.element) {
+    const element = this.getNativeElement(selector);
+    if (!(element instanceof HTMLElement)) {
+      throw new Error(`Cannot click: ${selector} is not a HTMLElement`);
+    }
+    element.click();
+    this.detectChanges();
+  }
+  blur(selector = this.element) {
+    const element = this.getNativeElement(selector);
+    if (!(element instanceof HTMLElement)) {
+      throw new Error(`Cannot blur: ${selector} is not a HTMLElement`);
+    }
+    patchElementFocus(element);
+    element.blur();
+    this.detectChanges();
+  }
+  focus(selector = this.element) {
+    const element = this.getNativeElement(selector);
+    if (!(element instanceof HTMLElement)) {
+      throw new Error(`Cannot focus: ${selector} is not a HTMLElement`);
+    }
+    patchElementFocus(element);
+    element.focus();
+    this.detectChanges();
+  }
+  dispatchMouseEvent(selector = this.element, type, x = 0, y = 0, event = createMouseEvent(type, x, y)) {
+    const element = this.getNativeElement(selector);
+    if (!(element instanceof Node)) {
+      throw new Error(`Cannot dispatch mouse event: ${selector} is not a node`);
+    }
+    const dispatchedEvent = dispatchMouseEvent(element, type, x, y, event);
+    this.detectChanges();
+    return dispatchedEvent;
+  }
+  dispatchKeyboardEvent(selector = this.element, type, keyOrKeyCode, target) {
+    const element = this.getNativeElement(selector);
+    if (!(element instanceof Node)) {
+      throw new Error(`Cannot dispatch keyboard event: ${selector} is not a node`);
+    }
+    const event = dispatchKeyboardEvent(element, type, keyOrKeyCode, target);
+    this.detectChanges();
+    return event;
+  }
+  dispatchFakeEvent(selector = this.element, type, canBubble) {
+    const event = dispatchFakeEvent(this.getNativeElement(selector), type, canBubble);
+    this.detectChanges();
+    return event;
+  }
+  triggerEventHandler(directiveOrSelector, eventName, eventObj, options) {
+    const triggerDebugElement = this.getDebugElement(directiveOrSelector, options);
+    if (!triggerDebugElement) {
+      console.error(`${directiveOrSelector} does not exists`);
+      return;
+    }
+    triggerDebugElement.triggerEventHandler(eventName, eventObj);
+    this.detectChanges();
+  }
+  get keyboard() {
+    return {
+      pressKey: (key, selector = this.element, event = KEY_UP) => {
+        this.dispatchKeyboardEvent(selector, event, key);
+      },
+      pressEscape: (selector = this.element, event = KEY_UP) => {
+        this.dispatchKeyboardEvent(selector, event, { key: "Escape", keyCode: 27 });
+      },
+      pressEnter: (selector = this.element, event = KEY_UP) => {
+        this.dispatchKeyboardEvent(selector, event, { key: "Enter", keyCode: 13 });
+      },
+      pressTab: (selector = this.element, event = KEY_UP) => {
+        this.dispatchKeyboardEvent(selector, event, { key: "Tab", keyCode: 9 });
+      },
+      pressBackspace: (selector = this.element, event = KEY_UP) => {
+        this.dispatchKeyboardEvent(selector, event, { key: "Backspace", keyCode: 8 });
+      }
+    };
+  }
+  get mouse() {
+    return {
+      contextmenu: (selector = this.element) => {
+        this.dispatchMouseEvent(selector, "contextmenu");
+      },
+      dblclick: (selector = this.element) => {
+        this.dispatchMouseEvent(selector, "dblclick");
+      }
+    };
+  }
+  dispatchTouchEvent(selector = this.element, type, x = 0, y = 0) {
+    dispatchTouchEvent(this.getNativeElement(selector), type, x, y);
+    this.detectChanges();
+  }
+  typeInElement(value, selector = this.element) {
+    typeInElement(value, this.getNativeElement(selector));
+    this.detectChanges();
+  }
+  selectOption(selector = this.element, options, config = { emitEvents: true }) {
+    if (!selector) {
+      throw new Error(`Cannot find select: ${selector}`);
+    }
+    selectOption(options, this.getNativeElement(selector), config);
+    this.detectChanges();
+  }
+  getNativeElement(selector) {
+    let element;
+    if (selector === window || selector === document) {
+      return selector;
+    }
+    if (isString(selector)) {
+      const exists = this.debugElement.query(import_platform_browser.By.css(selector));
+      if (exists) {
+        element = exists.nativeElement;
+      } else {
+        console.error(`${selector} does not exists`);
+      }
+    } else if (selector instanceof DOMSelector) {
+      element = selector.execute(document)[0] || null;
+    } else {
+      if (selector instanceof import_core.DebugElement || selector instanceof import_core.ElementRef) {
+        element = selector.nativeElement;
+      } else {
+        element = selector;
+      }
+    }
+    return element;
+  }
+  getDebugElement(directiveOrSelector, options) {
+    const debugElement = (options == null ? void 0 : options.root) ? this.getRootDebugElement() : this.debugElement;
+    if (isString(directiveOrSelector)) {
+      return debugElement.query(import_platform_browser.By.css(directiveOrSelector));
+    } else if (directiveOrSelector instanceof import_core.DebugElement) {
+      return directiveOrSelector;
+    } else {
+      return debugElement.query(import_platform_browser.By.directive(directiveOrSelector));
+    }
+  }
+  getRootDebugElement() {
+    let element = this.debugElement;
+    while (true) {
+      if (!element) {
+        throw Error("Unable to find root element");
+      }
+      if (!element.parent) {
+        return element;
+      }
+      element = element.parent;
+    }
+  }
+}
+class Spectator extends DomSpectator {
+  constructor(fixture, debugElement, instance, element) {
+    super(fixture, debugElement, instance, element);
+    this.fixture = fixture;
+    this.debugElement = debugElement;
+    this.instance = instance;
+    this.element = element;
+  }
+  get component() {
+    return this.instance;
+  }
+  inject(token, fromComponentInjector = false) {
+    if (fromComponentInjector) {
+      return this.debugElement.injector.get(token);
+    }
+    return super.inject(token);
+  }
+  detectComponentChanges() {
+    if (this.debugElement) {
+      this.debugElement.injector.get(import_core.ChangeDetectorRef).detectChanges();
+    } else {
+      this.detectChanges();
+    }
+  }
+  setInput(input, value) {
+    setProps(this.fixture.componentRef, input, value);
+    this.detectChanges();
+    this.debugElement.injector.get(import_core.ChangeDetectorRef).detectChanges();
+  }
+  deferBlock(deferBlockIndex = 0) {
+    return this._deferBlocksForGivenFixture(deferBlockIndex, this.fixture.getDeferBlocks());
+  }
+  /**
+   *
+   * @param deferBlockFixtures Defer block fixture
+   * @returns deferBlock object with methods to access the defer blocks
+   */
+  _deferBlocksForGivenFixture(deferBlockIndex = 0, deferBlockFixtures) {
+    return {
+      renderComplete: () => __async(this, null, function* () {
+        const renderedDeferFixture = yield this._renderDeferStateAndGetFixture(import_testing.DeferBlockState.Complete, deferBlockIndex, deferBlockFixtures);
+        return this._childrenDeferFixtures(renderedDeferFixture);
+      }),
+      renderPlaceholder: () => __async(this, null, function* () {
+        const renderedDeferFixture = yield this._renderDeferStateAndGetFixture(import_testing.DeferBlockState.Placeholder, deferBlockIndex, deferBlockFixtures);
+        return this._childrenDeferFixtures(renderedDeferFixture);
+      }),
+      renderLoading: () => __async(this, null, function* () {
+        const renderedDeferFixture = yield this._renderDeferStateAndGetFixture(import_testing.DeferBlockState.Loading, deferBlockIndex, deferBlockFixtures);
+        return this._childrenDeferFixtures(renderedDeferFixture);
+      }),
+      renderError: () => __async(this, null, function* () {
+        const renderedDeferFixture = yield this._renderDeferStateAndGetFixture(import_testing.DeferBlockState.Error, deferBlockIndex, deferBlockFixtures);
+        return this._childrenDeferFixtures(renderedDeferFixture);
+      })
+    };
+  }
+  /**
+   * Renders the given defer block state and returns the defer block fixture
+   *
+   * @param deferBlockState complete, placeholder, loading or error
+   * @param deferBlockIndex index of the defer block to render
+   * @param deferBlockFixtures Defer block fixture
+   * @returns Defer block fixture
+   */
+  _renderDeferStateAndGetFixture(deferBlockState, deferBlockIndex = 0, deferBlockFixtures) {
+    return __async(this, null, function* () {
+      const deferFixture = (yield deferBlockFixtures)[deferBlockIndex];
+      yield deferFixture.render(deferBlockState);
+      return deferFixture;
+    });
+  }
+  /**
+   *
+   * @param deferFixture Defer block fixture
+   * @returns deferBlock object with methods to access the nested defer blocks
+   */
+  _childrenDeferFixtures(deferFixture) {
+    return {
+      deferBlock: (deferBlockIndex = 0) => this._deferBlocksForGivenFixture(deferBlockIndex, deferFixture.getDeferBlocks())
+    };
+  }
+}
+function addMatchers(matchers) {
+  if (!matchers)
+    return;
+  if (typeof jasmine !== "undefined") {
+    jasmine.addMatchers(matchers);
+  } else {
+    const jestExpectExtend = {};
+    for (const key of Object.keys(matchers)) {
+      if (key.startsWith("to"))
+        jestExpectExtend[key] = matchers[key]().compare;
+    }
+    expect.extend(jestExpectExtend);
+  }
+}
+/**
+ * @license
+ * Copyright Netanel Basal. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/NetanelBasal/spectator/blob/master/LICENSE
+ */
+function hex2rgb(hex) {
+  const h = hex.replace("#", "");
+  const matches = h.match(new RegExp("(.{" + h.length / 3 + "})", "g"));
+  const [r, g, b] = matches.map((match) => parseInt(match.length === 1 ? match + match : match, 16));
+  return `rgb(${r},${g},${b})`;
+}
+function isHex(value) {
+  return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value);
+}
+function trim(value) {
+  return (value || "").replace(/\s/g, "");
+}
+(0, import_internals.restoreSetTimeout)();
+const hasProperty = (actual, expected) => {
+  return expected === void 0 ? actual !== void 0 : actual === expected;
+};
+const containsProperty = (actual, expected) => {
+  return expected === void 0 ? true : actual.includes(expected);
+};
+const checkProperty = (el, prop, predicate) => {
+  let pass = false;
+  let failing = "";
+  for (const key of Object.keys(prop)) {
+    const actual = (0, import_jquery.default)(el).prop(key);
+    const addendum = prop[key] !== void 0 ? ` with value '${prop[key]}'` : "";
+    pass = predicate(actual, prop[key]);
+    failing = !pass ? `'${prop}'${addendum}, but had '${actual}'` : "";
+  }
+  const message = () => `Expected element${pass ? " not" : ""} to have property ${failing}`;
+  return { pass, message };
+};
+const hasCss = (el, css) => {
+  let prop;
+  let value;
+  const $el = (0, import_jquery.default)(el);
+  for (prop in css) {
+    if (css.hasOwnProperty(prop)) {
+      value = css[prop];
+      if (isHex(value)) {
+        value = hex2rgb(css[prop]);
+      }
+      if (value === "auto" && $el.get(0).style[prop] === "auto") {
+        continue;
+      }
+      if (trim($el.get(0).style[prop]) !== trim(value) && trim(el.style[prop]) !== trim(value) && trim(el.style.getPropertyValue(prop)) !== trim(value)) {
+        return false;
+      }
+    }
+  }
+  return true;
+};
+const hasSameText = (el, expected, options) => {
+  if (expected && Array.isArray(expected)) {
+    let actual2;
+    let pass2 = false;
+    let failing;
+    (0, import_jquery.default)(el).each((i, e) => {
+      actual2 = options.exact && !options.trim ? (0, import_jquery.default)(e).text() : import_jquery.default.trim((0, import_jquery.default)(e).text());
+      pass2 = options.exact ? actual2 === expected[i] : actual2.includes(expected[i]);
+      if (!pass2) {
+        failing = expected[i];
+        return false;
+      }
+    });
+    const message2 = () => `Expected element${pass2 ? " not" : ""} to have${options.exact ? " exact" : ""} text '${failing}', but had '${actual2}'`;
+    return { pass: pass2, message: message2 };
+  }
+  const actual = options.exact && !options.trim ? (0, import_jquery.default)(el).text() : import_jquery.default.trim((0, import_jquery.default)(el).text());
+  if (expected && typeof expected !== "string") {
+    const pass2 = expected(actual);
+    const message2 = () => `Expected element${pass2 ? " not" : ""} to have${options.exact ? " exact" : ""} text matching '${expected}', but had '${actual}'`;
+    return { pass: pass2, message: message2 };
+  }
+  const pass = options.exact && !Array.isArray(expected) ? actual === expected : actual.indexOf(expected) !== -1;
+  const message = () => `Expected element${pass ? " not" : ""} to have${options.exact ? " exact" : ""} text '${expected}', but had '${actual}'`;
+  return { pass, message };
+};
+const comparator = (func) => () => ({
+  compare: func
+});
+const toExist = comparator((el) => {
+  const actual = (0, import_jquery.default)(el).length;
+  const pass = actual > 0;
+  const message = () => `Expected ${el} element${pass ? " not" : ""} to exist`;
+  return { pass, message };
+});
+const toHaveLength = comparator((el, expected) => {
+  const actual = (0, import_jquery.default)(el).length;
+  const pass = actual === expected;
+  const message = () => `Expected element${pass ? " not" : ""} to have length ${expected}, but had ${actual}`;
+  return { pass, message };
+});
+const toHaveId = comparator((el, expected) => {
+  const actual = (0, import_jquery.default)(el).attr("id");
+  const pass = actual === expected;
+  const message = () => `Expected element${pass ? " not" : ""} to have ID '${expected}', but had '${actual}'`;
+  return { pass, message };
+});
+const toHaveClass = comparator((el, expected, options = { strict: true }) => {
+  if (expected && Array.isArray(expected)) {
+    const actual2 = (0, import_jquery.default)(el).attr("class");
+    const expectedClasses = expected.join(" ");
+    const pass2 = options.strict ? (0, import_jquery.default)(el).hasClass(expectedClasses) : expected.every((e) => (0, import_jquery.default)(el).hasClass(e));
+    const message2 = () => `Expected element${pass2 ? " not" : ""} to have value '${expectedClasses}', but had '${actual2}'`;
+    return { pass: pass2, message: message2 };
+  }
+  const actual = (0, import_jquery.default)(el).attr("class");
+  const pass = (0, import_jquery.default)(el).hasClass(expected);
+  const message = () => `Expected element${pass ? " not" : ""} to have class '${expected}', but had '${actual}'`;
+  return { pass, message };
+});
+const toHaveAttribute = comparator((el, attr, val) => {
+  if (isObject(attr)) {
+    let pass2 = false;
+    let failing;
+    for (const key of Object.keys(attr)) {
+      const actual2 = (0, import_jquery.default)(el).attr(key);
+      const addendum2 = attr[key] !== void 0 ? ` with value '${attr[key]}'` : "";
+      pass2 = hasProperty(actual2, attr[key]);
+      failing = !pass2 ? `'${attr}'${addendum2}, but had '${actual2}'` : "";
+    }
+    const message2 = () => `Expected element${pass2 ? " not" : ""} to have attribute ${failing}`;
+    return { pass: pass2, message: message2 };
+  }
+  const actual = (0, import_jquery.default)(el).attr(attr);
+  const addendum = val !== void 0 ? ` with value '${val}'` : "";
+  const pass = hasProperty(actual, val);
+  const message = () => `Expected element${pass ? " not" : ""} to have attribute '${attr}'${addendum}, but had '${actual}'`;
+  return { pass, message };
+});
+const toHaveProperty = comparator((el, prop, val) => {
+  if (isObject(prop)) {
+    return checkProperty(el, prop, hasProperty);
+  }
+  const actual = (0, import_jquery.default)(el).prop(prop);
+  const addendum = val !== void 0 ? ` with value '${val}'` : "";
+  const pass = hasProperty(actual, val);
+  const message = () => `Expected element${pass ? " not" : ""} to have property '${prop}'${addendum}, but had '${actual}'`;
+  return { pass, message };
+});
+const toContainProperty = comparator((el, prop, val) => {
+  if (isObject(prop)) {
+    return checkProperty(el, prop, containsProperty);
+  }
+  const actual = (0, import_jquery.default)(el).prop(prop);
+  const addendum = val !== void 0 ? ` with value '${val}'` : "";
+  const pass = containsProperty(actual, val);
+  const message = () => `Expected element${pass ? " not" : ""} to have property '${prop}'${addendum}, but had '${actual}'`;
+  return { pass, message };
+});
+const toHaveText = comparator((el, expected, exact = false) => hasSameText(el, expected, { exact, trim: false }));
+const toHaveExactText = comparator((el, expected, options = { trim: false }) => hasSameText(el, expected, { exact: true, trim: options.trim }));
+const toHaveExactTrimmedText = comparator((el, expected) => hasSameText(el, expected, { exact: true, trim: true }));
+const toContainText = toHaveText;
+const toHaveValue = comparator((el, expected) => {
+  if (expected && Array.isArray(expected)) {
+    let actual2;
+    let pass2 = false;
+    let failing;
+    (0, import_jquery.default)(el).each((i, e) => {
+      actual2 = (0, import_jquery.default)(e).val();
+      pass2 = actual2 === expected[i];
+      if (!pass2) {
+        failing = expected[i];
+        return false;
+      }
+    });
+    const message2 = () => `Expected element${pass2 ? " not" : ""} to have value '${failing}', but had '${actual2}'`;
+    return { pass: pass2, message: message2 };
+  }
+  const actual = (0, import_jquery.default)(el).val();
+  const pass = actual === expected;
+  const message = () => `Expected element${pass ? " not" : ""} to have value '${expected}', but had '${actual}'`;
+  return { pass, message };
+});
+const toContainValue = toHaveValue;
+const toHaveStyle = comparator((el, expected) => {
+  const pass = hasCss(el, expected);
+  const message = () => `Expected element${pass ? " not" : ""} to have CSS ${JSON.stringify(expected)}`;
+  return { pass, message };
+});
+const toHaveData = comparator((el, { data, val }) => {
+  const actual = (0, import_jquery.default)(el).data(data);
+  const addendum = val !== void 0 ? ` with value '${val}'` : "";
+  const pass = hasProperty(actual, val);
+  const message = () => `Expected element${pass ? " not" : ""} to have data '${data}'${addendum}, but had '${actual}'`;
+  return { pass, message };
+});
+const toBeChecked = comparator((el) => {
+  const pass = (0, import_jquery.default)(el).is(":checked");
+  const message = () => `Expected element${pass ? " not" : ""} to be checked`;
+  return { pass, message };
+});
+const toBeIndeterminate = comparator((el) => {
+  const pass = (0, import_jquery.default)(el).is(":indeterminate");
+  const message = () => `Expected element${pass ? " not" : ""} to be indeterminate`;
+  return { pass, message };
+});
+const toBeDisabled = comparator((el) => {
+  const pass = (0, import_jquery.default)(el).is(":disabled");
+  const message = () => `Expected element${pass ? " not" : ""} to be disabled`;
+  return { pass, message };
+});
+const toBeEmpty = comparator((el) => {
+  const pass = (0, import_jquery.default)(el).is(":empty");
+  const message = () => `Expected element${pass ? " not" : ""} to be empty`;
+  return { pass, message };
+});
+const toBePartial = comparator((actual, expected) => {
+  const mapToPropsAndValues = (values, properties) => {
+    return properties.map((prop) => {
+      return {
+        name: prop,
+        value: values[prop],
+        type: typeof values[prop]
+      };
+    });
+  };
+  const actualProps = Object.getOwnPropertyNames(actual);
+  const actualPropsAndValues = mapToPropsAndValues(actual, actualProps);
+  const expectedProps = Object.getOwnPropertyNames(expected);
+  const expectedPropsAndValues = mapToPropsAndValues(expected, expectedProps);
+  const pass = expectedProps.every((expectedProp) => actual[expectedProp] === expected[expectedProp]);
+  const message = () => `Expected element${pass ? " not" : ""} to contain properties: ${JSON.stringify(expectedPropsAndValues)}.`.concat(` Actual properties: ${JSON.stringify(actualPropsAndValues)}`);
+  return { pass, message };
+});
+function isHidden(elOrSelector) {
+  let el = (0, import_jquery.default)(elOrSelector)[0];
+  if (!el) {
+    return true;
+  }
+  const hiddenWhen = [
+    (el2) => !(el2.offsetWidth || el2.offsetHeight || el2.getClientRects().length),
+    (el2) => {
+      var _a, _b;
+      return el2.style.display === "none" || ((_b = (_a = window.getComputedStyle(el2)).getPropertyValue) == null ? void 0 : _b.call(_a, "display")) === "none";
+    },
+    (el2) => {
+      var _a, _b;
+      return el2.style.visibility === "hidden" || ((_b = (_a = window.getComputedStyle(el2)).getPropertyValue) == null ? void 0 : _b.call(_a, "visibility")) === "hidden";
+    },
+    (el2) => el2.type === "hidden",
+    (el2) => el2.hasAttribute("hidden")
+  ];
+  if (isRunningInJsDom()) {
+    hiddenWhen.shift();
+  }
+  while (el) {
+    if (el === document) {
+      break;
+    }
+    if (el.nodeType === Node.ELEMENT_NODE && hiddenWhen.some((rule) => rule(el))) {
+      return true;
+    }
+    el = el.parentNode || el.host;
+  }
+  return false;
+}
+const toBeHidden = comparator((el) => {
+  const pass = isHidden(el);
+  const message = () => `Expected element${pass ? " not" : ""} to be hidden`;
+  return { pass, message };
+});
+const toBeSelected = comparator((el) => {
+  const pass = (0, import_jquery.default)(el).is(":selected");
+  const message = () => `Expected element${pass ? " not" : ""} to be selected`;
+  return { pass, message };
+});
+const toBeVisible = comparator((el) => {
+  const pass = !isHidden(el);
+  const message = () => `Expected element${pass ? " not" : ""} to be visible`;
+  return { pass, message };
+});
+const toBeFocused = comparator((el) => {
+  const element = (0, import_jquery.default)(el).get(0);
+  const pass = element === element.ownerDocument.activeElement;
+  const message = () => `Expected element${pass ? " not" : ""} to be focused`;
+  return { pass, message };
+});
+const toBeMatchedBy = comparator((el, expected) => {
+  const actual = (0, import_jquery.default)(el).filter(expected).length;
+  const pass = actual > 0;
+  const message = () => `Expected element${pass ? " not" : ""} to be matched by '${expected}'`;
+  return { pass, message };
+});
+const toHaveDescendant = comparator((el, selector) => {
+  const actual = (0, import_jquery.default)(el).find(selector).length;
+  const pass = actual > 0;
+  const message = () => `Expected element${pass ? " not" : ""} to contain child '${selector}'`;
+  return { pass, message };
+});
+const toHaveDescendantWithText = comparator((el, { selector, text }) => {
+  const actual = import_jquery.default.trim((0, import_jquery.default)(el).find(selector).text());
+  if (text && import_jquery.default.isFunction(text.test)) {
+    const pass2 = text.test(actual);
+    const message2 = () => `Expected element${pass2 ? " not" : ""} to have descendant '${selector}' with text matching '${text}', but had '${actual}'`;
+    return { pass: pass2, message: message2 };
+  }
+  const pass = actual.indexOf(text) !== -1;
+  const message = () => `Expected element${pass ? " not" : ""} to have descendant '${selector}' with text '${text}', but had '${actual}'`;
+  return { pass, message };
+});
+const toHaveSelectedOptions = comparator((el, expected) => {
+  var _a;
+  if (expected instanceof HTMLOptionElement) {
+    const actual2 = (0, import_jquery.default)(el).find(":selected");
+    const pass2 = actual2.is((0, import_jquery.default)(expected));
+    const message2 = () => `Expected element${pass2 ? " not" : ""} to have options '[${expected.outerHTML}]' but had '[${actual2[0].outerHTML}]'`;
+    return { pass: pass2, message: message2 };
+  }
+  if (isHTMLOptionElementArray(expected)) {
+    const actual2 = (0, import_jquery.default)(el).find(":selected");
+    const pass2 = actual2.length === expected.length && actual2.toArray().every((_, index) => (0, import_jquery.default)(actual2[index]).is(expected[index]));
+    const expectedOptionsString2 = (0, import_jquery.default)(expected).get().map((option) => option.outerHTML).join(",");
+    const actualOptionsString = actual2.get().map((option) => option.outerHTML).join(",");
+    const message2 = () => `Expected element${pass2 ? " not" : ""} to have options '[${expectedOptionsString2}]' but had '[${actualOptionsString}]'`;
+    return { pass: pass2, message: message2 };
+  }
+  const actual = (0, import_jquery.default)(el).val();
+  const pass = (_a = coerceArray(expected)) == null ? void 0 : _a.every((v) => actual.includes(v));
+  const expectedOptionsString = Array.isArray(expected) ? expected.reduce((acc, val, i) => acc + `${i === expected.length ? "" : ","}${val}`) : expected;
+  const message = () => `Expected element${pass ? " not" : ""} to have options '[${expectedOptionsString}]' but had '[${actual}]'`;
+  return { pass, message };
+});
+var customMatchers = /* @__PURE__ */ Object.freeze({
+  __proto__: null,
+  toBeChecked,
+  toBeDisabled,
+  toBeEmpty,
+  toBeFocused,
+  toBeHidden,
+  toBeIndeterminate,
+  toBeMatchedBy,
+  toBePartial,
+  toBeSelected,
+  toBeVisible,
+  toContainProperty,
+  toContainText,
+  toContainValue,
+  toExist,
+  toHaveAttribute,
+  toHaveClass,
+  toHaveData,
+  toHaveDescendant,
+  toHaveDescendantWithText,
+  toHaveExactText,
+  toHaveExactTrimmedText,
+  toHaveId,
+  toHaveLength,
+  toHaveProperty,
+  toHaveSelectedOptions,
+  toHaveStyle,
+  toHaveText,
+  toHaveValue
+});
+let globals = {
+  providers: [],
+  declarations: [],
+  imports: []
+};
+function defineGlobalsInjections(config) {
+  globals = __spreadValues(__spreadValues({}, globals), config);
+}
+function getGlobalsInjections() {
+  return globals;
+}
+function initialModule(options) {
+  const globals2 = __spreadValues({ imports: [], declarations: [], providers: [] }, getGlobalsInjections());
+  return {
+    declarations: [...globals2.declarations, ...options.declarations, ...options.entryComponents],
+    imports: [...options.disableAnimations ? [import_animations.NoopAnimationsModule] : [], ...globals2.imports, ...options.imports],
+    providers: [...globals2.providers, ...options.providers, ...options.mocks.map((type) => options.mockProvider(type))],
+    entryComponents: [...options.entryComponents],
+    teardown: (
+      // Caretaker note: we don't want to merge the `globals.teardown` and `options.teardown`, since `options.teardown`
+      // is always defined. If the user calls `defineGlobalsInjections({ teardown: { ... } })` and we merge it with
+      // `options.teardown`, then `options.teardown` will always override global options.
+      __spreadValues({}, globals2.teardown || options.teardown)
+    ),
+    deferBlockBehavior: globals2.deferBlockBehavior || options.deferBlockBehavior,
+    errorOnUnknownElements: globals2.errorOnUnknownElements || options.errorOnUnknownElements,
+    errorOnUnknownProperties: globals2.errorOnUnknownProperties || options.errorOnUnknownProperties
+  };
+}
+function initialSpectatorModule(options) {
+  const moduleMetadata = initialModule(options);
+  if (options.declareComponent) {
+    declareInModule(moduleMetadata, options.component);
+  }
+  moduleMetadata.schemas = [options.shallow ? import_core.NO_ERRORS_SCHEMA : options.schemas || []];
+  return moduleMetadata;
+}
+function merge(defaults, overrides) {
+  return __spreadValues(__spreadValues({}, defaults), overrides);
+}
+function installProtoMethods(mock, proto, createSpyFn) {
+  if (proto === null || proto === Object.prototype) {
+    return;
+  }
+  for (const key of Object.getOwnPropertyNames(proto)) {
+    const descriptor = Object.getOwnPropertyDescriptor(proto, key);
+    if (!descriptor) {
+      continue;
+    }
+    if (typeof descriptor.value === "function" && key !== "constructor" && typeof mock[key] === "undefined") {
+      mock[key] = createSpyFn(key);
+    } else if (descriptor.get && !mock.hasOwnProperty(key)) {
+      Object.defineProperty(mock, key, {
+        set: (value) => mock[`_${key}`] = value,
+        get: () => mock[`_${key}`],
+        configurable: true
+      });
+    }
+  }
+  installProtoMethods(mock, Object.getPrototypeOf(proto), createSpyFn);
+  mock.castToWritable = () => mock;
+}
+function createSpyObject(type, template) {
+  const mock = __spreadValues({}, template) || {};
+  installProtoMethods(mock, type.prototype, (name) => {
+    const newSpy = jasmine.createSpy(name);
+    newSpy.andCallFake = (fn) => newSpy.and.callFake(fn);
+    newSpy.andReturn = (val) => newSpy.and.returnValue(val);
+    newSpy.reset = () => newSpy.calls.reset();
+    newSpy.and.returnValue(null);
+    return newSpy;
+  });
+  return mock;
+}
+function mockProvider(type, properties) {
+  return {
+    provide: type,
+    useFactory: () => createSpyObject(type, properties)
+  };
+}
+const defaultOptions = {
+  disableAnimations: true,
+  entryComponents: [],
+  mocks: [],
+  mockProvider,
+  providers: [],
+  declarations: [],
+  imports: [],
+  schemas: [],
+  overrideModules: [],
+  overrideComponents: [],
+  overrideDirectives: [],
+  overridePipes: [],
+  teardown: { destroyAfterEach: false },
+  errorOnUnknownElements: false,
+  errorOnUnknownProperties: false,
+  deferBlockBehavior: import_testing.DeferBlockBehavior.Playthrough
+};
+function getDefaultBaseOptions(options) {
+  return merge(defaultOptions, options);
+}
+const defaultSpectatorOptions = __spreadProps(__spreadValues({}, getDefaultBaseOptions()), {
+  shallow: false,
+  declareComponent: true,
+  detectChanges: true,
+  componentProviders: [],
+  componentViewProviders: [],
+  componentMocks: [],
+  componentViewProvidersMocks: []
+});
+function getSpectatorDefaultOptions(overrides) {
+  return merge(defaultSpectatorOptions, overrides);
+}
+function overrideComponentIfProviderOverridesSpecified(options) {
+  const hasProviderOverrides = options.componentProviders.length || options.componentMocks.length;
+  const hasViewProviders = options.componentViewProviders.length || options.componentViewProvidersMocks.length;
+  if (hasProviderOverrides || hasViewProviders) {
+    let providerConfiguration = {};
+    if (hasProviderOverrides) {
+      providerConfiguration = {
+        providers: [...options.componentProviders, ...options.componentMocks.map((p) => options.mockProvider(p))]
+      };
+    }
+    if (hasViewProviders) {
+      providerConfiguration = __spreadProps(__spreadValues({}, providerConfiguration), {
+        viewProviders: [...options.componentViewProviders, ...options.componentViewProvidersMocks.map((p) => options.mockProvider(p))]
+      });
+    }
+    import_testing.TestBed.overrideComponent(options.component, {
+      set: providerConfiguration
+    });
+  }
+}
+function overrideModules(options) {
+  if (options.overrideModules.length) {
+    options.overrideModules.forEach((overrideModule) => {
+      const [ngModule, override] = overrideModule;
+      import_testing.TestBed.overrideModule(ngModule, override);
+    });
+  }
+}
+function overrideComponents(options) {
+  if (options.overrideComponents.length) {
+    options.overrideComponents.forEach((overrideComponent) => {
+      var _a;
+      const [component, override] = overrideComponent;
+      if (!((_a = (0, import_core.reflectComponentType)(component)) == null ? void 0 : _a.isStandalone)) {
+        throw new Error(`Can not override non standalone component`);
+      }
+      import_testing.TestBed.overrideComponent(component, override);
+    });
+  }
+}
+function overrideDirectives(options) {
+  if (options.overrideDirectives.length) {
+    options.overrideDirectives.forEach((overrideDirective) => {
+      const [directive, override] = overrideDirective;
+      if (!(0, import_core.isStandalone)(directive)) {
+        throw new Error(`Can not override non standalone directive`);
+      }
+      import_testing.TestBed.overrideDirective(directive, override);
+    });
+  }
+}
+function overridePipes(options) {
+  if (options.overridePipes.length) {
+    options.overridePipes.forEach((overridePipe) => {
+      const [pipe, override] = overridePipe;
+      if (!(0, import_core.isStandalone)(pipe)) {
+        throw new Error(`Can not override non standalone pipe`);
+      }
+      import_testing.TestBed.overridePipe(pipe, override);
+    });
+  }
+}
+function createComponentFactory(typeOrOptions) {
+  const options = isType(typeOrOptions) ? getSpectatorDefaultOptions({ component: typeOrOptions }) : getSpectatorDefaultOptions(typeOrOptions);
+  const moduleMetadata = initialSpectatorModule(options);
+  beforeEach((0, import_testing.waitForAsync)(() => {
+    addMatchers(customMatchers);
+    import_testing.TestBed.configureTestingModule(moduleMetadata).overrideModule(import_testing2.BrowserDynamicTestingModule, {});
+    overrideModules(options);
+    overrideComponents(options);
+    overrideDirectives(options);
+    overridePipes(options);
+    overrideComponentIfProviderOverridesSpecified(options);
+    import_testing.TestBed.compileComponents();
+  }));
+  return (overrides) => {
+    const defaults = { props: {}, detectChanges: true, providers: [] };
+    const { detectChanges, props, providers } = __spreadValues(__spreadValues({}, defaults), overrides);
+    if (providers && providers.length) {
+      providers.forEach((provider) => {
+        import_testing.TestBed.overrideProvider(provider.provide, provider);
+      });
+    }
+    const spectator = createSpectator(options, props);
+    if (options.detectChanges && detectChanges) {
+      spectator.detectChanges();
+    }
+    return spectator;
+  };
+}
+function createSpectator(options, props) {
+  const fixture = import_testing.TestBed.createComponent(options.component);
+  const debugElement = fixture.debugElement;
+  const component = setProps(fixture.componentRef, props);
+  return new Spectator(fixture, debugElement, component, debugElement.nativeElement);
+}
+class SpectatorHost extends DomSpectator {
+  constructor(hostComponent, hostDebugElement, hostElement, hostFixture, debugElement, componentInstance, element) {
+    super(hostFixture, debugElement, componentInstance, element);
+    this.hostComponent = hostComponent;
+    this.hostDebugElement = hostDebugElement;
+    this.hostElement = hostElement;
+    this.hostFixture = hostFixture;
+    this.debugElement = debugElement;
+    this.element = element;
+  }
+  get component() {
+    return this.instance;
+  }
+  inject(token, fromComponentInjector = false) {
+    if (fromComponentInjector) {
+      return this.debugElement.injector.get(token);
+    }
+    return super.inject(token);
+  }
+  detectComponentChanges() {
+    if (this.debugElement) {
+      this.debugElement.injector.get(import_core.ChangeDetectorRef).detectChanges();
+    } else {
+      this.detectChanges();
+    }
+  }
+  queryHost(directiveOrSelector, options) {
+    if ((options || {}).root && isString(directiveOrSelector)) {
+      return document.querySelector(directiveOrSelector);
+    }
+    return getChildren(this.hostDebugElement)(directiveOrSelector, options)[0] || null;
+  }
+  queryHostAll(directiveOrSelector, options) {
+    if ((options || {}).root && isString(directiveOrSelector)) {
+      return Array.from(document.querySelectorAll(directiveOrSelector));
+    }
+    return getChildren(this.hostDebugElement)(directiveOrSelector, options);
+  }
+  setHostInput(input, value) {
+    setHostProps(this.fixture.componentRef, input, value);
+    this.detectChanges();
+  }
+}
+function nodeByDirective(type) {
+  return (debugNode) => debugNode.providerTokens.includes(type);
+}
+function initialSpectatorWithHostModule(options) {
+  const moduleMetadata = initialSpectatorModule(options);
+  moduleMetadata.declarations.push(options.host);
+  return moduleMetadata;
+}
+const _HostComponent = class _HostComponent {
+};
+_HostComponent.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.0.1", ngImport: i0, type: _HostComponent, deps: [], target: i0.\u0275\u0275FactoryTarget.Component });
+_HostComponent.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "18.0.1", type: _HostComponent, selector: "lib-ngneat-host-component", ngImport: i0, template: "", isInline: true });
+let HostComponent = _HostComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.0.1", ngImport: i0, type: HostComponent, decorators: [{
+  type: import_core.Component,
+  args: [{
+    selector: "lib-ngneat-host-component",
+    template: ""
+  }]
+}] });
+const _HostModule = class _HostModule {
+};
+_HostModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.0.1", ngImport: i0, type: _HostModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_HostModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.0.1", ngImport: i0, type: _HostModule, declarations: [HostComponent] });
+_HostModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.0.1", ngImport: i0, type: _HostModule });
+let HostModule = _HostModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.0.1", ngImport: i0, type: HostModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    declarations: [HostComponent]
+  }]
+}] });
+const defaultSpectatorHostOptions = __spreadProps(__spreadValues({}, getSpectatorDefaultOptions()), {
+  host: HostComponent,
+  template: ""
+});
+function getSpectatorHostDefaultOptions(overrides) {
+  return merge(defaultSpectatorHostOptions, overrides);
+}
+function createHostFactory(typeOrOptions) {
+  const options = isType(typeOrOptions) ? getSpectatorHostDefaultOptions({ component: typeOrOptions }) : getSpectatorHostDefaultOptions(typeOrOptions);
+  const moduleMetadata = initialSpectatorWithHostModule(options);
+  beforeEach((0, import_testing.waitForAsync)(() => {
+    addMatchers(customMatchers);
+    import_testing.TestBed.configureTestingModule(moduleMetadata).overrideModule(import_testing2.BrowserDynamicTestingModule, {});
+    overrideModules(options);
+    overrideComponents(options);
+    overrideDirectives(options);
+    overridePipes(options);
+    overrideComponentIfProviderOverridesSpecified(options);
+    if (options.template) {
+      import_testing.TestBed.overrideComponent(options.host, {
+        set: { template: options.template }
+      });
+    }
+  }));
+  return (template, overrides) => {
+    const defaults = { hostProps: {}, detectChanges: true, providers: [] };
+    const { detectChanges, hostProps, providers } = __spreadValues(__spreadValues({}, defaults), overrides);
+    if (providers && providers.length) {
+      providers.forEach((provider) => {
+        import_testing.TestBed.overrideProvider(provider.provide, provider);
+      });
+    }
+    if (template) {
+      import_testing.TestBed.overrideComponent(options.host, {
+        set: { template }
+      });
+    }
+    const spectator = createSpectatorHost(options, hostProps);
+    if (options.detectChanges && detectChanges) {
+      spectator.detectChanges();
+    }
+    return spectator;
+  };
+}
+function createSpectatorHost(options, hostProps) {
+  const hostFixture = import_testing.TestBed.createComponent(options.host);
+  const debugElement = hostFixture.debugElement.query(import_platform_browser.By.directive(options.component)) || hostFixture.debugElement;
+  const debugNode = hostFixture.debugElement.queryAllNodes(nodeByDirective(options.component))[0];
+  if (!debugNode) {
+    throw new Error(`Cannot find component/directive ${options.component} in host template \u{1F614}`);
+  }
+  const hostComponent = setHostProps(hostFixture.componentRef, hostProps);
+  const component = debugNode.injector.get(options.component);
+  return new SpectatorHost(hostComponent, hostFixture.debugElement, hostFixture.nativeElement, hostFixture, debugElement, component, debugElement.nativeElement);
+}
+class SpectatorDirective extends DomSpectator {
+  constructor(hostComponent, fixture, debugElement, instance, element) {
+    super(fixture, debugElement, instance, element);
+    this.hostComponent = hostComponent;
+    this.fixture = fixture;
+    this.debugElement = debugElement;
+    this.instance = instance;
+    this.element = element;
+  }
+  get directive() {
+    return this.instance;
+  }
+  inject(token, fromDirectiveInjector = false) {
+    if (fromDirectiveInjector) {
+      return this.debugElement.injector.get(token);
+    }
+    return super.inject(token);
+  }
+  setHostInput(input, value) {
+    setHostProps(this.fixture.componentRef, input, value);
+    this.detectChanges();
+  }
+}
+function initialSpectatorDirectiveModule(options) {
+  const moduleMetadata = initialModule(options);
+  if (options.declareDirective) {
+    declareInModule(moduleMetadata, options.directive);
+  }
+  moduleMetadata.declarations.push(options.host);
+  moduleMetadata.schemas = [options.shallow ? import_core.NO_ERRORS_SCHEMA : options.schemas || []];
+  return moduleMetadata;
+}
+const defaultSpectatorRoutingOptions = __spreadProps(__spreadValues({}, getDefaultBaseOptions()), {
+  host: HostComponent,
+  template: "",
+  shallow: false,
+  detectChanges: true,
+  directiveProviders: [],
+  directiveMocks: [],
+  declareDirective: true
+});
+function getSpectatorDirectiveDefaultOptions(overrides) {
+  return merge(defaultSpectatorRoutingOptions, overrides);
+}
+function createDirectiveFactory(typeOrOptions) {
+  const options = isType(typeOrOptions) ? getSpectatorDirectiveDefaultOptions({ directive: typeOrOptions }) : getSpectatorDirectiveDefaultOptions(typeOrOptions);
+  const moduleMetadata = initialSpectatorDirectiveModule(options);
+  beforeEach((0, import_testing.waitForAsync)(() => {
+    addMatchers(customMatchers);
+    import_testing.TestBed.configureTestingModule(moduleMetadata);
+    overrideModules(options);
+    overrideComponents(options);
+    overrideDirectives(options);
+    overridePipes(options);
+  }));
+  return (template, overrides) => {
+    const defaults = {
+      hostProps: {},
+      detectChanges: true,
+      providers: []
+    };
+    const { detectChanges, hostProps, providers } = __spreadValues(__spreadValues({}, defaults), overrides);
+    if (providers && providers.length) {
+      providers.forEach((provider) => {
+        import_testing.TestBed.overrideProvider(provider.provide, provider);
+      });
+    }
+    import_testing.TestBed.overrideModule(import_testing2.BrowserDynamicTestingModule, {}).overrideComponent(options.host, {
+      set: { template: template || options.template }
+    });
+    if (options.directiveProviders.length || options.directiveMocks.length) {
+      import_testing.TestBed.overrideDirective(options.directive, {
+        set: { providers: [...options.directiveProviders, ...options.directiveMocks.map((p) => options.mockProvider(p))] }
+      });
+    }
+    const spectator = createSpectatorDirective(options, hostProps);
+    if (options.detectChanges && detectChanges) {
+      spectator.detectChanges();
+    }
+    return spectator;
+  };
+}
+function createSpectatorDirective(options, hostProps) {
+  const hostFixture = import_testing.TestBed.createComponent(options.host);
+  const debugElement = hostFixture.debugElement.query(import_platform_browser.By.directive(options.directive)) || hostFixture.debugElement;
+  const debugNode = hostFixture.debugElement.queryAllNodes(nodeByDirective(options.directive))[0];
+  if (!debugNode) {
+    throw new Error(`Cannot find directive ${options.directive} in host template \u{1F614}`);
+  }
+  const hostComponent = setHostProps(hostFixture.componentRef, hostProps);
+  const directive = debugNode.injector.get(options.directive);
+  return new SpectatorDirective(hostComponent, hostFixture, hostFixture.debugElement, directive, debugElement.nativeElement);
+}
+class SpectatorService extends BaseSpectator {
+  constructor(service) {
+    super();
+    this.service = service;
+  }
+}
+function initialServiceModule(options) {
+  const moduleMetadata = initialModule(options);
+  moduleMetadata.providers.push(options.service);
+  return moduleMetadata;
+}
+const defaultServiceOptions = __spreadValues({}, getDefaultBaseOptions());
+function getDefaultServiceOptions(overrides) {
+  return merge(defaultServiceOptions, overrides);
+}
+function createServiceFactory(typeOrOptions) {
+  const service = isType(typeOrOptions) ? typeOrOptions : typeOrOptions.service;
+  const options = isType(typeOrOptions) ? getDefaultServiceOptions({ service }) : getDefaultServiceOptions(typeOrOptions);
+  const moduleMetadata = initialServiceModule(options);
+  beforeEach(() => {
+    import_testing.TestBed.configureTestingModule(moduleMetadata);
+    overrideModules(options);
+  });
+  afterEach(() => {
+    const testedService = import_testing.TestBed.inject ? import_testing.TestBed.inject(service) : import_testing.TestBed.get(service);
+    if (doesServiceImplementsOnDestroy(testedService)) {
+      testedService.ngOnDestroy();
+    }
+  });
+  return (overrides) => {
+    const defaults = { providers: [] };
+    const { providers } = __spreadValues(__spreadValues({}, defaults), overrides);
+    if (providers && providers.length) {
+      providers.forEach((provider) => {
+        import_testing.TestBed.overrideProvider(provider.provide, provider);
+      });
+    }
+    return new SpectatorService(import_testing.TestBed.inject ? import_testing.TestBed.inject(service) : import_testing.TestBed.get(service));
+  };
+}
+class RouterStub extends import_router.Router {
+}
+function isRouterStub(router) {
+  return "emitRouterEvent" in router;
+}
+class SpectatorRouting extends Spectator {
+  constructor(fixture, debugElement, instance, router, activatedRouteStub) {
+    super(fixture, debugElement, instance, debugElement.nativeElement);
+    this.router = router;
+    this.activatedRouteStub = activatedRouteStub;
+  }
+  /**
+   * Simulates a route navigation by updating the Params, QueryParams and Data observable streams.
+   */
+  triggerNavigation(options) {
+    if (!this.checkStubPresent()) {
+      return;
+    }
+    if (options && options.params) {
+      this.activatedRouteStub.setParams(options.params);
+    }
+    if (options && options.queryParams) {
+      this.activatedRouteStub.setQueryParams(options.queryParams);
+    }
+    if (options && options.data) {
+      this.activatedRouteStub.setAllData(options.data);
+    }
+    if (options && options.fragment) {
+      this.activatedRouteStub.setFragment(options.fragment);
+    }
+    this.triggerNavigationAndUpdate();
+  }
+  /**
+   * Updates the route params and triggers a route navigation.
+   */
+  setRouteParam(name, value) {
+    if (this.checkStubPresent()) {
+      this.activatedRouteStub.setParam(name, value);
+      this.triggerNavigationAndUpdate();
+    }
+  }
+  /**
+   * Updates the route query params and triggers a route navigation.
+   */
+  setRouteQueryParam(name, value) {
+    if (this.checkStubPresent()) {
+      this.activatedRouteStub.setQueryParam(name, value);
+      this.triggerNavigationAndUpdate();
+    }
+  }
+  /**
+   * Updates the route data and triggers a route navigation.
+   * The `value` is typed as `any` since the `Route#data` is a record with `any` values.
+   * There's no sense to make it generic until `Route#data` starts supporting generic types.
+   */
+  setRouteData(name, value) {
+    if (this.checkStubPresent()) {
+      this.activatedRouteStub.setData(name, value);
+      this.triggerNavigationAndUpdate();
+    }
+  }
+  /**
+   * Updates the route fragment and triggers a route navigation.
+   */
+  setRouteFragment(fragment) {
+    if (this.checkStubPresent()) {
+      this.activatedRouteStub.setFragment(fragment);
+      this.triggerNavigationAndUpdate();
+    }
+  }
+  /**
+   * Updates the route url and triggers a route navigation.
+   */
+  setRouteUrl(url) {
+    if (this.checkStubPresent()) {
+      this.activatedRouteStub.setUrl(url);
+      this.triggerNavigationAndUpdate();
+    }
+  }
+  /**
+   * Emits a router event
+   */
+  emitRouterEvent(event) {
+    if (!isRouterStub(this.router)) {
+      console.warn('No stub for Router present. Set Spectator option "stubsEnabled" to true if you want to use this helper, or use Router navigation to trigger events.');
+      return;
+    }
+    this.router.emitRouterEvent(event);
+  }
+  triggerNavigationAndUpdate() {
+    this.activatedRouteStub.triggerNavigation();
+    this.detectChanges();
+  }
+  checkStubPresent() {
+    if (!this.activatedRouteStub) {
+      console.warn('No stub for ActivatedRoute present. Set Spectator option "stubsEnabled" to true if you want to use this helper, or use Router to trigger navigation.');
+      return false;
+    }
+    return true;
+  }
+}
+class ActivatedRouteStub extends import_router.ActivatedRoute {
+  constructor(options) {
+    super();
+    this.testParams = {};
+    this.testQueryParams = {};
+    this.testData = {};
+    this.testFragment = null;
+    this.testUrl = [];
+    this.testRoot = null;
+    this.testParent = null;
+    this.testFirstChild = null;
+    this.testChildren = null;
+    this.paramsSubject = new import_rxjs.ReplaySubject(1);
+    this.queryParamsSubject = new import_rxjs.ReplaySubject(1);
+    this.dataSubject = new import_rxjs.ReplaySubject(1);
+    this.fragmentSubject = new import_rxjs.ReplaySubject(1);
+    this.urlSubject = new import_rxjs.ReplaySubject(1);
+    if (options) {
+      this.testParams = options.params || {};
+      this.testQueryParams = options.queryParams || {};
+      this.testData = options.data || {};
+      this.testFragment = options.fragment || null;
+      this.testUrl = options.url || [];
+      this.testRoot = options.root || null;
+      this.testParent = options.parent || null;
+      this.testFirstChild = options.firstChild || null;
+      this.testChildren = options.children || null;
+    }
+    this.params = this.paramsSubject.asObservable();
+    this.queryParams = this.queryParamsSubject.asObservable();
+    this.data = this.dataSubject.asObservable();
+    this.fragment = this.fragmentSubject.asObservable();
+    this.url = this.urlSubject.asObservable();
+    this.snapshot = this.buildSnapshot();
+    this.triggerNavigation();
+  }
+  get paramMap() {
+    return this.paramsSubject.asObservable().pipe((0, import_operators.map)((params) => (0, import_router.convertToParamMap)(params)));
+  }
+  setParams(params) {
+    this.testParams = params;
+    this.snapshot = this.buildSnapshot();
+  }
+  setParam(name, value) {
+    this.testParams = __spreadProps(__spreadValues({}, this.testParams), { [name]: value });
+    this.snapshot = this.buildSnapshot();
+  }
+  setQueryParams(queryParams) {
+    this.testQueryParams = queryParams;
+    this.snapshot = this.buildSnapshot();
+  }
+  setQueryParam(name, value) {
+    this.testQueryParams = __spreadProps(__spreadValues({}, this.testQueryParams), { [name]: value });
+    this.snapshot = this.buildSnapshot();
+  }
+  setAllData(data) {
+    this.testData = data;
+    this.snapshot = this.buildSnapshot();
+  }
+  setData(name, value) {
+    this.testData = __spreadProps(__spreadValues({}, this.testData), { [name]: value });
+    this.snapshot = this.buildSnapshot();
+  }
+  setFragment(fragment) {
+    this.testFragment = fragment;
+    this.snapshot = this.buildSnapshot();
+  }
+  setUrl(url) {
+    this.testUrl = url;
+    this.snapshot = this.buildSnapshot();
+  }
+  get root() {
+    return this.testRoot || this;
+  }
+  get parent() {
+    return this.testParent || null;
+  }
+  get children() {
+    return this.testChildren || [this];
+  }
+  get firstChild() {
+    return this.testFirstChild || null;
+  }
+  /**
+   * Simulates a route navigation by updating the Params, QueryParams and Data observable streams.
+   */
+  triggerNavigation() {
+    this.paramsSubject.next(this.testParams);
+    this.queryParamsSubject.next(this.testQueryParams);
+    this.dataSubject.next(this.testData);
+    this.fragmentSubject.next(this.testFragment);
+    this.urlSubject.next(this.testUrl);
+  }
+  toString() {
+    return "activatedRouteStub";
+  }
+  buildSnapshot() {
+    const snapshot = new import_router.ActivatedRouteSnapshot();
+    snapshot.params = this.testParams;
+    snapshot.queryParams = this.testQueryParams;
+    snapshot.data = this.testData;
+    snapshot.fragment = this.testFragment;
+    snapshot.url = this.testUrl;
+    return snapshot;
+  }
+}
+function initialRoutingModule(options) {
+  const moduleMetadata = initialSpectatorModule(options);
+  if (options.stubsEnabled) {
+    moduleMetadata.imports.push(import_testing3.RouterTestingModule);
+    moduleMetadata.providers.push(options.mockProvider(RouterStub, {
+      events: new import_rxjs.Subject(),
+      emitRouterEvent(event) {
+        this.events.next(event);
+      },
+      serializeUrl() {
+        return "/";
+      }
+    }), {
+      provide: import_router.Router,
+      useExisting: RouterStub
+    });
+    moduleMetadata.providers.push({
+      provide: ActivatedRouteStub,
+      useValue: new ActivatedRouteStub({
+        params: options.params,
+        queryParams: options.queryParams,
+        data: options.data
+      })
+    }, {
+      provide: import_router.ActivatedRoute,
+      useExisting: ActivatedRouteStub
+    });
+  } else {
+    moduleMetadata.imports.push(import_testing3.RouterTestingModule.withRoutes(options.routes));
+  }
+  return moduleMetadata;
+}
+const defaultRoutingOptions = __spreadProps(__spreadValues({}, getSpectatorDefaultOptions()), {
+  params: {},
+  queryParams: {},
+  data: {},
+  fragment: null,
+  stubsEnabled: true,
+  routes: [],
+  url: [],
+  root: null,
+  parent: null,
+  children: null,
+  firstChild: null
+});
+function getRoutingDefaultOptions(overrides) {
+  return merge(defaultRoutingOptions, overrides);
+}
+function createRoutingFactory(typeOrOptions) {
+  const options = isType(typeOrOptions) ? getRoutingDefaultOptions({ component: typeOrOptions }) : getRoutingDefaultOptions(typeOrOptions);
+  const moduleMetadata = initialRoutingModule(options);
+  beforeEach((0, import_testing.waitForAsync)(() => {
+    addMatchers(customMatchers);
+    import_testing.TestBed.configureTestingModule(moduleMetadata);
+    overrideModules(options);
+    overrideComponents(options);
+    overrideDirectives(options);
+    overridePipes(options);
+    overrideComponentIfProviderOverridesSpecified(options);
+    import_testing.TestBed.compileComponents();
+  }));
+  return (overrides) => {
+    const defaults = {
+      props: {},
+      detectChanges: true,
+      providers: []
+    };
+    const { detectChanges, props, providers } = __spreadValues(__spreadValues({}, defaults), overrides);
+    if (providers && providers.length) {
+      providers.forEach((provider) => {
+        import_testing.TestBed.overrideProvider(provider.provide, provider);
+      });
+    }
+    const { params, queryParams, data, fragment, url, root, parent, children, firstChild } = __spreadValues(__spreadValues({}, options), overrides);
+    import_testing.TestBed.overrideProvider(import_router.ActivatedRoute, {
+      useValue: new ActivatedRouteStub({ params, queryParams, data, fragment, url, root, parent, children, firstChild })
+    });
+    const ngZone = import_testing.TestBed.inject ? import_testing.TestBed.inject(import_core.NgZone) : import_testing.TestBed.get(import_core.NgZone);
+    return ngZone.run(() => {
+      const spectator = createSpectatorRouting(options, props);
+      spectator.router.initialNavigation();
+      if (options.detectChanges && detectChanges) {
+        spectator.detectChanges();
+      }
+      return spectator;
+    });
+  };
+}
+function createSpectatorRouting(options, props) {
+  const fixture = import_testing.TestBed.createComponent(options.component);
+  const debugElement = fixture.debugElement;
+  const component = setProps(fixture.componentRef, props);
+  if (!import_testing.TestBed.inject) {
+    return new SpectatorRouting(fixture, debugElement, component, import_testing.TestBed.get(import_router.Router), import_testing.TestBed.get(import_router.ActivatedRoute));
+  }
+  return new SpectatorRouting(fixture, debugElement, component, import_testing.TestBed.inject(import_router.Router), import_testing.TestBed.inject(import_router.ActivatedRoute));
+}
+var HttpMethod;
+(function(HttpMethod2) {
+  HttpMethod2["GET"] = "GET";
+  HttpMethod2["POST"] = "POST";
+  HttpMethod2["DELETE"] = "DELETE";
+  HttpMethod2["PUT"] = "PUT";
+  HttpMethod2["PATCH"] = "PATCH";
+  HttpMethod2["HEAD"] = "HEAD";
+  HttpMethod2["JSONP"] = "JSONP";
+  HttpMethod2["OPTIONS"] = "OPTIONS";
+})(HttpMethod || (HttpMethod = {}));
+class SpectatorHttp extends BaseSpectator {
+  constructor(service, httpClient, controller) {
+    super();
+    this.service = service;
+    this.httpClient = httpClient;
+    this.controller = controller;
+    this.expectOne = this.expectOne.bind(this);
+    this.expectConcurrent = this.expectConcurrent.bind(this);
+  }
+  expectOne(url, method) {
+    expect(true).toBe(true);
+    const req = this.controller.expectOne({
+      url,
+      method
+    });
+    this.controller.verify();
+    return req;
+  }
+  expectConcurrent(expectations) {
+    const requests = expectations.map((expectation) => {
+      return this.controller.expectOne({
+        url: expectation.url,
+        method: expectation.method
+      });
+    });
+    this.controller.verify();
+    return requests;
+  }
+  flushAll(requests, args) {
+    requests.forEach((request, idx) => {
+      request.flush(args[idx]);
+    });
+  }
+}
+function initialHttpModule(options) {
+  const moduleMetadata = initialModule(options);
+  moduleMetadata.providers.push(options.service);
+  moduleMetadata.imports.push(import_testing4.HttpClientTestingModule);
+  return moduleMetadata;
+}
+const defaultHttpOptions = __spreadValues({}, getDefaultBaseOptions());
+function getDefaultHttpOptions(overrides) {
+  return merge(defaultHttpOptions, overrides);
+}
+function createHttpFactory(typeOrOptions) {
+  const service = isType(typeOrOptions) ? typeOrOptions : typeOrOptions.service;
+  const options = isType(typeOrOptions) ? getDefaultHttpOptions({ service }) : getDefaultHttpOptions(typeOrOptions);
+  const moduleMetadata = initialHttpModule(options);
+  beforeEach(() => {
+    import_testing.TestBed.configureTestingModule(moduleMetadata);
+    overrideModules(options);
+  });
+  afterEach(() => {
+    if (import_testing.TestBed.inject) {
+      import_testing.TestBed.inject(import_testing4.HttpTestingController).verify();
+    } else {
+      import_testing.TestBed.get(import_testing4.HttpTestingController).verify();
+    }
+  });
+  return (overrides) => {
+    const defaults = { providers: [] };
+    const { providers } = __spreadValues(__spreadValues({}, defaults), overrides);
+    if (providers && providers.length) {
+      providers.forEach((provider) => {
+        import_testing.TestBed.overrideProvider(provider.provide, provider);
+      });
+    }
+    if (!import_testing.TestBed.inject) {
+      return new SpectatorHttp(import_testing.TestBed.get(service), import_testing.TestBed.get(import_http.HttpClient), import_testing.TestBed.get(import_testing4.HttpTestingController));
+    }
+    return new SpectatorHttp(import_testing.TestBed.inject(service), import_testing.TestBed.inject(import_http.HttpClient), import_testing.TestBed.inject(import_testing4.HttpTestingController));
+  };
+}
+class SpectatorPipe extends BaseSpectator {
+  constructor(hostComponent, fixture, debugElement, element) {
+    super();
+    this.hostComponent = hostComponent;
+    this.fixture = fixture;
+    this.debugElement = debugElement;
+    this.element = element;
+  }
+  detectChanges() {
+    this.fixture.detectChanges();
+  }
+  setHostInput(input, value) {
+    setHostProps(this.fixture.componentRef, input, value);
+    this.detectChanges();
+  }
+}
+function initialSpectatorPipeModule(options) {
+  const moduleMetadata = initialModule(options);
+  declareInModule(moduleMetadata, options.pipe);
+  moduleMetadata.declarations.push(options.host);
+  return moduleMetadata;
+}
+const defaultSpectatorPipeOptions = __spreadProps(__spreadValues({}, getDefaultBaseOptions()), {
+  host: HostComponent,
+  detectChanges: true,
+  template: ""
+});
+function getSpectatorPipeDefaultOptions(overrides) {
+  return merge(defaultSpectatorPipeOptions, overrides);
+}
+function createPipeFactory(typeOrOptions) {
+  const options = isType(typeOrOptions) ? getSpectatorPipeDefaultOptions({ pipe: typeOrOptions }) : getSpectatorPipeDefaultOptions(typeOrOptions);
+  const moduleMetadata = initialSpectatorPipeModule(options);
+  beforeEach((0, import_testing.waitForAsync)(() => {
+    addMatchers(customMatchers);
+    import_testing.TestBed.configureTestingModule(moduleMetadata);
+    overrideModules(options);
+    overridePipes(options);
+  }));
+  return (templateOrOverrides, overrides) => {
+    const defaults = {
+      hostProps: {},
+      detectChanges: true,
+      providers: []
+    };
+    const resolvedOverrides = typeof templateOrOverrides === "object" ? templateOrOverrides : overrides;
+    const { detectChanges, hostProps, providers } = __spreadValues(__spreadValues({}, defaults), resolvedOverrides);
+    const template = typeof templateOrOverrides === "string" ? templateOrOverrides : options.template;
+    if (providers && providers.length) {
+      providers.forEach((provider) => {
+        import_testing.TestBed.overrideProvider(provider.provide, provider);
+      });
+    }
+    if (template) {
+      import_testing.TestBed.overrideModule(import_testing2.BrowserDynamicTestingModule, {}).overrideComponent(options.host, {
+        set: { template }
+      });
+    }
+    const spectator = createSpectatorPipe(options, hostProps);
+    if (options.detectChanges && detectChanges) {
+      spectator.detectChanges();
+    }
+    return spectator;
+  };
+}
+function createSpectatorPipe(options, hostProps) {
+  const hostFixture = import_testing.TestBed.createComponent(options.host);
+  const debugElement = hostFixture.debugElement;
+  const hostComponent = setHostProps(hostFixture.componentRef, hostProps);
+  return new SpectatorPipe(hostComponent, hostFixture, hostFixture.debugElement, debugElement.nativeElement);
+}

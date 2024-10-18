@@ -1,0 +1,43 @@
+0ec7e7d3a2df3b867423cde9d1a92f8d
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ViewPosixPermissionsComponent = void 0;
+const core_1 = require("@angular/core");
+const core_2 = require("@ngx-translate/core");
+const permissions_item_component_1 = require("app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component");
+const posix_ace_to_permission_item_utils_1 = require("app/pages/datasets/modules/permissions/utils/posix-ace-to-permission-item.utils");
+let ViewPosixPermissionsComponent = class ViewPosixPermissionsComponent {
+    constructor(translate) {
+        this.translate = translate;
+        this.permissionItems = [];
+    }
+    ngOnChanges() {
+        this.transformAcl();
+    }
+    transformAcl() {
+        this.permissionItems = this.acl.acl.map((ace) => (0, posix_ace_to_permission_item_utils_1.posixAceToPermissionItem)(this.translate, ace));
+    }
+};
+exports.ViewPosixPermissionsComponent = ViewPosixPermissionsComponent;
+ViewPosixPermissionsComponent.ctorParameters = () => [
+    { type: core_2.TranslateService }
+];
+ViewPosixPermissionsComponent.propDecorators = {
+    acl: [{ type: core_1.Input }]
+};
+exports.ViewPosixPermissionsComponent = ViewPosixPermissionsComponent = __decorate([
+    (0, core_1.Component)({
+        selector: 'ix-view-posix-permissions',
+        template: require("./view-posix-permissions.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [permissions_item_component_1.PermissionsItemComponent, core_2.TranslateModule],
+    })
+], ViewPosixPermissionsComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2RhdGFzZXRzL21vZHVsZXMvcGVybWlzc2lvbnMvY29tcG9uZW50cy92aWV3LXBvc2l4LXBlcm1pc3Npb25zL3ZpZXctcG9zaXgtcGVybWlzc2lvbnMuY29tcG9uZW50LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUFBLHdDQUV1QjtBQUN2Qiw4Q0FBd0U7QUFFeEUsOElBQXlJO0FBRXpJLHdJQUV5RjtBQVVsRixJQUFNLDZCQUE2QixHQUFuQyxNQUFNLDZCQUE2QjtJQUt4QyxZQUNVLFNBQTJCO1FBQTNCLGNBQVMsR0FBVCxTQUFTLENBQWtCO1FBSHJDLG9CQUFlLEdBQXFCLEVBQUUsQ0FBQztJQUlwQyxDQUFDO0lBRUosV0FBVztRQUNULElBQUksQ0FBQyxZQUFZLEVBQUUsQ0FBQztJQUN0QixDQUFDO0lBRU8sWUFBWTtRQUNsQixJQUFJLENBQUMsZUFBZSxHQUFHLElBQUksQ0FBQyxHQUFHLENBQUMsR0FBRyxDQUFDLEdBQUcsQ0FBQyxDQUFDLEdBQUcsRUFBRSxFQUFFLENBQUMsSUFBQSw2REFBd0IsRUFBQyxJQUFJLENBQUMsU0FBUyxFQUFFLEdBQUcsQ0FBQyxDQUFDLENBQUM7SUFDbEcsQ0FBQzs7QUFmVSxzRUFBNkI7Ozs7O2tCQUN2QyxZQUFLOzt3Q0FESyw2QkFBNkI7SUFSekMsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLDJCQUEyQjtRQUNyQyw0REFBb0Q7UUFFcEQsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07UUFDL0MsVUFBVSxFQUFFLElBQUk7UUFDaEIsT0FBTyxFQUFFLENBQUMscURBQXdCLEVBQUUsc0JBQWUsQ0FBQztLQUNyRCxDQUFDO0dBQ1csNkJBQTZCLENBZ0J6QyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvZGF0YXNldHMvbW9kdWxlcy9wZXJtaXNzaW9ucy9jb21wb25lbnRzL3ZpZXctcG9zaXgtcGVybWlzc2lvbnMvdmlldy1wb3NpeC1wZXJtaXNzaW9ucy5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcbiAgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCwgSW5wdXQsIE9uQ2hhbmdlcyxcbn0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBUcmFuc2xhdGVTZXJ2aWNlLCBUcmFuc2xhdGVNb2R1bGUgfSBmcm9tICdAbmd4LXRyYW5zbGF0ZS9jb3JlJztcbmltcG9ydCB7IFBvc2l4QWNsIH0gZnJvbSAnYXBwL2ludGVyZmFjZXMvYWNsLmludGVyZmFjZSc7XG5pbXBvcnQgeyBQZXJtaXNzaW9uc0l0ZW1Db21wb25lbnQgfSBmcm9tICdhcHAvcGFnZXMvZGF0YXNldHMvbW9kdWxlcy9wZXJtaXNzaW9ucy9jb21wb25lbnRzL3Blcm1pc3Npb25zLWl0ZW0vcGVybWlzc2lvbnMtaXRlbS5jb21wb25lbnQnO1xuaW1wb3J0IHsgUGVybWlzc2lvbkl0ZW0gfSBmcm9tICdhcHAvcGFnZXMvZGF0YXNldHMvbW9kdWxlcy9wZXJtaXNzaW9ucy9pbnRlcmZhY2VzL3Blcm1pc3Npb24taXRlbS5pbnRlcmZhY2UnO1xuaW1wb3J0IHtcbiAgcG9zaXhBY2VUb1Blcm1pc3Npb25JdGVtLFxufSBmcm9tICdhcHAvcGFnZXMvZGF0YXNldHMvbW9kdWxlcy9wZXJtaXNzaW9ucy91dGlscy9wb3NpeC1hY2UtdG8tcGVybWlzc2lvbi1pdGVtLnV0aWxzJztcblxuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnaXgtdmlldy1wb3NpeC1wZXJtaXNzaW9ucycsXG4gIHRlbXBsYXRlVXJsOiAndmlldy1wb3NpeC1wZXJtaXNzaW9ucy5jb21wb25lbnQuaHRtbCcsXG4gIHN0eWxlVXJsczogWycuL3ZpZXctcG9zaXgtcGVybWlzc2lvbnMuY29tcG9uZW50LnNjc3MnXSxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGltcG9ydHM6IFtQZXJtaXNzaW9uc0l0ZW1Db21wb25lbnQsIFRyYW5zbGF0ZU1vZHVsZV0sXG59KVxuZXhwb3J0IGNsYXNzIFZpZXdQb3NpeFBlcm1pc3Npb25zQ29tcG9uZW50IGltcGxlbWVudHMgT25DaGFuZ2VzIHtcbiAgQElucHV0KCkgYWNsOiBQb3NpeEFjbDtcblxuICBwZXJtaXNzaW9uSXRlbXM6IFBlcm1pc3Npb25JdGVtW10gPSBbXTtcblxuICBjb25zdHJ1Y3RvcihcbiAgICBwcml2YXRlIHRyYW5zbGF0ZTogVHJhbnNsYXRlU2VydmljZSxcbiAgKSB7fVxuXG4gIG5nT25DaGFuZ2VzKCk6IHZvaWQge1xuICAgIHRoaXMudHJhbnNmb3JtQWNsKCk7XG4gIH1cblxuICBwcml2YXRlIHRyYW5zZm9ybUFjbCgpOiB2b2lkIHtcbiAgICB0aGlzLnBlcm1pc3Npb25JdGVtcyA9IHRoaXMuYWNsLmFjbC5tYXAoKGFjZSkgPT4gcG9zaXhBY2VUb1Blcm1pc3Npb25JdGVtKHRoaXMudHJhbnNsYXRlLCBhY2UpKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

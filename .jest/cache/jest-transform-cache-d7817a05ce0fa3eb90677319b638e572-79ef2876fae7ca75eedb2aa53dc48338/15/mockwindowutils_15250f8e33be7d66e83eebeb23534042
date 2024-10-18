@@ -1,0 +1,20 @@
+65a9698631102d418c216eff946fa2b6
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mockWindow = mockWindow;
+const lodash_es_1 = require("lodash-es");
+const window_helper_1 = require("app/helpers/window.helper");
+function mockWindow(overrides = {}) {
+    const baseWindow = {
+        location: {
+            protocol: 'http:',
+            href: 'http://truenas.com',
+        },
+        open: jest.fn(),
+    };
+    return {
+        provide: window_helper_1.WINDOW,
+        useValue: (0, lodash_es_1.merge)(baseWindow, overrides),
+    };
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2NvcmUvdGVzdGluZy91dGlscy9tb2NrLXdpbmRvdy51dGlscy50cyIsIm1hcHBpbmdzIjoiOztBQUtBLGdDQWFDO0FBakJELHlDQUFrQztBQUVsQyw2REFBbUQ7QUFFbkQsU0FBZ0IsVUFBVSxDQUFDLFlBQWlDLEVBQUU7SUFDNUQsTUFBTSxVQUFVLEdBQUc7UUFDakIsUUFBUSxFQUFFO1lBQ1IsUUFBUSxFQUFFLE9BQU87WUFDakIsSUFBSSxFQUFFLG9CQUFvQjtTQUMzQjtRQUNELElBQUksRUFBRSxJQUFJLENBQUMsRUFBRSxFQUFFO0tBQ08sQ0FBQztJQUV6QixPQUFPO1FBQ0wsT0FBTyxFQUFFLHNCQUFNO1FBQ2YsUUFBUSxFQUFFLElBQUEsaUJBQUssRUFBQyxVQUFVLEVBQUUsU0FBUyxDQUFDO0tBQ3ZDLENBQUM7QUFDSixDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9jb3JlL3Rlc3RpbmcvdXRpbHMvbW9jay13aW5kb3cudXRpbHMudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgVmFsdWVQcm92aWRlciB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgbWVyZ2UgfSBmcm9tICdsb2Rhc2gtZXMnO1xuaW1wb3J0IHsgRGVlcFBhcnRpYWwgfSBmcm9tICd1dGlsaXR5LXR5cGVzJztcbmltcG9ydCB7IFdJTkRPVyB9IGZyb20gJ2FwcC9oZWxwZXJzL3dpbmRvdy5oZWxwZXInO1xuXG5leHBvcnQgZnVuY3Rpb24gbW9ja1dpbmRvdyhvdmVycmlkZXM6IERlZXBQYXJ0aWFsPFdpbmRvdz4gPSB7fSk6IFZhbHVlUHJvdmlkZXIge1xuICBjb25zdCBiYXNlV2luZG93ID0ge1xuICAgIGxvY2F0aW9uOiB7XG4gICAgICBwcm90b2NvbDogJ2h0dHA6JyxcbiAgICAgIGhyZWY6ICdodHRwOi8vdHJ1ZW5hcy5jb20nLFxuICAgIH0sXG4gICAgb3BlbjogamVzdC5mbigpLFxuICB9IGFzIERlZXBQYXJ0aWFsPFdpbmRvdz47XG5cbiAgcmV0dXJuIHtcbiAgICBwcm92aWRlOiBXSU5ET1csXG4gICAgdXNlVmFsdWU6IG1lcmdlKGJhc2VXaW5kb3csIG92ZXJyaWRlcyksXG4gIH07XG59XG4iXSwidmVyc2lvbiI6M30=

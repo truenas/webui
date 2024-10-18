@@ -1,0 +1,10 @@
+8df8c585816045694b3193bcaf98f8f3
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = void 0;
+var head_js_1 = require("./head.js");
+Object.defineProperty(exports, "default", { enumerable: true, get: function () { return __importDefault(head_js_1).default; } });
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2ZpcnN0LmpzIiwibWFwcGluZ3MiOiI7Ozs7OztBQUFBLHFDQUFtQztBQUExQixtSEFBQSxPQUFPLE9BQUEiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2ZpcnN0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCB7IGRlZmF1bHQgfSBmcm9tICcuL2hlYWQuanMnXG4iXSwidmVyc2lvbiI6M30=

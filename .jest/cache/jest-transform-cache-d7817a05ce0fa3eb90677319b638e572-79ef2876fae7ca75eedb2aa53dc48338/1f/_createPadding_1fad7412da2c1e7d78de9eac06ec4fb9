@@ -1,0 +1,36 @@
+c2e03af643ba3e37cb6e20746e388fcf
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseRepeat_js_1 = __importDefault(require("./_baseRepeat.js"));
+const _baseToString_js_1 = __importDefault(require("./_baseToString.js"));
+const _castSlice_js_1 = __importDefault(require("./_castSlice.js"));
+const _hasUnicode_js_1 = __importDefault(require("./_hasUnicode.js"));
+const _stringSize_js_1 = __importDefault(require("./_stringSize.js"));
+const _stringToArray_js_1 = __importDefault(require("./_stringToArray.js"));
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeCeil = Math.ceil;
+/**
+ * Creates the padding for `string` based on `length`. The `chars` string
+ * is truncated if the number of characters exceeds `length`.
+ *
+ * @private
+ * @param {number} length The padding length.
+ * @param {string} [chars=' '] The string used as padding.
+ * @returns {string} Returns the padding for `string`.
+ */
+function createPadding(length, chars) {
+    chars = chars === undefined ? ' ' : (0, _baseToString_js_1.default)(chars);
+    var charsLength = chars.length;
+    if (charsLength < 2) {
+        return charsLength ? (0, _baseRepeat_js_1.default)(chars, length) : chars;
+    }
+    var result = (0, _baseRepeat_js_1.default)(chars, nativeCeil(length / (0, _stringSize_js_1.default)(chars)));
+    return (0, _hasUnicode_js_1.default)(chars)
+        ? (0, _castSlice_js_1.default)((0, _stringToArray_js_1.default)(result), 0, length).join('')
+        : result.slice(0, length);
+}
+exports.default = createPadding;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jcmVhdGVQYWRkaW5nLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsc0VBQTBDO0FBQzFDLDBFQUE4QztBQUM5QyxvRUFBd0M7QUFDeEMsc0VBQTBDO0FBQzFDLHNFQUEwQztBQUMxQyw0RUFBZ0Q7QUFFaEQsd0ZBQXdGO0FBQ3hGLElBQUksVUFBVSxHQUFHLElBQUksQ0FBQyxJQUFJLENBQUM7QUFFM0I7Ozs7Ozs7O0dBUUc7QUFDSCxTQUFTLGFBQWEsQ0FBQyxNQUFNLEVBQUUsS0FBSztJQUNsQyxLQUFLLEdBQUcsS0FBSyxLQUFLLFNBQVMsQ0FBQyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQyxJQUFBLDBCQUFZLEVBQUMsS0FBSyxDQUFDLENBQUM7SUFFeEQsSUFBSSxXQUFXLEdBQUcsS0FBSyxDQUFDLE1BQU0sQ0FBQztJQUMvQixJQUFJLFdBQVcsR0FBRyxDQUFDLEVBQUUsQ0FBQztRQUNwQixPQUFPLFdBQVcsQ0FBQyxDQUFDLENBQUMsSUFBQSx3QkFBVSxFQUFDLEtBQUssRUFBRSxNQUFNLENBQUMsQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDO0lBQ3pELENBQUM7SUFDRCxJQUFJLE1BQU0sR0FBRyxJQUFBLHdCQUFVLEVBQUMsS0FBSyxFQUFFLFVBQVUsQ0FBQyxNQUFNLEdBQUcsSUFBQSx3QkFBVSxFQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQztJQUN2RSxPQUFPLElBQUEsd0JBQVUsRUFBQyxLQUFLLENBQUM7UUFDdEIsQ0FBQyxDQUFDLElBQUEsdUJBQVMsRUFBQyxJQUFBLDJCQUFhLEVBQUMsTUFBTSxDQUFDLEVBQUUsQ0FBQyxFQUFFLE1BQU0sQ0FBQyxDQUFDLElBQUksQ0FBQyxFQUFFLENBQUM7UUFDdEQsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxLQUFLLENBQUMsQ0FBQyxFQUFFLE1BQU0sQ0FBQyxDQUFDO0FBQzlCLENBQUM7QUFFRCxrQkFBZSxhQUFhLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jcmVhdGVQYWRkaW5nLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlUmVwZWF0IGZyb20gJy4vX2Jhc2VSZXBlYXQuanMnO1xuaW1wb3J0IGJhc2VUb1N0cmluZyBmcm9tICcuL19iYXNlVG9TdHJpbmcuanMnO1xuaW1wb3J0IGNhc3RTbGljZSBmcm9tICcuL19jYXN0U2xpY2UuanMnO1xuaW1wb3J0IGhhc1VuaWNvZGUgZnJvbSAnLi9faGFzVW5pY29kZS5qcyc7XG5pbXBvcnQgc3RyaW5nU2l6ZSBmcm9tICcuL19zdHJpbmdTaXplLmpzJztcbmltcG9ydCBzdHJpbmdUb0FycmF5IGZyb20gJy4vX3N0cmluZ1RvQXJyYXkuanMnO1xuXG4vKiBCdWlsdC1pbiBtZXRob2QgcmVmZXJlbmNlcyBmb3IgdGhvc2Ugd2l0aCB0aGUgc2FtZSBuYW1lIGFzIG90aGVyIGBsb2Rhc2hgIG1ldGhvZHMuICovXG52YXIgbmF0aXZlQ2VpbCA9IE1hdGguY2VpbDtcblxuLyoqXG4gKiBDcmVhdGVzIHRoZSBwYWRkaW5nIGZvciBgc3RyaW5nYCBiYXNlZCBvbiBgbGVuZ3RoYC4gVGhlIGBjaGFyc2Agc3RyaW5nXG4gKiBpcyB0cnVuY2F0ZWQgaWYgdGhlIG51bWJlciBvZiBjaGFyYWN0ZXJzIGV4Y2VlZHMgYGxlbmd0aGAuXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7bnVtYmVyfSBsZW5ndGggVGhlIHBhZGRpbmcgbGVuZ3RoLlxuICogQHBhcmFtIHtzdHJpbmd9IFtjaGFycz0nICddIFRoZSBzdHJpbmcgdXNlZCBhcyBwYWRkaW5nLlxuICogQHJldHVybnMge3N0cmluZ30gUmV0dXJucyB0aGUgcGFkZGluZyBmb3IgYHN0cmluZ2AuXG4gKi9cbmZ1bmN0aW9uIGNyZWF0ZVBhZGRpbmcobGVuZ3RoLCBjaGFycykge1xuICBjaGFycyA9IGNoYXJzID09PSB1bmRlZmluZWQgPyAnICcgOiBiYXNlVG9TdHJpbmcoY2hhcnMpO1xuXG4gIHZhciBjaGFyc0xlbmd0aCA9IGNoYXJzLmxlbmd0aDtcbiAgaWYgKGNoYXJzTGVuZ3RoIDwgMikge1xuICAgIHJldHVybiBjaGFyc0xlbmd0aCA/IGJhc2VSZXBlYXQoY2hhcnMsIGxlbmd0aCkgOiBjaGFycztcbiAgfVxuICB2YXIgcmVzdWx0ID0gYmFzZVJlcGVhdChjaGFycywgbmF0aXZlQ2VpbChsZW5ndGggLyBzdHJpbmdTaXplKGNoYXJzKSkpO1xuICByZXR1cm4gaGFzVW5pY29kZShjaGFycylcbiAgICA/IGNhc3RTbGljZShzdHJpbmdUb0FycmF5KHJlc3VsdCksIDAsIGxlbmd0aCkuam9pbignJylcbiAgICA6IHJlc3VsdC5zbGljZSgwLCBsZW5ndGgpO1xufVxuXG5leHBvcnQgZGVmYXVsdCBjcmVhdGVQYWRkaW5nO1xuIl0sInZlcnNpb24iOjN9

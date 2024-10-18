@@ -1,0 +1,48 @@
+a021a098d70ca16b6f7df3182fb69627
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseAssign_js_1 = __importDefault(require("./_baseAssign.js"));
+const _baseCreate_js_1 = __importDefault(require("./_baseCreate.js"));
+/**
+ * Creates an object that inherits from the `prototype` object. If a
+ * `properties` object is given, its own enumerable string keyed properties
+ * are assigned to the created object.
+ *
+ * @static
+ * @memberOf _
+ * @since 2.3.0
+ * @category Object
+ * @param {Object} prototype The object to inherit from.
+ * @param {Object} [properties] The properties to assign to the object.
+ * @returns {Object} Returns the new object.
+ * @example
+ *
+ * function Shape() {
+ *   this.x = 0;
+ *   this.y = 0;
+ * }
+ *
+ * function Circle() {
+ *   Shape.call(this);
+ * }
+ *
+ * Circle.prototype = _.create(Shape.prototype, {
+ *   'constructor': Circle
+ * });
+ *
+ * var circle = new Circle;
+ * circle instanceof Circle;
+ * // => true
+ *
+ * circle instanceof Shape;
+ * // => true
+ */
+function create(prototype, properties) {
+    var result = (0, _baseCreate_js_1.default)(prototype);
+    return properties == null ? result : (0, _baseAssign_js_1.default)(result, properties);
+}
+exports.default = create;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2NyZWF0ZS5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLHNFQUEwQztBQUMxQyxzRUFBMEM7QUFFMUM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQWlDRztBQUNILFNBQVMsTUFBTSxDQUFDLFNBQVMsRUFBRSxVQUFVO0lBQ25DLElBQUksTUFBTSxHQUFHLElBQUEsd0JBQVUsRUFBQyxTQUFTLENBQUMsQ0FBQztJQUNuQyxPQUFPLFVBQVUsSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxDQUFDLENBQUMsSUFBQSx3QkFBVSxFQUFDLE1BQU0sRUFBRSxVQUFVLENBQUMsQ0FBQztBQUN0RSxDQUFDO0FBRUQsa0JBQWUsTUFBTSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9jcmVhdGUuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VBc3NpZ24gZnJvbSAnLi9fYmFzZUFzc2lnbi5qcyc7XG5pbXBvcnQgYmFzZUNyZWF0ZSBmcm9tICcuL19iYXNlQ3JlYXRlLmpzJztcblxuLyoqXG4gKiBDcmVhdGVzIGFuIG9iamVjdCB0aGF0IGluaGVyaXRzIGZyb20gdGhlIGBwcm90b3R5cGVgIG9iamVjdC4gSWYgYVxuICogYHByb3BlcnRpZXNgIG9iamVjdCBpcyBnaXZlbiwgaXRzIG93biBlbnVtZXJhYmxlIHN0cmluZyBrZXllZCBwcm9wZXJ0aWVzXG4gKiBhcmUgYXNzaWduZWQgdG8gdGhlIGNyZWF0ZWQgb2JqZWN0LlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMi4zLjBcbiAqIEBjYXRlZ29yeSBPYmplY3RcbiAqIEBwYXJhbSB7T2JqZWN0fSBwcm90b3R5cGUgVGhlIG9iamVjdCB0byBpbmhlcml0IGZyb20uXG4gKiBAcGFyYW0ge09iamVjdH0gW3Byb3BlcnRpZXNdIFRoZSBwcm9wZXJ0aWVzIHRvIGFzc2lnbiB0byB0aGUgb2JqZWN0LlxuICogQHJldHVybnMge09iamVjdH0gUmV0dXJucyB0aGUgbmV3IG9iamVjdC5cbiAqIEBleGFtcGxlXG4gKlxuICogZnVuY3Rpb24gU2hhcGUoKSB7XG4gKiAgIHRoaXMueCA9IDA7XG4gKiAgIHRoaXMueSA9IDA7XG4gKiB9XG4gKlxuICogZnVuY3Rpb24gQ2lyY2xlKCkge1xuICogICBTaGFwZS5jYWxsKHRoaXMpO1xuICogfVxuICpcbiAqIENpcmNsZS5wcm90b3R5cGUgPSBfLmNyZWF0ZShTaGFwZS5wcm90b3R5cGUsIHtcbiAqICAgJ2NvbnN0cnVjdG9yJzogQ2lyY2xlXG4gKiB9KTtcbiAqXG4gKiB2YXIgY2lyY2xlID0gbmV3IENpcmNsZTtcbiAqIGNpcmNsZSBpbnN0YW5jZW9mIENpcmNsZTtcbiAqIC8vID0+IHRydWVcbiAqXG4gKiBjaXJjbGUgaW5zdGFuY2VvZiBTaGFwZTtcbiAqIC8vID0+IHRydWVcbiAqL1xuZnVuY3Rpb24gY3JlYXRlKHByb3RvdHlwZSwgcHJvcGVydGllcykge1xuICB2YXIgcmVzdWx0ID0gYmFzZUNyZWF0ZShwcm90b3R5cGUpO1xuICByZXR1cm4gcHJvcGVydGllcyA9PSBudWxsID8gcmVzdWx0IDogYmFzZUFzc2lnbihyZXN1bHQsIHByb3BlcnRpZXMpO1xufVxuXG5leHBvcnQgZGVmYXVsdCBjcmVhdGU7XG4iXSwidmVyc2lvbiI6M30=

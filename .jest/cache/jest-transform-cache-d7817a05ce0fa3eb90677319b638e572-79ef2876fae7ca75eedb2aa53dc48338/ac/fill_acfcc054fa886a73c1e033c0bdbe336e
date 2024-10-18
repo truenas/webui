@@ -1,0 +1,50 @@
+f5192357697936856cdd0a0f468ad377
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseFill_js_1 = __importDefault(require("./_baseFill.js"));
+const _isIterateeCall_js_1 = __importDefault(require("./_isIterateeCall.js"));
+/**
+ * Fills elements of `array` with `value` from `start` up to, but not
+ * including, `end`.
+ *
+ * **Note:** This method mutates `array`.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.2.0
+ * @category Array
+ * @param {Array} array The array to fill.
+ * @param {*} value The value to fill `array` with.
+ * @param {number} [start=0] The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns `array`.
+ * @example
+ *
+ * var array = [1, 2, 3];
+ *
+ * _.fill(array, 'a');
+ * console.log(array);
+ * // => ['a', 'a', 'a']
+ *
+ * _.fill(Array(3), 2);
+ * // => [2, 2, 2]
+ *
+ * _.fill([4, 6, 8, 10], '*', 1, 3);
+ * // => [4, '*', '*', 10]
+ */
+function fill(array, value, start, end) {
+    var length = array == null ? 0 : array.length;
+    if (!length) {
+        return [];
+    }
+    if (start && typeof start != 'number' && (0, _isIterateeCall_js_1.default)(array, value, start)) {
+        start = 0;
+        end = length;
+    }
+    return (0, _baseFill_js_1.default)(array, value, start, end);
+}
+exports.default = fill;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2ZpbGwuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxrRUFBc0M7QUFDdEMsOEVBQWtEO0FBRWxEOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBNEJHO0FBQ0gsU0FBUyxJQUFJLENBQUMsS0FBSyxFQUFFLEtBQUssRUFBRSxLQUFLLEVBQUUsR0FBRztJQUNwQyxJQUFJLE1BQU0sR0FBRyxLQUFLLElBQUksSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLEtBQUssQ0FBQyxNQUFNLENBQUM7SUFDOUMsSUFBSSxDQUFDLE1BQU0sRUFBRSxDQUFDO1FBQ1osT0FBTyxFQUFFLENBQUM7SUFDWixDQUFDO0lBQ0QsSUFBSSxLQUFLLElBQUksT0FBTyxLQUFLLElBQUksUUFBUSxJQUFJLElBQUEsNEJBQWMsRUFBQyxLQUFLLEVBQUUsS0FBSyxFQUFFLEtBQUssQ0FBQyxFQUFFLENBQUM7UUFDN0UsS0FBSyxHQUFHLENBQUMsQ0FBQztRQUNWLEdBQUcsR0FBRyxNQUFNLENBQUM7SUFDZixDQUFDO0lBQ0QsT0FBTyxJQUFBLHNCQUFRLEVBQUMsS0FBSyxFQUFFLEtBQUssRUFBRSxLQUFLLEVBQUUsR0FBRyxDQUFDLENBQUM7QUFDNUMsQ0FBQztBQUVELGtCQUFlLElBQUksQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvZmlsbC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZUZpbGwgZnJvbSAnLi9fYmFzZUZpbGwuanMnO1xuaW1wb3J0IGlzSXRlcmF0ZWVDYWxsIGZyb20gJy4vX2lzSXRlcmF0ZWVDYWxsLmpzJztcblxuLyoqXG4gKiBGaWxscyBlbGVtZW50cyBvZiBgYXJyYXlgIHdpdGggYHZhbHVlYCBmcm9tIGBzdGFydGAgdXAgdG8sIGJ1dCBub3RcbiAqIGluY2x1ZGluZywgYGVuZGAuXG4gKlxuICogKipOb3RlOioqIFRoaXMgbWV0aG9kIG11dGF0ZXMgYGFycmF5YC5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDMuMi4wXG4gKiBAY2F0ZWdvcnkgQXJyYXlcbiAqIEBwYXJhbSB7QXJyYXl9IGFycmF5IFRoZSBhcnJheSB0byBmaWxsLlxuICogQHBhcmFtIHsqfSB2YWx1ZSBUaGUgdmFsdWUgdG8gZmlsbCBgYXJyYXlgIHdpdGguXG4gKiBAcGFyYW0ge251bWJlcn0gW3N0YXJ0PTBdIFRoZSBzdGFydCBwb3NpdGlvbi5cbiAqIEBwYXJhbSB7bnVtYmVyfSBbZW5kPWFycmF5Lmxlbmd0aF0gVGhlIGVuZCBwb3NpdGlvbi5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyBgYXJyYXlgLlxuICogQGV4YW1wbGVcbiAqXG4gKiB2YXIgYXJyYXkgPSBbMSwgMiwgM107XG4gKlxuICogXy5maWxsKGFycmF5LCAnYScpO1xuICogY29uc29sZS5sb2coYXJyYXkpO1xuICogLy8gPT4gWydhJywgJ2EnLCAnYSddXG4gKlxuICogXy5maWxsKEFycmF5KDMpLCAyKTtcbiAqIC8vID0+IFsyLCAyLCAyXVxuICpcbiAqIF8uZmlsbChbNCwgNiwgOCwgMTBdLCAnKicsIDEsIDMpO1xuICogLy8gPT4gWzQsICcqJywgJyonLCAxMF1cbiAqL1xuZnVuY3Rpb24gZmlsbChhcnJheSwgdmFsdWUsIHN0YXJ0LCBlbmQpIHtcbiAgdmFyIGxlbmd0aCA9IGFycmF5ID09IG51bGwgPyAwIDogYXJyYXkubGVuZ3RoO1xuICBpZiAoIWxlbmd0aCkge1xuICAgIHJldHVybiBbXTtcbiAgfVxuICBpZiAoc3RhcnQgJiYgdHlwZW9mIHN0YXJ0ICE9ICdudW1iZXInICYmIGlzSXRlcmF0ZWVDYWxsKGFycmF5LCB2YWx1ZSwgc3RhcnQpKSB7XG4gICAgc3RhcnQgPSAwO1xuICAgIGVuZCA9IGxlbmd0aDtcbiAgfVxuICByZXR1cm4gYmFzZUZpbGwoYXJyYXksIHZhbHVlLCBzdGFydCwgZW5kKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgZmlsbDtcbiJdLCJ2ZXJzaW9uIjozfQ==

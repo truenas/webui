@@ -1,0 +1,25 @@
+bd13ce973a6bc1d35836f87e4fe2a432
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FileSizePipe = void 0;
+const core_1 = require("@angular/core");
+const file_size_utils_1 = require("app/helpers/file-size.utils");
+let FileSizePipe = class FileSizePipe {
+    transform(value) {
+        return (0, file_size_utils_1.buildNormalizedFileSize)(value, 'B', 2);
+    }
+};
+exports.FileSizePipe = FileSizePipe;
+exports.FileSizePipe = FileSizePipe = __decorate([
+    (0, core_1.Pipe)({
+        name: 'ixFileSize',
+        standalone: true,
+    })
+], FileSizePipe);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvcGlwZXMvZmlsZS1zaXplL2ZpbGUtc2l6ZS5waXBlLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUFBLHdDQUFvRDtBQUNwRCxpRUFBc0U7QUFNL0QsSUFBTSxZQUFZLEdBQWxCLE1BQU0sWUFBWTtJQUN2QixTQUFTLENBQUMsS0FBYTtRQUNyQixPQUFPLElBQUEseUNBQXVCLEVBQUMsS0FBSyxFQUFFLEdBQUcsRUFBRSxDQUFDLENBQUMsQ0FBQztJQUNoRCxDQUFDO0NBQ0YsQ0FBQTtBQUpZLG9DQUFZO3VCQUFaLFlBQVk7SUFKeEIsSUFBQSxXQUFJLEVBQUM7UUFDSixJQUFJLEVBQUUsWUFBWTtRQUNsQixVQUFVLEVBQUUsSUFBSTtLQUNqQixDQUFDO0dBQ1csWUFBWSxDQUl4QiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvbW9kdWxlcy9waXBlcy9maWxlLXNpemUvZmlsZS1zaXplLnBpcGUudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgUGlwZSwgUGlwZVRyYW5zZm9ybSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgYnVpbGROb3JtYWxpemVkRmlsZVNpemUgfSBmcm9tICdhcHAvaGVscGVycy9maWxlLXNpemUudXRpbHMnO1xuXG5AUGlwZSh7XG4gIG5hbWU6ICdpeEZpbGVTaXplJyxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbn0pXG5leHBvcnQgY2xhc3MgRmlsZVNpemVQaXBlIGltcGxlbWVudHMgUGlwZVRyYW5zZm9ybSB7XG4gIHRyYW5zZm9ybSh2YWx1ZTogbnVtYmVyKTogc3RyaW5nIHtcbiAgICByZXR1cm4gYnVpbGROb3JtYWxpemVkRmlsZVNpemUodmFsdWUsICdCJywgMik7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

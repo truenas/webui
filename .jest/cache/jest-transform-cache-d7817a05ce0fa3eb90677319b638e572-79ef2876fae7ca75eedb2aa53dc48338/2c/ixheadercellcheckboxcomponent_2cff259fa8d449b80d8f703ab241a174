@@ -1,0 +1,43 @@
+c0cd610da647c1afe4ffdd9d04ecaf3e
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxHeaderCellCheckboxComponent = void 0;
+const common_1 = require("@angular/common");
+const core_1 = require("@angular/core");
+const checkbox_1 = require("@angular/material/checkbox");
+const until_destroy_1 = require("@ngneat/until-destroy");
+const core_2 = require("@ngx-translate/core");
+const rxjs_1 = require("rxjs");
+const column_component_class_1 = require("app/modules/ix-table/interfaces/column-component.class");
+const test_directive_1 = require("app/modules/test-id/test.directive");
+let IxHeaderCellCheckboxComponent = class IxHeaderCellCheckboxComponent extends column_component_class_1.ColumnComponent {
+    onCheckboxChange(event) {
+        this.onColumnCheck(event.checked);
+    }
+    get allChecked$() {
+        return this.dataProvider.currentPage$.pipe((0, rxjs_1.map)((rows) => rows.every((row) => row[this.propertyName])), (0, until_destroy_1.untilDestroyed)(this));
+    }
+};
+exports.IxHeaderCellCheckboxComponent = IxHeaderCellCheckboxComponent;
+exports.IxHeaderCellCheckboxComponent = IxHeaderCellCheckboxComponent = __decorate([
+    (0, until_destroy_1.UntilDestroy)(),
+    (0, core_1.Component)({
+        selector: 'ix-header-cell-checkbox',
+        template: require("./ix-header-cell-checkbox.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+        standalone: true,
+        imports: [
+            checkbox_1.MatCheckbox,
+            core_2.TranslateModule,
+            common_1.AsyncPipe,
+            test_directive_1.TestDirective,
+        ],
+    })
+], IxHeaderCellCheckboxComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1oZWFkL2hlYWQtY2VsbHMvaXgtaGVhZGVyLWNlbGwtY2hlY2tib3gvaXgtaGVhZGVyLWNlbGwtY2hlY2tib3guY29tcG9uZW50LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUFBLDRDQUE0QztBQUM1Qyx3Q0FBbUU7QUFDbkUseURBQTRFO0FBQzVFLHlEQUFxRTtBQUNyRSw4Q0FBc0Q7QUFDdEQsK0JBQXVDO0FBQ3ZDLG1HQUF5RjtBQUN6Rix1RUFBbUU7QUFlNUQsSUFBTSw2QkFBNkIsR0FBbkMsTUFBTSw2QkFBaUMsU0FBUSx3Q0FBa0I7SUFHdEUsZ0JBQWdCLENBQUMsS0FBd0I7UUFDdkMsSUFBSSxDQUFDLGFBQWEsQ0FBQyxLQUFLLENBQUMsT0FBTyxDQUFDLENBQUM7SUFDcEMsQ0FBQztJQUVELElBQUksV0FBVztRQUNiLE9BQU8sSUFBSSxDQUFDLFlBQVksQ0FBQyxZQUFZLENBQUMsSUFBSSxDQUN4QyxJQUFBLFVBQUcsRUFBQyxDQUFDLElBQUksRUFBRSxFQUFFLENBQUMsSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDLEdBQUcsRUFBRSxFQUFFLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxZQUFZLENBQUMsQ0FBQyxDQUFDLEVBQzFELElBQUEsOEJBQWMsRUFBQyxJQUFJLENBQUMsQ0FDckIsQ0FBQztJQUNKLENBQUM7Q0FDRixDQUFBO0FBYlksc0VBQTZCO3dDQUE3Qiw2QkFBNkI7SUFiekMsSUFBQSw0QkFBWSxHQUFFO0lBQ2QsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLHlCQUF5QjtRQUNuQyw2REFBdUQ7UUFDdkQsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07UUFDL0MsVUFBVSxFQUFFLElBQUk7UUFDaEIsT0FBTyxFQUFFO1lBQ1Asc0JBQVc7WUFDWCxzQkFBZTtZQUNmLGtCQUFTO1lBQ1QsOEJBQWE7U0FDZDtLQUNGLENBQUM7R0FDVyw2QkFBNkIsQ0FhekMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvY29tcG9uZW50cy9peC10YWJsZS1oZWFkL2hlYWQtY2VsbHMvaXgtaGVhZGVyLWNlbGwtY2hlY2tib3gvaXgtaGVhZGVyLWNlbGwtY2hlY2tib3guY29tcG9uZW50LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEFzeW5jUGlwZSB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbic7XG5pbXBvcnQgeyBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneSwgQ29tcG9uZW50IH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBNYXRDaGVja2JveENoYW5nZSwgTWF0Q2hlY2tib3ggfSBmcm9tICdAYW5ndWxhci9tYXRlcmlhbC9jaGVja2JveCc7XG5pbXBvcnQgeyBVbnRpbERlc3Ryb3ksIHVudGlsRGVzdHJveWVkIH0gZnJvbSAnQG5nbmVhdC91bnRpbC1kZXN0cm95JztcbmltcG9ydCB7IFRyYW5zbGF0ZU1vZHVsZSB9IGZyb20gJ0BuZ3gtdHJhbnNsYXRlL2NvcmUnO1xuaW1wb3J0IHsgbWFwLCBPYnNlcnZhYmxlIH0gZnJvbSAncnhqcyc7XG5pbXBvcnQgeyBDb2x1bW5Db21wb25lbnQgfSBmcm9tICdhcHAvbW9kdWxlcy9peC10YWJsZS9pbnRlcmZhY2VzL2NvbHVtbi1jb21wb25lbnQuY2xhc3MnO1xuaW1wb3J0IHsgVGVzdERpcmVjdGl2ZSB9IGZyb20gJ2FwcC9tb2R1bGVzL3Rlc3QtaWQvdGVzdC5kaXJlY3RpdmUnO1xuXG5AVW50aWxEZXN0cm95KClcbkBDb21wb25lbnQoe1xuICBzZWxlY3RvcjogJ2l4LWhlYWRlci1jZWxsLWNoZWNrYm94JyxcbiAgdGVtcGxhdGVVcmw6ICcuL2l4LWhlYWRlci1jZWxsLWNoZWNrYm94LmNvbXBvbmVudC5odG1sJyxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGltcG9ydHM6IFtcbiAgICBNYXRDaGVja2JveCxcbiAgICBUcmFuc2xhdGVNb2R1bGUsXG4gICAgQXN5bmNQaXBlLFxuICAgIFRlc3REaXJlY3RpdmUsXG4gIF0sXG59KVxuZXhwb3J0IGNsYXNzIEl4SGVhZGVyQ2VsbENoZWNrYm94Q29tcG9uZW50PFQ+IGV4dGVuZHMgQ29sdW1uQ29tcG9uZW50PFQ+IHtcbiAgb25Db2x1bW5DaGVjazogKGNoZWNrZWQ6IGJvb2xlYW4pID0+IHZvaWQ7XG5cbiAgb25DaGVja2JveENoYW5nZShldmVudDogTWF0Q2hlY2tib3hDaGFuZ2UpOiB2b2lkIHtcbiAgICB0aGlzLm9uQ29sdW1uQ2hlY2soZXZlbnQuY2hlY2tlZCk7XG4gIH1cblxuICBnZXQgYWxsQ2hlY2tlZCQoKTogT2JzZXJ2YWJsZTxib29sZWFuPiB7XG4gICAgcmV0dXJuIHRoaXMuZGF0YVByb3ZpZGVyLmN1cnJlbnRQYWdlJC5waXBlKFxuICAgICAgbWFwKChyb3dzKSA9PiByb3dzLmV2ZXJ5KChyb3cpID0+IHJvd1t0aGlzLnByb3BlcnR5TmFtZV0pKSxcbiAgICAgIHVudGlsRGVzdHJveWVkKHRoaXMpLFxuICAgICk7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

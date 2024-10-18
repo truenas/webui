@@ -1,0 +1,57 @@
+a05e2a3b4842e1fd11b06f70742ab7f0
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseClone_js_1 = __importDefault(require("./_baseClone.js"));
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+/** Used to compose bitmasks for cloning. */
+var CLONE_DEEP_FLAG = 1;
+/**
+ * Creates a function that invokes `func` with the arguments of the created
+ * function. If `func` is a property name, the created function returns the
+ * property value for a given element. If `func` is an array or object, the
+ * created function returns `true` for elements that contain the equivalent
+ * source properties, otherwise it returns `false`.
+ *
+ * @static
+ * @since 4.0.0
+ * @memberOf _
+ * @category Util
+ * @param {*} [func=_.identity] The value to convert to a callback.
+ * @returns {Function} Returns the callback.
+ * @example
+ *
+ * var users = [
+ *   { 'user': 'barney', 'age': 36, 'active': true },
+ *   { 'user': 'fred',   'age': 40, 'active': false }
+ * ];
+ *
+ * // The `_.matches` iteratee shorthand.
+ * _.filter(users, _.iteratee({ 'user': 'barney', 'active': true }));
+ * // => [{ 'user': 'barney', 'age': 36, 'active': true }]
+ *
+ * // The `_.matchesProperty` iteratee shorthand.
+ * _.filter(users, _.iteratee(['user', 'fred']));
+ * // => [{ 'user': 'fred', 'age': 40 }]
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.map(users, _.iteratee('user'));
+ * // => ['barney', 'fred']
+ *
+ * // Create custom iteratee shorthands.
+ * _.iteratee = _.wrap(_.iteratee, function(iteratee, func) {
+ *   return !_.isRegExp(func) ? iteratee(func) : function(string) {
+ *     return func.test(string);
+ *   };
+ * });
+ *
+ * _.filter(['abc', 'def'], /ef/);
+ * // => ['def']
+ */
+function iteratee(func) {
+    return (0, _baseIteratee_js_1.default)(typeof func == 'function' ? func : (0, _baseClone_js_1.default)(func, CLONE_DEEP_FLAG));
+}
+exports.default = iteratee;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2l0ZXJhdGVlLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsb0VBQXdDO0FBQ3hDLDBFQUE4QztBQUU5Qyw0Q0FBNEM7QUFDNUMsSUFBSSxlQUFlLEdBQUcsQ0FBQyxDQUFDO0FBRXhCOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXlDRztBQUNILFNBQVMsUUFBUSxDQUFDLElBQUk7SUFDcEIsT0FBTyxJQUFBLDBCQUFZLEVBQUMsT0FBTyxJQUFJLElBQUksVUFBVSxDQUFDLENBQUMsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLElBQUEsdUJBQVMsRUFBQyxJQUFJLEVBQUUsZUFBZSxDQUFDLENBQUMsQ0FBQztBQUMzRixDQUFDO0FBRUQsa0JBQWUsUUFBUSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9pdGVyYXRlZS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZUNsb25lIGZyb20gJy4vX2Jhc2VDbG9uZS5qcyc7XG5pbXBvcnQgYmFzZUl0ZXJhdGVlIGZyb20gJy4vX2Jhc2VJdGVyYXRlZS5qcyc7XG5cbi8qKiBVc2VkIHRvIGNvbXBvc2UgYml0bWFza3MgZm9yIGNsb25pbmcuICovXG52YXIgQ0xPTkVfREVFUF9GTEFHID0gMTtcblxuLyoqXG4gKiBDcmVhdGVzIGEgZnVuY3Rpb24gdGhhdCBpbnZva2VzIGBmdW5jYCB3aXRoIHRoZSBhcmd1bWVudHMgb2YgdGhlIGNyZWF0ZWRcbiAqIGZ1bmN0aW9uLiBJZiBgZnVuY2AgaXMgYSBwcm9wZXJ0eSBuYW1lLCB0aGUgY3JlYXRlZCBmdW5jdGlvbiByZXR1cm5zIHRoZVxuICogcHJvcGVydHkgdmFsdWUgZm9yIGEgZ2l2ZW4gZWxlbWVudC4gSWYgYGZ1bmNgIGlzIGFuIGFycmF5IG9yIG9iamVjdCwgdGhlXG4gKiBjcmVhdGVkIGZ1bmN0aW9uIHJldHVybnMgYHRydWVgIGZvciBlbGVtZW50cyB0aGF0IGNvbnRhaW4gdGhlIGVxdWl2YWxlbnRcbiAqIHNvdXJjZSBwcm9wZXJ0aWVzLCBvdGhlcndpc2UgaXQgcmV0dXJucyBgZmFsc2VgLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBzaW5jZSA0LjAuMFxuICogQG1lbWJlck9mIF9cbiAqIEBjYXRlZ29yeSBVdGlsXG4gKiBAcGFyYW0geyp9IFtmdW5jPV8uaWRlbnRpdHldIFRoZSB2YWx1ZSB0byBjb252ZXJ0IHRvIGEgY2FsbGJhY2suXG4gKiBAcmV0dXJucyB7RnVuY3Rpb259IFJldHVybnMgdGhlIGNhbGxiYWNrLlxuICogQGV4YW1wbGVcbiAqXG4gKiB2YXIgdXNlcnMgPSBbXG4gKiAgIHsgJ3VzZXInOiAnYmFybmV5JywgJ2FnZSc6IDM2LCAnYWN0aXZlJzogdHJ1ZSB9LFxuICogICB7ICd1c2VyJzogJ2ZyZWQnLCAgICdhZ2UnOiA0MCwgJ2FjdGl2ZSc6IGZhbHNlIH1cbiAqIF07XG4gKlxuICogLy8gVGhlIGBfLm1hdGNoZXNgIGl0ZXJhdGVlIHNob3J0aGFuZC5cbiAqIF8uZmlsdGVyKHVzZXJzLCBfLml0ZXJhdGVlKHsgJ3VzZXInOiAnYmFybmV5JywgJ2FjdGl2ZSc6IHRydWUgfSkpO1xuICogLy8gPT4gW3sgJ3VzZXInOiAnYmFybmV5JywgJ2FnZSc6IDM2LCAnYWN0aXZlJzogdHJ1ZSB9XVxuICpcbiAqIC8vIFRoZSBgXy5tYXRjaGVzUHJvcGVydHlgIGl0ZXJhdGVlIHNob3J0aGFuZC5cbiAqIF8uZmlsdGVyKHVzZXJzLCBfLml0ZXJhdGVlKFsndXNlcicsICdmcmVkJ10pKTtcbiAqIC8vID0+IFt7ICd1c2VyJzogJ2ZyZWQnLCAnYWdlJzogNDAgfV1cbiAqXG4gKiAvLyBUaGUgYF8ucHJvcGVydHlgIGl0ZXJhdGVlIHNob3J0aGFuZC5cbiAqIF8ubWFwKHVzZXJzLCBfLml0ZXJhdGVlKCd1c2VyJykpO1xuICogLy8gPT4gWydiYXJuZXknLCAnZnJlZCddXG4gKlxuICogLy8gQ3JlYXRlIGN1c3RvbSBpdGVyYXRlZSBzaG9ydGhhbmRzLlxuICogXy5pdGVyYXRlZSA9IF8ud3JhcChfLml0ZXJhdGVlLCBmdW5jdGlvbihpdGVyYXRlZSwgZnVuYykge1xuICogICByZXR1cm4gIV8uaXNSZWdFeHAoZnVuYykgPyBpdGVyYXRlZShmdW5jKSA6IGZ1bmN0aW9uKHN0cmluZykge1xuICogICAgIHJldHVybiBmdW5jLnRlc3Qoc3RyaW5nKTtcbiAqICAgfTtcbiAqIH0pO1xuICpcbiAqIF8uZmlsdGVyKFsnYWJjJywgJ2RlZiddLCAvZWYvKTtcbiAqIC8vID0+IFsnZGVmJ11cbiAqL1xuZnVuY3Rpb24gaXRlcmF0ZWUoZnVuYykge1xuICByZXR1cm4gYmFzZUl0ZXJhdGVlKHR5cGVvZiBmdW5jID09ICdmdW5jdGlvbicgPyBmdW5jIDogYmFzZUNsb25lKGZ1bmMsIENMT05FX0RFRVBfRkxBRykpO1xufVxuXG5leHBvcnQgZGVmYXVsdCBpdGVyYXRlZTtcbiJdLCJ2ZXJzaW9uIjozfQ==

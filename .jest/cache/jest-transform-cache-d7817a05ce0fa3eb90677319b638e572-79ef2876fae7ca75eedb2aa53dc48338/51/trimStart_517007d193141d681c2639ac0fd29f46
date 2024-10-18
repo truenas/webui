@@ -1,0 +1,45 @@
+08f356dbaf8068be939e31712cb0ccbe
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseToString_js_1 = __importDefault(require("./_baseToString.js"));
+const _castSlice_js_1 = __importDefault(require("./_castSlice.js"));
+const _charsStartIndex_js_1 = __importDefault(require("./_charsStartIndex.js"));
+const _stringToArray_js_1 = __importDefault(require("./_stringToArray.js"));
+const toString_js_1 = __importDefault(require("./toString.js"));
+/** Used to match leading whitespace. */
+var reTrimStart = /^\s+/;
+/**
+ * Removes leading whitespace or specified characters from `string`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category String
+ * @param {string} [string=''] The string to trim.
+ * @param {string} [chars=whitespace] The characters to trim.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @returns {string} Returns the trimmed string.
+ * @example
+ *
+ * _.trimStart('  abc  ');
+ * // => 'abc  '
+ *
+ * _.trimStart('-_-abc-_-', '_-');
+ * // => 'abc-_-'
+ */
+function trimStart(string, chars, guard) {
+    string = (0, toString_js_1.default)(string);
+    if (string && (guard || chars === undefined)) {
+        return string.replace(reTrimStart, '');
+    }
+    if (!string || !(chars = (0, _baseToString_js_1.default)(chars))) {
+        return string;
+    }
+    var strSymbols = (0, _stringToArray_js_1.default)(string), start = (0, _charsStartIndex_js_1.default)(strSymbols, (0, _stringToArray_js_1.default)(chars));
+    return (0, _castSlice_js_1.default)(strSymbols, start).join('');
+}
+exports.default = trimStart;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RyaW1TdGFydC5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLDBFQUE4QztBQUM5QyxvRUFBd0M7QUFDeEMsZ0ZBQW9EO0FBQ3BELDRFQUFnRDtBQUNoRCxnRUFBcUM7QUFFckMsd0NBQXdDO0FBQ3hDLElBQUksV0FBVyxHQUFHLE1BQU0sQ0FBQztBQUV6Qjs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBa0JHO0FBQ0gsU0FBUyxTQUFTLENBQUMsTUFBTSxFQUFFLEtBQUssRUFBRSxLQUFLO0lBQ3JDLE1BQU0sR0FBRyxJQUFBLHFCQUFRLEVBQUMsTUFBTSxDQUFDLENBQUM7SUFDMUIsSUFBSSxNQUFNLElBQUksQ0FBQyxLQUFLLElBQUksS0FBSyxLQUFLLFNBQVMsQ0FBQyxFQUFFLENBQUM7UUFDN0MsT0FBTyxNQUFNLENBQUMsT0FBTyxDQUFDLFdBQVcsRUFBRSxFQUFFLENBQUMsQ0FBQztJQUN6QyxDQUFDO0lBQ0QsSUFBSSxDQUFDLE1BQU0sSUFBSSxDQUFDLENBQUMsS0FBSyxHQUFHLElBQUEsMEJBQVksRUFBQyxLQUFLLENBQUMsQ0FBQyxFQUFFLENBQUM7UUFDOUMsT0FBTyxNQUFNLENBQUM7SUFDaEIsQ0FBQztJQUNELElBQUksVUFBVSxHQUFHLElBQUEsMkJBQWEsRUFBQyxNQUFNLENBQUMsRUFDbEMsS0FBSyxHQUFHLElBQUEsNkJBQWUsRUFBQyxVQUFVLEVBQUUsSUFBQSwyQkFBYSxFQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7SUFFOUQsT0FBTyxJQUFBLHVCQUFTLEVBQUMsVUFBVSxFQUFFLEtBQUssQ0FBQyxDQUFDLElBQUksQ0FBQyxFQUFFLENBQUMsQ0FBQztBQUMvQyxDQUFDO0FBRUQsa0JBQWUsU0FBUyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy90cmltU3RhcnQuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VUb1N0cmluZyBmcm9tICcuL19iYXNlVG9TdHJpbmcuanMnO1xuaW1wb3J0IGNhc3RTbGljZSBmcm9tICcuL19jYXN0U2xpY2UuanMnO1xuaW1wb3J0IGNoYXJzU3RhcnRJbmRleCBmcm9tICcuL19jaGFyc1N0YXJ0SW5kZXguanMnO1xuaW1wb3J0IHN0cmluZ1RvQXJyYXkgZnJvbSAnLi9fc3RyaW5nVG9BcnJheS5qcyc7XG5pbXBvcnQgdG9TdHJpbmcgZnJvbSAnLi90b1N0cmluZy5qcyc7XG5cbi8qKiBVc2VkIHRvIG1hdGNoIGxlYWRpbmcgd2hpdGVzcGFjZS4gKi9cbnZhciByZVRyaW1TdGFydCA9IC9eXFxzKy87XG5cbi8qKlxuICogUmVtb3ZlcyBsZWFkaW5nIHdoaXRlc3BhY2Ugb3Igc3BlY2lmaWVkIGNoYXJhY3RlcnMgZnJvbSBgc3RyaW5nYC5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgU3RyaW5nXG4gKiBAcGFyYW0ge3N0cmluZ30gW3N0cmluZz0nJ10gVGhlIHN0cmluZyB0byB0cmltLlxuICogQHBhcmFtIHtzdHJpbmd9IFtjaGFycz13aGl0ZXNwYWNlXSBUaGUgY2hhcmFjdGVycyB0byB0cmltLlxuICogQHBhcmFtLSB7T2JqZWN0fSBbZ3VhcmRdIEVuYWJsZXMgdXNlIGFzIGFuIGl0ZXJhdGVlIGZvciBtZXRob2RzIGxpa2UgYF8ubWFwYC5cbiAqIEByZXR1cm5zIHtzdHJpbmd9IFJldHVybnMgdGhlIHRyaW1tZWQgc3RyaW5nLlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLnRyaW1TdGFydCgnICBhYmMgICcpO1xuICogLy8gPT4gJ2FiYyAgJ1xuICpcbiAqIF8udHJpbVN0YXJ0KCctXy1hYmMtXy0nLCAnXy0nKTtcbiAqIC8vID0+ICdhYmMtXy0nXG4gKi9cbmZ1bmN0aW9uIHRyaW1TdGFydChzdHJpbmcsIGNoYXJzLCBndWFyZCkge1xuICBzdHJpbmcgPSB0b1N0cmluZyhzdHJpbmcpO1xuICBpZiAoc3RyaW5nICYmIChndWFyZCB8fCBjaGFycyA9PT0gdW5kZWZpbmVkKSkge1xuICAgIHJldHVybiBzdHJpbmcucmVwbGFjZShyZVRyaW1TdGFydCwgJycpO1xuICB9XG4gIGlmICghc3RyaW5nIHx8ICEoY2hhcnMgPSBiYXNlVG9TdHJpbmcoY2hhcnMpKSkge1xuICAgIHJldHVybiBzdHJpbmc7XG4gIH1cbiAgdmFyIHN0clN5bWJvbHMgPSBzdHJpbmdUb0FycmF5KHN0cmluZyksXG4gICAgICBzdGFydCA9IGNoYXJzU3RhcnRJbmRleChzdHJTeW1ib2xzLCBzdHJpbmdUb0FycmF5KGNoYXJzKSk7XG5cbiAgcmV0dXJuIGNhc3RTbGljZShzdHJTeW1ib2xzLCBzdGFydCkuam9pbignJyk7XG59XG5cbmV4cG9ydCBkZWZhdWx0IHRyaW1TdGFydDtcbiJdLCJ2ZXJzaW9uIjozfQ==

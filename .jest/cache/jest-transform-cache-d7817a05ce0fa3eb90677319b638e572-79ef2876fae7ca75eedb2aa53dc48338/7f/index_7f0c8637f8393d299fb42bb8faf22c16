@@ -1,0 +1,30 @@
+8a64e671e24ea713d827910c10ab02b7
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.shared = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+__exportStar(require("./iscsi/iscsi"), exports);
+__exportStar(require("./nfs/nfs"), exports);
+__exportStar(require("./smb/smb"), exports);
+exports.shared = {
+    delete_share_message: (0, ngx_translate_extract_marker_1.marker)('The sharing configuration will be removed.\
+    Data in the share dataset will not be affected.'),
+    dialog_title: (0, ngx_translate_extract_marker_1.marker)('Enable service'),
+    dialog_message: (0, ngx_translate_extract_marker_1.marker)('Enable this service to start automatically.'),
+    dialog_button: (0, ngx_translate_extract_marker_1.marker)('Enable Service'),
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L3NoYXJpbmcvaW5kZXgudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSwwRkFBc0U7QUFFdEUsZ0RBQThCO0FBQzlCLDRDQUEwQjtBQUMxQiw0Q0FBMEI7QUFFYixRQUFBLE1BQU0sR0FBRztJQUNwQixvQkFBb0IsRUFBRSxJQUFBLHFDQUFDLEVBQUM7b0RBQzBCLENBQUM7SUFFbkQsWUFBWSxFQUFFLElBQUEscUNBQUMsRUFBQyxnQkFBZ0IsQ0FBQztJQUNqQyxjQUFjLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLDZDQUE2QyxDQUFDO0lBQ2hFLGFBQWEsRUFBRSxJQUFBLHFDQUFDLEVBQUMsZ0JBQWdCLENBQUM7Q0FDbkMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvaGVscHRleHQvc2hhcmluZy9pbmRleC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5cbmV4cG9ydCAqIGZyb20gJy4vaXNjc2kvaXNjc2knO1xuZXhwb3J0ICogZnJvbSAnLi9uZnMvbmZzJztcbmV4cG9ydCAqIGZyb20gJy4vc21iL3NtYic7XG5cbmV4cG9ydCBjb25zdCBzaGFyZWQgPSB7XG4gIGRlbGV0ZV9zaGFyZV9tZXNzYWdlOiBUKCdUaGUgc2hhcmluZyBjb25maWd1cmF0aW9uIHdpbGwgYmUgcmVtb3ZlZC5cXFxuICAgIERhdGEgaW4gdGhlIHNoYXJlIGRhdGFzZXQgd2lsbCBub3QgYmUgYWZmZWN0ZWQuJyksXG5cbiAgZGlhbG9nX3RpdGxlOiBUKCdFbmFibGUgc2VydmljZScpLFxuICBkaWFsb2dfbWVzc2FnZTogVCgnRW5hYmxlIHRoaXMgc2VydmljZSB0byBzdGFydCBhdXRvbWF0aWNhbGx5LicpLFxuICBkaWFsb2dfYnV0dG9uOiBUKCdFbmFibGUgU2VydmljZScpLFxufTtcbiJdLCJ2ZXJzaW9uIjozfQ==

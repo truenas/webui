@@ -1,0 +1,42 @@
+3c643df6753cb4b108e50719db5f1e6e
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayMap_js_1 = __importDefault(require("./_arrayMap.js"));
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+const _basePickBy_js_1 = __importDefault(require("./_basePickBy.js"));
+const _getAllKeysIn_js_1 = __importDefault(require("./_getAllKeysIn.js"));
+/**
+ * Creates an object composed of the `object` properties `predicate` returns
+ * truthy for. The predicate is invoked with two arguments: (value, key).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Object
+ * @param {Object} object The source object.
+ * @param {Function} [predicate=_.identity] The function invoked per property.
+ * @returns {Object} Returns the new object.
+ * @example
+ *
+ * var object = { 'a': 1, 'b': '2', 'c': 3 };
+ *
+ * _.pickBy(object, _.isNumber);
+ * // => { 'a': 1, 'c': 3 }
+ */
+function pickBy(object, predicate) {
+    if (object == null) {
+        return {};
+    }
+    var props = (0, _arrayMap_js_1.default)((0, _getAllKeysIn_js_1.default)(object), function (prop) {
+        return [prop];
+    });
+    predicate = (0, _baseIteratee_js_1.default)(predicate);
+    return (0, _basePickBy_js_1.default)(object, props, function (value, path) {
+        return predicate(value, path[0]);
+    });
+}
+exports.default = pickBy;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3BpY2tCeS5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLGtFQUFzQztBQUN0QywwRUFBOEM7QUFDOUMsc0VBQTBDO0FBQzFDLDBFQUE4QztBQUU5Qzs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FpQkc7QUFDSCxTQUFTLE1BQU0sQ0FBQyxNQUFNLEVBQUUsU0FBUztJQUMvQixJQUFJLE1BQU0sSUFBSSxJQUFJLEVBQUUsQ0FBQztRQUNuQixPQUFPLEVBQUUsQ0FBQztJQUNaLENBQUM7SUFDRCxJQUFJLEtBQUssR0FBRyxJQUFBLHNCQUFRLEVBQUMsSUFBQSwwQkFBWSxFQUFDLE1BQU0sQ0FBQyxFQUFFLFVBQVMsSUFBSTtRQUN0RCxPQUFPLENBQUMsSUFBSSxDQUFDLENBQUM7SUFDaEIsQ0FBQyxDQUFDLENBQUM7SUFDSCxTQUFTLEdBQUcsSUFBQSwwQkFBWSxFQUFDLFNBQVMsQ0FBQyxDQUFDO0lBQ3BDLE9BQU8sSUFBQSx3QkFBVSxFQUFDLE1BQU0sRUFBRSxLQUFLLEVBQUUsVUFBUyxLQUFLLEVBQUUsSUFBSTtRQUNuRCxPQUFPLFNBQVMsQ0FBQyxLQUFLLEVBQUUsSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUM7SUFDbkMsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDO0FBRUQsa0JBQWUsTUFBTSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9waWNrQnkuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGFycmF5TWFwIGZyb20gJy4vX2FycmF5TWFwLmpzJztcbmltcG9ydCBiYXNlSXRlcmF0ZWUgZnJvbSAnLi9fYmFzZUl0ZXJhdGVlLmpzJztcbmltcG9ydCBiYXNlUGlja0J5IGZyb20gJy4vX2Jhc2VQaWNrQnkuanMnO1xuaW1wb3J0IGdldEFsbEtleXNJbiBmcm9tICcuL19nZXRBbGxLZXlzSW4uanMnO1xuXG4vKipcbiAqIENyZWF0ZXMgYW4gb2JqZWN0IGNvbXBvc2VkIG9mIHRoZSBgb2JqZWN0YCBwcm9wZXJ0aWVzIGBwcmVkaWNhdGVgIHJldHVybnNcbiAqIHRydXRoeSBmb3IuIFRoZSBwcmVkaWNhdGUgaXMgaW52b2tlZCB3aXRoIHR3byBhcmd1bWVudHM6ICh2YWx1ZSwga2V5KS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAbWVtYmVyT2YgX1xuICogQHNpbmNlIDQuMC4wXG4gKiBAY2F0ZWdvcnkgT2JqZWN0XG4gKiBAcGFyYW0ge09iamVjdH0gb2JqZWN0IFRoZSBzb3VyY2Ugb2JqZWN0LlxuICogQHBhcmFtIHtGdW5jdGlvbn0gW3ByZWRpY2F0ZT1fLmlkZW50aXR5XSBUaGUgZnVuY3Rpb24gaW52b2tlZCBwZXIgcHJvcGVydHkuXG4gKiBAcmV0dXJucyB7T2JqZWN0fSBSZXR1cm5zIHRoZSBuZXcgb2JqZWN0LlxuICogQGV4YW1wbGVcbiAqXG4gKiB2YXIgb2JqZWN0ID0geyAnYSc6IDEsICdiJzogJzInLCAnYyc6IDMgfTtcbiAqXG4gKiBfLnBpY2tCeShvYmplY3QsIF8uaXNOdW1iZXIpO1xuICogLy8gPT4geyAnYSc6IDEsICdjJzogMyB9XG4gKi9cbmZ1bmN0aW9uIHBpY2tCeShvYmplY3QsIHByZWRpY2F0ZSkge1xuICBpZiAob2JqZWN0ID09IG51bGwpIHtcbiAgICByZXR1cm4ge307XG4gIH1cbiAgdmFyIHByb3BzID0gYXJyYXlNYXAoZ2V0QWxsS2V5c0luKG9iamVjdCksIGZ1bmN0aW9uKHByb3ApIHtcbiAgICByZXR1cm4gW3Byb3BdO1xuICB9KTtcbiAgcHJlZGljYXRlID0gYmFzZUl0ZXJhdGVlKHByZWRpY2F0ZSk7XG4gIHJldHVybiBiYXNlUGlja0J5KG9iamVjdCwgcHJvcHMsIGZ1bmN0aW9uKHZhbHVlLCBwYXRoKSB7XG4gICAgcmV0dXJuIHByZWRpY2F0ZSh2YWx1ZSwgcGF0aFswXSk7XG4gIH0pO1xufVxuXG5leHBvcnQgZGVmYXVsdCBwaWNrQnk7XG4iXSwidmVyc2lvbiI6M30=

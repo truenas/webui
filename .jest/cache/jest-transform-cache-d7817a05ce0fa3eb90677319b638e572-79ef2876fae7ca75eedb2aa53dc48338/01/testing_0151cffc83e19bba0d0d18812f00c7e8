@@ -1,0 +1,94 @@
+45db1e090bd4dd27e9c638435896f6fb
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var testing_exports = {};
+__export(testing_exports, {
+  BrowserDynamicTestingModule: () => BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting: () => platformBrowserDynamicTesting,
+  \u0275DOMTestComponentRenderer: () => DOMTestComponentRenderer,
+  \u0275platformCoreDynamicTesting: () => platformCoreDynamicTesting
+});
+module.exports = __toCommonJS(testing_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_testing = require("@angular/core/testing");
+var import_platform_browser_dynamic = require("@angular/platform-browser-dynamic");
+var import_testing2 = require("@angular/platform-browser/testing");
+var import_common = require("@angular/common");
+/**
+ * @license Angular v18.2.4
+ * (c) 2010-2024 Google LLC. https://angular.io/
+ * License: MIT
+ */
+const _DOMTestComponentRenderer = class _DOMTestComponentRenderer extends import_testing.TestComponentRenderer {
+  constructor(_doc) {
+    super();
+    this._doc = _doc;
+  }
+  insertRootElement(rootElId) {
+    this.removeAllRootElementsImpl();
+    const rootElement = (0, import_common.\u0275getDOM)().getDefaultDocument().createElement("div");
+    rootElement.setAttribute("id", rootElId);
+    this._doc.body.appendChild(rootElement);
+  }
+  removeAllRootElements() {
+    if (typeof this._doc.querySelectorAll === "function") {
+      this.removeAllRootElementsImpl();
+    }
+  }
+  removeAllRootElementsImpl() {
+    const oldRoots = this._doc.querySelectorAll("[id^=root]");
+    for (let i = 0; i < oldRoots.length; i++) {
+      (0, import_common.\u0275getDOM)().remove(oldRoots[i]);
+    }
+  }
+};
+_DOMTestComponentRenderer.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _DOMTestComponentRenderer, deps: [{ token: import_common.DOCUMENT }], target: i0.\u0275\u0275FactoryTarget.Injectable });
+_DOMTestComponentRenderer.\u0275prov = i0.\u0275\u0275ngDeclareInjectable({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _DOMTestComponentRenderer });
+let DOMTestComponentRenderer = _DOMTestComponentRenderer;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: DOMTestComponentRenderer, decorators: [{
+  type: import_core.Injectable
+}], ctorParameters: () => [{ type: void 0, decorators: [{
+  type: import_core.Inject,
+  args: [import_common.DOCUMENT]
+}] }] });
+const platformCoreDynamicTesting = (0, import_core.createPlatformFactory)(import_platform_browser_dynamic.\u0275platformCoreDynamic, "coreDynamicTesting", []);
+const platformBrowserDynamicTesting = (0, import_core.createPlatformFactory)(platformCoreDynamicTesting, "browserDynamicTesting", import_platform_browser_dynamic.\u0275INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS);
+const _BrowserDynamicTestingModule = class _BrowserDynamicTestingModule {
+};
+_BrowserDynamicTestingModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _BrowserDynamicTestingModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_BrowserDynamicTestingModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.4", ngImport: i0, type: _BrowserDynamicTestingModule, exports: [import_testing2.BrowserTestingModule] });
+_BrowserDynamicTestingModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: _BrowserDynamicTestingModule, providers: [{ provide: import_testing.TestComponentRenderer, useClass: DOMTestComponentRenderer }], imports: [import_testing2.BrowserTestingModule] });
+let BrowserDynamicTestingModule = _BrowserDynamicTestingModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.4", ngImport: i0, type: BrowserDynamicTestingModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    exports: [import_testing2.BrowserTestingModule],
+    providers: [{ provide: import_testing.TestComponentRenderer, useClass: DOMTestComponentRenderer }]
+  }]
+}] });

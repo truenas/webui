@@ -1,0 +1,38 @@
+d624be86126f7bcf44cdacde2eb860d0
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseFlatten_js_1 = __importDefault(require("./_baseFlatten.js"));
+const toInteger_js_1 = __importDefault(require("./toInteger.js"));
+/**
+ * Recursively flatten `array` up to `depth` times.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.4.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @param {number} [depth=1] The maximum recursion depth.
+ * @returns {Array} Returns the new flattened array.
+ * @example
+ *
+ * var array = [1, [2, [3, [4]], 5]];
+ *
+ * _.flattenDepth(array, 1);
+ * // => [1, 2, [3, [4]], 5]
+ *
+ * _.flattenDepth(array, 2);
+ * // => [1, 2, 3, [4], 5]
+ */
+function flattenDepth(array, depth) {
+    var length = array == null ? 0 : array.length;
+    if (!length) {
+        return [];
+    }
+    depth = depth === undefined ? 1 : (0, toInteger_js_1.default)(depth);
+    return (0, _baseFlatten_js_1.default)(array, depth);
+}
+exports.default = flattenDepth;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2ZsYXR0ZW5EZXB0aC5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLHdFQUE0QztBQUM1QyxrRUFBdUM7QUFFdkM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FtQkc7QUFDSCxTQUFTLFlBQVksQ0FBQyxLQUFLLEVBQUUsS0FBSztJQUNoQyxJQUFJLE1BQU0sR0FBRyxLQUFLLElBQUksSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLEtBQUssQ0FBQyxNQUFNLENBQUM7SUFDOUMsSUFBSSxDQUFDLE1BQU0sRUFBRSxDQUFDO1FBQ1osT0FBTyxFQUFFLENBQUM7SUFDWixDQUFDO0lBQ0QsS0FBSyxHQUFHLEtBQUssS0FBSyxTQUFTLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsSUFBQSxzQkFBUyxFQUFDLEtBQUssQ0FBQyxDQUFDO0lBQ25ELE9BQU8sSUFBQSx5QkFBVyxFQUFDLEtBQUssRUFBRSxLQUFLLENBQUMsQ0FBQztBQUNuQyxDQUFDO0FBRUQsa0JBQWUsWUFBWSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9mbGF0dGVuRGVwdGguanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGJhc2VGbGF0dGVuIGZyb20gJy4vX2Jhc2VGbGF0dGVuLmpzJztcbmltcG9ydCB0b0ludGVnZXIgZnJvbSAnLi90b0ludGVnZXIuanMnO1xuXG4vKipcbiAqIFJlY3Vyc2l2ZWx5IGZsYXR0ZW4gYGFycmF5YCB1cCB0byBgZGVwdGhgIHRpbWVzLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgNC40LjBcbiAqIEBjYXRlZ29yeSBBcnJheVxuICogQHBhcmFtIHtBcnJheX0gYXJyYXkgVGhlIGFycmF5IHRvIGZsYXR0ZW4uXG4gKiBAcGFyYW0ge251bWJlcn0gW2RlcHRoPTFdIFRoZSBtYXhpbXVtIHJlY3Vyc2lvbiBkZXB0aC5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUgbmV3IGZsYXR0ZW5lZCBhcnJheS5cbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIGFycmF5ID0gWzEsIFsyLCBbMywgWzRdXSwgNV1dO1xuICpcbiAqIF8uZmxhdHRlbkRlcHRoKGFycmF5LCAxKTtcbiAqIC8vID0+IFsxLCAyLCBbMywgWzRdXSwgNV1cbiAqXG4gKiBfLmZsYXR0ZW5EZXB0aChhcnJheSwgMik7XG4gKiAvLyA9PiBbMSwgMiwgMywgWzRdLCA1XVxuICovXG5mdW5jdGlvbiBmbGF0dGVuRGVwdGgoYXJyYXksIGRlcHRoKSB7XG4gIHZhciBsZW5ndGggPSBhcnJheSA9PSBudWxsID8gMCA6IGFycmF5Lmxlbmd0aDtcbiAgaWYgKCFsZW5ndGgpIHtcbiAgICByZXR1cm4gW107XG4gIH1cbiAgZGVwdGggPSBkZXB0aCA9PT0gdW5kZWZpbmVkID8gMSA6IHRvSW50ZWdlcihkZXB0aCk7XG4gIHJldHVybiBiYXNlRmxhdHRlbihhcnJheSwgZGVwdGgpO1xufVxuXG5leHBvcnQgZGVmYXVsdCBmbGF0dGVuRGVwdGg7XG4iXSwidmVyc2lvbiI6M30=

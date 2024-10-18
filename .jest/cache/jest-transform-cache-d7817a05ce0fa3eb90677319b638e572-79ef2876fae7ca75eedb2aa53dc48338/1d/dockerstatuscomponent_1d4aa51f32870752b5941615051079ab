@@ -1,0 +1,36 @@
+81220a107150af888084cd20393bef7a
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DockerStatusComponent = void 0;
+const core_1 = require("@angular/core");
+const until_destroy_1 = require("@ngneat/until-destroy");
+const docker_status_enum_1 = require("app/enums/docker-status.enum");
+const docker_store_1 = require("app/pages/apps/store/docker.store");
+let DockerStatusComponent = class DockerStatusComponent {
+    constructor(store) {
+        this.store = store;
+        this.DockerStatus = docker_status_enum_1.DockerStatus;
+        this.dockerStatusLabels = docker_status_enum_1.dockerStatusLabels;
+        this.status$ = this.store.status$;
+        this.statusDescription$ = this.store.statusDescription$;
+    }
+};
+exports.DockerStatusComponent = DockerStatusComponent;
+DockerStatusComponent.ctorParameters = () => [
+    { type: docker_store_1.DockerStore }
+];
+exports.DockerStatusComponent = DockerStatusComponent = __decorate([
+    (0, until_destroy_1.UntilDestroy)(this),
+    (0, core_1.Component)({
+        selector: 'ix-docker-status',
+        template: require("./docker-status.component.html"),
+        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+    })
+], DockerStatusComponent);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3BhZ2VzL2FwcHMvY29tcG9uZW50cy9pbnN0YWxsZWQtYXBwcy9kb2NrZXItc3RhdHVzL2RvY2tlci1zdGF0dXMuY29tcG9uZW50LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUFBLHdDQUFtRTtBQUNuRSx5REFBcUQ7QUFDckQscUVBQWdGO0FBQ2hGLG9FQUFnRTtBQVN6RCxJQUFNLHFCQUFxQixHQUEzQixNQUFNLHFCQUFxQjtJQU9oQyxZQUFvQixLQUFrQjtRQUFsQixVQUFLLEdBQUwsS0FBSyxDQUFhO1FBTjdCLGlCQUFZLEdBQUcsaUNBQVksQ0FBQztRQUM1Qix1QkFBa0IsR0FBRyx1Q0FBa0IsQ0FBQztRQUVqRCxZQUFPLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUM7UUFDN0IsdUJBQWtCLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxrQkFBa0IsQ0FBQztJQUVULENBQUM7O0FBUGhDLHNEQUFxQjs7OztnQ0FBckIscUJBQXFCO0lBUGpDLElBQUEsNEJBQVksRUFBQyxJQUFJLENBQUM7SUFDbEIsSUFBQSxnQkFBUyxFQUFDO1FBQ1QsUUFBUSxFQUFFLGtCQUFrQjtRQUM1QixtREFBNkM7UUFFN0MsZUFBZSxFQUFFLDhCQUF1QixDQUFDLE1BQU07S0FDaEQsQ0FBQztHQUNXLHFCQUFxQixDQVFqQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvcGFnZXMvYXBwcy9jb21wb25lbnRzL2luc3RhbGxlZC1hcHBzL2RvY2tlci1zdGF0dXMvZG9ja2VyLXN0YXR1cy5jb21wb25lbnQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ2hhbmdlRGV0ZWN0aW9uU3RyYXRlZ3ksIENvbXBvbmVudCB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgVW50aWxEZXN0cm95IH0gZnJvbSAnQG5nbmVhdC91bnRpbC1kZXN0cm95JztcbmltcG9ydCB7IERvY2tlclN0YXR1cywgZG9ja2VyU3RhdHVzTGFiZWxzIH0gZnJvbSAnYXBwL2VudW1zL2RvY2tlci1zdGF0dXMuZW51bSc7XG5pbXBvcnQgeyBEb2NrZXJTdG9yZSB9IGZyb20gJ2FwcC9wYWdlcy9hcHBzL3N0b3JlL2RvY2tlci5zdG9yZSc7XG5cbkBVbnRpbERlc3Ryb3kodGhpcylcbkBDb21wb25lbnQoe1xuICBzZWxlY3RvcjogJ2l4LWRvY2tlci1zdGF0dXMnLFxuICB0ZW1wbGF0ZVVybDogJy4vZG9ja2VyLXN0YXR1cy5jb21wb25lbnQuaHRtbCcsXG4gIHN0eWxlVXJsczogWycuL2RvY2tlci1zdGF0dXMuY29tcG9uZW50LnNjc3MnXSxcbiAgY2hhbmdlRGV0ZWN0aW9uOiBDaGFuZ2VEZXRlY3Rpb25TdHJhdGVneS5PblB1c2gsXG59KVxuZXhwb3J0IGNsYXNzIERvY2tlclN0YXR1c0NvbXBvbmVudCB7XG4gIHJlYWRvbmx5IERvY2tlclN0YXR1cyA9IERvY2tlclN0YXR1cztcbiAgcmVhZG9ubHkgZG9ja2VyU3RhdHVzTGFiZWxzID0gZG9ja2VyU3RhdHVzTGFiZWxzO1xuXG4gIHN0YXR1cyQgPSB0aGlzLnN0b3JlLnN0YXR1cyQ7XG4gIHN0YXR1c0Rlc2NyaXB0aW9uJCA9IHRoaXMuc3RvcmUuc3RhdHVzRGVzY3JpcHRpb24kO1xuXG4gIGNvbnN0cnVjdG9yKHByaXZhdGUgc3RvcmU6IERvY2tlclN0b3JlKSB7IH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

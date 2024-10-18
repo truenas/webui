@@ -1,0 +1,39 @@
+02a3ccdcb93a5e9524d6c5c0095270bf
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayReduceRight_js_1 = __importDefault(require("./_arrayReduceRight.js"));
+const _baseEachRight_js_1 = __importDefault(require("./_baseEachRight.js"));
+const _baseIteratee_js_1 = __importDefault(require("./_baseIteratee.js"));
+const _baseReduce_js_1 = __importDefault(require("./_baseReduce.js"));
+const isArray_js_1 = __importDefault(require("./isArray.js"));
+/**
+ * This method is like `_.reduce` except that it iterates over elements of
+ * `collection` from right to left.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @param {*} [accumulator] The initial value.
+ * @returns {*} Returns the accumulated value.
+ * @see _.reduce
+ * @example
+ *
+ * var array = [[0, 1], [2, 3], [4, 5]];
+ *
+ * _.reduceRight(array, function(flattened, other) {
+ *   return flattened.concat(other);
+ * }, []);
+ * // => [4, 5, 2, 3, 0, 1]
+ */
+function reduceRight(collection, iteratee, accumulator) {
+    var func = (0, isArray_js_1.default)(collection) ? _arrayReduceRight_js_1.default : _baseReduce_js_1.default, initAccum = arguments.length < 3;
+    return func(collection, (0, _baseIteratee_js_1.default)(iteratee, 4), accumulator, initAccum, _baseEachRight_js_1.default);
+}
+exports.default = reduceRight;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3JlZHVjZVJpZ2h0LmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsa0ZBQXNEO0FBQ3RELDRFQUFnRDtBQUNoRCwwRUFBOEM7QUFDOUMsc0VBQTBDO0FBQzFDLDhEQUFtQztBQUVuQzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBcUJHO0FBQ0gsU0FBUyxXQUFXLENBQUMsVUFBVSxFQUFFLFFBQVEsRUFBRSxXQUFXO0lBQ3BELElBQUksSUFBSSxHQUFHLElBQUEsb0JBQU8sRUFBQyxVQUFVLENBQUMsQ0FBQyxDQUFDLENBQUMsOEJBQWdCLENBQUMsQ0FBQyxDQUFDLHdCQUFVLEVBQzFELFNBQVMsR0FBRyxTQUFTLENBQUMsTUFBTSxHQUFHLENBQUMsQ0FBQztJQUVyQyxPQUFPLElBQUksQ0FBQyxVQUFVLEVBQUUsSUFBQSwwQkFBWSxFQUFDLFFBQVEsRUFBRSxDQUFDLENBQUMsRUFBRSxXQUFXLEVBQUUsU0FBUyxFQUFFLDJCQUFhLENBQUMsQ0FBQztBQUM1RixDQUFDO0FBRUQsa0JBQWUsV0FBVyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9yZWR1Y2VSaWdodC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYXJyYXlSZWR1Y2VSaWdodCBmcm9tICcuL19hcnJheVJlZHVjZVJpZ2h0LmpzJztcbmltcG9ydCBiYXNlRWFjaFJpZ2h0IGZyb20gJy4vX2Jhc2VFYWNoUmlnaHQuanMnO1xuaW1wb3J0IGJhc2VJdGVyYXRlZSBmcm9tICcuL19iYXNlSXRlcmF0ZWUuanMnO1xuaW1wb3J0IGJhc2VSZWR1Y2UgZnJvbSAnLi9fYmFzZVJlZHVjZS5qcyc7XG5pbXBvcnQgaXNBcnJheSBmcm9tICcuL2lzQXJyYXkuanMnO1xuXG4vKipcbiAqIFRoaXMgbWV0aG9kIGlzIGxpa2UgYF8ucmVkdWNlYCBleGNlcHQgdGhhdCBpdCBpdGVyYXRlcyBvdmVyIGVsZW1lbnRzIG9mXG4gKiBgY29sbGVjdGlvbmAgZnJvbSByaWdodCB0byBsZWZ0LlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgMC4xLjBcbiAqIEBjYXRlZ29yeSBDb2xsZWN0aW9uXG4gKiBAcGFyYW0ge0FycmF5fE9iamVjdH0gY29sbGVjdGlvbiBUaGUgY29sbGVjdGlvbiB0byBpdGVyYXRlIG92ZXIuXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBbaXRlcmF0ZWU9Xy5pZGVudGl0eV0gVGhlIGZ1bmN0aW9uIGludm9rZWQgcGVyIGl0ZXJhdGlvbi5cbiAqIEBwYXJhbSB7Kn0gW2FjY3VtdWxhdG9yXSBUaGUgaW5pdGlhbCB2YWx1ZS5cbiAqIEByZXR1cm5zIHsqfSBSZXR1cm5zIHRoZSBhY2N1bXVsYXRlZCB2YWx1ZS5cbiAqIEBzZWUgXy5yZWR1Y2VcbiAqIEBleGFtcGxlXG4gKlxuICogdmFyIGFycmF5ID0gW1swLCAxXSwgWzIsIDNdLCBbNCwgNV1dO1xuICpcbiAqIF8ucmVkdWNlUmlnaHQoYXJyYXksIGZ1bmN0aW9uKGZsYXR0ZW5lZCwgb3RoZXIpIHtcbiAqICAgcmV0dXJuIGZsYXR0ZW5lZC5jb25jYXQob3RoZXIpO1xuICogfSwgW10pO1xuICogLy8gPT4gWzQsIDUsIDIsIDMsIDAsIDFdXG4gKi9cbmZ1bmN0aW9uIHJlZHVjZVJpZ2h0KGNvbGxlY3Rpb24sIGl0ZXJhdGVlLCBhY2N1bXVsYXRvcikge1xuICB2YXIgZnVuYyA9IGlzQXJyYXkoY29sbGVjdGlvbikgPyBhcnJheVJlZHVjZVJpZ2h0IDogYmFzZVJlZHVjZSxcbiAgICAgIGluaXRBY2N1bSA9IGFyZ3VtZW50cy5sZW5ndGggPCAzO1xuXG4gIHJldHVybiBmdW5jKGNvbGxlY3Rpb24sIGJhc2VJdGVyYXRlZShpdGVyYXRlZSwgNCksIGFjY3VtdWxhdG9yLCBpbml0QWNjdW0sIGJhc2VFYWNoUmlnaHQpO1xufVxuXG5leHBvcnQgZGVmYXVsdCByZWR1Y2VSaWdodDtcbiJdLCJ2ZXJzaW9uIjozfQ==

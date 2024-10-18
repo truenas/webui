@@ -1,0 +1,35 @@
+56729072efe38d5cc6b32a79fd8848d8
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _createToPairs_js_1 = __importDefault(require("./_createToPairs.js"));
+const keysIn_js_1 = __importDefault(require("./keysIn.js"));
+/**
+ * Creates an array of own and inherited enumerable string keyed-value pairs
+ * for `object` which can be consumed by `_.fromPairs`. If `object` is a map
+ * or set, its entries are returned.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @alias entriesIn
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the key-value pairs.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.toPairsIn(new Foo);
+ * // => [['a', 1], ['b', 2], ['c', 3]] (iteration order is not guaranteed)
+ */
+var toPairsIn = (0, _createToPairs_js_1.default)(keysIn_js_1.default);
+exports.default = toPairsIn;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RvUGFpcnNJbi5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLDRFQUFnRDtBQUNoRCw0REFBaUM7QUFFakM7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBdUJHO0FBQ0gsSUFBSSxTQUFTLEdBQUcsSUFBQSwyQkFBYSxFQUFDLG1CQUFNLENBQUMsQ0FBQztBQUV0QyxrQkFBZSxTQUFTLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RvUGFpcnNJbi5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgY3JlYXRlVG9QYWlycyBmcm9tICcuL19jcmVhdGVUb1BhaXJzLmpzJztcbmltcG9ydCBrZXlzSW4gZnJvbSAnLi9rZXlzSW4uanMnO1xuXG4vKipcbiAqIENyZWF0ZXMgYW4gYXJyYXkgb2Ygb3duIGFuZCBpbmhlcml0ZWQgZW51bWVyYWJsZSBzdHJpbmcga2V5ZWQtdmFsdWUgcGFpcnNcbiAqIGZvciBgb2JqZWN0YCB3aGljaCBjYW4gYmUgY29uc3VtZWQgYnkgYF8uZnJvbVBhaXJzYC4gSWYgYG9iamVjdGAgaXMgYSBtYXBcbiAqIG9yIHNldCwgaXRzIGVudHJpZXMgYXJlIHJldHVybmVkLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgNC4wLjBcbiAqIEBhbGlhcyBlbnRyaWVzSW5cbiAqIEBjYXRlZ29yeSBPYmplY3RcbiAqIEBwYXJhbSB7T2JqZWN0fSBvYmplY3QgVGhlIG9iamVjdCB0byBxdWVyeS5cbiAqIEByZXR1cm5zIHtBcnJheX0gUmV0dXJucyB0aGUga2V5LXZhbHVlIHBhaXJzLlxuICogQGV4YW1wbGVcbiAqXG4gKiBmdW5jdGlvbiBGb28oKSB7XG4gKiAgIHRoaXMuYSA9IDE7XG4gKiAgIHRoaXMuYiA9IDI7XG4gKiB9XG4gKlxuICogRm9vLnByb3RvdHlwZS5jID0gMztcbiAqXG4gKiBfLnRvUGFpcnNJbihuZXcgRm9vKTtcbiAqIC8vID0+IFtbJ2EnLCAxXSwgWydiJywgMl0sIFsnYycsIDNdXSAoaXRlcmF0aW9uIG9yZGVyIGlzIG5vdCBndWFyYW50ZWVkKVxuICovXG52YXIgdG9QYWlyc0luID0gY3JlYXRlVG9QYWlycyhrZXlzSW4pO1xuXG5leHBvcnQgZGVmYXVsdCB0b1BhaXJzSW47XG4iXSwidmVyc2lvbiI6M30=

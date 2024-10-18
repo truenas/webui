@@ -1,0 +1,2 @@
+cfe30d713cf159b47994853995522d01
+module.exports="<div class=\"wrapper\">\n  <div class=\"container\">\n    @if (title) {\n      <div class=\"title\">{{ title | translate }}</div>\n    }\n    @if (message) {\n      <p class=\"message\" [class.pre]=\"data.pre\">{{ message | translate }}</p>\n    }\n  </div>\n  @if (data.showClose) {\n    <button\n      mat-button\n      color=\"primary\"\n      ixTest=\"close-full-screen\"\n      (click)=\"close()\"\n    >{{ 'Continue' | translate }}</button>\n  }\n</div>\n"

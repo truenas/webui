@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["/Users/macbook/karpov-work/TrueNAS/webui/node_modules/@angular/material/fesm2022/form-field/testing/control.mjs"],
+  "sourcesContent": ["import { ComponentHarness } from '@angular/cdk/testing';\n\n/**\n * Base class for custom form-field control harnesses. Harnesses for\n * custom controls with form-fields need to implement this interface.\n */\nclass MatFormFieldControlHarness extends ComponentHarness {\n}\n\nexport { MatFormFieldControlHarness };\n//# sourceMappingURL=control.mjs.map\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,qBAAiC;AAMjC,MAAM,mCAAmC,gCAAiB;AAC1D;",
+  "names": []
+}

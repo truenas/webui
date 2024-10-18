@@ -1,0 +1,11 @@
+e2163d8559332cea0773ca1e0f76e71f
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _root_js_1 = __importDefault(require("./_root.js"));
+/** Used to detect overreaching core-js shims. */
+var coreJsData = _root_js_1.default['__core-js_shared__'];
+exports.default = coreJsData;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jb3JlSnNEYXRhLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsMERBQThCO0FBRTlCLGlEQUFpRDtBQUNqRCxJQUFJLFVBQVUsR0FBRyxrQkFBSSxDQUFDLG9CQUFvQixDQUFDLENBQUM7QUFFNUMsa0JBQWUsVUFBVSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9fY29yZUpzRGF0YS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgcm9vdCBmcm9tICcuL19yb290LmpzJztcblxuLyoqIFVzZWQgdG8gZGV0ZWN0IG92ZXJyZWFjaGluZyBjb3JlLWpzIHNoaW1zLiAqL1xudmFyIGNvcmVKc0RhdGEgPSByb290WydfX2NvcmUtanNfc2hhcmVkX18nXTtcblxuZXhwb3J0IGRlZmF1bHQgY29yZUpzRGF0YTtcbiJdLCJ2ZXJzaW9uIjozfQ==

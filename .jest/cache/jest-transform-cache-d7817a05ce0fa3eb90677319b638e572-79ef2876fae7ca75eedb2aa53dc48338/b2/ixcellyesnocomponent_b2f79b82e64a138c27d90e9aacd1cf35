@@ -1,0 +1,2 @@
+e3b1f3842dd5994776479de8c572bbf1
+module.exports="<span\n  [ixTest]=\"[title, uniqueRowTag(row()), 'row-yesno']\"\n>{{ value | yesNo | translate }}</span>\n"

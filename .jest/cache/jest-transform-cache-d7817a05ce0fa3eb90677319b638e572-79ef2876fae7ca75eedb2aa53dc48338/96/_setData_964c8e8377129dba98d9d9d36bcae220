@@ -1,0 +1,25 @@
+8cf0de97973d67e6708bee61860904ab
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseSetData_js_1 = __importDefault(require("./_baseSetData.js"));
+const _shortOut_js_1 = __importDefault(require("./_shortOut.js"));
+/**
+ * Sets metadata for `func`.
+ *
+ * **Note:** If this function becomes hot, i.e. is invoked a lot in a short
+ * period of time, it will trip its breaker and transition to an identity
+ * function to avoid garbage collection pauses in V8. See
+ * [V8 issue 2070](https://bugs.chromium.org/p/v8/issues/detail?id=2070)
+ * for more details.
+ *
+ * @private
+ * @param {Function} func The function to associate metadata with.
+ * @param {*} data The metadata.
+ * @returns {Function} Returns `func`.
+ */
+var setData = (0, _shortOut_js_1.default)(_baseSetData_js_1.default);
+exports.default = setData;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19zZXREYXRhLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsd0VBQTRDO0FBQzVDLGtFQUFzQztBQUV0Qzs7Ozs7Ozs7Ozs7OztHQWFHO0FBQ0gsSUFBSSxPQUFPLEdBQUcsSUFBQSxzQkFBUSxFQUFDLHlCQUFXLENBQUMsQ0FBQztBQUVwQyxrQkFBZSxPQUFPLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19zZXREYXRhLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBiYXNlU2V0RGF0YSBmcm9tICcuL19iYXNlU2V0RGF0YS5qcyc7XG5pbXBvcnQgc2hvcnRPdXQgZnJvbSAnLi9fc2hvcnRPdXQuanMnO1xuXG4vKipcbiAqIFNldHMgbWV0YWRhdGEgZm9yIGBmdW5jYC5cbiAqXG4gKiAqKk5vdGU6KiogSWYgdGhpcyBmdW5jdGlvbiBiZWNvbWVzIGhvdCwgaS5lLiBpcyBpbnZva2VkIGEgbG90IGluIGEgc2hvcnRcbiAqIHBlcmlvZCBvZiB0aW1lLCBpdCB3aWxsIHRyaXAgaXRzIGJyZWFrZXIgYW5kIHRyYW5zaXRpb24gdG8gYW4gaWRlbnRpdHlcbiAqIGZ1bmN0aW9uIHRvIGF2b2lkIGdhcmJhZ2UgY29sbGVjdGlvbiBwYXVzZXMgaW4gVjguIFNlZVxuICogW1Y4IGlzc3VlIDIwNzBdKGh0dHBzOi8vYnVncy5jaHJvbWl1bS5vcmcvcC92OC9pc3N1ZXMvZGV0YWlsP2lkPTIwNzApXG4gKiBmb3IgbW9yZSBkZXRhaWxzLlxuICpcbiAqIEBwcml2YXRlXG4gKiBAcGFyYW0ge0Z1bmN0aW9ufSBmdW5jIFRoZSBmdW5jdGlvbiB0byBhc3NvY2lhdGUgbWV0YWRhdGEgd2l0aC5cbiAqIEBwYXJhbSB7Kn0gZGF0YSBUaGUgbWV0YWRhdGEuXG4gKiBAcmV0dXJucyB7RnVuY3Rpb259IFJldHVybnMgYGZ1bmNgLlxuICovXG52YXIgc2V0RGF0YSA9IHNob3J0T3V0KGJhc2VTZXREYXRhKTtcblxuZXhwb3J0IGRlZmF1bHQgc2V0RGF0YTtcbiJdLCJ2ZXJzaW9uIjozfQ==

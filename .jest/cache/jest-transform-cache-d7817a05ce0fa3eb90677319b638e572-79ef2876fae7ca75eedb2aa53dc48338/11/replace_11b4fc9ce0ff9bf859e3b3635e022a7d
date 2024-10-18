@@ -1,0 +1,32 @@
+14a661c8593469f0778221dbde0935ec
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const toString_js_1 = __importDefault(require("./toString.js"));
+/**
+ * Replaces matches for `pattern` in `string` with `replacement`.
+ *
+ * **Note:** This method is based on
+ * [`String#replace`](https://mdn.io/String/replace).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category String
+ * @param {string} [string=''] The string to modify.
+ * @param {RegExp|string} pattern The pattern to replace.
+ * @param {Function|string} replacement The match replacement.
+ * @returns {string} Returns the modified string.
+ * @example
+ *
+ * _.replace('Hi Fred', 'Fred', 'Barney');
+ * // => 'Hi Barney'
+ */
+function replace() {
+    var args = arguments, string = (0, toString_js_1.default)(args[0]);
+    return args.length < 3 ? string : string.replace(args[1], args[2]);
+}
+exports.default = replace;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3JlcGxhY2UuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxnRUFBcUM7QUFFckM7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQWtCRztBQUNILFNBQVMsT0FBTztJQUNkLElBQUksSUFBSSxHQUFHLFNBQVMsRUFDaEIsTUFBTSxHQUFHLElBQUEscUJBQVEsRUFBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQztJQUUvQixPQUFPLElBQUksQ0FBQyxNQUFNLEdBQUcsQ0FBQyxDQUFDLENBQUMsQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQyxFQUFFLElBQUksQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDO0FBQ3JFLENBQUM7QUFFRCxrQkFBZSxPQUFPLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3JlcGxhY2UuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHRvU3RyaW5nIGZyb20gJy4vdG9TdHJpbmcuanMnO1xuXG4vKipcbiAqIFJlcGxhY2VzIG1hdGNoZXMgZm9yIGBwYXR0ZXJuYCBpbiBgc3RyaW5nYCB3aXRoIGByZXBsYWNlbWVudGAuXG4gKlxuICogKipOb3RlOioqIFRoaXMgbWV0aG9kIGlzIGJhc2VkIG9uXG4gKiBbYFN0cmluZyNyZXBsYWNlYF0oaHR0cHM6Ly9tZG4uaW8vU3RyaW5nL3JlcGxhY2UpLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgNC4wLjBcbiAqIEBjYXRlZ29yeSBTdHJpbmdcbiAqIEBwYXJhbSB7c3RyaW5nfSBbc3RyaW5nPScnXSBUaGUgc3RyaW5nIHRvIG1vZGlmeS5cbiAqIEBwYXJhbSB7UmVnRXhwfHN0cmluZ30gcGF0dGVybiBUaGUgcGF0dGVybiB0byByZXBsYWNlLlxuICogQHBhcmFtIHtGdW5jdGlvbnxzdHJpbmd9IHJlcGxhY2VtZW50IFRoZSBtYXRjaCByZXBsYWNlbWVudC5cbiAqIEByZXR1cm5zIHtzdHJpbmd9IFJldHVybnMgdGhlIG1vZGlmaWVkIHN0cmluZy5cbiAqIEBleGFtcGxlXG4gKlxuICogXy5yZXBsYWNlKCdIaSBGcmVkJywgJ0ZyZWQnLCAnQmFybmV5Jyk7XG4gKiAvLyA9PiAnSGkgQmFybmV5J1xuICovXG5mdW5jdGlvbiByZXBsYWNlKCkge1xuICB2YXIgYXJncyA9IGFyZ3VtZW50cyxcbiAgICAgIHN0cmluZyA9IHRvU3RyaW5nKGFyZ3NbMF0pO1xuXG4gIHJldHVybiBhcmdzLmxlbmd0aCA8IDMgPyBzdHJpbmcgOiBzdHJpbmcucmVwbGFjZShhcmdzWzFdLCBhcmdzWzJdKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgcmVwbGFjZTtcbiJdLCJ2ZXJzaW9uIjozfQ==

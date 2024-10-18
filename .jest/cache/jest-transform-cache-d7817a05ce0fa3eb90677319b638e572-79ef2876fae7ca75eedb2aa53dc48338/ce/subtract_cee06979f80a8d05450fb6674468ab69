@@ -1,0 +1,27 @@
+23547dc6e22a0ee0e58e454949b832c8
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _createMathOperation_js_1 = __importDefault(require("./_createMathOperation.js"));
+/**
+ * Subtract two numbers.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Math
+ * @param {number} minuend The first number in a subtraction.
+ * @param {number} subtrahend The second number in a subtraction.
+ * @returns {number} Returns the difference.
+ * @example
+ *
+ * _.subtract(6, 4);
+ * // => 2
+ */
+var subtract = (0, _createMathOperation_js_1.default)(function (minuend, subtrahend) {
+    return minuend - subtrahend;
+}, 0);
+exports.default = subtract;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3N1YnRyYWN0LmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsd0ZBQTREO0FBRTVEOzs7Ozs7Ozs7Ozs7OztHQWNHO0FBQ0gsSUFBSSxRQUFRLEdBQUcsSUFBQSxpQ0FBbUIsRUFBQyxVQUFTLE9BQU8sRUFBRSxVQUFVO0lBQzdELE9BQU8sT0FBTyxHQUFHLFVBQVUsQ0FBQztBQUM5QixDQUFDLEVBQUUsQ0FBQyxDQUFDLENBQUM7QUFFTixrQkFBZSxRQUFRLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3N1YnRyYWN0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBjcmVhdGVNYXRoT3BlcmF0aW9uIGZyb20gJy4vX2NyZWF0ZU1hdGhPcGVyYXRpb24uanMnO1xuXG4vKipcbiAqIFN1YnRyYWN0IHR3byBudW1iZXJzLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgNC4wLjBcbiAqIEBjYXRlZ29yeSBNYXRoXG4gKiBAcGFyYW0ge251bWJlcn0gbWludWVuZCBUaGUgZmlyc3QgbnVtYmVyIGluIGEgc3VidHJhY3Rpb24uXG4gKiBAcGFyYW0ge251bWJlcn0gc3VidHJhaGVuZCBUaGUgc2Vjb25kIG51bWJlciBpbiBhIHN1YnRyYWN0aW9uLlxuICogQHJldHVybnMge251bWJlcn0gUmV0dXJucyB0aGUgZGlmZmVyZW5jZS5cbiAqIEBleGFtcGxlXG4gKlxuICogXy5zdWJ0cmFjdCg2LCA0KTtcbiAqIC8vID0+IDJcbiAqL1xudmFyIHN1YnRyYWN0ID0gY3JlYXRlTWF0aE9wZXJhdGlvbihmdW5jdGlvbihtaW51ZW5kLCBzdWJ0cmFoZW5kKSB7XG4gIHJldHVybiBtaW51ZW5kIC0gc3VidHJhaGVuZDtcbn0sIDApO1xuXG5leHBvcnQgZGVmYXVsdCBzdWJ0cmFjdDtcbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,50 @@
+175d33187c8a089bcdc972c9511e8cac
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _baseTimes_js_1 = __importDefault(require("./_baseTimes.js"));
+const _castFunction_js_1 = __importDefault(require("./_castFunction.js"));
+const toInteger_js_1 = __importDefault(require("./toInteger.js"));
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+/** Used as references for the maximum length and index of an array. */
+var MAX_ARRAY_LENGTH = 4294967295;
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMin = Math.min;
+/**
+ * Invokes the iteratee `n` times, returning an array of the results of
+ * each invocation. The iteratee is invoked with one argument; (index).
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Util
+ * @param {number} n The number of times to invoke `iteratee`.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Array} Returns the array of results.
+ * @example
+ *
+ * _.times(3, String);
+ * // => ['0', '1', '2']
+ *
+ *  _.times(4, _.constant(0));
+ * // => [0, 0, 0, 0]
+ */
+function times(n, iteratee) {
+    n = (0, toInteger_js_1.default)(n);
+    if (n < 1 || n > MAX_SAFE_INTEGER) {
+        return [];
+    }
+    var index = MAX_ARRAY_LENGTH, length = nativeMin(n, MAX_ARRAY_LENGTH);
+    iteratee = (0, _castFunction_js_1.default)(iteratee);
+    n -= MAX_ARRAY_LENGTH;
+    var result = (0, _baseTimes_js_1.default)(length, iteratee);
+    while (++index < n) {
+        iteratee(index);
+    }
+    return result;
+}
+exports.default = times;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL3RpbWVzLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUEsb0VBQXdDO0FBQ3hDLDBFQUE4QztBQUM5QyxrRUFBdUM7QUFFdkMseURBQXlEO0FBQ3pELElBQUksZ0JBQWdCLEdBQUcsZ0JBQWdCLENBQUM7QUFFeEMsdUVBQXVFO0FBQ3ZFLElBQUksZ0JBQWdCLEdBQUcsVUFBVSxDQUFDO0FBRWxDLHdGQUF3RjtBQUN4RixJQUFJLFNBQVMsR0FBRyxJQUFJLENBQUMsR0FBRyxDQUFDO0FBRXpCOzs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FrQkc7QUFDSCxTQUFTLEtBQUssQ0FBQyxDQUFDLEVBQUUsUUFBUTtJQUN4QixDQUFDLEdBQUcsSUFBQSxzQkFBUyxFQUFDLENBQUMsQ0FBQyxDQUFDO0lBQ2pCLElBQUksQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFDLEdBQUcsZ0JBQWdCLEVBQUUsQ0FBQztRQUNsQyxPQUFPLEVBQUUsQ0FBQztJQUNaLENBQUM7SUFDRCxJQUFJLEtBQUssR0FBRyxnQkFBZ0IsRUFDeEIsTUFBTSxHQUFHLFNBQVMsQ0FBQyxDQUFDLEVBQUUsZ0JBQWdCLENBQUMsQ0FBQztJQUU1QyxRQUFRLEdBQUcsSUFBQSwwQkFBWSxFQUFDLFFBQVEsQ0FBQyxDQUFDO0lBQ2xDLENBQUMsSUFBSSxnQkFBZ0IsQ0FBQztJQUV0QixJQUFJLE1BQU0sR0FBRyxJQUFBLHVCQUFTLEVBQUMsTUFBTSxFQUFFLFFBQVEsQ0FBQyxDQUFDO0lBQ3pDLE9BQU8sRUFBRSxLQUFLLEdBQUcsQ0FBQyxFQUFFLENBQUM7UUFDbkIsUUFBUSxDQUFDLEtBQUssQ0FBQyxDQUFDO0lBQ2xCLENBQUM7SUFDRCxPQUFPLE1BQU0sQ0FBQztBQUNoQixDQUFDO0FBRUQsa0JBQWUsS0FBSyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy90aW1lcy5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYmFzZVRpbWVzIGZyb20gJy4vX2Jhc2VUaW1lcy5qcyc7XG5pbXBvcnQgY2FzdEZ1bmN0aW9uIGZyb20gJy4vX2Nhc3RGdW5jdGlvbi5qcyc7XG5pbXBvcnQgdG9JbnRlZ2VyIGZyb20gJy4vdG9JbnRlZ2VyLmpzJztcblxuLyoqIFVzZWQgYXMgcmVmZXJlbmNlcyBmb3IgdmFyaW91cyBgTnVtYmVyYCBjb25zdGFudHMuICovXG52YXIgTUFYX1NBRkVfSU5URUdFUiA9IDkwMDcxOTkyNTQ3NDA5OTE7XG5cbi8qKiBVc2VkIGFzIHJlZmVyZW5jZXMgZm9yIHRoZSBtYXhpbXVtIGxlbmd0aCBhbmQgaW5kZXggb2YgYW4gYXJyYXkuICovXG52YXIgTUFYX0FSUkFZX0xFTkdUSCA9IDQyOTQ5NjcyOTU7XG5cbi8qIEJ1aWx0LWluIG1ldGhvZCByZWZlcmVuY2VzIGZvciB0aG9zZSB3aXRoIHRoZSBzYW1lIG5hbWUgYXMgb3RoZXIgYGxvZGFzaGAgbWV0aG9kcy4gKi9cbnZhciBuYXRpdmVNaW4gPSBNYXRoLm1pbjtcblxuLyoqXG4gKiBJbnZva2VzIHRoZSBpdGVyYXRlZSBgbmAgdGltZXMsIHJldHVybmluZyBhbiBhcnJheSBvZiB0aGUgcmVzdWx0cyBvZlxuICogZWFjaCBpbnZvY2F0aW9uLiBUaGUgaXRlcmF0ZWUgaXMgaW52b2tlZCB3aXRoIG9uZSBhcmd1bWVudDsgKGluZGV4KS5cbiAqXG4gKiBAc3RhdGljXG4gKiBAc2luY2UgMC4xLjBcbiAqIEBtZW1iZXJPZiBfXG4gKiBAY2F0ZWdvcnkgVXRpbFxuICogQHBhcmFtIHtudW1iZXJ9IG4gVGhlIG51bWJlciBvZiB0aW1lcyB0byBpbnZva2UgYGl0ZXJhdGVlYC5cbiAqIEBwYXJhbSB7RnVuY3Rpb259IFtpdGVyYXRlZT1fLmlkZW50aXR5XSBUaGUgZnVuY3Rpb24gaW52b2tlZCBwZXIgaXRlcmF0aW9uLlxuICogQHJldHVybnMge0FycmF5fSBSZXR1cm5zIHRoZSBhcnJheSBvZiByZXN1bHRzLlxuICogQGV4YW1wbGVcbiAqXG4gKiBfLnRpbWVzKDMsIFN0cmluZyk7XG4gKiAvLyA9PiBbJzAnLCAnMScsICcyJ11cbiAqXG4gKiAgXy50aW1lcyg0LCBfLmNvbnN0YW50KDApKTtcbiAqIC8vID0+IFswLCAwLCAwLCAwXVxuICovXG5mdW5jdGlvbiB0aW1lcyhuLCBpdGVyYXRlZSkge1xuICBuID0gdG9JbnRlZ2VyKG4pO1xuICBpZiAobiA8IDEgfHwgbiA+IE1BWF9TQUZFX0lOVEVHRVIpIHtcbiAgICByZXR1cm4gW107XG4gIH1cbiAgdmFyIGluZGV4ID0gTUFYX0FSUkFZX0xFTkdUSCxcbiAgICAgIGxlbmd0aCA9IG5hdGl2ZU1pbihuLCBNQVhfQVJSQVlfTEVOR1RIKTtcblxuICBpdGVyYXRlZSA9IGNhc3RGdW5jdGlvbihpdGVyYXRlZSk7XG4gIG4gLT0gTUFYX0FSUkFZX0xFTkdUSDtcblxuICB2YXIgcmVzdWx0ID0gYmFzZVRpbWVzKGxlbmd0aCwgaXRlcmF0ZWUpO1xuICB3aGlsZSAoKytpbmRleCA8IG4pIHtcbiAgICBpdGVyYXRlZShpbmRleCk7XG4gIH1cbiAgcmV0dXJuIHJlc3VsdDtcbn1cblxuZXhwb3J0IGRlZmF1bHQgdGltZXM7XG4iXSwidmVyc2lvbiI6M30=

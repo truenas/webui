@@ -1,0 +1,55 @@
+f56a9101b60850cd84cafacd67cdd869
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.helptextUsers = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+exports.helptextUsers = {
+    user_form_full_name_tooltip: (0, ngx_translate_extract_marker_1.marker)('Spaces are allowed.'),
+    user_form_username_tooltip: (0, ngx_translate_extract_marker_1.marker)('Usernames can be up to 32 characters long.\
+ Usernames cannot begin with a hyphen (<i>-</i>) or contain a space,\
+ tab, or these characters:\
+ <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be\
+ used as the last character of the username.'),
+    user_form_email_tooltip: (0, ngx_translate_extract_marker_1.marker)('Enter the email address of the new user.'),
+    user_form_password_tooltip: (0, ngx_translate_extract_marker_1.marker)('Required unless <b>Enable password login</b> is\
+ <i>No</i>. Passwords cannot contain a <b>?</b>.'),
+    user_form_password_edit_tooltip: (0, ngx_translate_extract_marker_1.marker)('Required unless <b>Enable password login</b> is\
+ <i>No</i>. Passwords cannot contain a <b>?</b>.'),
+    user_form_uid_tooltip: (0, ngx_translate_extract_marker_1.marker)('User accounts have an ID greater than 1000 and\
+ system accounts have an ID equal to the default\
+ port number used by the service.'),
+    user_form_group_create_tooltip: (0, ngx_translate_extract_marker_1.marker)('Set to create a new primary group with the same name as\
+ the user. Unset to select an existing group for the user.'),
+    user_form_primary_group_tooltip: (0, ngx_translate_extract_marker_1.marker)('New users are not given <b>su</b> permissions if\
+ <i>wheel</i> is their primary group.'),
+    user_form_aux_groups_tooltip: (0, ngx_translate_extract_marker_1.marker)('Add this user to additional groups.'),
+    user_form_dirs_explorer_tooltip: (0, ngx_translate_extract_marker_1.marker)('Choose a path to the user\'s\
+ home directory. If the directory exists and matches the username,\
+ it is set as the user\'s home directory. When the path does not\
+ end with a subdirectory matching the username, a new subdirectory is\
+ created only if the \'Create Home Directory\' field is marked checked.\
+ The full path to the user\'s home directory is shown\
+ here when editing a user.'),
+    user_form_home_dir_permissions_tooltip: (0, ngx_translate_extract_marker_1.marker)('Sets default Unix permissions of the user home\
+ directory. This is read-only for built-in users.'),
+    user_form_home_create_tooltip: (0, ngx_translate_extract_marker_1.marker)('Create a new home directory for user within the selected path.'),
+    user_form_auth_sshkey_tooltip: (0, ngx_translate_extract_marker_1.marker)('Enter or paste the <b>public</b> SSH key of the\
+ user for any key-based authentication. <b>Do not paste the private key.</b>'),
+    user_form_auth_pw_enable_tooltip: (0, ngx_translate_extract_marker_1.marker)('<i>Yes:</i> Disables the <b>Password</b> \
+ fields. The account cannot \
+ use password-based logins for services. For example, disabling the \
+ password prevents using account credentials to log in to an SMB share \
+ or open an SSH session on the system. The <b>Lock User</b> and \
+ <b>Permit Sudo</b> options are also removed.<br><br> \
+ <i>No:</i> Requires adding a <b>Password</b> to the account. The \
+ account can use the saved <b>Password</b> to authenticate with \
+ password-based services.'),
+    user_form_shell_tooltip: (0, ngx_translate_extract_marker_1.marker)('Select the shell to use for local and SSH logins.'),
+    user_form_lockuser_tooltip: (0, ngx_translate_extract_marker_1.marker)('Prevent the user from logging in or \
+ using password-based services until this option is unset. Locking an \
+ account is only possible when <b>Disable Password</b> is <i>No</i> and \
+ a <b>Password</b> has been created for the account.'),
+    user_form_smb_tooltip: (0, ngx_translate_extract_marker_1.marker)('Set to allow user to authenticate to Samba shares.'),
+    smbBuiltin: (0, ngx_translate_extract_marker_1.marker)('Cannot be enabled for built-in users.'),
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2hlbHB0ZXh0L2FjY291bnQvdXNlci1mb3JtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLDBGQUFzRTtBQUV6RCxRQUFBLGFBQWEsR0FBRztJQUMzQiwyQkFBMkIsRUFBRSxJQUFBLHFDQUFDLEVBQUMscUJBQXFCLENBQUM7SUFDckQsMEJBQTBCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzs7OzZDQUlhLENBQUM7SUFDNUMsdUJBQXVCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLDBDQUEwQyxDQUFDO0lBQ3RFLDBCQUEwQixFQUFFLElBQUEscUNBQUMsRUFBQztpREFDaUIsQ0FBQztJQUNoRCwrQkFBK0IsRUFBRSxJQUFBLHFDQUFDLEVBQUM7aURBQ1ksQ0FBQztJQUNoRCxxQkFBcUIsRUFBRSxJQUFBLHFDQUFDLEVBQUM7O2tDQUVPLENBQUM7SUFDakMsOEJBQThCLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzJEQUN1QixDQUFDO0lBQzFELCtCQUErQixFQUFFLElBQUEscUNBQUMsRUFBQztzQ0FDQyxDQUFDO0lBQ3JDLDRCQUE0QixFQUFFLElBQUEscUNBQUMsRUFBQyxxQ0FBcUMsQ0FBQztJQUN0RSwrQkFBK0IsRUFBRSxJQUFBLHFDQUFDLEVBQUM7Ozs7OzsyQkFNVixDQUFDO0lBQzFCLHNDQUFzQyxFQUFFLElBQUEscUNBQUMsRUFBQztrREFDTSxDQUFDO0lBQ2pELDZCQUE2QixFQUFFLElBQUEscUNBQUMsRUFBQyxnRUFBZ0UsQ0FBQztJQUNsRyw2QkFBNkIsRUFBRSxJQUFBLHFDQUFDLEVBQUM7NkVBQzBDLENBQUM7SUFDNUUsZ0NBQWdDLEVBQUUsSUFBQSxxQ0FBQyxFQUFDOzs7Ozs7OzswQkFRWixDQUFDO0lBQ3pCLHVCQUF1QixFQUFFLElBQUEscUNBQUMsRUFBQyxtREFBbUQsQ0FBQztJQUMvRSwwQkFBMEIsRUFBRSxJQUFBLHFDQUFDLEVBQUM7OztxREFHcUIsQ0FBQztJQUNwRCxxQkFBcUIsRUFBRSxJQUFBLHFDQUFDLEVBQUMsb0RBQW9ELENBQUM7SUFDOUUsVUFBVSxFQUFFLElBQUEscUNBQUMsRUFBQyx1Q0FBdUMsQ0FBQztDQUN2RCxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9oZWxwdGV4dC9hY2NvdW50L3VzZXItZm9ybS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBtYXJrZXIgYXMgVCB9IGZyb20gJ0BiaWVzYmplcmcvbmd4LXRyYW5zbGF0ZS1leHRyYWN0LW1hcmtlcic7XG5cbmV4cG9ydCBjb25zdCBoZWxwdGV4dFVzZXJzID0ge1xuICB1c2VyX2Zvcm1fZnVsbF9uYW1lX3Rvb2x0aXA6IFQoJ1NwYWNlcyBhcmUgYWxsb3dlZC4nKSxcbiAgdXNlcl9mb3JtX3VzZXJuYW1lX3Rvb2x0aXA6IFQoJ1VzZXJuYW1lcyBjYW4gYmUgdXAgdG8gMzIgY2hhcmFjdGVycyBsb25nLlxcXG4gVXNlcm5hbWVzIGNhbm5vdCBiZWdpbiB3aXRoIGEgaHlwaGVuICg8aT4tPC9pPikgb3IgY29udGFpbiBhIHNwYWNlLFxcXG4gdGFiLCBvciB0aGVzZSBjaGFyYWN0ZXJzOlxcXG4gPGk+LCA6ICsgJiAjICUgXiAoICkgISBAIH4gKiA/IDwgPiA9PC9pPi4gPGk+JDwvaT4gY2FuIG9ubHkgYmVcXFxuIHVzZWQgYXMgdGhlIGxhc3QgY2hhcmFjdGVyIG9mIHRoZSB1c2VybmFtZS4nKSxcbiAgdXNlcl9mb3JtX2VtYWlsX3Rvb2x0aXA6IFQoJ0VudGVyIHRoZSBlbWFpbCBhZGRyZXNzIG9mIHRoZSBuZXcgdXNlci4nKSxcbiAgdXNlcl9mb3JtX3Bhc3N3b3JkX3Rvb2x0aXA6IFQoJ1JlcXVpcmVkIHVubGVzcyA8Yj5FbmFibGUgcGFzc3dvcmQgbG9naW48L2I+IGlzXFxcbiA8aT5ObzwvaT4uIFBhc3N3b3JkcyBjYW5ub3QgY29udGFpbiBhIDxiPj88L2I+LicpLFxuICB1c2VyX2Zvcm1fcGFzc3dvcmRfZWRpdF90b29sdGlwOiBUKCdSZXF1aXJlZCB1bmxlc3MgPGI+RW5hYmxlIHBhc3N3b3JkIGxvZ2luPC9iPiBpc1xcXG4gPGk+Tm88L2k+LiBQYXNzd29yZHMgY2Fubm90IGNvbnRhaW4gYSA8Yj4/PC9iPi4nKSxcbiAgdXNlcl9mb3JtX3VpZF90b29sdGlwOiBUKCdVc2VyIGFjY291bnRzIGhhdmUgYW4gSUQgZ3JlYXRlciB0aGFuIDEwMDAgYW5kXFxcbiBzeXN0ZW0gYWNjb3VudHMgaGF2ZSBhbiBJRCBlcXVhbCB0byB0aGUgZGVmYXVsdFxcXG4gcG9ydCBudW1iZXIgdXNlZCBieSB0aGUgc2VydmljZS4nKSxcbiAgdXNlcl9mb3JtX2dyb3VwX2NyZWF0ZV90b29sdGlwOiBUKCdTZXQgdG8gY3JlYXRlIGEgbmV3IHByaW1hcnkgZ3JvdXAgd2l0aCB0aGUgc2FtZSBuYW1lIGFzXFxcbiB0aGUgdXNlci4gVW5zZXQgdG8gc2VsZWN0IGFuIGV4aXN0aW5nIGdyb3VwIGZvciB0aGUgdXNlci4nKSxcbiAgdXNlcl9mb3JtX3ByaW1hcnlfZ3JvdXBfdG9vbHRpcDogVCgnTmV3IHVzZXJzIGFyZSBub3QgZ2l2ZW4gPGI+c3U8L2I+IHBlcm1pc3Npb25zIGlmXFxcbiA8aT53aGVlbDwvaT4gaXMgdGhlaXIgcHJpbWFyeSBncm91cC4nKSxcbiAgdXNlcl9mb3JtX2F1eF9ncm91cHNfdG9vbHRpcDogVCgnQWRkIHRoaXMgdXNlciB0byBhZGRpdGlvbmFsIGdyb3Vwcy4nKSxcbiAgdXNlcl9mb3JtX2RpcnNfZXhwbG9yZXJfdG9vbHRpcDogVCgnQ2hvb3NlIGEgcGF0aCB0byB0aGUgdXNlclxcJ3NcXFxuIGhvbWUgZGlyZWN0b3J5LiBJZiB0aGUgZGlyZWN0b3J5IGV4aXN0cyBhbmQgbWF0Y2hlcyB0aGUgdXNlcm5hbWUsXFxcbiBpdCBpcyBzZXQgYXMgdGhlIHVzZXJcXCdzIGhvbWUgZGlyZWN0b3J5LiBXaGVuIHRoZSBwYXRoIGRvZXMgbm90XFxcbiBlbmQgd2l0aCBhIHN1YmRpcmVjdG9yeSBtYXRjaGluZyB0aGUgdXNlcm5hbWUsIGEgbmV3IHN1YmRpcmVjdG9yeSBpc1xcXG4gY3JlYXRlZCBvbmx5IGlmIHRoZSBcXCdDcmVhdGUgSG9tZSBEaXJlY3RvcnlcXCcgZmllbGQgaXMgbWFya2VkIGNoZWNrZWQuXFxcbiBUaGUgZnVsbCBwYXRoIHRvIHRoZSB1c2VyXFwncyBob21lIGRpcmVjdG9yeSBpcyBzaG93blxcXG4gaGVyZSB3aGVuIGVkaXRpbmcgYSB1c2VyLicpLFxuICB1c2VyX2Zvcm1faG9tZV9kaXJfcGVybWlzc2lvbnNfdG9vbHRpcDogVCgnU2V0cyBkZWZhdWx0IFVuaXggcGVybWlzc2lvbnMgb2YgdGhlIHVzZXIgaG9tZVxcXG4gZGlyZWN0b3J5LiBUaGlzIGlzIHJlYWQtb25seSBmb3IgYnVpbHQtaW4gdXNlcnMuJyksXG4gIHVzZXJfZm9ybV9ob21lX2NyZWF0ZV90b29sdGlwOiBUKCdDcmVhdGUgYSBuZXcgaG9tZSBkaXJlY3RvcnkgZm9yIHVzZXIgd2l0aGluIHRoZSBzZWxlY3RlZCBwYXRoLicpLFxuICB1c2VyX2Zvcm1fYXV0aF9zc2hrZXlfdG9vbHRpcDogVCgnRW50ZXIgb3IgcGFzdGUgdGhlIDxiPnB1YmxpYzwvYj4gU1NIIGtleSBvZiB0aGVcXFxuIHVzZXIgZm9yIGFueSBrZXktYmFzZWQgYXV0aGVudGljYXRpb24uIDxiPkRvIG5vdCBwYXN0ZSB0aGUgcHJpdmF0ZSBrZXkuPC9iPicpLFxuICB1c2VyX2Zvcm1fYXV0aF9wd19lbmFibGVfdG9vbHRpcDogVCgnPGk+WWVzOjwvaT4gRGlzYWJsZXMgdGhlIDxiPlBhc3N3b3JkPC9iPiBcXFxuIGZpZWxkcy4gVGhlIGFjY291bnQgY2Fubm90IFxcXG4gdXNlIHBhc3N3b3JkLWJhc2VkIGxvZ2lucyBmb3Igc2VydmljZXMuIEZvciBleGFtcGxlLCBkaXNhYmxpbmcgdGhlIFxcXG4gcGFzc3dvcmQgcHJldmVudHMgdXNpbmcgYWNjb3VudCBjcmVkZW50aWFscyB0byBsb2cgaW4gdG8gYW4gU01CIHNoYXJlIFxcXG4gb3Igb3BlbiBhbiBTU0ggc2Vzc2lvbiBvbiB0aGUgc3lzdGVtLiBUaGUgPGI+TG9jayBVc2VyPC9iPiBhbmQgXFxcbiA8Yj5QZXJtaXQgU3VkbzwvYj4gb3B0aW9ucyBhcmUgYWxzbyByZW1vdmVkLjxicj48YnI+IFxcXG4gPGk+Tm86PC9pPiBSZXF1aXJlcyBhZGRpbmcgYSA8Yj5QYXNzd29yZDwvYj4gdG8gdGhlIGFjY291bnQuIFRoZSBcXFxuIGFjY291bnQgY2FuIHVzZSB0aGUgc2F2ZWQgPGI+UGFzc3dvcmQ8L2I+IHRvIGF1dGhlbnRpY2F0ZSB3aXRoIFxcXG4gcGFzc3dvcmQtYmFzZWQgc2VydmljZXMuJyksXG4gIHVzZXJfZm9ybV9zaGVsbF90b29sdGlwOiBUKCdTZWxlY3QgdGhlIHNoZWxsIHRvIHVzZSBmb3IgbG9jYWwgYW5kIFNTSCBsb2dpbnMuJyksXG4gIHVzZXJfZm9ybV9sb2NrdXNlcl90b29sdGlwOiBUKCdQcmV2ZW50IHRoZSB1c2VyIGZyb20gbG9nZ2luZyBpbiBvciBcXFxuIHVzaW5nIHBhc3N3b3JkLWJhc2VkIHNlcnZpY2VzIHVudGlsIHRoaXMgb3B0aW9uIGlzIHVuc2V0LiBMb2NraW5nIGFuIFxcXG4gYWNjb3VudCBpcyBvbmx5IHBvc3NpYmxlIHdoZW4gPGI+RGlzYWJsZSBQYXNzd29yZDwvYj4gaXMgPGk+Tm88L2k+IGFuZCBcXFxuIGEgPGI+UGFzc3dvcmQ8L2I+IGhhcyBiZWVuIGNyZWF0ZWQgZm9yIHRoZSBhY2NvdW50LicpLFxuICB1c2VyX2Zvcm1fc21iX3Rvb2x0aXA6IFQoJ1NldCB0byBhbGxvdyB1c2VyIHRvIGF1dGhlbnRpY2F0ZSB0byBTYW1iYSBzaGFyZXMuJyksXG4gIHNtYkJ1aWx0aW46IFQoJ0Nhbm5vdCBiZSBlbmFibGVkIGZvciBidWlsdC1pbiB1c2Vycy4nKSxcbn07XG4iXSwidmVyc2lvbiI6M30=

@@ -1,0 +1,55 @@
+7b3bbb3d0350502fb5d729ee48d584f3
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ticketAcceptedFiles = exports.ticketCriticalityLabels = exports.TicketCriticality = exports.ticketEnvironmentLabels = exports.TicketEnvironment = exports.ticketCategoryLabels = exports.TicketCategory = exports.ticketTypeLabels = exports.TicketType = void 0;
+const ngx_translate_extract_marker_1 = require("@biesbjerg/ngx-translate-extract-marker");
+var TicketType;
+(function (TicketType) {
+    TicketType["Bug"] = "BUG";
+    TicketType["Suggestion"] = "FEATURE";
+})(TicketType || (exports.TicketType = TicketType = {}));
+exports.ticketTypeLabels = new Map([
+    [TicketType.Bug, (0, ngx_translate_extract_marker_1.marker)('Bug')],
+    [TicketType.Suggestion, (0, ngx_translate_extract_marker_1.marker)('Suggestion')],
+]);
+var TicketCategory;
+(function (TicketCategory) {
+    TicketCategory["Bug"] = "BUG";
+    TicketCategory["Hardware"] = "HARDWARE";
+    TicketCategory["Install"] = "INSTALL";
+    TicketCategory["Performance"] = "PERFORMANCE";
+})(TicketCategory || (exports.TicketCategory = TicketCategory = {}));
+exports.ticketCategoryLabels = new Map([
+    [TicketCategory.Bug, (0, ngx_translate_extract_marker_1.marker)('Bug')],
+    [TicketCategory.Hardware, (0, ngx_translate_extract_marker_1.marker)('Hardware')],
+    [TicketCategory.Install, (0, ngx_translate_extract_marker_1.marker)('Install')],
+    [TicketCategory.Performance, (0, ngx_translate_extract_marker_1.marker)('Performance')],
+]);
+var TicketEnvironment;
+(function (TicketEnvironment) {
+    TicketEnvironment["Production"] = "production";
+    TicketEnvironment["Staging"] = "staging";
+    TicketEnvironment["Testing"] = "testing";
+    TicketEnvironment["Prototyping"] = "prototyping";
+    TicketEnvironment["Initial"] = "initial";
+})(TicketEnvironment || (exports.TicketEnvironment = TicketEnvironment = {}));
+exports.ticketEnvironmentLabels = new Map([
+    [TicketEnvironment.Production, (0, ngx_translate_extract_marker_1.marker)('Production')],
+    [TicketEnvironment.Staging, (0, ngx_translate_extract_marker_1.marker)('Staging')],
+    [TicketEnvironment.Testing, (0, ngx_translate_extract_marker_1.marker)('Testing')],
+    [TicketEnvironment.Prototyping, (0, ngx_translate_extract_marker_1.marker)('Prototyping')],
+    [TicketEnvironment.Initial, (0, ngx_translate_extract_marker_1.marker)('Initial Deployment/Setup')],
+]);
+var TicketCriticality;
+(function (TicketCriticality) {
+    TicketCriticality["Inquiry"] = "inquiry";
+    TicketCriticality["LossFunctionality"] = "loss_functionality";
+    TicketCriticality["TotalDown"] = "total_down";
+})(TicketCriticality || (exports.TicketCriticality = TicketCriticality = {}));
+exports.ticketCriticalityLabels = new Map([
+    [TicketCriticality.Inquiry, (0, ngx_translate_extract_marker_1.marker)('Inquiry')],
+    [TicketCriticality.LossFunctionality, (0, ngx_translate_extract_marker_1.marker)('Loss of Functionality')],
+    [TicketCriticality.TotalDown, (0, ngx_translate_extract_marker_1.marker)('Total Down')],
+]);
+exports.ticketAcceptedFiles = 'image/png,image/jpeg,image/gif';
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2ZpbGUtdGlja2V0LmVudW0udHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMEZBQXNFO0FBRXRFLElBQVksVUFHWDtBQUhELFdBQVksVUFBVTtJQUNwQix5QkFBVyxDQUFBO0lBQ1gsb0NBQXNCLENBQUE7QUFDeEIsQ0FBQyxFQUhXLFVBQVUsMEJBQVYsVUFBVSxRQUdyQjtBQUVZLFFBQUEsZ0JBQWdCLEdBQUcsSUFBSSxHQUFHLENBQXFCO0lBQzFELENBQUMsVUFBVSxDQUFDLEdBQUcsRUFBRSxJQUFBLHFDQUFDLEVBQUMsS0FBSyxDQUFDLENBQUM7SUFDMUIsQ0FBQyxVQUFVLENBQUMsVUFBVSxFQUFFLElBQUEscUNBQUMsRUFBQyxZQUFZLENBQUMsQ0FBQztDQUN6QyxDQUFDLENBQUM7QUFFSCxJQUFZLGNBS1g7QUFMRCxXQUFZLGNBQWM7SUFDeEIsNkJBQVcsQ0FBQTtJQUNYLHVDQUFxQixDQUFBO0lBQ3JCLHFDQUFtQixDQUFBO0lBQ25CLDZDQUEyQixDQUFBO0FBQzdCLENBQUMsRUFMVyxjQUFjLDhCQUFkLGNBQWMsUUFLekI7QUFFWSxRQUFBLG9CQUFvQixHQUFHLElBQUksR0FBRyxDQUF5QjtJQUNsRSxDQUFDLGNBQWMsQ0FBQyxHQUFHLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLEtBQUssQ0FBQyxDQUFDO0lBQzlCLENBQUMsY0FBYyxDQUFDLFFBQVEsRUFBRSxJQUFBLHFDQUFDLEVBQUMsVUFBVSxDQUFDLENBQUM7SUFDeEMsQ0FBQyxjQUFjLENBQUMsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQyxTQUFTLENBQUMsQ0FBQztJQUN0QyxDQUFDLGNBQWMsQ0FBQyxXQUFXLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLGFBQWEsQ0FBQyxDQUFDO0NBQy9DLENBQUMsQ0FBQztBQUVILElBQVksaUJBTVg7QUFORCxXQUFZLGlCQUFpQjtJQUMzQiw4Q0FBeUIsQ0FBQTtJQUN6Qix3Q0FBbUIsQ0FBQTtJQUNuQix3Q0FBbUIsQ0FBQTtJQUNuQixnREFBMkIsQ0FBQTtJQUMzQix3Q0FBbUIsQ0FBQTtBQUNyQixDQUFDLEVBTlcsaUJBQWlCLGlDQUFqQixpQkFBaUIsUUFNNUI7QUFFWSxRQUFBLHVCQUF1QixHQUFHLElBQUksR0FBRyxDQUE0QjtJQUN4RSxDQUFDLGlCQUFpQixDQUFDLFVBQVUsRUFBRSxJQUFBLHFDQUFDLEVBQUMsWUFBWSxDQUFDLENBQUM7SUFDL0MsQ0FBQyxpQkFBaUIsQ0FBQyxPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLFNBQVMsQ0FBQyxDQUFDO0lBQ3pDLENBQUMsaUJBQWlCLENBQUMsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQyxTQUFTLENBQUMsQ0FBQztJQUN6QyxDQUFDLGlCQUFpQixDQUFDLFdBQVcsRUFBRSxJQUFBLHFDQUFDLEVBQUMsYUFBYSxDQUFDLENBQUM7SUFDakQsQ0FBQyxpQkFBaUIsQ0FBQyxPQUFPLEVBQUUsSUFBQSxxQ0FBQyxFQUFDLDBCQUEwQixDQUFDLENBQUM7Q0FDM0QsQ0FBQyxDQUFDO0FBRUgsSUFBWSxpQkFJWDtBQUpELFdBQVksaUJBQWlCO0lBQzNCLHdDQUFtQixDQUFBO0lBQ25CLDZEQUF3QyxDQUFBO0lBQ3hDLDZDQUF3QixDQUFBO0FBQzFCLENBQUMsRUFKVyxpQkFBaUIsaUNBQWpCLGlCQUFpQixRQUk1QjtBQUVZLFFBQUEsdUJBQXVCLEdBQUcsSUFBSSxHQUFHLENBQTRCO0lBQ3hFLENBQUMsaUJBQWlCLENBQUMsT0FBTyxFQUFFLElBQUEscUNBQUMsRUFBQyxTQUFTLENBQUMsQ0FBQztJQUN6QyxDQUFDLGlCQUFpQixDQUFDLGlCQUFpQixFQUFFLElBQUEscUNBQUMsRUFBQyx1QkFBdUIsQ0FBQyxDQUFDO0lBQ2pFLENBQUMsaUJBQWlCLENBQUMsU0FBUyxFQUFFLElBQUEscUNBQUMsRUFBQyxZQUFZLENBQUMsQ0FBQztDQUMvQyxDQUFDLENBQUM7QUFFVSxRQUFBLG1CQUFtQixHQUFHLGdDQUF5QyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9lbnVtcy9maWxlLXRpY2tldC5lbnVtLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IG1hcmtlciBhcyBUIH0gZnJvbSAnQGJpZXNiamVyZy9uZ3gtdHJhbnNsYXRlLWV4dHJhY3QtbWFya2VyJztcblxuZXhwb3J0IGVudW0gVGlja2V0VHlwZSB7XG4gIEJ1ZyA9ICdCVUcnLFxuICBTdWdnZXN0aW9uID0gJ0ZFQVRVUkUnLFxufVxuXG5leHBvcnQgY29uc3QgdGlja2V0VHlwZUxhYmVscyA9IG5ldyBNYXA8VGlja2V0VHlwZSwgc3RyaW5nPihbXG4gIFtUaWNrZXRUeXBlLkJ1ZywgVCgnQnVnJyldLFxuICBbVGlja2V0VHlwZS5TdWdnZXN0aW9uLCBUKCdTdWdnZXN0aW9uJyldLFxuXSk7XG5cbmV4cG9ydCBlbnVtIFRpY2tldENhdGVnb3J5IHtcbiAgQnVnID0gJ0JVRycsXG4gIEhhcmR3YXJlID0gJ0hBUkRXQVJFJyxcbiAgSW5zdGFsbCA9ICdJTlNUQUxMJyxcbiAgUGVyZm9ybWFuY2UgPSAnUEVSRk9STUFOQ0UnLFxufVxuXG5leHBvcnQgY29uc3QgdGlja2V0Q2F0ZWdvcnlMYWJlbHMgPSBuZXcgTWFwPFRpY2tldENhdGVnb3J5LCBzdHJpbmc+KFtcbiAgW1RpY2tldENhdGVnb3J5LkJ1ZywgVCgnQnVnJyldLFxuICBbVGlja2V0Q2F0ZWdvcnkuSGFyZHdhcmUsIFQoJ0hhcmR3YXJlJyldLFxuICBbVGlja2V0Q2F0ZWdvcnkuSW5zdGFsbCwgVCgnSW5zdGFsbCcpXSxcbiAgW1RpY2tldENhdGVnb3J5LlBlcmZvcm1hbmNlLCBUKCdQZXJmb3JtYW5jZScpXSxcbl0pO1xuXG5leHBvcnQgZW51bSBUaWNrZXRFbnZpcm9ubWVudCB7XG4gIFByb2R1Y3Rpb24gPSAncHJvZHVjdGlvbicsXG4gIFN0YWdpbmcgPSAnc3RhZ2luZycsXG4gIFRlc3RpbmcgPSAndGVzdGluZycsXG4gIFByb3RvdHlwaW5nID0gJ3Byb3RvdHlwaW5nJyxcbiAgSW5pdGlhbCA9ICdpbml0aWFsJyxcbn1cblxuZXhwb3J0IGNvbnN0IHRpY2tldEVudmlyb25tZW50TGFiZWxzID0gbmV3IE1hcDxUaWNrZXRFbnZpcm9ubWVudCwgc3RyaW5nPihbXG4gIFtUaWNrZXRFbnZpcm9ubWVudC5Qcm9kdWN0aW9uLCBUKCdQcm9kdWN0aW9uJyldLFxuICBbVGlja2V0RW52aXJvbm1lbnQuU3RhZ2luZywgVCgnU3RhZ2luZycpXSxcbiAgW1RpY2tldEVudmlyb25tZW50LlRlc3RpbmcsIFQoJ1Rlc3RpbmcnKV0sXG4gIFtUaWNrZXRFbnZpcm9ubWVudC5Qcm90b3R5cGluZywgVCgnUHJvdG90eXBpbmcnKV0sXG4gIFtUaWNrZXRFbnZpcm9ubWVudC5Jbml0aWFsLCBUKCdJbml0aWFsIERlcGxveW1lbnQvU2V0dXAnKV0sXG5dKTtcblxuZXhwb3J0IGVudW0gVGlja2V0Q3JpdGljYWxpdHkge1xuICBJbnF1aXJ5ID0gJ2lucXVpcnknLFxuICBMb3NzRnVuY3Rpb25hbGl0eSA9ICdsb3NzX2Z1bmN0aW9uYWxpdHknLFxuICBUb3RhbERvd24gPSAndG90YWxfZG93bicsXG59XG5cbmV4cG9ydCBjb25zdCB0aWNrZXRDcml0aWNhbGl0eUxhYmVscyA9IG5ldyBNYXA8VGlja2V0Q3JpdGljYWxpdHksIHN0cmluZz4oW1xuICBbVGlja2V0Q3JpdGljYWxpdHkuSW5xdWlyeSwgVCgnSW5xdWlyeScpXSxcbiAgW1RpY2tldENyaXRpY2FsaXR5Lkxvc3NGdW5jdGlvbmFsaXR5LCBUKCdMb3NzIG9mIEZ1bmN0aW9uYWxpdHknKV0sXG4gIFtUaWNrZXRDcml0aWNhbGl0eS5Ub3RhbERvd24sIFQoJ1RvdGFsIERvd24nKV0sXG5dKTtcblxuZXhwb3J0IGNvbnN0IHRpY2tldEFjY2VwdGVkRmlsZXMgPSAnaW1hZ2UvcG5nLGltYWdlL2pwZWcsaW1hZ2UvZ2lmJyBhcyBjb25zdDtcbiJdLCJ2ZXJzaW9uIjozfQ==

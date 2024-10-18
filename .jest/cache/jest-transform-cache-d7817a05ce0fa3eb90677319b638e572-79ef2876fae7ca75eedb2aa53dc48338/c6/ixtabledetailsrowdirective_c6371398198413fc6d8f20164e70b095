@@ -1,0 +1,33 @@
+e5ea0f22af1c25c10a0a30cd8892a7e5
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxTableDetailsRowDirective = void 0;
+const core_1 = require("@angular/core");
+let IxTableDetailsRowDirective = class IxTableDetailsRowDirective {
+    constructor(templateRef) {
+        this.templateRef = templateRef;
+    }
+    static ngTemplateContextGuard(dir, ctx) {
+        return true;
+    }
+};
+exports.IxTableDetailsRowDirective = IxTableDetailsRowDirective;
+IxTableDetailsRowDirective.ctorParameters = () => [
+    { type: core_1.TemplateRef }
+];
+IxTableDetailsRowDirective.propDecorators = {
+    dataProvider: [{ type: core_1.Input }]
+};
+exports.IxTableDetailsRowDirective = IxTableDetailsRowDirective = __decorate([
+    (0, core_1.Directive)({
+        selector: '[ix-table-details-row]',
+        standalone: true,
+    })
+], IxTableDetailsRowDirective);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvZGlyZWN0aXZlcy9peC10YWJsZS1kZXRhaWxzLXJvdy5kaXJlY3RpdmUudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7O0FBQUEsd0NBQThEO0FBT3ZELElBQU0sMEJBQTBCLEdBQWhDLE1BQU0sMEJBQTBCO0lBR3JDLFlBQW1CLFdBQTBDO1FBQTFDLGdCQUFXLEdBQVgsV0FBVyxDQUErQjtJQUFHLENBQUM7SUFFakUsTUFBTSxDQUFDLHNCQUFzQixDQUMzQixHQUFrQyxFQUNsQyxHQUFZO1FBRVosT0FBTyxJQUFJLENBQUM7SUFDZCxDQUFDOztBQVZVLGdFQUEwQjs7Ozs7MkJBQ3BDLFlBQUs7O3FDQURLLDBCQUEwQjtJQUp0QyxJQUFBLGdCQUFTLEVBQUM7UUFDVCxRQUFRLEVBQUUsd0JBQXdCO1FBQ2xDLFVBQVUsRUFBRSxJQUFJO0tBQ2pCLENBQUM7R0FDVywwQkFBMEIsQ0FXdEMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtdGFibGUvZGlyZWN0aXZlcy9peC10YWJsZS1kZXRhaWxzLXJvdy5kaXJlY3RpdmUudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgRGlyZWN0aXZlLCBJbnB1dCwgVGVtcGxhdGVSZWYgfSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7IERhdGFQcm92aWRlciB9IGZyb20gJ2FwcC9tb2R1bGVzL2l4LXRhYmxlL2ludGVyZmFjZXMvZGF0YS1wcm92aWRlci5pbnRlcmZhY2UnO1xuXG5ARGlyZWN0aXZlKHtcbiAgc2VsZWN0b3I6ICdbaXgtdGFibGUtZGV0YWlscy1yb3ddJyxcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcbn0pXG5leHBvcnQgY2xhc3MgSXhUYWJsZURldGFpbHNSb3dEaXJlY3RpdmU8VD4ge1xuICBASW5wdXQoKSBkYXRhUHJvdmlkZXI6IERhdGFQcm92aWRlcjxUPjtcblxuICBjb25zdHJ1Y3RvcihwdWJsaWMgdGVtcGxhdGVSZWY6IFRlbXBsYXRlUmVmPHsgJGltcGxpY2l0OiBUIH0+KSB7fVxuXG4gIHN0YXRpYyBuZ1RlbXBsYXRlQ29udGV4dEd1YXJkPFQ+KFxuICAgIGRpcjogSXhUYWJsZURldGFpbHNSb3dEaXJlY3RpdmU8VD4sXG4gICAgY3R4OiB1bmtub3duLFxuICApOiBjdHggaXMgeyAkaW1wbGljaXQ6IFQ7IGluZGV4OiBudW1iZXIgfSB7XG4gICAgcmV0dXJuIHRydWU7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

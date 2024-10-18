@@ -1,0 +1,34 @@
+e4a715986da9b0563bb7b29e39f4fda4
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _castSlice_js_1 = __importDefault(require("./_castSlice.js"));
+const _hasUnicode_js_1 = __importDefault(require("./_hasUnicode.js"));
+const _stringToArray_js_1 = __importDefault(require("./_stringToArray.js"));
+const toString_js_1 = __importDefault(require("./toString.js"));
+/**
+ * Creates a function like `_.lowerFirst`.
+ *
+ * @private
+ * @param {string} methodName The name of the `String` case method to use.
+ * @returns {Function} Returns the new case function.
+ */
+function createCaseFirst(methodName) {
+    return function (string) {
+        string = (0, toString_js_1.default)(string);
+        var strSymbols = (0, _hasUnicode_js_1.default)(string)
+            ? (0, _stringToArray_js_1.default)(string)
+            : undefined;
+        var chr = strSymbols
+            ? strSymbols[0]
+            : string.charAt(0);
+        var trailing = strSymbols
+            ? (0, _castSlice_js_1.default)(strSymbols, 1).join('')
+            : string.slice(1);
+        return chr[methodName]() + trailing;
+    };
+}
+exports.default = createCaseFirst;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jcmVhdGVDYXNlRmlyc3QuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSxvRUFBd0M7QUFDeEMsc0VBQTBDO0FBQzFDLDRFQUFnRDtBQUNoRCxnRUFBcUM7QUFFckM7Ozs7OztHQU1HO0FBQ0gsU0FBUyxlQUFlLENBQUMsVUFBVTtJQUNqQyxPQUFPLFVBQVMsTUFBTTtRQUNwQixNQUFNLEdBQUcsSUFBQSxxQkFBUSxFQUFDLE1BQU0sQ0FBQyxDQUFDO1FBRTFCLElBQUksVUFBVSxHQUFHLElBQUEsd0JBQVUsRUFBQyxNQUFNLENBQUM7WUFDakMsQ0FBQyxDQUFDLElBQUEsMkJBQWEsRUFBQyxNQUFNLENBQUM7WUFDdkIsQ0FBQyxDQUFDLFNBQVMsQ0FBQztRQUVkLElBQUksR0FBRyxHQUFHLFVBQVU7WUFDbEIsQ0FBQyxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUM7WUFDZixDQUFDLENBQUMsTUFBTSxDQUFDLE1BQU0sQ0FBQyxDQUFDLENBQUMsQ0FBQztRQUVyQixJQUFJLFFBQVEsR0FBRyxVQUFVO1lBQ3ZCLENBQUMsQ0FBQyxJQUFBLHVCQUFTLEVBQUMsVUFBVSxFQUFFLENBQUMsQ0FBQyxDQUFDLElBQUksQ0FBQyxFQUFFLENBQUM7WUFDbkMsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUM7UUFFcEIsT0FBTyxHQUFHLENBQUMsVUFBVSxDQUFDLEVBQUUsR0FBRyxRQUFRLENBQUM7SUFDdEMsQ0FBQyxDQUFDO0FBQ0osQ0FBQztBQUVELGtCQUFlLGVBQWUsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvX2NyZWF0ZUNhc2VGaXJzdC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgY2FzdFNsaWNlIGZyb20gJy4vX2Nhc3RTbGljZS5qcyc7XG5pbXBvcnQgaGFzVW5pY29kZSBmcm9tICcuL19oYXNVbmljb2RlLmpzJztcbmltcG9ydCBzdHJpbmdUb0FycmF5IGZyb20gJy4vX3N0cmluZ1RvQXJyYXkuanMnO1xuaW1wb3J0IHRvU3RyaW5nIGZyb20gJy4vdG9TdHJpbmcuanMnO1xuXG4vKipcbiAqIENyZWF0ZXMgYSBmdW5jdGlvbiBsaWtlIGBfLmxvd2VyRmlyc3RgLlxuICpcbiAqIEBwcml2YXRlXG4gKiBAcGFyYW0ge3N0cmluZ30gbWV0aG9kTmFtZSBUaGUgbmFtZSBvZiB0aGUgYFN0cmluZ2AgY2FzZSBtZXRob2QgdG8gdXNlLlxuICogQHJldHVybnMge0Z1bmN0aW9ufSBSZXR1cm5zIHRoZSBuZXcgY2FzZSBmdW5jdGlvbi5cbiAqL1xuZnVuY3Rpb24gY3JlYXRlQ2FzZUZpcnN0KG1ldGhvZE5hbWUpIHtcbiAgcmV0dXJuIGZ1bmN0aW9uKHN0cmluZykge1xuICAgIHN0cmluZyA9IHRvU3RyaW5nKHN0cmluZyk7XG5cbiAgICB2YXIgc3RyU3ltYm9scyA9IGhhc1VuaWNvZGUoc3RyaW5nKVxuICAgICAgPyBzdHJpbmdUb0FycmF5KHN0cmluZylcbiAgICAgIDogdW5kZWZpbmVkO1xuXG4gICAgdmFyIGNociA9IHN0clN5bWJvbHNcbiAgICAgID8gc3RyU3ltYm9sc1swXVxuICAgICAgOiBzdHJpbmcuY2hhckF0KDApO1xuXG4gICAgdmFyIHRyYWlsaW5nID0gc3RyU3ltYm9sc1xuICAgICAgPyBjYXN0U2xpY2Uoc3RyU3ltYm9scywgMSkuam9pbignJylcbiAgICAgIDogc3RyaW5nLnNsaWNlKDEpO1xuXG4gICAgcmV0dXJuIGNoclttZXRob2ROYW1lXSgpICsgdHJhaWxpbmc7XG4gIH07XG59XG5cbmV4cG9ydCBkZWZhdWx0IGNyZWF0ZUNhc2VGaXJzdDtcbiJdLCJ2ZXJzaW9uIjozfQ==

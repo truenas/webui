@@ -1,0 +1,2 @@
+f48c2c9b3586092b327ef56c68466776
+module.exports="<span class=\"readonly-badge\">\n  <ix-icon name=\"lock\"></ix-icon>\n  <span>\n    {{ 'readonly' | translate }}\n  </span>\n</span>\n"

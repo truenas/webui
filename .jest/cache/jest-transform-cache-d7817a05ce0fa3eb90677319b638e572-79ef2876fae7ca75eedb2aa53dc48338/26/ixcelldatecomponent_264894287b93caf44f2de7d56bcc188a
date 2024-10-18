@@ -1,0 +1,2 @@
+1c5ec5452ef4fda5ef6a407b280d6734
+module.exports="@if (date) {\n  <ix-date\n    [ixTest]=\"[title, uniqueRowTag(row()), 'row-date']\"\n    [date]=\"date\"\n  ></ix-date>\n} @else {\n  <span [ixTest]=\"[title, uniqueRowTag(row()), 'row-date']\">\n    {{ 'N/A' | translate }}\n  </span>\n}\n"

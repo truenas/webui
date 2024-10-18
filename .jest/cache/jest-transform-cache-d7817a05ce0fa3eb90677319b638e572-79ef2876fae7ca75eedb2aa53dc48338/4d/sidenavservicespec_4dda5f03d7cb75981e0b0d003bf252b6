@@ -1,0 +1,50 @@
+68ae5befbd2141d403fb3075ea94bc5a
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const layout_1 = require("@angular/cdk/layout");
+const router_1 = require("@angular/router");
+const jest_1 = require("@ngneat/spectator/jest");
+const testing_1 = require("@ngrx/effects/testing");
+const testing_2 = require("@ngrx/store/testing");
+const rxjs_1 = require("rxjs");
+const sidenav_service_1 = require("app/services/sidenav.service");
+const preferences_selectors_1 = require("app/store/preferences/preferences.selectors");
+describe('SidenavService', () => {
+    let spectator;
+    const breakpointObserve$ = new rxjs_1.BehaviorSubject({ matches: true });
+    const createService = (0, jest_1.createServiceFactory)({
+        service: sidenav_service_1.SidenavService,
+        providers: [
+            (0, jest_1.mockProvider)(router_1.Router, {
+                events: (0, rxjs_1.of)(),
+            }),
+            (0, jest_1.mockProvider)(layout_1.BreakpointObserver, {
+                observe: jest.fn(() => breakpointObserve$),
+            }),
+            (0, testing_1.provideMockActions)((0, rxjs_1.of)()),
+            (0, testing_2.provideMockStore)({
+                selectors: [
+                    {
+                        selector: preferences_selectors_1.selectPreferences,
+                        value: {
+                            sidenavStatus: {
+                                isCollapsed: true,
+                            },
+                        },
+                    },
+                ],
+            }),
+        ],
+    });
+    beforeEach(() => {
+        spectator = createService();
+    });
+    describe('listenForScreenSizeChanges', () => {
+        it('listens for screen size changes and sets isMobile accordingly', () => {
+            expect(spectator.service.isMobile()).toBe(true);
+            breakpointObserve$.next({ matches: false });
+            expect(spectator.service.isMobile()).toBe(false);
+        });
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL3NlcnZpY2VzL3NpZGVuYXYuc2VydmljZS5zcGVjLnRzIiwibWFwcGluZ3MiOiI7O0FBQUEsZ0RBQXlEO0FBQ3pELDRDQUF5QztBQUN6QyxpREFJZ0M7QUFDaEMsbURBQTJEO0FBQzNELGlEQUF1RDtBQUN2RCwrQkFBMkM7QUFDM0Msa0VBQThEO0FBQzlELHVGQUFnRjtBQUVoRixRQUFRLENBQUMsZ0JBQWdCLEVBQUUsR0FBRyxFQUFFO0lBQzlCLElBQUksU0FBMkMsQ0FBQztJQUNoRCxNQUFNLGtCQUFrQixHQUFHLElBQUksc0JBQWUsQ0FBQyxFQUFFLE9BQU8sRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDO0lBQ2xFLE1BQU0sYUFBYSxHQUFHLElBQUEsMkJBQW9CLEVBQUM7UUFDekMsT0FBTyxFQUFFLGdDQUFjO1FBQ3ZCLFNBQVMsRUFBRTtZQUNULElBQUEsbUJBQVksRUFBQyxlQUFNLEVBQUU7Z0JBQ25CLE1BQU0sRUFBRSxJQUFBLFNBQUUsR0FBRTthQUNiLENBQUM7WUFDRixJQUFBLG1CQUFZLEVBQUMsMkJBQWtCLEVBQUU7Z0JBQy9CLE9BQU8sRUFBRSxJQUFJLENBQUMsRUFBRSxDQUFDLEdBQUcsRUFBRSxDQUFDLGtCQUFrQixDQUFDO2FBQzNDLENBQUM7WUFDRixJQUFBLDRCQUFrQixFQUFDLElBQUEsU0FBRSxHQUFFLENBQUM7WUFDeEIsSUFBQSwwQkFBZ0IsRUFBQztnQkFDZixTQUFTLEVBQUU7b0JBQ1Q7d0JBQ0UsUUFBUSxFQUFFLHlDQUFpQjt3QkFDM0IsS0FBSyxFQUFFOzRCQUNMLGFBQWEsRUFBRTtnQ0FDYixXQUFXLEVBQUUsSUFBSTs2QkFDbEI7eUJBQ0Y7cUJBQ0Y7aUJBQ0Y7YUFDRixDQUFDO1NBQ0g7S0FDRixDQUFDLENBQUM7SUFFSCxVQUFVLENBQUMsR0FBRyxFQUFFO1FBQ2QsU0FBUyxHQUFHLGFBQWEsRUFBRSxDQUFDO0lBQzlCLENBQUMsQ0FBQyxDQUFDO0lBRUgsUUFBUSxDQUFDLDRCQUE0QixFQUFFLEdBQUcsRUFBRTtRQUMxQyxFQUFFLENBQUMsK0RBQStELEVBQUUsR0FBRyxFQUFFO1lBQ3ZFLE1BQU0sQ0FBQyxTQUFTLENBQUMsT0FBTyxDQUFDLFFBQVEsRUFBRSxDQUFDLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxDQUFDO1lBRWhELGtCQUFrQixDQUFDLElBQUksQ0FBQyxFQUFFLE9BQU8sRUFBRSxLQUFLLEVBQUUsQ0FBQyxDQUFDO1lBQzVDLE1BQU0sQ0FBQyxTQUFTLENBQUMsT0FBTyxDQUFDLFFBQVEsRUFBRSxDQUFDLENBQUMsSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDO1FBQ25ELENBQUMsQ0FBQyxDQUFDO0lBQ0wsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvc2VydmljZXMvc2lkZW5hdi5zZXJ2aWNlLnNwZWMudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQnJlYWtwb2ludE9ic2VydmVyIH0gZnJvbSAnQGFuZ3VsYXIvY2RrL2xheW91dCc7XG5pbXBvcnQgeyBSb3V0ZXIgfSBmcm9tICdAYW5ndWxhci9yb3V0ZXInO1xuaW1wb3J0IHtcbiAgY3JlYXRlU2VydmljZUZhY3RvcnksXG4gIG1vY2tQcm92aWRlcixcbiAgU3BlY3RhdG9yU2VydmljZSxcbn0gZnJvbSAnQG5nbmVhdC9zcGVjdGF0b3IvamVzdCc7XG5pbXBvcnQgeyBwcm92aWRlTW9ja0FjdGlvbnMgfSBmcm9tICdAbmdyeC9lZmZlY3RzL3Rlc3RpbmcnO1xuaW1wb3J0IHsgcHJvdmlkZU1vY2tTdG9yZSB9IGZyb20gJ0BuZ3J4L3N0b3JlL3Rlc3RpbmcnO1xuaW1wb3J0IHsgQmVoYXZpb3JTdWJqZWN0LCBvZiB9IGZyb20gJ3J4anMnO1xuaW1wb3J0IHsgU2lkZW5hdlNlcnZpY2UgfSBmcm9tICdhcHAvc2VydmljZXMvc2lkZW5hdi5zZXJ2aWNlJztcbmltcG9ydCB7IHNlbGVjdFByZWZlcmVuY2VzIH0gZnJvbSAnYXBwL3N0b3JlL3ByZWZlcmVuY2VzL3ByZWZlcmVuY2VzLnNlbGVjdG9ycyc7XG5cbmRlc2NyaWJlKCdTaWRlbmF2U2VydmljZScsICgpID0+IHtcbiAgbGV0IHNwZWN0YXRvcjogU3BlY3RhdG9yU2VydmljZTxTaWRlbmF2U2VydmljZT47XG4gIGNvbnN0IGJyZWFrcG9pbnRPYnNlcnZlJCA9IG5ldyBCZWhhdmlvclN1YmplY3QoeyBtYXRjaGVzOiB0cnVlIH0pO1xuICBjb25zdCBjcmVhdGVTZXJ2aWNlID0gY3JlYXRlU2VydmljZUZhY3Rvcnkoe1xuICAgIHNlcnZpY2U6IFNpZGVuYXZTZXJ2aWNlLFxuICAgIHByb3ZpZGVyczogW1xuICAgICAgbW9ja1Byb3ZpZGVyKFJvdXRlciwge1xuICAgICAgICBldmVudHM6IG9mKCksXG4gICAgICB9KSxcbiAgICAgIG1vY2tQcm92aWRlcihCcmVha3BvaW50T2JzZXJ2ZXIsIHtcbiAgICAgICAgb2JzZXJ2ZTogamVzdC5mbigoKSA9PiBicmVha3BvaW50T2JzZXJ2ZSQpLFxuICAgICAgfSksXG4gICAgICBwcm92aWRlTW9ja0FjdGlvbnMob2YoKSksXG4gICAgICBwcm92aWRlTW9ja1N0b3JlKHtcbiAgICAgICAgc2VsZWN0b3JzOiBbXG4gICAgICAgICAge1xuICAgICAgICAgICAgc2VsZWN0b3I6IHNlbGVjdFByZWZlcmVuY2VzLFxuICAgICAgICAgICAgdmFsdWU6IHtcbiAgICAgICAgICAgICAgc2lkZW5hdlN0YXR1czoge1xuICAgICAgICAgICAgICAgIGlzQ29sbGFwc2VkOiB0cnVlLFxuICAgICAgICAgICAgICB9LFxuICAgICAgICAgICAgfSxcbiAgICAgICAgICB9LFxuICAgICAgICBdLFxuICAgICAgfSksXG4gICAgXSxcbiAgfSk7XG5cbiAgYmVmb3JlRWFjaCgoKSA9PiB7XG4gICAgc3BlY3RhdG9yID0gY3JlYXRlU2VydmljZSgpO1xuICB9KTtcblxuICBkZXNjcmliZSgnbGlzdGVuRm9yU2NyZWVuU2l6ZUNoYW5nZXMnLCAoKSA9PiB7XG4gICAgaXQoJ2xpc3RlbnMgZm9yIHNjcmVlbiBzaXplIGNoYW5nZXMgYW5kIHNldHMgaXNNb2JpbGUgYWNjb3JkaW5nbHknLCAoKSA9PiB7XG4gICAgICBleHBlY3Qoc3BlY3RhdG9yLnNlcnZpY2UuaXNNb2JpbGUoKSkudG9CZSh0cnVlKTtcblxuICAgICAgYnJlYWtwb2ludE9ic2VydmUkLm5leHQoeyBtYXRjaGVzOiBmYWxzZSB9KTtcbiAgICAgIGV4cGVjdChzcGVjdGF0b3Iuc2VydmljZS5pc01vYmlsZSgpKS50b0JlKGZhbHNlKTtcbiAgICB9KTtcbiAgfSk7XG59KTtcbiJdLCJ2ZXJzaW9uIjozfQ==

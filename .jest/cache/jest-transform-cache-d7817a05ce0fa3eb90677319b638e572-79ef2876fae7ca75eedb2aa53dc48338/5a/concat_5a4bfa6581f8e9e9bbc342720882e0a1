@@ -1,0 +1,45 @@
+f795e1d1883a0b8c5085846f5afb29c9
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const _arrayPush_js_1 = __importDefault(require("./_arrayPush.js"));
+const _baseFlatten_js_1 = __importDefault(require("./_baseFlatten.js"));
+const _copyArray_js_1 = __importDefault(require("./_copyArray.js"));
+const isArray_js_1 = __importDefault(require("./isArray.js"));
+/**
+ * Creates a new array concatenating `array` with any additional arrays
+ * and/or values.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The array to concatenate.
+ * @param {...*} [values] The values to concatenate.
+ * @returns {Array} Returns the new concatenated array.
+ * @example
+ *
+ * var array = [1];
+ * var other = _.concat(array, 2, [3], [[4]]);
+ *
+ * console.log(other);
+ * // => [1, 2, 3, [4]]
+ *
+ * console.log(array);
+ * // => [1]
+ */
+function concat() {
+    var length = arguments.length;
+    if (!length) {
+        return [];
+    }
+    var args = Array(length - 1), array = arguments[0], index = length;
+    while (index--) {
+        args[index - 1] = arguments[index];
+    }
+    return (0, _arrayPush_js_1.default)((0, isArray_js_1.default)(array) ? (0, _copyArray_js_1.default)(array) : [array], (0, _baseFlatten_js_1.default)(args, 1));
+}
+exports.default = concat;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL2NvbmNhdC5qcyIsIm1hcHBpbmdzIjoiOzs7OztBQUFBLG9FQUF3QztBQUN4Qyx3RUFBNEM7QUFDNUMsb0VBQXdDO0FBQ3hDLDhEQUFtQztBQUVuQzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBcUJHO0FBQ0gsU0FBUyxNQUFNO0lBQ2IsSUFBSSxNQUFNLEdBQUcsU0FBUyxDQUFDLE1BQU0sQ0FBQztJQUM5QixJQUFJLENBQUMsTUFBTSxFQUFFLENBQUM7UUFDWixPQUFPLEVBQUUsQ0FBQztJQUNaLENBQUM7SUFDRCxJQUFJLElBQUksR0FBRyxLQUFLLENBQUMsTUFBTSxHQUFHLENBQUMsQ0FBQyxFQUN4QixLQUFLLEdBQUcsU0FBUyxDQUFDLENBQUMsQ0FBQyxFQUNwQixLQUFLLEdBQUcsTUFBTSxDQUFDO0lBRW5CLE9BQU8sS0FBSyxFQUFFLEVBQUUsQ0FBQztRQUNmLElBQUksQ0FBQyxLQUFLLEdBQUcsQ0FBQyxDQUFDLEdBQUcsU0FBUyxDQUFDLEtBQUssQ0FBQyxDQUFDO0lBQ3JDLENBQUM7SUFDRCxPQUFPLElBQUEsdUJBQVMsRUFBQyxJQUFBLG9CQUFPLEVBQUMsS0FBSyxDQUFDLENBQUMsQ0FBQyxDQUFDLElBQUEsdUJBQVMsRUFBQyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxLQUFLLENBQUMsRUFBRSxJQUFBLHlCQUFXLEVBQUMsSUFBSSxFQUFFLENBQUMsQ0FBQyxDQUFDLENBQUM7QUFDdEYsQ0FBQztBQUVELGtCQUFlLE1BQU0sQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL25vZGVfbW9kdWxlcy9sb2Rhc2gtZXMvY29uY2F0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBhcnJheVB1c2ggZnJvbSAnLi9fYXJyYXlQdXNoLmpzJztcbmltcG9ydCBiYXNlRmxhdHRlbiBmcm9tICcuL19iYXNlRmxhdHRlbi5qcyc7XG5pbXBvcnQgY29weUFycmF5IGZyb20gJy4vX2NvcHlBcnJheS5qcyc7XG5pbXBvcnQgaXNBcnJheSBmcm9tICcuL2lzQXJyYXkuanMnO1xuXG4vKipcbiAqIENyZWF0ZXMgYSBuZXcgYXJyYXkgY29uY2F0ZW5hdGluZyBgYXJyYXlgIHdpdGggYW55IGFkZGl0aW9uYWwgYXJyYXlzXG4gKiBhbmQvb3IgdmFsdWVzLlxuICpcbiAqIEBzdGF0aWNcbiAqIEBtZW1iZXJPZiBfXG4gKiBAc2luY2UgNC4wLjBcbiAqIEBjYXRlZ29yeSBBcnJheVxuICogQHBhcmFtIHtBcnJheX0gYXJyYXkgVGhlIGFycmF5IHRvIGNvbmNhdGVuYXRlLlxuICogQHBhcmFtIHsuLi4qfSBbdmFsdWVzXSBUaGUgdmFsdWVzIHRvIGNvbmNhdGVuYXRlLlxuICogQHJldHVybnMge0FycmF5fSBSZXR1cm5zIHRoZSBuZXcgY29uY2F0ZW5hdGVkIGFycmF5LlxuICogQGV4YW1wbGVcbiAqXG4gKiB2YXIgYXJyYXkgPSBbMV07XG4gKiB2YXIgb3RoZXIgPSBfLmNvbmNhdChhcnJheSwgMiwgWzNdLCBbWzRdXSk7XG4gKlxuICogY29uc29sZS5sb2cob3RoZXIpO1xuICogLy8gPT4gWzEsIDIsIDMsIFs0XV1cbiAqXG4gKiBjb25zb2xlLmxvZyhhcnJheSk7XG4gKiAvLyA9PiBbMV1cbiAqL1xuZnVuY3Rpb24gY29uY2F0KCkge1xuICB2YXIgbGVuZ3RoID0gYXJndW1lbnRzLmxlbmd0aDtcbiAgaWYgKCFsZW5ndGgpIHtcbiAgICByZXR1cm4gW107XG4gIH1cbiAgdmFyIGFyZ3MgPSBBcnJheShsZW5ndGggLSAxKSxcbiAgICAgIGFycmF5ID0gYXJndW1lbnRzWzBdLFxuICAgICAgaW5kZXggPSBsZW5ndGg7XG5cbiAgd2hpbGUgKGluZGV4LS0pIHtcbiAgICBhcmdzW2luZGV4IC0gMV0gPSBhcmd1bWVudHNbaW5kZXhdO1xuICB9XG4gIHJldHVybiBhcnJheVB1c2goaXNBcnJheShhcnJheSkgPyBjb3B5QXJyYXkoYXJyYXkpIDogW2FycmF5XSwgYmFzZUZsYXR0ZW4oYXJncywgMSkpO1xufVxuXG5leHBvcnQgZGVmYXVsdCBjb25jYXQ7XG4iXSwidmVyc2lvbiI6M30=

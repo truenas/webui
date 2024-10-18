@@ -1,0 +1,2 @@
+eb1af8a52be92c29d75ecb33d0be9eeb
+module.exports="<a\n  tabindex=\"0\"\n  class=\"mobile-back-button\"\n  ixTest=\"disk-details-back\"\n  [attr.aria-label]=\"'Back' | translate\"\n  (click)=\"onClose.emit()\"\n  (keydown.enter)=\"onClose.emit()\"\n>\n  <ix-icon name=\"mdi-chevron-left\"></ix-icon>\n</a>\n"

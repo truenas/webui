@@ -1,0 +1,25 @@
+fdbb9c3650a8461183f60d0cbc1ca9f1
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxTooltipHarness = void 0;
+const testing_1 = require("@angular/cdk/testing");
+class IxTooltipHarness extends testing_1.ComponentHarness {
+    getMessage() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const message = yield this.locatorForOptional('.tooltip-message')();
+            return message ? message.text() : '';
+        });
+    }
+}
+exports.IxTooltipHarness = IxTooltipHarness;
+IxTooltipHarness.hostSelector = 'ix-tooltip';
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvdG9vbHRpcC90b29sdGlwLmhhcm5lc3MudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7O0FBQUEsa0RBQXdEO0FBRXhELE1BQWEsZ0JBQWlCLFNBQVEsMEJBQWdCO0lBRzlDLFVBQVU7O1lBQ2QsTUFBTSxPQUFPLEdBQUcsTUFBTSxJQUFJLENBQUMsa0JBQWtCLENBQUMsa0JBQWtCLENBQUMsRUFBRSxDQUFDO1lBQ3BFLE9BQU8sT0FBTyxDQUFDLENBQUMsQ0FBQyxPQUFPLENBQUMsSUFBSSxFQUFFLENBQUMsQ0FBQyxDQUFDLEVBQUUsQ0FBQztRQUN2QyxDQUFDO0tBQUE7O0FBTkgsNENBT0M7QUFOaUIsNkJBQVksR0FBRyxZQUFZLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvdG9vbHRpcC90b29sdGlwLmhhcm5lc3MudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ29tcG9uZW50SGFybmVzcyB9IGZyb20gJ0Bhbmd1bGFyL2Nkay90ZXN0aW5nJztcblxuZXhwb3J0IGNsYXNzIEl4VG9vbHRpcEhhcm5lc3MgZXh0ZW5kcyBDb21wb25lbnRIYXJuZXNzIHtcbiAgc3RhdGljIHJlYWRvbmx5IGhvc3RTZWxlY3RvciA9ICdpeC10b29sdGlwJztcblxuICBhc3luYyBnZXRNZXNzYWdlKCk6IFByb21pc2U8c3RyaW5nPiB7XG4gICAgY29uc3QgbWVzc2FnZSA9IGF3YWl0IHRoaXMubG9jYXRvckZvck9wdGlvbmFsKCcudG9vbHRpcC1tZXNzYWdlJykoKTtcbiAgICByZXR1cm4gbWVzc2FnZSA/IG1lc3NhZ2UudGV4dCgpIDogJyc7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

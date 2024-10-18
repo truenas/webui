@@ -1,0 +1,34 @@
+fe9e6bf97b2602819159a49e7430f1b6
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.YesNoPipe = void 0;
+const core_1 = require("@angular/core");
+const core_2 = require("@ngx-translate/core");
+let YesNoPipe = class YesNoPipe {
+    constructor(translate) {
+        this.translate = translate;
+    }
+    transform(value) {
+        return value ? this.translate.instant('Yes') : this.translate.instant('No');
+    }
+};
+exports.YesNoPipe = YesNoPipe;
+YesNoPipe.ctorParameters = () => [
+    { type: core_2.TranslateService }
+];
+exports.YesNoPipe = YesNoPipe = __decorate([
+    (0, core_1.Pipe)({
+        name: 'yesNo',
+        standalone: true,
+    }),
+    (0, core_1.Injectable)({
+        providedIn: 'root',
+    })
+], YesNoPipe);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvcGlwZXMveWVzLW5vL3llcy1uby5waXBlLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUFBLHdDQUFnRTtBQUNoRSw4Q0FBdUQ7QUFTaEQsSUFBTSxTQUFTLEdBQWYsTUFBTSxTQUFTO0lBQ3BCLFlBQ1UsU0FBMkI7UUFBM0IsY0FBUyxHQUFULFNBQVMsQ0FBa0I7SUFDbEMsQ0FBQztJQUVKLFNBQVMsQ0FBQyxLQUFjO1FBQ3RCLE9BQU8sS0FBSyxDQUFDLENBQUMsQ0FBQyxJQUFJLENBQUMsU0FBUyxDQUFDLE9BQU8sQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsSUFBSSxDQUFDLFNBQVMsQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLENBQUM7SUFDOUUsQ0FBQzs7QUFQVSw4QkFBUzs7OztvQkFBVCxTQUFTO0lBUHJCLElBQUEsV0FBSSxFQUFDO1FBQ0osSUFBSSxFQUFFLE9BQU87UUFDYixVQUFVLEVBQUUsSUFBSTtLQUNqQixDQUFDO0lBQ0QsSUFBQSxpQkFBVSxFQUFDO1FBQ1YsVUFBVSxFQUFFLE1BQU07S0FDbkIsQ0FBQztHQUNXLFNBQVMsQ0FRckIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvcGlwZXMveWVzLW5vL3llcy1uby5waXBlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEluamVjdGFibGUsIFBpcGUsIFBpcGVUcmFuc2Zvcm0gfSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7IFRyYW5zbGF0ZVNlcnZpY2UgfSBmcm9tICdAbmd4LXRyYW5zbGF0ZS9jb3JlJztcblxuQFBpcGUoe1xuICBuYW1lOiAneWVzTm8nLFxuICBzdGFuZGFsb25lOiB0cnVlLFxufSlcbkBJbmplY3RhYmxlKHtcbiAgcHJvdmlkZWRJbjogJ3Jvb3QnLFxufSlcbmV4cG9ydCBjbGFzcyBZZXNOb1BpcGUgaW1wbGVtZW50cyBQaXBlVHJhbnNmb3JtIHtcbiAgY29uc3RydWN0b3IoXG4gICAgcHJpdmF0ZSB0cmFuc2xhdGU6IFRyYW5zbGF0ZVNlcnZpY2UsXG4gICkge31cblxuICB0cmFuc2Zvcm0odmFsdWU6IHVua25vd24pOiBzdHJpbmcge1xuICAgIHJldHVybiB2YWx1ZSA/IHRoaXMudHJhbnNsYXRlLmluc3RhbnQoJ1llcycpIDogdGhpcy50cmFuc2xhdGUuaW5zdGFudCgnTm8nKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

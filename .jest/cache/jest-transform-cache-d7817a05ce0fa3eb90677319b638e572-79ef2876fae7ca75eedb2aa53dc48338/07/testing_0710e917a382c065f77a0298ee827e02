@@ -1,0 +1,119 @@
+8e680315819a7f84a71d647190178fec
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
+var testing_exports = {};
+__export(testing_exports, {
+  MatButtonHarness: () => MatButtonHarness
+});
+module.exports = __toCommonJS(testing_exports);
+var import_core = require("@angular/core");
+var import_testing = require("@angular/cdk/testing");
+const _MatButtonHarness = class _MatButtonHarness extends import_testing.ContentContainerComponentHarness {
+  /**
+   * Gets a `HarnessPredicate` that can be used to search for a button with specific attributes.
+   * @param options Options for narrowing the search:
+   *   - `selector` finds a button whose host element matches the given selector.
+   *   - `text` finds a button with specific text content.
+   *   - `variant` finds buttons matching a specific variant.
+   * @return a `HarnessPredicate` configured with the given options.
+   */
+  static with(options = {}) {
+    return new import_testing.HarnessPredicate(this, options).addOption("text", options.text, (harness, text) => import_testing.HarnessPredicate.stringMatches(harness.getText(), text)).addOption("variant", options.variant, (harness, variant) => import_testing.HarnessPredicate.stringMatches(harness.getVariant(), variant)).addOption("disabled", options.disabled, (harness, disabled) => __async(this, null, function* () {
+      return (yield harness.isDisabled()) === disabled;
+    }));
+  }
+  click(...args) {
+    return __async(this, null, function* () {
+      return (yield this.host()).click(...args);
+    });
+  }
+  /** Gets a boolean promise indicating if the button is disabled. */
+  isDisabled() {
+    return __async(this, null, function* () {
+      const host = yield this.host();
+      return (0, import_core.booleanAttribute)(yield host.getAttribute("disabled")) || (yield host.hasClass("mat-mdc-button-disabled"));
+    });
+  }
+  /** Gets a promise for the button's label text. */
+  getText() {
+    return __async(this, null, function* () {
+      return (yield this.host()).text();
+    });
+  }
+  /** Focuses the button and returns a void promise that indicates when the action is complete. */
+  focus() {
+    return __async(this, null, function* () {
+      return (yield this.host()).focus();
+    });
+  }
+  /** Blurs the button and returns a void promise that indicates when the action is complete. */
+  blur() {
+    return __async(this, null, function* () {
+      return (yield this.host()).blur();
+    });
+  }
+  /** Whether the button is focused. */
+  isFocused() {
+    return __async(this, null, function* () {
+      return (yield this.host()).isFocused();
+    });
+  }
+  /** Gets the variant of the button. */
+  getVariant() {
+    return __async(this, null, function* () {
+      const host = yield this.host();
+      if ((yield host.getAttribute("mat-raised-button")) != null) {
+        return "raised";
+      } else if ((yield host.getAttribute("mat-flat-button")) != null) {
+        return "flat";
+      } else if ((yield host.getAttribute("mat-icon-button")) != null) {
+        return "icon";
+      } else if ((yield host.getAttribute("mat-stroked-button")) != null) {
+        return "stroked";
+      } else if ((yield host.getAttribute("mat-fab")) != null) {
+        return "fab";
+      } else if ((yield host.getAttribute("mat-mini-fab")) != null) {
+        return "mini-fab";
+      }
+      return "basic";
+    });
+  }
+};
+_MatButtonHarness.hostSelector = `[mat-button], [mat-raised-button], [mat-flat-button],
+                         [mat-icon-button], [mat-stroked-button], [mat-fab], [mat-mini-fab]`;
+let MatButtonHarness = _MatButtonHarness;

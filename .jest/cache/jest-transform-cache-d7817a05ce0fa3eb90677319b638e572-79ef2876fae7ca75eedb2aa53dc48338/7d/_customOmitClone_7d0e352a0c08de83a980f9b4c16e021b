@@ -1,0 +1,21 @@
+45a2fbb117a2953cb8c689721b7d955e
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const isPlainObject_js_1 = __importDefault(require("./isPlainObject.js"));
+/**
+ * Used by `_.omit` to customize its `_.cloneDeep` use to only clone plain
+ * objects.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @param {string} key The key of the property to inspect.
+ * @returns {*} Returns the uncloned value or `undefined` to defer cloning to `_.cloneDeep`.
+ */
+function customOmitClone(value) {
+    return (0, isPlainObject_js_1.default)(value) ? undefined : value;
+}
+exports.default = customOmitClone;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9ub2RlX21vZHVsZXMvbG9kYXNoLWVzL19jdXN0b21PbWl0Q2xvbmUuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSwwRUFBK0M7QUFFL0M7Ozs7Ozs7O0dBUUc7QUFDSCxTQUFTLGVBQWUsQ0FBQyxLQUFLO0lBQzVCLE9BQU8sSUFBQSwwQkFBYSxFQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyxTQUFTLENBQUMsQ0FBQyxDQUFDLEtBQUssQ0FBQztBQUNsRCxDQUFDO0FBRUQsa0JBQWUsZUFBZSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvbm9kZV9tb2R1bGVzL2xvZGFzaC1lcy9fY3VzdG9tT21pdENsb25lLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBpc1BsYWluT2JqZWN0IGZyb20gJy4vaXNQbGFpbk9iamVjdC5qcyc7XG5cbi8qKlxuICogVXNlZCBieSBgXy5vbWl0YCB0byBjdXN0b21pemUgaXRzIGBfLmNsb25lRGVlcGAgdXNlIHRvIG9ubHkgY2xvbmUgcGxhaW5cbiAqIG9iamVjdHMuXG4gKlxuICogQHByaXZhdGVcbiAqIEBwYXJhbSB7Kn0gdmFsdWUgVGhlIHZhbHVlIHRvIGluc3BlY3QuXG4gKiBAcGFyYW0ge3N0cmluZ30ga2V5IFRoZSBrZXkgb2YgdGhlIHByb3BlcnR5IHRvIGluc3BlY3QuXG4gKiBAcmV0dXJucyB7Kn0gUmV0dXJucyB0aGUgdW5jbG9uZWQgdmFsdWUgb3IgYHVuZGVmaW5lZGAgdG8gZGVmZXIgY2xvbmluZyB0byBgXy5jbG9uZURlZXBgLlxuICovXG5mdW5jdGlvbiBjdXN0b21PbWl0Q2xvbmUodmFsdWUpIHtcbiAgcmV0dXJuIGlzUGxhaW5PYmplY3QodmFsdWUpID8gdW5kZWZpbmVkIDogdmFsdWU7XG59XG5cbmV4cG9ydCBkZWZhdWx0IGN1c3RvbU9taXRDbG9uZTtcbiJdLCJ2ZXJzaW9uIjozfQ==

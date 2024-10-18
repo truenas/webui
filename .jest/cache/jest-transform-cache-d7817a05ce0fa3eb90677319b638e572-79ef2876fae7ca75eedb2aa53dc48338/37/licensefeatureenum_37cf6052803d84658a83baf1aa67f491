@@ -1,0 +1,12 @@
+69bf0d5c552f3cbaca685415ab2e2e45
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LicenseFeature = void 0;
+var LicenseFeature;
+(function (LicenseFeature) {
+    LicenseFeature["Jails"] = "JAILS";
+    LicenseFeature["FibreChannel"] = "FIBRECHANNEL";
+    LicenseFeature["Dedup"] = "DEDUP";
+    LicenseFeature["Vm"] = "VM";
+})(LicenseFeature || (exports.LicenseFeature = LicenseFeature = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL2xpY2Vuc2UtZmVhdHVyZS5lbnVtLnRzIiwibWFwcGluZ3MiOiI7OztBQUFBLElBQVksY0FLWDtBQUxELFdBQVksY0FBYztJQUN4QixpQ0FBZSxDQUFBO0lBQ2YsK0NBQTZCLENBQUE7SUFDN0IsaUNBQWUsQ0FBQTtJQUNmLDJCQUFTLENBQUE7QUFDWCxDQUFDLEVBTFcsY0FBYyw4QkFBZCxjQUFjLFFBS3pCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9lbnVtcy9saWNlbnNlLWZlYXR1cmUuZW51bS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZW51bSBMaWNlbnNlRmVhdHVyZSB7XG4gIEphaWxzID0gJ0pBSUxTJywgLy8gSmFpbHMgYXJlIHVzZWQgZm9yIGFwcHMgYXMgd2VsbFxuICBGaWJyZUNoYW5uZWwgPSAnRklCUkVDSEFOTkVMJyxcbiAgRGVkdXAgPSAnREVEVVAnLFxuICBWbSA9ICdWTScsXG59XG4iXSwidmVyc2lvbiI6M30=

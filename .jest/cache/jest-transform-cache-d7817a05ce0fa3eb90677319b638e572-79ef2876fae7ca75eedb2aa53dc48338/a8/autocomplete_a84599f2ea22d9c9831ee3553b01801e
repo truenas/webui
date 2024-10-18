@@ -1,0 +1,1070 @@
+7be109a896c86d17047c14ca2b41ee3e
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var autocomplete_exports = {};
+__export(autocomplete_exports, {
+  MAT_AUTOCOMPLETE_DEFAULT_OPTIONS: () => MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
+  MAT_AUTOCOMPLETE_DEFAULT_OPTIONS_FACTORY: () => MAT_AUTOCOMPLETE_DEFAULT_OPTIONS_FACTORY,
+  MAT_AUTOCOMPLETE_SCROLL_STRATEGY: () => MAT_AUTOCOMPLETE_SCROLL_STRATEGY,
+  MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY: () => MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY,
+  MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY_PROVIDER: () => MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY_PROVIDER,
+  MAT_AUTOCOMPLETE_VALUE_ACCESSOR: () => MAT_AUTOCOMPLETE_VALUE_ACCESSOR,
+  MatAutocomplete: () => MatAutocomplete,
+  MatAutocompleteModule: () => MatAutocompleteModule,
+  MatAutocompleteOrigin: () => MatAutocompleteOrigin,
+  MatAutocompleteSelectedEvent: () => MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger: () => MatAutocompleteTrigger,
+  MatOptgroup: () => import_core3.MatOptgroup,
+  MatOption: () => import_core3.MatOption,
+  getMatAutocompleteMissingPanelError: () => getMatAutocompleteMissingPanelError
+});
+module.exports = __toCommonJS(autocomplete_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_core2 = require("@angular/material/core");
+var import_core3 = require("@angular/material/core");
+var import_common = require("@angular/common");
+var i3 = __toESM(require("@angular/cdk/scrolling"), 1);
+var import_scrolling = require("@angular/cdk/scrolling");
+var i1$1 = __toESM(require("@angular/cdk/overlay"), 1);
+var import_overlay = require("@angular/cdk/overlay");
+var import_a11y = require("@angular/cdk/a11y");
+var i1 = __toESM(require("@angular/cdk/platform"), 1);
+var import_platform = require("@angular/cdk/platform");
+var import_animations = require("@angular/animations");
+var import_rxjs = require("rxjs");
+var import_keycodes = require("@angular/cdk/keycodes");
+var import_layout = require("@angular/cdk/layout");
+var import_portal = require("@angular/cdk/portal");
+var import_forms = require("@angular/forms");
+var i4 = __toESM(require("@angular/material/form-field"), 1);
+var import_form_field = require("@angular/material/form-field");
+var import_operators = require("rxjs/operators");
+var i2 = __toESM(require("@angular/cdk/bidi"), 1);
+const panelAnimation = (0, import_animations.trigger)("panelAnimation", [
+  (0, import_animations.state)("void, hidden", (0, import_animations.style)({
+    opacity: 0,
+    transform: "scaleY(0.8)"
+  })),
+  (0, import_animations.transition)(":enter, hidden => visible", [
+    (0, import_animations.group)([
+      (0, import_animations.animate)("0.03s linear", (0, import_animations.style)({ opacity: 1 })),
+      (0, import_animations.animate)("0.12s cubic-bezier(0, 0, 0.2, 1)", (0, import_animations.style)({ transform: "scaleY(1)" }))
+    ])
+  ]),
+  (0, import_animations.transition)(":leave, visible => hidden", [(0, import_animations.animate)("0.075s linear", (0, import_animations.style)({ opacity: 0 }))])
+]);
+let _uniqueAutocompleteIdCounter = 0;
+class MatAutocompleteSelectedEvent {
+  constructor(source, option) {
+    this.source = source;
+    this.option = option;
+  }
+}
+const MAT_AUTOCOMPLETE_DEFAULT_OPTIONS = new import_core.InjectionToken("mat-autocomplete-default-options", {
+  providedIn: "root",
+  factory: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS_FACTORY
+});
+function MAT_AUTOCOMPLETE_DEFAULT_OPTIONS_FACTORY() {
+  return {
+    autoActiveFirstOption: false,
+    autoSelectActiveOption: false,
+    hideSingleSelectionIndicator: false,
+    requireSelection: false
+  };
+}
+const _MatAutocomplete = class _MatAutocomplete {
+  /** Whether the autocomplete panel is open. */
+  get isOpen() {
+    return this._isOpen && this.showPanel;
+  }
+  /** @docs-private Sets the theme color of the panel. */
+  _setColor(value) {
+    this._color = value;
+    this._changeDetectorRef.markForCheck();
+  }
+  /**
+   * Takes classes set on the host mat-autocomplete element and applies them to the panel
+   * inside the overlay container to allow for easy styling.
+   */
+  set classList(value) {
+    this._classList = value;
+    this._elementRef.nativeElement.className = "";
+  }
+  /** Whether checkmark indicator for single-selection options is hidden. */
+  get hideSingleSelectionIndicator() {
+    return this._hideSingleSelectionIndicator;
+  }
+  set hideSingleSelectionIndicator(value) {
+    this._hideSingleSelectionIndicator = value;
+    this._syncParentProperties();
+  }
+  /** Syncs the parent state with the individual options. */
+  _syncParentProperties() {
+    if (this.options) {
+      for (const option of this.options) {
+        option._changeDetectorRef.markForCheck();
+      }
+    }
+  }
+  constructor(_changeDetectorRef, _elementRef, _defaults, platform) {
+    var _a;
+    this._changeDetectorRef = _changeDetectorRef;
+    this._elementRef = _elementRef;
+    this._defaults = _defaults;
+    this._activeOptionChanges = import_rxjs.Subscription.EMPTY;
+    this._animationDone = new import_core.EventEmitter();
+    this.showPanel = false;
+    this._isOpen = false;
+    this.displayWith = null;
+    this.optionSelected = new import_core.EventEmitter();
+    this.opened = new import_core.EventEmitter();
+    this.closed = new import_core.EventEmitter();
+    this.optionActivated = new import_core.EventEmitter();
+    this.id = `mat-autocomplete-${_uniqueAutocompleteIdCounter++}`;
+    this.inertGroups = (platform == null ? void 0 : platform.SAFARI) || false;
+    this.autoActiveFirstOption = !!_defaults.autoActiveFirstOption;
+    this.autoSelectActiveOption = !!_defaults.autoSelectActiveOption;
+    this.requireSelection = !!_defaults.requireSelection;
+    this._hideSingleSelectionIndicator = (_a = this._defaults.hideSingleSelectionIndicator) != null ? _a : false;
+  }
+  ngAfterContentInit() {
+    this._keyManager = new import_a11y.ActiveDescendantKeyManager(this.options).withWrap().skipPredicate(this._skipPredicate);
+    this._activeOptionChanges = this._keyManager.change.subscribe((index) => {
+      if (this.isOpen) {
+        this.optionActivated.emit({ source: this, option: this.options.toArray()[index] || null });
+      }
+    });
+    this._setVisibility();
+  }
+  ngOnDestroy() {
+    var _a;
+    (_a = this._keyManager) == null ? void 0 : _a.destroy();
+    this._activeOptionChanges.unsubscribe();
+    this._animationDone.complete();
+  }
+  /**
+   * Sets the panel scrollTop. This allows us to manually scroll to display options
+   * above or below the fold, as they are not actually being focused when active.
+   */
+  _setScrollTop(scrollTop) {
+    if (this.panel) {
+      this.panel.nativeElement.scrollTop = scrollTop;
+    }
+  }
+  /** Returns the panel's scrollTop. */
+  _getScrollTop() {
+    return this.panel ? this.panel.nativeElement.scrollTop : 0;
+  }
+  /** Panel should hide itself when the option list is empty. */
+  _setVisibility() {
+    this.showPanel = !!this.options.length;
+    this._changeDetectorRef.markForCheck();
+  }
+  /** Emits the `select` event. */
+  _emitSelectEvent(option) {
+    const event = new MatAutocompleteSelectedEvent(this, option);
+    this.optionSelected.emit(event);
+  }
+  /** Gets the aria-labelledby for the autocomplete panel. */
+  _getPanelAriaLabelledby(labelId) {
+    if (this.ariaLabel) {
+      return null;
+    }
+    const labelExpression = labelId ? labelId + " " : "";
+    return this.ariaLabelledby ? labelExpression + this.ariaLabelledby : labelId;
+  }
+  // `skipPredicate` determines if key manager should avoid putting a given option in the tab
+  // order. Allow disabled list items to receive focus via keyboard to align with WAI ARIA
+  // recommendation.
+  //
+  // Normally WAI ARIA's instructions are to exclude disabled items from the tab order, but it
+  // makes a few exceptions for compound widgets.
+  //
+  // From [Developing a Keyboard Interface](
+  // https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/):
+  //   "For the following composite widget elements, keep them focusable when disabled: Options in a
+  //   Listbox..."
+  //
+  // The user can focus disabled options using the keyboard, but the user cannot click disabled
+  // options.
+  _skipPredicate() {
+    return false;
+  }
+};
+_MatAutocomplete.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatAutocomplete, deps: [{ token: i0.ChangeDetectorRef }, { token: i0.ElementRef }, { token: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS }, { token: i1.Platform }], target: i0.\u0275\u0275FactoryTarget.Component });
+_MatAutocomplete.\u0275cmp = i0.\u0275\u0275ngDeclareComponent({ minVersion: "16.1.0", version: "18.2.0-next.2", type: _MatAutocomplete, isStandalone: true, selector: "mat-autocomplete", inputs: { ariaLabel: ["aria-label", "ariaLabel"], ariaLabelledby: ["aria-labelledby", "ariaLabelledby"], displayWith: "displayWith", autoActiveFirstOption: ["autoActiveFirstOption", "autoActiveFirstOption", import_core.booleanAttribute], autoSelectActiveOption: ["autoSelectActiveOption", "autoSelectActiveOption", import_core.booleanAttribute], requireSelection: ["requireSelection", "requireSelection", import_core.booleanAttribute], panelWidth: "panelWidth", disableRipple: ["disableRipple", "disableRipple", import_core.booleanAttribute], classList: ["class", "classList"], hideSingleSelectionIndicator: ["hideSingleSelectionIndicator", "hideSingleSelectionIndicator", import_core.booleanAttribute] }, outputs: { optionSelected: "optionSelected", opened: "opened", closed: "closed", optionActivated: "optionActivated" }, host: { classAttribute: "mat-mdc-autocomplete" }, providers: [{ provide: import_core2.MAT_OPTION_PARENT_COMPONENT, useExisting: _MatAutocomplete }], queries: [{ propertyName: "options", predicate: import_core2.MatOption, descendants: true }, { propertyName: "optionGroups", predicate: import_core2.MAT_OPTGROUP, descendants: true }], viewQueries: [{ propertyName: "template", first: true, predicate: import_core.TemplateRef, descendants: true, static: true }, { propertyName: "panel", first: true, predicate: ["panel"], descendants: true }], exportAs: ["matAutocomplete"], ngImport: i0, template: `<ng-template let-formFieldId="id">
+  <div
+    class="mat-mdc-autocomplete-panel mdc-menu-surface mdc-menu-surface--open"
+    role="listbox"
+    [id]="id"
+    [class]="_classList"
+    [class.mat-mdc-autocomplete-visible]="showPanel"
+    [class.mat-mdc-autocomplete-hidden]="!showPanel"
+    [class.mat-primary]="_color === 'primary'"
+    [class.mat-accent]="_color === 'accent'"
+    [class.mat-warn]="_color === 'warn'"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="_getPanelAriaLabelledby(formFieldId)"
+    [@panelAnimation]="isOpen ? 'visible' : 'hidden'"
+    (@panelAnimation.done)="_animationDone.next($event)"
+    #panel>
+    <ng-content></ng-content>
+  </div>
+</ng-template>
+`, styles: ["div.mat-mdc-autocomplete-panel{width:100%;max-height:256px;visibility:hidden;transform-origin:center top;overflow:auto;padding:8px 0;box-sizing:border-box;position:static;border-radius:var(--mat-autocomplete-container-shape, var(--mat-app-corner-extra-small));box-shadow:var(--mat-autocomplete-container-elevation-shadow);background-color:var(--mat-autocomplete-background-color, var(--mat-app-surface-container))}.cdk-high-contrast-active div.mat-mdc-autocomplete-panel{outline:solid 1px}.cdk-overlay-pane:not(.mat-mdc-autocomplete-panel-above) div.mat-mdc-autocomplete-panel{border-top-left-radius:0;border-top-right-radius:0}.mat-mdc-autocomplete-panel-above div.mat-mdc-autocomplete-panel{border-bottom-left-radius:0;border-bottom-right-radius:0;transform-origin:center bottom}div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible{visibility:visible}div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-hidden{visibility:hidden;pointer-events:none}mat-autocomplete{display:none}"], animations: [panelAnimation], changeDetection: i0.ChangeDetectionStrategy.OnPush, encapsulation: i0.ViewEncapsulation.None });
+let MatAutocomplete = _MatAutocomplete;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatAutocomplete, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "mat-autocomplete", encapsulation: import_core.ViewEncapsulation.None, changeDetection: import_core.ChangeDetectionStrategy.OnPush, exportAs: "matAutocomplete", host: {
+    "class": "mat-mdc-autocomplete"
+  }, providers: [{ provide: import_core2.MAT_OPTION_PARENT_COMPONENT, useExisting: MatAutocomplete }], animations: [panelAnimation], standalone: true, template: `<ng-template let-formFieldId="id">
+  <div
+    class="mat-mdc-autocomplete-panel mdc-menu-surface mdc-menu-surface--open"
+    role="listbox"
+    [id]="id"
+    [class]="_classList"
+    [class.mat-mdc-autocomplete-visible]="showPanel"
+    [class.mat-mdc-autocomplete-hidden]="!showPanel"
+    [class.mat-primary]="_color === 'primary'"
+    [class.mat-accent]="_color === 'accent'"
+    [class.mat-warn]="_color === 'warn'"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="_getPanelAriaLabelledby(formFieldId)"
+    [@panelAnimation]="isOpen ? 'visible' : 'hidden'"
+    (@panelAnimation.done)="_animationDone.next($event)"
+    #panel>
+    <ng-content></ng-content>
+  </div>
+</ng-template>
+`, styles: ["div.mat-mdc-autocomplete-panel{width:100%;max-height:256px;visibility:hidden;transform-origin:center top;overflow:auto;padding:8px 0;box-sizing:border-box;position:static;border-radius:var(--mat-autocomplete-container-shape, var(--mat-app-corner-extra-small));box-shadow:var(--mat-autocomplete-container-elevation-shadow);background-color:var(--mat-autocomplete-background-color, var(--mat-app-surface-container))}.cdk-high-contrast-active div.mat-mdc-autocomplete-panel{outline:solid 1px}.cdk-overlay-pane:not(.mat-mdc-autocomplete-panel-above) div.mat-mdc-autocomplete-panel{border-top-left-radius:0;border-top-right-radius:0}.mat-mdc-autocomplete-panel-above div.mat-mdc-autocomplete-panel{border-bottom-left-radius:0;border-bottom-right-radius:0;transform-origin:center bottom}div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible{visibility:visible}div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-hidden{visibility:hidden;pointer-events:none}mat-autocomplete{display:none}"] }]
+}], ctorParameters: () => [{ type: i0.ChangeDetectorRef }, { type: i0.ElementRef }, { type: void 0, decorators: [{
+  type: import_core.Inject,
+  args: [MAT_AUTOCOMPLETE_DEFAULT_OPTIONS]
+}] }, { type: i1.Platform }], propDecorators: { template: [{
+  type: import_core.ViewChild,
+  args: [import_core.TemplateRef, { static: true }]
+}], panel: [{
+  type: import_core.ViewChild,
+  args: ["panel"]
+}], options: [{
+  type: import_core.ContentChildren,
+  args: [import_core2.MatOption, { descendants: true }]
+}], optionGroups: [{
+  type: import_core.ContentChildren,
+  args: [import_core2.MAT_OPTGROUP, { descendants: true }]
+}], ariaLabel: [{
+  type: import_core.Input,
+  args: ["aria-label"]
+}], ariaLabelledby: [{
+  type: import_core.Input,
+  args: ["aria-labelledby"]
+}], displayWith: [{
+  type: import_core.Input
+}], autoActiveFirstOption: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}], autoSelectActiveOption: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}], requireSelection: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}], panelWidth: [{
+  type: import_core.Input
+}], disableRipple: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}], optionSelected: [{
+  type: import_core.Output
+}], opened: [{
+  type: import_core.Output
+}], closed: [{
+  type: import_core.Output
+}], optionActivated: [{
+  type: import_core.Output
+}], classList: [{
+  type: import_core.Input,
+  args: ["class"]
+}], hideSingleSelectionIndicator: [{
+  type: import_core.Input,
+  args: [{ transform: import_core.booleanAttribute }]
+}] } });
+const _MatAutocompleteOrigin = class _MatAutocompleteOrigin {
+  constructor(elementRef) {
+    this.elementRef = elementRef;
+  }
+};
+_MatAutocompleteOrigin.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatAutocompleteOrigin, deps: [{ token: i0.ElementRef }], target: i0.\u0275\u0275FactoryTarget.Directive });
+_MatAutocompleteOrigin.\u0275dir = i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "18.2.0-next.2", type: _MatAutocompleteOrigin, isStandalone: true, selector: "[matAutocompleteOrigin]", exportAs: ["matAutocompleteOrigin"], ngImport: i0 });
+let MatAutocompleteOrigin = _MatAutocompleteOrigin;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatAutocompleteOrigin, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    selector: "[matAutocompleteOrigin]",
+    exportAs: "matAutocompleteOrigin",
+    standalone: true
+  }]
+}], ctorParameters: () => [{ type: i0.ElementRef }] });
+const MAT_AUTOCOMPLETE_VALUE_ACCESSOR = {
+  provide: import_forms.NG_VALUE_ACCESSOR,
+  useExisting: (0, import_core.forwardRef)(() => MatAutocompleteTrigger),
+  multi: true
+};
+function getMatAutocompleteMissingPanelError() {
+  return Error("Attempting to open an undefined instance of `mat-autocomplete`. Make sure that the id passed to the `matAutocomplete` is correct and that you're attempting to open it after the ngAfterContentInit hook.");
+}
+const MAT_AUTOCOMPLETE_SCROLL_STRATEGY = new import_core.InjectionToken("mat-autocomplete-scroll-strategy", {
+  providedIn: "root",
+  factory: () => {
+    const overlay = (0, import_core.inject)(import_overlay.Overlay);
+    return () => overlay.scrollStrategies.reposition();
+  }
+});
+function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay) {
+  return () => overlay.scrollStrategies.reposition();
+}
+const MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY_PROVIDER = {
+  provide: MAT_AUTOCOMPLETE_SCROLL_STRATEGY,
+  deps: [import_overlay.Overlay],
+  useFactory: MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY
+};
+const _MatAutocompleteTrigger = class _MatAutocompleteTrigger {
+  constructor(_element, _overlay, _viewContainerRef, _zone, _changeDetectorRef, scrollStrategy, _dir, _formField, _document, _viewportRuler, _defaults) {
+    this._element = _element;
+    this._overlay = _overlay;
+    this._viewContainerRef = _viewContainerRef;
+    this._zone = _zone;
+    this._changeDetectorRef = _changeDetectorRef;
+    this._dir = _dir;
+    this._formField = _formField;
+    this._document = _document;
+    this._viewportRuler = _viewportRuler;
+    this._defaults = _defaults;
+    this._componentDestroyed = false;
+    this._manuallyFloatingLabel = false;
+    this._viewportSubscription = import_rxjs.Subscription.EMPTY;
+    this._breakpointObserver = (0, import_core.inject)(import_layout.BreakpointObserver);
+    this._handsetLandscapeSubscription = import_rxjs.Subscription.EMPTY;
+    this._canOpenOnNextFocus = true;
+    this._closeKeyEventStream = new import_rxjs.Subject();
+    this._windowBlurHandler = () => {
+      this._canOpenOnNextFocus = this._document.activeElement !== this._element.nativeElement || this.panelOpen;
+    };
+    this._onChange = () => {
+    };
+    this._onTouched = () => {
+    };
+    this.position = "auto";
+    this.autocompleteAttribute = "off";
+    this._initialized = new import_rxjs.Subject();
+    this._injector = (0, import_core.inject)(import_core.Injector);
+    this._aboveClass = "mat-mdc-autocomplete-panel-above";
+    this._overlayAttached = false;
+    this.optionSelections = (0, import_rxjs.defer)(() => {
+      const options = this.autocomplete ? this.autocomplete.options : null;
+      if (options) {
+        return options.changes.pipe((0, import_operators.startWith)(options), (0, import_operators.switchMap)(() => (0, import_rxjs.merge)(...options.map((option) => option.onSelectionChange))));
+      }
+      return this._initialized.pipe((0, import_operators.switchMap)(() => this.optionSelections));
+    });
+    this._handlePanelKeydown = (event) => {
+      var _a;
+      if (event.keyCode === import_keycodes.ESCAPE && !(0, import_keycodes.hasModifierKey)(event) || event.keyCode === import_keycodes.UP_ARROW && (0, import_keycodes.hasModifierKey)(event, "altKey")) {
+        if (this._pendingAutoselectedOption) {
+          this._updateNativeInputValue((_a = this._valueBeforeAutoSelection) != null ? _a : "");
+          this._pendingAutoselectedOption = null;
+        }
+        this._closeKeyEventStream.next();
+        this._resetActiveItem();
+        event.stopPropagation();
+        event.preventDefault();
+      }
+    };
+    this._trackedModal = null;
+    this._scrollStrategy = scrollStrategy;
+  }
+  ngAfterViewInit() {
+    this._initialized.next();
+    this._initialized.complete();
+    const window2 = this._getWindow();
+    if (typeof window2 !== "undefined") {
+      this._zone.runOutsideAngular(() => window2.addEventListener("blur", this._windowBlurHandler));
+    }
+  }
+  ngOnChanges(changes) {
+    if (changes["position"] && this._positionStrategy) {
+      this._setStrategyPositions(this._positionStrategy);
+      if (this.panelOpen) {
+        this._overlayRef.updatePosition();
+      }
+    }
+  }
+  ngOnDestroy() {
+    const window2 = this._getWindow();
+    if (typeof window2 !== "undefined") {
+      window2.removeEventListener("blur", this._windowBlurHandler);
+    }
+    this._handsetLandscapeSubscription.unsubscribe();
+    this._viewportSubscription.unsubscribe();
+    this._componentDestroyed = true;
+    this._destroyPanel();
+    this._closeKeyEventStream.complete();
+    this._clearFromModal();
+  }
+  /** Whether or not the autocomplete panel is open. */
+  get panelOpen() {
+    return this._overlayAttached && this.autocomplete.showPanel;
+  }
+  /** Opens the autocomplete suggestion panel. */
+  openPanel() {
+    this._openPanelInternal();
+  }
+  /** Closes the autocomplete suggestion panel. */
+  closePanel() {
+    this._resetLabel();
+    if (!this._overlayAttached) {
+      return;
+    }
+    if (this.panelOpen) {
+      this._zone.run(() => {
+        this.autocomplete.closed.emit();
+      });
+    }
+    if (this.autocomplete._latestOpeningTrigger === this) {
+      this.autocomplete._isOpen = false;
+      this.autocomplete._latestOpeningTrigger = null;
+    }
+    this._overlayAttached = false;
+    this._pendingAutoselectedOption = null;
+    if (this._overlayRef && this._overlayRef.hasAttached()) {
+      this._overlayRef.detach();
+      this._closingActionsSubscription.unsubscribe();
+    }
+    this._updatePanelState();
+    if (!this._componentDestroyed) {
+      this._changeDetectorRef.detectChanges();
+    }
+    if (this._trackedModal) {
+      (0, import_a11y.removeAriaReferencedId)(this._trackedModal, "aria-owns", this.autocomplete.id);
+    }
+  }
+  /**
+   * Updates the position of the autocomplete suggestion panel to ensure that it fits all options
+   * within the viewport.
+   */
+  updatePosition() {
+    if (this._overlayAttached) {
+      this._overlayRef.updatePosition();
+    }
+  }
+  /**
+   * A stream of actions that should close the autocomplete panel, including
+   * when an option is selected, on blur, and when TAB is pressed.
+   */
+  get panelClosingActions() {
+    return (0, import_rxjs.merge)(this.optionSelections, this.autocomplete._keyManager.tabOut.pipe((0, import_operators.filter)(() => this._overlayAttached)), this._closeKeyEventStream, this._getOutsideClickStream(), this._overlayRef ? this._overlayRef.detachments().pipe((0, import_operators.filter)(() => this._overlayAttached)) : (0, import_rxjs.of)()).pipe(
+      // Normalize the output so we return a consistent type.
+      (0, import_operators.map)((event) => event instanceof import_core2.MatOptionSelectionChange ? event : null)
+    );
+  }
+  /** The currently active option, coerced to MatOption type. */
+  get activeOption() {
+    if (this.autocomplete && this.autocomplete._keyManager) {
+      return this.autocomplete._keyManager.activeItem;
+    }
+    return null;
+  }
+  /** Stream of clicks outside of the autocomplete panel. */
+  _getOutsideClickStream() {
+    return (0, import_rxjs.merge)((0, import_rxjs.fromEvent)(this._document, "click"), (0, import_rxjs.fromEvent)(this._document, "auxclick"), (0, import_rxjs.fromEvent)(this._document, "touchend")).pipe((0, import_operators.filter)((event) => {
+      const clickTarget = (0, import_platform._getEventTarget)(event);
+      const formField = this._formField ? this._formField.getConnectedOverlayOrigin().nativeElement : null;
+      const customOrigin = this.connectedTo ? this.connectedTo.elementRef.nativeElement : null;
+      return this._overlayAttached && clickTarget !== this._element.nativeElement && // Normally focus moves inside `mousedown` so this condition will almost always be
+      // true. Its main purpose is to handle the case where the input is focused from an
+      // outside click which propagates up to the `body` listener within the same sequence
+      // and causes the panel to close immediately (see #3106).
+      this._document.activeElement !== this._element.nativeElement && (!formField || !formField.contains(clickTarget)) && (!customOrigin || !customOrigin.contains(clickTarget)) && !!this._overlayRef && !this._overlayRef.overlayElement.contains(clickTarget);
+    }));
+  }
+  // Implemented as part of ControlValueAccessor.
+  writeValue(value) {
+    Promise.resolve(null).then(() => this._assignOptionValue(value));
+  }
+  // Implemented as part of ControlValueAccessor.
+  registerOnChange(fn) {
+    this._onChange = fn;
+  }
+  // Implemented as part of ControlValueAccessor.
+  registerOnTouched(fn) {
+    this._onTouched = fn;
+  }
+  // Implemented as part of ControlValueAccessor.
+  setDisabledState(isDisabled) {
+    this._element.nativeElement.disabled = isDisabled;
+  }
+  _handleKeydown(event) {
+    const keyCode = event.keyCode;
+    const hasModifier = (0, import_keycodes.hasModifierKey)(event);
+    if (keyCode === import_keycodes.ESCAPE && !hasModifier) {
+      event.preventDefault();
+    }
+    this._valueOnLastKeydown = this._element.nativeElement.value;
+    if (this.activeOption && keyCode === import_keycodes.ENTER && this.panelOpen && !hasModifier) {
+      this.activeOption._selectViaInteraction();
+      this._resetActiveItem();
+      event.preventDefault();
+    } else if (this.autocomplete) {
+      const prevActiveItem = this.autocomplete._keyManager.activeItem;
+      const isArrowKey = keyCode === import_keycodes.UP_ARROW || keyCode === import_keycodes.DOWN_ARROW;
+      if (keyCode === import_keycodes.TAB || isArrowKey && !hasModifier && this.panelOpen) {
+        this.autocomplete._keyManager.onKeydown(event);
+      } else if (isArrowKey && this._canOpen()) {
+        this._openPanelInternal(this._valueOnLastKeydown);
+      }
+      if (isArrowKey || this.autocomplete._keyManager.activeItem !== prevActiveItem) {
+        this._scrollToOption(this.autocomplete._keyManager.activeItemIndex || 0);
+        if (this.autocomplete.autoSelectActiveOption && this.activeOption) {
+          if (!this._pendingAutoselectedOption) {
+            this._valueBeforeAutoSelection = this._valueOnLastKeydown;
+          }
+          this._pendingAutoselectedOption = this.activeOption;
+          this._assignOptionValue(this.activeOption.value);
+        }
+      }
+    }
+  }
+  _handleInput(event) {
+    var _a, _b;
+    let target = event.target;
+    let value = target.value;
+    if (target.type === "number") {
+      value = value == "" ? null : parseFloat(value);
+    }
+    if (this._previousValue !== value) {
+      this._previousValue = value;
+      this._pendingAutoselectedOption = null;
+      if (!this.autocomplete || !this.autocomplete.requireSelection) {
+        this._onChange(value);
+      }
+      if (!value) {
+        this._clearPreviousSelectedOption(null, false);
+      } else if (this.panelOpen && !this.autocomplete.requireSelection) {
+        const selectedOption = (_a = this.autocomplete.options) == null ? void 0 : _a.find((option) => option.selected);
+        if (selectedOption) {
+          const display = this._getDisplayValue(selectedOption.value);
+          if (value !== display) {
+            selectedOption.deselect(false);
+          }
+        }
+      }
+      if (this._canOpen() && this._document.activeElement === event.target) {
+        const valueOnAttach = (_b = this._valueOnLastKeydown) != null ? _b : this._element.nativeElement.value;
+        this._valueOnLastKeydown = null;
+        this._openPanelInternal(valueOnAttach);
+      }
+    }
+  }
+  _handleFocus() {
+    if (!this._canOpenOnNextFocus) {
+      this._canOpenOnNextFocus = true;
+    } else if (this._canOpen()) {
+      this._previousValue = this._element.nativeElement.value;
+      this._attachOverlay(this._previousValue);
+      this._floatLabel(true);
+    }
+  }
+  _handleClick() {
+    if (this._canOpen() && !this.panelOpen) {
+      this._openPanelInternal();
+    }
+  }
+  /**
+   * In "auto" mode, the label will animate down as soon as focus is lost.
+   * This causes the value to jump when selecting an option with the mouse.
+   * This method manually floats the label until the panel can be closed.
+   * @param shouldAnimate Whether the label should be animated when it is floated.
+   */
+  _floatLabel(shouldAnimate = false) {
+    if (this._formField && this._formField.floatLabel === "auto") {
+      if (shouldAnimate) {
+        this._formField._animateAndLockLabel();
+      } else {
+        this._formField.floatLabel = "always";
+      }
+      this._manuallyFloatingLabel = true;
+    }
+  }
+  /** If the label has been manually elevated, return it to its normal state. */
+  _resetLabel() {
+    if (this._manuallyFloatingLabel) {
+      if (this._formField) {
+        this._formField.floatLabel = "auto";
+      }
+      this._manuallyFloatingLabel = false;
+    }
+  }
+  /**
+   * This method listens to a stream of panel closing actions and resets the
+   * stream every time the option list changes.
+   */
+  _subscribeToClosingActions() {
+    const initialRender = new import_rxjs.Observable((subscriber) => {
+      (0, import_core.afterNextRender)(() => {
+        subscriber.next();
+      }, { injector: this._injector });
+    });
+    const optionChanges = this.autocomplete.options.changes.pipe(
+      (0, import_operators.tap)(() => this._positionStrategy.reapplyLastPosition()),
+      // Defer emitting to the stream until the next tick, because changing
+      // bindings in here will cause "changed after checked" errors.
+      (0, import_operators.delay)(0)
+    );
+    return (0, import_rxjs.merge)(initialRender, optionChanges).pipe(
+      // create a new stream of panelClosingActions, replacing any previous streams
+      // that were created, and flatten it so our stream only emits closing events...
+      (0, import_operators.switchMap)(() => this._zone.run(() => {
+        const wasOpen = this.panelOpen;
+        this._resetActiveItem();
+        this._updatePanelState();
+        this._changeDetectorRef.detectChanges();
+        if (this.panelOpen) {
+          this._overlayRef.updatePosition();
+        }
+        if (wasOpen !== this.panelOpen) {
+          if (this.panelOpen) {
+            this._emitOpened();
+          } else {
+            this.autocomplete.closed.emit();
+          }
+        }
+        return this.panelClosingActions;
+      })),
+      // when the first closing event occurs...
+      (0, import_operators.take)(1)
+    ).subscribe((event) => this._setValueAndClose(event));
+  }
+  /**
+   * Emits the opened event once it's known that the panel will be shown and stores
+   * the state of the trigger right before the opening sequence was finished.
+   */
+  _emitOpened() {
+    this.autocomplete.opened.emit();
+  }
+  /** Destroys the autocomplete suggestion panel. */
+  _destroyPanel() {
+    if (this._overlayRef) {
+      this.closePanel();
+      this._overlayRef.dispose();
+      this._overlayRef = null;
+    }
+  }
+  /** Given a value, returns the string that should be shown within the input. */
+  _getDisplayValue(value) {
+    const autocomplete = this.autocomplete;
+    return autocomplete && autocomplete.displayWith ? autocomplete.displayWith(value) : value;
+  }
+  _assignOptionValue(value) {
+    const toDisplay = this._getDisplayValue(value);
+    if (value == null) {
+      this._clearPreviousSelectedOption(null, false);
+    }
+    this._updateNativeInputValue(toDisplay != null ? toDisplay : "");
+  }
+  _updateNativeInputValue(value) {
+    if (this._formField) {
+      this._formField._control.value = value;
+    } else {
+      this._element.nativeElement.value = value;
+    }
+    this._previousValue = value;
+  }
+  /**
+   * This method closes the panel, and if a value is specified, also sets the associated
+   * control to that value. It will also mark the control as dirty if this interaction
+   * stemmed from the user.
+   */
+  _setValueAndClose(event) {
+    const panel = this.autocomplete;
+    const toSelect = event ? event.source : this._pendingAutoselectedOption;
+    if (toSelect) {
+      this._clearPreviousSelectedOption(toSelect);
+      this._assignOptionValue(toSelect.value);
+      this._onChange(toSelect.value);
+      panel._emitSelectEvent(toSelect);
+      this._element.nativeElement.focus();
+    } else if (panel.requireSelection && this._element.nativeElement.value !== this._valueOnAttach) {
+      this._clearPreviousSelectedOption(null);
+      this._assignOptionValue(null);
+      if (panel._animationDone) {
+        panel._animationDone.pipe((0, import_operators.take)(1)).subscribe(() => this._onChange(null));
+      } else {
+        this._onChange(null);
+      }
+    }
+    this.closePanel();
+  }
+  /**
+   * Clear any previous selected option and emit a selection change event for this option
+   */
+  _clearPreviousSelectedOption(skip, emitEvent) {
+    var _a, _b;
+    (_b = (_a = this.autocomplete) == null ? void 0 : _a.options) == null ? void 0 : _b.forEach((option) => {
+      if (option !== skip && option.selected) {
+        option.deselect(emitEvent);
+      }
+    });
+  }
+  _openPanelInternal(valueOnAttach = this._element.nativeElement.value) {
+    this._attachOverlay(valueOnAttach);
+    this._floatLabel();
+    if (this._trackedModal) {
+      const panelId = this.autocomplete.id;
+      (0, import_a11y.addAriaReferencedId)(this._trackedModal, "aria-owns", panelId);
+    }
+  }
+  _attachOverlay(valueOnAttach) {
+    var _a, _b;
+    if (!this.autocomplete && (typeof ngDevMode === "undefined" || ngDevMode)) {
+      throw getMatAutocompleteMissingPanelError();
+    }
+    let overlayRef = this._overlayRef;
+    if (!overlayRef) {
+      this._portal = new import_portal.TemplatePortal(this.autocomplete.template, this._viewContainerRef, {
+        id: (_a = this._formField) == null ? void 0 : _a.getLabelId()
+      });
+      overlayRef = this._overlay.create(this._getOverlayConfig());
+      this._overlayRef = overlayRef;
+      this._viewportSubscription = this._viewportRuler.change().subscribe(() => {
+        if (this.panelOpen && overlayRef) {
+          overlayRef.updateSize({ width: this._getPanelWidth() });
+        }
+      });
+      this._handsetLandscapeSubscription = this._breakpointObserver.observe(import_layout.Breakpoints.HandsetLandscape).subscribe((result) => {
+        const isHandsetLandscape = result.matches;
+        if (isHandsetLandscape) {
+          this._positionStrategy.withFlexibleDimensions(true).withGrowAfterOpen(true).withViewportMargin(8);
+        } else {
+          this._positionStrategy.withFlexibleDimensions(false).withGrowAfterOpen(false).withViewportMargin(0);
+        }
+      });
+    } else {
+      this._positionStrategy.setOrigin(this._getConnectedElement());
+      overlayRef.updateSize({ width: this._getPanelWidth() });
+    }
+    if (overlayRef && !overlayRef.hasAttached()) {
+      overlayRef.attach(this._portal);
+      this._valueOnAttach = valueOnAttach;
+      this._valueOnLastKeydown = null;
+      this._closingActionsSubscription = this._subscribeToClosingActions();
+    }
+    const wasOpen = this.panelOpen;
+    this.autocomplete._isOpen = this._overlayAttached = true;
+    this.autocomplete._latestOpeningTrigger = this;
+    this.autocomplete._setColor((_b = this._formField) == null ? void 0 : _b.color);
+    this._updatePanelState();
+    this._applyModalPanelOwnership();
+    if (this.panelOpen && wasOpen !== this.panelOpen) {
+      this._emitOpened();
+    }
+  }
+  /** Updates the panel's visibility state and any trigger state tied to id. */
+  _updatePanelState() {
+    var _a, _b;
+    this.autocomplete._setVisibility();
+    if (this.panelOpen) {
+      const overlayRef = this._overlayRef;
+      if (!this._keydownSubscription) {
+        this._keydownSubscription = overlayRef.keydownEvents().subscribe(this._handlePanelKeydown);
+      }
+      if (!this._outsideClickSubscription) {
+        this._outsideClickSubscription = overlayRef.outsidePointerEvents().subscribe();
+      }
+    } else {
+      (_a = this._keydownSubscription) == null ? void 0 : _a.unsubscribe();
+      (_b = this._outsideClickSubscription) == null ? void 0 : _b.unsubscribe();
+      this._keydownSubscription = this._outsideClickSubscription = null;
+    }
+  }
+  _getOverlayConfig() {
+    var _a, _b;
+    return new import_overlay.OverlayConfig({
+      positionStrategy: this._getOverlayPosition(),
+      scrollStrategy: this._scrollStrategy(),
+      width: this._getPanelWidth(),
+      direction: (_a = this._dir) != null ? _a : void 0,
+      panelClass: (_b = this._defaults) == null ? void 0 : _b.overlayPanelClass
+    });
+  }
+  _getOverlayPosition() {
+    const strategy = this._overlay.position().flexibleConnectedTo(this._getConnectedElement()).withFlexibleDimensions(false).withPush(false);
+    this._setStrategyPositions(strategy);
+    this._positionStrategy = strategy;
+    return strategy;
+  }
+  /** Sets the positions on a position strategy based on the directive's input state. */
+  _setStrategyPositions(positionStrategy) {
+    const belowPositions = [
+      { originX: "start", originY: "bottom", overlayX: "start", overlayY: "top" },
+      { originX: "end", originY: "bottom", overlayX: "end", overlayY: "top" }
+    ];
+    const panelClass = this._aboveClass;
+    const abovePositions = [
+      { originX: "start", originY: "top", overlayX: "start", overlayY: "bottom", panelClass },
+      { originX: "end", originY: "top", overlayX: "end", overlayY: "bottom", panelClass }
+    ];
+    let positions;
+    if (this.position === "above") {
+      positions = abovePositions;
+    } else if (this.position === "below") {
+      positions = belowPositions;
+    } else {
+      positions = [...belowPositions, ...abovePositions];
+    }
+    positionStrategy.withPositions(positions);
+  }
+  _getConnectedElement() {
+    if (this.connectedTo) {
+      return this.connectedTo.elementRef;
+    }
+    return this._formField ? this._formField.getConnectedOverlayOrigin() : this._element;
+  }
+  _getPanelWidth() {
+    return this.autocomplete.panelWidth || this._getHostWidth();
+  }
+  /** Returns the width of the input element, so the panel width can match it. */
+  _getHostWidth() {
+    return this._getConnectedElement().nativeElement.getBoundingClientRect().width;
+  }
+  /**
+   * Reset the active item to -1. This is so that pressing arrow keys will activate the correct
+   * option.
+   *
+   * If the consumer opted-in to automatically activatating the first option, activate the first
+   * *enabled* option.
+   */
+  _resetActiveItem() {
+    const autocomplete = this.autocomplete;
+    if (autocomplete.autoActiveFirstOption) {
+      let firstEnabledOptionIndex = -1;
+      for (let index = 0; index < autocomplete.options.length; index++) {
+        const option = autocomplete.options.get(index);
+        if (!option.disabled) {
+          firstEnabledOptionIndex = index;
+          break;
+        }
+      }
+      autocomplete._keyManager.setActiveItem(firstEnabledOptionIndex);
+    } else {
+      autocomplete._keyManager.setActiveItem(-1);
+    }
+  }
+  /** Determines whether the panel can be opened. */
+  _canOpen() {
+    const element = this._element.nativeElement;
+    return !element.readOnly && !element.disabled && !this.autocompleteDisabled;
+  }
+  /** Use defaultView of injected document if available or fallback to global window reference */
+  _getWindow() {
+    var _a;
+    return ((_a = this._document) == null ? void 0 : _a.defaultView) || window;
+  }
+  /** Scrolls to a particular option in the list. */
+  _scrollToOption(index) {
+    const autocomplete = this.autocomplete;
+    const labelCount = (0, import_core2._countGroupLabelsBeforeOption)(index, autocomplete.options, autocomplete.optionGroups);
+    if (index === 0 && labelCount === 1) {
+      autocomplete._setScrollTop(0);
+    } else if (autocomplete.panel) {
+      const option = autocomplete.options.toArray()[index];
+      if (option) {
+        const element = option._getHostElement();
+        const newScrollPosition = (0, import_core2._getOptionScrollPosition)(element.offsetTop, element.offsetHeight, autocomplete._getScrollTop(), autocomplete.panel.nativeElement.offsetHeight);
+        autocomplete._setScrollTop(newScrollPosition);
+      }
+    }
+  }
+  /**
+   * If the autocomplete trigger is inside of an `aria-modal` element, connect
+   * that modal to the options panel with `aria-owns`.
+   *
+   * For some browser + screen reader combinations, when navigation is inside
+   * of an `aria-modal` element, the screen reader treats everything outside
+   * of that modal as hidden or invisible.
+   *
+   * This causes a problem when the combobox trigger is _inside_ of a modal, because the
+   * options panel is rendered _outside_ of that modal, preventing screen reader navigation
+   * from reaching the panel.
+   *
+   * We can work around this issue by applying `aria-owns` to the modal with the `id` of
+   * the options panel. This effectively communicates to assistive technology that the
+   * options panel is part of the same interaction as the modal.
+   *
+   * At time of this writing, this issue is present in VoiceOver.
+   * See https://github.com/angular/components/issues/20694
+   */
+  _applyModalPanelOwnership() {
+    const modal = this._element.nativeElement.closest('body > .cdk-overlay-container [aria-modal="true"]');
+    if (!modal) {
+      return;
+    }
+    const panelId = this.autocomplete.id;
+    if (this._trackedModal) {
+      (0, import_a11y.removeAriaReferencedId)(this._trackedModal, "aria-owns", panelId);
+    }
+    (0, import_a11y.addAriaReferencedId)(modal, "aria-owns", panelId);
+    this._trackedModal = modal;
+  }
+  /** Clears the references to the listbox overlay element from the modal it was added to. */
+  _clearFromModal() {
+    if (this._trackedModal) {
+      const panelId = this.autocomplete.id;
+      (0, import_a11y.removeAriaReferencedId)(this._trackedModal, "aria-owns", panelId);
+      this._trackedModal = null;
+    }
+  }
+};
+_MatAutocompleteTrigger.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatAutocompleteTrigger, deps: [{ token: i0.ElementRef }, { token: i1$1.Overlay }, { token: i0.ViewContainerRef }, { token: i0.NgZone }, { token: i0.ChangeDetectorRef }, { token: MAT_AUTOCOMPLETE_SCROLL_STRATEGY }, { token: i2.Directionality, optional: true }, { token: import_form_field.MAT_FORM_FIELD, host: true, optional: true }, { token: import_common.DOCUMENT, optional: true }, { token: i3.ViewportRuler }, { token: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS, optional: true }], target: i0.\u0275\u0275FactoryTarget.Directive });
+_MatAutocompleteTrigger.\u0275dir = i0.\u0275\u0275ngDeclareDirective({ minVersion: "16.1.0", version: "18.2.0-next.2", type: _MatAutocompleteTrigger, isStandalone: true, selector: "input[matAutocomplete], textarea[matAutocomplete]", inputs: { autocomplete: ["matAutocomplete", "autocomplete"], position: ["matAutocompletePosition", "position"], connectedTo: ["matAutocompleteConnectedTo", "connectedTo"], autocompleteAttribute: ["autocomplete", "autocompleteAttribute"], autocompleteDisabled: ["matAutocompleteDisabled", "autocompleteDisabled", import_core.booleanAttribute] }, host: { listeners: { "focusin": "_handleFocus()", "blur": "_onTouched()", "input": "_handleInput($event)", "keydown": "_handleKeydown($event)", "click": "_handleClick()" }, properties: { "attr.autocomplete": "autocompleteAttribute", "attr.role": 'autocompleteDisabled ? null : "combobox"', "attr.aria-autocomplete": 'autocompleteDisabled ? null : "list"', "attr.aria-activedescendant": "(panelOpen && activeOption) ? activeOption.id : null", "attr.aria-expanded": "autocompleteDisabled ? null : panelOpen.toString()", "attr.aria-controls": "(autocompleteDisabled || !panelOpen) ? null : autocomplete?.id", "attr.aria-haspopup": 'autocompleteDisabled ? null : "listbox"' }, classAttribute: "mat-mdc-autocomplete-trigger" }, providers: [MAT_AUTOCOMPLETE_VALUE_ACCESSOR], exportAs: ["matAutocompleteTrigger"], usesOnChanges: true, ngImport: i0 });
+let MatAutocompleteTrigger = _MatAutocompleteTrigger;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatAutocompleteTrigger, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    selector: `input[matAutocomplete], textarea[matAutocomplete]`,
+    host: {
+      "class": "mat-mdc-autocomplete-trigger",
+      "[attr.autocomplete]": "autocompleteAttribute",
+      "[attr.role]": 'autocompleteDisabled ? null : "combobox"',
+      "[attr.aria-autocomplete]": 'autocompleteDisabled ? null : "list"',
+      "[attr.aria-activedescendant]": "(panelOpen && activeOption) ? activeOption.id : null",
+      "[attr.aria-expanded]": "autocompleteDisabled ? null : panelOpen.toString()",
+      "[attr.aria-controls]": "(autocompleteDisabled || !panelOpen) ? null : autocomplete?.id",
+      "[attr.aria-haspopup]": 'autocompleteDisabled ? null : "listbox"',
+      // Note: we use `focusin`, as opposed to `focus`, in order to open the panel
+      // a little earlier. This avoids issues where IE delays the focusing of the input.
+      "(focusin)": "_handleFocus()",
+      "(blur)": "_onTouched()",
+      "(input)": "_handleInput($event)",
+      "(keydown)": "_handleKeydown($event)",
+      "(click)": "_handleClick()"
+    },
+    exportAs: "matAutocompleteTrigger",
+    providers: [MAT_AUTOCOMPLETE_VALUE_ACCESSOR],
+    standalone: true
+  }]
+}], ctorParameters: () => [{ type: i0.ElementRef }, { type: i1$1.Overlay }, { type: i0.ViewContainerRef }, { type: i0.NgZone }, { type: i0.ChangeDetectorRef }, { type: void 0, decorators: [{
+  type: import_core.Inject,
+  args: [MAT_AUTOCOMPLETE_SCROLL_STRATEGY]
+}] }, { type: i2.Directionality, decorators: [{
+  type: import_core.Optional
+}] }, { type: i4.MatFormField, decorators: [{
+  type: import_core.Optional
+}, {
+  type: import_core.Inject,
+  args: [import_form_field.MAT_FORM_FIELD]
+}, {
+  type: import_core.Host
+}] }, { type: void 0, decorators: [{
+  type: import_core.Optional
+}, {
+  type: import_core.Inject,
+  args: [import_common.DOCUMENT]
+}] }, { type: i3.ViewportRuler }, { type: void 0, decorators: [{
+  type: import_core.Optional
+}, {
+  type: import_core.Inject,
+  args: [MAT_AUTOCOMPLETE_DEFAULT_OPTIONS]
+}] }], propDecorators: { autocomplete: [{
+  type: import_core.Input,
+  args: ["matAutocomplete"]
+}], position: [{
+  type: import_core.Input,
+  args: ["matAutocompletePosition"]
+}], connectedTo: [{
+  type: import_core.Input,
+  args: ["matAutocompleteConnectedTo"]
+}], autocompleteAttribute: [{
+  type: import_core.Input,
+  args: ["autocomplete"]
+}], autocompleteDisabled: [{
+  type: import_core.Input,
+  args: [{ alias: "matAutocompleteDisabled", transform: import_core.booleanAttribute }]
+}] } });
+const _MatAutocompleteModule = class _MatAutocompleteModule {
+};
+_MatAutocompleteModule.\u0275fac = i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatAutocompleteModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule });
+_MatAutocompleteModule.\u0275mod = i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatAutocompleteModule, imports: [
+  import_overlay.OverlayModule,
+  import_core2.MatOptionModule,
+  import_core2.MatCommonModule,
+  import_common.CommonModule,
+  MatAutocomplete,
+  MatAutocompleteTrigger,
+  MatAutocompleteOrigin
+], exports: [
+  import_scrolling.CdkScrollableModule,
+  MatAutocomplete,
+  import_core2.MatOptionModule,
+  import_core2.MatCommonModule,
+  MatAutocompleteTrigger,
+  MatAutocompleteOrigin
+] });
+_MatAutocompleteModule.\u0275inj = i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: _MatAutocompleteModule, providers: [MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY_PROVIDER], imports: [
+  import_overlay.OverlayModule,
+  import_core2.MatOptionModule,
+  import_core2.MatCommonModule,
+  import_common.CommonModule,
+  import_scrolling.CdkScrollableModule,
+  import_core2.MatOptionModule,
+  import_core2.MatCommonModule
+] });
+let MatAutocompleteModule = _MatAutocompleteModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.0-next.2", ngImport: i0, type: MatAutocompleteModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    imports: [
+      import_overlay.OverlayModule,
+      import_core2.MatOptionModule,
+      import_core2.MatCommonModule,
+      import_common.CommonModule,
+      MatAutocomplete,
+      MatAutocompleteTrigger,
+      MatAutocompleteOrigin
+    ],
+    exports: [
+      import_scrolling.CdkScrollableModule,
+      MatAutocomplete,
+      import_core2.MatOptionModule,
+      import_core2.MatCommonModule,
+      MatAutocompleteTrigger,
+      MatAutocompleteOrigin
+    ],
+    providers: [MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY_PROVIDER]
+  }]
+}] });

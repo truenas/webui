@@ -1,0 +1,37 @@
+64621b7eddc9794f7c16b04091097852
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IxIconRegistry = void 0;
+const common_1 = require("@angular/common");
+const http_1 = require("@angular/common/http");
+const core_1 = require("@angular/core");
+const icon_1 = require("@angular/material/icon");
+const platform_browser_1 = require("@angular/platform-browser");
+const sprite_config_json_1 = __importDefault(require("app/../assets/icons/sprite-config.json"));
+let IxIconRegistry = class IxIconRegistry extends icon_1.MatIconRegistry {
+    constructor(httpClient, sanitizer, document, errorHandler) {
+        super(httpClient, sanitizer, document, errorHandler);
+        // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
+        this.addSvgIconSet(sanitizer.bypassSecurityTrustResourceUrl(sprite_config_json_1.default.iconUrl));
+    }
+};
+exports.IxIconRegistry = IxIconRegistry;
+IxIconRegistry.ctorParameters = () => [
+    { type: http_1.HttpClient, decorators: [{ type: core_1.Optional }] },
+    { type: platform_browser_1.DomSanitizer },
+    { type: Document, decorators: [{ type: core_1.Optional }, { type: core_1.Inject, args: [common_1.DOCUMENT,] }] },
+    { type: core_1.ErrorHandler }
+];
+exports.IxIconRegistry = IxIconRegistry = __decorate([
+    (0, core_1.Injectable)({ providedIn: 'root' })
+], IxIconRegistry);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL21vZHVsZXMvaXgtaWNvbi9peC1pY29uLXJlZ2lzdHJ5LnNlcnZpY2UudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7O0FBQUEsNENBQTJDO0FBQzNDLCtDQUFrRDtBQUNsRCx3Q0FFdUI7QUFDdkIsaURBQXlEO0FBQ3pELGdFQUF5RDtBQUN6RCxnR0FBZ0U7QUFHekQsSUFBTSxjQUFjLEdBQXBCLE1BQU0sY0FBZSxTQUFRLHNCQUFlO0lBQ2pELFlBQ2MsVUFBc0IsRUFDbEMsU0FBdUIsRUFDTyxRQUFrQixFQUNoRCxZQUEwQjtRQUUxQixLQUFLLENBQUMsVUFBVSxFQUFFLFNBQVMsRUFBRSxRQUFRLEVBQUUsWUFBWSxDQUFDLENBQUM7UUFFckQsa0VBQWtFO1FBQ2xFLElBQUksQ0FBQyxhQUFhLENBQUMsU0FBUyxDQUFDLDhCQUE4QixDQUFDLDRCQUFVLENBQUMsT0FBTyxDQUFDLENBQUMsQ0FBQztJQUNuRixDQUFDOztBQVhVLHdDQUFjOztvREFFdEIsZUFBUTs7MkNBRVIsZUFBUSxZQUFJLGFBQU0sU0FBQyxpQkFBUTs7O3lCQUpuQixjQUFjO0lBRDFCLElBQUEsaUJBQVUsRUFBQyxFQUFFLFVBQVUsRUFBRSxNQUFNLEVBQUUsQ0FBQztHQUN0QixjQUFjLENBWTFCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9Vc2Vycy9tYWNib29rL2thcnBvdi13b3JrL1RydWVOQVMvd2VidWkvc3JjL2FwcC9tb2R1bGVzL2l4LWljb24vaXgtaWNvbi1yZWdpc3RyeS5zZXJ2aWNlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IERPQ1VNRU5UIH0gZnJvbSAnQGFuZ3VsYXIvY29tbW9uJztcbmltcG9ydCB7IEh0dHBDbGllbnQgfSBmcm9tICdAYW5ndWxhci9jb21tb24vaHR0cCc7XG5pbXBvcnQge1xuICBFcnJvckhhbmRsZXIsIEluamVjdCwgSW5qZWN0YWJsZSwgT3B0aW9uYWwsXG59IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgTWF0SWNvblJlZ2lzdHJ5IH0gZnJvbSAnQGFuZ3VsYXIvbWF0ZXJpYWwvaWNvbic7XG5pbXBvcnQgeyBEb21TYW5pdGl6ZXIgfSBmcm9tICdAYW5ndWxhci9wbGF0Zm9ybS1icm93c2VyJztcbmltcG9ydCBpY29uQ29uZmlnIGZyb20gJ2FwcC8uLi9hc3NldHMvaWNvbnMvc3ByaXRlLWNvbmZpZy5qc29uJztcblxuQEluamVjdGFibGUoeyBwcm92aWRlZEluOiAncm9vdCcgfSlcbmV4cG9ydCBjbGFzcyBJeEljb25SZWdpc3RyeSBleHRlbmRzIE1hdEljb25SZWdpc3RyeSB7XG4gIGNvbnN0cnVjdG9yKFxuICAgIEBPcHRpb25hbCgpIGh0dHBDbGllbnQ6IEh0dHBDbGllbnQsXG4gICAgc2FuaXRpemVyOiBEb21TYW5pdGl6ZXIsXG4gICAgQE9wdGlvbmFsKCkgQEluamVjdChET0NVTUVOVCkgZG9jdW1lbnQ6IERvY3VtZW50LFxuICAgIGVycm9ySGFuZGxlcjogRXJyb3JIYW5kbGVyLFxuICApIHtcbiAgICBzdXBlcihodHRwQ2xpZW50LCBzYW5pdGl6ZXIsIGRvY3VtZW50LCBlcnJvckhhbmRsZXIpO1xuXG4gICAgLy8gZXNsaW50LWRpc2FibGUtbmV4dC1saW5lIHNvbmFyanMvbm8tYW5ndWxhci1ieXBhc3Mtc2FuaXRpemF0aW9uXG4gICAgdGhpcy5hZGRTdmdJY29uU2V0KHNhbml0aXplci5ieXBhc3NTZWN1cml0eVRydXN0UmVzb3VyY2VVcmwoaWNvbkNvbmZpZy5pY29uVXJsKSk7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

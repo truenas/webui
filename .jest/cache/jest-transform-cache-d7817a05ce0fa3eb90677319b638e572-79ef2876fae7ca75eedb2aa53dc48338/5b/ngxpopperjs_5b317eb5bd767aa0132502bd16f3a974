@@ -1,0 +1,830 @@
+a8496bc4fcd6cc4a3c478acad5f27824
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+var ngx_popperjs_exports = {};
+__export(ngx_popperjs_exports, {
+  NgxPopperjsContentComponent: () => NgxPopperjsContentComponent,
+  NgxPopperjsDirective: () => NgxPopperjsDirective,
+  NgxPopperjsLooseDirective: () => NgxPopperjsLooseDirective,
+  NgxPopperjsModule: () => NgxPopperjsModule,
+  NgxPopperjsPlacements: () => NgxPopperjsPlacements,
+  NgxPopperjsTriggers: () => NgxPopperjsTriggers,
+  provideNgxPopperjsOptions: () => provideNgxPopperjsOptions
+});
+module.exports = __toCommonJS(ngx_popperjs_exports);
+var i0 = __toESM(require("@angular/core"), 1);
+var import_core = require("@angular/core");
+var import_core2 = require("@popperjs/core");
+var import_rxjs = require("rxjs");
+var i1 = __toESM(require("@angular/common"), 1);
+var import_common = require("@angular/common");
+var NgxPopperjsPlacements;
+(function(NgxPopperjsPlacements2) {
+  NgxPopperjsPlacements2["TOP"] = "top";
+  NgxPopperjsPlacements2["BOTTOM"] = "bottom";
+  NgxPopperjsPlacements2["LEFT"] = "left";
+  NgxPopperjsPlacements2["RIGHT"] = "right";
+  NgxPopperjsPlacements2["TOPSTART"] = "top-start";
+  NgxPopperjsPlacements2["BOTTOMSTART"] = "bottom-start";
+  NgxPopperjsPlacements2["LEFTSTART"] = "left-start";
+  NgxPopperjsPlacements2["RIGHTSTART"] = "right-start";
+  NgxPopperjsPlacements2["TOPEND"] = "top-end";
+  NgxPopperjsPlacements2["BOTTOMEND"] = "bottom-end";
+  NgxPopperjsPlacements2["LEFTEND"] = "left-end";
+  NgxPopperjsPlacements2["RIGHTEND"] = "right-end";
+  NgxPopperjsPlacements2["AUTO"] = "auto";
+  NgxPopperjsPlacements2["AUTOSTART"] = "auto-start";
+  NgxPopperjsPlacements2["AUTOEND"] = "auto-end";
+})(NgxPopperjsPlacements || (NgxPopperjsPlacements = {}));
+var NgxPopperjsTriggers;
+(function(NgxPopperjsTriggers2) {
+  NgxPopperjsTriggers2["click"] = "click";
+  NgxPopperjsTriggers2["hover"] = "hover";
+  NgxPopperjsTriggers2["mousedown"] = "mousedown";
+  NgxPopperjsTriggers2["none"] = "none";
+})(NgxPopperjsTriggers || (NgxPopperjsTriggers = {}));
+const _NgxPopperjsContentComponent = class _NgxPopperjsContentComponent {
+  constructor(elRef, _viewRef, _changeDetectorRef) {
+    __publicField(this, "elRef");
+    __publicField(this, "_viewRef");
+    __publicField(this, "_changeDetectorRef");
+    __publicField(this, "ariaHidden");
+    __publicField(this, "arrowColor", null);
+    __publicField(this, "displayType");
+    __publicField(this, "id", `ngx_poppperjs_${++_NgxPopperjsContentComponent.nextId}`);
+    __publicField(this, "isMouseOver", false);
+    __publicField(this, "onHidden", new import_core.EventEmitter());
+    __publicField(this, "onUpdate");
+    __publicField(this, "opacity");
+    __publicField(this, "popperInstance");
+    __publicField(this, "popperOptions", {
+      disableAnimation: false,
+      disableDefaultStyling: false,
+      placement: NgxPopperjsPlacements.AUTO,
+      boundariesElement: "",
+      trigger: NgxPopperjsTriggers.hover,
+      positionFixed: false,
+      appendToBody: false,
+      popperModifiers: []
+    });
+    __publicField(this, "popperViewRef");
+    __publicField(this, "referenceObject");
+    __publicField(this, "state");
+    __publicField(this, "text");
+    __publicField(this, "_baseModifiers", [
+      {
+        name: "offset",
+        enabled: true,
+        options: {
+          offset: [0, 8]
+        }
+      },
+      {
+        name: "arrow",
+        enabled: true,
+        options: {
+          element: ".ngxp__arrow",
+          padding: 3
+        },
+        requires: ["arrow"]
+      }
+    ]);
+    __publicField(this, "_destroy$", new import_rxjs.Subject());
+    __publicField(this, "_styleId", `${this.id}_style`);
+    this.elRef = elRef;
+    this._viewRef = _viewRef;
+    this._changeDetectorRef = _changeDetectorRef;
+    this._toggleVisibility(false);
+  }
+  clean() {
+    this.toggleVisibility(false);
+    if (!this.popperInstance) {
+      return;
+    }
+    this.popperInstance.destroy();
+  }
+  extractAppliedClassListExpr(classList = []) {
+    const klassList = Array.isArray(classList) ? classList : typeof classList === "string" ? classList.replace(/ /, "").split(",") : [];
+    return klassList.reduce((acc, klass) => {
+      acc[klass] = true;
+      return acc;
+    }, {});
+  }
+  hide() {
+    if (this.popperInstance) {
+      this.popperInstance.destroy();
+    }
+    this.toggleVisibility(false);
+    this.onHidden.emit();
+  }
+  ngOnDestroy() {
+    this._destroy$.next();
+    this.clean();
+    if (this.popperOptions.appendTo && this.elRef && this.elRef.nativeElement && this.elRef.nativeElement.parentNode) {
+      this._viewRef.detach();
+      this.elRef.nativeElement.parentNode.removeChild(this.elRef.nativeElement);
+    }
+  }
+  onDocumentResize() {
+    this.update();
+  }
+  onMouseOver() {
+    this.isMouseOver = true;
+  }
+  show() {
+    if (!this.referenceObject) {
+      return;
+    }
+    const appendToParent = this.popperOptions.appendTo && document.querySelector(this.popperOptions.appendTo);
+    if (appendToParent && this.elRef.nativeElement.parentNode !== appendToParent) {
+      this.elRef.nativeElement.parentNode && this.elRef.nativeElement.parentNode.removeChild(this.elRef.nativeElement);
+      appendToParent.appendChild(this.elRef.nativeElement);
+    }
+    const popperOptions = {
+      strategy: this.popperOptions.positionFixed ? "fixed" : "absolute",
+      placement: this.popperOptions.placement,
+      modifiers: this._baseModifiers
+    };
+    if (this.onUpdate) {
+      popperOptions.onFirstUpdate = this.onUpdate;
+    }
+    const boundariesElement = this.popperOptions.boundariesElement && document.querySelector(this.popperOptions.boundariesElement);
+    if (popperOptions.modifiers && boundariesElement) {
+      popperOptions.modifiers.push({
+        name: "preventOverflow",
+        enabled: this.popperOptions.preventOverflow,
+        options: {
+          boundary: boundariesElement
+        }
+      });
+    }
+    if (popperOptions.modifiers) {
+      const preventOverflowModifier = popperOptions.modifiers.find((v) => v.name === "preventOverflow");
+      if (preventOverflowModifier && !preventOverflowModifier.enabled) {
+        const hideModifier = popperOptions.modifiers.find((v) => v.name === "preventOverflow");
+        hideModifier && (hideModifier.enabled = false);
+      }
+    }
+    this._determineArrowColor();
+    popperOptions.modifiers = popperOptions.modifiers.concat(this.popperOptions.popperModifiers);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        this.popperInstance = (0, import_core2.createPopper)(this.referenceObject, this.popperViewRef.nativeElement, popperOptions);
+      });
+    });
+    this.toggleVisibility(true);
+    (0, import_rxjs.fromEvent)(document, "resize").pipe((0, import_rxjs.takeUntil)(this._destroy$)).subscribe({
+      next: () => this.onDocumentResize()
+    });
+  }
+  showOnLeave() {
+    this.isMouseOver = false;
+    if (this.popperOptions.trigger !== NgxPopperjsTriggers.hover && !this.popperOptions.hideOnMouseLeave) {
+      return;
+    }
+    this.hide();
+  }
+  // Toggle visibility and detect changes - Run only after ngOnInit!
+  toggleVisibility(state) {
+    this._toggleVisibility(state);
+    if (!this._changeDetectorRef["destroyed"]) {
+      this._changeDetectorRef.detectChanges();
+    }
+  }
+  update() {
+    this.popperInstance && this.popperInstance.update();
+  }
+  _createArrowSelector() {
+    return `div#${this.id}.ngxp__container > .ngxp__arrow.ngxp__force-arrow`;
+  }
+  _determineArrowColor() {
+    if (!this.popperOptions.styles || this.arrowColor) {
+      return false;
+    }
+    const ruleValue = this.popperOptions.styles["background-color"] || this.popperOptions.styles.backgroundColor;
+    if (this.arrowColor === ruleValue) {
+      return false;
+    }
+    this.arrowColor = ruleValue;
+    let $style = document.querySelector(`#${this._styleId}`);
+    const styleContent = this.arrowColor ? `${this._createArrowSelector()}:before { background-color: ${this.arrowColor}; }` : "";
+    if (!$style) {
+      $style = document.createElement("style");
+      $style.id = this._styleId;
+      $style.setAttribute("type", "text/css");
+      document.head.appendChild($style);
+    }
+    if ($style["styleSheet"]) {
+      $style["styleSheet"].cssText = styleContent;
+    } else {
+      $style.innerHTML = styleContent;
+    }
+  }
+  _toggleVisibility(state) {
+    this.displayType = ["none", "block"][+state];
+    this.opacity = +state;
+    this.ariaHidden = `${!state}`;
+    this.state = state;
+  }
+};
+__publicField(_NgxPopperjsContentComponent, "nextId", 0);
+/** @nocollapse */
+__publicField(_NgxPopperjsContentComponent, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.2", ngImport: i0, type: _NgxPopperjsContentComponent, deps: [{ token: i0.ElementRef }, { token: i0.ViewContainerRef }, { token: i0.ChangeDetectorRef }], target: i0.\u0275\u0275FactoryTarget.Component }));
+/** @nocollapse */
+__publicField(_NgxPopperjsContentComponent, "\u0275cmp", i0.\u0275\u0275ngDeclareComponent({ minVersion: "14.0.0", version: "16.0.2", type: _NgxPopperjsContentComponent, selector: "popper-content", host: { listeners: { "mouseover": "onMouseOver()", "mouseleave": "showOnLeave()" } }, viewQueries: [{ propertyName: "popperViewRef", first: true, predicate: ["popperViewRef"], descendants: true, static: true }], exportAs: ["ngxPopperjsContent"], ngImport: i0, template: '<div #popperViewRef\r\n     [attr.id]="id"\r\n     [class.ngxp__container]="!popperOptions.disableDefaultStyling"\r\n     [class.ngxp__animation]="!popperOptions.disableAnimation"\r\n     [style.display]="displayType"\r\n     [style.opacity]="opacity"\r\n     [ngStyle]="popperOptions.styles"\r\n     [ngClass]="extractAppliedClassListExpr(popperOptions.applyClass)"\r\n     attr.aria-hidden="{{ariaHidden}}"\r\n     [attr.aria-describedby]="popperOptions.ariaDescribe || null"\r\n     attr.role="{{popperOptions.ariaRole}}">\r\n    <div *ngIf="text"\r\n         class="ngxp__inner"\r\n         [innerHTML]="text">\r\n        <ng-content></ng-content>\r\n    </div>\r\n    <div *ngIf="!text"\r\n         class="ngxp__inner">\r\n        <ng-content></ng-content>\r\n    </div>\r\n    <div class="ngxp__arrow"\r\n         data-popper-arrow\r\n         [class.ngxp__force-arrow]="arrowColor"\r\n         [ngClass]="extractAppliedClassListExpr(popperOptions.applyArrowClass)"></div>\r\n\r\n</div>\r\n', styles: ['popper-content{position:relative;display:block}.ngxp__container{display:none;position:absolute;border-radius:3px;border:1px solid grey;box-shadow:0 0 2px #00000080;padding:10px}.ngxp__container.ngxp__animation{animation:ngxp-fadeIn .15s ease-out}.ngxp__container>.ngxp__arrow,.ngxp__container>.ngxp__arrow:before{position:absolute;width:10px;height:10px;z-index:-1}.ngxp__container>.ngxp__arrow:before{transform:rotate(45deg);content:"";background-color:#fff;top:0;left:0}.ngxp__container[data-popper-placement^=top]>.ngxp__arrow{bottom:-4px}.ngxp__container[data-popper-placement^=bottom]>.ngxp__arrow{top:-4px}.ngxp__container[data-popper-placement^=left]>.ngxp__arrow{right:-4px}.ngxp__container[data-popper-placement^=right]>.ngxp__arrow{left:-4px}@keyframes ngxp-fadeIn{0%{display:none;opacity:0}1%{display:block;opacity:0}to{display:block;opacity:1}}\n'], dependencies: [{ kind: "directive", type: i1.NgClass, selector: "[ngClass]", inputs: ["class", "ngClass"] }, { kind: "directive", type: i1.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { kind: "directive", type: i1.NgStyle, selector: "[ngStyle]", inputs: ["ngStyle"] }], changeDetection: i0.ChangeDetectionStrategy.OnPush, encapsulation: i0.ViewEncapsulation.None }));
+let NgxPopperjsContentComponent = _NgxPopperjsContentComponent;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.2", ngImport: i0, type: NgxPopperjsContentComponent, decorators: [{
+  type: import_core.Component,
+  args: [{ selector: "popper-content", encapsulation: import_core.ViewEncapsulation.None, changeDetection: import_core.ChangeDetectionStrategy.OnPush, exportAs: "ngxPopperjsContent", template: '<div #popperViewRef\r\n     [attr.id]="id"\r\n     [class.ngxp__container]="!popperOptions.disableDefaultStyling"\r\n     [class.ngxp__animation]="!popperOptions.disableAnimation"\r\n     [style.display]="displayType"\r\n     [style.opacity]="opacity"\r\n     [ngStyle]="popperOptions.styles"\r\n     [ngClass]="extractAppliedClassListExpr(popperOptions.applyClass)"\r\n     attr.aria-hidden="{{ariaHidden}}"\r\n     [attr.aria-describedby]="popperOptions.ariaDescribe || null"\r\n     attr.role="{{popperOptions.ariaRole}}">\r\n    <div *ngIf="text"\r\n         class="ngxp__inner"\r\n         [innerHTML]="text">\r\n        <ng-content></ng-content>\r\n    </div>\r\n    <div *ngIf="!text"\r\n         class="ngxp__inner">\r\n        <ng-content></ng-content>\r\n    </div>\r\n    <div class="ngxp__arrow"\r\n         data-popper-arrow\r\n         [class.ngxp__force-arrow]="arrowColor"\r\n         [ngClass]="extractAppliedClassListExpr(popperOptions.applyArrowClass)"></div>\r\n\r\n</div>\r\n', styles: ['popper-content{position:relative;display:block}.ngxp__container{display:none;position:absolute;border-radius:3px;border:1px solid grey;box-shadow:0 0 2px #00000080;padding:10px}.ngxp__container.ngxp__animation{animation:ngxp-fadeIn .15s ease-out}.ngxp__container>.ngxp__arrow,.ngxp__container>.ngxp__arrow:before{position:absolute;width:10px;height:10px;z-index:-1}.ngxp__container>.ngxp__arrow:before{transform:rotate(45deg);content:"";background-color:#fff;top:0;left:0}.ngxp__container[data-popper-placement^=top]>.ngxp__arrow{bottom:-4px}.ngxp__container[data-popper-placement^=bottom]>.ngxp__arrow{top:-4px}.ngxp__container[data-popper-placement^=left]>.ngxp__arrow{right:-4px}.ngxp__container[data-popper-placement^=right]>.ngxp__arrow{left:-4px}@keyframes ngxp-fadeIn{0%{display:none;opacity:0}1%{display:block;opacity:0}to{display:block;opacity:1}}\n'] }]
+}], ctorParameters: function() {
+  return [{ type: i0.ElementRef }, { type: i0.ViewContainerRef }, { type: i0.ChangeDetectorRef }];
+}, propDecorators: { popperViewRef: [{
+  type: import_core.ViewChild,
+  args: ["popperViewRef", { static: true }]
+}], onMouseOver: [{
+  type: import_core.HostListener,
+  args: ["mouseover"]
+}], showOnLeave: [{
+  type: import_core.HostListener,
+  args: ["mouseleave"]
+}] } });
+const NGX_POPPERJS_DEFAULTS = new import_core.InjectionToken("NGX_POPPERJS_DEFAULTS");
+class NgxPopperjsUtils {
+  /** Coerces a data-bound value (typically a string) to a boolean. */
+  static coerceBooleanProperty(value) {
+    return value != null && `${value}` !== "false";
+  }
+}
+const _NgxPopperjsDirective = class _NgxPopperjsDirective {
+  constructor(_changeDetectorRef, _elementRef, _vcr, _popperDefaults = {}) {
+    __publicField(this, "_changeDetectorRef");
+    __publicField(this, "_elementRef");
+    __publicField(this, "_vcr");
+    __publicField(this, "_popperDefaults");
+    __publicField(this, "ariaDescribe");
+    __publicField(this, "ariaRole");
+    __publicField(this, "boundariesElement");
+    __publicField(this, "closeOnClickOutside");
+    __publicField(this, "disableAnimation");
+    __publicField(this, "disableStyle");
+    __publicField(this, "hideOnClickOutside");
+    __publicField(this, "hideOnMouseLeave");
+    __publicField(this, "hideOnScroll");
+    __publicField(this, "hideTimeout", 0);
+    __publicField(this, "popperAppendTo");
+    __publicField(this, "popperModifiers");
+    __publicField(this, "popperOnHidden", new import_core.EventEmitter());
+    __publicField(this, "popperOnShown", new import_core.EventEmitter());
+    __publicField(this, "popperOnUpdate", new import_core.EventEmitter());
+    __publicField(this, "positionFixed");
+    __publicField(this, "showDelay");
+    __publicField(this, "showOnStart");
+    __publicField(this, "showTrigger");
+    __publicField(this, "styles");
+    __publicField(this, "targetElement");
+    __publicField(this, "timeoutAfterShow", 0);
+    __publicField(this, "_applyClass");
+    __publicField(this, "_content");
+    __publicField(this, "_destroy$", new import_rxjs.Subject());
+    __publicField(this, "_disabled");
+    __publicField(this, "_globalEventListenersCtrl$", new import_rxjs.Subject());
+    __publicField(this, "_popperApplyArrowClass");
+    __publicField(this, "_popperContent");
+    __publicField(this, "_popperContentClass", NgxPopperjsContentComponent);
+    __publicField(this, "_popperContentRef");
+    __publicField(this, "_popperPlacement");
+    __publicField(this, "_popperPreventOverflow");
+    __publicField(this, "_scheduledHideTimeoutCtrl$", new import_rxjs.Subject());
+    __publicField(this, "_scheduledShowTimeoutCtrl$", new import_rxjs.Subject());
+    __publicField(this, "_shown", false);
+    this._changeDetectorRef = _changeDetectorRef;
+    this._elementRef = _elementRef;
+    this._vcr = _vcr;
+    this._popperDefaults = _popperDefaults;
+    _NgxPopperjsDirective.baseOptions = __spreadValues(__spreadValues({}, _NgxPopperjsDirective.baseOptions), this._popperDefaults);
+  }
+  set applyClass(newValue) {
+    if (newValue === this._applyClass) {
+      return;
+    }
+    this._applyClass = newValue;
+    this._checkExisting("applyClass", newValue);
+  }
+  get applyClass() {
+    return this._applyClass;
+  }
+  set content(newValue) {
+    if (newValue === this._content) {
+      return;
+    }
+    this._content = newValue;
+    if (this._popperContent) {
+      if (typeof newValue === "string") {
+        this._popperContent.text = newValue;
+      } else {
+        this._popperContent = newValue;
+      }
+    }
+  }
+  get content() {
+    return this._content;
+  }
+  set disabled(newValue) {
+    if (newValue === this._disabled) {
+      return;
+    }
+    this._disabled = !!newValue;
+    if (this._shown) {
+      this.hide();
+    }
+  }
+  get disabled() {
+    return this._disabled;
+  }
+  set placement(newValue) {
+    this._popperPlacement = newValue;
+    this._checkExisting("placement", newValue);
+  }
+  get placement() {
+    return this._popperPlacement;
+  }
+  set popperApplyArrowClass(newValue) {
+    if (newValue === this._popperApplyArrowClass) {
+      return;
+    }
+    this._popperApplyArrowClass = newValue;
+    if (this._popperContent) {
+      this._popperContent.popperOptions.applyArrowClass = newValue;
+      if (!this._shown) {
+        return;
+      }
+      this._popperContent.popperInstance.setOptions(this._popperContent.popperOptions);
+    }
+  }
+  get popperApplyArrowClass() {
+    return this._popperApplyArrowClass;
+  }
+  set preventOverflow(newValue) {
+    this._popperPreventOverflow = NgxPopperjsUtils.coerceBooleanProperty(newValue);
+    this._checkExisting("preventOverflow", this._popperPreventOverflow);
+  }
+  get preventOverflow() {
+    return this._popperPreventOverflow;
+  }
+  static assignDefined(target, ...sources) {
+    for (const source of sources) {
+      for (const key of Object.keys(source)) {
+        const val = source[key];
+        if (val !== void 0) {
+          target[key] = val;
+        }
+      }
+    }
+    return target;
+  }
+  applyTriggerListeners() {
+    switch (this.showTrigger) {
+      case NgxPopperjsTriggers.click:
+        this._addListener("click", this.toggle.bind(this));
+        break;
+      case NgxPopperjsTriggers.mousedown:
+        this._addListener("mousedown", this.toggle.bind(this));
+        break;
+      case NgxPopperjsTriggers.hover:
+        this._addListener("mouseenter", this.scheduledShow.bind(this, this.showDelay));
+        ["touchend", "touchcancel", "mouseleave"].forEach((eventName) => {
+          this._addListener(eventName, this.scheduledHide.bind(this, null, this.hideTimeout));
+        });
+        break;
+    }
+    if (this.showTrigger !== NgxPopperjsTriggers.hover && this.hideOnMouseLeave) {
+      ["touchend", "touchcancel", "mouseleave"].forEach((eventName) => {
+        this._addListener(eventName, this.scheduledHide.bind(this, null, this.hideTimeout));
+      });
+    }
+  }
+  getRefElement() {
+    return this.targetElement || this._elementRef.nativeElement;
+  }
+  hide() {
+    if (this.disabled) {
+      return;
+    }
+    if (!this._shown) {
+      this._scheduledShowTimeoutCtrl$.next();
+      return;
+    }
+    this._shown = false;
+    if (this._popperContentRef) {
+      this._popperContentRef.instance.hide();
+    } else {
+      this._popperContent.hide();
+    }
+    this.popperOnHidden.emit(this);
+    this._globalEventListenersCtrl$.next();
+  }
+  hideOnClickOutsideHandler($event) {
+    if (this.disabled || !this.hideOnClickOutside || $event.target === this._popperContent.elRef.nativeElement || this._popperContent.elRef.nativeElement.contains($event.target)) {
+      return;
+    }
+    this.scheduledHide($event, this.hideTimeout);
+  }
+  hideOnScrollHandler($event) {
+    if (this.disabled || !this.hideOnScroll) {
+      return;
+    }
+    this.scheduledHide($event, this.hideTimeout);
+  }
+  ngOnDestroy() {
+    this._destroy$.next();
+    this._destroy$.complete();
+    this._popperContent && this._popperContent.clean();
+  }
+  ngOnInit() {
+    this.hideOnClickOutside = typeof this.hideOnClickOutside === "undefined" ? this.closeOnClickOutside : this.hideOnClickOutside;
+    if (typeof this.content === "string") {
+      this._popperContent = this._constructContent();
+      this._popperContent.text = this.content;
+    } else if (typeof this.content === "undefined") {
+      this._popperContent = this._constructContent();
+      this._popperContent.text = "";
+    } else {
+      this._popperContent = this.content;
+    }
+    const popperRef = this._popperContent;
+    popperRef.referenceObject = this.getRefElement();
+    this._setContentProperties(popperRef);
+    this._setDefaults();
+    this.applyTriggerListeners();
+    if (this.showOnStart) {
+      this.scheduledShow();
+    }
+  }
+  scheduledHide($event = null, delay = this.hideTimeout) {
+    if (this.disabled) {
+      return;
+    }
+    this._scheduledShowTimeoutCtrl$.next();
+    (0, import_rxjs.timer)(delay).pipe((0, import_rxjs.takeUntil)(this._scheduledHideTimeoutCtrl$), (0, import_rxjs.takeUntil)(this._destroy$)).subscribe({
+      next: () => {
+        const toElement = $event ? $event.toElement : null;
+        const popperContentView = this._popperContent.popperViewRef ? this._popperContent.popperViewRef.nativeElement : false;
+        if (!popperContentView || popperContentView === toElement || popperContentView.contains(toElement) || this.content && this.content.isMouseOver) {
+          return;
+        }
+        this.hide();
+        this._applyChanges();
+      }
+    });
+  }
+  scheduledShow(delay = this.showDelay) {
+    if (this.disabled) {
+      return;
+    }
+    this._scheduledHideTimeoutCtrl$.next();
+    (0, import_rxjs.timer)(delay).pipe((0, import_rxjs.takeUntil)(this._scheduledShowTimeoutCtrl$), (0, import_rxjs.takeUntil)(this._destroy$)).subscribe({
+      next: () => {
+        this.show();
+        this._applyChanges();
+      }
+    });
+  }
+  show() {
+    if (this._shown) {
+      this._scheduledHideTimeoutCtrl$.next();
+      return;
+    }
+    this._shown = true;
+    const popperRef = this._popperContent;
+    const element = this.getRefElement();
+    if (popperRef.referenceObject !== element) {
+      popperRef.referenceObject = element;
+    }
+    this._setContentProperties(popperRef);
+    popperRef.show();
+    this.popperOnShown.emit(this);
+    if (this.timeoutAfterShow > 0) {
+      this.scheduledHide(null, this.timeoutAfterShow);
+    }
+    (0, import_rxjs.fromEvent)(document, "click").pipe((0, import_rxjs.takeUntil)(this._globalEventListenersCtrl$), (0, import_rxjs.takeUntil)(this._destroy$)).subscribe({
+      next: (e) => this.hideOnClickOutsideHandler(e)
+    });
+    (0, import_rxjs.fromEvent)(this._getScrollParent(this.getRefElement()), "scroll").pipe((0, import_rxjs.takeUntil)(this._globalEventListenersCtrl$), (0, import_rxjs.takeUntil)(this._destroy$)).subscribe({
+      next: (e) => {
+        this.hideOnScrollHandler(e);
+      }
+    });
+  }
+  toggle() {
+    if (this.disabled) {
+      return;
+    }
+    this._shown ? this.scheduledHide(null, this.hideTimeout) : this.scheduledShow();
+  }
+  _addListener(eventName, cb) {
+    (0, import_rxjs.fromEvent)(this._elementRef.nativeElement, eventName).pipe((0, import_rxjs.takeUntil)(this._destroy$)).subscribe({
+      next: cb
+    });
+  }
+  _applyChanges() {
+    this._changeDetectorRef.markForCheck();
+    this._changeDetectorRef.detectChanges();
+  }
+  _checkExisting(key, newValue) {
+    if (this._popperContent) {
+      this._popperContent.popperOptions[key] = newValue;
+      if (!this._shown) {
+        return;
+      }
+      this._popperContent.popperInstance.setOptions(this._popperContent.popperOptions);
+    }
+  }
+  _constructContent() {
+    this._popperContentRef = this._vcr.createComponent(this._popperContentClass);
+    return this._popperContentRef.instance;
+  }
+  _getScrollParent(node) {
+    const isElement = node instanceof HTMLElement;
+    const overflowY = isElement && window.getComputedStyle(node).overflowY;
+    const isScrollable = overflowY !== "visible" && overflowY !== "hidden";
+    if (!node) {
+      return null;
+    } else if (isScrollable && node.scrollHeight > node.clientHeight) {
+      return node;
+    }
+    return this._getScrollParent(node.parentNode) || document;
+  }
+  _onPopperUpdate(event) {
+    this.popperOnUpdate.emit(event);
+  }
+  _setContentProperties(popperRef) {
+    popperRef.popperOptions = _NgxPopperjsDirective.assignDefined(popperRef.popperOptions, _NgxPopperjsDirective.baseOptions, {
+      showDelay: this.showDelay,
+      disableAnimation: this.disableAnimation,
+      disableDefaultStyling: this.disableStyle,
+      placement: this.placement,
+      boundariesElement: this.boundariesElement,
+      trigger: this.showTrigger,
+      positionFixed: this.positionFixed,
+      popperModifiers: this.popperModifiers,
+      ariaDescribe: this.ariaDescribe,
+      ariaRole: this.ariaRole,
+      applyClass: this.applyClass,
+      applyArrowClass: this.popperApplyArrowClass,
+      hideOnMouseLeave: this.hideOnMouseLeave,
+      styles: this.styles,
+      appendTo: this.popperAppendTo,
+      preventOverflow: this.preventOverflow
+    });
+    popperRef.onUpdate = this._onPopperUpdate.bind(this);
+    popperRef.onHidden.pipe((0, import_rxjs.takeUntil)(this._destroy$)).subscribe(this.hide.bind(this));
+  }
+  _setDefaults() {
+    ["showDelay", "hideOnScroll", "hideOnMouseLeave", "hideOnClickOutside", "ariaRole", "ariaDescribe"].forEach((key) => {
+      this[key] = this[key] === void 0 ? _NgxPopperjsDirective.baseOptions[key] : this[key];
+    });
+    this.showTrigger = this.showTrigger || _NgxPopperjsDirective.baseOptions.trigger;
+    this.styles = this.styles === void 0 ? __spreadValues({}, _NgxPopperjsDirective.baseOptions.styles) : this.styles;
+  }
+};
+__publicField(_NgxPopperjsDirective, "baseOptions", {
+  showDelay: 0,
+  placement: NgxPopperjsPlacements.AUTO,
+  hideOnClickOutside: true,
+  hideOnMouseLeave: false,
+  hideOnScroll: false,
+  appendTo: void 0,
+  ariaRole: "popper",
+  ariaDescribe: "",
+  styles: {},
+  trigger: NgxPopperjsTriggers.click
+});
+/** @nocollapse */
+__publicField(_NgxPopperjsDirective, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.2", ngImport: i0, type: _NgxPopperjsDirective, deps: [{ token: i0.ChangeDetectorRef }, { token: i0.ElementRef }, { token: i0.ViewContainerRef }, { token: NGX_POPPERJS_DEFAULTS }], target: i0.\u0275\u0275FactoryTarget.Directive }));
+/** @nocollapse */
+__publicField(_NgxPopperjsDirective, "\u0275dir", i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "16.0.2", type: _NgxPopperjsDirective, selector: "[popper]", inputs: { applyClass: ["popperApplyClass", "applyClass"], ariaDescribe: ["popperAriaDescribeBy", "ariaDescribe"], ariaRole: ["popperAriaRole", "ariaRole"], boundariesElement: ["popperBoundaries", "boundariesElement"], closeOnClickOutside: ["popperCloseOnClickOutside", "closeOnClickOutside"], content: ["popper", "content"], disableAnimation: ["popperDisableAnimation", "disableAnimation"], disabled: ["popperDisabled", "disabled"], disableStyle: ["popperDisableStyle", "disableStyle"], hideOnClickOutside: ["popperHideOnClickOutside", "hideOnClickOutside"], hideOnMouseLeave: ["popperHideOnMouseLeave", "hideOnMouseLeave"], hideOnScroll: ["popperHideOnScroll", "hideOnScroll"], hideTimeout: ["popperTimeout", "hideTimeout"], placement: ["popperPlacement", "placement"], popperAppendTo: "popperAppendTo", popperApplyArrowClass: "popperApplyArrowClass", popperModifiers: "popperModifiers", positionFixed: ["popperPositionFixed", "positionFixed"], preventOverflow: ["popperPreventOverflow", "preventOverflow"], showDelay: ["popperDelay", "showDelay"], showOnStart: ["popperShowOnStart", "showOnStart"], showTrigger: ["popperTrigger", "showTrigger"], styles: ["popperStyles", "styles"], targetElement: ["popperTarget", "targetElement"], timeoutAfterShow: ["popperTimeoutAfterShow", "timeoutAfterShow"] }, outputs: { popperOnHidden: "popperOnHidden", popperOnShown: "popperOnShown", popperOnUpdate: "popperOnUpdate" }, exportAs: ["popper"], ngImport: i0 }));
+let NgxPopperjsDirective = _NgxPopperjsDirective;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.2", ngImport: i0, type: NgxPopperjsDirective, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    // tslint:disable-next-line:directive-selector
+    selector: "[popper]",
+    exportAs: "popper"
+  }]
+}], ctorParameters: function() {
+  return [{ type: i0.ChangeDetectorRef }, { type: i0.ElementRef }, { type: i0.ViewContainerRef }, { type: void 0, decorators: [{
+    type: import_core.Inject,
+    args: [NGX_POPPERJS_DEFAULTS]
+  }] }];
+}, propDecorators: { applyClass: [{
+  type: import_core.Input,
+  args: ["popperApplyClass"]
+}], ariaDescribe: [{
+  type: import_core.Input,
+  args: ["popperAriaDescribeBy"]
+}], ariaRole: [{
+  type: import_core.Input,
+  args: ["popperAriaRole"]
+}], boundariesElement: [{
+  type: import_core.Input,
+  args: ["popperBoundaries"]
+}], closeOnClickOutside: [{
+  type: import_core.Input,
+  args: ["popperCloseOnClickOutside"]
+}], content: [{
+  type: import_core.Input,
+  args: ["popper"]
+}], disableAnimation: [{
+  type: import_core.Input,
+  args: ["popperDisableAnimation"]
+}], disabled: [{
+  type: import_core.Input,
+  args: ["popperDisabled"]
+}], disableStyle: [{
+  type: import_core.Input,
+  args: ["popperDisableStyle"]
+}], hideOnClickOutside: [{
+  type: import_core.Input,
+  args: ["popperHideOnClickOutside"]
+}], hideOnMouseLeave: [{
+  type: import_core.Input,
+  args: ["popperHideOnMouseLeave"]
+}], hideOnScroll: [{
+  type: import_core.Input,
+  args: ["popperHideOnScroll"]
+}], hideTimeout: [{
+  type: import_core.Input,
+  args: ["popperTimeout"]
+}], placement: [{
+  type: import_core.Input,
+  args: ["popperPlacement"]
+}], popperAppendTo: [{
+  type: import_core.Input
+}], popperApplyArrowClass: [{
+  type: import_core.Input
+}], popperModifiers: [{
+  type: import_core.Input
+}], popperOnHidden: [{
+  type: import_core.Output
+}], popperOnShown: [{
+  type: import_core.Output
+}], popperOnUpdate: [{
+  type: import_core.Output
+}], positionFixed: [{
+  type: import_core.Input,
+  args: ["popperPositionFixed"]
+}], preventOverflow: [{
+  type: import_core.Input,
+  args: ["popperPreventOverflow"]
+}], showDelay: [{
+  type: import_core.Input,
+  args: ["popperDelay"]
+}], showOnStart: [{
+  type: import_core.Input,
+  args: ["popperShowOnStart"]
+}], showTrigger: [{
+  type: import_core.Input,
+  args: ["popperTrigger"]
+}], styles: [{
+  type: import_core.Input,
+  args: ["popperStyles"]
+}], targetElement: [{
+  type: import_core.Input,
+  args: ["popperTarget"]
+}], timeoutAfterShow: [{
+  type: import_core.Input,
+  args: ["popperTimeoutAfterShow"]
+}] } });
+const _NgxPopperjsLooseDirective = class _NgxPopperjsLooseDirective extends NgxPopperjsDirective {
+  set popperLoose(newValue) {
+    this.content = newValue;
+  }
+  set popperLoosePlacement(newValue) {
+    this.placement = newValue;
+  }
+  set popperLooseTrigger(newValue) {
+    this.showTrigger = newValue;
+  }
+  constructor(changeDetectorRef, elementRef, vcr, popperDefaults = {}) {
+    super(changeDetectorRef, elementRef, vcr, popperDefaults);
+  }
+};
+/** @nocollapse */
+__publicField(_NgxPopperjsLooseDirective, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.2", ngImport: i0, type: _NgxPopperjsLooseDirective, deps: [{ token: i0.ChangeDetectorRef }, { token: i0.ElementRef }, { token: i0.ViewContainerRef }, { token: NGX_POPPERJS_DEFAULTS }], target: i0.\u0275\u0275FactoryTarget.Directive }));
+/** @nocollapse */
+__publicField(_NgxPopperjsLooseDirective, "\u0275dir", i0.\u0275\u0275ngDeclareDirective({ minVersion: "14.0.0", version: "16.0.2", type: _NgxPopperjsLooseDirective, selector: "[popperLoose]", inputs: { popperLoose: "popperLoose", popperLoosePlacement: "popperLoosePlacement", popperLooseTrigger: "popperLooseTrigger" }, exportAs: ["popperLoose"], usesInheritance: true, ngImport: i0 }));
+let NgxPopperjsLooseDirective = _NgxPopperjsLooseDirective;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.2", ngImport: i0, type: NgxPopperjsLooseDirective, decorators: [{
+  type: import_core.Directive,
+  args: [{
+    selector: "[popperLoose]",
+    exportAs: "popperLoose"
+  }]
+}], ctorParameters: function() {
+  return [{ type: i0.ChangeDetectorRef }, { type: i0.ElementRef }, { type: i0.ViewContainerRef }, { type: void 0, decorators: [{
+    type: import_core.Inject,
+    args: [NGX_POPPERJS_DEFAULTS]
+  }] }];
+}, propDecorators: { popperLoose: [{
+  type: import_core.Input
+}], popperLoosePlacement: [{
+  type: import_core.Input
+}], popperLooseTrigger: [{
+  type: import_core.Input
+}] } });
+function provideNgxPopperjsOptions(config = {}) {
+  return [
+    { provide: NGX_POPPERJS_DEFAULTS, useValue: config }
+  ];
+}
+const _NgxPopperjsModule = class _NgxPopperjsModule {
+  static forRoot(popperBaseOptions) {
+    return {
+      ngModule: _NgxPopperjsModule,
+      providers: [
+        provideNgxPopperjsOptions(popperBaseOptions)
+      ]
+    };
+  }
+};
+/** @nocollapse */
+__publicField(_NgxPopperjsModule, "\u0275fac", i0.\u0275\u0275ngDeclareFactory({ minVersion: "12.0.0", version: "16.0.2", ngImport: i0, type: _NgxPopperjsModule, deps: [], target: i0.\u0275\u0275FactoryTarget.NgModule }));
+/** @nocollapse */
+__publicField(_NgxPopperjsModule, "\u0275mod", i0.\u0275\u0275ngDeclareNgModule({ minVersion: "14.0.0", version: "16.0.2", ngImport: i0, type: _NgxPopperjsModule, declarations: [
+  NgxPopperjsContentComponent,
+  NgxPopperjsDirective,
+  NgxPopperjsLooseDirective
+], imports: [import_common.CommonModule], exports: [
+  NgxPopperjsContentComponent,
+  NgxPopperjsDirective,
+  NgxPopperjsLooseDirective
+] }));
+/** @nocollapse */
+__publicField(_NgxPopperjsModule, "\u0275inj", i0.\u0275\u0275ngDeclareInjector({ minVersion: "12.0.0", version: "16.0.2", ngImport: i0, type: _NgxPopperjsModule, providers: [
+  provideNgxPopperjsOptions()
+], imports: [import_common.CommonModule] }));
+let NgxPopperjsModule = _NgxPopperjsModule;
+i0.\u0275\u0275ngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.2", ngImport: i0, type: NgxPopperjsModule, decorators: [{
+  type: import_core.NgModule,
+  args: [{
+    imports: [
+      import_common.CommonModule
+    ],
+    declarations: [
+      NgxPopperjsContentComponent,
+      NgxPopperjsDirective,
+      NgxPopperjsLooseDirective
+    ],
+    exports: [
+      NgxPopperjsContentComponent,
+      NgxPopperjsDirective,
+      NgxPopperjsLooseDirective
+    ],
+    providers: [
+      provideNgxPopperjsOptions()
+    ]
+  }]
+}] });

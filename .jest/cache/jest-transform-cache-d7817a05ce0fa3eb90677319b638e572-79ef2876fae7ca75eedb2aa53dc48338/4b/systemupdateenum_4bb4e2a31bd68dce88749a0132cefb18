@@ -1,0 +1,17 @@
+87d9adc3d910761e8aad2a96e2bec5f3
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SystemUpdateOperationType = exports.SystemUpdateStatus = void 0;
+var SystemUpdateStatus;
+(function (SystemUpdateStatus) {
+    SystemUpdateStatus["Available"] = "AVAILABLE";
+    SystemUpdateStatus["Unavailable"] = "UNAVAILABLE";
+    SystemUpdateStatus["RebootRequired"] = "REBOOT_REQUIRED";
+})(SystemUpdateStatus || (exports.SystemUpdateStatus = SystemUpdateStatus = {}));
+var SystemUpdateOperationType;
+(function (SystemUpdateOperationType) {
+    SystemUpdateOperationType["Upgrade"] = "upgrade";
+    SystemUpdateOperationType["Install"] = "install";
+    SystemUpdateOperationType["Delete"] = "delete";
+})(SystemUpdateOperationType || (exports.SystemUpdateOperationType = SystemUpdateOperationType = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL1VzZXJzL21hY2Jvb2sva2FycG92LXdvcmsvVHJ1ZU5BUy93ZWJ1aS9zcmMvYXBwL2VudW1zL3N5c3RlbS11cGRhdGUuZW51bS50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSxJQUFZLGtCQUlYO0FBSkQsV0FBWSxrQkFBa0I7SUFDNUIsNkNBQXVCLENBQUE7SUFDdkIsaURBQTJCLENBQUE7SUFDM0Isd0RBQWtDLENBQUE7QUFDcEMsQ0FBQyxFQUpXLGtCQUFrQixrQ0FBbEIsa0JBQWtCLFFBSTdCO0FBRUQsSUFBWSx5QkFJWDtBQUpELFdBQVkseUJBQXlCO0lBQ25DLGdEQUFtQixDQUFBO0lBQ25CLGdEQUFtQixDQUFBO0lBQ25CLDhDQUFpQixDQUFBO0FBQ25CLENBQUMsRUFKVyx5QkFBeUIseUNBQXpCLHlCQUF5QixRQUlwQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvVXNlcnMvbWFjYm9vay9rYXJwb3Ytd29yay9UcnVlTkFTL3dlYnVpL3NyYy9hcHAvZW51bXMvc3lzdGVtLXVwZGF0ZS5lbnVtLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBlbnVtIFN5c3RlbVVwZGF0ZVN0YXR1cyB7XG4gIEF2YWlsYWJsZSA9ICdBVkFJTEFCTEUnLFxuICBVbmF2YWlsYWJsZSA9ICdVTkFWQUlMQUJMRScsXG4gIFJlYm9vdFJlcXVpcmVkID0gJ1JFQk9PVF9SRVFVSVJFRCcsXG59XG5cbmV4cG9ydCBlbnVtIFN5c3RlbVVwZGF0ZU9wZXJhdGlvblR5cGUge1xuICBVcGdyYWRlID0gJ3VwZ3JhZGUnLFxuICBJbnN0YWxsID0gJ2luc3RhbGwnLFxuICBEZWxldGUgPSAnZGVsZXRlJyxcbn1cbiJdLCJ2ZXJzaW9uIjozfQ==
