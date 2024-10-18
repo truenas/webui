@@ -7,10 +7,10 @@ import {
   OnInit,
   output,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, Observable, of, take,
 } from 'rxjs';
@@ -44,6 +44,10 @@ import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.in
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import {
@@ -61,6 +65,15 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrls: ['./other-options-section.component.scss'],
   templateUrl: './other-options-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxFieldsetComponent,
+    IxInputComponent,
+    TranslateModule,
+    ReactiveFormsModule,
+    IxSelectComponent,
+    IxWarningComponent,
+  ],
 })
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   @Input() parent: Dataset;
@@ -109,6 +122,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     { label: '2', value: 2 },
     { label: '3', value: 3 },
   ]);
+
   recordsizeOptions$: Observable<Option[]>;
   caseSensitivityOptions$ = of(mapToOptions(datasetCaseSensitivityLabels, this.translate));
   specialSmallBlockSizeOptions$: Observable<Option[]>;
@@ -118,6 +132,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     { label: this.translate.instant('SMB/NFSv4'), value: DatasetAclType.Nfsv4 },
     { label: this.translate.instant('POSIX'), value: DatasetAclType.Posix },
   ]);
+
   aclModeOptions$ = of(mapToOptions(aclModeLabels, this.translate));
 
   private readonly defaultSyncOptions$ = of(mapToOptions(datasetSyncLabels, this.translate));
@@ -127,11 +142,13 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private defaultChecksumOptions$ = this.ws.call('pool.dataset.checksum_choices').pipe(
     choicesToOptions(),
   );
+
   private onOffOptions$ = of(mapToOptions(onOffLabels, this.translate));
   private defaultSnapdevOptions$ = of(mapToOptions(datasetSnapdevLabels, this.translate));
   private defaultRecordSizeOptions$ = this.ws.call('pool.dataset.recordsize_choices').pipe(
     singleArrayToOptions(),
   );
+
   private defaultSpecialSmallBlockSizeOptions$ = of(specialSmallBlockSizeOptions);
 
   readonly helptext = helptextDatasetForm;
@@ -218,6 +235,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
+      // eslint-disable-next-line sonarjs/sonar-prefer-optional-chain,@typescript-eslint/prefer-optional-chain
       if (!systemInfo.license || !systemInfo.license.features.includes(LicenseFeature.Dedup)) {
         return;
       }
@@ -466,9 +484,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         const recordsize = this.formatter.memorySizeParsing(recordsizeAsString);
         const recommended = this.formatter.memorySizeParsing(recommendedAsString);
 
-        this.hasRecordsizeWarning = recordsize && recommended
+        this.hasRecordsizeWarning = (recordsize
+          && recommended
           && recordsizeAsString !== inherit
-          && recordsize < recommended;
+          && recordsize < recommended);
+
         this.minimumRecommendedRecordsize = recommendedAsString;
 
         if (this.hasRecordsizeWarning) {

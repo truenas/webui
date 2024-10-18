@@ -62,6 +62,7 @@ export class CreateDatasetDialogComponent implements OnInit {
       Validators.pattern(nameValidatorRegex),
     ]],
   });
+
   parent: Dataset;
 
   constructor(

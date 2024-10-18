@@ -107,7 +107,7 @@ export class IxFormatterService {
     dec = false,
     allowedUnits?: 'bkmgtp' | 'kmgtp' | 'mgtp' | 'gtp' | 'tp' | 'p',
   ): { number: string; unit: string } {
-    let num = '0';
+    let num;
     let unit = '';
 
     // empty value is evaluated as zero

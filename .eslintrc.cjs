@@ -1,5 +1,6 @@
 const { rules: airbnbSharedRules } = require('eslint-config-airbnb-typescript/lib/shared');
 const { rules: airbnbVariableRules } = require('eslint-config-airbnb-base/rules/variables');
+const stylistic = require('@stylistic/eslint-plugin');
 
 module.exports = {
   "root": true,
@@ -27,7 +28,8 @@ module.exports = {
         "plugin:@typescript-eslint/strict-type-checked",
         "plugin:@typescript-eslint/stylistic-type-checked",
         "plugin:rxjs/recommended",
-        "plugin:sonarjs/recommended"
+        "plugin:sonarjs/recommended-legacy",
+        "plugin:@stylistic/disable-legacy"
       ],
       "plugins": [
         "rxjs",
@@ -38,12 +40,11 @@ module.exports = {
         "unused-imports",
         "sonarjs",
         "import",
+        "@stylistic"
       ],
       "rules": {
-        // Conflicts with ngx-translate-extract
-        "prefer-template": "off",
-
         // Consciously altered
+        "prefer-template": "off",
         "no-underscore-dangle": "off",
         "class-methods-use-this": "off",
         "import/prefer-default-export": "off",
@@ -145,6 +146,11 @@ module.exports = {
         "@typescript-eslint/no-confusing-void-expression": ["error", {
           ignoreArrowShorthand: true,
         }],
+        "@typescript-eslint/no-throw-literal": ["off"],
+        "@typescript-eslint/only-throw-error": ["error"],
+        "sonarjs/no-empty-test-file": ["off"],
+        "sonarjs/new-cap": ["off"],
+        "sonarjs/no-ignored-exceptions": ["off"],
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "no-restricted-syntax": ["error",
@@ -199,27 +205,53 @@ module.exports = {
         "default-case": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/no-unsafe-return": "off",
+        "sonarjs/no-misused-promises": "off",
+        "sonarjs/function-return-type": "off",
+        "@typescript-eslint/no-unnecessary-type-parameters": "off",
+        "sonarjs/os-command": "off",
+        "sonarjs/sonar-prefer-optional-chain": "off",
 
         // Other temporary disables
+        "sonarjs/prefer-nullish-coalescing": ["off"],
+        "sonarjs/deprecation": ["off"],
+        "@typescript-eslint/no-deprecated": ["off"],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
-        "sonarjs/cognitive-complexity": ["error", 40],
         "@typescript-eslint/no-base-to-string": ["off"],
         "@typescript-eslint/class-literal-property-style": ["off"],
         "@typescript-eslint/no-unnecessary-condition": ["off"],
         "@typescript-eslint/no-invalid-void-type": ["off"],
         "@typescript-eslint/no-dynamic-delete": ["off"],
         "@typescript-eslint/prefer-reduce-type-parameter": ["off"],
+        "sonarjs/no-selector-parameter": ["off"],
+        "sonarjs/concise-regex": ["off"],
+        "sonarjs/regex-complexity": ["off"],
+        "sonarjs/no-nested-functions": ["off"],
+        "sonarjs/sonar-prefer-regexp-exec": ["off"],
+        "@typescript-eslint/prefer-regexp-exec": ["off"],
+        "sonarjs/empty-string-repetition": ["off"],
+        "sonarjs/anchor-precedence": ["off"],
+        "sonarjs/single-char-in-character-classes": ["off"],
+        "sonarjs/duplicates-in-character-class": ["off"],
+        "sonarjs/slow-regex": ["off"],
+        "sonarjs/no-base-to-string": ["off"],
+        "sonarjs/link-with-target-blank": ["off"],
+        "sonarjs/array-callback-without-return": "off",
+        "sonarjs/no-nested-assignment": "off",
+        "sonarjs/reduce-initial-value": "off",
+        "sonarjs/use-type-alias": "off",
+        "sonarjs/no-dead-store": "off",
 
         // Other overwrites
+        ...(stylistic.configs.customize({
+          semi: true,
+          jsx: false,
+          braceStyle: '1tbs',
+          arrowParens: 'always',
+          quoteProps: 'as-needed'
+        })).rules,
+        "@stylistic/quotes": ["error", "single", { avoidEscape: true }],
         "@typescript-eslint/lines-between-class-members": "off",
-        "@typescript-eslint/indent": ["error", 2, {
-          ...airbnbSharedRules['@typescript-eslint/indent'][2],
-          ignoredNodes: [
-            ...airbnbSharedRules['@typescript-eslint/indent'][2]['ignoredNodes'],
-            "PropertyDefinition[decorators]",
-          ]
-        }],
         "@typescript-eslint/restrict-plus-operands": ["error", { allowAny: true }],
         "no-restricted-globals": [
           "error",
@@ -230,6 +262,12 @@ module.exports = {
           }
         ],
         "sonarjs/no-duplicate-string": ["off"],
+        "sonarjs/no-clear-text-protocols": ["off"],
+        "sonarjs/todo-tag": ["off"],
+        "sonarjs/no-hardcoded-ip": ["off"],
+        "sonarjs/no-hardcoded-credentials": ["off"],
+        "sonarjs/pseudo-random": ["off"],
+        "sonarjs/cognitive-complexity": ["error", 40],
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],
@@ -239,8 +277,6 @@ module.exports = {
         "@typescript-eslint/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
         "@typescript-eslint/no-inferrable-types": "error",
         "@typescript-eslint/ban-tslint-comment": "error",
-        "@typescript-eslint/member-delimiter-style": "error",
-        "@typescript-eslint/type-annotation-spacing": "error",
         "@typescript-eslint/ban-ts-comment": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
         "@typescript-eslint/consistent-type-assertions": ["error"],
@@ -259,13 +295,18 @@ module.exports = {
           ignoreRestSiblings: true,
         }],
         "id-denylist": ["error", "res"],
-        "@typescript-eslint/ban-types": ["error", {
-          extendDefaults: true,
-          types: {
-            UntypedFormBuilder: 'Prefer normal typed FormBuilder.',
-            SimpleChanges: 'Prefer typed IxSimpleChanges<this>.',
-          }
-        }],
+        "@typescript-eslint/no-empty-object-type": "error",
+        "@typescript-eslint/no-unsafe-function-type": "error",
+        "@typescript-eslint/no-wrapper-object-types": "error",
+        "@typescript-eslint/no-restricted-types": [
+          "error",
+          {
+            "types": {
+              UntypedFormBuilder: 'Prefer normal typed FormBuilder.',
+              SimpleChanges: 'Prefer typed IxSimpleChanges<this>.',
+            }
+          },
+        ],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],
         "unicorn/prefer-array-find": ["error"],
         "@angular-eslint/component-selector": ["error", {
@@ -319,7 +360,8 @@ module.exports = {
             "message": "Use alias 'app' to replace part '../' of the path."
           }],
         }],
-        "@shopify/typescript/prefer-singular-enums": "error",
+        "@shopify/typescript-prefer-singular-enums": "error",
+        "@shopify/typescript-prefer-pascal-case-enums": "error",
         "@shopify/prefer-early-return": ["error", { maximumStatements: 3 }],
         "import/no-default-export": "error",
         "@typescript-eslint/consistent-indexed-object-style": "error",

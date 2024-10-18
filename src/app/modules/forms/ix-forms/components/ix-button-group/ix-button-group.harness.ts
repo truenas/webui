@@ -11,7 +11,7 @@ export interface IxButtonGroupHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxButtonGroupHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-button-group';
+  static readonly hostSelector = 'ix-button-group';
 
   static with(options: IxButtonGroupHarnessFilters): HarnessPredicate<IxButtonGroupHarness> {
     return new HarnessPredicate(IxButtonGroupHarness, options)

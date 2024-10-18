@@ -1,16 +1,20 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EMPTY, Observable, of } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -23,13 +27,21 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DatasetQuotaAddFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
@@ -52,6 +64,22 @@ interface QuotaData {
   templateUrl: './dataset-quotas-list.component.html',
   styleUrls: ['./dataset-quotas-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    SearchInput1Component,
+    MatSlideToggle,
+    TestDirective,
+    RequiresRolesDirective,
+    MatButton,
+    TranslateModule,
+    IxTableComponent,
+    AsyncPipe,
+    IxTableHeadComponent,
+    IxTableEmptyDirective,
+    IxTableBodyComponent,
+    IxTablePagerComponent,
+  ],
 })
 export class DatasetQuotasListComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
@@ -117,7 +145,7 @@ export class DatasetQuotasListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('OQ % Used'),
       propertyName: 'obj_used',
-      getValue: (row) => {
+      getValue: (row: DatasetQuota) => {
         if (row.obj_used && row.obj_quota) {
           return `${Math.round(row.obj_used / row.obj_quota * 100) / 100}%`;
         }
@@ -129,19 +157,19 @@ export class DatasetQuotasListComponent implements OnInit {
         {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
+          onClick: (row: DatasetQuota) => this.doEdit(row),
         },
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          hidden: (row) => of(!(row.quota > 0 || row.obj_quota > 0)),
+          onClick: (row: DatasetQuota) => this.doDelete(row),
+          hidden: (row: DatasetQuota) => of(!(row.quota > 0 || row.obj_quota > 0)),
           requiredRoles: this.requiredRoles,
         },
       ],
     }),
   ], {
-    uniqueRowTag: (row) => `${this.helpTextKey}-quota-` + row.name + this.emptyValue + row.obj_quota,
+    uniqueRowTag: (row: DatasetQuota) => `${this.helpTextKey}-quota-` + row.name + this.emptyValue + row.obj_quota,
     ariaLabels: (row) => [row.name, this.translate.instant('Dataset Quota')],
   });
 

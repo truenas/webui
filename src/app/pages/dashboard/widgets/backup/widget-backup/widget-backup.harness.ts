@@ -2,7 +2,7 @@ import { ComponentHarness } from '@angular/cdk/testing';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 
 export class WidgetBackupHarness extends ComponentHarness {
-  static hostSelector = 'ix-widget-backup';
+  static readonly hostSelector = 'ix-widget-backup';
 
   async getHeader(): Promise<{ title: string; icon: string; message: string }> {
     const title = await this.locatorForOptional('.title h3')();

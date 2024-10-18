@@ -35,6 +35,7 @@ export class MegaProviderFormComponent extends BaseProviderFormComponent impleme
       this.cdr.detectChanges();
     });
   }
+
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,

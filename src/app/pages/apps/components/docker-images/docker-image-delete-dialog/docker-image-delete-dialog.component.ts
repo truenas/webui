@@ -50,6 +50,7 @@ export class DockerImageDeleteDialogComponent {
     confirm: [false, [Validators.requiredTrue]],
     force: [false],
   });
+
   isJobCompleted = false;
   bulkItems = new Map<string, BulkListItem<ContainerImage>>();
   hasErrors = false;
@@ -57,9 +58,11 @@ export class DockerImageDeleteDialogComponent {
   get successCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Success).length;
   }
+
   get failedCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Error).length;
   }
+
   readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<ContainerImage>>> = (_, entry) => entry.key;
 
   constructor(

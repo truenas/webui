@@ -69,7 +69,9 @@ export function processNetworkInterfaces(interfaces: NetworkInterface[]): Dashbo
             dashboardNetworkInterfaces[index].state.aliases = concatenatedAliases;
           }
 
-          dashboardNetworkInterfaces[index].state.vlans.forEach((vlan) => { vlan.interface = nic; });
+          dashboardNetworkInterfaces[index].state.vlans.forEach((vlan) => {
+            vlan.interface = nic;
+          });
           dashboardNetworkInterfaces[index].state.vlans = dashboardNetworkInterfaces[index].state.vlans.concat(
             dashboardNetworkInterfaces[nicKeys[nic] as number].state.vlans,
           );

@@ -1,34 +1,28 @@
 @if ((status$ | async); as status) {
   @switch (status) {
     @case (DockerStatus.Running) {
-      <div class="status-wrapper" [matTooltip]="statusDescription$ | async">
+      <div class="status-wrapper">
         <ix-icon name="mdi-check-circle" class="running"></ix-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
 
     @case (DockerStatus.Initializing) {
-      <div
-        class="status-wrapper"
-        [matTooltip]="statusDescription$ | async"
-      >
+      <div class="status-wrapper">
         <mat-spinner [diameter]="20"></mat-spinner>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
 
     @case (DockerStatus.Stopping) {
-      <div
-        class="status-wrapper"
-        [matTooltip]="statusDescription$ | async"
-      >
+      <div class="status-wrapper">
         <mat-spinner [diameter]="20"></mat-spinner>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
 
     @case (DockerStatus.Stopped) {
-      <div class="status-wrapper" [matTooltip]="statusDescription$ | async">
+      <div class="status-wrapper">
         <ix-icon name="stop_circle"></ix-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
@@ -42,14 +36,14 @@
     }
 
     @case (DockerStatus.Unconfigured) {
-      <div class="status-wrapper" [matTooltip]="statusDescription$ | async">
+      <div class="status-wrapper">
         <ix-icon name="settings"></ix-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
 
     @case (DockerStatus.Pending) {
-      <div class="status-wrapper" [matTooltip]="statusDescription$ | async">
+      <div class="status-wrapper">
         <ix-icon name="pending"></ix-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
