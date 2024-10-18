@@ -7,7 +7,7 @@ import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/co
 import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
-import { snapshotsRoutes } from 'app/pages/datasets/modules/snapshots/snapshots.routing';
+import { snapshotsRoutes } from 'app/pages/datasets/modules/snapshots/snapshots.routes';
 import { DatasetTrivialPermissionsComponent } from './modules/permissions/containers/dataset-trivial-permissions/dataset-trivial-permissions.component';
 
 const userQuotasData = {

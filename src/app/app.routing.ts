@@ -84,7 +84,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'datasets',
-        loadChildren: () => import('./pages/datasets/datasets.routing').then((module) => module.datasetRoutes),
+        loadChildren: () => import('./pages/datasets/datasets.routes').then((module) => module.datasetRoutes),
         data: { title: T('Datasets'), breadcrumb: T('Datasets') },
       },
       {
