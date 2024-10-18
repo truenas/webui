@@ -52,3 +52,8 @@ table td .mdc-icon-button {
   font-size: 14px;
   white-space: pre;
 }
+
+.cdk-overlay-pane .mat-bottom-sheet-container {
+  padding: 0;
+  transition: max-width ease-in 0.3s;
+}
