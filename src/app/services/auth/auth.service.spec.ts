@@ -103,7 +103,7 @@ describe('AuthService', () => {
 
       testScheduler.run(({ expectObservable }) => {
         expectObservable(obs$).toBe(
-          'a',
+          '(a|)',
           { a: LoginResult.Success },
         );
         expectObservable(spectator.service.isAuthenticated$).toBe(
@@ -117,10 +117,10 @@ describe('AuthService', () => {
       });
       expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
-        method: 'auth.login',
-        params: ['dummy', 'dummy'],
+        method: 'auth.login_ex',
+        params: [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
       }));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.me');
+      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',
@@ -148,10 +148,10 @@ describe('AuthService', () => {
       });
       expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
-        method: 'auth.login_with_token',
-        params: ['DUMMY_TOKEN'],
+        method: 'auth.login_ex',
+        params: [{ mechanism: 'TOKEN_PLAIN', token: 'DUMMY_TOKEN' }],
       }));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.me');
+      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',
