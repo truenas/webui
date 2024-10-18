@@ -2436,6 +2436,7 @@
   "This action will set all dataset quotas for the removed or invalid groups to 0, virtually removing any dataset quota entires for such groups. Are you sure you want to proceed?": "",
   "This action will set all dataset quotas for the removed or invalid users to 0, virtually removing any dataset quota entires for such users. Are you sure you want to proceed?": "",
   "This controls how the SMB share reads and writes data. Leave unset for the share to behave like a normal SMB share and set for the share to behave like the deprecated Apple Filing Protocol (AFP). This should only be set when this share originated as an AFP sharing configuration. This is not required for pure SMB shares or MacOS SMB clients.": "",
+  "This dataset cannot be locked": "",
   "This dataset has children with shares": "",
   "This dataset is used by the system": "",
   "This dataset is used by: {apps}": "",

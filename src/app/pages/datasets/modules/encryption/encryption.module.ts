@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -40,6 +41,7 @@ import { LockDatasetDialogComponent } from './components/lock-dataset-dialog/loc
     MatButtonModule,
     ReactiveFormsModule,
     MatDialogModule,
+    MatTooltipModule,
     IxIconComponent,
     IxCheckboxComponent,
     IxRadioGroupComponent,

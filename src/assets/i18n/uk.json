@@ -1649,6 +1649,7 @@
   "These services depend on pool {name} and will be disrupted if the pool is detached:": "",
   "These unknown processes are using the pool:": "",
   "Thick": "",
+  "This dataset cannot be locked": "",
   "This dataset has children with shares": "",
   "This dataset is used by the system": "",
   "This dataset is used by: {apps}": "",

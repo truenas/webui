@@ -3952,6 +3952,7 @@
   "This certificate's public key verifies digital signatures used for a non-repudiation service.": "",
   "This change can interrupt connectivity and must be tested before making permanent. ": "",
   "This controls how the SMB share reads and writes data. Leave unset for the share to behave like a normal SMB share and set for the share to behave like the deprecated Apple Filing Protocol (AFP). This should only be set when this share originated as an AFP sharing configuration. This is not required for pure SMB shares or MacOS SMB clients.": "",
+  "This dataset cannot be locked": "",
   "This dataset has children with shares": "",
   "This dataset is used by the system": "",
   "This dataset is used by: {apps}": "",
