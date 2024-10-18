@@ -5,12 +5,16 @@ import {
   defer, EMPTY, finalize, MonoTypeOperatorFunction, Observable,
 } from 'rxjs';
 import { AppLoaderComponent } from 'app/modules/loader/components/app-loader/app-loader.component';
+import { FocusService } from 'app/services/focus.service';
 
 @Injectable({ providedIn: 'root' })
 export class AppLoaderService {
   dialogRef: MatDialogRef<AppLoaderComponent>;
 
-  constructor(private matDialog: MatDialog) { }
+  constructor(
+    private matDialog: MatDialog,
+    private focusService: FocusService,
+  ) { }
 
   /**
    * Opens loader when observable (request) starts and closes when it ends.
@@ -29,14 +33,18 @@ export class AppLoaderService {
       return EMPTY;
     }
 
-    this.dialogRef = this.matDialog.open(AppLoaderComponent, { disableClose: true });
-    this.dialogRef.updateSize('200px', '200px');
+    this.dialogRef = this.matDialog.open(AppLoaderComponent, {
+      disableClose: false,
+      width: '200px',
+      height: '200px',
+    });
     this.dialogRef.componentInstance.title = title;
     return this.dialogRef.afterClosed();
   }
 
   close(): void {
     if (this.dialogRef) {
+      this.tryToRestoreFocusToThePreviousDialog();
       this.dialogRef.close();
       this.dialogRef = undefined;
     }
@@ -48,5 +56,14 @@ export class AppLoaderService {
     }
 
     this.dialogRef.componentInstance.title = title;
+  }
+
+  private tryToRestoreFocusToThePreviousDialog(): void {
+    const previousDialogs = this.matDialog.openDialogs.filter((dialog) => dialog.id !== this.dialogRef.id);
+    const previousDialogId = previousDialogs[previousDialogs.length - 1]?.id;
+
+    if (previousDialogId) {
+      this.focusService.focusElementById(previousDialogId);
+    }
   }
 }
