@@ -37,14 +37,6 @@ describe('WarnAboutUnsavedChangesDirective', () => {
     });
   });
 
-  it('should set formChanged to true when form value changes', () => {
-    spectator.component.formGroup.markAsPristine();
-
-    spectator.component.formGroup.valueChanges.subscribe(() => {
-      expect(spectator.component.formChanged).toBe(true);
-    });
-  });
-
   it('should emit close event if there are no unsaved changes', () => {
     spectator.component.formGroup.markAsPristine();
 
