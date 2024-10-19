@@ -1981,6 +1981,7 @@
   "If the <i>Hex key</i> type is chosen, an encryption key will be auto-generated.": "",
   "If the IPMI out-of-band management interface is on a different VLAN from the management network, enter the IPMI VLAN.": "",
   "If the destination system has  snapshots but they do not have any data in common with the source  snapshots, destroy all destination snapshots and do a full replication.  <b>Warning:</b> enabling this option can cause data loss or excessive  data transfer if the replication is misconfigured.": "",
+  "If you can't use QR code, use this text code instead": "",
   "If {vmName} is still running, the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop After Timeout</i> option to stop the VM.": "",
   "Ignore Builtin": "",
   "Ignore List": "",
