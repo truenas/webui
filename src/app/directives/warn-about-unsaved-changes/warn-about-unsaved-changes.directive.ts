@@ -72,7 +72,7 @@ export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
   }
 
   private emitClose(response?: T): void {
-    this.slideInRef.slideInClosed$.next(response);
-    this.slideInRef.slideInClosed$.complete();
+    this.slideInRef.slideInClosed$?.next(response);
+    this.slideInRef.slideInClosed$?.complete();
   }
 }
