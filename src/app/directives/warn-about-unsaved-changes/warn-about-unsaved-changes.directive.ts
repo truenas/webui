@@ -5,7 +5,7 @@ import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 
@@ -27,19 +27,16 @@ export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
 
   ngOnInit(): void {
     this.overrideSlideInClose();
+    this.trackFormChanges();
   }
 
   @HostListener('ngSubmit')
   onFormSubmit(): void {
     this.formSubmitted = true;
-
-    if (this.formGroup.status === 'INVALID') {
-      this.formSubmitted = false;
-    }
   }
 
   closeWithConfirmation(response?: T): Observable<boolean> {
-    if (this.formGroup.pristine || this.formSubmitted) {
+    if (this.formGroup.pristine || (this.formSubmitted && !this.formGroup.invalid)) {
       this.emitClose(response);
       return of(true);
     }
@@ -52,6 +49,14 @@ export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
         return of(shouldClose);
       }),
     );
+  }
+
+  private trackFormChanges(): void {
+    this.formGroup.valueChanges.pipe(
+      filter(() => !this.formGroup.pristine && this.formSubmitted),
+      tap(() => this.formSubmitted = false),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   private overrideSlideInClose(): void {
