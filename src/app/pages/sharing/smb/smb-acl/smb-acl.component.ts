@@ -40,14 +40,16 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+type NameOrId = string | number | null;
+
 interface FormAclEntry {
   ae_who_sid: string;
   ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | NfsAclTag.Both | null;
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
-  user: string | number | null;
-  group: string | number | null;
-  both: string | number | null;
+  user: NameOrId;
+  group: NameOrId;
+  both: NameOrId;
 }
 
 @UntilDestroy()

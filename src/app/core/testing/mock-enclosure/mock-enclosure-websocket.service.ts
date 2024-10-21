@@ -48,8 +48,9 @@ export class MockEnclosureWebsocketService extends WebSocketService {
         return this.mockStorage.webuiDashboardEnclosureResponse() ?? undefined;
       case 'truenas.is_ix_hardware':
         return true;
+      default:
+        return undefined;
     }
-    return undefined;
   }
 
   private postCallOverride<M extends ApiCallMethod>(method: M, response: ApiCallResponse<M>): ApiCallResponse<M> {
@@ -57,8 +58,8 @@ export class MockEnclosureWebsocketService extends WebSocketService {
       case 'webui.main.dashboard.sys_info':
       case 'system.info':
         return this.mockStorage.enhanceSystemInfoResponse(response as SystemInfo);
+      default:
+        return undefined;
     }
-
-    return undefined;
   }
 }
