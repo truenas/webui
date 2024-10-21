@@ -106,6 +106,7 @@ export class PortalFormComponent implements OnInit {
       value: IscsiAuthMethod.ChapMutual,
     },
   ]);
+
   readonly authgroupOptions$ = this.iscsiService.getAuth().pipe(
     map((auth) => {
       return auth.map((item) => ({
@@ -114,6 +115,7 @@ export class PortalFormComponent implements OnInit {
       }));
     }),
   );
+
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
 
   readonly requiredRoles = [

@@ -1,19 +1,31 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import {
+  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
+} from '@angular/material/card';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { maxBy } from 'lodash-es';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { forkJoin, Subject } from 'rxjs';
 import {
   map, take, switchMap, tap,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { datasetCapacityManagementElements } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.elements';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
+import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -25,6 +37,22 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './dataset-capacity-management-card.component.html',
   styleUrls: ['./dataset-capacity-management-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardTitle,
+    MatCardHeader,
+    TranslateModule,
+    MatButton,
+    RequiresRolesDirective,
+    TestDirective,
+    MatCardContent,
+    SpaceManagementChartComponent,
+    FileSizePipe,
+    RouterLink,
+    NgxSkeletonLoaderModule,
+    UiSearchDirective,
+  ],
 })
 export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit {
   @Input() dataset: DatasetDetails;

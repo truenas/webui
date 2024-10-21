@@ -103,11 +103,13 @@ export class ApplicationsService {
     const diff = Math.round((Number(new Date()) - Number(date)) / 1000);
     const day = 60 * 60 * 24;
 
-    if (diff < day) { return this.translate.instant('Last 24 hours'); }
-    if (diff < day * 3) { return this.translate.instant('Last 3 days'); }
-    if (diff < day * 14) { return this.translate.instant('Last week'); }
-    if (diff < day * 60) { return this.translate.instant('Last month'); }
-    return this.translate.instant('Long time ago');
+    switch (true) {
+      case diff < day: return this.translate.instant('Last 24 hours');
+      case diff < day * 3: return this.translate.instant('Last 3 days');
+      case diff < day * 14: return this.translate.instant('Last week');
+      case diff < day * 60: return this.translate.instant('Last month');
+      default: return this.translate.instant('Long time ago');
+    }
   }
 
   private getAppsFetchCall(

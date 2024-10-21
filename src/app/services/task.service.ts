@@ -110,6 +110,7 @@ export class TaskService {
     { label: '23:45:00', value: '23:45' },
     { label: '23:59:00', value: '23:59' },
   ];
+
   protected cronOptions: CronOptions = {
     verbose: true,
     locale: this.language.currentLanguage,

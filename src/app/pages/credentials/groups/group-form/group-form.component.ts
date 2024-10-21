@@ -63,9 +63,11 @@ export class GroupFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingGroup;
   }
+
   get title(): string {
     return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
   }
+
   isFormLoading = false;
 
   privilegesList: Privilege[];

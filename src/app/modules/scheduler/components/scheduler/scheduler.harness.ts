@@ -11,7 +11,7 @@ export interface SchedulerFilters extends SelectHarnessFilters {
 }
 
 export class SchedulerHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-scheduler';
+  static readonly hostSelector = 'ix-scheduler';
 
   static with(options: SchedulerFilters): HarnessPredicate<SchedulerHarness> {
     return new HarnessPredicate(SchedulerHarness, options)

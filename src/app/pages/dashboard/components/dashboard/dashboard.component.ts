@@ -88,6 +88,7 @@ export class DashboardComponent implements OnInit {
     key: 'dashboardConfigure',
     message: this.translate.instant('New widgets and layouts.'),
   };
+
   readonly customLayout = computed(() => {
     return !isEqual(this.renderedGroups(), getDefaultWidgets(this.isHaLicensed()));
   });

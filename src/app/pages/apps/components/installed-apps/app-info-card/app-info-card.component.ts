@@ -84,6 +84,7 @@ export class AppInfoCardComponent {
     this.isRollbackPossible.set(false);
     this.updateRollbackSetup(app.name);
   }, { allowSignalWrites: true });
+
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
     return ['/apps', 'available', app.metadata.train, app.id];
@@ -157,7 +158,7 @@ export class AppInfoCardComponent {
       title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
       secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant('Remove iX Volumes'),
+      secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
     })
       .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
       .subscribe(({ secondaryCheckbox }) => this.executeDelete(name, secondaryCheckbox));

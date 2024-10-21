@@ -37,6 +37,7 @@ export class StorjProviderFormComponent extends BaseProviderFormComponent implem
       this.cdr.detectChanges();
     });
   }
+
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,

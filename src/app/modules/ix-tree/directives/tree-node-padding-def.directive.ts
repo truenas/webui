@@ -12,6 +12,7 @@ export class TreeNodePaddingDirective<T> extends CdkTreeNodePadding<T> {
   override get level(): number {
     return this._level;
   }
+
   override set level(value: number) {
     this._setLevelInput(value);
   }
@@ -20,6 +21,7 @@ export class TreeNodePaddingDirective<T> extends CdkTreeNodePadding<T> {
   override get indent(): number | string {
     return this._indent;
   }
+
   override set indent(indent: number | string) {
     this._setIndentInput(indent);
   }

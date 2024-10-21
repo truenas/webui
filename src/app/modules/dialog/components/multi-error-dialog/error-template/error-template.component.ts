@@ -57,10 +57,6 @@ export class ErrorTemplateComponent {
 
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
-      let errMsgHeight = messageWrapper.offsetHeight - 21;
-      if (errMsgHeight > 63) {
-        errMsgHeight = 63;
-      }
       messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
       btPanel.setAttribute('style', 'width: 750px; max-height: calc(80vh - 240px)');
     } else {

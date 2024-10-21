@@ -28,10 +28,10 @@ const commonSchemaTypes = [
   ChartSchemaType.Ipaddr,
   ChartSchemaType.Uri,
   ChartSchemaType.Text,
-];
+] as const;
 
-export function isCommonSchemaType(type: ChartSchemaType): boolean {
-  return commonSchemaTypes.includes(type);
+export function isCommonSchemaType(type: ChartSchemaType): type is typeof commonSchemaTypes[number] {
+  return (commonSchemaTypes as unknown as ChartSchemaType[]).includes(type);
 }
 
 export function buildCommonSchemaBase(payload: Partial<CommonSchemaTransform>): CommonSchemaBase {
@@ -64,7 +64,9 @@ export function transformIntSchemaType(
 ): DynamicFormSchemaInput | DynamicFormSchemaEnum | DynamicFormSchemaSelect {
   const { schema } = payload;
 
-  if (schema.enum) { return transformEnumSchemaType(payload); }
+  if (schema.enum) {
+    return transformEnumSchemaType(payload);
+  }
 
   const inputSchema: DynamicFormSchemaInput = {
     ...buildCommonSchemaBase(payload),
@@ -109,7 +111,9 @@ export function transformStringSchemaType(
 ): DynamicFormSchemaInput | DynamicFormSchemaEnum | DynamicFormSchemaSelect {
   const { schema } = payload;
 
-  if (schema.enum) { return transformEnumSchemaType(payload); }
+  if (schema.enum) {
+    return transformEnumSchemaType(payload);
+  }
 
   const inputSchema: DynamicFormSchemaInput = {
     ...buildCommonSchemaBase(payload),

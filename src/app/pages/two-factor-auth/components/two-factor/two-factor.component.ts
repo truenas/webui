@@ -107,6 +107,13 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
+  getProvisioningUriSecret(uri: string): string {
+    const url = new URL(uri);
+    const params = new URLSearchParams(url.search);
+
+    return params.get('secret');
+  }
+
   private handleError(error: WebSocketError): Observable<boolean> {
     this.toggleLoading(false);
 

@@ -30,7 +30,7 @@ describe('ValidationService', () => {
     formGroup.get(value1).setValue(0);
     formGroup.get(value2).setValue(0);
     formGroup.updateValueAndValidity();
-    // expect(formGroup.valid).toBeFalsy();
+
     expect(formGroup.get(value1).errors).toEqual({
       greaterThan: { message: 'Greater than error' },
     });

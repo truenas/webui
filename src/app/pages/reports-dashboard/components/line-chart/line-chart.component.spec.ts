@@ -51,7 +51,10 @@ describe('LineChartComponent', () => {
 
   describe('axisLabelFormatter', () => {
     it('returns default formatted value', () => {
+      jest.spyOn(console, 'warn').mockImplementation();
+
       expect(spectator.component.axisLabelFormatter(500000)).toBe('500k');
+      expect(console.warn).toHaveBeenCalled();
     });
 
     it('returns formatted value when labelY is set', () => {

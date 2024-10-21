@@ -125,6 +125,7 @@ export class ExtentFormComponent implements OnInit {
       return sortBy(options, ['label']);
     }),
   );
+
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
   constructor(

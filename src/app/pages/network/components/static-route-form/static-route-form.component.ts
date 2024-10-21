@@ -51,9 +51,11 @@ export class StaticRouteFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingRoute;
   }
+
   get title(): string {
     return this.isNew ? this.translate.instant('Add Static Route') : this.translate.instant('Edit Static Route');
   }
+
   isFormLoading = false;
 
   form = this.fb.group({

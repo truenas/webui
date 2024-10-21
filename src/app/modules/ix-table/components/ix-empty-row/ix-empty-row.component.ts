@@ -6,6 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -79,6 +80,8 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
         case EmptyType.NoSearchResults:
           icon = iconMarker('mdi-magnify-scan');
           break;
+        default:
+          assertUnreachable(this.conf.type);
       }
     }
     return icon;

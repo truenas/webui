@@ -81,7 +81,7 @@ describe('GlobalSearchSectionsProvider', () => {
 
   it('should generate help section results based on search term and missing app version', () => {
     const searchTerm = 'test';
-    const results = spectator.service.getHelpSectionResults(searchTerm, undefined);
+    const results = spectator.service.getHelpSectionResults(searchTerm);
 
     expect(results).toEqual([{
       hierarchy: ['Search Documentation for «{value}»'],

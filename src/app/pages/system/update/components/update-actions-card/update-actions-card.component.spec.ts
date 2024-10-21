@@ -96,7 +96,7 @@ describe('UpdateActionsCardComponent', () => {
     });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      message: 'The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?',
+      message: 'The system will restart and be briefly unavailable while applying updates. Apply updates and restart?',
       title: 'Apply Pending Updates',
     });
 
@@ -126,7 +126,7 @@ describe('UpdateActionsCardComponent', () => {
       hideCheckbox: true,
       message: 'Continue with download?',
       secondaryCheckbox: true,
-      secondaryCheckboxText: 'Apply updates and reboot system after downloading.',
+      secondaryCheckboxText: 'Apply updates and restart system after downloading.',
       title: 'Download Update',
     });
 

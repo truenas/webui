@@ -130,8 +130,12 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       // replace unix timestamp in first column with date
       const convertedDate = utcToZonedTime(row[0] * 1000, this.timezone);
 
-      if (index === 0) { this.lastMinDate = convertedDate.getTime(); }
-      if (index === rowData.length - 1) { this.lastMaxDate = convertedDate.getTime(); }
+      if (index === 0) {
+        this.lastMinDate = convertedDate.getTime();
+      }
+      if (index === rowData.length - 1) {
+        this.lastMaxDate = convertedDate.getTime();
+      }
 
       return [convertedDate, ...row.slice(1)];
     });
@@ -169,10 +173,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       case label.toLowerCase().includes('bits'):
         units = 'bits';
         break;
-    }
-
-    if (typeof units === 'undefined') {
-      console.warn('Could not infer units from ' + this.labelY);
+      default:
+        console.warn('Could not infer units from ' + this.labelY);
     }
 
     return units;
@@ -200,9 +202,13 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean, axis = false): Conversion {
     const day = 60 * 60 * 24;
-    let result: Conversion = { value };
-    if (!fixed) { fixed = -1; }
-    if (typeof value !== 'number') { return value; }
+    let result: Conversion;
+    if (!fixed) {
+      fixed = -1;
+    }
+    if (typeof value !== 'number') {
+      return value;
+    }
 
     switch (units.toLowerCase()) {
       case 'seconds':
@@ -244,7 +250,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   convertByKilo(value: number): Conversion {
-    if (typeof value !== 'number') { return value; }
+    if (typeof value !== 'number') {
+      return value;
+    }
+
     let newValue = value;
     let suffix = '';
 
@@ -307,7 +316,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   legendFormatter = (legend: dygraphs.LegendData): string => {
     const clone = { ...legend, chartId: this.chartId } as LegendDataWithStackedTotalHtml;
     clone.series.forEach((item: dygraphs.SeriesLegendData, index: number): void => {
-      if (!item.y) { return; }
+      if (!item.y) {
+        return;
+      }
       if (this.report.name === ReportingGraphName.NetworkInterface) {
         clone.series[index].yHTML = buildNormalizedFileSize(item.y * 1000, 'b', 10) + '/s';
       } else {

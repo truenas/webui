@@ -29,8 +29,10 @@ export class ProductImageComponent {
   @HostBinding('class.ix-logo') get isIxLogo(): boolean {
     return this.productImage().includes('ix-original.svg');
   }
+
   @HostBinding('class.truenas')
   isEnterprise = input.required<boolean>();
+
   systemProduct = input.required<string>();
   hasEnclosureSupport = input.required<boolean>();
   isHaLicensed = input.required<boolean>();
@@ -45,6 +47,7 @@ export class ProductImageComponent {
     }
     return getProductEnclosure(this.systemProduct());
   });
+
   isUnsupportedHardware = computed(() => {
     const isEnterprise = this.isEnterprise();
     const isIxHardware = this.isIxHardware();

@@ -42,6 +42,7 @@ export class PcloudProviderFormComponent extends BaseProviderFormComponent imple
       this.oauthComponent.form.patchValue(values);
     });
   }
+
   constructor(
     private formBuilder: FormBuilder,
   ) {
