@@ -4,15 +4,13 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 </div>
-<div mat-dialog-content>
-  <form [formGroup]="form">
-    <ix-input
-      formControlName="name"
-      [label]="'Name' | translate"
-      [required]="true"
-    ></ix-input>
-  </form>
-</div>
+<form [formGroup]="form">
+  <ix-input
+    formControlName="name"
+    [label]="'Name' | translate"
+    [required]="true"
+  ></ix-input>
+</form>
 <ix-form-actions mat-dialog-actions class="form-actions">
   <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
   <button

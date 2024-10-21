@@ -1,30 +1,30 @@
 <h1 matDialogTitle>{{ 'Manual S.M.A.R.T. Test' | translate }}</h1>
 @if (!hasStartedTests) {
-  <form
-    class="ix-form-container"
-    [formGroup]="form"
-    (submit)="onSubmit()"
-  >
-    <div class="disks-list">
-      @if (supportedDisks.length) {
+<form
+  class="ix-form-container"
+  [formGroup]="form"
+  (submit)="onSubmit()"
+>
+  <div class="disks-list">
+    @if (supportedDisks.length) {
         <div class="prompt">{{ 'Run manual test on disks:' }}</div>
-        <ul class="disks">
-          @for (disk of supportedDisks; track disk) {
+      <ul class="disks">
+        @for (disk of supportedDisks; track disk) {
+          <li>{{ disk.name }} ({{ disk.serial }})</li>
+        }
+      </ul>
+    }
+    @if (unsupportedDisks.length) {
+      <div class="prompt">
+        {{ 'These disks do not support S.M.A.R.T. tests:' | translate }}
+      </div>
+      <ul class="disks">
+        @for (disk of unsupportedDisks; track disk) {
             <li>{{ disk.name }} ({{ disk.serial }})</li>
-          }
-        </ul>
-      }
-      @if (unsupportedDisks.length) {
-        <div class="prompt">
-          {{ 'These disks do not support S.M.A.R.T. tests:' | translate }}
-        </div>
-        <ul class="disks">
-          @for (disk of unsupportedDisks; track disk) {
-            <li>{{ disk.name }} ({{ disk.serial }})</li>
-          }
-        </ul>
-      }
-    </div>
+        }
+      </ul>
+    }
+  </div>
 
     <ix-select
       formControlName="type"
@@ -88,7 +88,7 @@
     <ix-form-actions>
       <button mat-button type="button" ixTest="close" [matDialogClose]="true">
         {{ 'Close' | translate }}
-      </button>
-    </ix-form-actions>
-  </div>
+</button>
+  </ix-form-actions>
+</div>
 }
