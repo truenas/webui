@@ -12,7 +12,8 @@
 
   &::ng-deep {
     ix-missing-access-wrapper {
-      width: 100%;
+      display: block;
+      opacity: 0.6;
     }
   }
 }
