@@ -23,6 +23,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -51,6 +52,7 @@ import { WebSocketService } from 'app/services/ws.service';
     QrViewerComponent,
     TranslateModule,
     AsyncPipe,
+    CopyButtonComponent,
   ],
 })
 export class TwoFactorComponent implements OnInit, OnDestroy {
