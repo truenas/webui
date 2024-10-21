@@ -130,14 +130,6 @@ export class ReportComponent implements OnInit, OnChanges {
     return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
   }
 
-  get zoomInDisabled(): boolean {
-    return this.zoomLevelIndex >= this.zoomLevelMax;
-  }
-
-  get zoomOutDisabled(): boolean {
-    return this.zoomLevelIndex <= this.zoomLevelMin;
-  }
-
   get currentZoomLevel(): ReportZoomLevel {
     return this.zoomLevels[this.zoomLevelIndex].timespan;
   }

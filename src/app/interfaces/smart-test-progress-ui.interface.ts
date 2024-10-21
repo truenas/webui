@@ -7,6 +7,6 @@ export interface SmartTestProgressUi {
   wsError: unknown;
   progressPercentage: number;
   finished: boolean;
-  esimatedEnd: ApiTimestamp;
+  estimatedEnd: ApiTimestamp;
   type: SmartTestType;
 }

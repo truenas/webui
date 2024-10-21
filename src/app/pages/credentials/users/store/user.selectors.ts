@@ -4,10 +4,6 @@ import { adapter, UsersState } from 'app/pages/credentials/users/store/user.redu
 export const userStateKey = 'users';
 export const selectUserState = createFeatureSelector<UsersState>(userStateKey);
 
-export interface UserSlice {
-  [userStateKey]: UsersState;
-}
-
 const { selectAll, selectTotal } = adapter.getSelectors();
 
 export const selectUsers = createSelector(

@@ -62,9 +62,6 @@ export interface ApiJobDirectory {
   'boot.replace': { params: [oldDisk: string, newDisk: string]; response: void };
   'boot.scrub': { params: void; response: void };
 
-  // Boot Environment
-  'bootenv.delete': { params: [string]; response: boolean };
-
   // Catalog
   'catalog.sync': { params: [label: string]; response: void };
 

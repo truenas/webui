@@ -11,7 +11,7 @@ export const helptextSystemSupport = {
 
     secondary_contact: T('Secondary Contact'),
 
-    dialog_mesage: T('Successfully saved proactive support settings.'),
+    dialog_message: T('Successfully saved proactive support settings.'),
     dialog_unavailable_title: T('Warning'),
     dialog_unavailable_warning: T('Proactive support settings is not available.'),
   },
