@@ -80,8 +80,6 @@ export class ManualTestDialogComponent {
 
   selectedDisksWithSmartSupport: (Disk & { error: string })[] = [];
   selectedDisksWithoutSmartSupport: Disk[] = [];
-  endedTests = false;
-  progressTotalPercent = 0;
 
   protected readonly Role = Role;
 

@@ -32,7 +32,6 @@ export class SpaceManagementChartComponent {
   readonly dataset = input.required<DatasetDetails>();
 
   swatchColors: SwatchColors;
-  filteredData: DiskSpace[];
   chartOptions: ChartOptions<'doughnut'> = {
     plugins: {
       tooltip: {

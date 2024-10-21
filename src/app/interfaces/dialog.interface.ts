@@ -19,3 +19,10 @@ export interface DialogWithSecondaryCheckboxResult {
   confirmed: boolean;
   secondaryCheckbox: boolean;
 }
+
+export interface FullScreenDialogOptions {
+  title: string;
+  message: string;
+  showClose: boolean;
+  pre: boolean;
+}

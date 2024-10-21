@@ -19,11 +19,11 @@ export const helptextSystemUpdate = {
   },
 
   rebootAfterManualUpdate: {
-    placeholder: T('Reboot After Update'),
-    tooltip: T('Automatically reboot the system after the update\
+    placeholder: T('Restart After Update'),
+    tooltip: T('Automatically restart the system after the update\
  is applied.'),
 
-    manual_reboot_msg: T('Update successful. Please reboot for the update to take effect. Reboot now?'),
+    manual_reboot_msg: T('Update successful. Please restart for the update to take effect. Restart now?'),
   },
 
   manual_update_action: T('Manual Update'),
@@ -51,6 +51,6 @@ export const helptextSystemUpdate = {
   ha_download_msg: T('Upgrades both controllers. Files are downloaded to the Active Controller\
  and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.\
  Continue with download?'),
-  non_ha_confirm_msg: T('Apply updates and reboot system after downloading.'),
+  non_ha_confirm_msg: T('Apply updates and restart system after downloading.'),
   ha_confirm_msg: T('Check the box for full upgrade. Leave unchecked to download only.'),
 };

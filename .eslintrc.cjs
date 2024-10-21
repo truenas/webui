@@ -79,7 +79,7 @@ module.exports = {
             "order": "asc",
             "caseInsensitive": false
           }
-         }],
+        }],
         "import/no-duplicates": ["error", {"considerQueryString": true}],
         "import/extensions": ["error", "ignorePackages", {
           "js": "never",
@@ -151,6 +151,16 @@ module.exports = {
         "sonarjs/no-empty-test-file": ["off"],
         "sonarjs/new-cap": ["off"],
         "sonarjs/no-ignored-exceptions": ["off"],
+        "sonarjs/array-callback-without-return": "off",
+        "sonarjs/os-command": "off",
+        "sonarjs/sonar-prefer-optional-chain": "off",
+        "@typescript-eslint/member-ordering": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        "sonarjs/no-misused-promises": "off",
+        "sonarjs/function-return-type": "off",
+        "@typescript-eslint/no-unnecessary-type-parameters": "off",
+        "no-multi-str": "off",
+        "@typescript-eslint/prefer-reduce-type-parameter": ["off"],
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "no-restricted-syntax": ["error",
@@ -189,27 +199,7 @@ module.exports = {
           },
         ],
         "no-param-reassign": "off",
-        "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
-        "no-multi-str": "off",
-        "no-mixed-operators": ["error", {
-          groups: [
-            // TODO: Some operators from default config not implemented.
-            ["&", "|", "^", "~", "<<", ">>", ">>>"],
-            ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
-            ["&&", "||"],
-            ["in", "instanceof"]
-          ],
-          allowSamePrecedence: true
-        }],
-        "default-case": "off",
-        "@typescript-eslint/member-ordering": "off",
-        "@typescript-eslint/no-unsafe-return": "off",
-        "sonarjs/no-misused-promises": "off",
-        "sonarjs/function-return-type": "off",
-        "@typescript-eslint/no-unnecessary-type-parameters": "off",
-        "sonarjs/os-command": "off",
-        "sonarjs/sonar-prefer-optional-chain": "off",
 
         // Other temporary disables
         "sonarjs/prefer-nullish-coalescing": ["off"],
@@ -222,7 +212,6 @@ module.exports = {
         "@typescript-eslint/no-unnecessary-condition": ["off"],
         "@typescript-eslint/no-invalid-void-type": ["off"],
         "@typescript-eslint/no-dynamic-delete": ["off"],
-        "@typescript-eslint/prefer-reduce-type-parameter": ["off"],
         "sonarjs/no-selector-parameter": ["off"],
         "sonarjs/concise-regex": ["off"],
         "sonarjs/regex-complexity": ["off"],
@@ -236,11 +225,7 @@ module.exports = {
         "sonarjs/slow-regex": ["off"],
         "sonarjs/no-base-to-string": ["off"],
         "sonarjs/link-with-target-blank": ["off"],
-        "sonarjs/array-callback-without-return": "off",
-        "sonarjs/no-nested-assignment": "off",
         "sonarjs/reduce-initial-value": "off",
-        "sonarjs/use-type-alias": "off",
-        "sonarjs/no-dead-store": "off",
 
         // Other overwrites
         ...(stylistic.configs.customize({
@@ -307,7 +292,7 @@ module.exports = {
             }
           },
         ],
-        "unicorn/filename-case": ["error", { case: "kebabCase"}],
+        "unicorn/filename-case": ["error", { case: "kebabCase" }],
         "unicorn/prefer-array-find": ["error"],
         "@angular-eslint/component-selector": ["error", {
           "type": "element",
@@ -356,16 +341,18 @@ module.exports = {
             }
           ],
           "patterns": [{
-            "group": [ "../**"],
+            "group": ["../**"],
             "message": "Use alias 'app' to replace part '../' of the path."
           }],
         }],
         "@shopify/typescript-prefer-singular-enums": "error",
         "@shopify/typescript-prefer-pascal-case-enums": "error",
-        "@shopify/prefer-early-return": ["error", { maximumStatements: 3 }],
+        "@shopify/prefer-early-return": ["error", {maximumStatements: 3}],
         "import/no-default-export": "error",
         "@typescript-eslint/consistent-indexed-object-style": "error",
         "@angular-eslint/prefer-on-push-component-change-detection": "error",
+        "default-case": "off",
+        "@typescript-eslint/switch-exhaustiveness-check": "error",
         "@angular-eslint/prefer-standalone": "error",
 
         // RxJS rules
@@ -431,6 +418,7 @@ module.exports = {
           "addElements": ["a", "mat-row", "mat-slider", "table"]
         }],
         "@angular-eslint/template/prefer-control-flow": ['error'],
+        "@angular-eslint/template/no-positive-tabindex": ["error"],
 
         // TODO: To be enabled later
         '@angular-eslint/template/no-negated-async': ['off'],

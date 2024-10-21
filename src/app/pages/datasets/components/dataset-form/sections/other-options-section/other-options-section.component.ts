@@ -299,6 +299,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (aclTypeControl.value) {
       case DatasetAclType.Nfsv4:
         if (!this.existing) {
