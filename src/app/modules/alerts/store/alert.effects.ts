@@ -23,6 +23,7 @@ import {
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -79,6 +80,7 @@ export class AlertEffects {
     mergeMap(({ id }) => {
       return this.ws.call('alert.dismiss', [id]);
     }),
+    this.errorHandler.catchError(),
   ), { dispatch: false });
 
   reopenAlert$ = createEffect(() => this.actions$.pipe(
@@ -86,6 +88,7 @@ export class AlertEffects {
     mergeMap(({ id }) => {
       return this.ws.call('alert.restore', [id]);
     }),
+    this.errorHandler.catchError(),
   ), { dispatch: false });
 
   dismissAllAlerts$ = createEffect(() => this.actions$.pipe(
@@ -95,6 +98,7 @@ export class AlertEffects {
       const requests = unreadAlerts.map((alert) => this.ws.call('alert.dismiss', [alert.id]));
       return forkJoin(requests);
     }),
+    this.errorHandler.catchError(),
   ), { dispatch: false });
 
   reopenAllAlerts$ = createEffect(() => this.actions$.pipe(
@@ -104,6 +108,7 @@ export class AlertEffects {
       const requests = dismissedAlerts.map((alert) => this.ws.call('alert.restore', [alert.id]));
       return forkJoin(requests);
     }),
+    this.errorHandler.catchError(),
   ), { dispatch: false });
 
   constructor(
@@ -111,5 +116,6 @@ export class AlertEffects {
     private ws: WebSocketService,
     private store$: Store<AlertSlice>,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 }

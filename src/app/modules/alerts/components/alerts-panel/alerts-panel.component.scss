@@ -9,6 +9,12 @@
       border-bottom-style: none;
     }
   }
+
+  &::ng-deep {
+    ix-missing-access-wrapper {
+      width: 100%;
+    }
+  }
 }
 
 .controls {
