@@ -25,6 +25,7 @@
 
   @if (alert().dismissed) {
     <a
+      *ixRequiresRoles="requiredRoles"
       tabindex="0"
       role="button"
       class="action-link"
@@ -35,6 +36,7 @@
     </a>
   } @else {
     <a
+      *ixRequiresRoles="requiredRoles"
       tabindex="0"
       role="button"
       class="action-link"

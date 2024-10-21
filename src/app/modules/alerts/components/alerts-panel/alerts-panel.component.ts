@@ -13,6 +13,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Role } from 'app/enums/role.enum';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import {
   alertPanelClosed,
@@ -51,9 +53,12 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     MatRipple,
     TranslateModule,
     AsyncPipe,
+    RequiresRolesDirective,
   ],
 })
 export class AlertsPanelComponent implements OnInit {
+  readonly requiredRoles = [Role.AlertListWrite];
+
   error$ = this.store$.select(selectAlertState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectAlertState).pipe(map((state) => state.isLoading));
   unreadAlerts$ = this.store$.select(selectUnreadAlerts);

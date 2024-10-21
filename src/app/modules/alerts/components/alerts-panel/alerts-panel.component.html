@@ -74,6 +74,7 @@
         }
       </div>
       <button
+        *ixRequiresRoles="requiredRoles"
         matRipple
         class="button-row"
         ixTest="dismiss-all-alerts"
@@ -97,6 +98,7 @@
         }
       </div>
       <button
+        *ixRequiresRoles="requiredRoles"
         class="button-row"
         matRipple
         ixTest="reopen-all-alerts"

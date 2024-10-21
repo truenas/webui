@@ -8,6 +8,16 @@
   &.dismissed {
     opacity: 0.6;
   }
+
+  &::ng-deep {
+    ix-missing-access-wrapper {
+      display: inline-block;
+
+      .role-missing a + .role-missing-icon {
+        right: -15px;
+      }
+    }
+  }
 }
 
 .alert-icon {

@@ -6,7 +6,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
+import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -45,11 +47,13 @@ enum AlertLevelColor {
     TranslateModule,
     FormatDateTimePipe,
     AsyncPipe,
+    RequiresRolesDirective,
   ],
 })
 export class AlertComponent implements OnChanges {
   readonly alert = input.required<Alert>();
   readonly isHaLicensed = input<boolean>();
+  readonly requiredRoles = [Role.AlertListWrite];
 
   alertLevelColor: AlertLevelColor;
   icon: string;
