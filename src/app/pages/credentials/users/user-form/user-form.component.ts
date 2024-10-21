@@ -390,7 +390,7 @@ export class UserFormComponent implements OnInit {
               this.store$.dispatch(userChanged({ user }));
             }
             this.isFormLoading = false;
-            this.slideInRef.close();
+            this.slideInRef.close(true);
             this.cdr.markForCheck();
           },
           error: (error: unknown) => {

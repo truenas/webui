@@ -173,7 +173,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
           );
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {

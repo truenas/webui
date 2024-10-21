@@ -36,7 +36,7 @@ export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
   }
 
   closeWithConfirmation(response?: T): Observable<boolean> {
-    if (this.formGroup.pristine || (this.formSubmitted && !this.formGroup.invalid)) {
+    if (this.formGroup.pristine || (this.formSubmitted && !this.formGroup.invalid) || response) {
       this.emitClose(response);
       return of(true);
     }

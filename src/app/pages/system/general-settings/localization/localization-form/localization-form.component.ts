@@ -192,7 +192,7 @@ export class LocalizationFormComponent implements OnInit {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading = false;
-        this.slideInRef.close();
+        this.slideInRef.close(true);
         this.setTimeOptions(body.timezone);
         this.langService.setLanguage(body.language);
         this.cdr.markForCheck();

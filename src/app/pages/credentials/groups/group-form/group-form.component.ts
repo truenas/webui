@@ -197,7 +197,7 @@ export class GroupFormComponent implements OnInit {
         }
 
         this.isFormLoading = false;
-        this.slideInRef.close();
+        this.slideInRef.close(true);
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {

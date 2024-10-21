@@ -115,7 +115,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close();
+          this.slideInRef.close(true);
         },
         error: (error: unknown) => {
           this.isLoading = false;
