@@ -1,2 +1,0 @@
-cb6192607596b668be733e15197c4689
-module.exports="@if (isAnimating || !hideOnComplete) {\n  <mat-progress-bar\n    mode=\"determinate\"\n    @fadeOut\n    [value]=\"progress\"\n  ></mat-progress-bar>\n}\n"

@@ -380,7 +380,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
       secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
+      secondaryCheckboxText: this.translate.instant('Remove iX Volumes'),
     })
       .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
       .subscribe(({ secondaryCheckbox }) => {

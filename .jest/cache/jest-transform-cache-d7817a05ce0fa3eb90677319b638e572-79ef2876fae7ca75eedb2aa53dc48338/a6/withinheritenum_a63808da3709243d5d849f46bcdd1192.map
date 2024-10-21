@@ -1,1 +1,0 @@
-{"file":"/Users/macbook/karpov-work/TrueNAS/webui/src/app/enums/with-inherit.enum.ts","mappings":";;;AAEa,QAAA,OAAO,GAAG,SAAkB,CAAC","names":[],"sources":["/Users/macbook/karpov-work/TrueNAS/webui/src/app/enums/with-inherit.enum.ts"],"sourcesContent":["export type WithInherit<T> = T | typeof inherit;\n\nexport const inherit = 'INHERIT' as const;\n"],"version":3}

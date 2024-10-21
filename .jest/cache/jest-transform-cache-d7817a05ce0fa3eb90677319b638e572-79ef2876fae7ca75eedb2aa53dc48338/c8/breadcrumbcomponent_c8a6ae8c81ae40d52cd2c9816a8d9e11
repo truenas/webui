@@ -1,2 +1,0 @@
-c58e650a2ce602ec55b5234c2a0f61b0
-module.exports="<div id=\"breadcrumb-bar\" class=\"breadcrumb-bar\">\n  <ul class=\"breadcrumb\">\n    @for (breadcrumb of breadcrumbs; track breadcrumb) {\n      <li>\n        @if (breadcrumb.url) {\n          <a [routerLink]=\"breadcrumb.url\" [ixTest]=\"['breadcrumb', breadcrumb.breadcrumb]\">\n            {{ breadcrumb.breadcrumb | translate }}\n          </a>\n        } @else {\n          <span>{{ breadcrumb.breadcrumb | translate }}</span>\n        }\n      </li>\n    }\n  </ul>\n</div>\n"

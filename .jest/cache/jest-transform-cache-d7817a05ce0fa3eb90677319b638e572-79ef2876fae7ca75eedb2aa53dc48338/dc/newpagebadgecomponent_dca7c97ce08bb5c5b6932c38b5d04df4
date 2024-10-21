@@ -1,2 +1,0 @@
-346f8a89cb82b0b086ddd2d918375453
-module.exports="<div class=\"new-page-feedback\">\n  <span>{{ 'NEW' | translate }}</span>\n\n  <button\n    *ixIfNightly\n    mat-button\n    ixTest=\"new-page-feedback\"\n    (click)=\"leaveFeedbackPressed()\"\n  >{{ 'Leave Feedback' | translate }}</button>\n</div>\n"

@@ -1,1 +1,0 @@
-{"file":"/Users/macbook/karpov-work/TrueNAS/webui/src/app/constants/dataset.constants.ts","mappings":";;;AAAa,QAAA,cAAc,GAAG,GAAG,CAAC;AACrB,QAAA,iBAAiB,GAAG,EAAE,CAAC","names":[],"sources":["/Users/macbook/karpov-work/TrueNAS/webui/src/app/constants/dataset.constants.ts"],"sourcesContent":["export const maxDatasetPath = 200;\nexport const maxDatasetNesting = 50;\n"],"version":3}

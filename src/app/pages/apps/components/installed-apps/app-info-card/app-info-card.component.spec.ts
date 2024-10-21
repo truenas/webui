@@ -216,7 +216,7 @@ describe('AppInfoCardComponent', () => {
       title: 'Delete',
       message: 'Delete test-user-app-name?',
       secondaryCheckbox: true,
-      secondaryCheckboxText: 'Remove iXVolumes',
+      secondaryCheckboxText: 'Remove iX Volumes',
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'app.delete',

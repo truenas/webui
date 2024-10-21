@@ -1,2 +1,0 @@
-1c1b9fac40cf35e39d14ad78dd56e263
-module.exports="<mat-checkbox\n  color=\"primary\"\n  [ixTest]=\"[title, uniqueRowTag(row()), 'row-checkbox']\"\n  [checked]=\"checked\"\n  [aria-label]=\"(checked ? ('Uncheck' | translate) : ('Check' | translate)) + ' ' + getAriaLabel(row())\"\n  (change)=\"onCheckboxChange($event)\"\n  (click)=\"$event.stopPropagation()\"\n></mat-checkbox>\n"

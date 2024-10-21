@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["/Users/macbook/karpov-work/TrueNAS/webui/node_modules/@angular/cdk/fesm2022/cdk.mjs"],
-  "sourcesContent": ["import { Version } from '@angular/core';\n\n/** Current version of the Angular Component Development Kit. */\nconst VERSION = new Version('18.2.4');\n\nexport { VERSION };\n//# sourceMappingURL=cdk.mjs.map\n"],
-  "mappings": ";;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,kBAAwB;AAGxB,MAAM,UAAU,IAAI,oBAAQ,QAAQ;",
-  "names": []
-}

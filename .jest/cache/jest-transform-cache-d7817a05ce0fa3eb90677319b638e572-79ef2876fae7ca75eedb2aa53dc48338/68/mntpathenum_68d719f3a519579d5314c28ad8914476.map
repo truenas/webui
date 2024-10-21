@@ -1,1 +1,0 @@
-{"file":"/Users/macbook/karpov-work/TrueNAS/webui/src/app/enums/mnt-path.enum.ts","mappings":";;;AAAa,QAAA,OAAO,GAAG,MAAM,CAAC","names":[],"sources":["/Users/macbook/karpov-work/TrueNAS/webui/src/app/enums/mnt-path.enum.ts"],"sourcesContent":["export const mntPath = '/mnt';\n"],"version":3}

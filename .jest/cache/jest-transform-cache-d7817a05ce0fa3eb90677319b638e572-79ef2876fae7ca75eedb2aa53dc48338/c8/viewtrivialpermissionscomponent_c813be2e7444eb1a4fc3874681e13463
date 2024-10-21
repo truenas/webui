@@ -1,2 +1,0 @@
-7d3b0d8b9b19df70aac0c3656d26f7cf
-module.exports="<div class=\"title\">{{ 'Unix Permissions' | translate }}</div>\n\n@for (item of permissionItems; track item) {\n  <ix-permissions-item\n    [item]=\"item\"\n  ></ix-permissions-item>\n}\n"

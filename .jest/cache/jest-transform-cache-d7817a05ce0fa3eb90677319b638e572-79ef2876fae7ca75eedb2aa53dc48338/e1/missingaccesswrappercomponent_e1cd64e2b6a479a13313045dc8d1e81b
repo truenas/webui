@@ -1,2 +1,0 @@
-f7623f33a1dc4602082dc924da19bfdd
-module.exports="<span\n  matTooltipPosition=\"above\"\n  [disableFocusableElements]=\"!!template\"\n  [class]=\"['role-missing', class]\"\n  [matTooltip]=\"'Missing permissions for this action' | translate\"\n>\n  <ng-container *ngTemplateOutlet=\"template\"></ng-container>\n  <ix-icon name=\"lock\" class=\"role-missing-icon\"></ix-icon>\n</span>\n"

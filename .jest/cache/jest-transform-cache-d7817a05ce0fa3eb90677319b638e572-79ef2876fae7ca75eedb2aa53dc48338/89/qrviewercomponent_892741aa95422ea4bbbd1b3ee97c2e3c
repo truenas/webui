@@ -1,2 +1,0 @@
-bbf2b541875b5a7fe8a569588188b8be
-module.exports="<div>\n  @if (showWarning()) {\n    <ix-warning\n      class=\"warning\"\n      [message]=\"helpText.two_factor.qrCodeMessage | translate\"\n    ></ix-warning>\n  }\n\n  <qr-code [value]=\"qrInfo()\" [size]=\"200\"></qr-code>\n</div>\n"
