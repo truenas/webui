@@ -96,7 +96,7 @@ export class ProactiveComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close();
+          this.slideInRef.close(true);
 
           this.snackbar.success(
             this.translate.instant(helptext.proactive.dialog_mesage),

@@ -72,7 +72,7 @@ export class LicenseComponent {
     this.ws.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideInRef.close();
+        this.slideInRef.close(true);
         this.cdr.markForCheck();
         setTimeout(() => {
           this.dialogService.confirm({
