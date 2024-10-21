@@ -12,6 +12,7 @@ import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
   },
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['recursive: treeNodeToggleRecursive'],
+  standalone: true,
 })
 export class TreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
   @HostBinding('class.ix-tree-node-toggle') get hostClass(): boolean { return true; }

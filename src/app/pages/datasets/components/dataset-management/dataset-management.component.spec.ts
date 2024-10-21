@@ -8,7 +8,6 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { TreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
-import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -28,7 +27,6 @@ describe('DatasetsManagementComponent', () => {
   const createComponent = createRoutingFactory({
     component: DatasetsManagementComponent,
     imports: [
-      TreeModule,
       SearchInput1Component,
       EmptyComponent,
       FakeProgressBarComponent,

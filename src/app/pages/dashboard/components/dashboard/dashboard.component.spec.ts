@@ -12,6 +12,7 @@ import {
 } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxDragHandleDirective } from 'app/modules/ix-drop-grid/ix-drag-handle.directive';
 import { IxDragDirective } from 'app/modules/ix-drop-grid/ix-drag.directive';
 import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
@@ -51,6 +52,7 @@ describe('DashboardComponent', () => {
       MockDirective(IxDropGridDirective),
       MockDirective(IxDropGridItemDirective),
       MockDirective(IxDragDirective),
+      MockDirective(IxDragHandleDirective),
       NewFeatureIndicatorDirective,
       DisableFocusableElementsDirective,
     ],

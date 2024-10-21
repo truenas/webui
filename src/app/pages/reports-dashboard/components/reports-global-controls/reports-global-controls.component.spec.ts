@@ -10,7 +10,6 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import {
   NetdataDialogComponent,
 } from 'app/pages/reports-dashboard/components/reports-global-controls/netdata-dialog/netdata-dialog.component';
@@ -26,7 +25,6 @@ describe('ReportsGlobalControlsComponent', () => {
   const createComponent = createComponentFactory({
     component: ReportsGlobalControlsComponent,
     imports: [
-      IxDynamicFormModule,
       ReactiveFormsModule,
     ],
     providers: [

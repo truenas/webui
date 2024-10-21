@@ -353,6 +353,7 @@ module.exports = {
         "@angular-eslint/prefer-on-push-component-change-detection": "error",
         "default-case": "off",
         "@typescript-eslint/switch-exhaustiveness-check": "error",
+        "@angular-eslint/prefer-standalone": "error",
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

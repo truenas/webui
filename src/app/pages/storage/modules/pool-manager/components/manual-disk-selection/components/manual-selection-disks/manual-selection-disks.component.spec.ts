@@ -11,7 +11,6 @@ import {
 } from 'app/modules/disk-icon/disk-icon.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
-import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import {
   DiskInfoComponent,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
@@ -35,7 +34,6 @@ describe('ManualSelectionDisksComponent', () => {
   const createComponent = createComponentFactory({
     component: ManualSelectionDisksComponent,
     imports: [
-      TreeModule,
       DndModule,
     ],
     declarations: [

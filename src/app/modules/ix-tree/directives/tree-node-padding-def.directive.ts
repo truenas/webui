@@ -3,6 +3,7 @@ import { Directive, Input } from '@angular/core';
 
 @Directive({
   selector: '[treeNodePadding]',
+  standalone: true,
   providers: [{ provide: CdkTreeNodePadding, useExisting: TreeNodePaddingDirective }],
 })
 export class TreeNodePaddingDirective<T> extends CdkTreeNodePadding<T> {

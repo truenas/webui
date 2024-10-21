@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, tap } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -15,6 +15,8 @@ import { LayoutService } from 'app/services/layout.service';
   selector: 'ix-root',
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {
   isAuthenticated = false;
