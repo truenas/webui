@@ -1,7 +1,10 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, OnInit,
+  computed,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -24,7 +27,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { FormHeaderActionsComponent } from 'app/modules/forms/ix-forms/components/form-header-actions/form-header-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -36,11 +39,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
-  IxModalHeaderComponent,
-} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
@@ -49,6 +47,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { userAdded, userChanged } from 'app/pages/credentials/users/store/user.actions';
@@ -70,7 +69,7 @@ const defaultHomePath = '/var/empty';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    FormHeaderActionsComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -84,27 +83,27 @@ const defaultHomePath = '/var/empty';
     IxTextareaComponent,
     IxFileInputComponent,
     IxSelectComponent,
-    FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
     TranslateModule,
+    IxIconComponent,
     WarnAboutUnsavedChangesDirective,
   ],
 })
 export class UserFormComponent implements OnInit {
-  isFormLoading = false;
+  isLoading = signal(false);
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
   protected readonly requiredRoles = [Role.AccountWrite];
 
-  get isNewUser(): boolean {
-    return !this.editingUser;
-  }
+  isNewUser = computed(() => !this.editingUser);
 
-  get title(): string {
-    return this.isNewUser ? this.translate.instant('Add User') : this.translate.instant('Edit User');
-  }
+  title = computed(() => {
+    return this.isNewUser()
+      ? this.translate.instant('Add User')
+      : this.translate.instant('Edit User');
+  });
 
   get isEditingBuiltinUser(): boolean {
     return !this.isNewUser && this.editingUser.builtin;
@@ -120,13 +119,13 @@ export class UserFormComponent implements OnInit {
     email: ['', [emailValidator()]],
     password: ['', [
       this.validatorsService.validateOnCondition(
-        () => this.isNewUser,
+        () => this.isNewUser(),
         Validators.required,
       ),
     ]],
     password_conf: ['', [
       this.validatorsService.validateOnCondition(
-        () => this.isNewUser,
+        () => this.isNewUser(),
         Validators.required,
       ),
     ]],
@@ -189,11 +188,11 @@ export class UserFormComponent implements OnInit {
     const homeCreate = this.form.value.home_create;
     const home = this.form.value.home;
     const homeMode = this.form.value.home_mode;
-    if (this.isNewUser) {
+    if (this.isNewUser()) {
       if (!homeCreate && home !== defaultHomePath) {
         return this.translate.instant(
           'With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.',
-          { path: '\'' + this.form.value.home + '\'' },
+          { path: `'${this.form.value.home}'` },
         );
       }
     } else {
@@ -224,14 +223,14 @@ export class UserFormComponent implements OnInit {
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private filesystemService: FilesystemService,
-    private slideInRef: IxSlideInRef<UserFormComponent>,
     private snackbar: SnackbarService,
     private storageService: StorageService,
     private downloadService: DownloadService,
     private store$: Store<AppState>,
     private dialog: DialogService,
     private userService: UserService,
-    @Inject(SLIDE_IN_DATA) private editingUser: User,
+    private bottomSheetRef: MatBottomSheetRef,
+    @Inject(MAT_BOTTOM_SHEET_DATA) private editingUser: User,
   ) {
     this.form.controls.smb.errors$.pipe(
       filter((error) => error?.manualValidateErrorMsg),
@@ -306,7 +305,7 @@ export class UserFormComponent implements OnInit {
       this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$),
     );
 
-    if (this.isNewUser) {
+    if (this.isNewUser()) {
       this.setupNewUserForm();
     } else {
       this.setupEditUserForm(this.editingUser);
@@ -347,12 +346,11 @@ export class UserFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.isFormLoading = true;
-        this.cdr.markForCheck();
+        this.isLoading.set(true);
 
         let request$: Observable<number>;
         let nextRequest$: Observable<number>;
-        if (this.isNewUser) {
+        if (this.isNewUser()) {
           request$ = this.ws.call('user.create', [{
             ...body,
             group_create: values.group_create,
@@ -382,25 +380,21 @@ export class UserFormComponent implements OnInit {
           untilDestroyed(this),
         ).subscribe({
           next: (user) => {
-            if (this.isNewUser) {
+            if (this.isNewUser()) {
               this.snackbar.success(this.translate.instant('User added'));
               this.store$.dispatch(userAdded({ user }));
             } else {
               this.snackbar.success(this.translate.instant('User updated'));
               this.store$.dispatch(userChanged({ user }));
             }
-            this.isFormLoading = false;
-            this.slideInRef.close();
-            this.cdr.markForCheck();
+            this.isLoading.set(false);
+            this.bottomSheetRef.dismiss();
           },
           error: (error: unknown) => {
-            this.isFormLoading = false;
+            this.isLoading.set(false);
             this.errorHandler.handleWsFormError(error, this.form);
-            this.cdr.markForCheck();
           },
         });
-      },
-      complete: () => {
       },
     });
   }

@@ -1,3 +1,6 @@
+@use '@angular/cdk/overlay' as cdk with (
+  $overlay-backdrop-color: rgba(0, 0, 0, 0.75)
+);
 @use '@angular/material' as mat;
 @import 'scss-imports/cssvars';
 $standard-height: 40px;
@@ -6,6 +9,7 @@ $standard-height: 40px;
 @include mat.slide-toggle-density(-1);
 @include mat.radio-density(-1);
 @include mat.checkbox-density(-1);
+@include cdk.overlay();
 @import 'angular15';
 @import 'material-overrides';
 
