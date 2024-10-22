@@ -7,7 +7,7 @@ import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.se
 import {
   CallResponseOrFactory, JobResponseOrFactory,
   MockWebSocketCallResponse, MockWebSocketJobResponse,
-  MockWebSocketResponseType,
+  MockApiResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
@@ -51,9 +51,9 @@ export function mockWebSocket(
       useFactory: (router: Router, wsManager: WebSocketConnectionService, translate: TranslateService) => {
         const mockWebSocketService = new MockWebSocketService(router, wsManager, translate);
         (mockResponses || []).forEach((mockResponse) => {
-          if (mockResponse.type === MockWebSocketResponseType.Call) {
+          if (mockResponse.type === MockApiResponseType.Call) {
             mockWebSocketService.mockCall(mockResponse.method, mockResponse.response);
-          } else if (mockResponse.type === MockWebSocketResponseType.Job) {
+          } else if (mockResponse.type === MockApiResponseType.Job) {
             mockWebSocketService.mockJob(
               mockResponse.method,
               mockResponse.response as Job<ApiJobDirectory[ApiJobMethod]['response']>,
@@ -82,7 +82,7 @@ export function mockCall<M extends ApiCallMethod>(
   return {
     response,
     method,
-    type: MockWebSocketResponseType.Call,
+    type: MockApiResponseType.Call,
   };
 }
 
@@ -97,6 +97,6 @@ export function mockJob<M extends ApiJobMethod>(
   return {
     response,
     method,
-    type: MockWebSocketResponseType.Job,
+    type: MockApiResponseType.Job,
   };
 }
