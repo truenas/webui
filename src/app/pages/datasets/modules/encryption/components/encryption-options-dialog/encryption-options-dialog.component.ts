@@ -19,7 +19,7 @@ import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -164,7 +164,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.showSuccessMessage();
           this.dialogRef.close(true);
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -195,7 +195,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.showSuccessMessage();
           this.dialogRef.close(true);
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });

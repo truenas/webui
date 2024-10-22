@@ -16,7 +16,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -220,7 +220,7 @@ export class GuiFormComponent {
             this.wsManager.closeWebSocketConnection();
             this.replaceHrefWhenWsConnected(href);
           },
-          error: (error: WebSocketError) => {
+          error: (error: ApiError) => {
             this.loader.close();
             this.dialog.error({
               title: helptext.dialog_error_title,

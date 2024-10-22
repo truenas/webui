@@ -23,7 +23,7 @@ import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.inte
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -304,7 +304,7 @@ export class DatasetQuotasListComponent implements OnInit {
       tap(() => {
         this.getQuotas();
       }),
-      catchError((error: WebSocketError | Job) => {
+      catchError((error: ApiError | Job) => {
         this.handleError(error);
         return EMPTY;
       }),
@@ -368,7 +368,7 @@ export class DatasetQuotasListComponent implements OnInit {
       tap(() => {
         this.getQuotas();
       }),
-      catchError((error: WebSocketError | Job) => {
+      catchError((error: ApiError | Job) => {
         this.handleError(error);
         return EMPTY;
       }),

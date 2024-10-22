@@ -9,14 +9,14 @@ import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-da
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { ApiService } from 'app/services/api.service';
 
 export interface DevicesState {
   isLoading: boolean;
   poolId: number | null;
-  error: WebSocketError | null;
+  error: ApiError | null;
   nodes: DeviceNestedDataNode[];
   diskDictionary: Record<string, Disk>;
   selectedNodeGuid: string | null;
@@ -92,7 +92,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
                   nodes: this.createDataNodes(pools[0].topology),
                 });
               }),
-              catchError((error: WebSocketError) => {
+              catchError((error: ApiError) => {
                 this.patchState({
                   isLoading: false,
                   error,

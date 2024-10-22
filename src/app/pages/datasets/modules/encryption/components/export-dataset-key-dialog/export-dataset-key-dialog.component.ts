@@ -12,7 +12,7 @@ import { switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -71,7 +71,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
         next: () => {
           this.dialogRef.close();
         },
-        error: (error: WebSocketError | HttpErrorResponse) => {
+        error: (error: ApiError | HttpErrorResponse) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
@@ -90,7 +90,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
           this.key = job.result;
           this.cdr.markForCheck();
         },
-        error: (error: Job | WebSocketError) => {
+        error: (error: Job | ApiError) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });

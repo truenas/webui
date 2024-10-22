@@ -12,7 +12,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -167,7 +167,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
 
   getDiskTempAggregates(disksNames: string[]): Observable<DiskTemperatureAgg> {
     return this.ws.call('disk.temperature_agg', [disksNames, 14]).pipe(
-      catchError((error: WebSocketError) => {
+      catchError((error: ApiError) => {
         console.error('Error loading temperature: ', error);
         return of({});
       }),

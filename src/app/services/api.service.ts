@@ -28,7 +28,7 @@ import {
   ApiEvent, ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage, ResultMessage,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @Injectable({
@@ -181,7 +181,7 @@ export class ApiService {
     );
   }
 
-  private printError(error: WebSocketError, context: { method: string; params: unknown }): void {
+  private printError(error: ApiError, context: { method: string; params: unknown }): void {
     if (error.errname === ApiErrorName.NoAccess) {
       console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}`);
       return;
@@ -196,7 +196,7 @@ export class ApiService {
   }
 
   // TODO: Probably doesn't belong here. Consider building something similar to interceptors.
-  private enhanceError(error: WebSocketError, context: { method: string }): WebSocketError {
+  private enhanceError(error: ApiError, context: { method: string }): ApiError {
     if (error.errname === ApiErrorName.NoAccess) {
       return {
         ...error,

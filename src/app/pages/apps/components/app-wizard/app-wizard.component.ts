@@ -47,7 +47,7 @@ import {
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import {
@@ -202,7 +202,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           });
           this.afterAppLoaded();
         },
-        error: (error: WebSocketError) => this.afterAppLoadError(error),
+        error: (error: ApiError) => this.afterAppLoadError(error),
       });
   }
 
@@ -334,7 +334,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           this.setAppForEdit(releases[0]);
           this.afterAppLoaded();
         },
-        error: (error: WebSocketError) => this.afterAppLoadError(error),
+        error: (error: ApiError) => this.afterAppLoadError(error),
       });
   }
 

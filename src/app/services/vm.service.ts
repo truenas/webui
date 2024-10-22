@@ -17,7 +17,7 @@ import {
   VmDisplayWebUriParams,
   VmDisplayWebUriParamsOptions,
 } from 'app/interfaces/virtual-machine.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
@@ -123,7 +123,7 @@ export class VmService {
           this.checkMemory();
           this.refreshVmList$.next();
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.refreshVmList$.next();
           this.errorHandler.showErrorModal(error);
         },
@@ -142,7 +142,7 @@ export class VmService {
           this.checkMemory();
           this.refreshVmList$.next();
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           if (method === this.wsMethods.start
             && error.errname === ApiErrorName.NoMemory) {
             this.onMemoryError(vm);

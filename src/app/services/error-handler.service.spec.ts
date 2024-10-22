@@ -7,7 +7,7 @@ import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -19,7 +19,7 @@ const wsError = {
   reason: '[EINVAL] user_update.smb: This attribute cannot be changed\n[EINVAL] user_update.smb: Password must be changed in order to enable SMB authentication\n',
   trace: {},
   extra: [],
-} as WebSocketError;
+} as ApiError;
 
 const failedJob = {
   method: 'cloudsync.sync_onetime',

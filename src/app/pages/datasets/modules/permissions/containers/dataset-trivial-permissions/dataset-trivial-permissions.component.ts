@@ -18,7 +18,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
@@ -158,7 +158,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Permissions saved.'));
           this.router.navigate(['/datasets', this.datasetId]);
         },
-        error: (error: WebSocketError | Job) => {
+        error: (error: ApiError | Job) => {
           this.dialog.error(this.errorHandler.parseError(error));
         },
       });

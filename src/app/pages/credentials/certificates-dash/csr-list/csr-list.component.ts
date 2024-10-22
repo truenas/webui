@@ -18,7 +18,7 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -231,7 +231,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebSocketError | Job) => {
+        error: (err: ApiError | Job) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });

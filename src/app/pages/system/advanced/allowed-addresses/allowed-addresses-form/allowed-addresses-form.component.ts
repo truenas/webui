@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -112,7 +112,7 @@ export class AllowedAddressesFormComponent implements OnInit {
           return of(true);
         }
         return this.ws.call('system.general.ui_restart').pipe(
-          catchError((error: WebSocketError) => {
+          catchError((error: ApiError) => {
             this.dialogService.error({
               title: helptextSystemGeneral.dialog_error_title,
               message: error.reason,

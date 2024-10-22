@@ -20,7 +20,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -108,7 +108,7 @@ export class ImportPoolComponent implements OnInit {
         this.pool.options = of(opts);
         this.cdr.markForCheck();
       },
-      error: (error: WebSocketError | Job) => {
+      error: (error: ApiError | Job) => {
         this.isLoading = false;
         this.cdr.markForCheck();
 

@@ -12,7 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -91,7 +91,7 @@ export class ServiceExtraActionsComponent {
             );
           }
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           let message = this.translate.instant(
             'Error starting service {serviceName}.',
             { serviceName: serviceNames.get(service.service) || service.service },
