@@ -6,7 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
@@ -30,7 +30,7 @@ describe('SigninFormComponent', () => {
       mockProvider(AuthService, {
         login: jest.fn(() => of(LoginResult.Success)),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('auth.two_factor_auth', false),
       ]),
       mockProvider(SigninStore, {

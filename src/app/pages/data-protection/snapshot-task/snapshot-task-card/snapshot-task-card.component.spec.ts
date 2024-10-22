@@ -8,7 +8,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -75,7 +75,7 @@ describe('SnapshotTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.snapshottask.query', snapshotTasks),
         mockCall('pool.snapshottask.delete'),
         mockCall('pool.snapshottask.update'),

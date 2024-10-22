@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
@@ -25,7 +25,7 @@ describe('ReplicationWhenComponent', () => {
     providers: [
       CdkStepper,
       mockAuth(),
-      mockWebSocket(),
+      mockApi(),
     ],
   });
 

@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { LinkState, NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { AllNetworkInterfacesUpdate, NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -79,7 +79,7 @@ describe('InterfacesCardComponent', () => {
           isLoading: false,
         } as InterfacesState),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('interface.delete'),
       ]),
       mockProvider(NetworkService, {

@@ -9,7 +9,7 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -65,7 +65,7 @@ describe('ServicesComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('service.update', 1),
         mockCall('service.start'),
         mockCall('service.stop'),

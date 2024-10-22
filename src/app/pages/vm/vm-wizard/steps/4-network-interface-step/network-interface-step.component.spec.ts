@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmNicType } from 'app/enums/vm.enum';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -23,7 +23,7 @@ describe('NetworkInterfaceStepComponent', () => {
     ],
     providers: [
       CdkStepper,
-      mockWebSocket([
+      mockApi([
         mockCall('vm.random_mac', '00:00:00:00:00:01'),
         mockCall('vm.device.nic_attach_choices', {
           eno1: 'eno1',

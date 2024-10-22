@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
@@ -53,7 +53,7 @@ describe('LdapComponent', () => {
       WithManageCertificatesLinkComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockJob('ldap.update', fakeSuccessfulJob()),
         mockCall('ldap.config', existingLdapConfig),
         mockCall('kerberos.keytab.kerberos_principal_choices', [

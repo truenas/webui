@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -40,7 +40,7 @@ describe('CertificateAuthorityEditComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('certificateauthority.update'),
       ]),
       mockProvider(MatDialog),

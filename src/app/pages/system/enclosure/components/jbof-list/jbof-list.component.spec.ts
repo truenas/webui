@@ -5,7 +5,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -48,7 +48,7 @@ describe('JbofListComponent', () => {
       SearchInput1Component,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('jbof.query', fakeJbofDataSource),
         mockCall('jbof.delete', true),
         mockCall('jbof.licensed', 1),

@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebSocket,
+  mockCall, mockJob, mockApi,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
@@ -76,7 +76,7 @@ describe('CertificateAddComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('webui.crypto.certificate_profiles', {
           'HTTPS RSA Certificate': profile,
         }),

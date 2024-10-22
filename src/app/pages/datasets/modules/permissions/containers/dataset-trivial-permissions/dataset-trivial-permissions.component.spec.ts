@@ -7,7 +7,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebSocket,
+  mockCall, mockJob, mockApi,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -35,7 +35,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       datasetId: 'pool/trivial',
     },
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.query', [{
           acltype: {
             value: DatasetAclType.Posix,

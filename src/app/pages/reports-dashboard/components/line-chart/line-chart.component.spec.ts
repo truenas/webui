@@ -2,7 +2,7 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { dygraphs } from 'dygraphs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
@@ -20,7 +20,7 @@ describe('LineChartComponent', () => {
   const createComponent = createComponentFactory({
     component: LineChartComponent,
     providers: [
-      mockWebSocket(),
+      mockApi(),
       mockProvider(ReportsService, {
         emitLegendEvent: jest.fn(),
       }),

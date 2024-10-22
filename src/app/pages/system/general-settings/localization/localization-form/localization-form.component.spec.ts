@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -34,7 +34,7 @@ describe('LocalizationFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('system.general.update'),
       ]),
       mockProvider(SystemGeneralService, {

@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
@@ -33,7 +33,7 @@ describe('ManualUpdateFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.query', [
           {
             name: 'pool2',

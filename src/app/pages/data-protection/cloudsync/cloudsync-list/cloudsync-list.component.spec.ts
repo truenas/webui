@@ -9,7 +9,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -102,7 +102,7 @@ describe('CloudSyncListComponent', () => {
         open: jest.fn(() => of()),
       }),
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.query', cloudSyncList),
         mockCall('cloudsync.delete'),
         mockJob('cloudsync.sync', fakeSuccessfulJob()),

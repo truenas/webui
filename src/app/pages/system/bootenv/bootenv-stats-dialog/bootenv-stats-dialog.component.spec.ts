@@ -8,7 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -47,7 +47,7 @@ describe('BootenvStatsDialogComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
-      mockWebSocket([
+      mockApi([
         mockCall('boot.get_state', poolInstance),
         mockCall('boot.set_scrub_interval'),
       ]),

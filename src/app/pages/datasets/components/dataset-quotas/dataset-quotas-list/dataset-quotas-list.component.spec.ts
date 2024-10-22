@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -83,7 +83,7 @@ describe('DatasetQuotasListComponent', () => {
           slideInClosed$: of(undefined),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.get_quota', fakeQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),

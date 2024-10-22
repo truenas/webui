@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -24,7 +24,7 @@ describe('KerberosRealmsFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('kerberos.realm.create'),
         mockCall('kerberos.realm.update'),
       ]),

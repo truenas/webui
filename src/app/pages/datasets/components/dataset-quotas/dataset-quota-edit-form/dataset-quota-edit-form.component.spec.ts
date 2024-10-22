@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,7 +27,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.get_quota', [{
           id: 1,
           name: 'daemon',

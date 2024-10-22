@@ -7,7 +7,7 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -39,7 +39,7 @@ describe('SnapshotDetailsRowComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
         mockCall('zfs.snapshot.hold'),
         mockCall('zfs.snapshot.release'),

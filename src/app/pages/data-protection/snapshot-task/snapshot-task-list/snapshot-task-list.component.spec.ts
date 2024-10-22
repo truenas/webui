@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -70,7 +70,7 @@ describe('SnapshotTaskListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.snapshottask.query', snapshotTasksList),
       ]),
       mockProvider(DialogService, {

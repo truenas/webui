@@ -8,7 +8,7 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -32,7 +32,7 @@ describe('ConsoleFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('system.advanced.serial_port_choices', {
           ttyS0: 'ttyS0',
           ttyS1: 'ttyS1',

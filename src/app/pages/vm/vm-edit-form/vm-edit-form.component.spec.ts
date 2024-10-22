@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
 } from 'app/enums/vm.enum';
@@ -68,7 +68,7 @@ describe('VmEditFormComponent', () => {
     providers: [
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockWebSocket([
+      mockApi([
         mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
           UEFI_CSM: 'Legacy BIOS',

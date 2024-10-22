@@ -7,7 +7,7 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtent, IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -45,7 +45,7 @@ describe('InitiatorListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.initiator.query', initiators),
         mockCall('iscsi.initiator.delete'),
       ]),

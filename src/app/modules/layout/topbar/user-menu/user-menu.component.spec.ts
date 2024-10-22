@@ -9,7 +9,7 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
 import {
@@ -30,7 +30,7 @@ describe('UserMenuComponent', () => {
     ],
     providers: [
       mockProvider(MatDialog),
-      mockWebSocket(),
+      mockApi(),
       mockProvider(AuthService, {
         logout: jest.fn(() => of()),
         user$: of(dummyUser),

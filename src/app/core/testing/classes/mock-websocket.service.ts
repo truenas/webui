@@ -31,15 +31,15 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 const anyArgument = when((_: unknown) => true);
 
 /**
- * MockWebSocketService can be used to update websocket mocks on the fly.
- * For initial setup prefer mockWebSocket();
+ * MockApiService can be used to update api mocks on the fly.
+ * For initial setup prefer mockApi();
  *
  * To update on the fly:
  * @example
  * ```
  * // In test case:
- * const websocketService = spectator.inject(MockWebSocketService);
- * websocketService.mockCallOnce('filesystem.stat', { gid: 5 } as FileSystemStat);
+ * const apiService = spectator.inject(MockApiService);
+ * apiService.mockCallOnce('filesystem.stat', { gid: 5 } as FileSystemStat);
  * ```
  */
 @Injectable()

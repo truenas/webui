@@ -5,7 +5,7 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
@@ -24,7 +24,7 @@ describe('NetworkConfigurationCardComponent', () => {
       CastPipe,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('network.configuration.config', {
           hostname: 'truenas',
           domain: 'local',

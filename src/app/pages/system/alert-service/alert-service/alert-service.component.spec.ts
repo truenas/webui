@@ -8,7 +8,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockProvider } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
@@ -110,7 +110,7 @@ describe('AlertServiceComponent', () => {
       MockProvider(DialogService, {
         info: jest.fn(),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('alertservice.test', true),
         mockCall('alertservice.create'),
         mockCall('alertservice.update'),

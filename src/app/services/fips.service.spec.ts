@@ -6,7 +6,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/services/api.service';
 import { FipsService } from 'app/services/fips.service';
@@ -23,7 +23,7 @@ describe('FipsService', () => {
         })),
       }),
       mockProvider(Router),
-      mockWebSocket([
+      mockApi([
         mockJob('failover.reboot.other_node', fakeSuccessfulJob()),
       ]),
     ],

@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -39,7 +39,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       CdkStepper,
       mockProvider(ChainedRef, chainedRef),
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),

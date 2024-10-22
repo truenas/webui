@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
@@ -19,7 +19,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
     imports: [
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('core.download', [1, 'http://localhost/download']),
         mockJob('pool.dataset.export_key', fakeSuccessfulJob('12345678')),
       ]),

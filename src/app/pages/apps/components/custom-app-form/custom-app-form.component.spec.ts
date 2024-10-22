@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { App, ChartFormValue } from 'app/interfaces/app.interface';
@@ -81,7 +81,7 @@ describe('CustomAppFormComponent', () => {
       mockProvider(IxSlideInRef, {
         close: jest.fn(),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('app.create'),
         mockJob('app.update'),
       ]),

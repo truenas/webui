@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import {
   DialogService,
@@ -32,7 +32,7 @@ describe('ApiKeyFormDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('api_key.create', { key: 'generated-key' } as ApiKey),
         mockCall('api_key.update', {} as ApiKey),
       ]),

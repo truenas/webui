@@ -4,7 +4,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/services/api.service';
@@ -29,7 +29,7 @@ describe('HaUpgradeEffects', () => {
           afterClosed: () => of({}),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('failover.upgrade_pending', true),
         mockJob('failover.upgrade_finish', fakeSuccessfulJob()),
       ]),

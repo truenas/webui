@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
 import { NfsAcl } from 'app/interfaces/acl.interface';
@@ -98,7 +98,7 @@ describe('DatasetAclEditorComponent', () => {
       StorageService,
       DatasetAclEditorStore,
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('filesystem.getacl', acl),
         mockCall('filesystem.stat', {
           user: 'john',

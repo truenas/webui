@@ -7,7 +7,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -55,7 +55,7 @@ describe('DeviceListComponent', () => {
       pk: 76,
     },
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('vm.device.query', devices),
       ]),
       mockAuth(),

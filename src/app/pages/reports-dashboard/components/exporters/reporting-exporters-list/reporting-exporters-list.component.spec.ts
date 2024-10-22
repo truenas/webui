@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -42,7 +42,7 @@ describe('ReportingExportersListComponent', () => {
       FakeProgressBarComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('reporting.exporters.query', exporters),
         mockCall('reporting.exporters.delete'),
         mockCall('reporting.exporters.update'),

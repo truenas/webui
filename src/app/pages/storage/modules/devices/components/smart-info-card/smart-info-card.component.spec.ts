@@ -7,7 +7,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.interface';
@@ -30,7 +30,7 @@ describe('SmartInfoCardComponent', () => {
     component: SmartInfoCardComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('smart.test.results', [
           {
             disk: 'sdc',

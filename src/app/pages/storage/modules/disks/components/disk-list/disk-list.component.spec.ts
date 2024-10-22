@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
@@ -116,7 +116,7 @@ describe('DiskListComponent', () => {
           afterClosed: jest.fn(() => of(true)),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('disk.query', fakeDisks),
         mockCall('disk.details', { unused: [], used: fakeUnusedDisks }),
         mockCall('smart.test.disk_choices', fakeSmartDiskChoices),

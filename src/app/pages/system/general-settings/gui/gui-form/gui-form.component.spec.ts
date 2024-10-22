@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
@@ -61,7 +61,7 @@ describe('GuiFormComponent', () => {
     ],
     providers: [
       DialogService,
-      mockWebSocket([
+      mockApi([
         mockCall('system.general.update', mockSystemGeneralConfig),
         mockCall('system.general.ui_restart'),
       ]),

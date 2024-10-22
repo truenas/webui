@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -65,7 +65,7 @@ describe('CertificateListComponent', () => {
       IxTablePagerShowMoreComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('certificate.query', certificates),
         mockJob('certificate.delete', fakeSuccessfulJob(true)),
         mockJob('certificate.update', fakeSuccessfulJob()),

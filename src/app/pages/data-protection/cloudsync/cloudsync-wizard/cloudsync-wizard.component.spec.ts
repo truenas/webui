@@ -6,7 +6,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -41,7 +41,7 @@ describe('CloudSyncWizardComponent', () => {
     providers: [
       mockProvider(ChainedRef, chainedRef),
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
         mockCall('cloudsync.credentials.create'),

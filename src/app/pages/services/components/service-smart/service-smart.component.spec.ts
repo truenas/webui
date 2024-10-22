@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import { SmartConfig } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,7 +27,7 @@ describe('ServiceSmartComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('smart.config', {
           interval: 30,
           powermode: SmartPowerMode.Never,

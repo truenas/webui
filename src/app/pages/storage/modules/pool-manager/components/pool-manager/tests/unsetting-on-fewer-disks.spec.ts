@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -31,7 +31,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     ],
     providers: [
       ...commonProviders,
-      mockWebSocket([
+      mockApi([
         mockCall('pool.validate_name', true),
         mockCall('disk.details', {
           used: [

@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -47,7 +47,7 @@ describe('SmartTaskFormComponent', () => {
       }),
       mockAuth(),
       DialogService,
-      mockWebSocket([
+      mockApi([
         mockCall('smart.test.create'),
         mockCall('smart.test.update'),
         mockCall('smart.test.disk_choices', {

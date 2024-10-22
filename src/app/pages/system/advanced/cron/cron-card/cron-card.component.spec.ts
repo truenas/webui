@@ -7,7 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { invalidDate } from 'app/constants/invalid-date';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -59,7 +59,7 @@ describe('CronCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('cronjob.query', cronJobs),
         mockCall('cronjob.run'),
       ]),

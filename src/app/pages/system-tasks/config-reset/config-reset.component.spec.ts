@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -25,7 +25,7 @@ describe('ConfigResetComponent', () => {
       MockComponent(CopyrightLineComponent),
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockJob('config.reset', fakeSuccessfulJob()),
       ]),
       mockProvider(MatDialog),

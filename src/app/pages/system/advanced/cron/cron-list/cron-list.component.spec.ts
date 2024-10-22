@@ -8,7 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -72,7 +72,7 @@ describe('CronListComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('cronjob.query', cronJobs),
         mockCall('cronjob.run'),
       ]),

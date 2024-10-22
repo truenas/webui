@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -35,7 +35,7 @@ describe('KerberosKeytabsFormComponent', () => {
       mockProvider(DialogService),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockWebSocket([
+      mockApi([
         mockCall('kerberos.keytab.create'),
         mockCall('kerberos.keytab.update'),
       ]),

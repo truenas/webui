@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebSocket,
+  mockCall, mockJob, mockApi,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -31,7 +31,7 @@ describe('KmipComponent', () => {
       WithManageCertificatesLinkComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('kmip.config', {
           server: 'kmip.truenas.com',
           enabled: false,

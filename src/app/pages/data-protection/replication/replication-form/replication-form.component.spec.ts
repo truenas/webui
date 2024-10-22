@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -159,7 +159,7 @@ describe('ReplicationFormComponent', () => {
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.count_eligible_manual_snapshots', {
           eligible: 3,
           total: 5,

@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { User } from '@sentry/angular';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -66,7 +66,7 @@ describe('SmbAclComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('sharing.smb.getacl', mockAcl),
         mockCall('sharing.smb.setacl'),
         mockCall('user.query', [rootUser] as TnUser[]),

@@ -7,7 +7,7 @@ import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,7 +27,7 @@ describe('DeviceDeleteModalComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockWebSocket([
+        mockApi([
           mockCall('vm.device.delete'),
         ]),
         mockProvider(DialogService),

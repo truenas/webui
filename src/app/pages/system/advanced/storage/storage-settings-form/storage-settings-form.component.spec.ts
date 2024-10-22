@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -31,7 +31,7 @@ describe('StorageSettingsFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('systemdataset.pool_choices', {
           'current-pool': 'current-pool',
           'new-pool': 'new-pool',

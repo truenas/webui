@@ -10,7 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
@@ -142,7 +142,7 @@ describe('ReplicationListComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.query', tasks),
         mockCall('replication.update', { ...tasks[0], enabled: true }),
         mockJob('replication.run', fakeSuccessfulJob()),

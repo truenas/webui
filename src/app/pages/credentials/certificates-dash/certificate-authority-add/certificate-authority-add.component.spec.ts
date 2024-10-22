@@ -9,7 +9,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
@@ -112,7 +112,7 @@ describe('CertificateAuthorityAddComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('webui.crypto.certificateauthority_profiles', {
           CA: profile,
         }),

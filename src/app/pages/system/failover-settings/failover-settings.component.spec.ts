@@ -6,7 +6,7 @@ import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -29,7 +29,7 @@ describe('FailoverComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('failover.update'),
         mockCall('failover.sync_to_peer'),
         mockCall('failover.sync_from_peer'),

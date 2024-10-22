@@ -3,7 +3,7 @@ import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { ControllerType } from 'app/enums/controller-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -78,7 +78,7 @@ describe('AuditComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('audit.query', (params) => {
           if (params[0]['query-options'].count) {
             // TODO: Not correct. Figure out how to solve this for query endpoints.

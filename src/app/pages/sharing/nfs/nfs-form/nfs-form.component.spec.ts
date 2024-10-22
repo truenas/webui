@@ -9,7 +9,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
@@ -68,7 +68,7 @@ describe('NfsFormComponent', () => {
       IxIpInputWithNetmaskComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('sharing.nfs.create'),
         mockCall('sharing.nfs.update'),
         mockCall('nfs.config', {

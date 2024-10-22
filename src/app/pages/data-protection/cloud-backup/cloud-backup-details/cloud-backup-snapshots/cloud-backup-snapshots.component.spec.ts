@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -45,7 +45,7 @@ describe('CloudBackupSnapshotsComponent', () => {
     component: CloudBackupSnapshotsComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('cloud_backup.list_snapshots', cloudBackupSnapshots),
       ]),
       mockProvider(DialogService, {

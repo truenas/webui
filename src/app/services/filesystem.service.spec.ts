@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
@@ -14,7 +14,7 @@ describe('FilesystemService', () => {
   const createService = createServiceFactory({
     service: FilesystemService,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('filesystem.listdir', [
           {
             path: '/mnt/parent/directory',

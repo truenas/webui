@@ -1,7 +1,7 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -28,7 +28,7 @@ describe('TopologyCardComponent', () => {
       MockComponent(PoolCardIconComponent),
     ],
     providers: [
-      mockWebSocket([]),
+      mockApi([]),
     ],
   });
 

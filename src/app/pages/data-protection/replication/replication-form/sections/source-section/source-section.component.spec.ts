@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -29,7 +29,7 @@ describe('SourceSectionComponent', () => {
     providers: [
       mockProvider(LanguageService),
       mockProvider(LocaleService),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.snapshottask.query', [
           {
             id: 1,

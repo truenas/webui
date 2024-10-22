@@ -6,7 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Spectator, byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { DefaultGatewayDialogComponent } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
@@ -24,7 +24,7 @@ describe('DefaultGatewayDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('network.general.summary', {
           default_routes: ['1.1.1.1'],
         } as NetworkSummary),

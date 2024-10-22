@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots//testing/snapshot-fake-datasource';
@@ -33,7 +33,7 @@ describe('SnapshotRollbackDialogComponent', () => {
       },
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
         mockCall('zfs.snapshot.rollback'),
       ]),

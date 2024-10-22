@@ -8,7 +8,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -59,7 +59,7 @@ describe('UserDetailsRowComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebSocket([
+      mockApi([
         mockCall('user.delete'),
         mockCall('group.query', []),
       ]),

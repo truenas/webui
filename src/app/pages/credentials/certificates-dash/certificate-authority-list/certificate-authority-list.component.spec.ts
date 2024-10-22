@@ -6,7 +6,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -48,7 +48,7 @@ describe('CertificateAuthorityListComponent', () => {
       IxTablePagerShowMoreComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('certificateauthority.query', certificates),
         mockCall('certificateauthority.delete', true),
       ]),

@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -47,7 +47,7 @@ describe('AssociatedTargetFormComponent', () => {
       }),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.targetextent.create'),
         mockCall('iscsi.targetextent.update'),
       ]),

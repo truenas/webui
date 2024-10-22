@@ -9,7 +9,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -120,7 +120,7 @@ describe('PoolManagerWizardComponent', () => {
         startOver$,
         isLoading$: of(false),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.query', []),
         mockJob('pool.create', fakeSuccessfulJob(createdPool)),
       ]),

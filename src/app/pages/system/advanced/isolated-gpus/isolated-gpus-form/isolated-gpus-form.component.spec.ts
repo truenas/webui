@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
@@ -41,7 +41,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('system.advanced.update_gpu_pci_ids'),
         mockCall('system.advanced.get_gpu_pci_choices', {
           'Fake HD Graphics [0000:00:01.0]': '0000:00:01.0',

@@ -6,7 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -30,7 +30,7 @@ describe('BootPoolAttachDialogComponent', () => {
       UnusedDiskSelectComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('disk.details', {
           unused: [
             {

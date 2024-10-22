@@ -9,7 +9,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { TicketCategory, TicketCriticality, TicketEnvironment } from 'app/enums/file-ticket.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -48,7 +48,7 @@ describe('FileTicketLicensedFormComponent', () => {
         navigate: jest.fn(() => Promise.resolve(true)),
       }),
       mockWindow(),
-      mockWebSocket([
+      mockApi([
         mockCall('support.attach_ticket_max_size', 5),
       ]),
     ],

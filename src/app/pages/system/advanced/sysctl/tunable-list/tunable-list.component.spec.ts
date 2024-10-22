@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockWebSocket, mockCall, mockJob,
+  mockApi, mockCall, mockJob,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -117,7 +117,7 @@ describe('TunableListComponent', () => {
           afterClosed: of(null),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('core.get_jobs'),
         mockCall('tunable.query', tunables),
         mockJob('tunable.delete', fakeSuccessfulJob()),

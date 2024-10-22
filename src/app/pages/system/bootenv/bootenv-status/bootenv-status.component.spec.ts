@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -71,7 +71,7 @@ describe('BootStatusListComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),
-      mockWebSocket([
+      mockApi([
         mockCall('boot.get_state', poolInstance),
         mockCall('boot.detach'),
       ]),

@@ -9,7 +9,7 @@ import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -292,7 +292,7 @@ describe('AppWizardComponent', () => {
         getApp: jest.fn(() => of([existingAppEdit])),
         getAllApps: jest.fn(() => of([existingAppEdit])),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('app.create'),
         mockJob('app.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
