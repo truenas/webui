@@ -3,9 +3,9 @@ import { Injector } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -14,7 +14,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 const error = new Error('Dummy Error');
 const wsError = {
   error: 11,
-  errname: WebSocketErrorName.Again,
+  errname: ApiErrorName.Again,
   type: ResponseErrorType.Validation,
   reason: '[EINVAL] user_update.smb: This attribute cannot be changed\n[EINVAL] user_update.smb: Password must be changed in order to enable SMB authentication\n',
   trace: {},

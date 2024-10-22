@@ -8,9 +8,9 @@ import {
 import {
   filter, map, share, startWith, switchMap, take, takeUntil, tap,
 } from 'rxjs/operators';
+import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
@@ -182,7 +182,7 @@ export class ApiService {
   }
 
   private printError(error: WebSocketError, context: { method: string; params: unknown }): void {
-    if (error.errname === WebSocketErrorName.NoAccess) {
+    if (error.errname === ApiErrorName.NoAccess) {
       console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}`);
       return;
     }
@@ -197,7 +197,7 @@ export class ApiService {
 
   // TODO: Probably doesn't belong here. Consider building something similar to interceptors.
   private enhanceError(error: WebSocketError, context: { method: string }): WebSocketError {
-    if (error.errname === WebSocketErrorName.NoAccess) {
+    if (error.errname === ApiErrorName.NoAccess) {
       return {
         ...error,
         reason: this.translate.instant('Access denied to {method}', { method: context.method }),

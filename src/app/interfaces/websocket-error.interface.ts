@@ -1,8 +1,8 @@
+import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 
 export interface WebSocketError {
-  errname: WebSocketErrorName;
+  errname: ApiErrorName;
   error: number;
   extra: unknown;
   reason: string;

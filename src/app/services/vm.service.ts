@@ -5,8 +5,8 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, filter, Observable, repeat, Subject, switchMap, take,
 } from 'rxjs';
+import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { VmState } from 'app/enums/vm.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
@@ -144,7 +144,7 @@ export class VmService {
         },
         error: (error: WebSocketError) => {
           if (method === this.wsMethods.start
-            && error.errname === WebSocketErrorName.NoMemory) {
+            && error.errname === ApiErrorName.NoMemory) {
             this.onMemoryError(vm);
             return;
           }

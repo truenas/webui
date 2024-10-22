@@ -1,7 +1,7 @@
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
+import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -12,7 +12,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 const fakeError: WebSocketError = {
   type: ResponseErrorType.Validation,
   error: 11,
-  errname: WebSocketErrorName.Again,
+  errname: ApiErrorName.Again,
   extra: [
     [
       'test-query.test_control_1',
