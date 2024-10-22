@@ -8,7 +8,7 @@ import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
+import { ApiEventMethod, ApiEventTyped, IncomingApiMessage } from 'app/interfaces/api-message.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -76,7 +76,7 @@ export class WebSocketConnectionService {
       },
     });
     this.wsAsObservable$ = this.ws$.asObservable().pipe(
-      switchMap((data: IncomingWebSocketMessage) => {
+      switchMap((data: IncomingApiMessage) => {
         if (this.hasAuthError(data)) {
           console.error(data);
           this.ws$.complete();
@@ -86,7 +86,7 @@ export class WebSocketConnectionService {
     );
     // At least one explicit subscription required to keep the connection open
     this.ws$.pipe(
-      tap((response: IncomingWebSocketMessage) => {
+      tap((response: IncomingApiMessage) => {
         if (response.msg === IncomingApiMessageType.Connected) {
           performance.mark('WS Connected');
           performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');
@@ -129,7 +129,7 @@ export class WebSocketConnectionService {
     });
   }
 
-  private hasAuthError(data: IncomingWebSocketMessage): boolean {
+  private hasAuthError(data: IncomingApiMessage): boolean {
     return 'error' in data && data.error.error === 207;
   }
 

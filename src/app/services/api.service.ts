@@ -26,7 +26,7 @@ import {
 } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiError } from 'app/interfaces/api-error.interface';
 import {
-  ApiEvent, ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage, ResultMessage,
+  ApiEvent, ApiEventMethod, ApiEventTyped, IncomingApiMessage, ResultMessage,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -155,8 +155,8 @@ export class ApiService {
         });
       }),
       switchMap(() => this.ws$),
-      filter((data: IncomingWebSocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      switchMap((data: IncomingWebSocketMessage) => {
+      filter((data: IncomingApiMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+      switchMap((data: IncomingApiMessage) => {
         if ('error' in data && data.error) {
           this.printError(data.error, { method, params });
           const error = this.enhanceError(data.error, { method });

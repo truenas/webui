@@ -44,7 +44,7 @@ export type ApiEventTyped<
   T extends ApiEventResponseType<M> = ApiEventResponseType<M>,
 > = ApiEvent<T>;
 
-export type IncomingWebSocketMessage =
+export type IncomingApiMessage =
   | PongMessage
   | SubscriptionReadyMessage
   | ResultMessage
