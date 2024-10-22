@@ -34,11 +34,11 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { smartTaskListElements } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.elements';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

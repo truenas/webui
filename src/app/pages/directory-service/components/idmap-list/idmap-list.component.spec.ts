@@ -18,8 +18,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('IdmapListComponent', () => {
   let spectator: Spectator<IdmapListComponent>;

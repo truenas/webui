@@ -17,9 +17,9 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudCredentialsCardComponent', () => {
   let spectator: Spectator<CloudCredentialsCardComponent>;

@@ -16,7 +16,7 @@ import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 const ignoredAppsList = [customApp];
 

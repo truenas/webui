@@ -16,8 +16,8 @@ import {
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('AlertServiceListComponent', () => {
   let spectator: Spectator<AlertServiceListComponent>;

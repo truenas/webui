@@ -32,9 +32,9 @@ import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 enum SendMethod {
   Smtp = 'smtp',

@@ -18,8 +18,8 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshKeypairFormComponent', () => {
   let spectator: Spectator<SshKeypairFormComponent>;

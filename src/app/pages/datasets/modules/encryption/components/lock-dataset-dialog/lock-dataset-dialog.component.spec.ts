@@ -11,7 +11,7 @@ import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.ut
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { LockDatasetDialogComponent } from './lock-dataset-dialog.component';
 
 describe('LockDatasetDialogComponent', () => {

@@ -26,10 +26,10 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { failoverElements } from 'app/pages/system/failover-settings/failover-settings.elements';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 

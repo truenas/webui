@@ -38,8 +38,8 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { zfsHealthCardElements } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

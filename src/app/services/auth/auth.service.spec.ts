@@ -19,9 +19,9 @@ import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const authMeUser = {
   pw_dir: 'dir',

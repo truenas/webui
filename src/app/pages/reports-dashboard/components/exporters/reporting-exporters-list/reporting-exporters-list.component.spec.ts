@@ -14,8 +14,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const exporters: ReportingExporter[] = [
   {

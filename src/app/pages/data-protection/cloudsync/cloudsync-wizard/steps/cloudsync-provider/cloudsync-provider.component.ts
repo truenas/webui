@@ -23,8 +23,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

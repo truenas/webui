@@ -10,7 +10,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import {
   CreateStorjBucketDialogComponent,
 } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('CreateStorjBucketDialogComponent', () => {
   let spectator: Spectator<CreateStorjBucketDialogComponent>;

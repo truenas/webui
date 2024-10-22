@@ -39,10 +39,10 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { scrubListElements } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.elements';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

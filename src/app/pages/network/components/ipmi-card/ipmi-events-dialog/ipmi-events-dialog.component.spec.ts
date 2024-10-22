@@ -12,7 +12,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('IpmiEventsDialogComponent', () => {
   let spectator: Spectator<IpmiEventsDialogComponent>;

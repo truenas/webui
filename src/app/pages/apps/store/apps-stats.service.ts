@@ -4,7 +4,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppStats } from 'app/interfaces/app.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 type State = Record<string, AppStats>;
 

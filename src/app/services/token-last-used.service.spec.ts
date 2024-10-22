@@ -5,9 +5,9 @@ import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('TokenLastUsedService', () => {
   let spectator: SpectatorService<TokenLastUsedService>;

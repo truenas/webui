@@ -15,7 +15,7 @@ import {
   groupsLoaded,
   groupsNotLoaded,
 } from 'app/pages/credentials/groups/store/group.actions';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';

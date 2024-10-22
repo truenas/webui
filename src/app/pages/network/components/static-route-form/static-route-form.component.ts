@@ -22,7 +22,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

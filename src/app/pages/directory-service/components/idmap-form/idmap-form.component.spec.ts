@@ -24,9 +24,9 @@ import {
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IdmapService } from 'app/services/idmap.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('IdmapFormComponent', () => {
   let spectator: Spectator<IdmapFormComponent>;

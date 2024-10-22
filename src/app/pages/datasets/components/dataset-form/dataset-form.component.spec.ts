@@ -33,8 +33,8 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 describe('DatasetFormComponent', () => {

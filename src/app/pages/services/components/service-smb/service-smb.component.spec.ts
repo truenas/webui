@@ -16,10 +16,10 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;

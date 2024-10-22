@@ -8,7 +8,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { EulaEffects } from 'app/store/eula/eula.effects';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';

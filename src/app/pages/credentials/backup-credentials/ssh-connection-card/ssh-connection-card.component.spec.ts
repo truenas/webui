@@ -16,8 +16,8 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshConnectionCardComponent', () => {
   let spectator: Spectator<SshConnectionCardComponent>;

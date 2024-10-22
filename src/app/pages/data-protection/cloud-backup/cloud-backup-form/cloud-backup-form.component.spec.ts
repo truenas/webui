@@ -19,10 +19,10 @@ import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/page
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { WebSocketService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudBackupFormComponent', () => {
   const storjCreds = {

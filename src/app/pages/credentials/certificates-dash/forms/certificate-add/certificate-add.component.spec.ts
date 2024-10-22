@@ -39,8 +39,8 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
+import { WebSocketService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CertificateAddComponent', () => {
   let spectator: Spectator<CertificateAddComponent>;

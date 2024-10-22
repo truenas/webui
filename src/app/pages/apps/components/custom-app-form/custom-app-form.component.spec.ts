@@ -21,8 +21,8 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const fakeApp = {
   name: 'test-app-one',

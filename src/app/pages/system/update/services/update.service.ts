@@ -5,7 +5,7 @@ import {
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Injectable({

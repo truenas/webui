@@ -15,7 +15,7 @@ import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { SmartInfoCardComponent } from './smart-info-card.component';
 
 describe('SmartInfoCardComponent', () => {

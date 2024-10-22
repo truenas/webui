@@ -65,7 +65,7 @@ import {
 import {
   VictorOpsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

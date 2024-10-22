@@ -20,9 +20,9 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const certificates = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,

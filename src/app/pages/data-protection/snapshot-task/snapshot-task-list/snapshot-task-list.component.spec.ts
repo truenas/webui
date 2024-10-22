@@ -22,10 +22,10 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('SnapshotTaskListComponent', () => {
   let spectator: Spectator<SnapshotTaskListComponent>;

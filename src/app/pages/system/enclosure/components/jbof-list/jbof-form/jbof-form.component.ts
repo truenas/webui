@@ -19,7 +19,7 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

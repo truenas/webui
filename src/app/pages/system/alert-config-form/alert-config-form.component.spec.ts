@@ -10,7 +10,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('AlertConfigFormComponent', () => {
   let spectator: Spectator<AlertConfigFormComponent>;

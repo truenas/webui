@@ -23,8 +23,8 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

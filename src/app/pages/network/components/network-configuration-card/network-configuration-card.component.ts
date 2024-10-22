@@ -24,8 +24,8 @@ import { NetworkConfigurationComponent } from 'app/pages/network/components/conf
 import {
   networkConfigurationCardElements,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.elements';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()

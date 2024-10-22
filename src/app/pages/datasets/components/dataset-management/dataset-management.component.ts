@@ -66,8 +66,8 @@ import { datasetManagementElements } from 'app/pages/datasets/components/dataset
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

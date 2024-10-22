@@ -22,8 +22,8 @@ import { replicationSettingsCardElements } from 'app/pages/system/advanced/repli
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

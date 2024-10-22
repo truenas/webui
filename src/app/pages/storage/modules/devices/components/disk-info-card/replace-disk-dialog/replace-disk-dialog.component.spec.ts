@@ -18,7 +18,7 @@ import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
 } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('ReplaceDiskDialogComponent', () => {
   let spectator: Spectator<ReplaceDiskDialogComponent>;

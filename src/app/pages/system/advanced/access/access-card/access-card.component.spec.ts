@@ -20,10 +20,10 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 

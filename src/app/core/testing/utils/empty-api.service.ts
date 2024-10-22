@@ -1,5 +1,5 @@
 import { getMissingInjectionErrorFactory, getMissingInjectionErrorObservable } from 'app/core/testing/utils/missing-injection-factories';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 export class EmptyWebsocketService {
   readonly clearSubscriptions$ = getMissingInjectionErrorObservable(WebSocketService.name);

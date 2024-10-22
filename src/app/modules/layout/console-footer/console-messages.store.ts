@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { filter, map } from 'rxjs';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 export interface ConsoleMessagesState {
   lines: string[];

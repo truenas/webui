@@ -10,7 +10,7 @@ import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.ut
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { LeaveDomainDialogComponent } from './leave-domain-dialog.component';
 
 describe('LeaveDomainDialogComponent', () => {

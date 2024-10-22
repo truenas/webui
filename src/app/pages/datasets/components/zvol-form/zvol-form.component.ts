@@ -39,9 +39,9 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
+import { WebSocketService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 interface ZvolFormData {
   name?: string;

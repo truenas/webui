@@ -18,8 +18,8 @@ import {
 import {
   InitShutdownListComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('InitShutdownListComponent', () => {
   let spectator: Spectator<InitShutdownListComponent>;

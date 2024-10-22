@@ -20,9 +20,9 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { CertificateListComponent } from './certificate-list.component';
 
 const certificates = Array.from({ length: 10 }).map((_, index) => ({

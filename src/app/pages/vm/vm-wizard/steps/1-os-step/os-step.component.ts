@@ -27,7 +27,7 @@ import {
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

@@ -17,8 +17,8 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

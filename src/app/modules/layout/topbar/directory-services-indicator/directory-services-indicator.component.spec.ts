@@ -17,7 +17,7 @@ import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('DirectoryServicesIndicatorComponent', () => {
   let spectator: Spectator<DirectoryServicesIndicatorComponent>;

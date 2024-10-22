@@ -43,10 +43,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { WebSocketService } from 'app/services/api.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const existingTask: ReplicationTask = {
   name: 'dataset',

@@ -25,8 +25,8 @@ import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 

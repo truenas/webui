@@ -33,8 +33,8 @@ import {
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
 export interface PoolManagerTopologyCategory {

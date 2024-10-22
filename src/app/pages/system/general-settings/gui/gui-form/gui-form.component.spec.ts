@@ -19,10 +19,10 @@ import {
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';

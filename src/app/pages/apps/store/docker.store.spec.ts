@@ -4,7 +4,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('DockerStore', () => {
   let spectator: SpectatorService<DockerStore>;

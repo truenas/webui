@@ -14,9 +14,9 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
   enclosures: DashboardEnclosure[];

@@ -7,7 +7,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkinIndicatorPressed,

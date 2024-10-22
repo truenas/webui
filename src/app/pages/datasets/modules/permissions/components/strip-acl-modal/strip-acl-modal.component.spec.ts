@@ -13,7 +13,7 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import {
   StripAclModalComponent, StripAclModalData,
 } from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('StripAclModalComponent', () => {
   let spectator: Spectator<StripAclModalComponent>;

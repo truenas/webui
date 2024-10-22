@@ -24,7 +24,7 @@ import {
   matchOthersFgValidator,
 } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

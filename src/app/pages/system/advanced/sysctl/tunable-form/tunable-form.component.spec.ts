@@ -13,8 +13,8 @@ import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ch
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('TunableFormComponent', () => {
   let spectator: Spectator<TunableFormComponent>;

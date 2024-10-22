@@ -29,11 +29,11 @@ import {
   CloudSyncTaskCardComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudSyncTaskCardComponent', () => {

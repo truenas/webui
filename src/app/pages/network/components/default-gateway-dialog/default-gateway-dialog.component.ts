@@ -22,8 +22,8 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

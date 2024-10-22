@@ -42,9 +42,9 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
 const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';

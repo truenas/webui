@@ -10,7 +10,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('DeleteVmDialogComponent', () => {
   let spectator: Spectator<DeleteVmDialogComponent>;

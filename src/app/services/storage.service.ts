@@ -7,7 +7,7 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {

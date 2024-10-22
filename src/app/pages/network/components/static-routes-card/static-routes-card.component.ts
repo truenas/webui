@@ -31,8 +31,8 @@ import {
 } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { staticRoutesCardElements } from 'app/pages/network/components/static-routes-card/static-routes-card.elements';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

@@ -36,7 +36,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

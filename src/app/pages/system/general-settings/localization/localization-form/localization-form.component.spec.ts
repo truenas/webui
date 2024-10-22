@@ -15,11 +15,11 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';

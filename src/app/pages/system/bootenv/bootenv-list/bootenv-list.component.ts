@@ -45,9 +45,9 @@ import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-poo
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface BootenvUi extends Bootenv {

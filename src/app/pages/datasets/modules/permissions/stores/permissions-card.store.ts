@@ -8,8 +8,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const initialState: PermissionsCardState = {
   isLoading: false,

@@ -13,8 +13,8 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
+import { WebSocketService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverSettingsComponent>;

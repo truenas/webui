@@ -3,7 +3,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import {
   TrueCommandStatusComponent,
 } from 'app/pages/signin/true-command-status/true-command-status.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('TrueCommandStatusComponent', () => {
   let spectator: Spectator<TrueCommandStatusComponent>;

@@ -60,8 +60,8 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState as WebuiAppState } from 'app/store';
 
 enum SortableField {

@@ -16,10 +16,10 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshKeypairCardComponent', () => {
   let spectator: Spectator<SshKeypairCardComponent>;

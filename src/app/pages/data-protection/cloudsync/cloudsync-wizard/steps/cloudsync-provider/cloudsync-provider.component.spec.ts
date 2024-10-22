@@ -19,10 +19,10 @@ import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credent
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { storjProvider, googlePhotosProvider, googlePhotosCreds } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
+import { WebSocketService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudSyncProviderComponent', () => {
   let spectator: Spectator<CloudSyncProviderComponent>;

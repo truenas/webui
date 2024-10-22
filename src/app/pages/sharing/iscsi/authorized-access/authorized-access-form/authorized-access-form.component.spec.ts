@@ -13,8 +13,8 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   AuthorizedAccessFormComponent,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('AuthorizedAccessFormComponent', () => {
   let spectator: Spectator<AuthorizedAccessFormComponent>;

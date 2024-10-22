@@ -7,7 +7,7 @@ import { filter, take } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { RedirectDialogData } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog-data.interface';
 import { RedirectDialogComponent } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 

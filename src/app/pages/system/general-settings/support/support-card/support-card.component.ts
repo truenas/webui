@@ -40,9 +40,9 @@ import {
 import { supportCardElements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 

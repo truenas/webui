@@ -11,7 +11,7 @@ import { map, throttleTime } from 'rxjs';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

@@ -25,9 +25,9 @@ import {
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ActiveDirectoryComponent', () => {
   let spectator: Spectator<ActiveDirectoryComponent>;

@@ -19,7 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

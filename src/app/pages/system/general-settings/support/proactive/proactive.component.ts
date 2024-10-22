@@ -26,8 +26,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

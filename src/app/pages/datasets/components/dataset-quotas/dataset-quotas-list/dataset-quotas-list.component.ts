@@ -48,9 +48,9 @@ import {
 import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 interface QuotaData {
   quotaType: DatasetQuotaType.User | DatasetQuotaType.Group;

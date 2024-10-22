@@ -41,12 +41,12 @@ import {
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { servicesElements } from 'app/pages/services/services.elements';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ServicesService } from 'app/services/services.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { serviceChanged } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';

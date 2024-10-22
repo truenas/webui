@@ -41,11 +41,11 @@ import {
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

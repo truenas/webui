@@ -6,8 +6,8 @@ import {
 } from 'rxjs/operators';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface ApiKeysState {
   isLoading: boolean;

@@ -16,9 +16,9 @@ import {
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
+import { WebSocketService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceFtpComponent', () => {
   let spectator: Spectator<ServiceFtpComponent>;

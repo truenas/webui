@@ -29,8 +29,8 @@ import {
   RaidzExtendDialogComponent, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 

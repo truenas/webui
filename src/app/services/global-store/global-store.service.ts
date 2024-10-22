@@ -5,7 +5,7 @@ import {
 import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventMethod, ApiEventTyped } from 'app/interfaces/api-message.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 export interface GlobalStoreMembers<
   M1 extends ApiCallMethod,

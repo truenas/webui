@@ -33,9 +33,9 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

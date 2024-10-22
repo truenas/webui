@@ -8,8 +8,8 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { DeviceType } from 'app/enums/device-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Device } from 'app/interfaces/device.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 

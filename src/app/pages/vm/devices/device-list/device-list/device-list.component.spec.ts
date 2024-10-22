@@ -21,8 +21,8 @@ import {
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
 import { DeviceListComponent } from 'app/pages/vm/devices/device-list/device-list/device-list.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeviceListComponent', () => {
   let spectator: Spectator<DeviceListComponent>;

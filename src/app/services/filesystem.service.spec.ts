@@ -6,8 +6,8 @@ import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('FilesystemService', () => {
   let spectator: SpectatorService<FilesystemService>;

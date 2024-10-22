@@ -12,8 +12,8 @@ import {
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * This is a sugar syntax for creating simple websocket mocks.

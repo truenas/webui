@@ -47,8 +47,8 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

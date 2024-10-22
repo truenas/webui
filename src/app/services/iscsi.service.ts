@@ -9,7 +9,7 @@ import {
   IscsiTarget,
   IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @Injectable({
   providedIn: 'root',

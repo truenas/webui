@@ -18,7 +18,7 @@ import {
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('PoolManagerStore', () => {
   let spectator: SpectatorService<PoolManagerStore>;

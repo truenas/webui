@@ -38,8 +38,8 @@ import {
   snapshotExcludeBootQueryFilter,
 } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

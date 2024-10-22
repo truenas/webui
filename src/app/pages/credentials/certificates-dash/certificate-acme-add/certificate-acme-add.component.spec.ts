@@ -18,7 +18,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('CertificateAcmeAddComponent', () => {
   let spectator: Spectator<CertificateAcmeAddComponent>;

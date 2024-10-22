@@ -13,7 +13,7 @@ import {
   AclEditorSaveControlsComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/acl-editor-save-controls/acl-editor-save-controls.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('AclEditorSaveControlsComponent', () => {
   let spectator: Spectator<AclEditorSaveControlsComponent>;

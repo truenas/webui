@@ -66,8 +66,8 @@ import { auditElements } from 'app/pages/audit/audit.elements';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
+import { WebSocketService } from 'app/services/api.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 

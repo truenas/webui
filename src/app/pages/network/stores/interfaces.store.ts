@@ -3,8 +3,8 @@ import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs/operators';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface InterfacesState {
   interfaces: NetworkInterface[];

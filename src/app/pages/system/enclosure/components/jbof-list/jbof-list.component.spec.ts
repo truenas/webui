@@ -14,8 +14,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const fakeJbofDataSource: Jbof[] = [
   {

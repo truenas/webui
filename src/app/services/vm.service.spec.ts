@@ -7,7 +7,7 @@ import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-we
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { VmService } from './vm.service';
 
 describe('VmService', () => {

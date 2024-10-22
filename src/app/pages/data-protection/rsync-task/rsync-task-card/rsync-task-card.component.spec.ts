@@ -18,10 +18,10 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('RsyncTaskCardComponent', () => {

@@ -19,7 +19,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 export enum NewOrExistingDisk {
   New = 'new',

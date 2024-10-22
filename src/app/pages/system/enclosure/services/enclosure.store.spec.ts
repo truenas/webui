@@ -16,8 +16,8 @@ import {
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
+import { WebSocketService } from 'app/services/api.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('EnclosureStore', () => {
   let spectator: SpectatorService<EnclosureStore>;

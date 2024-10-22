@@ -11,8 +11,8 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const mockWebSocketConnectionService = {
   send: jest.fn(),

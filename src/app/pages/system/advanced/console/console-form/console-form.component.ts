@@ -24,7 +24,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 

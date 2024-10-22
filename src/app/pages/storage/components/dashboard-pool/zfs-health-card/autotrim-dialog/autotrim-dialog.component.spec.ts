@@ -15,7 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('AutotrimDialogComponent', () => {
   let spectator: Spectator<AutotrimDialogComponent>;

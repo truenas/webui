@@ -35,7 +35,7 @@ import {
   basicConstraintOptions,
   keyUsageOptions,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constants';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

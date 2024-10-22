@@ -29,8 +29,8 @@ import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-war
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

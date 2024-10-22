@@ -29,7 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

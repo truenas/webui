@@ -13,7 +13,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   DeleteExtentDialogComponent,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('DeleteExtentDialogComponent', () => {
   let spectator: Spectator<DeleteExtentDialogComponent>;

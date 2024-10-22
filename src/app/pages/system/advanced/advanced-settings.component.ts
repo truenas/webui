@@ -10,7 +10,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { advancedSettingsElements } from 'app/pages/system/advanced/advanced-settings.elements';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { AccessCardComponent } from './access/access-card/access-card.component';
 import { AllowedAddressesCardComponent } from './allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AuditCardComponent } from './audit/audit-card/audit-card.component';

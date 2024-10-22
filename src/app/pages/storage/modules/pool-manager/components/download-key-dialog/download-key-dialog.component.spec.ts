@@ -10,9 +10,9 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
+import { WebSocketService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('DownloadKeyDialogComponent', () => {
   let spectator: Spectator<DownloadKeyDialogComponent>;

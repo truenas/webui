@@ -43,12 +43,12 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

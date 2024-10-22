@@ -8,8 +8,8 @@ import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/
 import { MockEnclosureGenerator } from 'app/core/testing/mock-enclosure/mock-enclosure-generator.utils';
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
   providedIn: 'root',

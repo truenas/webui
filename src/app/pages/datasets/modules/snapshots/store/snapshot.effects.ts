@@ -15,7 +15,7 @@ import {
   snapshotPageEntered,
   snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 

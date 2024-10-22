@@ -12,8 +12,8 @@ import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('SetAdminPasswordFormComponent', () => {
   let spectator: Spectator<SetAdminPasswordFormComponent>;

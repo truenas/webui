@@ -25,7 +25,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

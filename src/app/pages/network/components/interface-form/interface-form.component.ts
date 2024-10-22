@@ -58,9 +58,9 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 

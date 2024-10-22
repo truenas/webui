@@ -28,7 +28,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';

@@ -11,7 +11,7 @@ import { PoolTopology } from 'app/interfaces/pool.interface';
 import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 export interface DevicesState {
   isLoading: boolean;

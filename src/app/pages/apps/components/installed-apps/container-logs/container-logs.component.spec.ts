@@ -12,7 +12,7 @@ import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('ContainerLogsComponent', () => {
   let spectator: Spectator<ContainerLogsComponent>;

@@ -22,8 +22,8 @@ import {
 } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebSocketService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * Better than just expect.anything() because it allows null and undefined.

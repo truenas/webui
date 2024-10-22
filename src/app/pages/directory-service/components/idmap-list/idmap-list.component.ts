@@ -38,10 +38,10 @@ import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap
 import { idMapElements } from 'app/pages/directory-service/components/idmap-list/idmap-list.elements';
 import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

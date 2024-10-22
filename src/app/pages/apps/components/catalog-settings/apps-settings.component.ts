@@ -32,7 +32,7 @@ import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-v
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({

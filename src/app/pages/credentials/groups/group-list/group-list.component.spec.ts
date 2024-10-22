@@ -16,7 +16,7 @@ import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-det
 import { GroupListComponent } from 'app/pages/credentials/groups/group-list/group-list.component';
 import { groupsInitialState, GroupsState } from 'app/pages/credentials/groups/store/group.reducer';
 import { selectGroups, selectGroupState, selectGroupsTotal } from 'app/pages/credentials/groups/store/group.selectors';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 const fakeGroupDataSource: Group[] = [{

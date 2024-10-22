@@ -42,8 +42,8 @@ import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/di
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { DiskWipeDialogComponent } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {

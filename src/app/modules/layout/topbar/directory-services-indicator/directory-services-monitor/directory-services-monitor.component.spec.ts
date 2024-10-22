@@ -8,7 +8,7 @@ import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('DirectoryServicesMonitorComponent', () => {
   let spectator: Spectator<DirectoryServicesMonitorComponent>;

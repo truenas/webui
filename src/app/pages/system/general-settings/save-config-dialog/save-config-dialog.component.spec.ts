@@ -15,8 +15,8 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+import { WebSocketService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('SaveConfigDialogComponent', () => {

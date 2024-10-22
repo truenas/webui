@@ -5,7 +5,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('AppResourcesCardComponent', () => {
   let spectator: Spectator<AppResourcesCardComponent>;

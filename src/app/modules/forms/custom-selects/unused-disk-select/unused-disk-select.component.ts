@@ -28,7 +28,7 @@ import {
   getNonUniqueSerialDisksWarning,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 /**
  * Presents unused disks, shows their size and if there is exported pool on them.

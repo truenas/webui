@@ -29,9 +29,9 @@ import {
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServicesComponent } from 'app/pages/services/services.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { initialState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
 

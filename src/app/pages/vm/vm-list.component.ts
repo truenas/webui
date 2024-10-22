@@ -46,10 +46,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { vmListElements } from 'app/pages/vm/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

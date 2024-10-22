@@ -7,7 +7,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { haStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {

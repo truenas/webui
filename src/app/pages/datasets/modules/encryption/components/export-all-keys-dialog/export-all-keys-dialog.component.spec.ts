@@ -9,8 +9,8 @@ import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-we
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
+import { WebSocketService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ExportAllKeysDialogComponent', () => {
   let spectator: Spectator<ExportAllKeysDialogComponent>;

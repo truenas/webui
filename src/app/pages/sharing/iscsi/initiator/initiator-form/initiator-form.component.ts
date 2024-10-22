@@ -23,8 +23,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 interface InitiatorItem {
   id: string;

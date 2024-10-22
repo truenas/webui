@@ -18,8 +18,8 @@ import { SaveConfigDialogComponent } from 'app/pages/system/general-settings/sav
 import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
+import { WebSocketService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 describe('UpdateActionsCardComponent', () => {

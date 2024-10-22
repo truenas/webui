@@ -23,7 +23,7 @@ import {
   RaidzExtendDialogComponent, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('RaidzExtendDialogComponent', () => {
   let spectator: Spectator<RaidzExtendDialogComponent>;

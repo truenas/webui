@@ -21,7 +21,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('CatalogEditFormComponent', () => {
   let spectator: Spectator<AppsSettingsComponent>;

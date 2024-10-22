@@ -14,7 +14,7 @@ import {
   UnusedDiskSelectComponent,
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { BootPoolReplaceDialogComponent } from './boot-pool-replace-dialog.component';
 
 describe('BootPoolReplaceDialogComponent', () => {

@@ -10,7 +10,7 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { ManageDiskSedDialogComponent } from './manage-disk-sed-dialog.component';
 
 describe('ManageDiskSedDialogComponent', () => {

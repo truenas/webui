@@ -23,8 +23,8 @@ import { storageCardElements } from 'app/pages/system/advanced/storage/storage-c
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()

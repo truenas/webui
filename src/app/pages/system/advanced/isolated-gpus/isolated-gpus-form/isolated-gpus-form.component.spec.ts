@@ -13,11 +13,11 @@ import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ch
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { IsolatedGpusFormComponent } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('IsolatedGpuPcisFormComponent', () => {

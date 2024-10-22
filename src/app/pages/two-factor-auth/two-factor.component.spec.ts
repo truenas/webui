@@ -13,8 +13,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;

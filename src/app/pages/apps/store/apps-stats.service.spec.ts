@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { AppStats } from 'app/interfaces/app.interface';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('AppsStatsService', () => {
   const plexStats: AppStats = {

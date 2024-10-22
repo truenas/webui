@@ -26,7 +26,7 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('DashboardPoolComponent', () => {
   let spectator: Spectator<DashboardPoolComponent>;

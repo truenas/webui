@@ -8,8 +8,8 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WebSocketService } from 'app/services/api.service';
 import { FipsService } from 'app/services/fips.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('FipsService', () => {
   let spectator: SpectatorService<FipsService>;

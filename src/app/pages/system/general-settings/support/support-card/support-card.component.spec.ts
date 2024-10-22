@@ -21,7 +21,7 @@ import {
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const systemInfo = {

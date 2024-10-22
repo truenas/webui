@@ -16,8 +16,8 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { ApiKeysComponent } from 'app/pages/api-keys/api-keys.component';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
+import { WebSocketService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeysComponent', () => {
   let spectator: Spectator<ApiKeysComponent>;

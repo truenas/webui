@@ -17,7 +17,7 @@ import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapsho
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('SnapshotDetailsRowComponent', () => {
   let spectator: SpectatorRouting<SnapshotDetailsRowComponent>;

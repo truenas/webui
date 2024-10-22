@@ -16,7 +16,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 const newOption = 'NEW';
 

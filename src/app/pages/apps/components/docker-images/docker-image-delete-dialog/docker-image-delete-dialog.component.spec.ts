@@ -17,7 +17,7 @@ import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-lis
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 const mockSuccessBulkResponse = [{
   result: null,

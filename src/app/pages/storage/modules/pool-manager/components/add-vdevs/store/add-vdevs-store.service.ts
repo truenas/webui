@@ -9,8 +9,8 @@ import { map } from 'rxjs/operators';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface AddVdevsState {
   pool: Pool;

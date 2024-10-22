@@ -17,8 +17,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { auditCardElements } from 'app/pages/system/advanced/audit/audit-card/audit-card.elements';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
+import { WebSocketService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy(this)
 @Component({

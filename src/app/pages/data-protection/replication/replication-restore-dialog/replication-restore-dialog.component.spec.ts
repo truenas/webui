@@ -11,8 +11,8 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { WebSocketService } from 'app/services/api.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ReplicationRestoreDialogComponent', () => {
   let spectator: Spectator<ReplicationRestoreDialogComponent>;

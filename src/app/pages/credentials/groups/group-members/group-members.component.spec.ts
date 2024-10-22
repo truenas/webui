@@ -13,7 +13,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
 import { GroupMembersComponent } from 'app/pages/credentials/groups/group-members/group-members.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 const fakeGroupDataSource = [{
   id: 1,

@@ -5,8 +5,8 @@ import { EMPTY, throwError } from 'rxjs';
 import {
   catchError, filter, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
+import { WebSocketService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {

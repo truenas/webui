@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig {
   return {

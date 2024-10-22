@@ -27,8 +27,8 @@ import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WebSocketService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({

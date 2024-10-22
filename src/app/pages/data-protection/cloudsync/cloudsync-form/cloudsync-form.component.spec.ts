@@ -21,9 +21,9 @@ import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { WebSocketService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudSyncFormComponent', () => {
   const existingTask = {

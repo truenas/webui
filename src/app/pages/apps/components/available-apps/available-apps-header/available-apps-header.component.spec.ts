@@ -19,7 +19,7 @@ import { IxFilterSelectListHarness } from 'app/pages/apps/components/filter-sele
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/api.service';
 
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;

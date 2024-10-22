@@ -21,8 +21,8 @@ import {
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
+import { WebSocketService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync-provider.component';
 
 @UntilDestroy()
