@@ -34,7 +34,7 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { smartTaskListElements } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.elements';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
@@ -122,7 +122,7 @@ export class SmartTaskListComponent implements OnInit {
     private taskService: TaskService,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
   ) {

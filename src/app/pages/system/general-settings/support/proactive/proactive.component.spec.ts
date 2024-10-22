@@ -16,13 +16,13 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ProactiveComponent', () => {
   let spectator: Spectator<ProactiveComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
   let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
@@ -59,7 +59,7 @@ describe('ProactiveComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
     form = await loader.getHarness(IxFormHarness);
   });
 

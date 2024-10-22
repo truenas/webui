@@ -3,7 +3,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import {
   TrueCommandStatusComponent,
 } from 'app/pages/signin/true-command-status/true-command-status.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('TrueCommandStatusComponent', () => {
   let spectator: Spectator<TrueCommandStatusComponent>;
@@ -21,7 +21,7 @@ describe('TrueCommandStatusComponent', () => {
   });
 
   it('makes a websocket call to check TrueCommand status', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truenas.managed_by_truecommand');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.managed_by_truecommand');
   });
 
   it('shows Managed by Truecommand status', () => {

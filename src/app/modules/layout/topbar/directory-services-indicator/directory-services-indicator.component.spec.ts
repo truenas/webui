@@ -17,7 +17,7 @@ import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DirectoryServicesIndicatorComponent', () => {
   let spectator: Spectator<DirectoryServicesIndicatorComponent>;
@@ -41,7 +41,7 @@ describe('DirectoryServicesIndicatorComponent', () => {
   });
 
   it('loads directory services state and shows an icon if one of the services is enabled', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('directoryservices.get_state');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.get_state');
 
     const iconButton = await loader.getHarness(MatButtonHarness);
     await iconButton.click();

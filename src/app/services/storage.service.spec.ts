@@ -3,12 +3,12 @@ import { VdevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-typ
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { TopologyDisk, TopologyItem, VDev } from 'app/interfaces/storage.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { StorageService } from 'app/services/storage.service';
 
 describe('StorageService', () => {
   const storageService = new StorageService(
-    {} as WebSocketService,
+    {} as ApiService,
   );
 
   describe('getRedundancyLevel', () => {

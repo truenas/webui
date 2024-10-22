@@ -41,7 +41,7 @@ import {
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
@@ -171,7 +171,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private authService: AuthService,
     private datasetService: DatasetService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 

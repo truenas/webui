@@ -28,7 +28,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { sshConnectionsCardElements } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.elements';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
@@ -88,7 +88,7 @@ export class SshConnectionCardComponent implements OnInit {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private chainedSlideInService: IxChainedSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,

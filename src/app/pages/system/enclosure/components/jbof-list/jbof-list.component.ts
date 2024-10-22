@@ -32,7 +32,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -106,7 +106,7 @@ export class JbofListComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,

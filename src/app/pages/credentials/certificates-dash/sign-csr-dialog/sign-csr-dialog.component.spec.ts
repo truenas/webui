@@ -10,7 +10,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { SignCsrDialogComponent } from './sign-csr-dialog.component';
 
@@ -63,7 +63,7 @@ describe('SignCsrDialogComponent', () => {
     const signButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign' }));
     await signButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'certificateauthority.ca_sign_csr',
       [{
         ca_id: 13,

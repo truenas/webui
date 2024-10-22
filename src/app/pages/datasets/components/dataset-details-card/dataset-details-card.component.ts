@@ -25,7 +25,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -64,7 +64,7 @@ export class DatasetDetailsCardComponent {
     private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private snackbar: SnackbarService,
   ) { }
 

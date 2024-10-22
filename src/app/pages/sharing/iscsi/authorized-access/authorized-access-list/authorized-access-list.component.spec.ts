@@ -19,7 +19,7 @@ import {
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const authAccess: IscsiAuthAccess[] = [
@@ -95,7 +95,7 @@ describe('AuthorizedAccessListComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.auth.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.auth.delete', [1]);
   });
 
   it('should show table rows', async () => {

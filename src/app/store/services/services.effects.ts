@@ -9,7 +9,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ServicesService } from 'app/services/services.service';
 import { AppState } from 'app/store';
@@ -90,7 +90,7 @@ export class ServicesEffects {
   constructor(
     private store$: Store<AppState>,
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private matDialog: MatDialog,
     private authService: AuthService,
     private servicesService: ServicesService,

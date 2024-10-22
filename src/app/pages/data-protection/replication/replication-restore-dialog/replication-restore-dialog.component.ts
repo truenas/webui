@@ -18,7 +18,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 
 @UntilDestroy()
@@ -53,7 +53,7 @@ export class ReplicationRestoreDialogComponent {
   readonly helptext = helptextReplication;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     private formBuilder: FormBuilder,
     private datasetService: DatasetService,

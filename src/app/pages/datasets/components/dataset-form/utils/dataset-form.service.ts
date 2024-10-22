@@ -10,7 +10,7 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @Injectable({
@@ -19,7 +19,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class DatasetFormService {
   constructor(
     private dialog: DialogService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {}

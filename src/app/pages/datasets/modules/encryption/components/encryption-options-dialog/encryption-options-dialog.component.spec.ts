@@ -13,12 +13,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { EncryptionOptionsDialogComponent } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 describe('EncryptionOptionsDialogComponent', () => {
   let spectator: Spectator<EncryptionOptionsDialogComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>;
@@ -69,7 +69,7 @@ describe('EncryptionOptionsDialogComponent', () => {
         { provide: MAT_DIALOG_DATA, useValue: dialogData },
       ],
     });
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     dialogRef = spectator.inject(MatDialogRef);
     form = await loader.getHarness(IxFormHarness);

@@ -10,7 +10,7 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
@@ -63,7 +63,7 @@ export class SystemGeneralService {
   );
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: ApiService,
   ) {}
 
   getCertificateAuthorities(): Observable<CertificateAuthority[]> {

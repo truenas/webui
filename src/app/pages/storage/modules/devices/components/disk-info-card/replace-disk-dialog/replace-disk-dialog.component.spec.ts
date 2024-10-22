@@ -18,7 +18,7 @@ import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
 } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('ReplaceDiskDialogComponent', () => {
   let spectator: Spectator<ReplaceDiskDialogComponent>;
@@ -80,7 +80,7 @@ describe('ReplaceDiskDialogComponent', () => {
     await replaceButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.replace', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.replace', [
       1,
       {
         disk: '{serial_lunid}BBBBB1',

@@ -39,7 +39,7 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -222,7 +222,7 @@ export class ZvolFormComponent implements OnInit {
     public formatter: IxFormatterService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,

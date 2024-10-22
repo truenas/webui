@@ -13,7 +13,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 const mockJobSuccessResponse = [{
   result: true,
@@ -64,7 +64,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', [
       'zfs.snapshot.delete',
       [
         ['test-dataset@first-snapshot'],

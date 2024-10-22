@@ -24,7 +24,7 @@ import {
   DatasetAclEditorState,
 } from 'app/pages/datasets/modules/permissions/interfaces/dataset-acl-editor-state.interface';
 import { newNfsAce, newPosixAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -44,7 +44,7 @@ const initialState: DatasetAclEditorState = {
 })
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private router: Router,

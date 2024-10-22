@@ -17,7 +17,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -55,7 +55,7 @@ export class DeleteExtentDialogComponent {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,

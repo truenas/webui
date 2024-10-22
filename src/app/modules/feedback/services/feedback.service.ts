@@ -26,7 +26,7 @@ import {
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
@@ -47,7 +47,7 @@ export class FeedbackService {
 
   constructor(
     private httpClient: HttpClient,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     private sentryService: SentryService,

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ export class UpdateService {
   private lastSeenBootId: string;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     @Inject(WINDOW) private window: Window,
   ) {}
 

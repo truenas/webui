@@ -6,7 +6,7 @@ import {
 } from 'rxjs/operators';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface ApiKeysState {
@@ -26,7 +26,7 @@ const initialState: ApiKeysState = {
 })
 export class ApiKeyComponentStore extends ComponentStore<ApiKeysState> {
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialog: DialogService,
   ) {

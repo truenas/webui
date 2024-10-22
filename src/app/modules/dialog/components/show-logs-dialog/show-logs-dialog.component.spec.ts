@@ -7,7 +7,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 
 describe('ShowLogsDialogComponent', () => {
@@ -45,7 +45,7 @@ describe('ShowLogsDialogComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Download Logs' }));
     await button.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.job_download_logs', [123456, '123456.log']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_download_logs', [123456, '123456.log']);
     expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenLastCalledWith(
       'http://localhost/download/log',
       '123456.log',

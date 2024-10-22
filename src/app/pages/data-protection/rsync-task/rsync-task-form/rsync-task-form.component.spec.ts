@@ -18,7 +18,7 @@ import {
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -141,7 +141,7 @@ describe('RsyncTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.create', [{
         archive: false,
         compress: true,
         delayupdates: false,
@@ -221,7 +221,7 @@ describe('RsyncTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTask,
@@ -251,7 +251,7 @@ describe('RsyncTaskFormComponent', () => {
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTaskWithoutModule,
@@ -281,7 +281,7 @@ describe('RsyncTaskFormComponent', () => {
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTaskWithoutModule,

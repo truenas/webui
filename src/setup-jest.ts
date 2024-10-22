@@ -86,7 +86,7 @@ import {
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -193,7 +193,7 @@ defineGlobalsInjections({
       useClass: EmptyAuthService,
     },
     {
-      provide: WebSocketService,
+      provide: ApiService,
       useClass: EmptyWebsocketService,
     },
     { provide: IxIconRegistry, useClass: FakeMatIconRegistry },

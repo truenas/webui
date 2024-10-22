@@ -8,7 +8,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const initialState: PermissionsCardState = {
@@ -20,7 +20,7 @@ const initialState: PermissionsCardState = {
 @Injectable()
 export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
   ) {

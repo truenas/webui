@@ -14,7 +14,7 @@ import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.inter
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
 
@@ -22,7 +22,7 @@ describe('SshConnectionFormComponent', () => {
   let spectator: Spectator<SshConnectionFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
 
   const existingConnection = {
     id: 11,
@@ -82,7 +82,7 @@ describe('SshConnectionFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
     });
 
     it('shows values for an existing SSH connection', async () => {
@@ -133,7 +133,7 @@ describe('SshConnectionFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
     });
 
     it('saves new SSH connection added manually', async () => {

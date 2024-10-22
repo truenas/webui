@@ -8,7 +8,7 @@ import { Device, PciDevice } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
 @Injectable({
@@ -17,7 +17,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
 export class VmGpuService {
   constructor(
     private gpuService: GpuService,
-    private ws: WebSocketService,
+    private ws: ApiService,
   ) {}
 
   /**

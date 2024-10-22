@@ -22,7 +22,7 @@ import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonl
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -66,7 +66,7 @@ export class GroupMembersComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: DialogService,

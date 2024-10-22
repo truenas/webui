@@ -29,7 +29,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
@@ -133,7 +133,7 @@ describe('SmbFormComponent', () => {
   let spectator: Spectator<SmbFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -196,7 +196,7 @@ describe('SmbFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
     });
 
     it('shows values of existing share when editing', async () => {
@@ -247,7 +247,7 @@ describe('SmbFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -562,7 +562,7 @@ describe('SmbFormComponent', () => {
   describe('smb validation', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       jest.spyOn(websocket, 'call').mockImplementation((method) => {
         if (method === 'sharing.smb.share_precheck') {
           return throwError({ reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' });
@@ -571,7 +571,7 @@ describe('SmbFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -587,7 +587,7 @@ describe('SmbFormComponent', () => {
   describe('handle error', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       jest.spyOn(websocket, 'call').mockImplementation((method) => {
         switch (method) {
           case 'group.query':

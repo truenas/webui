@@ -16,7 +16,7 @@ import {
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +41,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
   private statusSubscription: Subscription;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) { }

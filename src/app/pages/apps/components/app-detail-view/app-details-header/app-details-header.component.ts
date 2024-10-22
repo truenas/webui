@@ -23,7 +23,7 @@ import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/ap
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -60,7 +60,7 @@ export class AppDetailsHeaderComponent {
     private authService: AuthService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private viewContainerRef: ViewContainerRef,
   ) { }
 

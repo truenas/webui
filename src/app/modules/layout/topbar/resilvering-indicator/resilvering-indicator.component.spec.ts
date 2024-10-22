@@ -10,7 +10,7 @@ import {
 import {
   ResilveringIndicatorComponent,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('ResilveringIndicatorComponent', () => {
   let spectator: Spectator<ResilveringIndicatorComponent>;
@@ -18,7 +18,7 @@ describe('ResilveringIndicatorComponent', () => {
     component: ResilveringIndicatorComponent,
     providers: [
       mockProvider(MatDialog),
-      mockProvider(WebSocketService, {
+      mockProvider(ApiService, {
         subscribe: jest.fn().mockReturnValue(of({
           fields: {
             scan: {

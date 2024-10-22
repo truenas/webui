@@ -27,7 +27,7 @@ import {
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -81,7 +81,7 @@ export class OsStepComponent implements SummaryProvider {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
   ) {
     this.form.controls.enable_display.valueChanges.pipe(untilDestroyed(this)).subscribe((isEnabled) => {
       if (isEnabled) {

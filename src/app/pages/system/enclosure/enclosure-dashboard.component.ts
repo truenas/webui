@@ -13,7 +13,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ViewElementsMenuComponent } from 'app/pages/system/enclosure/components/enclosure-header/view-elements-menu/view-elements-menu.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +52,7 @@ export class EnclosureDashboardComponent {
   constructor(
     private enclosureStore: EnclosureStore,
     private route: ActivatedRoute,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
   ) {
     this.enclosureStore.initiate();

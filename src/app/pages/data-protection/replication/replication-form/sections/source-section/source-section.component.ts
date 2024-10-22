@@ -25,7 +25,7 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import {
   PropertiesOverrideValidatorService,
 } from 'app/pages/data-protection/replication/replication-form/properties-override-validator/properties-override-validator.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { TaskService } from 'app/services/task.service';
 
 @Component({
@@ -94,7 +94,7 @@ export class SourceSectionComponent implements OnChanges {
   protected readonly CronPresetValue = CronPresetValue;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private formBuilder: FormBuilder,
     private taskService: TaskService,
     private translate: TranslateService,

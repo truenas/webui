@@ -52,7 +52,7 @@ import { certificateAuthorityListElements } from 'app/pages/credentials/certific
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -146,7 +146,7 @@ export class CertificateAuthorityListComponent implements OnInit {
 
   constructor(
     private matDialog: MatDialog,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,

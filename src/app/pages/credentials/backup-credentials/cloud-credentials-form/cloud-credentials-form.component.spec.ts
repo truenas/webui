@@ -31,7 +31,7 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { CloudCredentialsFormComponent } from './cloud-credentials-form.component';
 
 jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => {
@@ -134,7 +134,7 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('loads a list of providers and shows them in Provider select', async () => {
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.providers');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.providers');
 
       const providersSelect = await form.getControl('Provider') as IxSelectHarness;
       expect(await providersSelect.getOptionLabels()).toEqual(['Amazon S3', 'Box', 'Storj iX']);
@@ -178,7 +178,7 @@ describe('CloudCredentialsFormComponent', () => {
         const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
         await verifyButton.click();
 
-        expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
           provider: 'S3',
           attributes: {
             s3attribute: 's3 value',
@@ -246,7 +246,7 @@ describe('CloudCredentialsFormComponent', () => {
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         await saveButton.click();
 
-        expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
           name: 'New sync',
           provider: CloudSyncProviderName.AmazonS3,
           attributes: {
@@ -327,7 +327,7 @@ describe('CloudCredentialsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
         233,
         {
           name: 'My updated server',

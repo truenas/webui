@@ -42,7 +42,7 @@ import {
   ipAddressesColumn,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
@@ -139,7 +139,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private networkService: NetworkService,

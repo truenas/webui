@@ -50,7 +50,7 @@ import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/devices/com
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/devices/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/devices/components/vdev-group-node/vdev-group-node.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
@@ -136,7 +136,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     private devicesStore: DevicesStore,
     private breakpointObserver: BreakpointObserver,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     @Inject(WINDOW) private window: Window,
   ) { }
 

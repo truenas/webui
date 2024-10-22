@@ -20,7 +20,7 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -140,14 +140,14 @@ describe('AccessCardComponent', () => {
       title: 'Terminate session',
       message: 'Are you sure you want to terminate the session?',
     });
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.terminate_session', ['e8a2892e-f2a3-429e-bd9e-442db8fc9480']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.terminate_session', ['e8a2892e-f2a3-429e-bd9e-442db8fc9480']);
   });
 
   it('terminates other sessions when corresponding Terminate Other Sessions is pressed', async () => {
     const terminateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Terminate Other Sessions' }));
     await terminateButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.terminate_other_sessions');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.terminate_other_sessions');
   });
 
   it('should show table rows', async () => {

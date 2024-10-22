@@ -13,7 +13,7 @@ import {
   ResilverProgressDialogComponent,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 @Component({
   selector: 'ix-resilvering-indicator',
@@ -42,7 +42,7 @@ export class ResilveringIndicatorComponent {
 
   constructor(
     private matDialog: MatDialog,
-    private ws: WebSocketService,
+    private ws: ApiService,
   ) {}
 
   showDetails(): void {

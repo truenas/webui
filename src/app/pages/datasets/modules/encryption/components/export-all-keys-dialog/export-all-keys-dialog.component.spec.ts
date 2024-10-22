@@ -9,7 +9,7 @@ import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-we
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 
 describe('ExportAllKeysDialogComponent', () => {
@@ -48,7 +48,7 @@ describe('ExportAllKeysDialogComponent', () => {
     const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Keys' }));
     await downloadButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', [
       'pool.dataset.export_keys',
       ['my-dataset'],
       'dataset_my-dataset_keys.json',

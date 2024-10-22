@@ -41,7 +41,7 @@ import {
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { servicesElements } from 'app/pages/services/services.elements';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -138,7 +138,7 @@ export class ServicesComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private servicesService: ServicesService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private router: Router,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

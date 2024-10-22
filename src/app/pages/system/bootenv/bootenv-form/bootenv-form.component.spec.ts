@@ -12,13 +12,13 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('BootEnvironmentFormComponent', () => {
   let spectator: Spectator<BootEnvironmentFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
   const createComponent = createComponentFactory({
     component: BootEnvironmentFormComponent,
     imports: [
@@ -52,7 +52,7 @@ describe('BootEnvironmentFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -89,7 +89,7 @@ describe('BootEnvironmentFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -134,7 +134,7 @@ describe('BootEnvironmentFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 

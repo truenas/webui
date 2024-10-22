@@ -44,7 +44,7 @@ import {
   InstallationMediaStepComponent,
 } from 'app/pages/vm/vm-wizard/steps/5-installation-media-step/installation-media-step.component';
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
@@ -120,7 +120,7 @@ export class VmWizardComponent implements OnInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private slideInRef: IxSlideInRef<VmWizardComponent>,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,

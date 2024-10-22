@@ -19,7 +19,7 @@ import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/page
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -126,12 +126,12 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(1, 'cloudsync.create_bucket', [
+      expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(1, 'cloudsync.create_bucket', [
         2,
         'brand-new-bucket',
       ]);
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(2, 'cloud_backup.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(2, 'cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'brand-new-bucket' },
         bwlimit: [],
@@ -177,7 +177,7 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'path_to_bucket1' },
         bwlimit: [],
@@ -271,7 +271,7 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
         args: '',
         attributes: {
           folder: '/My Folder',

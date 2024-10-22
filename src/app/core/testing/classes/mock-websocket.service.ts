@@ -22,7 +22,7 @@ import {
 } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 /**
@@ -43,7 +43,7 @@ const anyArgument = when((_: unknown) => true);
  * ```
  */
 @Injectable()
-export class MockWebSocketService extends WebSocketService {
+export class MockWebSocketService extends ApiService {
   private subscribeStream$ = new Subject<ApiEvent>();
   private jobIdCounter = 1;
 

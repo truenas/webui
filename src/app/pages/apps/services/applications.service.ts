@@ -16,7 +16,7 @@ import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 const ignoredAppsList = [customApp];
 
@@ -28,7 +28,7 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
-  constructor(private ws: WebSocketService, private translate: TranslateService) {}
+  constructor(private ws: ApiService, private translate: TranslateService) {}
 
   getPoolList(): Observable<Pool[]> {
     return this.ws.call('pool.query');

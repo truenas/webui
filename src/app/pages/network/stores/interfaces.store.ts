@@ -3,7 +3,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs/operators';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface InterfacesState {
@@ -19,7 +19,7 @@ const initialState: InterfacesState = {
 @Injectable()
 export class InterfacesStore extends ComponentStore<InterfacesState> {
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {

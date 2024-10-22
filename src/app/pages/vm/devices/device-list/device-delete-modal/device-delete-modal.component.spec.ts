@@ -13,12 +13,12 @@ import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-devic
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DeviceDeleteModalComponent', () => {
   let spectator: Spectator<DeviceDeleteModalComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   function createComponentWithData(device: VmDevice): SpectatorFactory<DeviceDeleteModalComponent> {
     return createComponentFactory({
@@ -52,7 +52,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     afterEach(() => {
@@ -110,7 +110,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     afterEach(() => {
@@ -183,7 +183,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     afterEach(() => {

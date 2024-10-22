@@ -24,7 +24,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -68,7 +68,7 @@ export class CreateDatasetDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,

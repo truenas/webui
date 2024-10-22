@@ -19,7 +19,7 @@ import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
@@ -115,7 +115,7 @@ describe('AuthService', () => {
         method: 'auth.login',
         params: ['dummy', 'dummy'],
       }));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.me');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',
@@ -146,7 +146,7 @@ describe('AuthService', () => {
         method: 'auth.login_with_token',
         params: ['DUMMY_TOKEN'],
       }));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.me');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',

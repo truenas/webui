@@ -18,7 +18,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
@@ -165,7 +165,7 @@ describe('RsyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
   });
 
   it('deletes a Rsync Task with confirmation when Delete button is pressed', async () => {
@@ -177,7 +177,7 @@ describe('RsyncTaskCardComponent', () => {
       message: 'Delete Rsync Task <b>"asd - asdad"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
   });
 
   it('updates Rsync Task Enabled status once mat-toggle is updated', async () => {
@@ -187,7 +187,7 @@ describe('RsyncTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'rsynctask.update',
       [1, { enabled: true }],
     );

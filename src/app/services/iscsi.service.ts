@@ -9,13 +9,13 @@ import {
   IscsiTarget,
   IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IscsiService {
-  constructor(protected ws: WebSocketService) {}
+  constructor(protected ws: ApiService) {}
 
   getIpChoices(): Observable<Choices> {
     return this.ws.call('iscsi.portal.listen_ip_choices');

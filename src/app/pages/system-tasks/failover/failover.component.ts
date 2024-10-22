@@ -11,7 +11,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
@@ -33,7 +33,7 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 })
 export class FailoverComponent implements OnInit {
   constructor(
-    protected ws: WebSocketService,
+    protected ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private wsManager: WebSocketConnectionService,
     protected router: Router,

@@ -43,7 +43,7 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { ReplicationService } from 'app/services/replication.service';
@@ -228,7 +228,7 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.query(TargetSectionComponent).getPayload).toHaveBeenCalled();
       expect(spectator.query(ScheduleSectionComponent).getPayload).toHaveBeenCalled();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.create', [{
         name: 'dataset',
         ssh_credentials: 5,
         direction: Direction.Pull,
@@ -258,7 +258,7 @@ describe('ReplicationFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.update', [
         1,
         {
           name: 'dataset',

@@ -22,7 +22,7 @@ import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/i
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -76,7 +76,7 @@ export class TunableFormComponent implements OnInit {
   private editingTunable: Tunable;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

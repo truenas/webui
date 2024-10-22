@@ -14,7 +14,7 @@ import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-re
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
@@ -123,7 +123,7 @@ describe('SigninStore', () => {
 
   describe('handleSuccessfulLogin', () => {
     it('redirects user', () => {
-      jest.spyOn(spectator.inject(WebSocketService), 'call').mockReturnValueOnce(of({ enabled: false }));
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(of({ enabled: false }));
       jest.spyOn(spectator.inject(Router), 'navigateByUrl');
       spectator.service.handleSuccessfulLogin();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');

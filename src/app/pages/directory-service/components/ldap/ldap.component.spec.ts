@@ -19,7 +19,7 @@ import {
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -93,7 +93,7 @@ describe('LdapComponent', () => {
   });
 
   it('loads LDAP config and shows it', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ldap.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ldap.config');
 
     const values = await form.getValues();
     expect(values).toEqual({
@@ -155,7 +155,7 @@ describe('LdapComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'ldap.update',
       [{
         ...existingLdapConfig,

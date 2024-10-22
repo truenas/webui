@@ -15,7 +15,7 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -65,7 +65,7 @@ describe('SaveConfigDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', [
       'config.save',
       [{ secretseed: false }],
       'truenas-TrueNAS-SCALE-22.12-20220524160228.db',
@@ -85,7 +85,7 @@ describe('SaveConfigDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', [
       'config.save',
       [{ secretseed: true }],
       'truenas-TrueNAS-SCALE-22.12-20220524160228.tar',

@@ -10,7 +10,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DeleteVmDialogComponent', () => {
   let spectator: Spectator<DeleteVmDialogComponent>;
@@ -53,7 +53,7 @@ describe('DeleteVmDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.delete', [1, { force: true, zvols: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.delete', [1, { force: true, zvols: true }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 });

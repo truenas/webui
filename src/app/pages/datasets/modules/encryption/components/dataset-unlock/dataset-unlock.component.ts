@@ -29,7 +29,7 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
@@ -100,7 +100,7 @@ export class DatasetUnlockComponent implements OnInit {
   private apiEndPoint: string;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private formBuilder: FormBuilder,
     private aroute: ActivatedRoute,
     private authService: AuthService,

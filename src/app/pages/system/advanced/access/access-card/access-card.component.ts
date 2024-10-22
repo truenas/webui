@@ -40,7 +40,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -142,7 +142,7 @@ export class AccessCardComponent implements OnInit {
     private dialogService: DialogService,
     private translate: TranslateService,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private advancedSettings: AdvancedSettingsService,
     private systemGeneralService: SystemGeneralService,
     protected emptyService: EmptyService,

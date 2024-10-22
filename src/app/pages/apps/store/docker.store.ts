@@ -9,7 +9,7 @@ import { DockerStatus } from 'app/enums/docker-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface DockerConfigState {
@@ -43,7 +43,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   readonly statusDescription$ = this.select((state) => state.statusData.description);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

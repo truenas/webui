@@ -24,7 +24,7 @@ import {
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IdmapService } from 'app/services/idmap.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -130,7 +130,7 @@ describe('IdmapFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('idmap.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('idmap.create', [{
         idmap_backend: IdmapBackend.Ad,
         range_high: 2000001,
         range_low: 2000000,
@@ -158,7 +158,7 @@ describe('IdmapFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('idmap.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('idmap.create', [{
         idmap_backend: IdmapBackend.Tdb,
         name: IdmapName.DsTypeDefaultDomain,
         range_high: 2000001,
@@ -211,7 +211,7 @@ describe('IdmapFormComponent', () => {
         hideCheckbox: true,
       });
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('idmap.clear_idmap_cache');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('idmap.clear_idmap_cache');
     });
   });
 
@@ -250,7 +250,7 @@ describe('IdmapFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('idmap.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('idmap.update', [
         10,
         {
           dns_domain_name: 'dns.com',

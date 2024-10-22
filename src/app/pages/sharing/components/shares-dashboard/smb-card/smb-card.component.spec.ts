@@ -26,7 +26,7 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -140,7 +140,7 @@ describe('SmbCardComponent', () => {
 
     await toggle.uncheck();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'sharing.smb.update',
       [3, { enabled: false }],
     );
@@ -150,7 +150,7 @@ describe('SmbCardComponent', () => {
     const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 5);
     await editIcon.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'sharing.smb.getacl',
       [{ share_name: 'homes' }],
     );

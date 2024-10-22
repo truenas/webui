@@ -19,7 +19,7 @@ import {
   KeyCreatedDialogComponent,
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('ApiKeyFormDialogComponent', () => {
   let spectator: Spectator<ApiKeyFormDialogComponent>;
@@ -74,7 +74,7 @@ describe('ApiKeyFormDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call)
+    expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('api_key.create', [{ name: 'My key', allowlist: [{ method: '*', resource: '*' }] }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, { data: 'generated-key' });
@@ -93,7 +93,7 @@ describe('ApiKeyFormDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.update', [1, { name: 'My key', reset: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.update', [1, { name: 'My key', reset: false }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialogComponent, { data: 'generated-key' });
   });
@@ -113,7 +113,7 @@ describe('ApiKeyFormDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.update', [1, { name: 'My key', reset: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.update', [1, { name: 'My key', reset: true }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, { data: 'generated-key' });
   });

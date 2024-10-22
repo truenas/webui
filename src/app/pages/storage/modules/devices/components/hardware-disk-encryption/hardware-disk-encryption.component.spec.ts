@@ -11,7 +11,7 @@ import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { HardwareDiskEncryptionComponent } from './hardware-disk-encryption.component';
 
 describe('HardwareDiskEncryptionComponent', () => {
@@ -46,7 +46,7 @@ describe('HardwareDiskEncryptionComponent', () => {
   });
 
   it('loads and shows whether password is set for the current disk', () => {
-    expect(spectator.inject(WebSocketService).call)
+    expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
 
     const detailsItem = spectator.query(byText('SED Password:', { exact: true }));
@@ -54,7 +54,7 @@ describe('HardwareDiskEncryptionComponent', () => {
   });
 
   it('loads and shows whether SED password is set globally', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
 
     const detailsItem = spectator.query(byText('Global SED Password:', { exact: true }));
     expect(detailsItem.nextElementSibling).toHaveText('Password is set');

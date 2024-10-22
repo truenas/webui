@@ -27,7 +27,7 @@ import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
@@ -101,7 +101,7 @@ export class InitShutdownFormComponent implements OnInit {
   private editingScript: InitShutdownScript;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,

@@ -14,7 +14,7 @@ import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 
@@ -31,7 +31,7 @@ const dummyAlert = {
 
 describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let alert: AlertPageObject;
   const createComponent = createComponentFactory({
     component: AlertComponent,
@@ -69,7 +69,7 @@ describe('AlertComponent', () => {
       },
     });
 
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     alert = new AlertPageObject(spectator);
   });
 

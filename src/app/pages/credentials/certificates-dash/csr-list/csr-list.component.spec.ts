@@ -20,7 +20,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -129,7 +129,7 @@ describe('CertificateSigningRequestsListComponent', () => {
       buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.delete', [1, false]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.delete', [1, false]);
   });
 
   it('should show table rows', async () => {

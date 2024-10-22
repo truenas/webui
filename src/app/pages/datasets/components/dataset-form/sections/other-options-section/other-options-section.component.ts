@@ -54,7 +54,7 @@ import {
   specialSmallBlockSizeOptions,
 } from 'app/pages/datasets/components/dataset-form/utils/special-small-block-size-options.constant';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -161,7 +161,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
     private formatter: IxFormatterService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private datasetFormService: DatasetFormService,
   ) {}
 

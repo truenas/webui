@@ -26,7 +26,7 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -141,7 +141,7 @@ export class LocalizationFormComponent implements OnInit {
     private sysGeneralService: SystemGeneralService,
     private fb: FormBuilder,
     public localeService: LocaleService,
-    protected ws: WebSocketService,
+    protected ws: ApiService,
     protected langService: LanguageService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,

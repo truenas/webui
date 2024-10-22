@@ -19,7 +19,7 @@ import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credent
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { storjProvider, googlePhotosProvider, googlePhotosCreds } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -114,7 +114,7 @@ describe('CloudSyncProviderComponent', () => {
     expect(loading.emit).toHaveBeenNthCalledWith(1, true);
     expect(loading.emit).toHaveBeenNthCalledWith(2, false);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
       provider: 'GOOGLE_PHOTOS',
       attributes: {
         client_id: 'test-client-id',

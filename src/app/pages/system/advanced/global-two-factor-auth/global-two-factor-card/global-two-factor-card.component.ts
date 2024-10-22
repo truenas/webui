@@ -22,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { globalTwoFactorCardElements } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.elements';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
@@ -63,7 +63,7 @@ export class GlobalTwoFactorAuthCardComponent {
   );
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private advancedSettings: AdvancedSettingsService,
     private chainedSlideIns: IxChainedSlideInService,
   ) { }

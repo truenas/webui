@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig {
   return {
@@ -33,7 +33,7 @@ function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig
 describe('TruecommandConnectModalComponent', () => {
   let spectator: Spectator<TruecommandConnectModalComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   function createComponentWithData(
     config: Partial<TrueCommandConfig>,
@@ -101,7 +101,7 @@ describe('TruecommandConnectModalComponent', () => {
       beforeEach(() => {
         spectator = createComponent();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        ws = spectator.inject(WebSocketService);
+        ws = spectator.inject(ApiService);
       });
 
       it(`it has title '${expectedTitle}'`, () => {
@@ -142,7 +142,7 @@ describe('TruecommandConnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {
@@ -182,7 +182,7 @@ describe('TruecommandConnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {
@@ -228,7 +228,7 @@ describe('TruecommandConnectModalComponent', () => {
       jest.spyOn(dialogServiceMock, 'generalDialog').mockReturnValue(of(true));
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {

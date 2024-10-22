@@ -16,7 +16,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { ApiKeysComponent } from 'app/pages/api-keys/api-keys.component';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 
 describe('ApiKeysComponent', () => {
@@ -110,6 +110,6 @@ describe('ApiKeysComponent', () => {
       message: 'Are you sure you want to delete the <b>first-api-key</b> API Key?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.delete', [1]);
   });
 });

@@ -12,7 +12,7 @@ import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('ContainerLogsComponent', () => {
   let spectator: Spectator<ContainerLogsComponent>;
@@ -27,7 +27,7 @@ describe('ContainerLogsComponent', () => {
     it('subscribes to logs updates', () => {
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LogsDetailsDialogComponent, { width: '400px' });
 
-      expect(spectator.inject(WebSocketService).subscribeToLogs).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).subscribeToLogs).toHaveBeenCalledWith(
         'app.container_log_follow: {"app_name":"ix-test-app","container_id":"ix-test-container","tail_lines":650}',
       );
     });
@@ -82,7 +82,7 @@ describe('ContainerLogsComponent', () => {
             }),
           }) as unknown as MatDialogRef<LogsDetailsDialogComponent>),
         }),
-        mockProvider(WebSocketService, {
+        mockProvider(ApiService, {
           subscribeToLogs: jest.fn(() => of({
             fields: {
               timestamp: '[12:34]',

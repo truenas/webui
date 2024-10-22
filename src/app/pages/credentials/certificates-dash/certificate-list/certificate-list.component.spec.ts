@@ -20,7 +20,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { CertificateListComponent } from './certificate-list.component';
@@ -143,7 +143,7 @@ describe('CertificateListComponent', () => {
       buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.delete', [certificates[0].id, true]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.delete', [certificates[0].id, true]);
   });
 
   it('revokes a certificate when Revoke button is pressed', async () => {
@@ -156,7 +156,7 @@ describe('CertificateListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.update', [certificates[0].id, { revoked: true }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.update', [certificates[0].id, { revoked: true }]);
   });
 
   it('should show table rows', async () => {

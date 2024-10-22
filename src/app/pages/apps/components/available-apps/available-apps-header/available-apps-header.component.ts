@@ -30,7 +30,7 @@ import { FilterSelectListComponent } from 'app/pages/apps/components/filter-sele
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -88,7 +88,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,

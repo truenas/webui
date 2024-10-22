@@ -23,7 +23,7 @@ import {
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -108,7 +108,7 @@ export class AlertEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private store$: Store<AlertSlice>,
     private translate: TranslateService,
   ) {}

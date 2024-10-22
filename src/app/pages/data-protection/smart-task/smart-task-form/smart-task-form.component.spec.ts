@@ -13,7 +13,7 @@ import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -89,7 +89,7 @@ describe('SmartTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.create', [{
         all_disks: false,
         disks: ['sdc'],
         desc: 'New task',
@@ -139,7 +139,7 @@ describe('SmartTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.update', [5, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.update', [5, {
         all_disks: true,
         disks: [],
         desc: 'Updated task',

@@ -11,7 +11,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const fakeDataSource: NtpServer[] = [
@@ -47,7 +47,7 @@ const fakeDataSource: NtpServer[] = [
 describe('NtpServerCardComponent', () => {
   let spectator: Spectator<NtpServerCardComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
   let slideInRef: IxSlideInService;
   let table: IxTableHarness;
 
@@ -72,7 +72,7 @@ describe('NtpServerCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
     slideInRef = spectator.inject(IxSlideInService);
     table = await loader.getHarness(IxTableHarness);
   });

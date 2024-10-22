@@ -45,7 +45,7 @@ import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-poo
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -206,7 +206,7 @@ export class BootEnvironmentListComponent implements OnInit {
   private bootenvs: BootenvUi[] = [];
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private slideInService: IxSlideInService,

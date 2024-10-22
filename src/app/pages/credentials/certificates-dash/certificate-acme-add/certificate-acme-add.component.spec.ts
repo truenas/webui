@@ -18,7 +18,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('CertificateAcmeAddComponent', () => {
   let spectator: Spectator<CertificateAcmeAddComponent>;
@@ -73,7 +73,7 @@ describe('CertificateAcmeAddComponent', () => {
 
     expect(labels).toContain('DNS:truenas.com');
     expect(labels).toContain('DNS:truenas.io');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('webui.crypto.get_certificate_domain_names', [2]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webui.crypto.get_certificate_domain_names', [2]);
   });
 
   it('creates an ACME certificate when form is submitted', async () => {
@@ -90,7 +90,7 @@ describe('CertificateAcmeAddComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'certificate.create',
       [{
         acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory',
@@ -124,7 +124,7 @@ describe('CertificateAcmeAddComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'certificate.create',
       [{
         acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',

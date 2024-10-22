@@ -18,7 +18,7 @@ import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/i
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FipsService } from 'app/services/fips.service';
 import { AppState } from 'app/store';
@@ -63,7 +63,7 @@ export class SystemSecurityFormComponent implements OnInit {
     private fips: FipsService,
     private store$: Store<AppState>,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     this.systemSecurityConfig = this.chainedRef.getData();

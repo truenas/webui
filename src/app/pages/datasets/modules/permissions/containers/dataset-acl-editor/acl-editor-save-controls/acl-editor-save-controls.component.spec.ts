@@ -13,7 +13,7 @@ import {
   AclEditorSaveControlsComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/acl-editor-save-controls/acl-editor-save-controls.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('AclEditorSaveControlsComponent', () => {
   let spectator: Spectator<AclEditorSaveControlsComponent>;
@@ -34,7 +34,7 @@ describe('AclEditorSaveControlsComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(WebSocketService, {
+      mockProvider(ApiService, {
         call: jest.fn(() => call$),
       }),
       mockAuth(),

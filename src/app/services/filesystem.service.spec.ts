@@ -6,7 +6,7 @@ import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('FilesystemService', () => {
@@ -47,7 +47,7 @@ describe('FilesystemService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'filesystem.listdir',
         ['/mnt/parent', [], {
           select: ['attributes', 'is_ctldir', 'name', 'path', 'type'],

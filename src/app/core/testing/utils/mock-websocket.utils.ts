@@ -12,7 +12,7 @@ import {
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 /**
@@ -47,7 +47,7 @@ export function mockWebSocket(
 ): (FactoryProvider | ExistingProvider | ValueProvider)[] {
   return [
     {
-      provide: WebSocketService,
+      provide: ApiService,
       useFactory: (router: Router, wsManager: WebSocketConnectionService, translate: TranslateService) => {
         const mockWebSocketService = new MockWebSocketService(router, wsManager, translate);
         (mockResponses || []).forEach((mockResponse) => {
@@ -66,7 +66,7 @@ export function mockWebSocket(
     },
     {
       provide: MockWebSocketService,
-      useExisting: forwardRef(() => WebSocketService),
+      useExisting: forwardRef(() => ApiService),
     },
     {
       provide: WebSocketConnectionService,

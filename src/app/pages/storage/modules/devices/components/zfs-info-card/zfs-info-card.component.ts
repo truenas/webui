@@ -29,7 +29,7 @@ import {
   RaidzExtendDialogComponent, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
@@ -125,7 +125,7 @@ export class ZfsInfoCardComponent {
   constructor(
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,

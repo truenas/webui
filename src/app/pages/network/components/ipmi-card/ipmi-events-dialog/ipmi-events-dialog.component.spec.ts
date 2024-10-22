@@ -12,7 +12,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('IpmiEventsDialogComponent', () => {
   let spectator: Spectator<IpmiEventsDialogComponent>;
@@ -67,7 +67,7 @@ describe('IpmiEventsDialogComponent', () => {
     const clearButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear' }));
     await clearButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('ipmi.sel.clear');
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('ipmi.sel.clear');
   });
 
   describe('no events', () => {

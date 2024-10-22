@@ -29,7 +29,7 @@ import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
@@ -73,7 +73,7 @@ export class DashboardPoolComponent implements OnChanges {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private snackbar: SnackbarService,
     private store: PoolsDashboardStore,
     private searchDirectives: UiSearchDirectivesService,

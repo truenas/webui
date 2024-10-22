@@ -22,7 +22,7 @@ import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wiz
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const appVersion121 = {
@@ -361,7 +361,7 @@ describe('AppWizardComponent', () => {
       spectator.component.onSubmit();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.update',
         ['app_name', {
           values: {
@@ -449,7 +449,7 @@ describe('AppWizardComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
         [{
           app_name: 'appname',
@@ -498,7 +498,7 @@ describe('AppWizardComponent', () => {
       spectator.component.onSubmit();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
         [{
           app_name: 'ipfs',

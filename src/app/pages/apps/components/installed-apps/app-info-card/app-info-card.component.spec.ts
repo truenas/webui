@@ -25,7 +25,7 @@ import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-a
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
 
@@ -221,7 +221,7 @@ describe('AppInfoCardComponent', () => {
       secondaryCheckbox: true,
       secondaryCheckboxText: 'Remove iXVolumes',
     });
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'app.delete',
       [fakeApp.name, { remove_images: true, remove_ix_volumes: true }],
     );

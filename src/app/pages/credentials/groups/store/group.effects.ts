@@ -15,7 +15,7 @@ import {
   groupsLoaded,
   groupsNotLoaded,
 } from 'app/pages/credentials/groups/store/group.actions';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -57,7 +57,7 @@ export class GroupEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}

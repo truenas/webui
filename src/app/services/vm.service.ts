@@ -21,7 +21,7 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -38,7 +38,7 @@ export class VmService {
   } as const;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private translate: TranslateService,

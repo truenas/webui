@@ -10,7 +10,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('CloneVmDialogComponent', () => {
   let spectator: Spectator<CloneVmDialogComponent>;
@@ -48,7 +48,7 @@ describe('CloneVmDialogComponent', () => {
     const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clone' }));
     await cloneButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.clone', [1, 'Dolly']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.clone', [1, 'Dolly']);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 });

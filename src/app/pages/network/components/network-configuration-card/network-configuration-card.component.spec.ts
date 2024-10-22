@@ -12,7 +12,7 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { NetworkConfigurationCardComponent } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('NetworkConfigurationCardComponent', () => {
@@ -61,7 +61,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('loads network summary and config when component is initialized', () => {
-    const ws = spectator.inject(WebSocketService);
+    const ws = spectator.inject(ApiService);
 
     expect(ws.call).toHaveBeenCalledWith('network.general.summary');
     expect(ws.call).toHaveBeenCalledWith('network.configuration.config');

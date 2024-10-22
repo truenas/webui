@@ -33,7 +33,7 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -184,12 +184,12 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.smb.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
         path: '/mnt/saved-id',
       }]);
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/saved-id',
       }]);
 
@@ -209,12 +209,12 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
         path: '/mnt/saved-id',
       }]);
 
-      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('sharing.nfs.create', [{
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/saved-id',
       }]);
 
@@ -230,7 +230,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         name: 'dataset',
         encryption: true,
         aclmode: AclMode.Passthrough,
@@ -244,7 +244,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         name: 'dataset',
         encryption: true,
         refquota: GiB,
@@ -256,7 +256,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acl_is_trivial', ['/mnt/parent']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.acl_is_trivial', ['/mnt/parent']);
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
           title: helptextDatasetForm.afterSubmitDialog.title,
@@ -286,7 +286,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
         name: 'dataset',
         aclmode: AclMode.Passthrough,
       }]);
@@ -313,7 +313,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
         name: 'dataset',
         aclmode: AclMode.Passthrough,
       }]);

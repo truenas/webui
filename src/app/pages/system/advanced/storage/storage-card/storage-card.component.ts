@@ -23,7 +23,7 @@ import { storageCardElements } from 'app/pages/system/advanced/storage/storage-c
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { AppState } from 'app/store';
 
@@ -70,7 +70,7 @@ export class StorageCardComponent {
     private chainedSlideIns: IxChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
     private store$: Store<AppState>,
-    private ws: WebSocketService,
+    private ws: ApiService,
   ) {}
 
   onConfigurePressed(): void {

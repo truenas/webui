@@ -19,7 +19,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DatasetCapacitySettingsComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('DatasetCapacitySettingsComponent', () => {
@@ -156,7 +156,7 @@ describe('DatasetCapacitySettingsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', [
       'root/path',
       {
         quota: 110 * GiB,
@@ -183,7 +183,7 @@ describe('DatasetCapacitySettingsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
       'root/path',
       {
         quota: 105 * GiB,

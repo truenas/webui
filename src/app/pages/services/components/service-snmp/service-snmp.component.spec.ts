@@ -10,12 +10,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
 
 describe('ServiceSnmpComponent', () => {
   let spectator: Spectator<ServiceSnmpComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let loader: HarnessLoader;
   const createComponent = createRoutingFactory({
     component: ServiceSnmpComponent,
@@ -50,7 +50,7 @@ describe('ServiceSnmpComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

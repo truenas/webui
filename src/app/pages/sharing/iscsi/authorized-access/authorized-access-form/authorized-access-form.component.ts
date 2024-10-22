@@ -24,7 +24,7 @@ import {
   matchOthersFgValidator,
 } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -117,7 +117,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private validatorService: IxValidatorsService,
     private slideInRef: IxSlideInRef<AuthorizedAccessFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingAccess: IscsiAuthAccess,

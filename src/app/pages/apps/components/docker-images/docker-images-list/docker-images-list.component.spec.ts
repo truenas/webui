@@ -15,7 +15,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { DockerImagesListComponent } from './docker-images-list.component';
 
@@ -68,7 +68,7 @@ describe('DockerImagesListComponent', () => {
       ['', 'sha256:test2', 'truenas/middleware:0.1.2', '5.82 MiB', ''],
     ];
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.image.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.image.query');
     expect(await table.getCellTexts()).toEqual(expectedRows);
   });
 

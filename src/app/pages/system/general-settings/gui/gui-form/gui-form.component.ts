@@ -30,7 +30,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -95,7 +95,7 @@ export class GuiFormComponent {
     private slideInRef: IxSlideInRef<GuiFormComponent, boolean>,
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private wsManager: WebSocketConnectionService,
     private dialog: DialogService,
     private loader: AppLoaderService,

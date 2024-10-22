@@ -28,7 +28,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -166,9 +166,9 @@ describe('CloudSyncListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
   });
 
@@ -184,7 +184,7 @@ describe('CloudSyncListComponent', () => {
       expect.objectContaining(cloudSyncList[0]),
     );
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
@@ -200,8 +200,8 @@ describe('CloudSyncListComponent', () => {
       message: 'Delete Cloud Sync Task <b>"custom-cloudlist"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been deleted.');
   });
 
@@ -217,7 +217,7 @@ describe('CloudSyncListComponent', () => {
       data: 1,
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been restored.');
   });
 
@@ -233,8 +233,8 @@ describe('CloudSyncListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
   });
 });

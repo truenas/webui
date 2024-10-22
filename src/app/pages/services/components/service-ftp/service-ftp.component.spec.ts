@@ -16,7 +16,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -109,7 +109,7 @@ describe('ServiceFtpComponent', () => {
   it('loads and shows current settings for FTP service', async () => {
     const values = await form.getValues();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ftp.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.config');
     expect(values).toEqual({
       Port: '21',
       Clients: '5',
@@ -184,7 +184,7 @@ describe('ServiceFtpComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ftp.update', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.update', [{
       ...existingFtpConfig,
       tls_opt_ip_address_required: true,
       anonuserdlbw: 5,

@@ -22,7 +22,7 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('PoolManagerComponent – creating dRAID pool', () => {
   let spectator: Spectator<PoolManagerComponent>;
@@ -167,7 +167,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
     await wizard.clickCreatePoolButton();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.create', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.create', [{
       name: 'dRAID',
       allow_duplicate_serials: false,
       encryption: false,

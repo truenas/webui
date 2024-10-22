@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface AddVdevsState {
@@ -39,7 +39,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
 
   constructor(
     private diskStore: DiskStore,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {

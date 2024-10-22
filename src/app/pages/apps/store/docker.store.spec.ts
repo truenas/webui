@@ -4,7 +4,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DockerStore', () => {
   let spectator: SpectatorService<DockerStore>;
@@ -34,9 +34,9 @@ describe('DockerStore', () => {
     it('loads docker data', () => {
       spectator.service.initialize();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.config');
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.lacks_nvidia_drivers');
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.status');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.config');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.lacks_nvidia_drivers');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.status');
 
       expect(spectator.service.state()).toEqual({
         dockerConfig: {

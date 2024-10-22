@@ -13,7 +13,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   DiskWipeDialogComponent,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DiskWipeDialogComponent', () => {
   let spectator: Spectator<DiskWipeDialogComponent>;
@@ -55,6 +55,6 @@ describe('DiskWipeDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('disk.wipe', ['sda', DiskWipeMethod.Full]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('disk.wipe', ['sda', DiskWipeMethod.Full]);
   });
 });

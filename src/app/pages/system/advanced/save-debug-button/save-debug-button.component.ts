@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { saveDebugElement } from 'app/pages/system/advanced/save-debug-button/save-debug-button.elements';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppState } from 'app/store';
@@ -41,7 +41,7 @@ export class SaveDebugButtonComponent {
   protected readonly searchableElement = saveDebugElement;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private store$: Store<AppState>,
     private datePipe: DatePipe,
     private errorHandler: ErrorHandlerService,

@@ -22,7 +22,7 @@ import { replicationSettingsCardElements } from 'app/pages/system/advanced/repli
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
@@ -64,7 +64,7 @@ export class ReplicationSettingsCardComponent {
   );
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private chainedSlideIns: IxChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}

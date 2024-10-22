@@ -34,7 +34,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 @Injectable({
   providedIn: 'root',
 })
-export class WebSocketService {
+export class ApiService {
   private readonly eventSubscribers = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
   readonly clearSubscriptions$ = new Subject<void>();
 

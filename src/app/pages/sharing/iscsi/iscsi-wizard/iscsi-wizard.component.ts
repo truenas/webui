@@ -53,7 +53,7 @@ import {
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -259,7 +259,7 @@ export class IscsiWizardComponent implements OnInit {
     private fb: FormBuilder,
     private slideInRef: IxSlideInRef<IscsiWizardComponent>,
     private iscsiService: IscsiService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,

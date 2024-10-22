@@ -6,7 +6,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ReplicationService } from 'app/services/replication.service';
 
 describe('ReplicationService', () => {
@@ -47,7 +47,7 @@ describe('ReplicationService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'replication.list_datasets',
         [TransportMode.Ssh, 2],
       );
@@ -118,7 +118,7 @@ describe('ReplicationService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
     });
   });
 });

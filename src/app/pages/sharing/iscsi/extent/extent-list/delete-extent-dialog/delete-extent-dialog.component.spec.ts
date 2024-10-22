@@ -13,7 +13,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   DeleteExtentDialogComponent,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DeleteExtentDialogComponent', () => {
   let spectator: Spectator<DeleteExtentDialogComponent>;
@@ -53,7 +53,7 @@ describe('DeleteExtentDialogComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await submitButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, false, true]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, false, true]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
@@ -81,7 +81,7 @@ describe('DeleteExtentDialogComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await submitButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, true, true]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, true, true]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 });

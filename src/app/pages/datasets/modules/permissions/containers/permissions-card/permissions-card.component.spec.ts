@@ -29,7 +29,7 @@ import {
   PermissionsCardComponent,
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('PermissionsCardComponent', () => {
   const stat = {
@@ -79,7 +79,7 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('loads stat and acl for dataset provided in Input', () => {
-    const websocket = spectator.inject(WebSocketService);
+    const websocket = spectator.inject(ApiService);
 
     expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
     expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);

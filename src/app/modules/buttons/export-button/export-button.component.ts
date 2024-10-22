@@ -20,7 +20,7 @@ import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppState } from 'app/store';
@@ -57,7 +57,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,

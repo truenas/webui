@@ -36,7 +36,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { apiKeysElements } from 'app/pages/api-keys/api-keys.elements';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -130,7 +130,7 @@ export class ApiKeysComponent implements OnInit {
     private store: ApiKeyComponentStore,
     private matDialog: MatDialog,
     private dialog: DialogService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private emptyService: EmptyService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,

@@ -34,7 +34,7 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { CsrAddComponent } from './csr-add.component';
 
@@ -152,7 +152,7 @@ describe('CsrAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [
       {
         name: 'new',
         create_type: CertificateCreateType.CreateCsr,
@@ -208,7 +208,7 @@ describe('CsrAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
       create_type: CertificateCreateType.ImportCsr,
       CSR: '-----BEGIN CERTIFICATE REQUEST-----',

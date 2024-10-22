@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { FipsService } from 'app/services/fips.service';
 
 describe('FipsService', () => {
@@ -68,7 +68,7 @@ describe('FipsService', () => {
           buttonText: 'Restart Standby',
         }),
       );
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('failover.reboot.other_node');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('failover.reboot.other_node');
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     });
   });

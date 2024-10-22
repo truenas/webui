@@ -15,7 +15,7 @@ import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { SmartInfoCardComponent } from './smart-info-card.component';
 
 describe('SmartInfoCardComponent', () => {
@@ -95,7 +95,7 @@ describe('SmartInfoCardComponent', () => {
       text: '4',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.results', [[['disk', '=', 'sdc']]]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.results', [[['disk', '=', 'sdc']]]);
   });
 
   it('shows a link to view all smart tests for a disk', () => {
@@ -146,7 +146,7 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('loads and shows a number of SMART tasks associated with the disk', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query_for_disk', ['sdc']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.query_for_disk', ['sdc']);
 
     const detailsItem = spectator.query(byText('S.M.A.R.T. Tasks:')).parentElement;
     expect(detailsItem).toHaveDescendantWithText({

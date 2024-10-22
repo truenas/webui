@@ -22,7 +22,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
@@ -127,7 +127,7 @@ describe('SnapshotTaskListComponent', () => {
       },
     );
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.query');
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
@@ -143,6 +143,6 @@ describe('SnapshotTaskListComponent', () => {
       message: 'Delete Periodic Snapshot Task <b>"m60pool/manual-2024-02-05_11-19-clone - auto-%Y-%m-%d_%H-%M"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.query');
   });
 });

@@ -20,7 +20,7 @@ import { JobsPanelPageObject } from 'app/modules/jobs/components/jobs-panel/jobs
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
@@ -74,7 +74,7 @@ const transientRunningJob = {
 
 describe('JobsPanelComponent', () => {
   let spectator: Spectator<JobsPanelComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let loader: HarnessLoader;
   let jobPanel: JobsPanelPageObject;
 
@@ -115,7 +115,7 @@ describe('JobsPanelComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     jobPanel = new JobsPanelPageObject(spectator);
   });

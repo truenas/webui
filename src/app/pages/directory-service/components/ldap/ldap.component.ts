@@ -27,7 +27,7 @@ import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -103,7 +103,7 @@ export class LdapComponent implements OnInit {
   readonly isEnabled$ = this.form.select((values) => values.enable);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private systemGeneralService: SystemGeneralService,

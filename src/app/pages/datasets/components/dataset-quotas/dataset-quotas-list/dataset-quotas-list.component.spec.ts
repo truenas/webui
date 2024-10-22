@@ -22,7 +22,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-list/dataset-quotas-list.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const fakeQuotas = [{
@@ -46,7 +46,7 @@ const fakeQuotas = [{
 describe('DatasetQuotasListComponent', () => {
   let spectator: Spectator<DatasetQuotasListComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -58,7 +58,7 @@ describe('DatasetQuotasListComponent', () => {
     providers: [
       mockProvider(AppLoaderService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(WebSocketService),
+      mockProvider(ApiService),
       mockProvider(IxFormatterService, {
         convertBytesToHumanReadable: jest.fn(() => '500 KiB'),
       }),
@@ -96,7 +96,7 @@ describe('DatasetQuotasListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
     table = await loader.getHarness(IxTableHarness);
   });
 

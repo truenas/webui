@@ -28,7 +28,7 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('ZfsHealthCardComponent', () => {
   let spectator: Spectator<ZfsHealthCardComponent>;
@@ -61,7 +61,7 @@ describe('ZfsHealthCardComponent', () => {
     percentage: 17.43,
     total_secs_left: 574,
   } as PoolScanUpdate;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   const websocketSubscription$ = new Subject<ApiEvent<PoolScan>>();
 
   const createComponent = createComponentFactory({
@@ -79,7 +79,7 @@ describe('ZfsHealthCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(WebSocketService, {
+      mockProvider(ApiService, {
         subscribe: jest.fn(() => websocketSubscription$),
         call: jest.fn((method: string) => {
           if (method === 'pool.scrub.query') {
@@ -105,7 +105,7 @@ describe('ZfsHealthCardComponent', () => {
       props: { pool },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
   });
 
   describe('health indication', () => {
@@ -236,7 +236,7 @@ describe('ZfsHealthCardComponent', () => {
       const pauseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Pause Scrub' }));
       await pauseButton.click();
 
-      expect(spectator.inject(WebSocketService).startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Pause]);
+      expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Pause]);
     });
 
     it('resumes scrub after it was previously paused and Resume was pressed', async () => {
@@ -259,7 +259,7 @@ describe('ZfsHealthCardComponent', () => {
       const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Resume Scrub' }));
       await resumeButton.click();
 
-      expect(spectator.inject(WebSocketService).startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
+      expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
     });
   });
 });

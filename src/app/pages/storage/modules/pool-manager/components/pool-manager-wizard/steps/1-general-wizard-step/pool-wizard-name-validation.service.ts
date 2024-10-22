@@ -7,7 +7,7 @@ import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @Injectable({
@@ -15,7 +15,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 })
 export class PoolWizardNameValidationService {
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
   ) { }

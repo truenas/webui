@@ -21,7 +21,7 @@ import {
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
 import { DeviceListComponent } from 'app/pages/vm/devices/device-list/device-list/device-list.component';
-import { WebSocketService } from 'app/services/api.service';
+import { ApiService } from 'app/services/api.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('DeviceListComponent', () => {
@@ -79,7 +79,7 @@ describe('DeviceListComponent', () => {
   });
 
   it('loads devices using virtual machine id from url', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.device.query', [[['vm', '=', 76]]]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.device.query', [[['vm', '=', 76]]]);
   });
 
   it('shows devices in a table', async () => {
