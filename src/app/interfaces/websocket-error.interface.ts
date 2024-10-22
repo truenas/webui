@@ -6,11 +6,11 @@ export interface ApiError {
   error: number;
   extra: unknown;
   reason: string;
-  trace: WebSocketErrorTrace;
+  trace: ApiErrorTrace;
   type: ResponseErrorType | null;
 }
 
-export interface WebSocketErrorTrace {
+export interface ApiErrorTrace {
   class: string;
   formatted: string;
   frames: WebSocketTraceFrame[];
