@@ -7,7 +7,7 @@ import { ValuesType } from 'utility-types';
 import {
   CallResponseOrFactory,
   JobResponseOrFactory,
-} from 'app/core/testing/interfaces/mock-websocket-responses.interface';
+} from 'app/core/testing/interfaces/mock-api-responses.interface';
 import { ApiCallAndSubscribeMethod } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
   ApiCallMethod,
