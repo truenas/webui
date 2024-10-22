@@ -3537,6 +3537,7 @@
   "System Update": "",
   "System Uptime": "",
   "System Utilization": "",
+  "System Version": "",
   "System dataset updated.": "",
   "TCP port used to access the iSCSI target. Default is <i>3260</i>.": "",
   "TLS (STARTTLS)": "",
