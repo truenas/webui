@@ -30,6 +30,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
@@ -37,7 +38,6 @@ import {
   SmbPresetType,
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';

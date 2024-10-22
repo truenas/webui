@@ -15,8 +15,8 @@ import {
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';

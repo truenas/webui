@@ -7,9 +7,9 @@ import {
 } from 'rxjs';
 import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
 import { isWebSocketError } from 'app/helpers/websocket.helper';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 
 @Injectable({

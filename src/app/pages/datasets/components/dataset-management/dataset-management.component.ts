@@ -41,10 +41,10 @@ import { IxDetailsHeightDirective } from 'app/directives/details-height/details-
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';

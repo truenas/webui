@@ -2,7 +2,7 @@ import { of, OperatorFunction, pipe } from 'rxjs';
 import {
   catchError, map, startWith,
 } from 'rxjs/operators';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 
 export interface LoadingState<T> {
   isLoading: boolean;

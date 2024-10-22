@@ -10,6 +10,7 @@ import { VmState } from 'app/enums/vm.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   VirtualizationDetails,
   VirtualMachine,
@@ -17,7 +18,6 @@ import {
   VmDisplayWebUriParams,
   VmDisplayWebUriParamsOptions,
 } from 'app/interfaces/virtual-machine.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';

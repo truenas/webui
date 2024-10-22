@@ -16,9 +16,9 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';

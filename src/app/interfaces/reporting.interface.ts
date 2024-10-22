@@ -1,6 +1,6 @@
 import { LinkState } from 'app/enums/network-interface.enum';
 import { ReportingQueryUnit } from 'app/enums/reporting.enum';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 
 export interface ReportingRealtimeUpdate {
   cpu: AllCpusUpdate;

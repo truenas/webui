@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const WEBSOCKET = new InjectionToken<typeof rxjsWebSocket>(

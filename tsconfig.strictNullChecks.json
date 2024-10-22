@@ -393,7 +393,7 @@
     "./src/app/interfaces/vmware.interface.ts",
     "./src/app/interfaces/volume-data.interface.ts",
     "./src/app/interfaces/volumes-list-pool.interface.ts",
-    "./src/app/interfaces/websocket-error.interface.ts",
+    "./src/app/interfaces/api-error.interface.ts",
     "./src/app/interfaces/zfs-property.interface.ts",
     "./src/app/interfaces/zfs-snapshot.interface.ts",
     "./src/app/modules/alerts/store/alert.actions.ts",

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { isWebSocketError } from 'app/helpers/websocket.helper';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 
 @Component({
   selector: 'ix-with-loading-state-error',

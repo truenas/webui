@@ -6,8 +6,8 @@ import { of } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 

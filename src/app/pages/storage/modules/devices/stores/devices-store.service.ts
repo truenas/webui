@@ -5,11 +5,11 @@ import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VdevType } from 'app/enums/v-dev-type.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { ApiService } from 'app/services/api.service';
 

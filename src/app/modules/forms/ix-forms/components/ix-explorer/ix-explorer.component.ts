@@ -23,10 +23,10 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';

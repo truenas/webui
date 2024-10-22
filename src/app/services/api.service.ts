@@ -24,11 +24,11 @@ import {
   ApiJobParams,
   ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   ApiEvent, ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage, ResultMessage,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @Injectable({

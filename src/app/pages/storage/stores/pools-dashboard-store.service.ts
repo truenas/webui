@@ -8,11 +8,11 @@ import {
 import { catchError, switchMap } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
-import { ApiError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
