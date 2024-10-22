@@ -13,10 +13,10 @@ export interface ApiError {
 export interface ApiErrorTrace {
   class: string;
   formatted: string;
-  frames: WebSocketTraceFrame[];
+  frames: ApiTraceFrame[];
 }
 
-export interface WebSocketTraceFrame {
+export interface ApiTraceFrame {
   argspec: string[];
   filename: string;
   line: string;
