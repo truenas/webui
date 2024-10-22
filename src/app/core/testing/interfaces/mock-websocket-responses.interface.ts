@@ -23,7 +23,7 @@ export interface MockApiCallResponse {
   id?: number;
 }
 
-export interface MockWebSocketJobResponse {
+export interface MockApiJobResponse {
   type: MockApiResponseType.Job;
   method: ApiJobMethod;
   response: Job | ((params: unknown) => Job);

@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import {
   CallResponseOrFactory, JobResponseOrFactory,
-  MockApiCallResponse, MockWebSocketJobResponse,
+  MockApiCallResponse, MockApiJobResponse,
   MockApiResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
@@ -43,7 +43,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
  */
 
 export function mockWebSocket(
-  mockResponses?: (MockApiCallResponse | MockWebSocketJobResponse)[],
+  mockResponses?: (MockApiCallResponse | MockApiJobResponse)[],
 ): (FactoryProvider | ExistingProvider | ValueProvider)[] {
   return [
     {
@@ -93,7 +93,7 @@ export function mockCall<M extends ApiCallMethod>(
 export function mockJob<M extends ApiJobMethod>(
   method: M,
   response: JobResponseOrFactory<M> = undefined,
-): MockWebSocketJobResponse {
+): MockApiJobResponse {
   return {
     response,
     method,
