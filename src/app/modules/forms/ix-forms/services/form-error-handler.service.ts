@@ -32,7 +32,7 @@ export class FormErrorHandlerService {
     fieldsMap: Record<string, string> = {},
     triggerAnchor: string = undefined,
   ): void {
-    if (this.errorHandler.isWebSocketError(error) && error.type === ResponseErrorType.Validation && error.extra) {
+    if (this.errorHandler.isApiError(error) && error.type === ResponseErrorType.Validation && error.extra) {
       this.handleValidationError(error, formGroup, fieldsMap, triggerAnchor);
       return;
     }

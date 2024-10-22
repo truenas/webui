@@ -41,7 +41,7 @@ describe('FormErrorHandlerService', () => {
     providers: [
       mockProvider(DialogService),
       mockProvider(ErrorHandlerService, {
-        isWebSocketError: jest.fn(() => true),
+        isApiError: jest.fn(() => true),
         parseError: jest.fn((error: ApiError) => ({
           title: error.type,
           message: error.reason,

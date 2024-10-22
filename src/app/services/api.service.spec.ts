@@ -28,7 +28,7 @@ const mockEventSubscriptions = new Map<string, Observable<ApiEvent>>([
   ['event2', apiEventSubscription2$],
 ]);
 
-describe('WebSocketService', () => {
+describe('ApiService', () => {
   let service: ApiService;
 
   beforeEach(() => {

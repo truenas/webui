@@ -5,8 +5,8 @@ import * as Sentry from '@sentry/angular';
 import {
   catchError, EMPTY, MonoTypeOperatorFunction, Observable,
 } from 'rxjs';
+import { isApiError } from 'app/helpers/api.helper';
 import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
-import { isWebSocketError } from 'app/helpers/websocket.helper';
 import { ApiError } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -49,7 +49,7 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseError(error: unknown): ErrorReport | ErrorReport[] {
-    if (this.isWebSocketError(error)) {
+    if (this.isApiError(error)) {
       return this.parseWsError(error);
     }
     if (this.isJobError(error)) {
@@ -72,8 +72,8 @@ export class ErrorHandlerService implements ErrorHandler {
     Sentry.captureException(sentryCustomExceptionExtraction(error));
   }
 
-  isWebSocketError(error: unknown): error is ApiError {
-    return isWebSocketError(error);
+  isApiError(error: unknown): error is ApiError {
+    return isApiError(error);
   }
 
   isJobError(obj: unknown): obj is Job {
@@ -162,7 +162,7 @@ export class ErrorHandlerService implements ErrorHandler {
     extractedError: string | ApiError | Job,
   ): ErrorReport | ErrorReport[] {
     let parsedError: ErrorReport | ErrorReport[];
-    if (this.isWebSocketError(extractedError)) {
+    if (this.isApiError(extractedError)) {
       parsedError = this.parseWsError(extractedError);
     } else if (this.isJobError(extractedError)) {
       parsedError = this.parseJobError(extractedError);
