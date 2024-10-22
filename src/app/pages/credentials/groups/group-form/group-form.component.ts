@@ -81,7 +81,6 @@ export class GroupFormComponent implements OnInit {
     sudo_commands_nopasswd: [[] as string[]],
     sudo_commands_nopasswd_all: [false],
     smb: [false],
-    allowDuplicateGid: [false],
     privileges: [[] as string[] | number[]],
   });
 
@@ -91,7 +90,6 @@ export class GroupFormComponent implements OnInit {
     privileges: helptextGroups.privileges_tooltip,
     sudo: helptextGroups.bsdgrp_sudo_tooltip,
     smb: helptextGroups.smb_tooltip,
-    allowDuplicateGid: helptextGroups.allow_tooltip,
   };
 
   readonly privilegeOptions$ = this.ws.call('privilege.query').pipe(
@@ -147,7 +145,6 @@ export class GroupFormComponent implements OnInit {
           : this.editingGroup.sudo_commands_nopasswd,
         sudo_commands_nopasswd_all: this.editingGroup.sudo_commands_nopasswd?.includes(allCommands),
         smb: this.editingGroup.smb,
-        allowDuplicateGid: true,
       });
       this.setNamesInUseValidator(this.editingGroup.group);
     }
@@ -160,7 +157,6 @@ export class GroupFormComponent implements OnInit {
       smb: values.smb,
       sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
-      allow_duplicate_gid: values.allowDuplicateGid,
     };
 
     this.isFormLoading = true;
