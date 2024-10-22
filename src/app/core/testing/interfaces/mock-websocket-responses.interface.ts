@@ -16,7 +16,7 @@ export enum MockApiResponseType {
   Call = 'call',
 }
 
-export interface MockWebSocketCallResponse {
+export interface MockApiCallResponse {
   type: MockApiResponseType.Call;
   method: ApiCallMethod;
   response: unknown;
