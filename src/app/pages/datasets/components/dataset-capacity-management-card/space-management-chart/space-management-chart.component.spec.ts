@@ -1,5 +1,5 @@
 import { PercentPipe } from '@angular/common';
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -18,12 +18,9 @@ describe('SpaceManagementChartComponent', () => {
       MockDirective(BaseChartDirective),
     ],
     providers: [
-      {
-        provide: ThemeService,
-        useValue: {
-          getRgbBackgroundColorByIndex: jest.fn((index) => `rgb(${index * 10}, ${index * 10}, ${index * 10})`),
-        },
-      },
+      mockProvider(ThemeService, {
+        getRgbBackgroundColorByIndex: jest.fn((index) => `rgb(${index * 10}, ${index * 10}, ${index * 10})`),
+      }),
     ],
   });
 
@@ -40,7 +37,7 @@ describe('SpaceManagementChartComponent', () => {
     });
   });
 
-  it('should generate datasets based on dataset type', () => {
+  it('should generate chart datasets', () => {
     spectator.detectChanges();
     expect(spectator.component.chartDatasets()).toEqual([
       {
