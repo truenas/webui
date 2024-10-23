@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconHarness } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -65,7 +65,7 @@ describe('DirectoryServicesIndicatorComponent', () => {
     const icon = spectator.query('button');
     expect(icon).toExist();
 
-    const websocketMock = spectator.inject(MockWebSocketService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.subscribe.mockImplementation(() => of({
       fields: {
         activedirectory: DirectoryServiceState.Disabled,

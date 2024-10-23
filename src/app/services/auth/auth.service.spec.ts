@@ -9,7 +9,7 @@ import {
 import * as rxjs from 'rxjs';
 import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -182,7 +182,7 @@ describe('AuthService', () => {
 
   describe('hasRole', () => {
     async function setUserRoles(roles: Role[]): Promise<void> {
-      const mockedWebSocket = spectator.inject(MockWebSocketService);
+      const mockedWebSocket = spectator.inject(MockApiService);
       mockedWebSocket.mockCall('auth.me', {
         ...authMeUser,
         privilege: {

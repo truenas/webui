@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
@@ -157,7 +157,7 @@ describe('AlertsPanelComponent', () => {
   it('adds an alert when websocket alert.list subscription sends an "add" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const websocketMock = spectator.inject(MockWebSocketService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitSubscribeEvent({
       msg: IncomingApiMessageType.Added,
       collection: 'alert.list',
@@ -176,7 +176,7 @@ describe('AlertsPanelComponent', () => {
   it('updates an alert when websocket alert.list subscription sends a "change" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const websocketMock = spectator.inject(MockWebSocketService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitSubscribeEvent({
       msg: IncomingApiMessageType.Changed,
       collection: 'alert.list',

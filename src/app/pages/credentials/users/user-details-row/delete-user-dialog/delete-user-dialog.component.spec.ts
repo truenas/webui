@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
@@ -71,7 +71,7 @@ describe('DeleteUserDialogComponent', () => {
   });
 
   it('shows Delete primary group checkbox if this is the last user in the group', async () => {
-    const websocketMock = spectator.inject(MockWebSocketService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.mockCall('group.query', [
       {
         users: [1],

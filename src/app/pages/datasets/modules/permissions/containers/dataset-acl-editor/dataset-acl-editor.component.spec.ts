@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
@@ -49,7 +49,7 @@ import { UserService } from 'app/services/user.service';
 
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
-  let websocket: MockWebSocketService;
+  let websocket: MockApiService;
   let matDialog: MatDialog;
   let loader: HarnessLoader;
   const acl = {
@@ -124,7 +124,7 @@ describe('DatasetAclEditorComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(MockWebSocketService);
+    websocket = spectator.inject(MockApiService);
     matDialog = spectator.inject(MatDialog);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });

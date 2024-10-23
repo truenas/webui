@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
@@ -133,7 +133,7 @@ describe('NfsFormComponent', () => {
     });
 
     it('loads NFS config and shows Security select in Access fieldset when NFS is version 4', async () => {
-      const websocketMock = spectator.inject(MockWebSocketService);
+      const websocketMock = spectator.inject(MockApiService);
       websocketMock.mockCallOnce('nfs.config', {
         protocols: [NfsProtocol.V4],
       } as NfsConfig);

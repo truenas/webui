@@ -4,7 +4,7 @@ import {
   mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
@@ -84,7 +84,7 @@ describe('EnclosureStore', () => {
       jest.spyOn(spectator.service, 'patchState').mockImplementation();
       spectator.service.listenForDiskUpdates().subscribe();
 
-      spectator.inject(MockWebSocketService).emitSubscribeEvent({
+      spectator.inject(MockApiService).emitSubscribeEvent({
         msg: IncomingApiMessageType.Changed,
         collection: 'disk.query',
       });

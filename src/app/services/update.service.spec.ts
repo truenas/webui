@@ -1,5 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { UpdateService } from 'app/services/update.service';
@@ -39,7 +39,7 @@ describe('UpdateService', () => {
     expect(window.location.reload).not.toHaveBeenCalled();
 
     // Receive new id.
-    spectator.inject(MockWebSocketService).mockCall('system.boot_id', 'boot-id-2');
+    spectator.inject(MockApiService).mockCall('system.boot_id', 'boot-id-2');
 
     spectator.service.hardRefreshIfNeeded().subscribe();
 

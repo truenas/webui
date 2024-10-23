@@ -43,7 +43,7 @@ const anyArgument = when((_: unknown) => true);
  * ```
  */
 @Injectable()
-export class MockWebSocketService extends ApiService {
+export class MockApiService extends ApiService {
   private subscribeStream$ = new Subject<ApiEvent>();
   private jobIdCounter = 1;
 
@@ -61,13 +61,13 @@ export class MockWebSocketService extends ApiService {
     this.callAndSubscribe = jest.fn();
 
     when(this.call).mockImplementation((method: ApiCallMethod, args: unknown) => {
-      throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked API call ${method} with ${JSON.stringify(args)}`);
     });
     when(this.callAndSubscribe).mockImplementation((method: ApiCallAndSubscribeMethod, args: unknown) => {
-      throw Error(`Unmocked websocket callAndSubscribe ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked API callAndSubscribe ${method} with ${JSON.stringify(args)}`);
     });
     when(this.job).mockImplementation((method: ApiJobMethod, args: unknown) => {
-      throw Error(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked API job call ${method} with ${JSON.stringify(args)}`);
     });
   }
 

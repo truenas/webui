@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
@@ -110,19 +110,19 @@ describe('JbofListComponent', () => {
   });
 
   it('enables Add button when existing are less than licensed', () => {
-    spectator.inject(MockWebSocketService).mockCall('jbof.licensed', 3);
+    spectator.inject(MockApiService).mockCall('jbof.licensed', 3);
     spectator.component.updateAvailableJbof();
     expect(spectator.component.canAddJbof).toBeTruthy();
   });
 
   it('disables Add button when existing are equal to licensed', () => {
-    spectator.inject(MockWebSocketService).mockCall('jbof.licensed', 2);
+    spectator.inject(MockApiService).mockCall('jbof.licensed', 2);
     spectator.component.updateAvailableJbof();
     expect(spectator.component.canAddJbof).toBeFalsy();
   });
 
   it('disables Add button when existing are more than licensed', () => {
-    spectator.inject(MockWebSocketService).mockCall('jbof.licensed', 1);
+    spectator.inject(MockApiService).mockCall('jbof.licensed', 1);
     spectator.component.updateAvailableJbof();
     expect(spectator.component.canAddJbof).toBeFalsy();
   });

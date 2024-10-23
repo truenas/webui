@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
@@ -79,7 +79,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         ['sha256:test2', { force: false }],
       ],
     ];
-    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
+    spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
 
     expect(spectator.fixture.nativeElement).toHaveText('The following 2 docker images will be deleted. Are you sure you want to proceed?');
 
@@ -106,7 +106,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         ['sha256:test2', { force: true }],
       ],
     ];
-    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
+    spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -128,7 +128,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         ['sha256:test2', { force: false }],
       ],
     ];
-    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
+    spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({

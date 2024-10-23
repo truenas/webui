@@ -6,7 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -118,7 +118,7 @@ describe('BootenvStatsDialogComponent', () => {
   });
 
   it('tells user to look at alerts if boot pool status is degraded', () => {
-    const websocketMock = spectator.inject(MockWebSocketService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.mockCall('boot.get_state', {
       ...poolInstance,
       status: PoolStatus.Degraded,

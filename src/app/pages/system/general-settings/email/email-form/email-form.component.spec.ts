@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -108,7 +108,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
-      spectator.inject(MockWebSocketService).mockCall('mail.local_administrator_email', null);
+      spectator.inject(MockApiService).mockCall('mail.local_administrator_email', null);
 
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await button.click();

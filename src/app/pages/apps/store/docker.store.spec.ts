@@ -1,5 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
@@ -62,7 +62,7 @@ describe('DockerStore', () => {
         enable_image_updates: false,
       } as DockerConfig;
 
-      const mockWebsocket = spectator.inject(MockWebSocketService);
+      const mockWebsocket = spectator.inject(MockApiService);
       jest.resetAllMocks();
       mockWebsocket.mockCall('docker.config', newDockerConfig);
 

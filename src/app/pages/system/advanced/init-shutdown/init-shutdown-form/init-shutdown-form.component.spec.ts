@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
@@ -22,7 +22,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 describe('InitShutdownFormComponent', () => {
   let spectator: Spectator<InitShutdownFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockWebSocketService;
+  let ws: MockApiService;
   const createComponent = createComponentFactory({
     component: InitShutdownFormComponent,
     imports: [
@@ -56,7 +56,7 @@ describe('InitShutdownFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(MockWebSocketService);
+      ws = spectator.inject(MockApiService);
     });
 
     it('saves values for new script when form is being submitted', async () => {
@@ -129,7 +129,7 @@ describe('InitShutdownFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(MockWebSocketService);
+      ws = spectator.inject(MockApiService);
     });
 
     it('shows current group values when form is being edited', async () => {
