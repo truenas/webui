@@ -151,6 +151,11 @@
         flex: 1;
         max-width: 100%;
       }
+
+      .skeleton {
+        display: block;
+        flex-grow: 1;
+      }
     }
   }
 

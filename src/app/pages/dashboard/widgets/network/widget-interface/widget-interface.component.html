@@ -97,33 +97,22 @@
       </div>
       @if (showChart()) {
         <div class="nic-chart">
-          <div class="chart-body">
-            @if (isLoading()) {
-              <ngx-skeleton-loader
-                class="skeleton"
-                [theme]="{
-                  width: 'calc(100% - 16px)',
-                  height: '184px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: '8px 0 0',
-                }"
-              ></ngx-skeleton-loader>
-            } @else {
-              <ix-network-chart [data]="chartData()" [aspectRatio]="aspectRatio()"></ix-network-chart>
-            }
-          </div>
+          @if (isLoading()) {
+            <ngx-skeleton-loader
+              class="skeleton"
+              [theme]="{
+                width: 'calc(100% - 16px)',
+                height: '184px',
+                background: 'var(--alt-bg2)',
+                opacity: 0.25,
+                margin: '8px 0 0',
+              }"
+            ></ngx-skeleton-loader>
+          } @else {
+            <ix-network-chart [data]="chartData()" [aspectRatio]="aspectRatio()"></ix-network-chart>
+          }
         </div>
       }
     </div>
   </mat-card-content>
 </mat-card>
-
-<ng-template #chart>
-  <ix-network-chart [data]="chartData()" [aspectRatio]="aspectRatio()"></ix-network-chart>
-</ng-template>
-
-<ng-template #skeleton>
-  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-</ng-template>
-
