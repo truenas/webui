@@ -1870,6 +1870,7 @@
   "Yesterday": "",
   "You are using an insecure connection. Switch to HTTPS for secure access.": "",
   "You can also vote for new features <a target=\"_blank\" href=\"https://forums.truenas.com/feature-requests\">on our forum.</a>": "",
+  "You can only lock a dataset if it was encrypted with a passphrase": "",
   "You have unsaved changes. Are you sure you want to close?": "",
   "You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.": "",
   "Your dashboard is currently empty!": "",

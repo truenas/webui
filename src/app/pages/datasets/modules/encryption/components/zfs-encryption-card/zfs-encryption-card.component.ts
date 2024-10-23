@@ -4,6 +4,7 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -41,6 +42,7 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
     MatCard,
     MatCardHeader,
     MatCardTitle,
+    MatTooltipModule,
     TranslateModule,
     MatButton,
     TestDirective,

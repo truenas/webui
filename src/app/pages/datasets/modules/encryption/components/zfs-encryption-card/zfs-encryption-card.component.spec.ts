@@ -89,9 +89,11 @@ describe('ZfsEncryptionCardComponent', () => {
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons).toHaveLength(2);
+    expect(buttons).toHaveLength(3);
     expect(await buttons[0].getText()).toBe('Edit');
     expect(await buttons[1].getText()).toBe('Export Key');
+    expect(await buttons[2].getText()).toBe('Lock');
+    expect(await buttons[2].isDisabled()).toBeTruthy();
   });
 
   it('shows correct card state for password encrypted unlocked root', async () => {
