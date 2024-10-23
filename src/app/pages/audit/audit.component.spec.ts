@@ -3,7 +3,7 @@ import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { ControllerType } from 'app/enums/controller-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';

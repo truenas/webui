@@ -2,7 +2,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 

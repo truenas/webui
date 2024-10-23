@@ -2,7 +2,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';

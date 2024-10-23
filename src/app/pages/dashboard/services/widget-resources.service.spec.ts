@@ -4,7 +4,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
 import { mockGlobalStore } from 'app/core/testing/classes/mock-global-store.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { App } from 'app/interfaces/app.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
