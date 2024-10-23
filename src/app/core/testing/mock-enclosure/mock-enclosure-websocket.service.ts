@@ -14,7 +14,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 @Injectable({
   providedIn: 'root',
 })
-export class MockEnclosureWebsocketService extends ApiService {
+export class MockEnclosureApiService extends ApiService {
   private mockConfig: MockEnclosureConfig = environment.mockConfig;
   private mockStorage = new MockEnclosureGenerator(this.mockConfig);
 
@@ -25,7 +25,7 @@ export class MockEnclosureWebsocketService extends ApiService {
   ) {
     super(router, wsManager, translate);
 
-    console.warn('MockEnclosureWebsocketService is in effect. Some calls will be mocked');
+    console.warn('MockEnclosureApiService is in effect. Some calls will be mocked');
   }
 
   override call<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
