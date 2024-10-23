@@ -52,9 +52,11 @@ export class TunableFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTunable;
   }
+
   get title(): string {
     return this.isNew ? this.translate.instant('Add Sysctl') : this.translate.instant('Edit Sysctl');
   }
+
   isFormLoading = false;
 
   form = this.fb.group({

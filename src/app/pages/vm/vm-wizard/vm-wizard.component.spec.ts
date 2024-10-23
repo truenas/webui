@@ -93,7 +93,6 @@ describe('VmWizardComponent', () => {
         mockCall('vm.device.nic_attach_choices', {
           eno2: 'eno2',
         }),
-        mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
         mockCall('system.advanced.update_gpu_pci_ids'),
         mockCall('system.advanced.get_gpu_pci_choices', {
           'GeForce GTX 1080 [0000:03:00.0]': '0000:03:00.0',

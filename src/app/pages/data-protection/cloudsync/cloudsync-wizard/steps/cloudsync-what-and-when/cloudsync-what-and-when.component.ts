@@ -236,7 +236,8 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       }
     } else {
       attributes.folder = isArray(formValue.folder_destination)
-        ? formValue.folder_destination[0] : formValue.folder_destination;
+        ? formValue.folder_destination[0]
+        : formValue.folder_destination;
 
       if (!formValue.path_source.length || !isArray(formValue.path_source)) {
         value.path = '/';
@@ -417,7 +418,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
 
         const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
         for (const i of taskSchemas) {
-          const toBeDisable = !(findIndex(taskSchema, { property: i }) > -1);
+          const toBeDisable = findIndex(taskSchema, { property: i }) === -1;
           if (i === 'task_encryption' || i === 'fast_list' || i === 'chunk_size' || i === 'storage_class') {
             if (toBeDisable) {
               this.form.controls[i].disable();

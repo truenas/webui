@@ -12,7 +12,7 @@ import {
  * See if can be optimized somehow.
  */
 export class IxListItemHarness extends ComponentHarness {
-  static hostSelector = 'ix-list-item';
+  static readonly hostSelector = 'ix-list-item';
 
   getControlHarnesses = this.locatorForAll(...supportedFormControlSelectors);
 

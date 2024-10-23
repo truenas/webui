@@ -13,7 +13,6 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { isEmpty } from 'lodash-es';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
   filter, map, switchMap, take, tap,
@@ -79,13 +78,13 @@ export class AppInfoCardComponent {
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
   protected readonly imagePlaceholder = appImagePlaceholder;
-  protected readonly isEmpty = isEmpty;
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
   protected rollbackUpdateButtonSetEffect = effect(() => {
     const app = this.app();
     this.isRollbackPossible.set(false);
     this.updateRollbackSetup(app.name);
   }, { allowSignalWrites: true });
+
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
     return ['/apps', 'available', app.metadata.train, app.id];
@@ -159,7 +158,7 @@ export class AppInfoCardComponent {
       title: helptextApps.apps.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
       secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant('Remove iX Volumes'),
+      secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
     })
       .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
       .subscribe(({ secondaryCheckbox }) => this.executeDelete(name, secondaryCheckbox));

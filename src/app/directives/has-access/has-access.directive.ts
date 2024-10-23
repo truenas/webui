@@ -37,6 +37,7 @@ export class HasAccessDirective {
   get elementClass(): string {
     return this.cssClassList.join(' ');
   }
+
   set elementClass(val: string) {
     this.cssClassList = val.split(' ');
   }

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { FullScreenDialogOptions } from 'app/interfaces/dialog.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -17,18 +18,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class FullScreenDialogComponent {
-  title: string;
-  message: string;
-
   constructor(
     public dialogRef: MatDialogRef<FullScreenDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) protected data: {
-      showClose: boolean;
-      pre: boolean;
-    },
+    @Inject(MAT_DIALOG_DATA) protected data: Partial<FullScreenDialogOptions>,
   ) {}
 
   close(): void {
-    this.dialogRef.close(true);
+    this.dialogRef.close();
   }
 }

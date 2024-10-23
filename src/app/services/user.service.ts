@@ -9,7 +9,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  static namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_.-]*[$]?$/;
+  static readonly namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_.-]*[$]?$/;
   protected uncachedUserQuery = 'user.get_user_obj' as const;
   protected uncachedGroupQuery = 'group.get_group_obj' as const;
   protected userQuery = 'user.query' as const;

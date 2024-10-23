@@ -68,6 +68,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
       value: NewOrExistingDisk.Existing,
     },
   ]);
+
   readonly hddPathOptions$ = this.ws.call('vm.device.disk_choices').pipe(choicesToOptions());
 
   readonly datastoreOptions$ = this.ws

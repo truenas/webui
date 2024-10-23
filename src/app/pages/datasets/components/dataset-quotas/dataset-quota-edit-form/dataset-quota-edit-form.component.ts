@@ -1,13 +1,17 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, Observable, of, switchMap,
 } from 'rxjs';
 import { catchError, filter, tap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
@@ -17,11 +21,16 @@ import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -29,6 +38,20 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-dataset-quota-edit-form',
   templateUrl: './dataset-quota-edit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    MatButton,
+    RequiresRolesDirective,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class DatasetQuotaEditFormComponent implements OnInit {
   readonly requiredRoles = [Role.DatasetWrite];
@@ -44,11 +67,13 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       ? this.translate.instant('Edit User Quota')
       : this.translate.instant('Edit Group Quota');
   }
+
   get nameLabel(): string {
     return this.quotaType === DatasetQuotaType.User
       ? helpTextQuotas.users.dialog.placeholder
       : helpTextQuotas.groups.dialog.placeholder;
   }
+
   get dataQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
       ? this.getUserDataQuotaLabel()
@@ -70,6 +95,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       ? helpTextQuotas.users.obj_quota.placeholder
       : helpTextQuotas.groups.obj_quota.placeholder;
   }
+
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
       ? this.getUserDataQuotaTooltip()

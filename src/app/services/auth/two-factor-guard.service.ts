@@ -16,7 +16,9 @@ import { AppState } from 'app/store';
 import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class TwoFactorGuardService implements CanActivateChild {
   constructor(
     private router: Router,
@@ -69,11 +71,11 @@ export class TwoFactorGuardService implements CanActivateChild {
           this.appLoader.close();
           return of(true);
         }
-        return this.dialogService.fullScreenDialog(
-          this.translate.instant('Two-Factor Authentication Setup Warning!'),
-          this.translate.instant('Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication on the next page. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.'),
-          true,
-        ).pipe(
+        return this.dialogService.fullScreenDialog({
+          title: this.translate.instant('Two-Factor Authentication Setup Warning!'),
+          message: this.translate.instant('Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication on the next page. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.'),
+          showClose: true,
+        }).pipe(
           switchMap(() => {
             this.appLoader.close();
             this.router.navigate(['/two-factor-auth']);

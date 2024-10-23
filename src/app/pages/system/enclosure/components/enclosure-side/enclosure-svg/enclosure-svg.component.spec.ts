@@ -173,7 +173,7 @@ describe('EnclosureSvgComponent', () => {
   describe('svg is not loaded yet', () => {
     beforeEach(fakeAsync(() => {
       mockGetBBox();
-      setupComponent(undefined);
+      setupComponent();
     }));
 
     it('shows skeleton loader while SVG is loading', fakeAsync(() => {

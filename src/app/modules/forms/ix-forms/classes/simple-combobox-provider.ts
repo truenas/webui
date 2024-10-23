@@ -7,7 +7,7 @@ export class SimpleComboboxProvider implements IxComboboxProvider {
     if (filterValue) {
       return of(this.options.filter((option: Option) => {
         return option.label.toLowerCase().includes(filterValue.toLowerCase())
-            || option.value.toString().toLowerCase().includes(filterValue.toLowerCase());
+          || option.value.toString().toLowerCase().includes(filterValue.toLowerCase());
       }));
     }
     return of([...this.options]);

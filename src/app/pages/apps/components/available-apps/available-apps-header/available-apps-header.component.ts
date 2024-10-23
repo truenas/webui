@@ -66,7 +66,6 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   searchControl = this.fb.control('');
   showFilters = false;
-  isFirstLoad = true;
   availableApps$ = this.applicationsStore.availableApps$;
   areLoaded$ = new BehaviorSubject(false);
   installedApps$ = this.installedAppsStore.installedApps$;
@@ -77,6 +76,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Name },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
   ]);
+
   categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
     map((categories) => {
       this.appsCategories = [...categories];

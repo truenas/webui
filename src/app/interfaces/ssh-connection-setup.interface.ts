@@ -28,14 +28,3 @@ export interface RemoteSshScanParams {
   host: string;
   port: number;
 }
-
-export interface SshSemiAutomaticSetup {
-  name: string;
-  url: string;
-  token?: string;
-  password?: string;
-  username?: string;
-  otp_token?: string;
-  private_key: number;
-  connect_timeout?: number;
-}

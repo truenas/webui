@@ -25,7 +25,9 @@ import {
 } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
+import {
+  IxDynamicFormComponent,
+} from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -55,12 +57,12 @@ import { WebSocketService } from 'app/services/ws.service';
     IxInputComponent,
     IxSelectComponent,
     IxCheckboxComponent,
-    IxDynamicFormModule,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
     TranslateModule,
+    IxDynamicFormComponent,
   ],
 })
 export class ReportingExportersFormComponent implements OnInit {

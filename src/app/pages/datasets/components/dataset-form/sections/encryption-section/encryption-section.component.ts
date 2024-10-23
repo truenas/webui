@@ -1,16 +1,21 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, output,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -19,6 +24,16 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-encryption-section',
   templateUrl: './encryption-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxFieldsetComponent,
+    ReactiveFormsModule,
+    IxCheckboxComponent,
+    IxSelectComponent,
+    IxTextareaComponent,
+    TranslateModule,
+    IxInputComponent,
+  ],
 })
 export class EncryptionSectionComponent implements OnChanges, OnInit {
   @Input() parent: Dataset;
@@ -59,6 +74,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     { label: T('Key'), value: DatasetEncryptionType.Default },
     { label: T('Passphrase'), value: DatasetEncryptionType.Passphrase },
   ]);
+
   algorithmOptions$ = this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(choicesToOptions());
 
   constructor(

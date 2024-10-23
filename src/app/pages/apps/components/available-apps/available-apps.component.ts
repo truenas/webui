@@ -65,6 +65,7 @@ export class AvailableAppsComponent implements OnInit {
       return !!searchQuery || isFilterApplied;
     }),
   );
+
   isLoading$ = this.applicationsStore.isLoading$;
   isFiltering$ = this.appsFilterStore.isFiltering$;
 
@@ -88,12 +89,5 @@ export class AvailableAppsComponent implements OnInit {
 
   trackByAppId(_: number, app: AvailableApp): string {
     return `${app.train}-${app.name}`;
-  }
-
-  applyCategoryFilter(category: string): void {
-    this.appsFilterStore.applyFilters({
-      categories: [category],
-      sort: null,
-    });
   }
 }

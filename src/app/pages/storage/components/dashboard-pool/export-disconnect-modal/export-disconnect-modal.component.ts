@@ -191,10 +191,12 @@ export class ExportDisconnectModalComponent implements OnInit {
         && !Array.isArray(failureData.exc_info.extra)
         && failureData.exc_info.extra.code === 'control_services'
       ) {
-        this.showServicesErrorsDialog(failureData); return;
+        this.showServicesErrorsDialog(failureData);
+        return;
       }
       if (failureData.extra && failureData.extra.code === 'unstoppable_processes') {
-        this.showUnstoppableErrorDialog(failureData); return;
+        this.showUnstoppableErrorDialog(failureData);
+        return;
       }
     }
     this.showExportErrorDialog(failureData);
@@ -210,6 +212,7 @@ export class ExportDisconnectModalComponent implements OnInit {
       backtrace: failureData.exception,
     });
   }
+
   showServicesErrorsDialog(failureData: Job): void {
     const stopMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.stopServices);
     const restartMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.restartServices);
@@ -303,7 +306,7 @@ export class ExportDisconnectModalComponent implements OnInit {
 
     this.confirmLabelText = this.pool.status === PoolStatus.Unknown
       ? this.translate.instant(helptextVolumes.exportDialog.confirm)
-        + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknown_status_alt_text)
+      + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknown_status_alt_text)
       : this.translate.instant(helptextVolumes.exportDialog.confirm);
 
     this.processes.forEach((process) => {

@@ -252,9 +252,9 @@ export class WidgetStorageComponent {
   }
 
   private getScanItemInfo(pool: Pool): ItemInfo {
-    let level = StatusLevel.Safe;
-    let icon: MarkedIcon = statusIcons.checkCircle;
-    let value = this.translate.instant('Never');
+    let level: StatusLevel;
+    let icon: MarkedIcon;
+    let value: string;
 
     const isScrub = pool.scan?.function === PoolScanFunction.Scrub;
     const isScanFinished = pool.scan?.state === PoolScanState.Finished;

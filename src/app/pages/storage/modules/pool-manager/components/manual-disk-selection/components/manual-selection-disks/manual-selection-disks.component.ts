@@ -15,8 +15,13 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
+import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
+import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
+import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
+import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
+import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
-import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
 import {
   ManualDiskSelectionFilters,
@@ -40,7 +45,7 @@ interface EnclosureGroup {
 
 type DiskOrGroup = EnclosureDisk | EnclosureGroup;
 
-const noEnclosureId = 'no-enclosure' as const;
+const noEnclosureId = 'no-enclosure';
 
 @UntilDestroy()
 @Component({
@@ -53,7 +58,6 @@ const noEnclosureId = 'no-enclosure' as const;
     ManualSelectionDiskFiltersComponent,
     DndDropzoneDirective,
     NgClass,
-    TreeModule,
     RouterLinkActive,
     DndDraggableDirective,
     DiskIconComponent,
@@ -62,6 +66,12 @@ const noEnclosureId = 'no-enclosure' as const;
     IxIconComponent,
     TranslateModule,
     AsyncPipe,
+    TreeViewComponent,
+    TreeNodeComponent,
+    NestedTreeNodeComponent,
+    TreeNodeDefDirective,
+    TreeNodeToggleDirective,
+    TreeNodeOutletDirective,
   ],
 })
 export class ManualSelectionDisksComponent implements OnInit {
@@ -163,10 +173,10 @@ export class ManualSelectionDisksComponent implements OnInit {
       const diskNameNormalized = disk.name?.toLowerCase().trim() || '';
       const searchMatches = filterValues.search
         ? (
-          diskModalStringNormalized.includes(searchStringNormalized)
-          || diskSerialStringNormalized.includes(searchStringNormalized)
-          || diskNameNormalized.includes(searchStringNormalized)
-        )
+            diskModalStringNormalized.includes(searchStringNormalized)
+            || diskSerialStringNormalized.includes(searchStringNormalized)
+            || diskNameNormalized.includes(searchStringNormalized)
+          )
         : true;
 
       return typeMatches && sizeMatches && searchMatches;

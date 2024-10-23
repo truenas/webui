@@ -1,5 +1,4 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
@@ -8,6 +7,7 @@ import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/co
 import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
+import { snapshotsRoutes } from 'app/pages/datasets/modules/snapshots/snapshots.routes';
 import { DatasetTrivialPermissionsComponent } from './modules/permissions/containers/dataset-trivial-permissions/dataset-trivial-permissions.component';
 
 const userQuotasData = {
@@ -22,7 +22,7 @@ const groupQuotasData = {
   helpTextKey: 'groups',
 };
 
-export const routes: Routes = [
+export const datasetRoutes: Routes = [
   {
     path: '',
     data: { title: T('Datasets'), breadcrumb: null },
@@ -38,6 +38,7 @@ export const routes: Routes = [
         data: { title: T('Edit ACL'), breadcrumb: null },
         pathMatch: 'full',
       },
+      ...snapshotsRoutes,
       {
         path: ':datasetId',
         data: { breadcrumb: T('Datasets') },
@@ -88,4 +89,3 @@ export const routes: Routes = [
     ],
   },
 ];
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

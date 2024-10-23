@@ -12,6 +12,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { ShellDetailsDialogData } from 'app/interfaces/shell-details-dialog.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
@@ -29,6 +30,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
     IxInputComponent,
     MatDialogContent,
     MatDialogActions,
+    TestDirective,
   ],
 })
 export class ShellDetailsDialogComponent {
@@ -43,6 +45,7 @@ export class ShellDetailsDialogComponent {
     command?: FormControl<string>;
     tail_lines?: FormControl<number>;
   }>;
+
   title: string;
   hasPool = true;
 

@@ -3,34 +3,10 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
 import { WebSocketConnectionGuard } from 'app/core/guards/websocket-connection.guard';
 import { AdminLayoutComponent } from 'app/modules/layout/admin-layout/admin-layout.component';
-import { BlankLayoutComponent } from 'app/modules/layout/blank-layout/blank-layout.component';
-import { SigninComponent } from 'app/pages/signin/signin.component';
+import { AuthGuardService } from 'app/services/auth/auth-guard.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
-import { AuthGuardService } from './services/auth/auth-guard.service';
 
-export const rootRouterConfig: Routes = [
-  {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full',
-  },
-  {
-    path: '',
-    component: BlankLayoutComponent,
-    canActivate: [TranslationsLoadedGuard, WebSocketConnectionGuard],
-    children: [
-      {
-        path: 'signin',
-        component: SigninComponent,
-        data: { title: T('Signin') },
-      },
-      {
-        path: 'system-tasks',
-        loadChildren: () => import('app/pages/system-tasks/system-tasks.routes').then((module) => module.systemTasksRoutes),
-        data: { title: T('Others'), breadcrumb: T('Others') },
-      },
-    ],
-  },
+export const adminRoutes: Routes = [
   {
     path: '',
     component: AdminLayoutComponent,
@@ -84,7 +60,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'datasets',
-        loadChildren: () => import('./pages/datasets/datasets.module').then((module) => module.DatasetsModule),
+        loadChildren: () => import('./pages/datasets/datasets.routes').then((module) => module.datasetRoutes),
         data: { title: T('Datasets'), breadcrumb: T('Datasets') },
       },
       {
@@ -109,7 +85,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'two-factor-auth',
-        loadChildren: () => import('./pages/two-factor-auth/two-factor-auth.module').then((module) => module.TwoFactorAuthModule),
+        loadComponent: () => import('./pages/two-factor-auth/two-factor.component').then((module) => module.TwoFactorComponent),
         data: { title: T('Two-Factor Authentication'), breadcrumb: T('Two-Factor Authentication') },
       },
       {
@@ -132,10 +108,5 @@ export const rootRouterConfig: Routes = [
         loadChildren: () => import('./pages/audit/audit.routes').then((module) => module.auditRoutes),
       },
     ],
-  },
-  {
-    path: '**',
-    redirectTo: 'dashboard',
-    pathMatch: 'full',
   },
 ];

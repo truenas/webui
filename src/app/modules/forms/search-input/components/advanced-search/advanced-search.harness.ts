@@ -4,7 +4,7 @@ import {
 } from 'app/modules/forms/search-input/components/advanced-search/codemirror-autocomplete.harness';
 
 export class AdvancedSearchHarness extends ComponentHarness {
-  static hostSelector = 'ix-advanced-search';
+  static readonly hostSelector = 'ix-advanced-search';
 
   getResetIcon = this.locatorFor('.reset-icon');
   getInputArea = this.locatorFor('.cm-content');
