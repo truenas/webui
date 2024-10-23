@@ -9,18 +9,17 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiKeysComponent } from 'app/pages/api-keys/api-keys.component';
-import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
-import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
+import { ApiKeyFormDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
+import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('ApiKeysComponent', () => {
-  let spectator: Spectator<ApiKeysComponent>;
+describe('UserApiKeysComponent', () => {
+  let spectator: Spectator<UserApiKeysComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
@@ -28,14 +27,14 @@ describe('ApiKeysComponent', () => {
     {
       id: 1,
       name: 'first-api-key',
-      key: 'strong-key',
+      keyhash: 'strong-key',
       created_at: {
         $date: 1010101010101,
       },
     }, {
       id: 2,
       name: 'second-api-key',
-      key: 'strong-key',
+      keyhash: 'strong-key',
       created_at: {
         $date: 1011101010102,
       },
@@ -43,9 +42,9 @@ describe('ApiKeysComponent', () => {
   ] as ApiKey[];
 
   const createComponent = createComponentFactory({
-    component: ApiKeysComponent,
+    component: UserApiKeysComponent,
     imports: [
-      SearchInput1Component,
+      SearchInputComponent,
       MockComponent(PageHeaderComponent),
     ],
     declarations: [
@@ -57,7 +56,6 @@ describe('ApiKeysComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      ApiKeyComponentStore,
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

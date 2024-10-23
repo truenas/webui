@@ -3,9 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  KeyCreatedDialogComponent,
-} from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
+import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 
 describe('KeyCreatedDialogComponent', () => {
   let spectator: Spectator<KeyCreatedDialogComponent>;

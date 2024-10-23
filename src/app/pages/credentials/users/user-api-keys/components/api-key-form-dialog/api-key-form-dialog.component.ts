@@ -1,6 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
+  ChangeDetectionStrategy, Component, computed, inject, OnInit,
+  signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -8,6 +10,7 @@ import {
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApiKeys } from 'app/helptext/api-keys';
@@ -15,13 +18,13 @@ import { ApiKey, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import {
-  KeyCreatedDialogComponent,
-} from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
-import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
+import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -35,6 +38,7 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogTitle,
     ReactiveFormsModule,
     IxInputComponent,
+    IxSelectComponent,
     IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
@@ -45,17 +49,24 @@ import { WebSocketService } from 'app/services/ws.service';
   ],
 })
 export class ApiKeyFormDialogComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly isNew = computed(() => !this.editingRow());
+  protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
+  protected readonly username = toSignal(this.authService.user$.pipe(map((user) => user.pw_name)));
+  protected readonly tooltips = {
+    name: helptextApiKeys.name.tooltip,
+    reset: helptextApiKeys.reset.tooltip,
+  };
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     name: ['', [Validators.required]],
     reset: [false],
   });
 
-  readonly tooltips = {
-    name: helptextApiKeys.name.tooltip,
-    reset: helptextApiKeys.reset.tooltip,
-  };
+  protected readonly forbiddenNames$ = this.ws.call('api_key.query', [
+    [], { select: ['name'], order_by: ['name'] },
+  ]).pipe(map((keys) => keys.map((key) => key.name)));
+
+  private readonly editingRow = signal(inject<ApiKey>(MAT_DIALOG_DATA));
 
   constructor(
     private fb: FormBuilder,
@@ -64,40 +75,35 @@ export class ApiKeyFormDialogComponent implements OnInit {
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
-    private store: ApiKeyComponentStore,
-    @Inject(MAT_DIALOG_DATA) private editingRow: ApiKey,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
-    if (!this.isNew) {
-      this.form.patchValue(this.editingRow);
+    this.addForbiddenNamesValidator();
+    if (!this.isNew()) {
+      this.form.patchValue(this.editingRow());
     }
   }
 
-  get isNew(): boolean {
-    return !this.editingRow;
-  }
-
   onSubmit(): void {
-    const values = this.form.value;
-    const request$ = this.isNew
-      ? this.ws.call('api_key.create', [{ name: values.name, allowlist: [{ method: '*', resource: '*' }] }])
-      : this.ws.call('api_key.update', [this.editingRow.id, values] as UpdateApiKeyRequest);
+    const username = this.username();
+    const values = { ...this.form.value };
+    const request$ = this.isNew()
+      ? this.ws.call('api_key.create', [{ name: values.name, username }])
+      : this.ws.call('api_key.update', [this.editingRow().id, {
+        name: values.name,
+        reset: Boolean(values?.reset),
+      }] as UpdateApiKeyRequest);
 
     request$
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (apiKey) => {
-          if (this.isNew) {
-            this.store.apiKeyAdded(apiKey);
-          } else {
-            this.store.apiKeyEdited(apiKey);
-          }
           this.dialogRef.close(true);
 
-          if (apiKey.key) {
+          if (apiKey.keyhash) {
             this.matDialog.open(KeyCreatedDialogComponent, {
-              data: apiKey.key,
+              data: apiKey.keyhash,
             });
           }
         },
@@ -106,5 +112,10 @@ export class ApiKeyFormDialogComponent implements OnInit {
           this.loader.close();
         },
       });
+  }
+
+  protected addForbiddenNamesValidator(): void {
+    this.form.controls.name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenNames$));
+    this.form.controls.name.updateValueAndValidity();
   }
 }

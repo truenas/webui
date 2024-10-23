@@ -1,12 +1,15 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -16,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    ReactiveFormsModule,
     MatDialogTitle,
     CdkScrollable,
     MatDialogContent,
@@ -25,15 +29,24 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
     MatDialogClose,
     TranslateModule,
+    IxTextareaComponent,
   ],
 })
 export class KeyCreatedDialogComponent {
+  apiKeyControl = new FormControl<string>('');
+
   constructor(
     private clipboard: Clipboard,
+    private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public key: string,
-  ) {}
+  ) {
+    this.apiKeyControl.setValue(key);
+  }
 
   onCopyPressed(): void {
-    this.clipboard.copy(this.key);
+    const copied = this.clipboard.copy(this.key);
+    if (copied) {
+      this.snackbar.success('API Key copied to clipboard');
+    }
   }
 }
