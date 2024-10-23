@@ -107,6 +107,10 @@ export const adminRoutes: Routes = [
         path: 'system/audit',
         loadChildren: () => import('./pages/audit/audit.routes').then((module) => module.auditRoutes),
       },
+      {
+        path: 'virtualization',
+        loadChildren: () => import('app/pages/virtualization/virtualization.routes').then((module) => module.virtualizationRoutes),
+      },
     ],
   },
 ];
