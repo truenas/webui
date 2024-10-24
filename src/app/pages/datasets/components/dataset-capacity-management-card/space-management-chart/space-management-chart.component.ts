@@ -50,7 +50,7 @@ export class SpaceManagementChartComponent {
 
   readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
-  protected readonly chartDatasets = computed(() => {
+  readonly chartDatasets = computed(() => {
     const data: DiskSpace[] = [];
     if (this.isZvol()) {
       data.push(
