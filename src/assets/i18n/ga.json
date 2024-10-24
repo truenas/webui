@@ -131,6 +131,7 @@
   "System Freeze": "",
   "System Overload": "",
   "System Update": "",
+  "System Version": "",
   "The system will restart and be briefly unavailable while applying updates. Apply updates and restart?": "",
   "The {service} service is running and will auto-start after a system restart.": "",
   "This dataset is used to store apps config and other container related data": "",
