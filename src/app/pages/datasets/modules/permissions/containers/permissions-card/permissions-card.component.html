@@ -3,26 +3,26 @@
     <h3 mat-card-title>{{ 'Permissions' | translate }}</h3>
 
     <ng-container *ixRequiresRoles="requiredRoles">
-      @if (canEditPermissions) {
-        <button
-          mat-button
-          ixTest="edit-permissions"
-          (click)="redirectToEditPermissions()"
-        >
-          {{ 'Edit' | translate }}
-        </button>
-      }
+      <button
+        mat-button
+        ixTest="edit-permissions"
+        [disabled]="!canEditPermissions()"
+        [matTooltip]="reasonEditIsDisabled()"
+        (click)="redirectToEditPermissions()"
+      >
+        {{ 'Edit' | translate }}
+      </button>
     </ng-container>
   </mat-card-header>
 
   <mat-card-content>
-    @if (stat?.user || isLoading) {
+    @if (stat()?.user || isLoading()) {
       <div class="file-information">
         <div class="details-item">
           <div class="label">{{ 'Owner:' | translate }}</div>
-          @if (!isLoading) {
+          @if (!isLoading()) {
             <div class="value">
-              {{ stat.user }}
+              {{ stat().user }}
             </div>
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
@@ -30,9 +30,9 @@
         </div>
         <div class="details-item">
           <div class="label">{{ 'Group:' | translate }}</div>
-          @if (!isLoading) {
+          @if (!isLoading()) {
             <div class="value">
-              {{ stat.group }}
+              {{ stat().group }}
             </div>
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
@@ -41,22 +41,20 @@
       </div>
     }
 
-    @if (acl) {
+    @if (acl()) {
       <div class="permissions">
-        @if (acl.trivial) {
-          <ix-view-trivial-permissions
-            [stat]="stat"
-          ></ix-view-trivial-permissions>
+        @if (acl().trivial) {
+          <ix-view-trivial-permissions [stat]="stat()"></ix-view-trivial-permissions>
         } @else {
-          @switch (acl.acltype) {
+          @switch (acl().acltype) {
             @case (AclType.Posix1e) {
               <ix-view-posix-permissions
-                [acl]="acl | cast"
+                [acl]="acl() | cast"
               ></ix-view-posix-permissions>
             }
             @case (AclType.Nfs4) {
               <ix-view-nfs-permissions
-                [acl]="acl | cast"
+                [acl]="acl() | cast"
               ></ix-view-nfs-permissions>
             }
           }
@@ -64,16 +62,16 @@
       </div>
     }
 
-    @if (!isLoading && !acl) {
+    @if (!isLoading() && !acl()) {
       <ix-empty
-        [conf]="isMissingMountpoint ? missionMountpointEmptyConfig : emptyConfig"
+        [conf]="isMissingMountpoint() ? missionMountpointEmptyConfig : emptyConfig"
       ></ix-empty>
     }
   </mat-card-content>
 </mat-card>
 
 
-@if (isLoading) {
+@if (isLoading()) {
   <div class="permissions loader-permissions">
     <ngx-skeleton-loader
       [count]="4"
