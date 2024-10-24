@@ -87,6 +87,7 @@ describe('AppInfoCardComponent', () => {
     providers: [
       mockProvider(ApplicationsService, {
         getAppUpgradeSummary: jest.fn(() => of(upgradeSummary)),
+        checkIfAppIxVolumeExists: jest.fn(() => of(true)),
       }),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([]),

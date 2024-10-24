@@ -154,13 +154,19 @@ export class AppInfoCardComponent {
   deleteButtonPressed(): void {
     const name = this.app().name;
 
-    this.dialogService.confirm({
-      title: helptextApps.apps.delete_dialog.title,
-      message: this.translate.instant('Delete {name}?', { name }),
-      secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
-    })
-      .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
+    this.appService.checkIfAppIxVolumeExists(name).pipe(
+      this.loader.withLoader(),
+      switchMap((ixVolumeExists) => {
+        return this.dialogService.confirm({
+          title: helptextApps.apps.delete_dialog.title,
+          message: this.translate.instant('Delete {name}?', { name }),
+          secondaryCheckbox: ixVolumeExists,
+          secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
+        });
+      }),
+      filter(({ confirmed }) => confirmed),
+      untilDestroyed(this),
+    )
       .subscribe(({ secondaryCheckbox }) => this.executeDelete(name, secondaryCheckbox));
   }
 
