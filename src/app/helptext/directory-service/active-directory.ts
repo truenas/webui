@@ -14,22 +14,20 @@ export const helptextActiveDirectory = {
   activedirectory_bindpw_tooltip: T('Password for the Active Directory administrator account. \
  Required the first time a domain is configured. After initial configuration, the password \
  is not needed to edit, start, or stop the service.'),
-  activedirectory_verbose_logging_tooltip: T('Set to log attempts to join the domain to\
- /var/log/messages.'),
-  activedirectory_trusted_doms_tooltip: T('When set, usernames do not include a domain name.\
- Unset to force domain names to be prepended to user names. One possible reason for unsetting this value\
- is to prevent username collisions when Allow Trusted Domains is set and there are identical usernames in\
- more than one domain.'),
-  activedirectory_default_dom_tooltip: T('Set the domain name to the username.\
- Unset to prevent name collisions when Allow Trusted Domains is set and multiple domains use the same\
- username.'),
-  activedirectory_dns_updates_tooltip: T('Set to enable Samba to do DNS updates when joining a domain.'),
-  activedirectory_disable_fn_cache_tooltip: T('Set to disable caching AD users and groups. This can\
- help when unable to bind to a domain with a large number of users or groups.'),
+  activedirectory_verbose_logging_tooltip: T('Select to log attempts to join the domain in /var/log/messages.'),
+  activedirectory_trusted_doms_tooltip: T('Select if you do not want the username to include a domain name.\
+ Leave cleared to force the domain names to be prepended to usernames. One possible reason to not\
+ select this is to prevent username collisions when this is selected and there are identical\
+ usernames across multiple domains.'),
+  activedirectory_default_dom_tooltip: T('Domain Select to set the domain name to the username. Leave clear to\
+ prevent name collisions when Allow Trusted Domains is selected and multiple domains use the same username.'),
+  activedirectory_dns_updates_tooltip: T('Select to enable Samba to do DNS updates when joining a domain. Selected by default.'),
+  activedirectory_disable_fn_cache_tooltip: T('Select to disable caching AD users and groups, which can help when\
+ unable to bind to a domain with a lot of users or groups.'),
 
   restrict_pam: {
-    tooltip: T('Set to restrict SSH access in certain circumstances to only members of \
- BUILTIN\\Administrators'),
+    tooltip: T('Select to restrict SSH access in certain circumstance to members in BUILTIN/Administrators.\
+ Pluggable Authentication Module (PAM) enables systems to authenticate users against AD credentials.'),
   },
 
   activedirectory_site_tooltip: T('Enter the relative distinguished name of the\

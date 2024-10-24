@@ -641,6 +641,7 @@ export interface ApiCallDirectory {
   'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
+  'app.ix_volume.exists': { params: [string]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };

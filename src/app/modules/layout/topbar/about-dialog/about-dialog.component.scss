@@ -26,8 +26,8 @@
 }
 
 .help {
+  font-family: var(--font-family-header);
   font-size: 1.2rem;
-  font-weight: 500;
 }
 
 .line-item {
@@ -59,14 +59,15 @@
   font-size: 1rem;
 }
 
-#open-source {
+#open-source,
+#system-version {
   font-size: 0.75rem;
-  padding: 1rem 0.5rem;
+  padding: 0.5rem;
   text-align: center;
 }
 
 .copyright-txt {
-  align-self: flex-end;
+  align-self: center;
   font-size: 11px;
   margin-left: 10px;
   text-align: center;
