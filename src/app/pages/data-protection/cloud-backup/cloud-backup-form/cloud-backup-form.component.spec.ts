@@ -88,7 +88,6 @@ describe('CloudBackupFormComponent', () => {
       mockWebSocket([
         mockCall('cloud_backup.create', existingTask),
         mockCall('cloud_backup.update', existingTask),
-        mockCall('cloudsync.create_bucket'),
       ]),
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of()),
@@ -126,12 +125,7 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(1, 'cloudsync.create_bucket', [
-        2,
-        'brand-new-bucket',
-      ]);
-
-      expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(2, 'cloud_backup.create', [{
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'brand-new-bucket' },
         bwlimit: [],
