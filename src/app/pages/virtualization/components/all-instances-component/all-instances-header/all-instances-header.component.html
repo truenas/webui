@@ -1,0 +1,12 @@
+<button
+  mat-button
+  ixTest="edit-global-settings"
+  (click)="onEdit()"
+>{{ 'Global Settings' }}</button>
+
+<a
+  mat-button
+  color="primary"
+  ixTest="create-new-instance"
+  [routerLink]="['/virtualization/new']"
+>{{ 'Create New Instance' | translate }}</a>
