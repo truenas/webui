@@ -64,7 +64,6 @@
   "For performance reasons SHA512 is recommended over SHA256 for datasets with deduplication enabled.": "",
   "General Settings": "",
   "Global Config": "",
-  "Global Settings": "",
   "Go to Jobs Page": "",
   "Hardware Change": "",
   "High usage necessitating a system reset.": "",

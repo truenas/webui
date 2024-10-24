@@ -1,10 +1,7 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { AllInstancesComponent } from 'app/pages/virtualization/components/all-instances-component/all-instances.component';
 import { InstanceFormComponent } from 'app/pages/virtualization/components/instance-form/instance-form.component';
-import { InstanceViewComponent } from 'app/pages/virtualization/components/instance-view/instance-view.component';
-import {
-  VirtualizationDashboardComponent,
-} from 'app/pages/virtualization/components/virtualization-dashboard/virtualization-dashboard.component';
 
 export const virtualizationRoutes: Routes = [{
   path: '',
@@ -12,7 +9,7 @@ export const virtualizationRoutes: Routes = [{
   children: [
     {
       path: '',
-      component: VirtualizationDashboardComponent,
+      component: AllInstancesComponent,
     },
     {
       path: 'new',
@@ -24,7 +21,7 @@ export const virtualizationRoutes: Routes = [{
         {
           path: '',
           pathMatch: 'full',
-          component: InstanceViewComponent,
+          component: AllInstancesComponent,
         },
         {
           path: 'edit',
