@@ -15,7 +15,6 @@ import { isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
   imports: [
     TranslateModule,
     IxIconComponent,
-
   ],
 })
 export class DatasetEncryptionCellComponent {
