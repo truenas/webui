@@ -75,7 +75,7 @@ describe('AboutDialogComponent', () => {
   });
 
   it('should display system version correctly', () => {
-    const systemVersionElement = spectator.query('.line-item:nth-of-type(3) .medium-font');
+    const systemVersionElement = spectator.query('#system-version');
     expect(systemVersionElement).toHaveText('System Version: SCALE-24.04');
   });
 

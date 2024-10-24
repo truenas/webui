@@ -31,19 +31,15 @@
       ></div>
     </div>
 
-    <div class="line-item">
-      <div><ix-icon name="verified_user" class="bullet-icon"></ix-icon></div>
-      <div
-        class="medium-font"
-        [innerHtml]="('System Version' | translate) + ': ' +  (systemVersion$ | async)"
-      ></div>
-    </div>
-
     <div
       *appLet="systemType | mapValue: productTypeLabels as product"
       id="open-source"
       [innerHtml]="helptext.opensource | translate: { product }"
     ></div>
+
+    <div id="system-version">
+      {{ ('System Version' | translate) + ': ' +  (systemVersion$ | async) }}
+    </div>
   </div>
 </div>
 
