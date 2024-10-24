@@ -54,7 +54,7 @@ export class OsStepComponent implements SummaryProvider {
     name: ['',
       [Validators.required, Validators.pattern(vmNamePattern)],
       forbiddenAsyncValues(
-        this.ws.call('vm.query').pipe(
+        this.ws.call('vm.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
           map((vms) => vms.map((vm) => vm.name)),
         ),
       ),

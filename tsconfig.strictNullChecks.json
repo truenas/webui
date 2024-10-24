@@ -544,8 +544,6 @@
     "./src/app/modules/tooltip/tooltip.component.ts",
     "./src/app/pages/credentials/groups/store/group.actions.ts",
     "./src/app/pages/credentials/users/store/user.actions.ts",
-    "./src/app/pages/api-keys/components/key-created-dialog/key-created-dialog.component.spec.ts",
-    "./src/app/pages/api-keys/components/key-created-dialog/key-created-dialog.component.ts",
     "./src/app/pages/apps/components/app-router-outlet/app-router-outlet.component.ts",
     "./src/app/pages/apps/components/docker-images/test/fake-docker-images.ts",
     "./src/app/pages/apps/components/filter-select-list/filter-select-list.component.ts",
