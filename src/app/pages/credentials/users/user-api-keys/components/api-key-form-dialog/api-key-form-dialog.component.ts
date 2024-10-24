@@ -58,7 +58,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
   };
 
   protected readonly form = this.fb.group({
-    name: ['', [Validators.required]],
+    name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     reset: [false],
   });
 

@@ -14,8 +14,8 @@ export interface ApiKey {
 
 export interface CreateApiKeyRequest {
   name: string;
-  username?: string;
-  allowlist?: ApiKeyAllowListItem[];
+  username: string;
+  expires_at?: string;
 }
 
 export type UpdateApiKeyRequest = [number, {
