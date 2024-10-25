@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   GlobalConfigFormComponent,
-} from 'app/pages/virtualization/components/all-instances-component/all-instances-header/global-config-form/global-config-form.component';
+} from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()

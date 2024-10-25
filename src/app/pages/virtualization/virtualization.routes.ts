@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { AllInstancesComponent } from 'app/pages/virtualization/components/all-instances-component/all-instances.component';
+import { AllInstancesComponent } from 'app/pages/virtualization/components/all-instances/all-instances.component';
 import { InstanceFormComponent } from 'app/pages/virtualization/components/instance-form/instance-form.component';
 
 export const virtualizationRoutes: Routes = [{

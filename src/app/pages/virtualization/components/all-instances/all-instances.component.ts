@@ -3,10 +3,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
   AllInstancesHeaderComponent,
-} from 'app/pages/virtualization/components/all-instances-component/all-instances-header/all-instances-header.component';
+} from 'app/pages/virtualization/components/all-instances/all-instances-header/all-instances-header.component';
 import {
   InstanceDetailsComponent,
-} from 'app/pages/virtualization/components/all-instances-component/instance-details/instance-details.component';
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-details.component';
 
 @Component({
   selector: 'ix-instance-list',

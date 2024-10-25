@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   InstanceDevicesComponent,
-} from 'app/pages/virtualization/components/all-instances-component/instance-details/instance-devices/instance-devices.component';
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';
 
 @Component({
   selector: 'ix-instance-details',
