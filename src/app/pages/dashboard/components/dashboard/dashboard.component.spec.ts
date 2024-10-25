@@ -168,7 +168,7 @@ describe('DashboardComponent', () => {
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true);
     });
 
-    it('resets configuration to defaults when Reset is pressed', async () => {
+    it('resets configuration to defaults with confirmation when Reset is pressed', async () => {
       const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
       await resetButton.click();
 
@@ -177,6 +177,7 @@ describe('DashboardComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(spectator.inject(DashboardStore, true).save).toHaveBeenCalledWith(getDefaultWidgets());
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
