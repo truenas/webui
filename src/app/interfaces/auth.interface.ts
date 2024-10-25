@@ -7,6 +7,13 @@ export enum LoginExResponseType {
   OtpRequired = 'OTP_REQUIRED',
 }
 
+export enum LoginExMechanism {
+  PasswordPlain = 'PASSWORD_PLAIN',
+  OtpToken = 'OTP_TOKEN',
+  TokenPlain = 'TOKEN_PLAIN',
+  ApiKeyPlain = 'API_KEY_PLAIN',
+}
+
 export interface LoginExResponse {
   response_type: LoginExResponseType;
   user_info?: LoggedInUser;
@@ -19,24 +26,24 @@ export type LoginExQuery =
   | LoginExAuthTokenQuery
   | LoginExApiKeyQuery;
 
-interface LoginExPasswordQuery {
-  mechanism: 'PASSWORD_PLAIN';
+export interface LoginExPasswordQuery {
+  mechanism: LoginExMechanism.PasswordPlain;
   username: string;
   password: string;
 }
 
-interface LoginExOtpTokenQuery {
-  mechanism: 'OTP_TOKEN';
+export interface LoginExOtpTokenQuery {
+  mechanism: LoginExMechanism.OtpToken;
   otp_token: string;
 }
 
-interface LoginExAuthTokenQuery {
-  mechanism: 'TOKEN_PLAIN';
+export interface LoginExAuthTokenQuery {
+  mechanism: LoginExMechanism.TokenPlain;
   token: string;
 }
 
-interface LoginExApiKeyQuery {
-  mechanism: 'API_KEY_PLAIN';
+export interface LoginExApiKeyQuery {
+  mechanism: LoginExMechanism.ApiKeyPlain;
   username: string;
   api_key: string;
 }

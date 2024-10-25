@@ -35,7 +35,7 @@ import {
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { LoginExQuery, LoginExResponse } from 'app/interfaces/auth.interface';
+import { LoginExOtpTokenQuery, LoginExQuery, LoginExResponse } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
@@ -329,6 +329,7 @@ export interface ApiCallDirectory {
   // Auth
   'auth.generate_token': { params: void; response: string };
   'auth.login_ex': { params: [LoginExQuery]; response: LoginExResponse };
+  'auth.login_ex_continue': { params: [LoginExOtpTokenQuery]; response: LoginExResponse };
   'auth.logout': { params: void; response: void };
   'auth.me': { params: void; response: LoggedInUser };
   'auth.sessions': { params: QueryParams<AuthSession>; response: AuthSession[] };

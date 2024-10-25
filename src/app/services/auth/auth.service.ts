@@ -27,7 +27,7 @@ import {
   ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
 import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
-import { LoginExQuery, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
+import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
@@ -131,11 +131,10 @@ export class AuthService {
   }
 
   login(username: string, password: string, otp: string = null): Observable<LoginResult> {
-    const payload: LoginExQuery = otp
-      ? { mechanism: 'OTP_TOKEN', otp_token: otp }
-      : { mechanism: 'PASSWORD_PLAIN', username, password };
-
-    return this.makeRequest('auth.login_ex', [payload]).pipe(
+    return (otp
+      ? this.makeRequest('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
+      : this.makeRequest('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }])
+    ).pipe(
       switchMap((loginResult) => this.processLoginResult(loginResult)),
     );
   }
@@ -146,7 +145,10 @@ export class AuthService {
     }
 
     performance.mark('Login Start');
-    return this.makeRequest('auth.login_ex', [{ mechanism: 'TOKEN_PLAIN', token: this.token }]).pipe(
+    return this.makeRequest('auth.login_ex', [{
+      mechanism: LoginExMechanism.TokenPlain,
+      token: this.token,
+    }]).pipe(
       switchMap((loginResult) => this.processLoginResult(loginResult)),
     );
   }
