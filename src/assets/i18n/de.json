@@ -3734,7 +3734,7 @@
   "{tasks, plural, =1 {# received task} other {# received tasks}} this week": "",
   "{tasks, plural, =1 {# send task} other {# send tasks}}": "",
   "{tasks, plural, =1 {# sent task} other {# sent tasks}} this week": "",
-  "{temp}°C (All Threads)": "",
+  "{temp}°C (All Cores)": "",
   "{temp}°C (Core #{core})": "",
   "{temp}°C ({coreCount} cores at {temp}°C)": "",
   "{threadCount, plural, one {# thread} other {# threads} }": "",
