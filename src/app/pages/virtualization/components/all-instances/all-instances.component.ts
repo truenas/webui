@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
@@ -7,6 +7,7 @@ import {
 import {
   InstanceDetailsComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-details.component';
+import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 
 @Component({
   selector: 'ix-instance-list',
@@ -20,6 +21,12 @@ import {
     InstanceDetailsComponent,
   ],
 })
-export class AllInstancesComponent {
+export class AllInstancesComponent implements OnInit {
+  constructor(
+    private configStore: VirtualizationConfigStore,
+  ) {}
 
+  ngOnInit(): void {
+    this.configStore.init();
+  }
 }
