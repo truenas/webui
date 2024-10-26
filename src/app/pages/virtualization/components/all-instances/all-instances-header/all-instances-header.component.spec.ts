@@ -127,7 +127,11 @@ describe('AllInstancesHeaderComponent', () => {
       const globalSettingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Settings' }));
       await globalSettingsButton.click();
 
-      expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(GlobalConfigFormComponent);
+      expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+        GlobalConfigFormComponent,
+        false,
+        { dataset: 'pool1/dataset1' },
+      );
     });
   });
 });

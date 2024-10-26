@@ -33,7 +33,7 @@ export class VirtualizationConfigStore extends ComponentStore<VirtualizationConf
     super(initialState);
   }
 
-  readonly init = this.effect((trigger$) => {
+  readonly initialize = this.effect((trigger$) => {
     return trigger$.pipe(
       switchMap(() => {
         this.patchState({ isLoading: true });

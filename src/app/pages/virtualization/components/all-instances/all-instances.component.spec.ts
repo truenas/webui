@@ -15,7 +15,7 @@ describe('AllInstancesComponent', () => {
     component: AllInstancesComponent,
     providers: [
       mockProvider(VirtualizationConfigStore, {
-        init: jest.fn(),
+        initialize: jest.fn(),
       }),
     ],
     declarations: [
@@ -31,6 +31,6 @@ describe('AllInstancesComponent', () => {
   });
 
   it('initializes config store on init', () => {
-    expect(spectator.inject(VirtualizationConfigStore).init).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationConfigStore).initialize).toHaveBeenCalled();
   });
 });

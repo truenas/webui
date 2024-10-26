@@ -52,7 +52,7 @@ describe('VirtualizationStateComponent', () => {
     });
 
     const icon = spectator.query(IxIconComponent);
-    expect(icon.name).toBe('lock');
+    expect(icon.name).toBe('mdi-lock');
     expect(spectator.query('.status-text')).toHaveText('Dataset is locked');
   });
 

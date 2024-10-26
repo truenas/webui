@@ -90,7 +90,7 @@ export class GlobalConfigFormComponent {
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Virtualization settings updated'));
         this.slideInRef.close({
-          response: true,
+          response: undefined,
           error: false,
         });
       });

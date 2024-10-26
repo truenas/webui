@@ -13,11 +13,11 @@
   }
 </button>
 
-@if (isLocked()) {
+@if (isLocked() && config()?.dataset) {
   <a
     mat-button
     ixTest="go-to-dataset"
-    [routerLink]="['/storage/datasets/' + config()?.dataset]"
+    [routerLink]="['/storage/datasets/' + config().dataset]"
   >{{ 'Go To Dataset' | translate }}</a>
 }
 

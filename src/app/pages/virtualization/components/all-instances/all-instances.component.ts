@@ -27,6 +27,6 @@ export class AllInstancesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.configStore.init();
+    this.configStore.initialize();
   }
 }
