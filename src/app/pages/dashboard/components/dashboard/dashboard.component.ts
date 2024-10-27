@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
@@ -70,6 +71,7 @@ export class DashboardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private dialogService: DialogService,
     private store$: Store<AppState>,
   ) {}
 
@@ -149,8 +151,21 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onReset(): void {
-    this.renderedGroups.set(getDefaultWidgets(this.isHaLicensed()));
-    this.snackbar.success(this.translate.instant('Default widgets restored'));
+    this.dialogService.confirm({
+      title: this.translate.instant('Restore default widgets'),
+      message: this.translate.instant('Are you sure you want to restore the default set of widgets?'),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Restore'),
+    })
+      .pipe(untilDestroyed(this))
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          return;
+        }
+
+        this.renderedGroups.set(getDefaultWidgets(this.isHaLicensed()));
+        this.snackbar.success(this.translate.instant('Default widgets restored'));
+      });
   }
 
   private loadGroups(): void {
