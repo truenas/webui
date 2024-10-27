@@ -198,12 +198,12 @@ export interface ApiJobDirectory {
 
   // Virt
   'virt.instance.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
-  'virt.instance.delete ': { params: [instanceId: number]; response: boolean };
+  'virt.instance.delete ': { params: [instanceId: string]; response: boolean };
   'virt.instance.restart': { params: VirtualizationStopParams; response: boolean };
-  'virt.instance.start': { params: [instanceId: number]; response: boolean };
-  'virt.instance.stop': { params: [instanceId: number]; response: boolean };
+  'virt.instance.start': { params: [instanceId: string]; response: boolean };
+  'virt.instance.stop': { params: [instanceId: string]; response: boolean };
   'virt.instance.update': {
-    params: [instanceId: number, update: UpdateVirtualizationInstance];
+    params: [instanceId: string, update: UpdateVirtualizationInstance];
     response: VirtualizationInstance;
   };
 

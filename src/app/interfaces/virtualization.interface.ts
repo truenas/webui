@@ -12,6 +12,7 @@ import {
 
 export interface VirtualizationInstance {
   id: string;
+  name: string;
   type: VirtualizationType;
   status: VirtualizationStatus;
   cpu: string;

@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  gap: 15px;
+
+  .form {
+    flex: 1;
+  }
+}
+
+.actions {
+  margin: 15px;
+}
