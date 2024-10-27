@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
 import { Observable, Subject, of } from 'rxjs';
@@ -48,11 +47,10 @@ export class MockApiService extends ApiService {
   private jobIdCounter = 1;
 
   constructor(
-    protected override router: Router,
     protected override wsManager: WebSocketConnectionService,
     protected override translate: TranslateService,
   ) {
-    super(router, wsManager, translate);
+    super(wsManager, translate);
 
     this.call = jest.fn();
     this.job = jest.fn();

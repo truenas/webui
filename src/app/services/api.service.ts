@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
@@ -39,7 +38,6 @@ export class ApiService {
   readonly clearSubscriptions$ = new Subject<void>();
 
   constructor(
-    protected router: Router,
     protected wsManager: WebSocketConnectionService,
     protected translate: TranslateService,
   ) {

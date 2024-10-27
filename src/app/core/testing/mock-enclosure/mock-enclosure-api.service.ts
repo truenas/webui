@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import { Observable, of } from 'rxjs';
@@ -19,11 +18,10 @@ export class MockEnclosureApiService extends ApiService {
   private mockStorage = new MockEnclosureGenerator(this.mockConfig);
 
   constructor(
-    router: Router,
     wsManager: WebSocketConnectionService,
     translate: TranslateService,
   ) {
-    super(router, wsManager, translate);
+    super(wsManager, translate);
 
     console.warn('MockEnclosureApiService is in effect. Some calls will be mocked');
   }
