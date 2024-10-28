@@ -160,3 +160,19 @@ export interface VirtualizationNetwork {
 export interface VirtualizationImageParams {
   remote: VirtualizationRemote;
 }
+
+export interface AvailableGpu {
+  bus: number;
+  slot: number;
+  description: string;
+  vendor: string | null;
+}
+
+export interface AvailableUsb {
+  vendor_id: string;
+  product_id: string;
+  bus: number;
+  dev: number;
+  product: string;
+  manufacturer: string;
+}

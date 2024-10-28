@@ -25,7 +25,6 @@ export const serviceNames = new Map<ServiceName, string>([
   [ServiceName.Ups, 'UPS'],
 ]);
 
-// There is a mismatch between how middleware reports services names on different endpoints.
-export enum RdmaServiceName {
+export enum RdmaSupportedProtocol {
   Nfs = 'NFS',
 }

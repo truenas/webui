@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { Role } from 'app/enums/role.enum';
-import { RdmaServiceName } from 'app/enums/service-name.enum';
+import { RdmaSupportedProtocol } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
@@ -187,7 +187,7 @@ export class ServiceNfsComponent implements OnInit {
       this.store$.select(selectIsEnterprise).pipe(take(1)),
     ]).pipe(
       map(([capableServices, isEnterprise]) => {
-        const hasRdmaSupport = capableServices.includes(RdmaServiceName.Nfs) && isEnterprise;
+        const hasRdmaSupport = capableServices.includes(RdmaSupportedProtocol.Nfs) && isEnterprise;
         if (hasRdmaSupport) {
           this.form.controls.rdma.enable();
         } else {

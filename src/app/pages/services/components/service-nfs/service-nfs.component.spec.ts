@@ -10,7 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
-import { RdmaServiceName } from 'app/enums/service-name.enum';
+import { RdmaSupportedProtocol } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -57,7 +57,7 @@ describe('ServiceNfsComponent', () => {
           '192.168.1.119': '192.168.1.119',
         }),
         mockCall('nfs.update'),
-        mockCall('rdma.capable_services', [RdmaServiceName.Nfs]),
+        mockCall('rdma.capable_services', [RdmaSupportedProtocol.Nfs]),
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Healthy,
           ldap: DirectoryServiceState.Disabled,
