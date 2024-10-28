@@ -13,7 +13,7 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiKeyFormDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
+import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -49,7 +49,7 @@ describe('UserApiKeysComponent', () => {
     ],
     declarations: [
       FakeFormatDateTimePipe,
-      ApiKeyFormDialogComponent,
+      ApiKeyFormComponent,
     ],
     providers: [
       mockAuth(),
@@ -92,7 +92,7 @@ describe('UserApiKeysComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ApiKeyFormDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
       data: apiKeys[1],
     });
   });

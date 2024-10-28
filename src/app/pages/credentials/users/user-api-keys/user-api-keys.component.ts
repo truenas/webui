@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, of, switchMap, tap } from 'rxjs';
@@ -36,9 +35,10 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiKeyFormDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
+import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -63,7 +63,6 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
     AsyncPipe,
     PageHeaderComponent,
-    MatDialogModule,
   ],
 })
 export class UserApiKeysComponent implements OnInit {
@@ -85,7 +84,7 @@ export class UserApiKeysComponent implements OnInit {
       propertyName: 'username',
     }),
     textColumn({
-      title: this.translate.instant('Key'),
+      title: this.translate.instant('Keyhash'),
       propertyName: 'keyhash',
     }),
     dateColumn({
@@ -128,10 +127,10 @@ export class UserApiKeysComponent implements OnInit {
     protected emptyService: EmptyService,
     private translate: TranslateService,
     private ws: WebSocketService,
-    private matDialog: MatDialog,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
+    private slideIn: IxSlideInService,
   ) { }
 
   ngOnInit(): void {
@@ -152,8 +151,8 @@ export class UserApiKeysComponent implements OnInit {
   }
 
   openForm(apiKey?: ApiKey): void {
-    this.matDialog.open(ApiKeyFormDialogComponent, { data: apiKey })
-      .afterClosed()
+    this.slideIn.open(ApiKeyFormComponent, { data: apiKey })
+      .slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }

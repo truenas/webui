@@ -5,8 +5,8 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogTitle, MatDialogClose,
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatDialog,
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,11 +14,15 @@ import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApiKeys } from 'app/helptext/api-keys';
-import { ApiKey, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
+import { ApiKey } from 'app/interfaces/api-key.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -29,13 +33,12 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-api-key-form-dialog',
+  selector: 'ix-api-key-form',
   templateUrl: './api-key-form-dialog.component.html',
   styleUrls: ['./api-key-form-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
     ReactiveFormsModule,
     IxInputComponent,
     IxSelectComponent,
@@ -43,34 +46,46 @@ import { WebSocketService } from 'app/services/ws.service';
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    IxFieldsetComponent,
   ],
 })
-export class ApiKeyFormDialogComponent implements OnInit {
+export class ApiKeyFormComponent implements OnInit {
   protected readonly isNew = computed(() => !this.editingRow());
+  protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
-  protected readonly username = toSignal(this.authService.user$.pipe(map((user) => user.pw_name)));
+  protected readonly isFullAdmin = toSignal(this.authService.hasRole([Role.FullAdmin]));
+  protected readonly username$ = this.authService.user$.pipe(map((user) => user.pw_name));
+  protected readonly username = toSignal(this.username$);
   protected readonly tooltips = {
     name: helptextApiKeys.name.tooltip,
+    username: helptextApiKeys.username.tooltip,
     reset: helptextApiKeys.reset.tooltip,
   };
 
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
+    username: [''],
     reset: [false],
   });
+
+  protected readonly userOptions$ = this.ws.call('user.query', [
+    [], { select: ['username'], order_by: ['username'] },
+  ]).pipe(map((users) => users.map((user) => ({ label: user.username, value: user.username }))));
 
   protected readonly forbiddenNames$ = this.ws.call('api_key.query', [
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
-  private readonly editingRow = signal(inject<ApiKey>(MAT_DIALOG_DATA));
+  private readonly editingRow = signal(inject<ApiKey>(SLIDE_IN_DATA));
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<ApiKeyFormDialogComponent>,
+    private slideInRef: IxSlideInRef<ApiKeyFormComponent>,
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private loader: AppLoaderService,
@@ -80,38 +95,44 @@ export class ApiKeyFormDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.addForbiddenNamesValidator();
+    this.setCurrentUsername();
+
     if (!this.isNew()) {
       this.form.patchValue(this.editingRow());
     }
   }
 
   onSubmit(): void {
-    const username = this.username();
-    const values = { ...this.form.value };
+    this.isLoading.set(true);
+    const { name, username, reset } = this.form.value;
     const request$ = this.isNew()
-      ? this.ws.call('api_key.create', [{ name: values.name, username }])
-      : this.ws.call('api_key.update', [this.editingRow().id, {
-        name: values.name,
-        reset: Boolean(values?.reset),
-      }] as UpdateApiKeyRequest);
+      ? this.ws.call('api_key.create', [{ name, username }])
+      : this.ws.call('api_key.update', [this.editingRow().id, { name, reset }]);
 
     request$
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
-        next: (apiKey) => {
-          this.dialogRef.close(true);
+        next: ({ key }) => {
+          this.isLoading.set(false);
+          this.slideInRef.close(true);
 
-          if (apiKey.keyhash) {
-            this.matDialog.open(KeyCreatedDialogComponent, {
-              data: apiKey.keyhash,
-            });
+          if (key) {
+            this.matDialog.open(KeyCreatedDialogComponent, { data: key });
           }
         },
         error: (error: unknown) => {
+          this.isLoading.set(false);
           this.errorHandler.handleWsFormError(error, this.form);
           this.loader.close();
         },
       });
+  }
+
+  protected setCurrentUsername(): void {
+    const username = this.username();
+    if (username) {
+      this.form.patchValue({ username });
+    }
   }
 
   protected addForbiddenNamesValidator(): void {

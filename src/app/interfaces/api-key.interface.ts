@@ -4,6 +4,7 @@ export interface ApiKey {
   created_at: ApiTimestamp;
   expires_at: ApiTimestamp;
   id: number;
+  key: string;
   keyhash: string;
   local: boolean;
   revoked: boolean;

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,17 +11,19 @@ import { ApiKey } from 'app/interfaces/api-key.interface';
 import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ApiKeyFormDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
+import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeyFormDialogComponent', () => {
-  let spectator: Spectator<ApiKeyFormDialogComponent>;
+  let spectator: Spectator<ApiKeyFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
-    component: ApiKeyFormDialogComponent,
+    component: ApiKeyFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
@@ -34,7 +36,7 @@ describe('ApiKeyFormDialogComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: SLIDE_IN_DATA,
         useValue: undefined,
       },
     ],
@@ -44,7 +46,7 @@ describe('ApiKeyFormDialogComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: SLIDE_IN_DATA,
           useValue: apiKey,
         },
       ],
@@ -92,7 +94,7 @@ describe('ApiKeyFormDialogComponent', () => {
       name: 'My key',
       reset: false,
     }]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });
