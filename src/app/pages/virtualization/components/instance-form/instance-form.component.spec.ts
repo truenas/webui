@@ -35,6 +35,7 @@ describe('InstanceFormComponent', () => {
     providers: [
       mockWebSocket([
         mockCall('virt.instance.query', [{
+          id: 'test',
           name: 'test',
           type: VirtualizationType.Container,
           autostart: false,
@@ -73,7 +74,7 @@ describe('InstanceFormComponent', () => {
         Name: 'test',
         Autostart: false,
         CPU: 'Intel Xeon',
-        Image: '', // TODO:
+        Image: 'almalinux/8/cloud',
         'Memory Size': '2 GiB',
       });
     });
@@ -90,14 +91,12 @@ describe('InstanceFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.update', ['test', {
-        name: 'test',
-        autostart: false,
         cpu: 'Intel Xeon',
         memory: 3 * GiB,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/virtualization/instance/test']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/virtualization/instance', 'test']);
     });
   });
 

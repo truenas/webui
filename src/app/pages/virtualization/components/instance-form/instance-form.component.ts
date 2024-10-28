@@ -5,9 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Job } from 'app/interfaces/job.interface';
 import { CreateVirtualizationInstance, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -95,8 +96,8 @@ export class InstanceFormComponent implements OnInit {
     const values = this.form.value;
 
     const request$ = this.isNew()
-      ? this.ws.job('virt.instance.create', [values as CreateVirtualizationInstance])
-      : this.ws.job('virt.instance.update', [this.existingInstance().id, values]);
+      ? this.buildCreateRequest(values)
+      : this.buildUpdateRequest(values);
 
     this.dialogService.jobDialog(request$, {
       title: this.translate.instant('Saving Instance'),
@@ -141,13 +142,24 @@ export class InstanceFormComponent implements OnInit {
       });
   }
 
+  private buildCreateRequest(values: InstanceFormComponent['form']['value']): Observable<Job> {
+    return this.ws.job('virt.instance.create', [values as CreateVirtualizationInstance]);
+  }
+
+  private buildUpdateRequest(values: InstanceFormComponent['form']['value']): Observable<Job> {
+    const payload = { ...values };
+    delete payload.image;
+    delete payload.autostart; // TODO: Temporary because of middleware bug
+    return this.ws.job('virt.instance.update', [this.existingInstance().id, payload]);
+  }
+
   private setFormValues(instance: VirtualizationInstance): void {
     this.form.setValue({
       name: instance.name,
       cpu: instance.cpu,
       autostart: instance.autostart,
       memory: instance.memory,
-      image: '', // TODO:
+      image: 'almalinux/8/cloud', // TODO: Field is not present in the response.
     });
   }
 
