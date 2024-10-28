@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit,
   signal,
@@ -5,8 +6,13 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
-import { Gallery, GalleryItem, ImageItem } from 'ng-gallery';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  Gallery, GalleryItem, GalleryModule, ImageItem,
+} from 'ng-gallery';
+import { LightboxModule } from 'ng-gallery/lightbox';
+import { ImgFallbackModule } from 'ngx-img-fallback';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   map, filter, switchMap,
   tap,
@@ -14,6 +20,12 @@ import {
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
+import { AppDetailsHeaderComponent } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
+import { AppDetailsSimilarComponent } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
+import { AppJsonDetailsCardComponent } from 'app/pages/apps/components/app-detail-view/app-json-details-card/app-json-details-card.component';
+import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
 @UntilDestroy()
@@ -22,6 +34,21 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   templateUrl: './app-detail-view.component.html',
   styleUrls: ['./app-detail-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    AppDetailsHeaderComponent,
+    TranslateModule,
+    NgxSkeletonLoaderModule,
+    ImgFallbackModule,
+    AppDetailsSimilarComponent,
+    AppResourcesCardComponent,
+    NgTemplateOutlet,
+    AppAvailableInfoCardComponent,
+    AppJsonDetailsCardComponent,
+    LightboxModule,
+    GalleryModule,
+  ],
 })
 export class AppDetailViewComponent implements OnInit {
   readonly app = signal<AvailableApp>(null);

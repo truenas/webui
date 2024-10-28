@@ -123,15 +123,18 @@ export class ServiceSmbComponent implements OnInit {
     { label: this.translate.instant('Full'), value: LogLevel.Full },
     { label: this.translate.instant('Debug'), value: LogLevel.Debug },
   ]);
+
   readonly unixCharsetOptions$ = this.ws.call('smb.unixcharset_choices').pipe(choicesToOptions());
   readonly guestAccountOptions$ = this.ws.call('user.query').pipe(
     map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
   );
+
   readonly adminGroupProvider = new SimpleAsyncComboboxProvider(
     this.userService.groupQueryDsCache('', true).pipe(
       map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
     ),
   );
+
   readonly bindIpAddressOptions$ = this.ws.call('smb.bindip_choices').pipe(choicesToOptions());
   readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
 
@@ -180,7 +183,7 @@ export class ServiceSmbComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {

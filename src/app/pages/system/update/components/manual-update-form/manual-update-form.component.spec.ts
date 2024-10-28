@@ -85,11 +85,9 @@ describe('ManualUpdateFormComponent', () => {
     ],
   });
 
-  beforeEach(/* async */ () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    // form = await loader.getHarness(IxFormHarness);
-    // websocket = spectator.inject(WebSocketService2);
   });
 
   it('loads all pool location options if is not HA system', async () => {

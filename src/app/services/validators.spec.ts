@@ -16,7 +16,7 @@ describe('ValidationService', () => {
     });
   });
 
-  it('should have greatherThan error when value1 is smaller', () => {
+  it('should have greaterThan error when value1 is smaller', () => {
     formGroup.get(value1).setValue(0);
     formGroup.get(value2).setValue(1);
     formGroup.updateValueAndValidity();
@@ -26,17 +26,17 @@ describe('ValidationService', () => {
     });
   });
 
-  it('should have greatherThan error when value1 is equal', () => {
+  it('should have greaterThan error when value1 is equal', () => {
     formGroup.get(value1).setValue(0);
     formGroup.get(value2).setValue(0);
     formGroup.updateValueAndValidity();
-    // expect(formGroup.valid).toBeFalsy();
+
     expect(formGroup.get(value1).errors).toEqual({
       greaterThan: { message: 'Greater than error' },
     });
   });
 
-  it('should not have greatherThan error when value1 is greater', () => {
+  it('should not have greaterThan error when value1 is greater', () => {
     formGroup.get(value1).setValue(1);
     formGroup.get(value2).setValue(0);
     formGroup.updateValueAndValidity();

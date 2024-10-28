@@ -9,7 +9,7 @@ import { IxCellHarness } from 'app/modules/ix-table/components/ix-table/cell.har
 import { IxRowHarness } from 'app/modules/ix-table/components/ix-table/row.harness';
 
 export class IxTableHarness extends ContentContainerComponentHarness {
-  static hostSelector = 'ix-table';
+  static readonly hostSelector = 'ix-table';
 
   readonly getCells = this.locatorForAll(IxCellHarness);
   readonly getRows = this.locatorForAll(IxRowHarness);

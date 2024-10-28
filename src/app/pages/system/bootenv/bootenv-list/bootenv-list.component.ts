@@ -120,10 +120,10 @@ export class BootEnvironmentListComponent implements OnInit {
         switch (row.active) {
           case BootEnvironmentActive.Now:
             return this.translate.instant('Now');
-          case BootEnvironmentActive.Reboot:
-            return this.translate.instant('Reboot');
+          case BootEnvironmentActive.Restart:
+            return this.translate.instant('Restart');
           case BootEnvironmentActive.NowReboot:
-            return this.translate.instant('Now/Reboot');
+            return this.translate.instant('Now/Restart');
           default:
             return row.active;
         }

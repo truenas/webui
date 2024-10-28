@@ -26,9 +26,7 @@ describe('AppMetadataCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppMetadataCardComponent,
-    declarations: [
-      AppSectionExpandCollapseComponent,
-    ],
+    imports: [AppSectionExpandCollapseComponent],
     providers: [],
   });
 

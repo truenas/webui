@@ -15,7 +15,9 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectHasEnclosureSupport, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class NavigationService {
   readonly hasFailover$ = this.store$.select(selectIsHaLicensed);
   readonly hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
@@ -90,6 +92,14 @@ export class NavigationService {
       tooltip: T('Virtualization'),
       icon: iconMarker('computer'),
       state: 'vm',
+      isVisible$: this.hasVms$,
+    },
+    {
+      name: T('Containers (WIP)'),
+      type: MenuItemType.Link,
+      tooltip: T('Containers'),
+      icon: iconMarker('computer'),
+      state: 'virtualization',
       isVisible$: this.hasVms$,
     },
     {

@@ -61,6 +61,7 @@ export class SaveAsPresetModalComponent implements OnInit {
   form = this.fb.group({
     presetName: ['', Validators.required],
   });
+
   presets: AclTemplateByPath[] = [];
   isFormLoading = false;
   acl: Acl;

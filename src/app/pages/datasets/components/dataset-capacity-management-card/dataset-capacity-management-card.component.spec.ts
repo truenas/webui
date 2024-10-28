@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
-import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
+import { MockComponents, MockModule } from 'ng-mocks';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
@@ -60,10 +60,12 @@ describe('DatasetCapacityManagementCardComponent', () => {
     imports: [
       FileSizePipe,
     ],
+    componentProviders: [
+      MockModule(NgxSkeletonLoaderModule),
+    ],
     declarations: [
       MockComponents(
         SpaceManagementChartComponent,
-        NgxSkeletonLoaderComponent,
       ),
     ],
     providers: [

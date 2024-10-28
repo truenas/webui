@@ -2,15 +2,21 @@ import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   combineLatest, map, Subscription, switchMap, tap,
 } from 'rxjs';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -31,6 +37,15 @@ interface ContainerLogEvent {
   styleUrls: ['./container-logs.component.scss'],
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    ToolbarSliderComponent,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+    MatProgressSpinner,
+  ],
 })
 export class ContainerLogsComponent implements OnInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
@@ -117,54 +132,13 @@ export class ContainerLogsComponent implements OnInit {
   scrollToBottom(): void {
     try {
       this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
-    } catch (err: unknown) {
-
+      // eslint-disable-next-line sonarjs/no-ignored-exceptions,unused-imports/no-unused-vars
+    } catch (_: unknown) {
+      // Ignore error
     }
   }
 
   onFontSizeChanged(newSize: number): void {
     this.fontSize = newSize;
   }
-
-  onDownloadLogs(): void {
-    // TODO: download logs
-  }
-
-  // downloadLogs(formValue: LogsDialogFormValue): void {
-  //   const appName = formValue.apps;
-  //   const podName = formValue.pods;
-  //   const containerName = formValue.containers;
-  //   const tailLines = formValue.tail_lines;
-
-  //   this.dialogService.closeAllDialogs();
-
-  //   const fileName = `${appName}_${podName}_${containerName}.log`;
-  //   const mimetype = 'application/octet-stream';
-  //   this.ws.call(
-  //     'core.download',
-  //     [
-  //       'chart.release.pod_logs',
-  //       [appName, { pod_name: podName, container_name: containerName, tail_lines: tailLines }],
-  //       fileName,
-  //     ],
-  //   ).pipe(
-  //     this.loader.withLoader(),
-  //     this.errorHandler.catchError(),
-  //     untilDestroyed(this),
-  //   ).subscribe((download) => {
-  //     const [, url] = download;
-  //     this.download.streamDownloadFile(url, fileName, mimetype)
-  //       .pipe(untilDestroyed(this))
-  //       .subscribe({
-  //         next: (file: Blob) => {
-  //           if (download !== null) {
-  //             this.download.downloadBlob(file, fileName);
-  //           }
-  //         },
-  //         error: (error: HttpErrorResponse) => {
-  //           this.dialogService.error(this.errorHandler.parseHttpError(error));
-  //         },
-  //       });
-  //   });
-  // }
 }

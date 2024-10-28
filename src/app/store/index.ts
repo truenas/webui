@@ -12,6 +12,9 @@ import { groupStateKey } from 'app/pages/credentials/groups/store/group.selector
 import { UserEffects } from 'app/pages/credentials/users/store/user.effects';
 import { userReducer, UsersState } from 'app/pages/credentials/users/store/user.reducer';
 import { userStateKey } from 'app/pages/credentials/users/store/user.selectors';
+import { SnapshotEffects } from 'app/pages/datasets/modules/snapshots/store/snapshot.effects';
+import { snapshotReducer, SnapshotsState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
+import { snapshotStateKey } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { EulaEffects } from 'app/store/eula/eula.effects';
 import { HaFipsEffects } from 'app/store/ha-fips/ha-fips.effects';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
@@ -49,6 +52,7 @@ export interface AppState {
   [alertStateKey]: AlertsState;
   [userStateKey]: UsersState;
   [groupStateKey]: GroupsState;
+  [snapshotStateKey]: SnapshotsState;
   router: RouterReducerState<CustomRouterState>;
 }
 
@@ -63,6 +67,7 @@ export const rootReducers: ActionReducerMap<AppState> = {
   [alertStateKey]: alertReducer,
   [userStateKey]: userReducer,
   [groupStateKey]: groupReducer,
+  [snapshotStateKey]: snapshotReducer,
   router: routerReducer,
 };
 export const rootEffects = [
@@ -79,4 +84,5 @@ export const rootEffects = [
   AlertEffects,
   UserEffects,
   GroupEffects,
+  SnapshotEffects,
 ];

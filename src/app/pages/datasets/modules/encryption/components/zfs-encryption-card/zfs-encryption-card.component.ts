@@ -1,10 +1,18 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { MatAnchor, MatButton } from '@angular/material/button';
+import {
+  MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
+} from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   EncryptionOptionsDialogData,
 } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog-data.interface';
@@ -29,6 +37,21 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
   templateUrl: './zfs-encryption-card.component.html',
   styleUrls: ['./zfs-encryption-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatTooltipModule,
+    TranslateModule,
+    MatButton,
+    TestDirective,
+    RequiresRolesDirective,
+    RouterLink,
+    MatCardContent,
+    MatCardActions,
+    MatAnchor,
+  ],
 })
 export class ZfsEncryptionCardComponent {
   @Input() dataset: DatasetDetails;

@@ -108,6 +108,7 @@ export class ReportComponent implements OnInit, OnChanges {
     '1M': null as number,
     '6M': null as number,
   };
+
   currentStartDate: number;
   currentEndDate: number;
   customZoom = false;
@@ -121,19 +122,12 @@ export class ReportComponent implements OnInit, OnChanges {
     { timespan: ReportZoomLevel.Day, timeformat: '%a %H:%M', culling: 4 },
     { timespan: ReportZoomLevel.Hour, timeformat: '%H:%M', culling: 6 },
   ];
+
   readonly zoomLevelLabels = zoomLevelLabels;
 
   get reportTitle(): string {
     const trimmed = this.report.title.replace(/[()]/g, '');
     return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
-  }
-
-  get zoomInDisabled(): boolean {
-    return this.zoomLevelIndex >= this.zoomLevelMax;
-  }
-
-  get zoomOutDisabled(): boolean {
-    return this.zoomLevelIndex <= this.zoomLevelMin;
   }
 
   get currentZoomLevel(): ReportZoomLevel {

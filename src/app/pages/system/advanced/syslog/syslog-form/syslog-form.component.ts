@@ -92,6 +92,7 @@ export class SyslogFormComponent implements OnInit {
   readonly certificateOptions$ = this.ws.call('system.advanced.syslog_certificate_choices').pipe(
     choicesToOptions(),
   );
+
   readonly certificateAuthorityOptions$ = this.ws.call('system.advanced.syslog_certificate_authority_choices')
     .pipe(choicesToOptions());
 

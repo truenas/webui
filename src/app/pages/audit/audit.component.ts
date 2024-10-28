@@ -228,7 +228,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
     this.searchQuery = query;
 
-    if (query && query.isBasicQuery) {
+    if (query?.isBasicQuery) {
       const term = `(?i)${query.query || ''}`;
       const params = new ParamsBuilder<AuditEntry>()
         .filter('event', '~', term)
@@ -280,6 +280,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   }
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
+    // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
     return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView ? 15 : 35));
   }
 

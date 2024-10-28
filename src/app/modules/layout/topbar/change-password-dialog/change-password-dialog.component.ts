@@ -1,10 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -33,15 +36,14 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogClose,
     TranslateModule,
     TestDirective,
+    AsyncPipe,
   ],
 })
 export class ChangePasswordDialogComponent {
   form = this.fb.group({
-    old_password: ['', [Validators.required]],
+    old_password: [''],
     new_password: ['', [Validators.required]],
-    passwordConfirmation: ['', [
-      Validators.required,
-    ]],
+    passwordConfirmation: ['', [Validators.required]],
   }, {
     validators: [
       matchOthersFgValidator(
@@ -57,6 +59,10 @@ export class ChangePasswordDialogComponent {
   readonly tooltips = {
     password: helptextTopbar.changePasswordDialog.pw_new_pw_tooltip,
   };
+
+  get isFullAdminUser$(): Observable<boolean> {
+    return this.authService.hasRole(Role.FullAdmin);
+  }
 
   constructor(
     private translate: TranslateService,

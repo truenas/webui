@@ -4,10 +4,6 @@ import { adapter, SnapshotsState } from 'app/pages/datasets/modules/snapshots/st
 export const snapshotStateKey = 'snapshots';
 export const selectSnapshotState = createFeatureSelector<SnapshotsState>(snapshotStateKey);
 
-export interface SnapshotSlice {
-  [snapshotStateKey]: SnapshotsState;
-}
-
 const { selectAll, selectTotal } = adapter.getSelectors();
 
 export const selectSnapshots = createSelector(

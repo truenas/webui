@@ -145,6 +145,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.topology$,
     (topology) => categoryCapacity(topology[VdevType.Data]),
   );
+
   readonly allowedDisks$ = this.select(
     this.diskStore.selectableDisks$,
     this.diskSettings$,

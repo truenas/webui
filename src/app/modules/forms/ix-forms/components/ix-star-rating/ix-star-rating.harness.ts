@@ -12,7 +12,7 @@ export interface IxStarRatingFilters extends BaseHarnessFilters {
 }
 
 export class IxStarRatingHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-star-rating';
+  static readonly hostSelector = 'ix-star-rating';
 
   static with(options: IxStarRatingFilters): HarnessPredicate<IxStarRatingHarness> {
     return new HarnessPredicate(IxStarRatingHarness, options)
@@ -44,8 +44,6 @@ export class IxStarRatingHarness extends ComponentHarness implements IxFormContr
     const buttons = await this.getButtons();
     const inputState = await parallel(() => buttons.map((control) => control.isDisabled()));
 
-    return new Promise((resolve) => {
-      resolve(inputState.every(Boolean));
-    });
+    return inputState.every(Boolean);
   }
 }

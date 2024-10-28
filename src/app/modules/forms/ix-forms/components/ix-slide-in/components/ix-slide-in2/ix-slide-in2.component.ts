@@ -87,7 +87,9 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   }
 
   onBackdropClicked(): void {
-    if (!this.element || !this.isSlideInOpen) { return; }
+    if (!this.element || !this.isSlideInOpen) {
+      return;
+    }
     this.componentInfo.close$.next({ response: false, error: null });
     this.componentInfo.close$.complete();
     this.closeSlideIn();

@@ -1,17 +1,28 @@
 import {
   Component, ChangeDetectionStrategy, Inject, OnInit, ChangeDetectorRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatAnchor, MatButton } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -23,6 +34,25 @@ import { AppState } from 'app/store';
   templateUrl: './snapshot-batch-delete-dialog.component.html',
   styleUrls: ['./snapshot-batch-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    TranslateModule,
+    ReactiveFormsModule,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    IxCheckboxComponent,
+    MatTooltip,
+    RequiresRolesDirective,
+    TestDirective,
+    MatButton,
+    MatDialogClose,
+    FormActionsComponent,
+    RouterLink,
+    MatAnchor,
+  ],
 })
 export class SnapshotBatchDeleteDialogComponent implements OnInit {
   readonly requiredRoles = [Role.SnapshotDelete];
@@ -31,6 +61,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
   });
+
   total = this.snapshots.length;
   dialogData: SnapshotDialogData;
   jobSuccess: boolean[] = [];

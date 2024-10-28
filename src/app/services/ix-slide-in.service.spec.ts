@@ -18,6 +18,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @Component({
   selector: 'ix-test',
   template: '<h1>{{text}}</h1>',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestComponent {
@@ -28,6 +29,7 @@ class TestComponent {
   ) {
     this.text = value;
   }
+
   close(): void {
     this.slideInRef.close();
   }

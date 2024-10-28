@@ -192,7 +192,7 @@ export class WidgetBackupComponent implements OnInit {
   private getTile(title: string, tasks: BackupRow[]): BackupTile {
     const successfulTasks = tasks.filter((backup) => this.successStates.includes(backup.state));
     const lastSuccessfulTask = successfulTasks
-      .sort((a, b) => b.timestamp.$date - a.timestamp.$date)[0]?.timestamp;
+      .toSorted((a, b) => b.timestamp.$date - a.timestamp.$date)[0]?.timestamp;
 
     return {
       title,

@@ -17,17 +17,17 @@ export interface DynamicWizardSchema extends DynamicFormSchema {
 }
 
 export type DynamicFormSchemaNode =
-| DynamicFormSchemaUri
-| DynamicFormSchemaCron
-| DynamicFormSchemaInput
-| DynamicFormSchemaSelect
-| DynamicFormSchemaEnum
-| DynamicFormSchemaExplorer
-| DynamicFormSchemaCheckbox
-| DynamicFormSchemaIpaddr
-| DynamicFormSchemaDict
-| DynamicFormSchemaList
-| DynamicFormSchemaText;
+  | DynamicFormSchemaUri
+  | DynamicFormSchemaCron
+  | DynamicFormSchemaInput
+  | DynamicFormSchemaSelect
+  | DynamicFormSchemaEnum
+  | DynamicFormSchemaExplorer
+  | DynamicFormSchemaCheckbox
+  | DynamicFormSchemaIpaddr
+  | DynamicFormSchemaDict
+  | DynamicFormSchemaList
+  | DynamicFormSchemaText;
 
 export interface DynamicFormSchemaBase {
   controlName: string;

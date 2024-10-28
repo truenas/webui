@@ -67,7 +67,7 @@ describe('BootEnvironmentListComponent', () => {
       [
         '',
         '22.12-MASTER-20220808-020013',
-        'Now/Reboot',
+        'Now/Restart',
         '2022-08-09 06:52:00',
         '2.61 GiB',
         'No',

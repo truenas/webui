@@ -7,6 +7,7 @@ import {
   alertChanged,
   alertPanelClosed,
   alertRemoved,
+  alertsDismissedChanged,
   alertsLoaded,
   alertsNotLoaded, dismissAlertPressed, dismissAllAlertsPressed, reopenAlertPressed, reopenAllAlertsPressed,
 } from 'app/modules/alerts/store/alert.actions';
@@ -51,6 +52,9 @@ export const alertReducer = createReducer(
     id: alert.id,
     changes: alert,
   }, state)),
+  on(alertsDismissedChanged, (state, { dismissed }) => {
+    return adapter.map((alert) => ({ ...alert, dismissed }), state);
+  }),
   on(alertRemoved, (state, { id }) => adapter.removeOne(id, state)),
 
   on(dismissAlertPressed, (state, { id }) => adapter.updateOne({

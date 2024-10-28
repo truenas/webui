@@ -70,6 +70,7 @@ export class SigninComponent implements OnInit {
     delay(1000),
     switchMap(() => this.isConnected$),
   );
+
   readonly hasLoadingIndicator$ = combineLatest([
     this.signinStore.isLoading$,
     this.isConnected$,
@@ -99,7 +100,11 @@ export class SigninComponent implements OnInit {
     this.signinStore.loginBanner$.pipe(
       filter(Boolean),
       filter(() => this.window.sessionStorage.getItem('loginBannerDismissed') !== 'true'),
-      switchMap((text) => this.dialog.fullScreenDialog(null, text, true, false).pipe(take(1))),
+      switchMap((text) => this.dialog.fullScreenDialog({
+        message: text,
+        showClose: true,
+        pre: true,
+      }).pipe(take(1))),
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {

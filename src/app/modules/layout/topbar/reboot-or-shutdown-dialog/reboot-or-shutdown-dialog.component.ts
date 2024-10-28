@@ -11,6 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { SelectOption } from 'app/interfaces/option.interface';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -37,6 +38,7 @@ const customReasonValue = 'CUSTOM_REASON_VALUE';
     IxCheckboxComponent,
     IxSelectComponent,
     IxInputComponent,
+    FormActionsComponent,
   ],
 })
 export class RebootOrShutdownDialogComponent {
@@ -68,8 +70,8 @@ export class RebootOrShutdownDialogComponent {
     },
     {
       label: this.translate.instant('Power Outage'),
-      tooltip: this.translate.instant('Unexpected power loss necessitating a reboot.'),
-      value: 'Unexpected power loss necessitating a reboot.',
+      tooltip: this.translate.instant('Unexpected power loss necessitating a restart.'),
+      value: 'Unexpected power loss necessitating a restart.',
     },
     {
       label: this.translate.instant('Maintenance Window'),
@@ -83,8 +85,8 @@ export class RebootOrShutdownDialogComponent {
     },
     {
       label: this.translate.instant('Software Installation'),
-      tooltip: this.translate.instant('Required reboot after new software installation.'),
-      value: 'Required reboot after new software installation.',
+      tooltip: this.translate.instant('Required restart after new software installation.'),
+      value: 'Required restart after new software installation.',
     },
     {
       label: this.translate.instant('Performance Optimization'),
@@ -98,8 +100,8 @@ export class RebootOrShutdownDialogComponent {
     },
     {
       label: this.translate.instant('System Freeze'),
-      tooltip: this.translate.instant('Unresponsive system necessitating a forced reboot.'),
-      value: 'Unresponsive system necessitating a forced reboot.',
+      tooltip: this.translate.instant('Unresponsive system necessitating a forced restart.'),
+      value: 'Unresponsive system necessitating a forced restart.',
     },
   ]);
 

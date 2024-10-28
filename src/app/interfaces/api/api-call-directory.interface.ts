@@ -2,14 +2,12 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
-import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
-import { SystemState } from 'app/enums/system-state.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
   Acl,
@@ -25,7 +23,6 @@ import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.int
 import {
   Alert, AlertCategory, AlertClasses, AlertClassesUpdate,
 } from 'app/interfaces/alert.interface';
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import {
   App,
@@ -99,8 +96,7 @@ import {
   DiskTemperatureAgg,
   DiskTemperatures,
   DiskUpdate,
-  ExtraDiskQueryOptions,
-  DetailsDisk, DiskDetailsParams,
+  ExtraDiskQueryOptions, DiskDetailsParams,
 } from 'app/interfaces/disk.interface';
 import {
   AuthenticatorSchema,
@@ -222,7 +218,6 @@ import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface'
 import {
   RemoteSshScanParams,
   SshConnectionSetup,
-  SshSemiAutomaticSetup,
 } from 'app/interfaces/ssh-connection-setup.interface';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
@@ -235,12 +230,11 @@ import {
   SystemUpdateTrains,
 } from 'app/interfaces/system-update.interface';
 import {
-  TrueCommandConfig,
-  TrueCommandConnectionState, TrueCommandUpdateResponse,
+  TrueCommandConfig, TrueCommandUpdateResponse,
   UpdateTrueCommand,
 } from 'app/interfaces/true-command-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
-import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import {
   DeleteUserParams, SetPasswordParams, User, UserUpdate,
@@ -250,6 +244,11 @@ import {
   VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
+import {
+  VirtualizationDevice, VirtualizationGlobalConfig,
+  VirtualizationImage, VirtualizationImageParams,
+  VirtualizationInstance, VirtualizationNetwork,
+} from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
@@ -318,7 +317,11 @@ export interface ApiCallDirectory {
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
   'app.rollback_versions': { params: [app_name: string]; response: string[] };
-  'app.used_ports': { params: void; response: number[] };
+
+  // App Image
+  'app.image.delete': { params: DeleteContainerImageParams; response: boolean };
+  'app.image.dockerhub_rate_limit': { params: void; response: DockerHubRateLimit };
+  'app.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
 
   // Audit
   'audit.config': { params: void; response: AuditConfig };
@@ -362,27 +365,19 @@ export interface ApiCallDirectory {
   'certificate.country_choices': { params: void; response: Choices };
   'certificate.ec_curve_choices': { params: void; response: Choices };
   'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
-  'certificate.get_domain_names': { params: [number]; response: string[] };
-  'certificate.profiles': { params: void; response: CertificateProfiles };
   'certificate.query': { params: QueryParams<Certificate>; response: Certificate[] };
 
   // Certificate Authority
   'certificateauthority.ca_sign_csr': { params: [CertificateAuthoritySignRequest]; response: CertificateAuthority };
   'certificateauthority.create': { params: [CertificateAuthorityUpdate]; response: CertificateAuthority };
   'certificateauthority.delete': { params: [id: number]; response: boolean };
-  'certificateauthority.profiles': { params: void; response: CertificateProfiles };
   'certificateauthority.query': { params: QueryParams<CertificateAuthority>; response: CertificateAuthority[] };
   'certificateauthority.update': {
     params: [number, Partial<CertificateAuthorityUpdate>];
     response: CertificateAuthority;
   };
 
-  // Chart
-  'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
-  'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
-
   // CloudBackup
-  'cloud_backup.abort': { params: [id: number]; response: void };
   'cloud_backup.create': { params: [CloudBackupUpdate]; response: CloudBackup };
   'cloud_backup.delete': { params: [id: number]; response: boolean };
   'cloud_backup.list_snapshots': { params: [id: number]; response: CloudBackupSnapshot[] };
@@ -407,11 +402,6 @@ export interface ApiCallDirectory {
   'cloudsync.restore': { params: CloudSyncRestoreParams; response: void };
   'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
 
-  // Container
-  'app.image.delete': { params: DeleteContainerImageParams; response: boolean };
-  'app.image.dockerhub_rate_limit': { params: void; response: DockerHubRateLimit };
-  'app.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
-
   // Core
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
@@ -434,20 +424,16 @@ export interface ApiCallDirectory {
 
   // Disk
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
-  'disk.get_unused': { params: [joinPartitions?: boolean]; response: DetailsDisk[] };
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
-  'disk.temperature': { params: [name: string]; response: number };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
-  'disk.get_instance': { params: [id: string, params?: { extra: { supports_smart: boolean } }]; response: Disk };
 
   // Enclosure
   'enclosure2.query': { params: void; response: Enclosure[] };
   'webui.enclosure.dashboard': { params: void; response: DashboardEnclosure[] };
   'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
-  'enclosure.set_slot_status': { params: [enclosureId: string, slot: number, status: EnclosureSlotStatus ]; response: void };
   'enclosure2.set_slot_status': { params: [SetDriveBayLightStatus]; response: void };
 
   // Failover
@@ -591,7 +577,6 @@ export interface ApiCallDirectory {
   'keychaincredential.generate_ssh_key_pair': { params: void; response: SshKeyPair };
   'keychaincredential.query': { params: QueryParams<KeychainCredential>; response: KeychainCredential[] };
   'keychaincredential.remote_ssh_host_key_scan': { params: [RemoteSshScanParams]; response: string };
-  'keychaincredential.remote_ssh_semiautomatic_setup': { params: [SshSemiAutomaticSetup]; response: KeychainSshCredentials };
   'keychaincredential.setup_ssh_connection': { params: [SshConnectionSetup]; response: KeychainSshCredentials };
   'keychaincredential.update': { params: [id: number, credential: KeychainCredentialUpdate]; response: KeychainCredential };
 
@@ -640,7 +625,6 @@ export interface ApiCallDirectory {
   'pool.dataset.details': { params: void; response: DatasetDetails[] };
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
   'pool.dataset.export_keys_for_replication': { params: [id: number]; response: unknown };
-  'pool.dataset.get_instance': { params: [path: string]; response: DatasetDetails };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };
   'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
@@ -649,16 +633,14 @@ export interface ApiCallDirectory {
   'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: DatasetRecordSize };
   'pool.dataset.recordsize_choices': { params: void; response: string[] };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
-  'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: [id: string, update: DatasetUpdate]; response: Dataset };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
-  'pool.get_disks': { params: [ids: string[]]; response: string[] };
-  'pool.is_upgraded': { params: [poolId: number]; response: boolean };
   'pool.offline': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
+  'app.ix_volume.exists': { params: [string]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };
@@ -696,7 +678,6 @@ export interface ApiCallDirectory {
   'reporting.exporters.create': { params: [CreateReportingExporter]; response: ReportingExporter };
   'reporting.exporters.delete': { params: [id: number]; response: boolean };
   'reporting.exporters.exporter_schemas': { params: void; response: ReportingExporterSchema[] };
-  'reporting.exporters.get_instance': { params: [id: number]; response: ReportingExporter };
   'reporting.exporters.query': { params: QueryParams<ReportingExporter>; response: ReportingExporter[] };
   'reporting.exporters.update': { params: [number, UpdateReportingExporter]; response: ReportingExporter };
   'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
@@ -713,7 +694,6 @@ export interface ApiCallDirectory {
   'service.query': { params: QueryParams<Service>; response: Service[] };
   'service.restart': { params: [ServiceName]; response: boolean };
   'service.start': { params: [ServiceName, { silent: boolean }]; response: boolean };
-  'service.started': { params: [ServiceName]; response: boolean };
   'service.stop': {
     params: [ServiceName, { silent: boolean }];
     response: boolean; // False indicates that service has been stopped.
@@ -786,7 +766,6 @@ export interface ApiCallDirectory {
   'system.advanced.update': { params: [Partial<AdvancedConfigUpdate>]; response: AdvancedConfig };
   'system.advanced.update_gpu_pci_ids': { params: [isolated_gpu_pci_ids: string[]]; response: void };
   'system.advanced.login_banner': { params: void; response: string };
-  'system.build_time': { params: void; response: ApiTimestamp };
   'system.boot_id': { params: void; response: string };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: void; response: Choices };
@@ -800,8 +779,6 @@ export interface ApiCallDirectory {
   'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
   'system.host_id': { params: void; response: string };
   'system.info': { params: void; response: SystemInfo };
-  'system.is_stable': { params: void; response: boolean };
-  'system.license': { params: void; response: null | object };
   'system.license_update': { params: [license: string]; response: void };
   'system.ntpserver.create': { params: [CreateNtpServer]; response: NtpServer };
   'system.ntpserver.delete': { params: [id: number]; response: boolean };
@@ -810,11 +787,6 @@ export interface ApiCallDirectory {
   'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.info.fips_available': { params: void; response: boolean };
-  'system.set_time': { params: [number]; response: void };
-  'system.ready': { params: void; response: boolean };
-  'system.state': { params: void; response: SystemState };
-  'system.version': { params: void; response: string };
-  'system.version_short': { params: void; response: string };
 
   // Systemdataset
   'systemdataset.config': { params: void; response: SystemDatasetConfig };
@@ -822,7 +794,6 @@ export interface ApiCallDirectory {
 
   // Truecommand
   'truecommand.config': { params: void; response: TrueCommandConfig };
-  'truecommand.info': { params: void; response: TrueCommandConnectionState };
   'truecommand.update': { params: [UpdateTrueCommand]; response: TrueCommandUpdateResponse };
 
   // TrueNAS
@@ -835,7 +806,6 @@ export interface ApiCallDirectory {
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
-  'tunable.tunable_type_choices': { params: void; response: Choices };
 
   // Update
   'update.check_available': { params: void; response: SystemUpdate };
@@ -862,8 +832,19 @@ export interface ApiCallDirectory {
   'user.set_password': { params: [SetPasswordParams]; response: void };
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
-  'user.twofactor_config': { params: void; response: UserTwoFactorConfig };
   'user.update': { params: [id: number, update: UserUpdate]; response: number };
+
+  // Virt
+  'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: void }; // TODO
+  'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: unknown }; // TODO:
+  'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
+  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: VirtualizationImage[] };
+
+  'virt.global.bridge_choices': { params: []; response: Choices };
+  'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
+  'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
+  'virt.global.pool_choices': { params: []; response: Choices };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };
@@ -875,7 +856,6 @@ export interface ApiCallDirectory {
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
-  'vm.device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
   'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
   'vm.device.nic_attach_choices': { params: void; response: Choices };
   'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };

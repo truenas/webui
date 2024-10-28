@@ -12,7 +12,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
@@ -62,6 +62,7 @@ export class CreateDatasetDialogComponent implements OnInit {
       Validators.pattern(nameValidatorRegex),
     ]],
   });
+
   parent: Dataset;
 
   constructor(
@@ -103,13 +104,27 @@ export class CreateDatasetDialogComponent implements OnInit {
 
   loadParentDataset(): void {
     this.isLoading$.next(true);
-    this.ws.call('pool.dataset.query', [[['id', '=', this.data.parentId]]])
-      .pipe(untilDestroyed(this)).subscribe((parent) => {
+    const normalizedParentId = this.data.parentId.replace(/\/$/, '');
+    this.ws.call('pool.dataset.query', [[['id', '=', normalizedParentId]]]).pipe(
+      tap((parent) => {
+        if (!parent.length) {
+          throw new Error(`Parent dataset ${normalizedParentId} not found`);
+        }
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (parent) => {
         this.isLoading$.next(false);
         this.parent = parent[0];
         this.cdr.markForCheck();
         this.addNameValidators();
-      });
+      },
+      error: (error) => {
+        this.isLoading$.next(false);
+        this.dialog.error(this.errorHandler.parseError(error));
+        this.dialogRef.close(false);
+      },
+    });
   }
 
   private addNameValidators(): void {

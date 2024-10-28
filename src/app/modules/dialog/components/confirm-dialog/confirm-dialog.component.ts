@@ -77,9 +77,9 @@ export class ConfirmDialogComponent {
   onCancel(): void {
     const result = this.options.secondaryCheckbox
       ? {
-        confirmed: false,
-        secondaryCheckbox: this.isSecondaryCheckboxChecked,
-      } as DialogWithSecondaryCheckboxResult
+          confirmed: false,
+          secondaryCheckbox: this.isSecondaryCheckboxChecked,
+        } as DialogWithSecondaryCheckboxResult
       : false;
 
     this.dialogRef.close(result);
@@ -88,9 +88,9 @@ export class ConfirmDialogComponent {
   onSubmit(): void {
     const result = this.options.secondaryCheckbox
       ? {
-        confirmed: true,
-        secondaryCheckbox: this.isSecondaryCheckboxChecked,
-      } as DialogWithSecondaryCheckboxResult
+          confirmed: true,
+          secondaryCheckbox: this.isSecondaryCheckboxChecked,
+        } as DialogWithSecondaryCheckboxResult
       : true;
 
     this.dialogRef.close(result);

@@ -25,4 +25,10 @@ are submitted only when this box is set.'),
  and files within the current dataset.'),
 
   dataset_permissions_traverse_tooltip: T('Apply permissions recursively to all child datasets of the current dataset.'),
+
+  editDisabled: {
+    locked: T('Permissions cannot be modified on a locked dataset.'),
+    readonly: T('Permissions cannot be modified on a read-only dataset.'),
+    root: T('Permissions cannot be modified on a root dataset.'),
+  },
 };
