@@ -21,14 +21,15 @@ describe('GlobalConfigFormComponent', () => {
 
   const createComponent = createComponentFactory({
     component: GlobalConfigFormComponent,
-    imports: [
-
-    ],
+    imports: [],
     providers: [
       mockWebSocket([
         mockCall('virt.global.pool_choices', {
           '[Disabled]': 'Disabled',
           poolio: 'poolio',
+        }),
+        mockCall('virt.global.bridge_choices', {
+          bridge1: 'bridge1',
         }),
         mockJob('virt.global.update', fakeSuccessfulJob()),
       ]),
@@ -41,6 +42,12 @@ describe('GlobalConfigFormComponent', () => {
         close: jest.fn(),
         getData: jest.fn(() => ({
           pool: 'poolio',
+          bridge: null,
+          v4_network: null,
+          v6_network: null,
+          use_default_bridge: null,
+          automatic_ipv6: null,
+          automatic_ipv4: null,
         })),
       }),
       mockAuth(),
@@ -56,12 +63,20 @@ describe('GlobalConfigFormComponent', () => {
   it('shows current global settings from the slide-in data', async () => {
     expect(await form.getValues()).toEqual({
       Pool: 'poolio',
+      'Use automatic IPv4 network': true,
+      'Use automatic IPv6 network': true,
+      'Use default bridge device': true,
     });
   });
 
   it('updates global settings and closes slide-in', async () => {
     await form.fillForm({
       Pool: 'Disabled',
+      'Use default bridge device': false,
+    });
+
+    await form.fillForm({
+      Bridge: 'bridge1',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -69,11 +84,44 @@ describe('GlobalConfigFormComponent', () => {
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.global.update', [{
       pool: '[Disabled]',
+      bridge: 'bridge1',
+      v4_network: null,
+      v6_network: null,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
       response: undefined,
       error: false,
     });
+  });
+
+  it('hides bridge select field when use_default_bridge is checked', async () => {
+    await form.fillForm({
+      'Use default bridge device': true,
+    });
+    spectator.detectChanges();
+
+    const bridgeSelect = await form.getControl('bridge');
+    expect(bridgeSelect).toBeFalsy();
+  });
+
+  it('hides v4_network field when automatic_ipv4 is checked', async () => {
+    await form.fillForm({
+      'Use automatic IPv4 network': true,
+    });
+    spectator.detectChanges();
+
+    const v4NetworkInput = await form.getControl('v4_network');
+    expect(v4NetworkInput).toBeFalsy();
+  });
+
+  it('hides v6_network field when automatic_ipv6 is checked', async () => {
+    await form.fillForm({
+      'Use automatic IPv6 network': true,
+    });
+    spectator.detectChanges();
+
+    const v6NetworkInput = await form.getControl('v6_network');
+    expect(v6NetworkInput).toBeFalsy();
   });
 });

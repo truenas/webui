@@ -7,13 +7,55 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
+      <ix-fieldset [title]="'Storage' | translate">
         <ix-select
           formControlName="pool"
           [label]="'Pool' | translate"
           [required]="true"
           [options]="poolOptions$"
         ></ix-select>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Network' | translate">
+        <ix-checkbox
+          formControlName="use_default_bridge"
+          [label]="'Use default bridge device' | translate"
+        ></ix-checkbox>
+
+        @if (!form.controls.use_default_bridge.value) {
+          <ix-select
+            formControlName="bridge"
+            [label]="'Bridge' | translate"
+            [required]="true"
+            [options]="bridgeOptions$"
+          ></ix-select>
+        }
+
+        <ix-checkbox
+          formControlName="automatic_ipv4"
+          [label]="'Use automatic IPv4 network' | translate"
+        ></ix-checkbox>
+
+        @if (!form.controls.automatic_ipv4.value) {
+          <ix-ip-input-with-netmask
+            formControlName="v4_network"
+            [label]="'IPv4 Network' | translate"
+            [required]="true"
+          ></ix-ip-input-with-netmask>
+        }
+
+        <ix-checkbox
+          formControlName="automatic_ipv6"
+          [label]="'Use automatic IPv6 network' | translate"
+        ></ix-checkbox>
+
+        @if (!form.controls.automatic_ipv6.value) {
+          <ix-ip-input-with-netmask
+            formControlName="v6_network"
+            [label]="'IPv6 Network' | translate"
+            [required]="true"
+          ></ix-ip-input-with-netmask>
+        }
       </ix-fieldset>
 
       <ix-form-actions>
