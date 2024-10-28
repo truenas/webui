@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -17,6 +18,7 @@ import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicat
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxDragDirective } from 'app/modules/ix-drop-grid/ix-drag.directive';
 import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
@@ -70,6 +72,7 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
     WidgetGroupComponent,
     EmptyComponent,
     TranslateModule,
+    MatTooltip,
   ],
   providers: [
     WidgetResourcesService,
@@ -107,6 +110,7 @@ export class DashboardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private dialogService: DialogService,
     private store$: Store<AppState>,
   ) {}
 
@@ -184,8 +188,21 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onReset(): void {
-    this.renderedGroups.set(getDefaultWidgets(this.isHaLicensed()));
-    this.snackbar.success(this.translate.instant('Default widgets restored'));
+    this.dialogService.confirm({
+      title: this.translate.instant('Restore default widgets'),
+      message: this.translate.instant('Are you sure you want to restore the default set of widgets?'),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Restore'),
+    })
+      .pipe(untilDestroyed(this))
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          return;
+        }
+
+        this.renderedGroups.set(getDefaultWidgets(this.isHaLicensed()));
+        this.snackbar.success(this.translate.instant('Default widgets restored'));
+      });
   }
 
   private loadGroups(): void {

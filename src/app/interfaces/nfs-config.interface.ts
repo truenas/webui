@@ -15,9 +15,9 @@ export interface NfsConfig {
   v4_domain: string;
   v4_krb: boolean;
   v4_krb_enabled: boolean;
-  v4_v3owner: boolean;
   keytab_has_nfs_spn: boolean;
   managed_nfsd: boolean;
+  rdma: boolean;
 }
 
 export type NfsConfigUpdate = Partial<Omit<NfsConfig, 'id' | 'v4_krb_enabled'>>;

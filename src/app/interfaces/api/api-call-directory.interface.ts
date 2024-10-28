@@ -6,7 +6,7 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { RdmaServiceName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
@@ -244,6 +244,11 @@ import {
   VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
+import {
+  VirtualizationDevice, VirtualizationGlobalConfig,
+  VirtualizationImage, VirtualizationImageParams,
+  VirtualizationInstance, VirtualizationNetwork,
+} from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
@@ -657,6 +662,9 @@ export interface ApiCallDirectory {
   'privilege.roles': { params: QueryParams<PrivilegeRole>; response: PrivilegeRole[] };
   'privilege.update': { params: [id: number, update: PrivilegeUpdate]; response: Privilege };
 
+  // RDMA
+  'rdma.capable_services': { params: []; response: RdmaServiceName[] };
+
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
   'replication.config.update': { params: [ReplicationConfigUpdate]; response: ReplicationConfig };
@@ -829,6 +837,18 @@ export interface ApiCallDirectory {
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
   'user.update': { params: [id: number, update: UserUpdate]; response: number };
+
+  // Virt
+  'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: void }; // TODO
+  'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: unknown }; // TODO:
+  'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
+  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: VirtualizationImage[] };
+
+  'virt.global.bridge_choices': { params: []; response: Choices };
+  'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
+  'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
+  'virt.global.pool_choices': { params: []; response: Choices };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };
