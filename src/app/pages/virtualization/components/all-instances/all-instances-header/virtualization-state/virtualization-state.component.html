@@ -1,0 +1,22 @@
+@switch (state()) {
+  @case (VirtualizationGlobalState.NoPool) {
+    <ix-icon name="settings"></ix-icon>
+    <div class="status-text">{{ 'Pool is not selected' | translate }}</div>
+  }
+  @case (VirtualizationGlobalState.Initialized) {
+    <ix-icon name="check"></ix-icon>
+    <div class="status-text">{{ 'Initialized' | translate }}</div>
+  }
+  @case (VirtualizationGlobalState.Locked) {
+    <ix-icon name="mdi-lock"></ix-icon>
+    <div class="status-text">{{ 'Dataset is locked' | translate }}</div>
+  }
+  @case (VirtualizationGlobalState.Error) {
+    <ix-icon name="mdi-close"></ix-icon>
+    <div class="status-text">{{ 'Error' | translate }}</div>
+  }
+  @case (VirtualizationGlobalState.Initializing) {
+    <mat-spinner class="spinner" [diameter]="24"></mat-spinner>
+    <div class="status-text">{{ 'Initializing...' | translate }}</div>
+  }
+}

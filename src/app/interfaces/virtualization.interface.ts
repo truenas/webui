@@ -132,9 +132,9 @@ export type VirtualizationStopParams = [
 
 export interface VirtualizationGlobalConfigUpdate {
   pool: string;
-  bridge: string | null;
-  v4_network: string | null;
-  v6_network: string | null;
+  bridge?: string | null;
+  v4_network?: string | null;
+  v6_network?: string | null;
 }
 
 export interface VirtualizationGlobalConfig {
