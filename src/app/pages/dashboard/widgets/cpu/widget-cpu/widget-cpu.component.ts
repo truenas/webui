@@ -116,8 +116,10 @@ export class WidgetCpuComponent {
       usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));
     }
 
-    for (let i = 0; i < this.coreCount(); i++) {
-      temperatureColumn.push(parseInt(cpuData.temperature_celsius[i].toFixed(0)));
+    if (cpuData.temperature_celsius) {
+      for (let i = 0; i < this.coreCount(); i++) {
+        temperatureColumn.push(parseInt(cpuData.temperature_celsius[i].toFixed(0)));
+      }
     }
 
     return [usageColumn, temperatureColumn];

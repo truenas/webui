@@ -119,14 +119,17 @@ export class CpuCoreBarComponent {
     const temperatureColumn: GaugeData = ['Temperature'];
 
     for (let i = 0; i < this.coreCount(); i++) {
-      const usageIndex = this.hyperthread ? i * 2 : i;
+      const usageIndex = this.hyperthread() ? i * 2 : i;
 
-      const usageCore = this.hyperthread
+      const usageCore = this.hyperthread()
         ? (cpuData[usageIndex].usage + cpuData[usageIndex + 1].usage).toFixed(1)
         : cpuData[usageIndex].usage.toFixed(1);
 
       usageColumn.push(parseInt(usageCore));
-      temperatureColumn.push(parseInt(cpuData.temperature_celsius[i].toFixed(0)));
+
+      if (cpuData.temperature_celsius) {
+        temperatureColumn.push(parseInt(cpuData.temperature_celsius[i].toFixed(0)));
+      }
     }
 
     return [
