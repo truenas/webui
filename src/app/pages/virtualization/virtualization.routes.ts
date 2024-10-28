@@ -20,7 +20,7 @@ export const virtualizationRoutes: Routes = [{
       component: InstanceFormComponent,
     },
     {
-      path: 'view/:id',
+      path: 'instance/:id',
       children: [
         {
           path: '',

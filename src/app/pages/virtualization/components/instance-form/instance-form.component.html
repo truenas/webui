@@ -14,11 +14,22 @@
         [label]="'Autostart' | translate"
       ></ix-checkbox>
 
-      <ix-input
-        formControlName="image"
-        [label]="'Image' | translate"
-        [required]="true"
-      ></ix-input>
+      <div class="image-field">
+        <ix-input
+          class="input"
+          formControlName="image"
+          [readonly]="true"
+          [label]="'Image' | translate"
+          [required]="true"
+        ></ix-input>
+
+        <button
+          mat-button
+          ixTest="browse-images"
+          type="button"
+          (click)="onBrowseImages()"
+        >{{ 'Browse' | translate }}</button>
+      </div>
     </ix-fieldset>
 
     <ix-fieldset [title]="'CPU & Memory' | translate">
@@ -51,7 +62,7 @@
         ixTest="save"
         [disabled]="form.invalid || isLoading()"
       >
-        {{ 'Save' | translate }}
+        {{ 'Save Instance' | translate }}
       </button>
     </div>
   </form>

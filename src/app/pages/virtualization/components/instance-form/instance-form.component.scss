@@ -8,5 +8,24 @@
 }
 
 .actions {
-  margin: 15px;
+  margin: 9px;
+}
+
+ix-fieldset {
+  display: block;
+  width: 40%;
+}
+
+.image-field {
+  align-items: flex-end;
+  display: flex;
+  gap: 10px;
+
+  .input {
+    flex: 1;
+  }
+
+  button {
+    margin-bottom: 18px;
+  }
 }

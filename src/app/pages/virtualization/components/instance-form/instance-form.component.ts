@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -45,12 +46,6 @@ export class InstanceFormComponent implements OnInit {
   protected readonly isNew = computed(() => !this.existingInstance());
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    /**
-     *   remote: VirtualizationRemote;
-     *   instance_type: VirtualizationType;
-     *   environment?: Record<string, string>;
-     *   devices: VirtualizationDevice[];
-     */
     name: ['', Validators.required],
     cpu: ['', Validators.required],
     autostart: [false],
@@ -73,6 +68,7 @@ export class InstanceFormComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
+    private matDialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private errorHandler: ErrorHandlerService,
@@ -91,6 +87,10 @@ export class InstanceFormComponent implements OnInit {
     }
   }
 
+  protected onBrowseImages(): void {
+
+  }
+
   protected onSubmit(): void {
     const values = this.form.value;
 
@@ -106,7 +106,7 @@ export class InstanceFormComponent implements OnInit {
       .subscribe({
         next: (newInstance) => {
           this.snackbar.success(this.translate.instant('Instance saved'));
-          this.router.navigate(['/virtualization', newInstance.id]);
+          this.router.navigate(['/virtualization/instance', newInstance.id]);
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
