@@ -13,8 +13,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { User } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -74,9 +76,15 @@ export class ApiKeyFormComponent implements OnInit {
     reset: [false],
   });
 
-  protected readonly usernames$ = this.ws.call('user.query', [
-    [], { select: ['username'], order_by: ['username'] },
-  ]).pipe(map((users) => users.map((user) => ({ label: user.username, value: user.username }))));
+  protected readonly userQueryParams = new ParamsBuilder<User>()
+    .filter('local', '=', false)
+    .orFilter('roles', '!=', [])
+    .setOptions({ select: ['username'], order_by: ['username'] })
+    .getParams();
+
+  protected readonly usernames$ = this.ws.call('user.query', this.userQueryParams).pipe(
+    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
+  );
 
   protected readonly userProvider = new SimpleAsyncComboboxProvider(this.usernames$);
 

@@ -970,6 +970,7 @@
   "{cpuPercentage}% Avg. Usage": "",
   "{email} via {server}": "",
   "{minutes, plural, =1 {# minute} other {# minutes}}": "",
+  "{n, plural, =0 {No keys} =1 {# key} other {# keys}}": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# core} other {# cores}}": "",
   "{n, plural, one {# thread} other {# threads}}": "",
