@@ -15,11 +15,12 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -41,7 +42,7 @@ import { WebSocketService } from 'app/services/ws.service';
   imports: [
     ReactiveFormsModule,
     IxInputComponent,
-    IxSelectComponent,
+    IxComboboxComponent,
     IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
@@ -59,8 +60,8 @@ export class ApiKeyFormComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
   protected readonly isFullAdmin = toSignal(this.authService.hasRole([Role.FullAdmin]));
-  protected readonly username$ = this.authService.user$.pipe(map((user) => user.pw_name));
-  protected readonly username = toSignal(this.username$);
+  protected readonly currentUsername$ = this.authService.user$.pipe(map((user) => user.pw_name));
+  protected readonly username = toSignal(this.currentUsername$);
   protected readonly tooltips = {
     name: helptextApiKeys.name.tooltip,
     username: helptextApiKeys.username.tooltip,
@@ -73,9 +74,11 @@ export class ApiKeyFormComponent implements OnInit {
     reset: [false],
   });
 
-  protected readonly userOptions$ = this.ws.call('user.query', [
+  protected readonly usernames$ = this.ws.call('user.query', [
     [], { select: ['username'], order_by: ['username'] },
   ]).pipe(map((users) => users.map((user) => ({ label: user.username, value: user.username }))));
+
+  protected readonly userProvider = new SimpleAsyncComboboxProvider(this.usernames$);
 
   protected readonly forbiddenNames$ = this.ws.call('api_key.query', [
     [], { select: ['name'], order_by: ['name'] },
