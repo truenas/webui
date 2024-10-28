@@ -1,4 +1,8 @@
-<ix-modal-header [requiredRoles]="requiredRoles" [title]="'NFS' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header
+  title="NFS"
+  [requiredRoles]="requiredRoles"
+  [loading]="isFormLoading()"
+></ix-modal-header>
 
 <mat-card class="card">
   <mat-card-content>
@@ -47,12 +51,6 @@
           ></ix-input>
 
           <ix-checkbox
-            formControlName="v4_v3owner"
-            [label]="'NFSv3 ownership model for NFSv4' | translate"
-            [tooltip]="tooltips.v4_v3owner"
-          ></ix-checkbox>
-
-          <ix-checkbox
             formControlName="v4_krb"
             [label]="'Require Kerberos for NFSv4' | translate"
             [tooltip]="tooltips.v4_krb"
@@ -84,6 +82,11 @@
 
       <ix-fieldset [title]="'Other Options' | translate">
         <ix-checkbox
+          formControlName="rdma"
+          [label]="'Enable NFS over RDMA' | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
           formControlName="allow_nonroot"
           [label]="'Allow non-root mount' | translate"
           [tooltip]="tooltips.allow_nonroot"
@@ -104,32 +107,32 @@
             type="submit"
             color="primary"
             ixTest="save"
-            [disabled]="form.invalid || isFormLoading"
+            [disabled]="form.invalid || isFormLoading()"
           >
             {{ 'Save' | translate }}
           </button>
         </div>
         <div class="add-spn-container">
-          @if (isAddSpnVisible && isAddSpnDisabled) {
+          @if (isAddSpnVisible && isAddSpnDisabled()) {
             <ix-tooltip
               [header]="'Add SPN' | translate"
               [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
             ></ix-tooltip>
           }
-          <ng-container *ixRequiresRoles="requiredRoles">
-            @if (isAddSpnVisible) {
+          @if (isAddSpnVisible) {
+            <ng-container *ixRequiresRoles="requiredRoles">
               <button
                 mat-button
                 type="button"
                 color="primary"
                 ixTest="add-spn"
-                [disabled]="isAddSpnDisabled"
+                [disabled]="isAddSpnDisabled()"
                 (click)="addSpn()"
               >
                 {{ 'Add SPN' | translate }}
               </button>
-            }
-          </ng-container>
+            </ng-container>
+          }
         </div>
       </ix-form-actions>
     </form>
