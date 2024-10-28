@@ -77,7 +77,7 @@ export class DatasetDetailsPanelComponent {
   });
 
   protected readonly hasPermissions = computed(() => {
-    return this.hasRoles() && !this.dataset().locked;
+    return this.hasRoles();
   });
 
   protected readonly hasChildrenWithShares = computed(() => doesDatasetHaveShares(this.dataset()));

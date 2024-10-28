@@ -245,6 +245,11 @@ import {
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
 import {
+  VirtualizationDevice, VirtualizationGlobalConfig,
+  VirtualizationImage, VirtualizationImageParams,
+  VirtualizationInstance, VirtualizationNetwork,
+} from 'app/interfaces/virtualization.interface';
+import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
 import {
@@ -636,6 +641,7 @@ export interface ApiCallDirectory {
   'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
+  'app.ix_volume.exists': { params: [string]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };
@@ -828,6 +834,18 @@ export interface ApiCallDirectory {
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
   'user.update': { params: [id: number, update: UserUpdate]; response: number };
+
+  // Virt
+  'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: void }; // TODO
+  'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: unknown }; // TODO:
+  'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
+  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: VirtualizationImage[] };
+
+  'virt.global.bridge_choices': { params: []; response: Choices };
+  'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
+  'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
+  'virt.global.pool_choices': { params: []; response: Choices };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };

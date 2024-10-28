@@ -4,9 +4,11 @@
   </div>
 } @else {
   @if (dataset().locked) {
-    <ix-icon
-      [name]="'mdi-lock' + (isEncryptionRoot() ? '' : '-outline')"
-    ></ix-icon>
+    @if (isEncryptionRoot()) {
+      <ix-icon name="mdi-lock"></ix-icon>
+    } @else {
+      <ix-icon name="mdi-lock-outline"></ix-icon>
+    }
     <div class="encryption-description">
       <div>{{ 'Locked' | translate }}</div>
       @if (!isEncryptionRoot()) {

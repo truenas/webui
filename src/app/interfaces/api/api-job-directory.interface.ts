@@ -47,6 +47,14 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
+import {
+  CreateVirtualizationInstance,
+  UpdateVirtualizationInstance,
+  VirtualizationGlobalConfig,
+  VirtualizationGlobalConfigUpdate,
+  VirtualizationInstance,
+  VirtualizationStopParams,
+} from 'app/interfaces/virtualization.interface';
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
@@ -187,6 +195,19 @@ export interface ApiJobDirectory {
   'update.download': { params: void; response: boolean };
   'update.file': { params: [{ resume: boolean }?]; response: void };
   'update.update': { params: [UpdateParams]; response: void };
+
+  // Virt
+  'virt.instance.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
+  'virt.instance.delete ': { params: [instanceId: number]; response: boolean };
+  'virt.instance.restart': { params: VirtualizationStopParams; response: boolean };
+  'virt.instance.start': { params: [instanceId: number]; response: boolean };
+  'virt.instance.stop': { params: [instanceId: number]; response: boolean };
+  'virt.instance.update': {
+    params: [instanceId: number, update: UpdateVirtualizationInstance];
+    response: VirtualizationInstance;
+  };
+
+  'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
 
   // VM
   'vm.restart': { params: [id: number]; response: void };

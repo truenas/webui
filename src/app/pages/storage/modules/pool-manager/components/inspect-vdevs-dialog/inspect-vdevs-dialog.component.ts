@@ -15,6 +15,8 @@ import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-man
 import {
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
+import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
+import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 import {
   vdevsToManualSelectionVdevs,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/utils/vdevs-to-manual-selection-vdevs.utils';
@@ -40,6 +42,10 @@ import {
     IxIconComponent,
     ManualSelectionVdevComponent,
     TranslateModule,
+  ],
+  providers: [
+    ManualDiskSelectionStore,
+    ManualDiskDragToggleStore,
   ],
 })
 export class InspectVdevsDialogComponent implements OnInit {
