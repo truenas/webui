@@ -148,6 +148,7 @@ module.exports = {
         }],
         "@typescript-eslint/no-throw-literal": ["off"],
         "@typescript-eslint/only-throw-error": ["error"],
+        "sonarjs/no-throw-literal": ["off"],
         "sonarjs/no-empty-test-file": ["off"],
         "sonarjs/new-cap": ["off"],
         "sonarjs/no-ignored-exceptions": ["off"],
