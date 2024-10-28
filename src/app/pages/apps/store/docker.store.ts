@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  filter,
   forkJoin, map, Observable, switchMap, tap,
 } from 'rxjs';
 import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
@@ -11,6 +12,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 
 export interface DockerConfigState {
   isLoading: boolean;
@@ -95,28 +97,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       { title: this.translate.instant('Configuring...') },
     )
       .afterClosed()
-      .pipe(
-        tap((job) => {
-          if (job.state === JobState.Success) {
-            this.patchState((state) => ({
-              ...state,
-              dockerConfig: {
-                ...state.dockerConfig,
-                pool: poolName,
-              },
-            }));
-          } else if ([JobState.Failed, JobState.Aborted, JobState.Error].includes(job.state)) {
-            this.patchState((state) => ({
-              ...state,
-              dockerConfig: {
-                ...state.dockerConfig,
-                pool: null,
-              },
-            }));
-          }
-        }),
-        this.errorHandler.catchError(),
-      );
+      .pipe(this.errorHandler.catchError());
   }
 
   reloadDockerConfig(): Observable<DockerConfig> {
@@ -157,5 +138,14 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
         this.patchState({ statusData });
       }),
     );
+  }
+
+  dockerConfigEventUpdates(): Observable<DockerConfig> {
+    return this.ws.subscribe('core.get_jobs')
+      .pipe(
+        filter((event) => event.fields.method === 'docker.update' && !!event.fields.result),
+        map((event) => event.fields.result),
+        tap((dockerConfig: DockerConfig) => this.patchState({ dockerConfig }))
+      )
   }
 }
