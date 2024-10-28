@@ -1,6 +1,6 @@
 export type RebootParams = [
-  string,
-  {
+  reason: string,
+  config?: {
     delay?: number;
-  }?,
+  },
 ];

@@ -1,6 +1,6 @@
 export type ShutdownParams = [
-  string,
-  {
+  reason: string,
+  config?: {
     delay?: number;
-  }?,
+  },
 ];
