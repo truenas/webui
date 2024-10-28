@@ -88,11 +88,11 @@ export class UserApiKeysComponent implements OnInit {
       propertyName: 'keyhash',
     }),
     dateColumn({
-      title: this.translate.instant('Created at'),
+      title: this.translate.instant('Created date'),
       propertyName: 'created_at',
     }),
     textColumn({
-      title: this.translate.instant('Expires at'),
+      title: this.translate.instant('Expires date'),
       propertyName: 'expires_at',
       getValue: (row) => row.expires_at || this.translate.instant('Never'),
     }),
@@ -137,6 +137,7 @@ export class UserApiKeysComponent implements OnInit {
     this.dataProvider = new ApiDataProvider(this.ws, 'api_key.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
+    this.setDefaultSort();
     this.dataProvider.load();
 
     this.setSearchProperties();
@@ -144,9 +145,9 @@ export class UserApiKeysComponent implements OnInit {
 
   setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 1,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
+      active: 3,
+      direction: SortDirection.Desc,
+      propertyName: 'created_at',
     });
   }
 

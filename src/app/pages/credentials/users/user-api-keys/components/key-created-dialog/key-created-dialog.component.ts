@@ -1,6 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -33,18 +33,16 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class KeyCreatedDialogComponent {
-  apiKeyControl = new FormControl<string>('');
+  key = signal(inject<string>(MAT_DIALOG_DATA));
+  apiKeyControl = new FormControl<string>(this.key());
 
   constructor(
     private clipboard: Clipboard,
     private snackbar: SnackbarService,
-    @Inject(MAT_DIALOG_DATA) public key: string,
-  ) {
-    this.apiKeyControl.setValue(key);
-  }
+  ) {}
 
   onCopyPressed(): void {
-    const copied = this.clipboard.copy(this.key);
+    const copied = this.clipboard.copy(this.key());
     if (copied) {
       this.snackbar.success('API Key copied to clipboard');
     }
