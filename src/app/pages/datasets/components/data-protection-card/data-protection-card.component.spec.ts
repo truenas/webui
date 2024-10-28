@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { DataProtectionCardComponent } from './data-protection-card.component';
 
 describe('DataProtectionComponent', () => {
@@ -17,7 +17,7 @@ describe('DataProtectionComponent', () => {
     component: DataProtectionCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };
         }),
@@ -63,7 +63,7 @@ describe('DataProtectionComponent', () => {
   });
 
   it('opens the snapshot add from when button clicked', async () => {
-    const slideInRef = spectator.inject(IxSlideInService);
+    const slideInRef = spectator.inject(SlideInService);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Snapshot' }));
     await editButton.click();

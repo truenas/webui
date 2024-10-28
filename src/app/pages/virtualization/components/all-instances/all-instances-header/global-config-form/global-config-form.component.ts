@@ -7,8 +7,8 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
-  IxModalHeader2Component,
-} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
+  ModalHeader2Component,
+} from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -18,7 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormActionsComponent,
-    IxModalHeader2Component,
+    ModalHeader2Component,
     MatButton,
     MatCard,
     MatCardContent,

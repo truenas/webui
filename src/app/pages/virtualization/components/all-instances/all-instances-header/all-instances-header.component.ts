@@ -8,7 +8,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,7 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
 })
 export class AllInstancesHeaderComponent {
   constructor(
-    private slideIn: IxChainedSlideInService,
+    private slideIn: ChainedSlideInService,
   ) {}
 
   onEdit(): void {

@@ -53,9 +53,9 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -174,7 +174,7 @@ export class ReplicationListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private chainedSlideInService: IxChainedSlideInService,
+    private chainedSlideIn: ChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
@@ -245,7 +245,7 @@ export class ReplicationListComponent implements OnInit {
 
   openForm(row?: ReplicationTask): void {
     if (row) {
-      this.chainedSlideInService.open(ReplicationFormComponent, true, row)
+      this.chainedSlideIn.open(ReplicationFormComponent, true, row)
         .pipe(
           filter((response) => !!response.response),
           untilDestroyed(this),
@@ -255,7 +255,7 @@ export class ReplicationListComponent implements OnInit {
           },
         });
     } else {
-      this.chainedSlideInService.open(ReplicationWizardComponent, true)
+      this.chainedSlideIn.open(ReplicationWizardComponent, true)
         .pipe(
           filter((response) => !!response.response),
           untilDestroyed(this),

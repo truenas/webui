@@ -25,7 +25,7 @@ import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
@@ -46,7 +46,7 @@ import { WebSocketService } from 'app/services/ws.service';
     MatProgressBar,
     MatCardActions,
     NgxSkeletonLoaderModule,
-    IxWarningComponent,
+    WarningComponent,
     MatButton,
     TestDirective,
     QrViewerComponent,

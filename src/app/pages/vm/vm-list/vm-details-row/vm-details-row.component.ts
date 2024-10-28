@@ -18,7 +18,7 @@ import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.comp
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { VmService } from 'app/services/vm.service';
 
 @UntilDestroy()
@@ -48,7 +48,7 @@ export class VirtualMachineDetailsRowComponent {
 
   constructor(
     private loader: AppLoaderService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private matDialog: MatDialog,
     private router: Router,
     private errorHandler: ErrorHandlerService,

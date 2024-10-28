@@ -30,7 +30,7 @@ import {
   Observable,
   switchMap,
 } from 'rxjs';
-import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AppState } from 'app/enums/app-state.enum';
@@ -109,7 +109,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     AppRowComponent,
     EmptyComponent,
     MatTooltip,
-    IxDetailsHeightDirective,
+    DetailsHeightDirective,
     AppDetailsPanelComponent,
   ],
 })

@@ -18,8 +18,8 @@ import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorit
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import {
   CertificateAddComponent,
@@ -91,7 +91,7 @@ describe('CertificateAddComponent', () => {
         ] as Certificate[]),
         mockJob('certificate.create', fakeSuccessfulJob()),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
         getUnsignedCas: () => of([
@@ -203,7 +203,7 @@ describe('CertificateAddComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import Certificate and form is submitted', async () => {

@@ -5,27 +5,27 @@ import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { ChainedComponentResponse, ChainedComponentSerialized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse, ChainedComponentSerialized, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
-describe('IxModalHeader2Component', () => {
-  let spectator: Spectator<IxModalHeader2Component>;
+describe('ModalHeader2Component', () => {
+  let spectator: Spectator<ModalHeader2Component>;
   const components$ = new Subject<ChainedComponentSerialized[]>();
   const closeSubject$ = new Subject<ChainedComponentResponse>();
   const backSubject$ = new Subject<ChainedComponentResponse>();
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: IxModalHeader2Component,
+    component: ModalHeader2Component,
     declarations: [
       MockComponent(CloudSyncWizardComponent),
     ],
     providers: [
       mockAuth(),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         components$,
       }),
       mockProvider(ChainedRef, {
