@@ -37,7 +37,7 @@ import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/creden
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { userListElements } from 'app/pages/credentials/users/user-list/user-list.elements';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -130,7 +130,7 @@ export class UserListComponent implements OnInit {
   }
 
   constructor(
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private translate: TranslateService,

@@ -24,7 +24,7 @@ import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-bac
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { BackupTaskActionsComponent } from './backup-task-actions/backup-task-actions.component';
 import { BackupTaskEmptyComponent } from './backup-task-empty/backup-task-empty.component';
 import { BackupTaskTileComponent } from './backup-task-tile/backup-task-tile.component';
@@ -124,7 +124,7 @@ export class WidgetBackupComponent implements OnInit {
   constructor(
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private chainedSlideInService: IxChainedSlideInService,
+    private chainedSlideInService: ChainedSlideInService,
     private widgetResourcesService: WidgetResourcesService,
   ) {}
 

@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
 import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
-import { IxFilterSelectListHarness } from 'app/pages/apps/components/filter-select-list/filter-select-list.harness';
+import { FilterSelectListHarness } from 'app/pages/apps/components/filter-select-list/filter-select-list.harness';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -25,7 +25,7 @@ describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;
   let loader: HarnessLoader;
   let searchInput: MatInputHarness;
-  let sortItems: IxFilterSelectListHarness;
+  let sortItems: FilterSelectListHarness;
   let categoriesSelect: IxChipsHarness;
   let appsFilterStore: AppsFilterStore;
 
@@ -83,7 +83,7 @@ describe('AvailableAppsHeaderComponent', () => {
     await filtersButton.click();
 
     searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));
-    sortItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[0];
+    sortItems = (await loader.getAllHarnesses(FilterSelectListHarness))[0];
     categoriesSelect = await loader.getHarness(IxChipsHarness);
     appsFilterStore = spectator.inject(AppsFilterStore);
   });

@@ -16,20 +16,20 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { Subscription, timer } from 'rxjs';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInService } from 'app/services/slide-in.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-slide-in',
-  templateUrl: './ix-slide-in.component.html',
-  styleUrls: ['./ix-slide-in.component.scss'],
+  templateUrl: './slide-in.component.html',
+  styleUrls: ['./slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CdkTrapFocus],
 })
-export class IxSlideInComponent implements OnInit, OnDestroy {
+export class SlideInComponent implements OnInit, OnDestroy {
   @Input() id: string;
   @ViewChild('body', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
 
@@ -45,7 +45,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
 
   constructor(
     private el: ElementRef,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private defaultInjector: Injector,
@@ -88,7 +88,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   openSlideIn<T, D>(
     componentType: Type<T>,
     params?: { wide?: boolean; data?: D; injector?: Injector },
-  ): IxSlideInRef<T, D> {
+  ): SlideInRef<T, D> {
     if (this.isSlideInOpen) {
       console.error('SlideIn is already open');
     }
@@ -117,12 +117,12 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     componentType: Type<T>,
     data?: D,
     parentInjector?: Injector,
-  ): IxSlideInRef<T, D> {
-    const slideInRef = new IxSlideInRef<T, D>();
+  ): SlideInRef<T, D> {
+    const slideInRef = new SlideInRef<T, D>();
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
-        { provide: IxSlideInRef, useValue: slideInRef },
+        { provide: SlideInRef, useValue: slideInRef },
       ],
       parent: parentInjector,
     });

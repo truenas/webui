@@ -16,7 +16,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { customAppButtonElements } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.elements';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +51,7 @@ export class CustomAppButtonComponent {
   constructor(
     private dockerStore: DockerStore,
     private router: Router,
-    private slideIn: IxSlideInService,
+    private slideIn: SlideInService,
   ) { }
 
   openAppWizardCreation(): void {

@@ -4,22 +4,22 @@ import {
   Component, ElementRef, input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { IxSlideIn2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-slide-in2/ix-slide-in2.component';
+import { SlideIn2Component } from 'app/modules/slide-ins/components/slide-in2/slide-in2.component';
 import {
   ChainedComponentSerialized,
-  IxChainedSlideInService,
-} from 'app/services/ix-chained-slide-in.service';
+  ChainedSlideInService,
+} from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-chained-slide-in',
-  templateUrl: './ix-chained-slide-in.component.html',
-  styleUrls: ['./ix-chained-slide-in.component.scss'],
+  templateUrl: './chained-slide-in.component.html',
+  styleUrls: ['./chained-slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [IxSlideIn2Component, AsyncPipe],
+  imports: [SlideIn2Component, AsyncPipe],
 })
-export class IxChainedSlideInComponent implements OnInit, OnDestroy {
+export class ChainedSlideInComponent implements OnInit, OnDestroy {
   readonly id = input<string>();
 
   @ViewChild('componentWrapper') container: HTMLElement;
@@ -28,7 +28,7 @@ export class IxChainedSlideInComponent implements OnInit, OnDestroy {
 
   constructor(
     private el: ElementRef,
-    protected ixChainedSlideInService: IxChainedSlideInService,
+    protected ixChainedSlideInService: ChainedSlideInService,
     private cdr: ChangeDetectorRef,
   ) {
     this.element = this.el.nativeElement as HTMLElement;

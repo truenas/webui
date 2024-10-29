@@ -38,8 +38,8 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -101,7 +101,7 @@ export class AppInfoCardComponent {
     private translate: TranslateService,
     private router: Router,
     private installedAppsStore: InstalledAppsStore,
-    private slideIn: IxSlideInService,
+    private slideIn: SlideInService,
     @Inject(WINDOW) private window: Window,
   ) {}
 

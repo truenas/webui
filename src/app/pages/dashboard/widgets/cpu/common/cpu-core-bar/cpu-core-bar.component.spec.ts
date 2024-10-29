@@ -67,10 +67,10 @@ describe('CpuCoreBarComponent', () => {
 
     const data = chart.data as ChartData<'bar'>;
     expect(data).toMatchObject({
-      labels: ['1', '2', '3', '4'],
+      labels: ['1', '2'],
       datasets: [
-        { data: [6, 30, 70, 9] },
-        { data: [31, 31, 83, 83] },
+        { data: [36, 79] },
+        { data: [31, 83] },
       ],
     });
   });

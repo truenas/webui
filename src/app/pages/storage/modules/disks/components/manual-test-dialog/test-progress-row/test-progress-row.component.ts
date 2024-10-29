@@ -32,7 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TestDirective,
   ],
 })
-export class IxTestProgressRowComponent implements OnInit {
+export class TestProgressRowComponent implements OnInit {
   disk = input.required<Disk>();
   testType = input.required<SmartTestType>();
   loading = input.required<boolean>();

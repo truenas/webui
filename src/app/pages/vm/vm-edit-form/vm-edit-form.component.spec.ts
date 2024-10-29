@@ -12,15 +12,15 @@ import {
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('VmEditFormComponent', () => {
@@ -66,7 +66,7 @@ describe('VmEditFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockWebSocket([
         mockCall('vm.bootloader_options', {
@@ -125,7 +125,7 @@ describe('VmEditFormComponent', () => {
       mockProvider(VmGpuService, {
         updateVmGpus: jest.fn(() => of(undefined)),
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
     ],
     componentProviders: [
       mockProvider(CpuValidatorService, {
@@ -209,7 +209,7 @@ describe('VmEditFormComponent', () => {
       time: VmTime.Local,
       vcpus: 1,
     }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('sends cpu_model as null when CPU Mode is not Custom', async () => {
@@ -246,7 +246,7 @@ describe('VmEditFormComponent', () => {
       time: VmTime.Local,
       vcpus: 1,
     }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('updates GPU devices when form is edited and saved', async () => {

@@ -6,17 +6,17 @@ import {
   merge, Observable, Subject, timer,
 } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInComponent } from 'app/modules/slide-ins/slide-in.component';
 import { FocusService } from 'app/services/focus.service';
 
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
-export class IxSlideInService {
-  slideInComponent: IxSlideInComponent;
-  slideInRefMap = new Map<string, IxSlideInRef<unknown>>();
+export class SlideInService {
+  slideInComponent: SlideInComponent;
+  slideInRefMap = new Map<string, SlideInRef<unknown>>();
   /**
    * Emits when any slide in has been closed.
    * Prefer to use slideInClosed$ in slideInRef to tell when an individual slide in is closed.
@@ -36,14 +36,14 @@ export class IxSlideInService {
   }
 
   // TODO: Rework via cdk overlays or something else that would make it easier to use in tests.
-  setSlideComponent(slideComponent: IxSlideInComponent): void {
+  setSlideComponent(slideComponent: SlideInComponent): void {
     this.slideInComponent = slideComponent;
   }
 
   open<T, D>(
     component: Type<T>,
     params?: { wide?: boolean; data?: D; injector?: Injector },
-  ): IxSlideInRef<T, D> {
+  ): SlideInRef<T, D> {
     this.slideInRefMap.forEach((ref) => ref.close());
 
     const slideInRef = this.slideInComponent.openSlideIn<T, D>(component, params);

@@ -14,7 +14,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { VmService } from 'app/services/vm.service';
 import { VirtualMachineDetailsRowComponent } from './vm-details-row.component';
 
@@ -52,7 +52,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
         doStop: jest.fn(),
         doRestart: jest.fn(() => of()),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
@@ -80,7 +80,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
       VmEditFormComponent,
       { data: virtualMachine },
     );

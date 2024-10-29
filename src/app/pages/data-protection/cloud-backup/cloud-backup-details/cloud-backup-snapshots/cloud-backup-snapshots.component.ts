@@ -34,7 +34,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -97,7 +97,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
 
   constructor(
     protected emptyService: EmptyService,
-    private slideIn: IxSlideInService,
+    private slideIn: SlideInService,
     private translate: TranslateService,
     private ws: WebSocketService,
     private dialog: DialogService,

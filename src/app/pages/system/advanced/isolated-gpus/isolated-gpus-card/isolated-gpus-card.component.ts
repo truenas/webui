@@ -20,8 +20,8 @@ import { isolatedGpusCardElements } from 'app/pages/system/advanced/isolated-gpu
 import {
   IsolatedGpusFormComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -61,7 +61,7 @@ export class IsolatedGpusCardComponent implements OnInit {
     private advancedSettings: AdvancedSettingsService,
     private gpuService: GpuService,
     private cdr: ChangeDetectorRef,
-    private chainedSlideIns: IxChainedSlideInService,
+    private chainedSlideIns: ChainedSlideInService,
     private translate: TranslateService,
   ) {}
 

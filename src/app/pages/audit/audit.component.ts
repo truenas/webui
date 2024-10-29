@@ -20,7 +20,7 @@ import {
   combineLatest,
   filter, map, of, shareReplay, take, async,
 } from 'rxjs';
-import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import {
   AuditEvent, AuditService, auditEventLabels, auditServiceLabels,
@@ -92,7 +92,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     IxTableCellDirective,
     MatTooltip,
     IxTablePagerComponent,
-    IxDetailsHeightDirective,
+    DetailsHeightDirective,
     ExportButtonComponent,
     LogDetailsPanelComponent,
     IxTableHeadComponent,
