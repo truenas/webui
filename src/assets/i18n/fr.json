@@ -981,7 +981,7 @@
   "{name} Devices": "",
   "{name} Sessions": "",
   "{rate} RPM": "",
-  "{temp}°C (All Threads)": "",
+  "{temp}°C (All Cores)": "",
   "{temp}°C (Core #{core})": "",
   "{threadCount, plural, one {# thread} other {# threads} }": "",
   "{type} VDEVs": "",
