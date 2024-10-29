@@ -21,6 +21,7 @@ export interface VirtualizationInstance {
   environment: Record<string, string>;
   aliases: VirtualizationAlias;
   raw: unknown;
+  image: VirtualizationImage;
 }
 
 export interface VirtualizationAlias {
