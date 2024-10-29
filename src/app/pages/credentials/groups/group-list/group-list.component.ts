@@ -40,7 +40,7 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
 import { groupListElements } from 'app/pages/credentials/groups/group-list/group-list.elements';
 import { groupPageEntered, groupRemoved } from 'app/pages/credentials/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/credentials/groups/store/group.selectors';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -140,7 +140,7 @@ export class GroupListComponent implements OnInit {
 
   constructor(
     private emptyService: EmptyService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private translate: TranslateService,

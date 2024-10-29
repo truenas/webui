@@ -22,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { syslogCardElements } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.elements';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -116,7 +116,7 @@ export class SyslogCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private chainedSlideIns: IxChainedSlideInService,
+    private chainedSlideIns: ChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 

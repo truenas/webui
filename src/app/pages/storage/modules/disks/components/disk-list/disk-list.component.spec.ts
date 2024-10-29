@@ -29,7 +29,7 @@ import {
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 describe('DiskListComponent', () => {
   let spectator: Spectator<DiskListComponent>;
@@ -108,7 +108,7 @@ describe('DiskListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(Router),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => mockSlideInRef),
       }),
       mockProvider(MatDialog, {
@@ -166,7 +166,7 @@ describe('DiskListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
     expect(mockSlideInRef.componentInstance.setFormDisk).toHaveBeenCalledWith(fakeDisk);
   });
 

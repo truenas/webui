@@ -12,7 +12,7 @@ import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('StorageCardComponent', () => {
   let spectator: Spectator<StorageCardComponent>;
@@ -29,7 +29,7 @@ describe('StorageCardComponent', () => {
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
     ],
@@ -55,7 +55,7 @@ describe('StorageCardComponent', () => {
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(
-      spectator.inject(IxChainedSlideInService).open,
+      spectator.inject(ChainedSlideInService).open,
     ).toHaveBeenCalledWith(
       StorageSettingsFormComponent,
       false,

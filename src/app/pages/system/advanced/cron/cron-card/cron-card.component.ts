@@ -38,8 +38,8 @@ import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -138,7 +138,7 @@ export class CronCardComponent implements OnInit {
     private matDialog: MatDialog,
     private advancedSettings: AdvancedSettingsService,
     protected emptyService: EmptyService,
-    private chainedSlideIns: IxChainedSlideInService,
+    private chainedSlideIns: ChainedSlideInService,
   ) {}
 
   ngOnInit(): void {

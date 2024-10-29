@@ -1,5 +1,5 @@
 import { Type } from '@angular/core';
-import { ChainedComponentResponse as ChainedResponse } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse as ChainedResponse } from 'app/services/chained-slide-in.service';
 
 export class ChainedRef<T> {
   close: (response: ChainedResponse) => void;

@@ -11,17 +11,17 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   CloudBackupCardComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-card/cloud-backup-card.component';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
@@ -62,8 +62,8 @@ describe('CloudBackupCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInRef),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(SlideInRef),
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({
           response: true,
         })),
@@ -112,7 +112,7 @@ describe('CloudBackupCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
       true,
       cloudBackups[0],
@@ -123,7 +123,7 @@ describe('CloudBackupCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
       true,
       undefined,

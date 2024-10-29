@@ -45,7 +45,7 @@ export interface ChainedComponentSerialized {
 @Injectable({
   providedIn: 'root',
 })
-export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState> {
+export class ChainedSlideInService extends ComponentStore<ChainedSlideInState> {
   readonly components$: Observable<ChainedComponentSerialized[]> = this.select(
     (state) => this.getAliveComponents(state.components),
   );

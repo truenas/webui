@@ -28,8 +28,8 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
 import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -98,7 +98,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     private ws: WebSocketService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
-    private chainedSlideinService: IxChainedSlideInService,
+    private chainedSlideinService: ChainedSlideInService,
     private dialog: DialogService,
     private cloudCredentialService: CloudCredentialService,
   ) {}

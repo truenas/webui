@@ -47,7 +47,7 @@ import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add
 import { csrListElements } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.elements';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -125,7 +125,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private download: DownloadService,

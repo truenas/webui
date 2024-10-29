@@ -17,7 +17,7 @@ import { InstanceFormComponent } from 'app/pages/virtualization/components/insta
 import {
   VirtualizationConfigStore,
 } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -56,7 +56,7 @@ export class AllInstancesHeaderComponent {
   });
 
   constructor(
-    private slideIn: IxChainedSlideInService,
+    private slideIn: ChainedSlideInService,
     private configStore: VirtualizationConfigStore,
     private matDialog: MatDialog,
   ) {}

@@ -36,7 +36,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { reportingExportersElements } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -150,7 +150,7 @@ export class ReportingExporterListComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private appLoader: AppLoaderService,

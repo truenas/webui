@@ -40,7 +40,7 @@ import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idma
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -155,7 +155,7 @@ export class IdmapListComponent implements OnInit {
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
   ) { }
 
   ngOnInit(): void {

@@ -14,8 +14,8 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
@@ -29,7 +29,7 @@ import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryptio
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { doesDatasetHaveShares, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -69,7 +69,7 @@ export class DatasetDetailsPanelComponent {
   constructor(
     private datasetStore: DatasetTreeStore,
     private router: Router,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
   ) { }
 
   protected readonly hasRoles = computed(() => {
@@ -88,7 +88,7 @@ export class DatasetDetailsPanelComponent {
 
   protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>, modalType: unknown): void {
+  handleSlideInClosed(slideInRef: SlideInRef<unknown>, modalType: unknown): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this))
       .subscribe((value: { id: string }) => {
         this.datasetStore.datasetUpdated();

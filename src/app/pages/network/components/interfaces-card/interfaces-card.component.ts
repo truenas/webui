@@ -43,8 +43,8 @@ import {
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -137,7 +137,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private loader: AppLoaderService,

@@ -10,18 +10,18 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-modal-header2',
-  templateUrl: './ix-modal-header2.component.html',
-  styleUrls: ['./ix-modal-header2.component.scss'],
+  templateUrl: './modal-header2.component.html',
+  styleUrls: ['./modal-header2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -35,7 +35,7 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
     TestDirective,
   ],
 })
-export class IxModalHeader2Component implements AfterViewInit {
+export class ModalHeader2Component implements AfterViewInit {
   @Input() title: string;
   @Input() loading: boolean;
   @Input() disableClose = false;
@@ -51,7 +51,7 @@ export class IxModalHeader2Component implements AfterViewInit {
 
   constructor(
     private translate: TranslateService,
-    private chainedSlideIn: IxChainedSlideInService,
+    private chainedSlideIn: ChainedSlideInService,
     private chainedSlideInRef: ChainedRef<unknown>,
     private authService: AuthService,
   ) {}
