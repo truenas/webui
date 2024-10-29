@@ -843,7 +843,7 @@ export interface ApiCallDirectory {
   'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: void }; // TODO
   'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: unknown }; // TODO:
   'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
-  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: VirtualizationImage[] };
+  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
 
   'virt.global.bridge_choices': { params: []; response: Choices };
   'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
