@@ -5,6 +5,6 @@ export interface CpuParams {
   usageMaxThreads: number[];
   tempMin: number;
   tempMax: number;
-  tempMinThreads: number[];
-  tempMaxThreads: number[];
+  tempMinCores: number[];
+  tempMaxCores: number[];
 }

@@ -26,7 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 /**
  * Better than just expect.anything() because it allows null and undefined.
  */
-const anyArgument = when((_: unknown) => true);
+const anyArgument = when((_: ApiJobParams<ApiJobMethod>) => true);
 
 /**
  * MockWebSocketService can be used to update websocket mocks on the fly.
