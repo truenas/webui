@@ -10,7 +10,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, forkJoin, of, switchMap,
+  combineLatest, filter, forkJoin, of, switchMap,
+  take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -105,7 +106,7 @@ export class AppsSettingsComponent implements OnInit {
   setupForm(): void {
     combineLatest([
       this.ws.call('catalog.config'),
-      this.dockerStore.dockerConfig$,
+      this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([catalogConfig, dockerConfig]) => {
