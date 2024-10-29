@@ -11,7 +11,7 @@ import { suppressJsDomCssErrors } from 'app/core/testing/utils/suppress-jsdom-cs
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
+import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { GroupMembersComponent } from 'app/pages/credentials/groups/group-members/group-members.component';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -32,7 +32,7 @@ describe('GroupMembersComponent', () => {
     component: GroupMembersComponent,
     imports: [
       ReactiveFormsModule,
-      DualListboxComponent,
+      DualListBoxComponent,
     ],
     providers: [
       mockWebSocket([

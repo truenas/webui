@@ -18,6 +18,7 @@
                 formControlName="new_initiator"
                 [label]="helptext.initiator_form_placeholder_initiators | translate"
                 [tooltip]="helptext.initiator_form_tooltip_initiators | translate"
+                (keydown.enter)="$event.preventDefault(); onAddInitiator()"
               ></ix-input>
               <button
                 mat-flat-button
@@ -34,21 +35,20 @@
 
         @if (!isAllowAll) {
           <ix-dual-listbox
-            minHeight="55vh"
-            maxHeight="55vh"
-            [items]="allInitiators"
-            [title1]="'Connected Initiators' | translate"
-            [title2]="'Allowed Initiators' | translate"
-            [(selectedItems)]="selectedInitiators"
-          >
-            <ng-template #templateItem let-item>
-              <span matListItemLine>{{ item.name }}</span>
-            </ng-template>
-          </ix-dual-listbox>
+            class="padding-16"
+            display="name"
+            key="id"
+            height="55vh"
+            [sourceName]="'Connected Initiators' | translate"
+            [targetName]="'Allowed Initiators' | translate"
+            [source]="allInitiators()"
+            [destination]="selectedInitiators()"
+          ></ix-dual-listbox>
 
           <button
             mat-flat-button
             type="button"
+            class="refresh-button"
             ixTest="refresh"
             [disabled]="isFormLoading"
             (click)="getConnectedInitiators()"
@@ -63,7 +63,6 @@
           [label]="helptext.initiator_form_placeholder_comment | translate"
           [tooltip]="helptext.initiator_form_tooltip_comment | translate"
         ></ix-input>
-
       </div>
     </mat-card-content>
 
