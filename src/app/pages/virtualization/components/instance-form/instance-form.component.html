@@ -39,7 +39,7 @@
       ></ix-select>
     </ix-fieldset>
 
-    <div>
+    <div class="table-wrapper">
       <table mat-table [dataSource]="filteredImages()" [ixTest]="['images-table']">
         <ng-container matColumnDef="label">
           <th *matHeaderCellDef mat-header-cell>{{ 'Label' | translate }}</th>

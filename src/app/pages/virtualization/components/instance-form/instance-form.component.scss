@@ -1,10 +1,16 @@
 @import 'scss-imports/variables';
 
 :host ::ng-deep {
-  table thead {
-    position: sticky;
-    top: 0;
-    z-index: 2;
+  .table-wrapper {
+    @media(max-width: $breakpoint-sm) {
+      overflow: auto;
+    }
+
+    table thead {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
   }
 
   ix-fieldset fieldset {
