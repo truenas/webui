@@ -16,23 +16,23 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { cloneDeep } from 'lodash-es';
 import { Subscription, timer } from 'rxjs';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import {
   ChainedComponentResponse,
   ChainedComponentSerialized,
-  IxChainedSlideInService,
-} from 'app/services/ix-chained-slide-in.service';
+  ChainedSlideInService,
+} from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-slide-in2',
-  templateUrl: './ix-slide-in2.component.html',
-  styleUrls: ['./ix-slide-in2.component.scss'],
+  templateUrl: './slide-in2.component.html',
+  styleUrls: ['./slide-in2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CdkTrapFocus],
 })
-export class IxSlideIn2Component implements OnInit, OnDestroy {
+export class SlideIn2Component implements OnInit, OnDestroy {
   @Input() componentInfo: ChainedComponentSerialized;
   @Input() index: number;
   @Input() lastIndex: number;
@@ -55,7 +55,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
-    private chainedSlideInService: IxChainedSlideInService,
+    private chainedSlideInService: ChainedSlideInService,
     private cdr: ChangeDetectorRef,
   ) {
     this.element = this.el.nativeElement as HTMLElement;

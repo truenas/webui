@@ -28,7 +28,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-cell.component';
 
@@ -94,7 +94,7 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   constructor(
     protected translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     protected emptyService: EmptyService,
     private ws: WebSocketService,
     private dialogService: DialogService,

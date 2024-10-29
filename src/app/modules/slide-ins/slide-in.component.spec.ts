@@ -5,8 +5,8 @@ import {
 } from '@angular/core';
 import { fakeAsync } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SlideInComponent } from 'app/modules/slide-ins/slide-in.component';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 
 /** Simple component for testing IxSlideInComponent */
 @Component({
@@ -24,11 +24,11 @@ class TestClassComponent {
   }
 }
 
-describe('IxSlideInComponent', () => {
-  let spectator: Spectator<IxSlideInComponent>;
+describe('SlideInComponent', () => {
+  let spectator: Spectator<SlideInComponent>;
 
   const createComponent = createComponentFactory({
-    component: IxSlideInComponent,
+    component: SlideInComponent,
     imports: [
       A11yModule,
       TestClassComponent,

@@ -7,12 +7,12 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KerberosConfig } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('KerberosSettingsComponent', () => {
@@ -32,10 +32,10 @@ describe('KerberosSettingsComponent', () => {
         } as KerberosConfig),
         mockCall('kerberos.update'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],

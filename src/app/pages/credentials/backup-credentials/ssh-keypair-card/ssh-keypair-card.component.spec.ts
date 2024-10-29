@@ -8,17 +8,17 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DownloadService } from 'app/services/download.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshKeypairCardComponent', () => {
@@ -60,13 +60,13 @@ describe('SshKeypairCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
         onClose$: of(),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -95,14 +95,14 @@ describe('SshKeypairCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshKeypairFormComponent);
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SshKeypairFormComponent);
   });
 
   it('opens form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 1);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshKeypairFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SshKeypairFormComponent, {
       data: credentials[0],
     });
   });

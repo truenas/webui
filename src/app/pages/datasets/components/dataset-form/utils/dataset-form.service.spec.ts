@@ -7,7 +7,7 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('DatasetFormService', () => {
@@ -22,7 +22,7 @@ describe('DatasetFormService', () => {
       mockProvider(DialogService, {
         warn: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
     ],
   });
 
@@ -37,7 +37,7 @@ describe('DatasetFormService', () => {
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooLongWarning,
       );
-      expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
+      expect(spectator.inject(SlideInService).closeLast).toHaveBeenCalled();
     });
 
     it('checks parent path, shows error if it nesting level is too deep and closes slide in', async () => {
@@ -48,7 +48,7 @@ describe('DatasetFormService', () => {
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooDeepWarning,
       );
-      expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
+      expect(spectator.inject(SlideInService).closeLast).toHaveBeenCalled();
     });
   });
 

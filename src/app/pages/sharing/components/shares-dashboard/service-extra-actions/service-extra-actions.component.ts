@@ -18,7 +18,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -61,7 +61,7 @@ export class ServiceExtraActionsComponent {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private router: Router,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private urlOptions: UrlOptionsService,
   ) {}
 

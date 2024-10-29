@@ -8,7 +8,7 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 const datasetDummy = {
   id: '/mnt/pool/ds',
@@ -40,7 +40,7 @@ describe('RolesCardComponent', () => {
     providers: [
       mockAuth(),
       mockWebSocket(),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),
           componentInstance: {
@@ -176,12 +176,12 @@ describe('RolesCardComponent', () => {
     const createNfsShareLink = spectator.queryAll('.details-item .action')[1] as HTMLAnchorElement;
 
     createSmbShareLink.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
       data: { defaultSmbShare: { path: '/mnt/pool/ds' } },
     });
 
     createNfsShareLink.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
       data: { defaultNfsShare: { path: '/mnt/pool/ds' } },
     });
   });

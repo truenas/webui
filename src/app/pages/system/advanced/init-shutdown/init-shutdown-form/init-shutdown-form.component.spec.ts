@@ -11,12 +11,12 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('InitShutdownFormComponent', () => {
@@ -34,7 +34,7 @@ describe('InitShutdownFormComponent', () => {
         mockCall('initshutdownscript.create'),
         mockCall('initshutdownscript.update'),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),

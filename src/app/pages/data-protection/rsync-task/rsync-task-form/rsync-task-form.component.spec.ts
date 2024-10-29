@@ -16,10 +16,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -81,7 +81,7 @@ describe('RsyncTaskFormComponent', () => {
           { id: 2, name: 'ssh02' },
         ] as KeychainCredential[]),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of()),
         components$: of([]),
       }),

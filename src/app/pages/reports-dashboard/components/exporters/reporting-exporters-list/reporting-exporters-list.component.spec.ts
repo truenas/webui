@@ -7,14 +7,14 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const exporters: ReportingExporter[] = [
@@ -47,11 +47,11 @@ describe('ReportingExportersListComponent', () => {
         mockCall('reporting.exporters.delete'),
         mockCall('reporting.exporters.update'),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of(true) })),
       }),
       mockAuth(),
@@ -73,14 +73,14 @@ describe('ReportingExportersListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReportingExportersFormComponent);
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ReportingExportersFormComponent);
   });
 
   it('opens reporting exporters form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
       data: exporters[0],
     });
   });

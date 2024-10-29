@@ -14,11 +14,11 @@ import { Role } from 'app/enums/role.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -35,7 +35,7 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   imports: [
     CloudSyncProviderComponent,
     CloudSyncWhatAndWhenComponent,
-    IxModalHeader2Component,
+    ModalHeader2Component,
     MatCardModule,
     MatStepperModule,
     TranslateModule,

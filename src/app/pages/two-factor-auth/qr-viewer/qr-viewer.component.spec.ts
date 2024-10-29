@@ -2,7 +2,7 @@ import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent, MockModule } from 'ng-mocks';
 import { QrCodeComponent, QrCodeModule } from 'ng-qrcode';
 import { helptext2fa } from 'app/helptext/system/2fa';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 
 describe('QrViewerComponent', () => {
@@ -11,7 +11,7 @@ describe('QrViewerComponent', () => {
   const createComponent = createComponentFactory({
     component: QrViewerComponent,
     declarations: [
-      MockComponent(IxWarningComponent),
+      MockComponent(WarningComponent),
     ],
     imports: [
       MockModule(QrCodeModule),
@@ -28,7 +28,7 @@ describe('QrViewerComponent', () => {
 
   it('shows warning message when parent component requires it', () => {
     spectator.setInput('showWarning', true);
-    const warning = spectator.query(IxWarningComponent);
+    const warning = spectator.query(WarningComponent);
     expect(warning).toBeTruthy();
     expect(warning).toHaveAttribute('message', helptext2fa.two_factor.qrCodeMessage);
   });

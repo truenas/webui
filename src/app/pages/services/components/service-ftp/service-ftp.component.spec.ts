@@ -9,12 +9,12 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -94,7 +94,7 @@ describe('ServiceFtpComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],

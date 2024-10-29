@@ -44,14 +44,14 @@ import {
 } from 'app/interfaces/iscsi.interface';
 import { newOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -70,7 +70,7 @@ import { PortalWizardStepComponent } from './steps/portal-wizard-step/portal-wiz
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     ReactiveFormsModule,
     MatStepper,
@@ -257,7 +257,7 @@ export class IscsiWizardComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<IscsiWizardComponent>,
+    private slideInRef: SlideInRef<IscsiWizardComponent>,
     private iscsiService: IscsiService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,

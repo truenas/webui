@@ -9,7 +9,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('AuditCardComponent', () => {
   let spectator: Spectator<AuditCardComponent>;
@@ -18,7 +18,7 @@ describe('AuditCardComponent', () => {
     component: AuditCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of(true)),
       }),
       mockProvider(AdvancedSettingsService, {
@@ -58,6 +58,6 @@ describe('AuditCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(AuditFormComponent);
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(AuditFormComponent);
   });
 });

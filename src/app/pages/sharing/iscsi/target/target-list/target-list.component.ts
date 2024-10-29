@@ -32,7 +32,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -135,7 +135,7 @@ export class TargetListComponent implements OnInit {
   constructor(
     public emptyService: EmptyService,
     private iscsiService: IscsiService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
