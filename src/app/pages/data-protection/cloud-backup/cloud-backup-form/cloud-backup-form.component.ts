@@ -7,9 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import {
-  Observable, debounceTime, distinctUntilChanged, map, of,
-  switchMap,
+import { debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
@@ -281,23 +279,15 @@ export class CloudBackupFormComponent implements OnInit {
 
   onSubmit(): void {
     const payload = this.prepareData(this.form.value);
+    let request$ = this.ws.call('cloud_backup.create', [payload]);
 
     this.isLoading = true;
 
-    let createBucket$: Observable<unknown> = of(null);
-    if (!!this.form.value.bucket_input && this.isNewBucketOptionSelected) {
-      createBucket$ = this.ws.call('cloudsync.create_bucket', [this.form.value.credentials, this.form.value.bucket_input]);
+    if (!this.isNew) {
+      request$ = this.ws.call('cloud_backup.update', [this.editingTask.id, payload]);
     }
 
-    createBucket$.pipe(
-      switchMap(() => {
-        if (this.isNew) {
-          return this.ws.call('cloud_backup.create', [payload]);
-        }
-        return this.ws.call('cloud_backup.update', [this.editingTask.id, payload]);
-      }),
-      untilDestroyed(this),
-    ).subscribe({
+    request$.pipe(untilDestroyed(this)).subscribe({
       next: (response: CloudBackup) => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));
