@@ -56,10 +56,9 @@ export class GlobalConfigFormComponent {
 
   protected readonly form = this.formBuilder.nonNullable.group({
     pool: [''],
-    bridge: [null as string],
+    bridge: ['[AUTO]'],
     v4_network: [null as string],
     v6_network: [null as string],
-    use_default_bridge: [null],
     automatic_ipv4: [null],
     automatic_ipv6: [null],
   });
@@ -80,10 +79,9 @@ export class GlobalConfigFormComponent {
 
     this.form.setValue({
       pool: currentConfig.pool,
-      bridge: currentConfig.bridge,
+      bridge: currentConfig.bridge === null ? '[AUTO]' : currentConfig.bridge,
       v4_network: currentConfig.v4_network,
       v6_network: currentConfig.v6_network,
-      use_default_bridge: !currentConfig.bridge,
       automatic_ipv4: !currentConfig.v4_network,
       automatic_ipv6: !currentConfig.v6_network,
     });
@@ -94,7 +92,7 @@ export class GlobalConfigFormComponent {
 
     const values: VirtualizationGlobalConfigUpdate = {
       pool: this.form.controls.pool.value,
-      bridge: this.form.controls.use_default_bridge.value ? null : this.form.controls.bridge.value,
+      bridge: this.form.controls.bridge.value,
       v4_network: this.form.controls.automatic_ipv4.value ? null : this.form.controls.v4_network.value,
       v6_network: this.form.controls.automatic_ipv6.value ? null : this.form.controls.v6_network.value,
     };

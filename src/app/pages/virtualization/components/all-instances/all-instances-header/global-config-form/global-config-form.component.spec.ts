@@ -42,12 +42,9 @@ describe('GlobalConfigFormComponent', () => {
         close: jest.fn(),
         getData: jest.fn(() => ({
           pool: 'poolio',
-          bridge: null,
-          v4_network: null,
+          bridge: 'bridge1',
+          v4_network: '1.2.3.4/24',
           v6_network: null,
-          use_default_bridge: null,
-          automatic_ipv6: null,
-          automatic_ipv4: null,
         })),
       }),
       mockAuth(),
@@ -62,17 +59,17 @@ describe('GlobalConfigFormComponent', () => {
 
   it('shows current global settings from the slide-in data', async () => {
     expect(await form.getValues()).toEqual({
+      Bridge: 'bridge1',
       Pool: 'poolio',
-      'Use automatic IPv4 network': true,
+      'Use automatic IPv4 network': false,
+      'IPv4 Network': '1.2.3.4/24',
       'Use automatic IPv6 network': true,
-      'Use default bridge device': true,
     });
   });
 
   it('updates global settings and closes slide-in', async () => {
     await form.fillForm({
       Pool: 'Disabled',
-      'Use default bridge device': false,
     });
 
     await form.fillForm({
@@ -85,7 +82,7 @@ describe('GlobalConfigFormComponent', () => {
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.global.update', [{
       pool: '[Disabled]',
       bridge: 'bridge1',
-      v4_network: null,
+      v4_network: '1.2.3.4/24',
       v6_network: null,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -93,16 +90,6 @@ describe('GlobalConfigFormComponent', () => {
       response: undefined,
       error: false,
     });
-  });
-
-  it('hides bridge select field when use_default_bridge is checked', async () => {
-    await form.fillForm({
-      'Use default bridge device': true,
-    });
-    spectator.detectChanges();
-
-    const bridgeSelect = await form.getControl('bridge');
-    expect(bridgeSelect).toBeFalsy();
   });
 
   it('hides v4_network field when automatic_ipv4 is checked', async () => {

@@ -17,19 +17,12 @@
       </ix-fieldset>
 
       <ix-fieldset [title]="'Network' | translate">
-        <ix-checkbox
-          formControlName="use_default_bridge"
-          [label]="'Use default bridge device' | translate"
-        ></ix-checkbox>
-
-        @if (!form.controls.use_default_bridge.value) {
-          <ix-select
-            formControlName="bridge"
-            [label]="'Bridge' | translate"
-            [required]="true"
-            [options]="bridgeOptions$"
-          ></ix-select>
-        }
+        <ix-select
+          formControlName="bridge"
+          [label]="'Bridge' | translate"
+          [required]="true"
+          [options]="bridgeOptions$"
+        ></ix-select>
 
         <ix-checkbox
           formControlName="automatic_ipv4"
