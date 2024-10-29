@@ -48,17 +48,16 @@ export class InstanceFormComponent implements OnInit {
   protected readonly columns = ['label', 'os', 'release', 'arch', 'variant', 'actions'];
   form: FormGroup;
 
-  entityEmptyConf = {
-    type: EmptyType.Loading,
-    large: true,
-  } as EmptyConfig;
-
   osOptions$: Observable<Option[]>;
   variantOptions$: Observable<Option[]>;
   releaseOptions$: Observable<Option[]>;
 
   images = signal<VirtualizationImage[]>([]);
   filteredImages = signal<VirtualizationImage[]>([]);
+  entityEmptyConf = signal({
+    type: EmptyType.Loading,
+    large: true,
+  } as EmptyConfig);
 
   constructor(
     private ws: WebSocketService,
@@ -139,11 +138,11 @@ export class InstanceFormComponent implements OnInit {
     });
 
     if (!filtered.length) {
-      this.entityEmptyConf = {
+      this.entityEmptyConf.set({
         type: EmptyType.NoSearchResults,
         large: true,
         title: this.translate.instant('No images found'),
-      };
+      });
     }
 
     this.filteredImages.set(filtered);

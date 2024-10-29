@@ -84,8 +84,8 @@
         <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['image-table-row', row]"></tr>
       </table>
 
-      @if (filteredImages().length === 0) {
-        <ix-empty [conf]="entityEmptyConf"></ix-empty>
+      @if (!filteredImages().length) {
+        <ix-empty [conf]="entityEmptyConf()"></ix-empty>
       }
     </div>
   </form>
