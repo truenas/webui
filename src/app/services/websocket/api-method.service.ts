@@ -16,7 +16,7 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
 })
 export class ApiMethodService {
   private get ws$(): Observable<unknown> {
-    return this.wsHandler.wsConnection.websocket$.pipe(
+    return this.wsHandler.wsConnection.stream$.pipe(
       tap((response: IncomingApiMessage) => {
         if (this.hasAuthError(response)) {
           console.error(response);

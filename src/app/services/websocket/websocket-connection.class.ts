@@ -4,7 +4,7 @@ import { webSocket as rxjsWebSocket, WebSocketSubject, WebSocketSubjectConfig } 
 export class WebSocketConnection {
   private ws$: WebSocketSubject<unknown>;
   private wsAsObservable$: Observable<unknown>;
-  get websocket$(): Observable<unknown> {
+  get stream$(): Observable<unknown> {
     return this.wsAsObservable$;
   }
 
@@ -28,7 +28,7 @@ export class WebSocketConnection {
   }
 
   close(): void {
-    this.ws$.complete();
+    this.ws$?.complete();
   }
 
   event<R>(

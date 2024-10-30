@@ -4,20 +4,21 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { environment } from 'environments/environment';
 import { tap } from 'rxjs';
-import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConnectionData } from 'app/interfaces/terminal.interface';
+import { WebSocketConnection } from 'app/services/websocket/websocket-connection.class';
 
 @UntilDestroy()
 @Injectable()
 export class ShellService {
   private encoder = new TextEncoder();
-  private ws$: WebSocketSubject<unknown>;
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket/shell/';
   private isConnected = false;
+  private wsConnection: WebSocketConnection;
 
   private shellOutput = new EventEmitter<ArrayBuffer>();
   private shellConnected = new EventEmitter<ShellConnectedEvent>();
@@ -31,9 +32,8 @@ export class ShellService {
   ) {}
 
   connect(connectionData: TerminalConnectionData, token: string): void {
-    this.disconnectIfSessionActive();
-
-    this.ws$ = this.webSocket({
+    this.wsConnection = new WebSocketConnection(this.webSocket);
+    this.wsConnection.connect({
       url: this.connectionUrl,
       openObserver: {
         next: () => this.onOpen(connectionData, token),
@@ -46,7 +46,7 @@ export class ShellService {
       binaryType: 'arraybuffer',
     });
 
-    this.ws$.pipe(
+    this.wsConnection.stream$.pipe(
       tap((response: MessageEvent<ArrayBuffer | string>) => {
         this.onMessage(response);
       }),
@@ -62,9 +62,9 @@ export class ShellService {
 
   private onOpen(connectionData: TerminalConnectionData, token: string): void {
     if (connectionData.vmId) {
-      this.ws$.next(JSON.stringify({ token, options: { vm_id: connectionData.vmId } }));
+      this.wsConnection.send(JSON.stringify({ token, options: { vm_id: connectionData.vmId } }));
     } else if (connectionData.podInfo) {
-      this.ws$.next(JSON.stringify({
+      this.wsConnection.send(JSON.stringify({
         token,
         options: {
           app_name: connectionData.podInfo.chartReleaseName,
@@ -73,7 +73,7 @@ export class ShellService {
         },
       }));
     } else {
-      this.ws$.next(JSON.stringify({ token }));
+      this.wsConnection.send(JSON.stringify({ token }));
     }
   }
 
@@ -112,13 +112,7 @@ export class ShellService {
   send(data: string): void {
     if (this.isConnected) {
       const buffer = this.encoder.encode(data);
-      this.ws$.next(buffer);
-    }
-  }
-
-  disconnectIfSessionActive(): void {
-    if (this.ws$ && !this.ws$.closed) {
-      this.ws$.complete();
+      this.wsConnection.send(buffer);
     }
   }
 }

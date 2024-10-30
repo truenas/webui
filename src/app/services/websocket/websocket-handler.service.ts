@@ -58,7 +58,7 @@ export class WebSocketHandlerService {
   }
 
   private setupSubscriptionUpdates(): void {
-    this.wsConnection.websocket$.pipe(
+    this.wsConnection.stream$.pipe(
       tap((response: IncomingApiMessage) => {
         if (response.msg === IncomingApiMessageType.Connected) {
           performance.mark('WS Connected');
