@@ -21,12 +21,12 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
-} from 'app/pages/virtualization/components/instance-form/select-image-dialog/select-image-dialog.component';
+} from 'app/pages/virtualization/components/create-instance-form/select-image-dialog/select-image-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-form',
+  selector: 'ix-create-instance-form',
   standalone: true,
   imports: [
     PageHeaderComponent,
@@ -39,11 +39,11 @@ import { WebSocketService } from 'app/services/ws.service';
     TestDirective,
     IxFieldsetComponent,
   ],
-  templateUrl: './instance-form.component.html',
-  styleUrls: ['./instance-form.component.scss'],
+  templateUrl: './create-instance-form.component.html',
+  styleUrls: ['./create-instance-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstanceFormComponent {
+export class CreateInstanceFormComponent {
   protected readonly isLoading = signal(false);
 
   protected readonly form = this.formBuilder.nonNullable.group({

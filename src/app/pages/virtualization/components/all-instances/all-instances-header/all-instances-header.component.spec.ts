@@ -46,7 +46,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.NoPool);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(2);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.NoPool);
@@ -59,7 +59,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Initializing);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(4);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Initializing);
@@ -75,7 +75,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Initialized);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(4);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Initialized);
@@ -92,7 +92,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Locked);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(4);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Locked);
@@ -109,7 +109,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Error);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(2);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Error);

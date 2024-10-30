@@ -21,18 +21,18 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { InstanceFormComponent } from 'app/pages/virtualization/components/instance-form/instance-form.component';
+import { CreateInstanceFormComponent } from 'app/pages/virtualization/components/create-instance-form/create-instance-form.component';
 import {
   VirtualizationImageWithId,
-} from 'app/pages/virtualization/components/instance-form/select-image-dialog/select-image-dialog.component';
+} from 'app/pages/virtualization/components/create-instance-form/select-image-dialog/select-image-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('InstanceFormComponent', () => {
-  let spectator: SpectatorRouting<InstanceFormComponent>;
+  let spectator: SpectatorRouting<CreateInstanceFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createRoutingFactory({
-    component: InstanceFormComponent,
+    component: CreateInstanceFormComponent,
     declarations: [
       MockComponent(PageHeaderComponent),
     ],

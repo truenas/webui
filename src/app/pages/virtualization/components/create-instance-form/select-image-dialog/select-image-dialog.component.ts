@@ -17,7 +17,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { InstanceFormComponent } from 'app/pages/virtualization/components/instance-form/instance-form.component';
+import { CreateInstanceFormComponent } from 'app/pages/virtualization/components/create-instance-form/create-instance-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -27,7 +27,7 @@ export type VirtualizationImageWithId = VirtualizationImage & {
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-form',
+  selector: 'ix-select-image-dialog',
   standalone: true,
   imports: [
     MatTableModule,
@@ -71,7 +71,7 @@ export class SelectImageDialogComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private dialogRef: MatDialogRef<InstanceFormComponent>,
+    private dialogRef: MatDialogRef<CreateInstanceFormComponent>,
     private fb: FormBuilder,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
