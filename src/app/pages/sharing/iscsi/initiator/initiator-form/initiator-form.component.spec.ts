@@ -82,7 +82,7 @@ describe('InitiatorFormComponent', () => {
 
     await (await available[0].host()).click();
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="add-to-list"]' }));
+    const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="move-selected-right"]' }));
     await addButton.click();
 
     expect(await availableList.getItems()).toHaveLength(0);
@@ -97,7 +97,7 @@ describe('InitiatorFormComponent', () => {
 
     expect(ws.call).toHaveBeenLastCalledWith('iscsi.initiator.update', [1, {
       comment: 'new_comment',
-      initiators: ['inr1', 'inr11', 'inr12'],
+      initiators: ['inr11', 'inr12', 'inr1'],
     }]);
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiator']);
   });

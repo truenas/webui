@@ -1,7 +1,6 @@
 import { MatButtonModule } from '@angular/material/button';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { MockComponent } from 'ng-mocks';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListBoxComponent } from './dual-listbox.component';
@@ -36,9 +35,9 @@ describe('DualListBoxComponent', () => {
 
   it('should call selectItem when an item is clicked', () => {
     const selectItemSpy = jest.spyOn(spectator.component, 'selectItem');
-    const itemElement = spectator.query('li', { root: true });
+    const listItemElement = spectator.query('mat-list-item', { root: true });
 
-    spectator.click(itemElement);
+    spectator.click(listItemElement);
 
     expect(selectItemSpy).toHaveBeenCalledWith(
       spectator.component.available.pick, spectator.component.available.sift[0],

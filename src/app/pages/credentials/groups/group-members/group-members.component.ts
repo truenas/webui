@@ -19,6 +19,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -54,6 +55,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class GroupMembersComponent implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
+  protected readonly iconMarker = iconMarker;
 
   selectedMembers: User[] = [];
   users: User[] = [];

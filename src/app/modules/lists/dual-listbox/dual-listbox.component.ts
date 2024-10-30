@@ -1,9 +1,11 @@
 import { NgClass, NgStyle } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { AngularDualListBoxModule, DualListComponent } from 'angular-dual-listbox';
+import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -21,13 +23,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     IxIconComponent,
     MatIconButton,
     TestDirective,
+    MatTooltip,
+    MatListModule,
     TranslateModule,
   ],
 })
 export class DualListBoxComponent extends DualListComponent {
-  sourceName = input(null);
-  targetName = input(null);
-  listItemIcon = input(null);
+  sourceName = input.required<string>();
+  targetName = input.required<string>();
+  listItemIcon = input<MarkedIcon>(null);
 
   moveAll(): void {
     this.selectAll(this.available);
