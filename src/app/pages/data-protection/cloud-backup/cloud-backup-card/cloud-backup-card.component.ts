@@ -42,8 +42,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -138,7 +138,7 @@ export class CloudBackupCardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private chainedSlideInService: IxChainedSlideInService,
+    private chainedSlideInService: ChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,

@@ -34,10 +34,10 @@ import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explo
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';

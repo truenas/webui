@@ -23,8 +23,6 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { IxChainedSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-chained-slide-in/ix-chained-slide-in.component';
-import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ConsoleFooterComponent } from 'app/modules/layout/console-footer/console-footer.component';
@@ -34,6 +32,8 @@ import { SecondaryMenuComponent } from 'app/modules/layout/secondary-menu/second
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { ChainedSlideInComponent } from 'app/modules/slide-ins/components/chained-slide-in/chained-slide-in.component';
+import { SlideInComponent } from 'app/modules/slide-ins/slide-in.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LanguageService } from 'app/services/language.service';
 import { SentryService } from 'app/services/sentry.service';
@@ -68,8 +68,8 @@ import { selectBuildYear, waitForSystemInfo } from 'app/store/system-info/system
     RouterOutlet,
     ConsoleFooterComponent,
     AlertsPanelComponent,
-    IxSlideInComponent,
-    IxChainedSlideInComponent,
+    SlideInComponent,
+    ChainedSlideInComponent,
     AsyncPipe,
     LowerCasePipe,
     TranslateModule,

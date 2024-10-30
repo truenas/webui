@@ -7,12 +7,12 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('PullImageFormComponent', () => {
@@ -28,8 +28,8 @@ describe('PullImageFormComponent', () => {
       mockWebSocket([
         mockJob('app.image.pull'),
       ]),
-      mockProvider(IxSlideInService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInService),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {

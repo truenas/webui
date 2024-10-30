@@ -8,12 +8,12 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SysctlCardComponent } from './sysctl-card.component';
 
@@ -51,7 +51,7 @@ describe('SysctlCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(ChainedRef, { close: jest.fn() }),
@@ -95,7 +95,7 @@ describe('SysctlCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 4);
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       TunableFormComponent,
       false,
       expect.objectContaining(items[0]),

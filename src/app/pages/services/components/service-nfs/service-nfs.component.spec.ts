@@ -10,18 +10,18 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
-import { RdmaSupportedProtocol } from 'app/enums/service-name.enum';
+import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   AddSpnDialogComponent,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -57,7 +57,7 @@ describe('ServiceNfsComponent', () => {
           '192.168.1.119': '192.168.1.119',
         }),
         mockCall('nfs.update'),
-        mockCall('rdma.capable_services', [RdmaSupportedProtocol.Nfs]),
+        mockCall('rdma.capable_protocols', [RdmaProtocolName.Nfs]),
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Healthy,
           ldap: DirectoryServiceState.Disabled,
@@ -71,7 +71,7 @@ describe('ServiceNfsComponent', () => {
           },
         ],
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -81,7 +81,7 @@ describe('ServiceNfsComponent', () => {
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],

@@ -9,10 +9,10 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('AuditFormComponent', () => {
@@ -35,7 +35,7 @@ describe('AuditFormComponent', () => {
         } as AuditConfig),
         mockCall('audit.update'),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),

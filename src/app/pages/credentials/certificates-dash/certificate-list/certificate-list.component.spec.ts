@@ -10,7 +10,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
@@ -18,9 +17,10 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CertificateListComponent } from './certificate-list.component';
@@ -78,13 +78,13 @@ describe('CertificateListComponent', () => {
           afterClosed: jest.fn(() => of(undefined)),
         })),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
         onClose$: of(),
       }),
-      mockProvider(IxSlideInRef, {
+      mockProvider(SlideInRef, {
         slideInClosed$: of(true),
       }),
       mockProvider(MatDialog, {
@@ -112,14 +112,14 @@ describe('CertificateListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CertificateAddComponent);
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(CertificateAddComponent);
   });
 
   it('opens certificate edit form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CertificateEditComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(CertificateEditComponent, {
       data: certificates[0],
       wide: true,
     });

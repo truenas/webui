@@ -6,7 +6,7 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { RdmaSupportedProtocol, ServiceName } from 'app/enums/service-name.enum';
+import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { VirtualizationGpuType, VirtualizationType } from 'app/enums/virtualization.enum';
@@ -664,7 +664,7 @@ export interface ApiCallDirectory {
   'privilege.update': { params: [id: number, update: PrivilegeUpdate]; response: Privilege };
 
   // RDMA
-  'rdma.capable_services': { params: []; response: RdmaSupportedProtocol[] };
+  'rdma.capable_protocols': { params: []; response: RdmaProtocolName[] };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
@@ -844,7 +844,7 @@ export interface ApiCallDirectory {
   'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: void }; // TODO
   'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: unknown }; // TODO:
   'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
-  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: VirtualizationImage[] };
+  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
 
   'virt.device.disk_choices': { params: []; response: Choices };
   'virt.device.gpu_choices': {

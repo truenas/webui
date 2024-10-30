@@ -28,7 +28,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -93,7 +93,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private dialog: DialogService,

@@ -554,6 +554,7 @@
   "Choose <i>ON</i> to update the access time for files when they are read. Choose <i>Off</i> to prevent producing log traffic when reading files. This can result in significant performance gains.": "",
   "Choose File": "",
   "Choose File for {label}": "",
+  "Choose Image": "",
   "Choose Pool": "",
   "Choose Shell Details": "",
   "Choose a Tag": "",

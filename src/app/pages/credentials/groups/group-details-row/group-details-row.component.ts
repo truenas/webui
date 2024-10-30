@@ -18,7 +18,7 @@ import {
   DeleteGroupDialogComponent,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +45,7 @@ export class GroupDetailsRowComponent {
   protected readonly Role = Role;
 
   constructor(
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private router: Router,
     private matDialog: MatDialog,
   ) {}

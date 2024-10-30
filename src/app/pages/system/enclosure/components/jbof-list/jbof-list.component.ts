@@ -33,7 +33,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -107,7 +107,7 @@ export class JbofListComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,

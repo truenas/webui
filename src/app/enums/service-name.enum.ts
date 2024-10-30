@@ -25,6 +25,6 @@ export const serviceNames = new Map<ServiceName, string>([
   [ServiceName.Ups, 'UPS'],
 ]);
 
-export enum RdmaSupportedProtocol {
+export enum RdmaProtocolName {
   Nfs = 'NFS',
 }

@@ -13,10 +13,10 @@ import { KeychainSshKeyPair, SshKeyPair } from 'app/interfaces/keychain-credenti
 import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -48,7 +48,7 @@ describe('SshKeypairFormComponent', () => {
         mockCall('keychaincredential.create'),
         mockCall('keychaincredential.update'),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DownloadService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),

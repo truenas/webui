@@ -21,7 +21,7 @@ import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-setting
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ export class AppSettingsButtonComponent {
   protected readonly updateDockerRoles = [Role.DockerWrite];
 
   constructor(
-    private ixSlideInService: IxSlideInService,
+    private ixSlideInService: SlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,

@@ -192,6 +192,7 @@
   "Check {name} and {n, plural, one {# other disk} other {# other disks}}.": "",
   "Check {name}.": "",
   "Child Shares": "",
+  "Choose Image": "",
   "Choose Shell Details": "",
   "Clear": "",
   "Click \"Add\" to specify NFS client hosts for this share. If both networks and hosts are empty the share will be exported to everyone.": "",

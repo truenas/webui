@@ -1,7 +1,7 @@
 import { ComponentRef } from '@angular/core';
 import { Subject } from 'rxjs';
 
-export class IxSlideInRef<T, D = unknown> {
+export class SlideInRef<T, D = unknown> {
   readonly slideInClosed$ = new Subject<D>();
   componentRef: ComponentRef<T>;
   id: string;

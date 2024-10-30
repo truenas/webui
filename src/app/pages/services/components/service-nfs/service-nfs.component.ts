@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { Role } from 'app/enums/role.enum';
-import { RdmaSupportedProtocol } from 'app/enums/service-name.enum';
+import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
@@ -27,11 +27,11 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -49,7 +49,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -121,7 +121,7 @@ export class ServiceNfsComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
-    private slideInRef: IxSlideInRef<ServiceNfsComponent>,
+    private slideInRef: SlideInRef<ServiceNfsComponent>,
     private validatorsService: IxValidatorsService,
   ) {}
 
@@ -183,11 +183,11 @@ export class ServiceNfsComponent implements OnInit {
 
   private checkForRdmaSupport(): Observable<void> {
     return forkJoin([
-      this.ws.call('rdma.capable_services'),
+      this.ws.call('rdma.capable_protocols'),
       this.store$.select(selectIsEnterprise).pipe(take(1)),
     ]).pipe(
-      map(([capableServices, isEnterprise]) => {
-        const hasRdmaSupport = capableServices.includes(RdmaSupportedProtocol.Nfs) && isEnterprise;
+      map(([capableProtocols, isEnterprise]) => {
+        const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Nfs) && isEnterprise;
         if (hasRdmaSupport) {
           this.form.controls.rdma.enable();
         } else {

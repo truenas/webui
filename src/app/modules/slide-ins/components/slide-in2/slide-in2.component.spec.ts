@@ -8,15 +8,15 @@ import { MockComponent } from 'ng-mocks';
 import {
   Subject, of,
 } from 'rxjs';
-import { IxSlideIn2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-slide-in2/ix-slide-in2.component';
+import { SlideIn2Component } from 'app/modules/slide-ins/components/slide-in2/slide-in2.component';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('IxSlideIn2Component', () => {
   const close$ = new Subject<ChainedComponentResponse>();
-  let spectator: Spectator<IxSlideIn2Component>;
+  let spectator: Spectator<SlideIn2Component>;
   const createComponent = createComponentFactory({
-    component: IxSlideIn2Component,
+    component: SlideIn2Component,
     imports: [
       A11yModule,
     ],
@@ -26,7 +26,7 @@ describe('IxSlideIn2Component', () => {
     providers: [
       mockProvider(ElementRef),
       mockProvider(Renderer2),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         isTopComponentWide$: of(false),
         popComponent: jest.fn(),
         swapComponent: jest.fn(),
@@ -69,7 +69,7 @@ describe('IxSlideIn2Component', () => {
     expect(close$.next).toHaveBeenCalledWith({ response: false, error: null });
     expect(close$.complete).toHaveBeenCalled();
     tick(305);
-    expect(spectator.inject(IxChainedSlideInService).popComponent).toHaveBeenCalledWith('id');
+    expect(spectator.inject(ChainedSlideInService).popComponent).toHaveBeenCalledWith('id');
     discardPeriodicTasks();
   }));
 

@@ -32,13 +32,13 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
@@ -57,7 +57,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [ReplicationService],
   standalone: true,
   imports: [
-    IxModalHeader2Component,
+    ModalHeader2Component,
     MatCard,
     MatCardContent,
     MatStepper,

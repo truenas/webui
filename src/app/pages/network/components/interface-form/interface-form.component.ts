@@ -37,14 +37,14 @@ import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/compon
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -73,7 +73,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   providers: [InterfaceNameValidatorService],
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -181,7 +181,7 @@ export class InterfaceFormComponent implements OnInit {
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
-    private slideInRef: IxSlideInRef<InterfaceFormComponent>,
+    private slideInRef: SlideInRef<InterfaceFormComponent>,
     private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) private existingInterface: NetworkInterface,
   ) {}

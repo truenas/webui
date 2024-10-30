@@ -14,17 +14,17 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -73,12 +73,12 @@ describe('NfsCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };
         }),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -120,7 +120,7 @@ describe('NfsCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
       data: { existingNfsShare: expect.objectContaining(nfsShares[0]) },
     });
   });
