@@ -17,7 +17,7 @@ ix-fieldset {
 }
 
 .image-field {
-  align-items: flex-end;
+  align-items: flex-start;
   display: flex;
   gap: 10px;
 
@@ -26,6 +26,6 @@ ix-fieldset {
   }
 
   button {
-    margin-bottom: 18px;
+    margin-top: 43px;
   }
 }

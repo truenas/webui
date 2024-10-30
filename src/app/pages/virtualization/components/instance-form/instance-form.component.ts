@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,8 +8,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { CreateVirtualizationInstance, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import {
+  CreateVirtualizationInstance,
+  VirtualizationInstance,
+} from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -19,6 +23,9 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  SelectImageDialogComponent, VirtualizationImageWithId,
+} from 'app/pages/virtualization/components/instance-form/select-image-dialog/select-image-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -51,8 +58,10 @@ export class InstanceFormComponent implements OnInit {
     cpu: ['', Validators.required],
     autostart: [false],
     memory: [null as number, Validators.required],
-    image: ['almalinux/8/cloud', Validators.required], // TODO: Temporary default.
+    image: ['', Validators.required],
   });
+
+  protected readonly visibleImageName = new FormControl('');
 
   protected readonly pageTitle = computed(() => {
     if (this.isLoading()) {
@@ -89,7 +98,23 @@ export class InstanceFormComponent implements OnInit {
   }
 
   protected onBrowseImages(): void {
+    this.matDialog
+      .open(SelectImageDialogComponent, {
+        minWidth: '80vw',
+        data: {
+          remote: VirtualizationRemote.LinuxContainers,
+        },
+      })
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((image: VirtualizationImageWithId) => {
+        if (!image) {
+          return;
+        }
 
+        this.form.controls.image.setValue(image.id);
+        this.visibleImageName.setValue(image.label);
+      });
   }
 
   protected onSubmit(): void {

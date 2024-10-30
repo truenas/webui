@@ -17,7 +17,7 @@
       <div class="image-field">
         <ix-input
           class="input"
-          formControlName="image"
+          [formControl]="visibleImageName"
           [readonly]="true"
           [label]="'Image' | translate"
           [required]="true"
@@ -36,7 +36,7 @@
       <ix-input
         formControlName="cpu"
         [required]="true"
-        [label]="'CPU' | translate"
+        [label]="'CPU Configuration' | translate"
       ></ix-input>
 
       <ix-input
