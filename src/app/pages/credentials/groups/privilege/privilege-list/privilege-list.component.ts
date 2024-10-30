@@ -135,10 +135,12 @@ export class PrivilegeListComponent implements OnInit {
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
 
-  private rolesSuggestions$ = of(Object.values(Role).map((key) => ({
-    label: this.translate.instant(roleNames.get(key)),
-    value: `"${this.translate.instant(roleNames.get(key))}"`,
-  })));
+  private readonly rolesSuggestions$ = of(Object.values(Role)).pipe(
+    map((roles) => roles.map((key) => ({
+      label: this.translate.instant(roleNames.get(key)),
+      value: `"${this.translate.instant(roleNames.get(key))}"`,
+    }))),
+  );
 
   constructor(
     private slideInService: SlideInService,
