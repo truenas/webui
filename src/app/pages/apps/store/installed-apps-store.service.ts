@@ -3,8 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, Subscription, catchError, delay, filter, of, repeat, switchMap, tap,
-  withLatestFrom,
+  Observable, Subscription, catchError, combineLatest, delay, filter, of, repeat, switchMap, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -83,9 +82,11 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   }
 
   private loadInstalledApps(): Observable<App[]> {
-    return this.dockerStore.isLoading$.pipe(
-      withLatestFrom(this.dockerStore.isDockerStarted$),
-      filter(([isLoading, isDockerStarted]) => !isLoading && isDockerStarted !== null),
+    return combineLatest([
+      this.dockerStore.isLoading$,
+      this.dockerStore.isDockerStarted$,
+    ]).pipe(
+      filter(([isLoading, isDockerStarted]) => !isLoading && isDockerStarted != null),
       switchMap(([, isDockerStarted]) => {
         this.subscribeToInstalledAppsUpdates();
 
