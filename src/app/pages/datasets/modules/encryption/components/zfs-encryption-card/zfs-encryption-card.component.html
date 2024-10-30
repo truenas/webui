@@ -79,11 +79,15 @@
         }
       </ng-container>
       <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-        @if (hasPassphrase) {
-          <button mat-button ixTest="lock" (click)="onLock()">
-            {{ 'Lock' | translate }}
-          </button>
-        }
+        <button
+          mat-button
+          ixTest="lock"
+          [matTooltip]="!hasPassphrase ? ('You can only lock a dataset if it was encrypted with a passphrase' | translate) : ''"
+          [disabled]="!hasPassphrase"
+          (click)="onLock()"
+        >
+          {{ 'Lock' | translate }}
+        </button>
       </ng-container>
     </mat-card-actions>
   }

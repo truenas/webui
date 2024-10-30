@@ -30,6 +30,10 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 export class ApplicationsService {
   constructor(private ws: WebSocketService, private translate: TranslateService) {}
 
+  checkIfAppIxVolumeExists(appName: string): Observable<boolean> {
+    return this.ws.call('app.ix_volume.exists', [appName]);
+  }
+
   getPoolList(): Observable<Pool[]> {
     return this.ws.call('pool.query');
   }

@@ -13,10 +13,10 @@ import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -68,7 +68,7 @@ describe('GroupFormComponent', () => {
         mockCall('privilege.update'),
         mockCall('group.get_next_gid', 1234),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(FormErrorHandlerService),
       provideMockStore(),
       mockAuth(),
@@ -106,7 +106,6 @@ describe('GroupFormComponent', () => {
         'SMB Group': true,
         'Allow all sudo commands': true,
         'Allowed sudo commands with no password': ['ls'],
-        'Allow Duplicate GIDs': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -116,7 +115,6 @@ describe('GroupFormComponent', () => {
         gid: 1234,
         name: 'new',
         smb: true,
-        allow_duplicate_gid: true,
         sudo_commands: [allCommands],
         sudo_commands_nopasswd: ['ls'],
       }]);
@@ -172,7 +170,6 @@ describe('GroupFormComponent', () => {
         {
           name: 'updated',
           smb: true,
-          allow_duplicate_gid: true,
           sudo_commands: [],
           sudo_commands_nopasswd: [],
         },

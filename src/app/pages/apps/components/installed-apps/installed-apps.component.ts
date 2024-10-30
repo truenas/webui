@@ -26,9 +26,11 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter,
+  forkJoin,
   Observable,
+  switchMap,
 } from 'rxjs';
-import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AppState } from 'app/enums/app-state.enum';
@@ -46,6 +48,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -106,7 +109,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     AppRowComponent,
     EmptyComponent,
     MatTooltip,
-    IxDetailsHeightDirective,
+    DetailsHeightDirective,
     AppDetailsPanelComponent,
   ],
 })
@@ -213,6 +216,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private store$: Store<WebuiAppState>,
     private location: Location,
     private appsStats: AppsStatsService,
+    private loader: AppLoaderService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -431,43 +435,23 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   onBulkDelete(): void {
-    const checkedNames = this.checkedAppsNames;
-    const name = checkedNames.join(', ');
-    this.dialogService.confirm({
-      title: helptextApps.apps.delete_dialog.title,
-      message: this.translate.instant('Delete {name}?', { name }),
-      secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
-    })
-      .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
-      .subscribe(({ secondaryCheckbox }) => {
-        this.dialogService.jobDialog(
-          this.ws.job('core.bulk', ['app.delete', checkedNames.map(
-            (item) => [item, { remove_images: true, remove_ix_volumes: secondaryCheckbox }],
-          )]),
-          { title: helptextApps.apps.delete_dialog.job },
-        )
-          .afterClosed()
-          .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-          .subscribe((job: Job<CoreBulkResponse[]>) => {
-            if (!this.dataSource.length) {
-              this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
-            }
-            this.dialogService.closeAllDialogs();
-            let message = '';
-            job.result.forEach((item) => {
-              if (item.error !== null) {
-                message = message + '<li>' + item.error + '</li>';
-              }
-            });
-
-            if (message !== '') {
-              message = '<ul>' + message + '</ul>';
-              this.dialogService.error({ title: helptextApps.bulkActions.title, message });
-            }
+    forkJoin(this.checkedAppsNames.map((appName) => this.appService.checkIfAppIxVolumeExists(appName)))
+      .pipe(
+        this.loader.withLoader(),
+        switchMap((ixVolumesExist) => {
+          return this.dialogService.confirm({
+            title: helptextApps.apps.delete_dialog.title,
+            message: this.translate.instant('Delete {name}?', { name: this.checkedAppsNames.join(', ') }),
+            secondaryCheckbox: ixVolumesExist.some(Boolean),
+            secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
           });
-        this.toggleAppsChecked(false);
-      });
+        }),
+        filter(({ confirmed }) => confirmed),
+        switchMap(({ secondaryCheckbox }) => this.executeBulkDeletion(secondaryCheckbox)),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));
   }
 
   sortChanged(sort: Sort, apps?: App[]): void {
@@ -491,6 +475,39 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           return doSortCompare(a.name, b.name, isAsc);
       }
     });
+  }
+
+  private executeBulkDeletion(removeIxVolumes = false): Observable<Job<CoreBulkResponse[]>> {
+    const bulkDeletePayload = this.checkedAppsNames.map((name) => [
+      name,
+      { remove_images: true, remove_ix_volumes: removeIxVolumes },
+    ]);
+
+    return this.dialogService.jobDialog(
+      this.ws.job('core.bulk', ['app.delete', bulkDeletePayload]),
+      { title: helptextApps.apps.delete_dialog.job },
+    ).afterClosed();
+  }
+
+  private handleDeletionResult(job: Job<CoreBulkResponse[]>): void {
+    if (!this.dataSource.length) {
+      this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+    }
+
+    this.dialogService.closeAllDialogs();
+    const errorMessages = this.getErrorMessages(job.result);
+
+    if (errorMessages) {
+      this.dialogService.error({ title: helptextApps.bulkActions.title, message: errorMessages });
+    }
+
+    this.toggleAppsChecked(false);
+  }
+
+  private getErrorMessages(results: CoreBulkResponse[]): string {
+    const errors = results.filter((item) => item.error).map((item) => `<li>${item.error}</li>`);
+
+    return errors.length ? `<ul>${errors.join('')}</ul>` : '';
   }
 
   private selectAppForDetails(appId: string): void {

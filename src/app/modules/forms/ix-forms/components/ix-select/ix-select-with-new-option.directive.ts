@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 export const addNewIxSelectValue = 'ADD_NEW';
 
@@ -24,7 +24,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
 
   private options = new BehaviorSubject<Option[]>([]);
 
-  private chainedSlideIn = inject(IxChainedSlideInService);
+  private chainedSlideIn = inject(ChainedSlideInService);
   private translateService = inject(TranslateService);
 
   ngOnInit(): void {

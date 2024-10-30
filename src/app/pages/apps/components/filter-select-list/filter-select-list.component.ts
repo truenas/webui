@@ -9,7 +9,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
-type IxSelectListValue = string | number | (string | number)[];
+type SelectListValue = string | number | (string | number)[];
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,7 @@ export class FilterSelectListComponent implements ControlValueAccessor {
   multiple = input<boolean>();
 
   isDisabled = false;
-  value: IxSelectListValue;
+  value: SelectListValue;
 
   constructor(
     public controlDirective: NgControl,
@@ -39,15 +39,15 @@ export class FilterSelectListComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  onChange: (value: IxSelectListValue) => void = (): void => {};
+  onChange: (value: SelectListValue) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  writeValue(value: IxSelectListValue): void {
+  writeValue(value: SelectListValue): void {
     this.value = value;
     this.cdr.markForCheck();
   }
 
-  registerOnChange(onChange: (value: IxSelectListValue) => void): void {
+  registerOnChange(onChange: (value: SelectListValue) => void): void {
     this.onChange = onChange;
   }
 

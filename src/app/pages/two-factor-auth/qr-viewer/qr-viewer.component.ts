@@ -5,7 +5,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { QrCodeModule } from 'ng-qrcode';
 import { helptext2fa } from 'app/helptext/system/2fa';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 
 @UntilDestroy()
 @Component({
@@ -15,7 +15,7 @@ import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-war
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxWarningComponent,
+    WarningComponent,
     QrCodeModule,
     TranslateModule,
   ],

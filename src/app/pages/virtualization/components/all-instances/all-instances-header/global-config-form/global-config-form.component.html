@@ -1,0 +1,33 @@
+<ix-modal-header2
+  [title]="'Global Config' | translate"
+  [requiredRoles]="requiredRoles"
+  [loading]="isLoading()"
+></ix-modal-header2>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-select
+          formControlName="pool"
+          [label]="'Pool' | translate"
+          [required]="true"
+          [options]="poolOptions$"
+        ></ix-select>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

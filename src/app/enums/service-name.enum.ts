@@ -24,3 +24,7 @@ export const serviceNames = new Map<ServiceName, string>([
   [ServiceName.Cifs, 'SMB'],
   [ServiceName.Ups, 'UPS'],
 ]);
+
+export enum RdmaProtocolName {
+  Nfs = 'NFS',
+}

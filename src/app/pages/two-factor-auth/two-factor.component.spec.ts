@@ -10,7 +10,7 @@ import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -24,7 +24,7 @@ describe('TwoFactorComponent', () => {
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
     declarations: [
-      MockComponent(IxWarningComponent),
+      MockComponent(WarningComponent),
       MockComponent(QrViewerComponent),
       MockComponent(CopyButtonComponent),
     ],
@@ -90,7 +90,7 @@ describe('TwoFactorComponent', () => {
     jest.spyOn(spectator.inject(AuthService), 'getGlobalTwoFactorConfig').mockImplementation(() => of({
       enabled: true,
     } as GlobalTwoFactorConfig));
-    const warning = spectator.query(IxWarningComponent);
+    const warning = spectator.query(WarningComponent);
     expect(warning).toBeTruthy();
     expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_disabled);
   });
@@ -99,7 +99,7 @@ describe('TwoFactorComponent', () => {
     spectator.component.ngOnInit();
     spectator.component.userTwoFactorAuthConfigured = false;
     spectator.detectChanges();
-    const warning = spectator.query(IxWarningComponent);
+    const warning = spectator.query(WarningComponent);
     expect(warning).toBeTruthy();
     expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_enabled_user_disabled);
   });
@@ -107,7 +107,7 @@ describe('TwoFactorComponent', () => {
   it('shows warning when global setting is enabled and user enabled', () => {
     spectator.component.ngOnInit();
     spectator.detectChanges();
-    const warning = spectator.query(IxWarningComponent);
+    const warning = spectator.query(WarningComponent);
     expect(warning).toBeTruthy();
     expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_enabled_user_enabled);
   });
