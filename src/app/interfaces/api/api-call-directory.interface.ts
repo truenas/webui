@@ -6,7 +6,7 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { RdmaServiceName, ServiceName } from 'app/enums/service-name.enum';
+import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
@@ -663,7 +663,7 @@ export interface ApiCallDirectory {
   'privilege.update': { params: [id: number, update: PrivilegeUpdate]; response: Privilege };
 
   // RDMA
-  'rdma.capable_services': { params: []; response: RdmaServiceName[] };
+  'rdma.capable_protocols': { params: []; response: RdmaProtocolName[] };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
