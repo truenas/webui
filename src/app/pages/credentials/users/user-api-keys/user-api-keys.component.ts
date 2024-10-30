@@ -3,13 +3,13 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, of, switchMap, tap } from 'rxjs';
+import { uniq } from 'lodash-es';
+import { filter, map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { ApiKey } from 'app/interfaces/api-key.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
@@ -123,6 +123,16 @@ export class UserApiKeysComponent implements OnInit {
     pageNumber: 1,
   };
 
+  private readonly apiKeys$ = this.ws.call('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));
+
+  protected readonly nameSuggestions$ = this.apiKeys$.pipe(
+    map((keys) => uniq(keys.map((key) => ({ label: key.name, value: key.name })))),
+  );
+
+  protected readonly usernameSuggestions$ = this.apiKeys$.pipe(
+    map((keys) => uniq(keys.map((key) => ({ label: key.username, value: key.username })))),
+  );
+
   constructor(
     protected emptyService: EmptyService,
     private translate: TranslateService,
@@ -181,8 +191,8 @@ export class UserApiKeysComponent implements OnInit {
 
   private setSearchProperties(): void {
     this.searchProperties = searchProperties<ApiKey>([
-      textProperty('name', this.translate.instant('Name'), of<Option[]>([])),
-      textProperty('username', this.translate.instant('Username'), of<Option[]>([])),
+      textProperty('name', this.translate.instant('Name'), this.nameSuggestions$),
+      textProperty('username', this.translate.instant('Username'), this.usernameSuggestions$),
       booleanProperty('revoked', this.translate.instant('Revoked')),
     ]);
   }
@@ -198,7 +208,7 @@ export class UserApiKeysComponent implements OnInit {
       const term = `(?i)${query.query || ''}`;
       const params = new ParamsBuilder<ApiKey>()
         .filter('name', '~', term)
-        .filter('username', '~', term)
+        .orFilter('username', '~', term)
         .getParams();
 
       this.dataProvider.setParams(params);
