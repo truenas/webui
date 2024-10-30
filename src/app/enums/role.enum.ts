@@ -1,6 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum Role {
+  ApiKeyWrite = 'API_KEY_WRITE',
+  ApiKeyRead = 'API_KEY_READ',
   TrueCommandRead = 'TRUECOMMAND_READ',
   TrueCommandWrite = 'TRUECOMMAND_WRITE',
   AccountRead = 'ACCOUNT_READ',
