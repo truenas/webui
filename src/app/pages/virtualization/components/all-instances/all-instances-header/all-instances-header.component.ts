@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
+import { VirtualizationGlobalState, VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   GlobalConfigFormComponent,
@@ -12,10 +13,11 @@ import {
 import {
   VirtualizationStateComponent,
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
+import { InstanceFormComponent } from 'app/pages/virtualization/components/instance-form/instance-form.component';
 import {
   VirtualizationConfigStore,
 } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -54,9 +56,19 @@ export class AllInstancesHeaderComponent {
   });
 
   constructor(
-    private slideIn: IxChainedSlideInService,
+    private slideIn: ChainedSlideInService,
     private configStore: VirtualizationConfigStore,
+    private matDialog: MatDialog,
   ) {}
+
+  openImageSelector(): void {
+    this.matDialog.open(InstanceFormComponent, {
+      minWidth: '80vw',
+      data: {
+        remote: VirtualizationRemote.LinuxContainers,
+      },
+    });
+  }
 
   protected onEdit(): void {
     this.slideIn

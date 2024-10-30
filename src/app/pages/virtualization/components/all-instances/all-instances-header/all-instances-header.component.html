@@ -13,6 +13,14 @@
   }
 </button>
 
+<button
+  ixTest="open-image-selector"
+  mat-button
+  (click)="openImageSelector()"
+>
+  {{ 'Choose Image' | translate }}
+</button>
+
 @if (isLocked() && config()?.dataset) {
   <a
     mat-button

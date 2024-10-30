@@ -21,7 +21,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const dataset = {
@@ -64,7 +64,7 @@ describe('DatasetDetailsCardComponent', () => {
         selectedParentDataset$: of({ id: 'pool' }),
       }),
       mockProvider(MatSnackBar),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of() })),
         onClose$: of(),
       }),
@@ -126,7 +126,7 @@ describe('DatasetDetailsCardComponent', () => {
       const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
       await editButton.click();
 
-      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
         DatasetFormComponent,
         { wide: true, data: { datasetId: 'pool/child', isNew: false } },
       );
@@ -163,7 +163,7 @@ describe('DatasetDetailsCardComponent', () => {
 
       const editZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Zvol' }));
       await editZvolButton.click();
-      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
         ZvolFormComponent,
         { data: { isNew: false, parentId: 'pool/child' } },
       );

@@ -11,7 +11,7 @@ import {
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
 import { VirtualizationStateComponent } from 'app/pages/virtualization/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { AllInstancesHeaderComponent } from './all-instances-header.component';
 
 describe('AllInstancesHeaderComponent', () => {
@@ -30,7 +30,7 @@ describe('AllInstancesHeaderComponent', () => {
     ],
     providers: [
       mockProvider(VirtualizationConfigStore, storeMock),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of(undefined)),
       }),
     ],
@@ -46,7 +46,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.NoPool);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(2);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.NoPool);
@@ -59,7 +59,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Initializing);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(4);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Initializing);
@@ -75,7 +75,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Initialized);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(4);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Initialized);
@@ -92,7 +92,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Locked);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(4);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Locked);
@@ -109,7 +109,7 @@ describe('AllInstancesHeaderComponent', () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Error);
       spectator.detectChanges();
 
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(2);
+      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
 
       const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Error);
@@ -127,7 +127,7 @@ describe('AllInstancesHeaderComponent', () => {
       const globalSettingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Settings' }));
       await globalSettingsButton.click();
 
-      expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+      expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
         GlobalConfigFormComponent,
         false,
         { dataset: 'pool1/dataset1' },

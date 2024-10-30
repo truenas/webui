@@ -10,14 +10,14 @@ import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.inte
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { IxTestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
+import { TestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 describe('IxTestProgressRowComponent', () => {
-  let spectator: Spectator<IxTestProgressRowComponent>;
+  let spectator: Spectator<TestProgressRowComponent>;
 
   const createComponent = createComponentFactory({
-    component: IxTestProgressRowComponent,
+    component: TestProgressRowComponent,
     imports: [
       IxIconComponent,
       MatProgressBar,
