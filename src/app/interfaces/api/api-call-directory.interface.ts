@@ -9,6 +9,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
+import { VirtualizationGpuType, VirtualizationType } from 'app/enums/virtualization.enum';
 import {
   Acl,
   AclQueryParams,
@@ -245,9 +246,9 @@ import {
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
 import {
-  VirtualizationDevice, VirtualizationGlobalConfig,
+  VirtualizationDevice, VirtualizationGlobalConfig, AvailableGpu,
   VirtualizationImage, VirtualizationImageParams,
-  VirtualizationInstance, VirtualizationNetwork,
+  VirtualizationInstance, VirtualizationNetwork, AvailableUsb,
 } from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
@@ -844,6 +845,13 @@ export interface ApiCallDirectory {
   'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: unknown }; // TODO:
   'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
   'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
+
+  'virt.device.disk_choices': { params: []; response: Choices };
+  'virt.device.gpu_choices': {
+    params: [instanceType: VirtualizationType, gpuType: VirtualizationGpuType];
+    response: Record<string, AvailableGpu>;
+  };
+  'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
 
   'virt.global.bridge_choices': { params: []; response: Choices };
   'virt.global.config': { params: []; response: VirtualizationGlobalConfig };

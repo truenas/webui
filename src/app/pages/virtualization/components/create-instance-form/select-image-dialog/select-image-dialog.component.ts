@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, signal, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
@@ -17,12 +17,17 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { CreateInstanceFormComponent } from 'app/pages/virtualization/components/create-instance-form/create-instance-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+export type VirtualizationImageWithId = VirtualizationImage & {
+  id: string;
+};
+
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-form',
+  selector: 'ix-select-image-dialog',
   standalone: true,
   imports: [
     MatTableModule,
@@ -40,52 +45,50 @@ import { WebSocketService } from 'app/services/ws.service';
     TestDirective,
     EmptyComponent,
   ],
-  templateUrl: './instance-form.component.html',
-  styleUrls: ['./instance-form.component.scss'],
+  templateUrl: './select-image-dialog.component.html',
+  styleUrls: ['./select-image-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstanceFormComponent implements OnInit {
+export class SelectImageDialogComponent implements OnInit {
   protected readonly columns = ['label', 'os', 'release', 'arch', 'variant', 'actions'];
-  form: FormGroup;
+  protected filterForm = this.fb.group({
+    os: [''],
+    variant: [''],
+    release: [''],
+    searchQuery: [''],
+  });
 
-  osOptions$: Observable<Option[]>;
-  variantOptions$: Observable<Option[]>;
-  releaseOptions$: Observable<Option[]>;
+  protected osOptions$: Observable<Option[]>;
+  protected variantOptions$: Observable<Option[]>;
+  protected releaseOptions$: Observable<Option[]>;
 
-  images = signal<VirtualizationImage[]>([]);
-  filteredImages = signal<VirtualizationImage[]>([]);
-  entityEmptyConf = signal({
+  protected images = signal<VirtualizationImageWithId[]>([]);
+  protected filteredImages = signal<VirtualizationImageWithId[]>([]);
+  protected entityEmptyConf = signal({
     type: EmptyType.Loading,
     large: true,
   } as EmptyConfig);
 
   constructor(
     private ws: WebSocketService,
-    private dialogRef: MatDialogRef<InstanceFormComponent>,
+    private dialogRef: MatDialogRef<CreateInstanceFormComponent>,
     private fb: FormBuilder,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) protected data: { remote: VirtualizationRemote },
   ) {
-    this.form = this.fb.group({
-      os: [''],
-      variant: [''],
-      release: [''],
-      searchQuery: [''],
-    });
-
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.filterImages());
+    this.filterForm.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.filterImages());
   }
 
   ngOnInit(): void {
     this.getImages();
   }
 
-  onClose(): void {
+  protected onClose(): void {
     this.dialogRef.close();
   }
 
-  selectImage(image: VirtualizationImage): void {
+  protected selectImage(image: VirtualizationImageWithId): void {
     this.dialogRef.close(image);
   }
 
@@ -98,21 +101,21 @@ export class InstanceFormComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe((images: VirtualizationImage[]) => {
+      .subscribe((images: Record<string, VirtualizationImage>) => {
         this.setFilteringOptions(images);
         this.filterImages();
       });
   }
 
-  private setFilteringOptions(images: VirtualizationImage[]): void {
+  private setFilteringOptions(images: Record<string, VirtualizationImage>): void {
     const osSet = new Set<string>();
     const variantSet = new Set<string>();
     const releaseSet = new Set<string>();
 
-    const imageArray = Object.values(images);
+    const imageArray = Object.entries(images).map(([id, image]) => ({ ...image, id }));
     this.images.set(imageArray);
 
-    imageArray.forEach((image: VirtualizationImage) => {
+    imageArray.forEach((image) => {
       osSet.add(image.os);
       variantSet.add(image.variant);
       releaseSet.add(image.release);
@@ -124,9 +127,7 @@ export class InstanceFormComponent implements OnInit {
   }
 
   private filterImages(): void {
-    const { os, variant, release, searchQuery } = this.form.value as {
-      os: string; variant: string; release: string; searchQuery: string;
-    };
+    const { os, variant, release, searchQuery } = this.filterForm.value;
 
     const filtered = this.images().filter((image) => {
       const matchesOs = os ? image.os === os : true;
