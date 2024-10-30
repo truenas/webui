@@ -2,15 +2,18 @@ import { Inject, Injectable } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { BehaviorSubject, interval, NEVER, Observable, switchMap, tap, timer } from 'rxjs';
+import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
+import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IncomingApiMessage } from 'app/interfaces/api-message.interface';
-import { WebSocketConnection2Service } from 'app/services/websocket-connection2.service';
+import { WebSocketConnection } from 'app/services/websocket/websocket-connection.class';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketHandlerService {
+  readonly wsConnection: WebSocketConnection = new WebSocketConnection(this.webSocket);
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
 
   readonly isConnected$ = new BehaviorSubject(false);
@@ -31,7 +34,7 @@ export class WebSocketHandlerService {
 
   constructor(
     @Inject(WINDOW) protected window: Window,
-    public wsConnection: WebSocketConnection2Service,
+    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
   ) {
     this.setupWebSocket();
   }

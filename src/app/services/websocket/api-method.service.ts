@@ -9,7 +9,7 @@ import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/ap
 import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiError } from 'app/interfaces/api-error.interface';
 import { IncomingApiMessage, ResultMessage } from 'app/interfaces/api-message.interface';
-import { WebSocketHandlerService } from 'app/services/websocket-handler.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @Injectable({
   providedIn: 'root',

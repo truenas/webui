@@ -29,9 +29,9 @@ import {
 import { IncomingApiMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { ApiEventService } from 'app/services/api-event.service';
-import { ApiMethodService } from 'app/services/api-method.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
+import { ApiEventService } from 'app/services/websocket/api-event.service';
+import { ApiMethodService } from 'app/services/websocket/api-method.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -191,7 +191,7 @@ export class AuthService {
     return this.makeRequest('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
-        this.apiEventService.clearSubscriptions();
+        this.apiEventService.endAllEvents();
         this.isLoggedIn$.next(false);
       }),
     );

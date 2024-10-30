@@ -1,12 +1,7 @@
-import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { webSocket as rxjsWebSocket, WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
-import { WEBSOCKET } from 'app/helpers/websocket.helper';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class WebSocketConnection2Service {
+export class WebSocketConnection {
   private ws$: WebSocketSubject<unknown>;
   private wsAsObservable$: Observable<unknown>;
   get websocket$(): Observable<unknown> {
@@ -14,7 +9,7 @@ export class WebSocketConnection2Service {
   }
 
   constructor(
-    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
+    private webSocket: typeof rxjsWebSocket,
   ) { }
 
   connect(config: WebSocketSubjectConfig<unknown>): void {
