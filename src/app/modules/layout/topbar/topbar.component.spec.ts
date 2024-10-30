@@ -9,7 +9,7 @@ import {
   Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents, MockModule } from 'ng-mocks';
+import { MockComponents } from 'ng-mocks';
 import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -21,7 +21,6 @@ import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
-import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { RebootInfoState } from 'app/store/reboot-info/reboot-info.reducer';
@@ -55,7 +54,6 @@ describe('TopbarComponent', () => {
         UserMenuComponent,
         PowerMenuComponent,
       ),
-      MockModule(TruecommandModule),
     ],
     providers: [
       mockProvider(ThemeService),

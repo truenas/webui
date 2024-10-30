@@ -35,6 +35,7 @@ export class RebootRequiredDialogComponent {
   thisNodeRebootReasons = toSignal(this.store$.select(selectThisNodeRebootInfo).pipe(
     map((info) => info?.reboot_required_reasons || []),
   ));
+
   otherNodeRebootReasons = toSignal(this.store$.select(selectOtherNodeRebootInfo).pipe(
     map((info) => info?.reboot_required_reasons || []),
   ));
