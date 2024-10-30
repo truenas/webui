@@ -12,7 +12,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 
 export interface DockerConfigState {
   isLoading: boolean;
@@ -145,7 +144,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       .pipe(
         filter((event) => event.fields.method === 'docker.update' && !!event.fields.result),
         map((event) => event.fields.result),
-        tap((dockerConfig: DockerConfig) => this.patchState({ dockerConfig }))
-      )
+        tap((dockerConfig: DockerConfig) => this.patchState({ dockerConfig })),
+      );
   }
 }
