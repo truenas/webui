@@ -1231,8 +1231,6 @@
   "Use Preset": "",
   "Use Snapshot": "",
   "Use Syslog Only": "",
-  "Use automatic IPv4 network": "",
-  "Use automatic IPv6 network": "",
   "Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?": "",
   "User Bind Path": "",
   "User CN": "",

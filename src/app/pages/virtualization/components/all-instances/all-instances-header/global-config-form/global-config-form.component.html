@@ -24,29 +24,15 @@
           [options]="bridgeOptions$"
         ></ix-select>
 
-        <ix-checkbox
-          formControlName="automatic_ipv4"
-          [label]="'Use automatic IPv4 network' | translate"
-        ></ix-checkbox>
-
-        @if (!form.controls.automatic_ipv4.value) {
+        @if (isAutoBridge) {
           <ix-ip-input-with-netmask
             formControlName="v4_network"
             [label]="'IPv4 Network' | translate"
-            [required]="true"
           ></ix-ip-input-with-netmask>
-        }
 
-        <ix-checkbox
-          formControlName="automatic_ipv6"
-          [label]="'Use automatic IPv6 network' | translate"
-        ></ix-checkbox>
-
-        @if (!form.controls.automatic_ipv6.value) {
           <ix-ip-input-with-netmask
             formControlName="v6_network"
             [label]="'IPv6 Network' | translate"
-            [required]="true"
           ></ix-ip-input-with-netmask>
         }
       </ix-fieldset>

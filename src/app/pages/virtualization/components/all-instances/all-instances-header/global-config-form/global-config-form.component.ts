@@ -11,9 +11,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { VirtualizationGlobalConfig, VirtualizationGlobalConfigUpdate } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -44,8 +42,6 @@ import { WebSocketService } from 'app/services/ws.service';
     TestDirective,
     TranslateModule,
     IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
     IxSelectComponent,
     IxIpInputWithNetmaskComponent,
   ],
@@ -53,18 +49,21 @@ import { WebSocketService } from 'app/services/ws.service';
 export class GlobalConfigFormComponent {
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected isLoading = signal(false);
+  protected readonly autoBridge = '[AUTO]';
 
   protected readonly form = this.formBuilder.nonNullable.group({
     pool: [''],
-    bridge: ['[AUTO]'],
+    bridge: [this.autoBridge],
     v4_network: [null as string],
     v6_network: [null as string],
-    automatic_ipv4: [null],
-    automatic_ipv6: [null],
   });
 
   protected poolOptions$ = this.ws.call('virt.global.pool_choices').pipe(choicesToOptions());
   protected bridgeOptions$ = this.ws.call('virt.global.bridge_choices').pipe(choicesToOptions());
+
+  get isAutoBridge(): boolean {
+    return this.form.controls.bridge.value === this.autoBridge;
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -79,22 +78,21 @@ export class GlobalConfigFormComponent {
 
     this.form.setValue({
       pool: currentConfig.pool,
-      bridge: currentConfig.bridge === null ? '[AUTO]' : currentConfig.bridge,
+      bridge: !currentConfig.bridge ? this.autoBridge : currentConfig.bridge,
       v4_network: currentConfig.v4_network,
       v6_network: currentConfig.v6_network,
-      automatic_ipv4: !currentConfig.v4_network,
-      automatic_ipv6: !currentConfig.v6_network,
     });
   }
 
   onSubmit(): void {
     this.isLoading.set(true);
 
+    const controls = this.form.controls;
     const values: VirtualizationGlobalConfigUpdate = {
-      pool: this.form.controls.pool.value,
-      bridge: this.form.controls.bridge.value,
-      v4_network: this.form.controls.automatic_ipv4.value ? null : this.form.controls.v4_network.value,
-      v6_network: this.form.controls.automatic_ipv6.value ? null : this.form.controls.v6_network.value,
+      pool: controls.pool.value,
+      bridge: controls.bridge.value,
+      v4_network: (!this.isAutoBridge || !controls.v4_network.value) ? null : controls.v4_network.value,
+      v6_network: (!this.isAutoBridge || !controls.v6_network.value) ? null : controls.v6_network.value,
     };
 
     this.dialogService.jobDialog(

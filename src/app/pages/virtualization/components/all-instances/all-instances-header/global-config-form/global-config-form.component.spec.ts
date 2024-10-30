@@ -24,11 +24,12 @@ describe('GlobalConfigFormComponent', () => {
     providers: [
       mockWebSocket([
         mockCall('virt.global.pool_choices', {
-          '[Disabled]': 'Disabled',
+          '[Disabled]': '[Disabled]',
           poolio: 'poolio',
         }),
         mockCall('virt.global.bridge_choices', {
           bridge1: 'bridge1',
+          '[AUTO]': '[AUTO]',
         }),
         mockJob('virt.global.update', fakeSuccessfulJob()),
       ]),
@@ -60,19 +61,18 @@ describe('GlobalConfigFormComponent', () => {
     expect(await form.getValues()).toEqual({
       Bridge: 'bridge1',
       Pool: 'poolio',
-      'Use automatic IPv4 network': false,
-      'IPv4 Network': '1.2.3.4/24',
-      'Use automatic IPv6 network': true,
     });
+
+    const v4NetworkInput = await form.getControl('v4_network');
+    expect(v4NetworkInput).toBeFalsy();
+    const v6NetworkInput = await form.getControl('v6_network');
+    expect(v6NetworkInput).toBeFalsy();
   });
 
-  it('updates global settings and closes slide-in', async () => {
+  it('updates global settings and shows network fields when bridge is [AUTO] and closes slide-in', async () => {
     await form.fillForm({
-      Pool: 'Disabled',
-    });
-
-    await form.fillForm({
-      Bridge: 'bridge1',
+      Pool: '[Disabled]',
+      Bridge: '[AUTO]',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -80,7 +80,7 @@ describe('GlobalConfigFormComponent', () => {
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.global.update', [{
       pool: '[Disabled]',
-      bridge: 'bridge1',
+      bridge: '[AUTO]',
       v4_network: '1.2.3.4/24',
       v6_network: null,
     }]);
@@ -89,25 +89,5 @@ describe('GlobalConfigFormComponent', () => {
       response: undefined,
       error: false,
     });
-  });
-
-  it('hides v4_network field when automatic_ipv4 is checked', async () => {
-    await form.fillForm({
-      'Use automatic IPv4 network': true,
-    });
-    spectator.detectChanges();
-
-    const v4NetworkInput = await form.getControl('v4_network');
-    expect(v4NetworkInput).toBeFalsy();
-  });
-
-  it('hides v6_network field when automatic_ipv6 is checked', async () => {
-    await form.fillForm({
-      'Use automatic IPv6 network': true,
-    });
-    spectator.detectChanges();
-
-    const v6NetworkInput = await form.getControl('v6_network');
-    expect(v6NetworkInput).toBeFalsy();
   });
 });

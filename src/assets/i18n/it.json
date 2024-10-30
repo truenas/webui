@@ -3677,8 +3677,6 @@
   "Updating custom app": "",
   "Updating settings": "",
   "Use Custom ACME Server Directory URI": "",
-  "Use automatic IPv4 network": "",
-  "Use automatic IPv6 network": "",
   "Use compressed WRITE records to make the  stream more efficient. The destination system must also support  compressed WRITE records. See  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",
   "User Execute": "",
   "User passed to <i>camcontrol security -u</i> to unlock SEDs": "",
