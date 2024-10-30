@@ -86,7 +86,7 @@ export class FipsService {
   }
 
   restart(): void {
-    this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+    this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
   }
 
   failover(): void {

@@ -5,6 +5,7 @@ import {
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
@@ -64,6 +65,7 @@ import { WebSocketService } from 'app/services/ws.service';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    RouterLink,
   ],
 })
 export class NfsListComponent implements OnInit {

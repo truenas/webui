@@ -63,7 +63,7 @@ describe('TargetListComponent', () => {
     table = await loader.getHarness(IxTableHarness);
   });
 
-  it('shows acurate page title', () => {
+  it('shows accurate page title', () => {
     const title = spectator.query('h3');
     expect(title).toHaveText('Targets');
   });

@@ -46,7 +46,7 @@ describe('PowerMenuComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialogComponent, {
       width: '400px',
     });
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/reboot'], {
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/restart'], {
       skipLocationChange: true,
       queryParams: { reason: 'reason' },
     });

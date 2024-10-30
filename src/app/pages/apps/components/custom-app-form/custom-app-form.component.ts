@@ -4,20 +4,28 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Role } from 'app/enums/role.enum';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { App, AppCreate } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -27,6 +35,20 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-custom-app-form',
   templateUrl: './custom-app-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    IxModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    IxInputComponent,
+    IxCodeEditorComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+  ],
 })
 export class CustomAppFormComponent implements OnInit {
   protected isNew = signal(true);
@@ -36,6 +58,7 @@ export class CustomAppFormComponent implements OnInit {
     release_name: ['', Validators.required],
     custom_compose_config_string: ['\n\n', Validators.required],
   });
+
   protected isLoading = signal(false);
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 

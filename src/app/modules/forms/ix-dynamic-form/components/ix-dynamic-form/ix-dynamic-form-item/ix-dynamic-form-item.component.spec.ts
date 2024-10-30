@@ -171,7 +171,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxInputComponent).tooltip).toBe(inputSchema.tooltip);
 
       expect(spectator.query('ix-input')).not.toBeHidden();
-      const field = (spectator.component.dynamicForm.controls.input as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.input as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -191,7 +191,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxCodeEditorComponent).required).toBe(textSchema.required);
       expect(spectator.query(IxCodeEditorComponent).tooltip).toBe(textSchema.tooltip);
       expect(spectator.query('ix-code-editor')).not.toBeHidden();
-      const field = (spectator.component.dynamicForm.controls.text as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.text as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -213,7 +213,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxSelectComponent).tooltip).toBe(selectSchema.tooltip);
 
       expect(spectator.query('ix-select')).not.toBeHidden();
-      const field = (spectator.component.dynamicForm.controls.select as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.select as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -234,7 +234,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxCheckboxComponent).tooltip).toBe(checkboxSchema.tooltip);
 
       expect(spectator.query('ix-checkbox')).not.toBeHidden();
-      const field = (spectator.component.dynamicForm.controls.checkbox as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.checkbox as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -255,7 +255,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxIpInputWithNetmaskComponent).tooltip).toBe(ipaddrSchema.tooltip);
 
       expect(spectator.query('ix-ip-input-with-netmask')).not.toBeHidden();
-      const field = (spectator.component.dynamicForm.controls.ipaddr as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.ipaddr as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -276,7 +276,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxExplorerComponent).tooltip).toBe(explorerSchema.tooltip);
 
       expect(spectator.query('ix-explorer')).not.toBeHidden();
-      const field = (spectator.component.dynamicForm.controls.explorer as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.explorer as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -299,7 +299,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query(IxListComponent).label).toBe(listSchema.title);
 
       expect(spectator.query('ix-list')).not.toBeHidden();
-      const field = (spectator.component.dynamicForm.controls.list as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.list as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -322,7 +322,7 @@ describe('IxDynamicFormItemComponent', () => {
         expect(item).not.toBeHidden();
       });
 
-      const field = (spectator.component.dynamicForm.controls.dict as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.dict as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -344,7 +344,7 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
 
-      const field = (spectator.component.dynamicForm.controls.list as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.list as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -368,7 +368,7 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
 
-      const field = (spectator.component.dynamicForm.controls.list as CustomUntypedFormField);
+      const field = spectator.component.dynamicForm.controls.list as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }

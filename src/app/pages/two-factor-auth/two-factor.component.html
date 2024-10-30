@@ -1,0 +1,58 @@
+<mat-card class="card" [ixUiSearch]="searchableElements.elements.twoFactor">
+  <mat-toolbar-row>
+    <h3>{{ 'User Two-Factor Authentication Actions' | translate }}</h3>
+  </mat-toolbar-row>
+
+  @if (isFormLoading || isDataLoading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <mat-card-actions>
+    <div class="status-content">
+      @if (isDataLoading) {
+        <ngx-skeleton-loader class="skeleton-loader"></ngx-skeleton-loader>
+      } @else {
+        <ix-warning
+          [message]="global2FaMsg"
+          [color]="!globalTwoFactorEnabled || !userTwoFactorAuthConfigured ? 'orange' : 'green'"
+        ></ix-warning>
+      }
+      <button
+        mat-button
+        color="primary"
+        type="button"
+        ixTest="renew-secret"
+        [disabled]="isFormLoading"
+        [ixUiSearch]="searchableElements.elements.configure2FaSecret"
+        (click)="renewSecretOrEnable2Fa()"
+      >
+        {{ userTwoFactorAuthConfigured ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}
+      </button>
+    </div>
+  </mat-card-actions>
+
+  @if (userTwoFactorAuthConfigured && authService.userTwoFactorConfig$ | async; as qrInfo) {
+    <mat-card-actions>
+      <ix-qr-viewer
+        [qrInfo]="qrInfo?.provisioning_uri"
+        [showWarning]="globalTwoFactorEnabled && showQrCodeWarning"
+      ></ix-qr-viewer>
+    </mat-card-actions>
+
+    @if (getProvisioningUriSecret(qrInfo?.provisioning_uri); as secret) {
+      <mat-card-actions class="secret-actions">
+        <p>
+          {{ 'If you can\'t use QR code, use this text code instead' | translate }}:
+        </p>
+
+        <div class="secret">
+          <p>
+            {{ secret }}
+          </p>
+
+          <ix-copy-button [text]="secret"></ix-copy-button>
+        </div>
+      </mat-card-actions>
+    }
+  }
+</mat-card>

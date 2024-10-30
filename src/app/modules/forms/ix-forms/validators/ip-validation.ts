@@ -72,7 +72,7 @@ export function ipv4or6OptionalCidrValidator(): ValidatorFn {
     }
 
     if (!isCidr.v4(thisControl.value) && !isCidr.v6(thisControl.value)
-          && !ipRegex({ exact: true, includeBoundaries: true }).test(thisControl.value)) {
+      && !ipRegex({ exact: true, includeBoundaries: true }).test(thisControl.value)) {
       return { ip2: true };
     }
 

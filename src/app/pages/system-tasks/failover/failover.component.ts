@@ -61,18 +61,18 @@ export class FailoverComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Replace URL so that we don't reboot again if page is refreshed.
+    // Replace URL so that we don't restart again if page is refreshed.
     this.location.replaceState('/signin');
     this.matDialog.closeAll();
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
-      error: (error: unknown) => { // error on reboot
+      error: (error: unknown) => { // error on restart
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/signin']);
           });
       },
-      complete: () => { // show reboot screen
+      complete: () => { // show restart screen
         this.store$.dispatch(passiveNodeReplaced());
 
         this.wsManager.prepareShutdown();

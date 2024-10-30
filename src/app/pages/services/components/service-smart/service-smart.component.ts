@@ -115,7 +115,7 @@ export class ServiceSmartComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {

@@ -66,7 +66,7 @@ export class AclEditorSaveControlsComponent implements OnInit {
   protected hasValidateAclCheckbox = toSignal(this.ws.call('directoryservices.get_state').pipe(
     map((state) => {
       return state.activedirectory !== DirectoryServiceState.Disabled
-      || state.ldap !== DirectoryServiceState.Disabled;
+        || state.ldap !== DirectoryServiceState.Disabled;
     }),
   ));
 

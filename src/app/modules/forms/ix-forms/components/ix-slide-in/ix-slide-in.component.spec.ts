@@ -12,6 +12,7 @@ import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in
 @Component({
   selector: 'ix-test',
   template: '<h1>{{text}}</h1>',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestClassComponent {
@@ -30,8 +31,6 @@ describe('IxSlideInComponent', () => {
     component: IxSlideInComponent,
     imports: [
       A11yModule,
-    ],
-    declarations: [
       TestClassComponent,
     ],
     providers: [

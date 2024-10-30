@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
 import { Observable, Subject, of } from 'rxjs';
-import { ValuesType } from 'utility-types';
 import {
   CallResponseOrFactory,
   JobResponseOrFactory,
@@ -14,7 +13,6 @@ import {
   ApiCallParams,
   ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
-import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import {
   ApiJobMethod,
   ApiJobParams,
@@ -28,7 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 /**
  * Better than just expect.anything() because it allows null and undefined.
  */
-const anyArgument = when((_: unknown) => true);
+const anyArgument = when((_: ApiJobParams<ApiJobMethod>) => true);
 
 /**
  * MockWebSocketService can be used to update websocket mocks on the fly.
@@ -57,7 +55,7 @@ export class MockWebSocketService extends WebSocketService {
     this.call = jest.fn();
     this.job = jest.fn();
     this.startJob = jest.fn();
-    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable() as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
+    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable());
     this.callAndSubscribe = jest.fn();
 
     when(this.call).mockImplementation((method: ApiCallMethod, args: unknown) => {
@@ -101,6 +99,7 @@ export class MockWebSocketService extends WebSocketService {
       .calledWith(method, anyArgument as unknown as ApiCallParams<ApiCallMethod>)
       .mockReturnValueOnce(of(response));
   }
+
   mockJob<M extends ApiJobMethod>(method: M, response: JobResponseOrFactory<M>): void {
     const getJobResponse = (params: ApiJobParams<M> = undefined): Job<ApiJobResponse<M>> => {
       let job: Job;

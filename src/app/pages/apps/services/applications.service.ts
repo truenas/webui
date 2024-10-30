@@ -14,7 +14,6 @@ import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface'
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -31,12 +30,12 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 export class ApplicationsService {
   constructor(private ws: WebSocketService, private translate: TranslateService) {}
 
-  getPoolList(): Observable<Pool[]> {
-    return this.ws.call('pool.query');
+  checkIfAppIxVolumeExists(appName: string): Observable<boolean> {
+    return this.ws.call('app.ix_volume.exists', [appName]);
   }
 
-  getInterfaces(): Observable<NetworkInterface[]> {
-    return this.ws.call('interface.query');
+  getPoolList(): Observable<Pool[]> {
+    return this.ws.call('pool.query');
   }
 
   getCatalogAppDetails(name: string, train: string): Observable<CatalogApp> {
@@ -108,11 +107,13 @@ export class ApplicationsService {
     const diff = Math.round((Number(new Date()) - Number(date)) / 1000);
     const day = 60 * 60 * 24;
 
-    if (diff < day) { return this.translate.instant('Last 24 hours'); }
-    if (diff < day * 3) { return this.translate.instant('Last 3 days'); }
-    if (diff < day * 14) { return this.translate.instant('Last week'); }
-    if (diff < day * 60) { return this.translate.instant('Last month'); }
-    return this.translate.instant('Long time ago');
+    switch (true) {
+      case diff < day: return this.translate.instant('Last 24 hours');
+      case diff < day * 3: return this.translate.instant('Last 3 days');
+      case diff < day * 14: return this.translate.instant('Last week');
+      case diff < day * 60: return this.translate.instant('Last month');
+      default: return this.translate.instant('Long time ago');
+    }
   }
 
   private getAppsFetchCall(

@@ -11,11 +11,18 @@ export interface ConfirmOptions {
 }
 
 export interface ConfirmOptionsWithSecondaryCheckbox extends ConfirmOptions {
-  secondaryCheckbox: true;
+  secondaryCheckbox: boolean;
   secondaryCheckboxText?: string;
 }
 
 export interface DialogWithSecondaryCheckboxResult {
   confirmed: boolean;
   secondaryCheckbox: boolean;
+}
+
+export interface FullScreenDialogOptions {
+  title: string;
+  message: string;
+  showClose: boolean;
+  pre: boolean;
 }

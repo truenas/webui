@@ -34,7 +34,7 @@ describe('FipsService', () => {
   });
 
   describe('promptForLocalRestart', () => {
-    it('prompts for local standby and redirects to reboot page', () => {
+    it('prompts for local standby and redirects to restart page', () => {
       spectator.service.promptForRestart().subscribe();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -42,7 +42,7 @@ describe('FipsService', () => {
           buttonText: 'Restart Now',
         }),
       );
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/reboot'], { skipLocationChange: true });
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/restart'], { skipLocationChange: true });
     });
   });
 

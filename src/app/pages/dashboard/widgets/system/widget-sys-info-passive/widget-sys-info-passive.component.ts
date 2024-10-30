@@ -96,6 +96,7 @@ export class WidgetSysInfoPassiveComponent {
     const [, timeValue] = this.localeService.getDateAndTime();
     return `${timeValue.split(':')[0]}:${timeValue.split(':')[1]}`;
   });
+
   isLoaded = computed(() => this.systemInfo());
 
   constructor(

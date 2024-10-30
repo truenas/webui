@@ -42,6 +42,7 @@ jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
         aws_access_key_id: 'KEY1',
         aws_secret_access_key: 'SECRET1',
       })) as BaseAlertServiceForm['getSubmitAttributes'];
+
       form = {
         get valid(): boolean {
           return true;
@@ -61,6 +62,7 @@ jest.mock('./alert-services/ops-genie-service/ops-genie-service.component', () =
       getSubmitAttributes = jest.fn(() => ({
         email: 'me@truenas.com',
       })) as BaseAlertServiceForm['getSubmitAttributes'];
+
       form = {
         get valid(): boolean {
           return true;

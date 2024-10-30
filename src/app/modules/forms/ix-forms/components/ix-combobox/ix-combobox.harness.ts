@@ -11,7 +11,7 @@ export interface IxComboboxHarnessFilters extends AutocompleteHarnessFilters {
 }
 
 export class IxComboboxHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-combobox';
+  static readonly hostSelector = 'ix-combobox';
 
   static with(options: IxComboboxHarnessFilters): HarnessPredicate<IxComboboxHarness> {
     return new HarnessPredicate(IxComboboxHarness, options)

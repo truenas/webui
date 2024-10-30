@@ -78,7 +78,6 @@ describe('VmEditFormComponent', () => {
           Pentium: 'Pentium',
         }),
         mockCall('vm.update'),
-        mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
         mockCall('system.advanced.update_gpu_pci_ids'),
         mockCall('system.advanced.get_gpu_pci_choices', {
           'GeForce [0000:02:00.0]': '0000:02:00.0',

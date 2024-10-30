@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponents, MockDirective } from 'ng-mocks';
-import { ImgFallbackDirective } from 'ngx-img-fallback';
+import { ImgFallbackDirective, ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -75,6 +75,7 @@ describe('AppInfoCardComponent', () => {
       CleanLinkPipe,
       OrNotAvailablePipe,
       AppVersionPipe,
+      ImgFallbackModule,
     ],
     declarations: [
       MockComponents(
@@ -86,6 +87,7 @@ describe('AppInfoCardComponent', () => {
     providers: [
       mockProvider(ApplicationsService, {
         getAppUpgradeSummary: jest.fn(() => of(upgradeSummary)),
+        checkIfAppIxVolumeExists: jest.fn(() => of(true)),
       }),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([]),
@@ -218,7 +220,7 @@ describe('AppInfoCardComponent', () => {
       title: 'Delete',
       message: 'Delete test-user-app-name?',
       secondaryCheckbox: true,
-      secondaryCheckboxText: 'Remove iX Volumes',
+      secondaryCheckboxText: 'Remove iXVolumes',
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'app.delete',

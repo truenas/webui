@@ -7,7 +7,7 @@ import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class'
 import {
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
-  DialogWithSecondaryCheckboxResult,
+  DialogWithSecondaryCheckboxResult, FullScreenDialogOptions,
 } from 'app/interfaces/dialog.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -37,7 +37,7 @@ export class DialogService {
     return this.matDialog.open(ConfirmDialogComponent, {
       disableClose: options.disableClose || false,
       data: options,
-      autoFocus: false,
+      autoFocus: true,
     })
       .afterClosed();
   }
@@ -107,7 +107,7 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  fullScreenDialog(title: string, message: string, showClose = false, pre = false): Observable<boolean> {
+  fullScreenDialog(options: Partial<FullScreenDialogOptions> = {}): Observable<void> {
     const dialogRef = this.matDialog.open(FullScreenDialogComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
@@ -115,10 +115,8 @@ export class DialogService {
       width: '100%',
       panelClass: 'full-screen-modal',
       disableClose: true,
-      data: { showClose, pre },
+      data: options,
     });
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.message = message;
 
     return dialogRef.afterClosed();
   }

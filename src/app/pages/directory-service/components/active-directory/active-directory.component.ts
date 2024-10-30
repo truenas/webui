@@ -100,6 +100,7 @@ export class ActiveDirectoryComponent implements OnInit {
       }));
     }),
   );
+
   readonly kerberosPrincipals$ = this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
   readonly nssOptions$ = this.ws.call('activedirectory.nss_info_choices').pipe(singleArrayToOptions());
 

@@ -1,16 +1,24 @@
-import { KeyValue } from '@angular/common';
+import { KeyValue, KeyValuePipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, TrackByFunction,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
+} from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage, DeleteContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -19,6 +27,19 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './docker-image-delete-dialog.component.html',
   styleUrls: ['./docker-image-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    BulkListItemComponent,
+    IxCheckboxComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TranslateModule,
+    TestDirective,
+    KeyValuePipe,
+    MatDialogTitle,
+    MatDialogClose,
+  ],
 })
 export class DockerImageDeleteDialogComponent {
   readonly requiredRoles = [Role.AppsWrite];
@@ -29,6 +50,7 @@ export class DockerImageDeleteDialogComponent {
     confirm: [false, [Validators.requiredTrue]],
     force: [false],
   });
+
   isJobCompleted = false;
   bulkItems = new Map<string, BulkListItem<ContainerImage>>();
   hasErrors = false;
@@ -36,9 +58,11 @@ export class DockerImageDeleteDialogComponent {
   get successCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Success).length;
   }
+
   get failedCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Error).length;
   }
+
   readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<ContainerImage>>> = (_, entry) => entry.key;
 
   constructor(

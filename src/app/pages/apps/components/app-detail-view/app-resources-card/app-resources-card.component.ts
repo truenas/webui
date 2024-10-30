@@ -1,11 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, OnInit,
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map, throttleTime } from 'rxjs';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -15,6 +19,13 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './app-resources-card.component.html',
   styleUrls: ['./app-resources-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    NgxSkeletonLoaderModule,
+    FileSizePipe,
+    AsyncPipe,
+  ],
 })
 export class AppResourcesCardComponent implements OnInit {
   readonly isLoading = input<boolean>();
@@ -46,7 +57,7 @@ export class AppResourcesCardComponent implements OnInit {
       if (update?.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
-        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+        // eslint-disable-next-line sonarjs/sonar-prefer-optional-chain,@typescript-eslint/prefer-optional-chain
         if (update.zfs && update.zfs.arc_size !== null) {
           memStats.arc_size = update.zfs.arc_size;
         }

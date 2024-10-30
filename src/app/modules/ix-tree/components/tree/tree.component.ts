@@ -19,6 +19,7 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
 // eslint-disable-next-line @angular-eslint/use-component-selector
 @Component({
   template: '',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
@@ -35,6 +36,7 @@ export class Tree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
   override get dataSource(): DataSource<T> | Observable<T[]> | T[] {
     return super.dataSource;
   }
+
   override set dataSource(dataSource$: DataSource<T> | Observable<T[]> | T[]) {
     super.dataSource = dataSource$;
   }

@@ -200,7 +200,7 @@ export class ManualUpdateFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+        this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
       });
   }
 
@@ -223,14 +223,14 @@ export class ManualUpdateFormComponent implements OnInit {
 
     const params: UploadOptions = this.isHaLicensed
       ? {
-        method: 'failover.upgrade',
-        file: files[0],
-      }
+          method: 'failover.upgrade',
+          file: files[0],
+        }
       : {
-        method: 'update.file',
-        params: [{ destination: fileLocation }],
-        file: files[0],
-      };
+          method: 'update.file',
+          params: [{ destination: fileLocation }],
+          file: files[0],
+        };
 
     const job$ = this.upload.uploadAsJob(params);
     this.dialogService
@@ -251,7 +251,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   finishNonHaUpdate(): void {
     if (this.form.value.rebootAfterManualUpdate) {
-      this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+      this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Restart'),
@@ -259,7 +259,7 @@ export class ManualUpdateFormComponent implements OnInit {
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),
-      ).subscribe(() => this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true }));
+      ).subscribe(() => this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true }));
     }
   }
 

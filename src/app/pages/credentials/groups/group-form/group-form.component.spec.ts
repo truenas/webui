@@ -106,7 +106,6 @@ describe('GroupFormComponent', () => {
         'SMB Group': true,
         'Allow all sudo commands': true,
         'Allowed sudo commands with no password': ['ls'],
-        'Allow Duplicate GIDs': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -116,7 +115,6 @@ describe('GroupFormComponent', () => {
         gid: 1234,
         name: 'new',
         smb: true,
-        allow_duplicate_gid: true,
         sudo_commands: [allCommands],
         sudo_commands_nopasswd: ['ls'],
       }]);
@@ -172,7 +170,6 @@ describe('GroupFormComponent', () => {
         {
           name: 'updated',
           smb: true,
-          allow_duplicate_gid: true,
           sudo_commands: [],
           sudo_commands_nopasswd: [],
         },

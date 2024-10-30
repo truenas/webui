@@ -46,11 +46,9 @@ describe('AppNotesCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppNotesCardComponent,
-    declarations: [
-      AppSectionExpandCollapseComponent,
-    ],
     imports: [
       MarkdownModule.forRoot(),
+      AppSectionExpandCollapseComponent,
     ],
   });
 
