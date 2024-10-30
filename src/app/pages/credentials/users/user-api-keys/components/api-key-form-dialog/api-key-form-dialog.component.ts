@@ -23,12 +23,12 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -51,7 +51,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     IxFieldsetComponent,
@@ -96,7 +96,7 @@ export class ApiKeyFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<ApiKeyFormComponent>,
+    private slideInRef: SlideInRef<ApiKeyFormComponent>,
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private loader: AppLoaderService,

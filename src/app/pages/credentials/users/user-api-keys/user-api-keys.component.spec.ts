@@ -9,15 +9,15 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('UserApiKeysComponent', () => {
@@ -72,12 +72,12 @@ describe('UserApiKeysComponent', () => {
         mockCall('api_key.query', apiKeys),
         mockCall('api_key.delete'),
       ]),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
       }),
-      mockProvider(IxSlideInRef, {
+      mockProvider(SlideInRef, {
         slideInClosed$: of(true),
       }),
     ],
@@ -104,7 +104,7 @@ describe('UserApiKeysComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-pencil' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
       data: apiKeys[0],
     });
   });

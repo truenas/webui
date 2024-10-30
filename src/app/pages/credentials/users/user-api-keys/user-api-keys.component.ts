@@ -38,7 +38,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -140,7 +140,7 @@ export class UserApiKeysComponent implements OnInit {
     private dialog: DialogService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
-    private slideIn: IxSlideInService,
+    private slideIn: SlideInService,
   ) { }
 
   ngOnInit(): void {

@@ -11,9 +11,9 @@ import { ApiKey } from 'app/interfaces/api-key.interface';
 import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,7 +34,7 @@ describe('ApiKeyFormComponent', () => {
         mockCall('api_key.update', {} as ApiKey),
       ]),
       mockProvider(MatDialogRef),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DialogService),
       {
         provide: SLIDE_IN_DATA,
@@ -72,7 +72,7 @@ describe('ApiKeyFormComponent', () => {
       name: 'My key',
       username: 'root',
     }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });
@@ -95,7 +95,7 @@ describe('ApiKeyFormComponent', () => {
       name: 'My key',
       reset: false,
     }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });
@@ -120,7 +120,7 @@ describe('ApiKeyFormComponent', () => {
       name: 'My key',
       reset: true,
     }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });
