@@ -1,18 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { VirtualizationRemote } from 'app/enums/virtualization.enum';
-import { Job } from 'app/interfaces/job.interface';
 import {
   CreateVirtualizationInstance,
-  VirtualizationInstance,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -26,7 +22,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-form/select-image-dialog/select-image-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -48,10 +43,8 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./instance-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstanceFormComponent implements OnInit {
+export class InstanceFormComponent {
   protected readonly isLoading = signal(false);
-
-  protected readonly isNew = computed(() => !this.existingInstance());
 
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
@@ -63,39 +56,17 @@ export class InstanceFormComponent implements OnInit {
 
   protected readonly visibleImageName = new FormControl('');
 
-  protected readonly pageTitle = computed(() => {
-    if (this.isLoading()) {
-      return this.translate.instant('Loading...');
-    }
-
-    return this.isNew()
-      ? this.translate.instant('Create Instance')
-      : this.translate.instant('Update {name} Instance', { name: this.existingInstance().name });
-  });
-
-  private readonly existingInstance = signal<VirtualizationInstance | null>(null);
-
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private matDialog: MatDialog,
-    private route: ActivatedRoute,
     private router: Router,
-    private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
   ) {}
-
-  ngOnInit(): void {
-    const instanceId = this.route.snapshot.params['id'] as string;
-
-    if (instanceId) {
-      this.loadInstance(instanceId);
-    }
-  }
 
   protected onBrowseImages(): void {
     this.matDialog
@@ -120,11 +91,9 @@ export class InstanceFormComponent implements OnInit {
   protected onSubmit(): void {
     const values = this.form.value;
 
-    const request$ = this.isNew()
-      ? this.buildCreateRequest(values)
-      : this.buildUpdateRequest(values);
+    const job$ = this.ws.job('virt.instance.create', [values as CreateVirtualizationInstance]);
 
-    this.dialogService.jobDialog(request$, {
+    this.dialogService.jobDialog(job$, {
       title: this.translate.instant('Saving Instance'),
     })
       .afterClosed()
@@ -132,68 +101,11 @@ export class InstanceFormComponent implements OnInit {
       .subscribe({
         next: (newInstance) => {
           this.snackbar.success(this.translate.instant('Instance saved'));
-          this.router.navigate(['/virtualization/instance', newInstance.id]);
+          this.router.navigate(['/virtualization/view', newInstance.id]);
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
-  }
-
-  private loadInstance(instanceId: string): void {
-    this.isLoading.set(true);
-    this.ws.call('virt.instance.query', [[['id', '=', instanceId]]])
-      .pipe(
-        map((instances) => {
-          if (!instances.length) {
-            throw new Error('Virtualization instance not found.');
-          }
-
-          return instances[0];
-        }),
-        finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (instance) => {
-          this.existingInstance.set(instance);
-          this.setFormValues(instance);
-          this.markFieldsAsDisabledOnEdit();
-        },
-        error: (error) => {
-          this.errorHandler.showErrorModal(error);
-          this.router.navigate(['/virtualization']);
-        },
-      });
-  }
-
-  private buildCreateRequest(values: InstanceFormComponent['form']['value']): Observable<Job> {
-    return this.ws.job('virt.instance.create', [values as CreateVirtualizationInstance]);
-  }
-
-  private buildUpdateRequest(values: InstanceFormComponent['form']['value']): Observable<Job> {
-    const payload = { ...values };
-    delete payload.image;
-    delete payload.autostart; // TODO: Temporary because of middleware bug
-    return this.ws.job('virt.instance.update', [this.existingInstance().id, payload]);
-  }
-
-  private setFormValues(instance: VirtualizationInstance): void {
-    this.form.setValue({
-      name: instance.name,
-      cpu: instance.cpu,
-      autostart: instance.autostart,
-      memory: instance.memory,
-      image: 'almalinux/8/cloud', // TODO: Field is not present in the response.
-    });
-  }
-
-  private markFieldsAsDisabledOnEdit(): void {
-    // TODO: Why can't name be edited?
-    const readonlyFields = ['name'] as const;
-
-    readonlyFields.forEach((field) => {
-      this.form.controls[field].disable();
-    });
   }
 }

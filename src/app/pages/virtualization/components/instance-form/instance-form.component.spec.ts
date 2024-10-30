@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
   createRoutingFactory,
@@ -8,7 +9,7 @@ import {
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -21,6 +22,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InstanceFormComponent } from 'app/pages/virtualization/components/instance-form/instance-form.component';
+import {
+  VirtualizationImageWithId,
+} from 'app/pages/virtualization/components/instance-form/select-image-dialog/select-image-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('InstanceFormComponent', () => {
@@ -53,6 +57,14 @@ describe('InstanceFormComponent', () => {
           ),
         })),
       }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of({
+            id: 'almalinux/8/cloud',
+            label: 'Almalinux 8 Cloud',
+          } as VirtualizationImageWithId),
+        })),
+      }),
     ],
   });
 
@@ -62,66 +74,39 @@ describe('InstanceFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  describe('editing existing instance', () => {
-    it('loads existing instance using router params and sets form values', async () => {
-      spectator.setRouteParam('id', 'test');
-      spectator.component.ngOnInit();
+  it('opens SelectImageDialogComponent when Browse image button is pressed and show image label when image is selected', async () => {
+    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse' }));
+    await browseButton.click();
 
-      expect(spectator.inject(WebSocketService).call)
-        .toHaveBeenCalledWith('virt.instance.query', [[['id', '=', 'test']]]);
-
-      expect(await form.getValues()).toEqual({
-        Name: 'test',
-        Autostart: false,
-        CPU: 'Intel Xeon',
-        Image: 'almalinux/8/cloud',
-        'Memory Size': '2 GiB',
-      });
-    });
-
-    it('updates existing instance when form is submitted', async () => {
-      spectator.setRouteParam('id', 'test');
-      spectator.component.ngOnInit();
-
-      await form.fillForm({
-        'Memory Size': '3 GiB',
-      });
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Instance' }));
-      await saveButton.click();
-
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.update', ['test', {
-        cpu: 'Intel Xeon',
-        memory: 3 * GiB,
-      }]);
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/virtualization/instance', 'test']);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
+    expect(await form.getValues()).toMatchObject({
+      Image: 'Almalinux 8 Cloud',
     });
   });
 
-  describe('creating a new instance', () => {
-    it('creates new instance when form is submitted', async () => {
-      await form.fillForm({
-        Name: 'new',
-        Autostart: true,
-        CPU: 'Intel Xeon',
-        'Memory Size': '1 GiB',
-      });
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Instance' }));
-      await saveButton.click();
-
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.create', [{
-        name: 'new',
-        autostart: true,
-        cpu: 'Intel Xeon',
-        image: 'almalinux/8/cloud',
-        memory: GiB,
-      }]);
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/virtualization/instance', 'new']);
+  it('creates new instance when form is submitted', async () => {
+    await form.fillForm({
+      Name: 'new',
+      Autostart: true,
+      'CPU Configuration': '1-2',
+      'Memory Size': '1 GiB',
     });
+
+    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse' }));
+    await browseButton.click();
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Instance' }));
+    await saveButton.click();
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.create', [{
+      name: 'new',
+      autostart: true,
+      cpu: '1-2',
+      image: 'almalinux/8/cloud',
+      memory: GiB,
+    }]);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/virtualization/view', 'new']);
   });
 });
