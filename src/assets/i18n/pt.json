@@ -517,7 +517,7 @@
   "Dataset Quota": "",
   "Dataset Roles": "",
   "Dataset ZFS Encryption": "",
-  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-applications dataset but this is not used for application data storage.": "",
+  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-apps dataset but this is not used for application data storage.": "",
   "Dataset is locked": "",
   "Dataset is shared via NFS": "",
   "Dataset is shared via SMB": "",
