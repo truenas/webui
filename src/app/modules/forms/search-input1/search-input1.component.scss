@@ -58,6 +58,12 @@
 
 .reset-icon {
   .ix-icon {
-    margin-right: 4px;
+    margin-right: 8px;
+    width: 16px;
+
+    &:focus {
+      box-shadow: 0 0 0 1.5px var(--focus-bg) inset;
+      outline-width: 0;
+    }
   }
 }

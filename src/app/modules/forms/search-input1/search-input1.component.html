@@ -18,6 +18,6 @@
     class="reset-icon reset-input"
     (click)="onResetInput();"
   >
-    <ix-icon name="mdi-close-circle"></ix-icon>
+    <ix-icon tabindex="0" name="mdi-close-circle" (keydown.enter)="onResetInput()"></ix-icon>
   </span>
 }
