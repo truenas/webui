@@ -54,6 +54,12 @@ export class UserDetailsRowComponent {
 
   getDetails(user: User): Option[] {
     const details = [
+      {
+        label: this.translate.instant('API Keys'),
+        value: this.translate.instant('{n, plural, =0 {No keys} =1 {# key} other {# keys}}', {
+          n: user?.api_keys?.length,
+        }),
+      },
       { label: this.translate.instant('GID'), value: user?.group?.bsdgrp_gid },
       { label: this.translate.instant('Home Directory'), value: user.home },
       { label: this.translate.instant('Shell'), value: user.shell },

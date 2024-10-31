@@ -42,7 +42,7 @@ export enum EnclosureModel {
   R40 = 'R40',
   R50 = 'R50',
   R50B = 'R50B',
-  // eslint-disable-next-line @shopify/typescript-prefer-pascal-case-enums,@typescript-eslint/naming-convention
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   R50BM = 'R50BM',
 
   X10 = 'X10',

@@ -187,7 +187,7 @@ export class WidgetResourcesService {
     const volumesData = new Map<string, VolumeData>();
 
     datasets.forEach((dataset) => {
-      if (typeof dataset === undefined || !dataset) {
+      if (typeof dataset === 'undefined' || !dataset) {
         return;
       }
 
