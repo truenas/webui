@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  filter, Observable, Subscription, switchMap, tap,
+  filter, Observable, Subscription, switchMap, take, tap,
 } from 'rxjs';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -158,7 +158,7 @@ export class TopbarComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
-    this.checkRebootInfo().pipe(untilDestroyed(this)).subscribe();
+    this.showRebootInfoDialog();
   }
 
   onAlertIndicatorPressed(): void {
@@ -202,6 +202,7 @@ export class TopbarComponent implements OnInit {
 
   private checkRebootInfo(): Observable<unknown> {
     return this.appStore$.select(selectRebootInfo).pipe(
+      take(1),
       tap(() => this.hasRebootRequiredReasons.set(false)),
       filter(({ thisNodeRebootInfo, otherNodeRebootInfo }) => {
         return !!thisNodeRebootInfo?.reboot_required_reasons?.length

@@ -16,7 +16,6 @@ import { SnapshotEffects } from 'app/pages/datasets/modules/snapshots/store/snap
 import { snapshotReducer, SnapshotsState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import { snapshotStateKey } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { EulaEffects } from 'app/store/eula/eula.effects';
-import { HaFipsEffects } from 'app/store/ha-fips/ha-fips.effects';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
 import { haInfoReducer, HaInfoState } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
@@ -82,7 +81,6 @@ export const rootEffects = [
   EulaEffects,
   ServicesEffects,
   NetworkInterfacesEffects,
-  HaFipsEffects,
   RebootInfoEffects,
   JobEffects,
   AlertEffects,

@@ -7,8 +7,6 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { EMPTY, Observable } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -19,7 +17,6 @@ import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { FipsService } from 'app/services/fips.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -60,7 +57,6 @@ export class SystemSecurityFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private chainedRef: ChainedRef<SystemSecurityConfig>,
-    private fips: FipsService,
     private store$: Store<AppState>,
     private dialogService: DialogService,
     private ws: WebSocketService,
@@ -84,7 +80,6 @@ export class SystemSecurityFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        switchMap(() => this.promptForRestart()),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -97,20 +92,5 @@ export class SystemSecurityFormComponent implements OnInit {
   private initSystemSecurityForm(): void {
     this.form.patchValue(this.systemSecurityConfig);
     this.cdr.markForCheck();
-  }
-
-  private promptForRestart(): Observable<unknown> {
-    return this.isHaLicensed$
-      .pipe(
-        take(1),
-        switchMap((isHaLicensed) => {
-          if (isHaLicensed) {
-            // Restart will be handled in response to failover.disabled.reasons event in HaFipsEffects.
-            return EMPTY;
-          }
-
-          return this.fips.promptForRestart();
-        }),
-      );
   }
 }
