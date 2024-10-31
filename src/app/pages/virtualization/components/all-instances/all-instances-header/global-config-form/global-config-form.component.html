@@ -7,13 +7,34 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
+      <ix-fieldset [title]="'Storage' | translate">
         <ix-select
           formControlName="pool"
           [label]="'Pool' | translate"
           [required]="true"
           [options]="poolOptions$"
         ></ix-select>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Network' | translate">
+        <ix-select
+          formControlName="bridge"
+          [label]="'Bridge' | translate"
+          [required]="true"
+          [options]="bridgeOptions$"
+        ></ix-select>
+
+        @if (isAutoBridge) {
+          <ix-ip-input-with-netmask
+            formControlName="v4_network"
+            [label]="'IPv4 Network' | translate"
+          ></ix-ip-input-with-netmask>
+
+          <ix-ip-input-with-netmask
+            formControlName="v6_network"
+            [label]="'IPv6 Network' | translate"
+          ></ix-ip-input-with-netmask>
+        }
       </ix-fieldset>
 
       <ix-form-actions>
