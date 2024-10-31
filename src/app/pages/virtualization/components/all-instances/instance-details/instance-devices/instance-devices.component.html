@@ -4,7 +4,16 @@
       {{ 'Devices' | translate }}
     </h3>
   </mat-card-header>
-  <mat-card-content>
 
+  <mat-card-content>
+    @if (isLoading()) {
+      <mat-spinner [diameter]="40"></mat-spinner>
+    } @else {
+      @for (device of devices(); track device.id) {
+        <div>
+          <p>{{ 'Device Type' | translate }}: {{ device.dev_type | titlecase }}</p>
+        </div>
+      }
+    }
   </mat-card-content>
 </mat-card>

@@ -953,6 +953,7 @@
   "Device Busy": "",
   "Device ID": "",
   "Device Name": "",
+  "Device Type": "",
   "Device added": "",
   "Device names of each disk being edited.": "",
   "Device «{disk}» has been detached.": "",

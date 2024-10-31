@@ -439,6 +439,7 @@
   "Determines the outgoing and incoming traffic ports.<br>  <i>LACP</i> is the recommended protocol if the network switch is capable of  active LACP.<br><i>Failover</i> is the default protocol choice and  should only be used if the network switch does not support active LACP.": "",
   "Device Busy": "",
   "Device Name": "",
+  "Device Type": "",
   "Device added": "",
   "Device names of each disk being edited.": "",
   "Device removed": "",
