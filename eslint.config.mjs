@@ -28,7 +28,15 @@ export default tsEslint.config(
     linterOptions: {
       // TODO: Change to error
       reportUnusedDisableDirectives: "warn"
-    }
+    },
+  },
+  {
+    ignores: [
+      ".angular/",
+      "debian/",
+      "docker/",
+      "tests/"
+    ],
   },
   {
     files: ['**/*.ts'],
