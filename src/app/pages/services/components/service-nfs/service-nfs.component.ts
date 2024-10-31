@@ -9,7 +9,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { finalize, forkJoin, Observable, of, tap } from 'rxjs';
+import {
+  finalize, forkJoin, Observable, of, tap,
+} from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';

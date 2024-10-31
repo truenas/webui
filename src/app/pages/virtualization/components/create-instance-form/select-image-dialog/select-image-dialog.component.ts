@@ -1,7 +1,11 @@
-import { ChangeDetectionStrategy, Component, Inject, signal, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Inject, signal, OnInit,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogModule, MatDialogRef,
+} from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -127,7 +131,9 @@ export class SelectImageDialogComponent implements OnInit {
   }
 
   private filterImages(): void {
-    const { os, variant, release, searchQuery } = this.filterForm.value;
+    const {
+      os, variant, release, searchQuery,
+    } = this.filterForm.value;
 
     const filtered = this.images().filter((image) => {
       const matchesOs = os ? image.os === os : true;

@@ -16,7 +16,9 @@ import {
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
-import { TranslateService, TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler } from '@ngx-translate/core';
+import {
+  TranslateService, TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
+} from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
