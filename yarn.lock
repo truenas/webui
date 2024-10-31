@@ -5214,6 +5214,13 @@ ajv@^8.0.0, ajv@^8.0.1:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
+angular-dual-listbox@~7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/angular-dual-listbox/-/angular-dual-listbox-7.0.0.tgz#78349dc72ffbf88dad43d7c11a5095c80d731989"
+  integrity sha512-R/cUM2Fn+a7gRtmP2VVHcOvHKR6SYN09YNB/qcKR+oH3h+zoXvu7Fe3+NlQzF99DqxkYX/brzXQYOkA/wJXedg==
+  dependencies:
+    tslib "^2.4.0"
+
 angular-eslint@~18.4.0:
   version "18.4.0"
   resolved "https://registry.yarnpkg.com/angular-eslint/-/angular-eslint-18.4.0.tgz#e4e3a55fd85431ac45684eb569e91b5fa9c58c1e"
