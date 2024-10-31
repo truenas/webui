@@ -79,16 +79,6 @@
           "options": {
             "buildTarget": "truenas-scale-ui:build"
           }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html",
-              "scripts/**/*.ts"
-            ]
-          }
         }
       }
     }

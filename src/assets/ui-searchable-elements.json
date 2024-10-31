@@ -201,21 +201,6 @@
   },
   {
     "hierarchy": [
-      "API Keys"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/apikeys"
-    ],
-    "routerLink": null,
-    "anchor": "api-keys",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "Applications",
       "Discover"
     ],
@@ -820,6 +805,51 @@
     ],
     "routerLink": null,
     "anchor": "credentials-kmip",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users",
+      "User API Keys"
+    ],
+    "synonyms": [
+      "Add user linked API Key",
+      "Add API Key"
+    ],
+    "requiredRoles": [
+      "API_KEY_WRITE",
+      "SHARING_ADMIN",
+      "READONLY_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "user-api-keys"
+    ],
+    "routerLink": null,
+    "anchor": "credentials-users-user-api-keys",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users",
+      "User API Keys"
+    ],
+    "synonyms": [
+      "User linked API Keys"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "user-api-keys"
+    ],
+    "routerLink": null,
+    "anchor": "credentials-users-user-api-keys",
     "triggerAnchor": null,
     "section": "ui"
   },

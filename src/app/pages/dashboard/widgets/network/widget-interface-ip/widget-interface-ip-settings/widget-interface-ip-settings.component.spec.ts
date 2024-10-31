@@ -17,7 +17,7 @@ describe('WidgetInterfaceIpSettingsComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       mockProvider(WidgetSettingsRef, {
-        getSettings: jest.fn(() => {}),
+        getSettings: jest.fn(),
         updateValidity: jest.fn(),
         updateSettings: jest.fn(),
       }),
