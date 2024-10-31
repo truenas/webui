@@ -1,0 +1,21 @@
+@import 'mixins/cards';
+@import 'scss-imports/variables';
+
+:host {
+  width: 100%;
+
+  &::ng-deep {
+    .cards .card {
+      @include details-card();
+      margin: 0;
+    }
+  }
+}
+
+.cards {
+  @include details-cards();
+
+  @media (max-width: $breakpoint-tablet) {
+    overflow: hidden;
+  }
+}

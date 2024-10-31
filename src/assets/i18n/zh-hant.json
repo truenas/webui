@@ -495,6 +495,7 @@
   "Backup to Cloud or another TrueNAS via links below": "",
   "Bandwidth": "",
   "Base": "",
+  "Base Image": "",
   "Base64 encoded key for the Azure account.": "",
   "Basic Constraints": "",
   "Basic Constraints Config": "",
