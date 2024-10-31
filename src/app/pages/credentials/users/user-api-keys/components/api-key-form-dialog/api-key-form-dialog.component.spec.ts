@@ -71,6 +71,7 @@ describe('ApiKeyFormComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.create', [{
       name: 'My key',
       username: 'root',
+      expires_at: null,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
@@ -94,6 +95,7 @@ describe('ApiKeyFormComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: false,
+      expires_at: null,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialogComponent, {
@@ -111,6 +113,7 @@ describe('ApiKeyFormComponent', () => {
     await form.fillForm({
       Name: 'My key',
       Reset: true,
+      'Expires at': '2024-12-31T23:59:59.000Z',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -119,6 +122,7 @@ describe('ApiKeyFormComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: true,
+      expires_at: '2024-12-31T23:59:59.000Z',
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {

@@ -22,6 +22,7 @@ export interface CreateApiKeyRequest {
 export type UpdateApiKeyRequest = [number, {
   name: string;
   reset?: boolean;
+  expires_at?: string;
 }];
 
 export interface ApiKeyAllowListItem {
