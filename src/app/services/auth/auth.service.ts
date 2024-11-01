@@ -14,6 +14,7 @@ import {
   switchMap,
   take,
   tap,
+  throwError,
   timer,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
@@ -258,12 +259,13 @@ export class AuthService {
   private getFilteredWebSocketResponse<T>(uuid: string): Observable<T> {
     return this.wsManager.websocket$.pipe(
       filter((data: IncomingWebSocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      map((data: ResultMessage<T>) => {
-        if (data.error) {
-          throw data.error as unknown;
+      switchMap((data: IncomingWebSocketMessage) => {
+        if ('error' in data && data.error) {
+          return throwError(() => data.error);
         }
-        return data.result;
+        return of(data);
       }),
+      map((data: ResultMessage<T>) => data.result),
       take(1),
     );
   }
