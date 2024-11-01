@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'ix-instance-devices',
   templateUrl: './instance-devices.component.html',
+  styleUrls: ['./instance-devices.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -20,5 +21,4 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
 })
 export class InstanceDevicesComponent {
-
 }
