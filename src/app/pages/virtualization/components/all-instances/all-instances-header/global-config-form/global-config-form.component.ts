@@ -12,7 +12,8 @@ import { VirtualizationGlobalConfig, VirtualizationGlobalConfigUpdate } from 'ap
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import {
@@ -35,24 +36,34 @@ import { WebSocketService } from 'app/services/ws.service';
     MatButton,
     MatCard,
     MatCardContent,
+    IxRadioGroupComponent,
     ReactiveFormsModule,
     RequiresRolesDirective,
     TestDirective,
     TranslateModule,
     IxFieldsetComponent,
-    IxInputComponent,
     IxSelectComponent,
+    IxIpInputWithNetmaskComponent,
   ],
 })
 export class GlobalConfigFormComponent {
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected isLoading = signal(false);
+  protected readonly autoBridge = '[AUTO]';
 
   protected readonly form = this.formBuilder.nonNullable.group({
     pool: [''],
+    bridge: [this.autoBridge],
+    v4_network: [null as string],
+    v6_network: [null as string],
   });
 
   protected poolOptions$ = this.ws.call('virt.global.pool_choices').pipe(choicesToOptions());
+  protected bridgeOptions$ = this.ws.call('virt.global.bridge_choices').pipe(choicesToOptions());
+
+  get isAutoBridge(): boolean {
+    return this.form.controls.bridge.value === this.autoBridge;
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -67,19 +78,26 @@ export class GlobalConfigFormComponent {
 
     this.form.setValue({
       pool: currentConfig.pool,
+      bridge: !currentConfig.bridge ? this.autoBridge : currentConfig.bridge,
+      v4_network: currentConfig.v4_network,
+      v6_network: currentConfig.v6_network,
     });
   }
 
   onSubmit(): void {
     this.isLoading.set(true);
 
-    const values = this.form.value as VirtualizationGlobalConfigUpdate;
+    const controls = this.form.controls;
+    const values: VirtualizationGlobalConfigUpdate = {
+      pool: controls.pool.value,
+      bridge: controls.bridge.value,
+      v4_network: (!this.isAutoBridge || !controls.v4_network.value) ? null : controls.v4_network.value,
+      v6_network: (!this.isAutoBridge || !controls.v6_network.value) ? null : controls.v6_network.value,
+    };
 
     this.dialogService.jobDialog(
       this.ws.job('virt.global.update', [values]),
-      {
-        title: this.translate.instant('Updating settings'),
-      },
+      { title: this.translate.instant('Updating settings') },
     )
       .afterClosed()
       .pipe(
