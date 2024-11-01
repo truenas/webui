@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -96,7 +96,7 @@ export const commonImports = [
   FileSizePipe,
   MapValuePipe,
   CastPipe,
-  IxWarningComponent,
+  WarningComponent,
   FakeProgressBarComponent,
   ConfigurationPreviewComponent,
   ExistingConfigurationPreviewComponent,

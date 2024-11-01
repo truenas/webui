@@ -11,7 +11,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { iscsiElements } from 'app/pages/sharing/iscsi/iscsi.elements';
 import { IscsiService } from 'app/services/iscsi.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { AssociatedTargetListComponent } from './associated-target/associated-target-list/associated-target-list.component';
 import { AuthorizedAccessListComponent } from './authorized-access/authorized-access-list/authorized-access-list.component';
 import { ExtentListComponent } from './extent/extent-list/extent-list.component';
@@ -86,7 +86,7 @@ export class IscsiComponent {
 
   constructor(
     protected translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
   ) {}
 
   gotoWizard(): void {

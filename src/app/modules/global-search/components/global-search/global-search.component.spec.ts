@@ -20,8 +20,8 @@ import * as focusHelper from 'app/modules/global-search/helpers/focus-helper';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SidenavService } from 'app/services/sidenav.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
@@ -55,7 +55,7 @@ describe('GlobalSearchComponent', () => {
         search: jest.fn().mockReturnValue(of(mockedSearchResults)),
         selectionChanged$: of(),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         closeAll: jest.fn(),
       }),
       mockProvider(SidenavService, {
@@ -176,7 +176,7 @@ describe('GlobalSearchComponent', () => {
   }));
 
   it('should close all backdrops', () => {
-    const slideInService = spectator.inject(IxSlideInService);
+    const slideInService = spectator.inject(SlideInService);
     const sidenavService = spectator.inject(SidenavService);
     const dialogService = spectator.inject(DialogService);
 

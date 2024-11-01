@@ -19,7 +19,7 @@ import {
   DeleteUserDialogComponent,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -45,7 +45,7 @@ export class UserDetailsRowComponent {
 
   constructor(
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
     private urlOptions: UrlOptionsService,
@@ -54,6 +54,12 @@ export class UserDetailsRowComponent {
 
   getDetails(user: User): Option[] {
     const details = [
+      {
+        label: this.translate.instant('API Keys'),
+        value: this.translate.instant('{n, plural, =0 {No keys} =1 {# key} other {# keys}}', {
+          n: user?.api_keys?.length,
+        }),
+      },
       { label: this.translate.instant('GID'), value: user?.group?.bsdgrp_gid },
       { label: this.translate.instant('Home Directory'), value: user.home },
       { label: this.translate.instant('Shell'), value: user.shell },

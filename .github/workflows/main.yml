@@ -48,7 +48,7 @@ jobs:
         uses: ./.github/actions/prepare
       - name: Generate default environment file
         run: yarn run check-env
-      - name: Build
+      - name: Run linter
         run: yarn lint
 
   test:

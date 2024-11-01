@@ -1,0 +1,73 @@
+<ix-page-header [pageTitle]="'Create Instance' | translate"></ix-page-header>
+
+<div class="container">
+  <form class="form" [formGroup]="form" (submit)="onSubmit()">
+    <ix-fieldset [title]="'Instance Configuration' | translate">
+      <ix-input
+        formControlName="name"
+        [label]="'Name' | translate"
+        [required]="true"
+      ></ix-input>
+
+      <ix-checkbox
+        formControlName="autostart"
+        [label]="'Autostart' | translate"
+      ></ix-checkbox>
+
+      <div class="image-field">
+        <ix-input
+          class="input"
+          [formControl]="visibleImageName"
+          [readonly]="true"
+          [label]="'Image' | translate"
+          [required]="true"
+        ></ix-input>
+
+        <button
+          mat-button
+          ixTest="browse-images"
+          type="button"
+          (click)="onBrowseImages()"
+        >{{ 'Browse' | translate }}</button>
+      </div>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'CPU & Memory' | translate">
+      <ix-input
+        formControlName="cpu"
+        [required]="true"
+        [label]="'CPU Configuration' | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="memory"
+        [required]="true"
+        [label]="'Memory Size' | translate"
+        [format]="formatter.memorySizeFormatting"
+        [parse]="formatter.memorySizeParsing"
+      ></ix-input>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Network' | translate">
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Other Devices' | translate">
+    </ix-fieldset>
+
+    <div class="actions">
+      <button
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="save"
+        [disabled]="form.invalid || isLoading()"
+      >
+        {{ 'Save Instance' | translate }}
+      </button>
+    </div>
+  </form>
+
+  <div class="glossary">
+
+  </div>
+</div>

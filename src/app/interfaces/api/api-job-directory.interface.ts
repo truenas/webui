@@ -42,6 +42,8 @@ import {
   PoolReplaceParams,
   UpdatePool,
 } from 'app/interfaces/pool.interface';
+import { RebootParams } from 'app/interfaces/reboot.interface';
+import { ShutdownParams } from 'app/interfaces/shutdown.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
@@ -173,8 +175,8 @@ export interface ApiJobDirectory {
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
 
   // System
-  'system.reboot': { params: { delay?: number; reason?: string }; response: void };
-  'system.shutdown': { params: { delay?: number; reason?: string }; response: void };
+  'system.reboot': { params: RebootParams; response: void };
+  'system.shutdown': { params: ShutdownParams; response: void };
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
 
   // SystemDataset
@@ -198,12 +200,12 @@ export interface ApiJobDirectory {
 
   // Virt
   'virt.instance.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
-  'virt.instance.delete ': { params: [instanceId: number]; response: boolean };
+  'virt.instance.delete ': { params: [instanceId: string]; response: boolean };
   'virt.instance.restart': { params: VirtualizationStopParams; response: boolean };
-  'virt.instance.start': { params: [instanceId: number]; response: boolean };
-  'virt.instance.stop': { params: [instanceId: number]; response: boolean };
+  'virt.instance.start': { params: [instanceId: string]; response: boolean };
+  'virt.instance.stop': { params: [instanceId: string]; response: boolean };
   'virt.instance.update': {
-    params: [instanceId: number, update: UpdateVirtualizationInstance];
+    params: [instanceId: string, update: UpdateVirtualizationInstance];
     response: VirtualizationInstance;
   };
 

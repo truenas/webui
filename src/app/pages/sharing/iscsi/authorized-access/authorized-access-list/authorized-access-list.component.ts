@@ -31,7 +31,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -131,7 +131,7 @@ export class AuthorizedAccessListComponent implements OnInit {
     private dialogService: DialogService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private iscsiService: IscsiService,

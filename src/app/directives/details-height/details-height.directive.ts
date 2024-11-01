@@ -20,7 +20,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   selector: '[ixDetailsHeight]',
   standalone: true,
 })
-export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
+export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
   private hasConsoleFooter = false;
   private headerHeight = headerHeight;
   private footerHeight = footerHeight;

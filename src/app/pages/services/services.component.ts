@@ -43,8 +43,8 @@ import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/s
 import { servicesElements } from 'app/pages/services/services.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ServicesService } from 'app/services/services.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { serviceChanged } from 'app/store/services/services.actions';
@@ -142,7 +142,7 @@ export class ServicesComponent implements OnInit {
     private router: Router,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private store$: Store<ServicesState>,
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,

@@ -13,8 +13,8 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { WebSocketService } from 'app/services/ws.service';
 import { ImportPoolComponent } from './import-pool.component';
 
@@ -56,7 +56,7 @@ describe('ImportPoolComponent', () => {
           encryption_root: '/mnt/pewl',
         } as Dataset]),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({

@@ -86,7 +86,7 @@ export class AlertEffects {
           this.store$.dispatch(alertChanged({ alert: { id, dismissed: false } as Alert }));
           return of(EMPTY);
         }),
-      ); ;
+      );
     }),
   ), { dispatch: false });
 

@@ -34,8 +34,8 @@ import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
+import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetGroupControlsComponent } from './widget-group-controls/widget-group-controls.component';
@@ -106,7 +106,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private dashboardStore: DashboardStore,
-    private slideIn: IxChainedSlideInService,
+    private slideIn: ChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
