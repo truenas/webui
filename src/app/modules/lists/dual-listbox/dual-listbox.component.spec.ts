@@ -39,9 +39,9 @@ describe('DualListBoxComponent', () => {
 
     spectator.click(listItemElement);
 
-    expect(selectItemSpy).toHaveBeenCalledWith(
-      spectator.component.available.pick, spectator.component.available.sift[0],
-    );
+    const available = spectator.component.available;
+
+    expect(selectItemSpy).toHaveBeenCalledWith(available.pick, available.sift[0]);
   });
 
   it('should move selected items from available to confirmed and from confirmed to available', () => {
