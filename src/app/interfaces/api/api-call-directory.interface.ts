@@ -452,14 +452,6 @@ export interface ApiCallDirectory {
   'failover.upgrade_pending': { params: void; response: boolean };
 
   // Filesystem
-  'filesystem.acl_is_trivial': {
-    params: [string];
-    /**
-     * Returns True if the ACL can be fully expressed as a file mode without losing any access rules,
-     * or if the path does not support NFSv4 ACLs (for example a path on a tmpfs filesystem).
-     */
-    response: boolean;
-  };
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
   'filesystem.acltemplate.create': { params: [AclTemplateCreateParams]; response: AclTemplateCreateResponse };
   'filesystem.acltemplate.delete': { params: [id: number]; response: boolean };
