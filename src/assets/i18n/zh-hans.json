@@ -541,6 +541,7 @@
   "Highlighted path is {node}. Press 'Space' to {expand}. Press 'Enter' to {select}.": "",
   "Home Widgets": "",
   "Host Mounts": "",
+  "Host ports are listed on the left and associated container ports are on the right.    0.0.0.0 on the host side represents binding to any IP address on the host.": "",
   "Hostname Database": "",
   "Hostname Database:": "",
   "Hostname – Active": "",
