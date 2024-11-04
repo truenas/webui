@@ -1329,7 +1329,7 @@
   "Dataset Space Management": "Bainistíocht Spáis Tacar Sonraí",
   "Dataset Write": "Tacar Sonraí Scríobh",
   "Dataset ZFS Encryption": "Criptiú tacar sonraí ZFS",
-  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-applications dataset but this is not used for application data storage.": "Tacar sonraí le húsáid ag feidhmchlár. Má tá sé ar intinn agat feidhmchláir coimeádáin a imscaradh, cruthaíonn an córas an tacar sonraí ix-apps go huathoibríoch ach ní úsáidtear é seo chun sonraí feidhmchláir a stóráil.",
+  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-apps dataset but this is not used for application data storage.": "Tacar sonraí le húsáid ag feidhmchlár. Má tá sé ar intinn agat feidhmchláir coimeádáin a imscaradh, cruthaíonn an córas an tacar sonraí ix-apps go huathoibríoch ach ní úsáidtear é seo chun sonraí feidhmchláir a stóráil.",
   "Dataset has no mountpoint": "Níl aon phointe sléibhe ag an tacar sonraí",
   "Dataset is shared via NFS": "Roinntear an tacar sonraí trí NFS",
   "Dataset is shared via SMB": "Roinntear an tacar sonraí trí SMB",
