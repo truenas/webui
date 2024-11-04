@@ -17,6 +17,7 @@ export enum EnclosureModel {
 
   H10 = 'H10',
   H20 = 'H20',
+  H30 = 'H30',
 
   M30 = 'M30',
   M40 = 'M40',
