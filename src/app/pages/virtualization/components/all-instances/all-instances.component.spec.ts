@@ -8,6 +8,7 @@ import {
   InstanceDetailsComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-details.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
+import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 describe('AllInstancesComponent', () => {
   let spectator: Spectator<AllInstancesComponent>;
@@ -16,6 +17,10 @@ describe('AllInstancesComponent', () => {
     providers: [
       mockProvider(VirtualizationConfigStore, {
         initialize: jest.fn(),
+      }),
+      mockProvider(VirtualizationInstancesStore, {
+        initialize: jest.fn(),
+        selectedInstance: jest.fn(),
       }),
     ],
     declarations: [
@@ -32,5 +37,6 @@ describe('AllInstancesComponent', () => {
 
   it('initializes config store on init', () => {
     expect(spectator.inject(VirtualizationConfigStore).initialize).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
   });
 });
