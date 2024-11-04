@@ -213,9 +213,7 @@ export class NfsListComponent implements OnInit {
   }
 
   private onChangeEnabledState(row: NfsShare): void {
-    const param = 'enabled';
-
-    this.ws.call('sharing.nfs.update', [row.id, { [param]: !row[param] }]).pipe(
+    this.ws.call('sharing.nfs.update', [row.id, { enabled: !row.enabled }]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
