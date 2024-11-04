@@ -28,6 +28,7 @@
   "Address Pools": "",
   "Admins": "",
   "Aliases": "",
+  "All Users": "",
   "Allow clients to access the TrueNAS server if they are members of domains that have a trust relationship with the domain to which TrueNAS is joined. This requires valid idmap backend configuration for all trusted domains.": "Autorisez les clients à accéder au serveur TrueNAS s'ils sont membres de domaines qui ont une relation de confiance avec le domaine auquel TrueNAS est joint. Cela nécessite une configuration backend idmap valide pour tous les domaines approuvés.",
   "Always Chroot": "",
   "An update is already applied. Please restart the system.": "Une mise à jour est déjà appliquée. Veuillez redémarrer le système.",
