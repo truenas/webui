@@ -1,4 +1,6 @@
-import { CdkVirtualScrollViewport, CdkVirtualScrollableWindow, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from '@angular/cdk/scrolling';
+import {
+  CdkVirtualScrollViewport, CdkVirtualScrollableWindow, CdkFixedSizeVirtualScroll, CdkVirtualForOf,
+} from '@angular/cdk/scrolling';
 import {
   CdkTree, CdkTreeNodeOutletContext,
 } from '@angular/cdk/tree';

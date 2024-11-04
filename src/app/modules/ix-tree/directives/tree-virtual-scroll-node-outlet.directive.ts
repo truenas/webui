@@ -58,7 +58,7 @@ export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
 
   private updateExistingContext(ctx: CdkTreeNodeOutletContext<T>): void {
     for (const propName of Object.keys(ctx)) {
-      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @stylistic/ts/max-len
       (this._viewRef.context as Record<string, unknown>)[propName] = (this.data.context as unknown as Record<string, unknown>)[propName];
     }
   }

@@ -1,0 +1,19 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'General Info' | translate }}
+    </h3>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (instance(); as instance) {
+      <p>{{ 'Name' | translate }}: {{ instance.name || '-' }}</p>
+      <p>{{ 'Status' | translate }}: {{ (instance.status | titlecase) | translate }}</p>
+      <p>{{ 'Autostart' | translate }}: {{ instance.autostart | yesNo }}</p>
+      <p>{{ 'Base Image' | translate }}: {{ instance.image.description || '-' }}</p>
+      <p>{{ 'CPU' | translate }}: {{ instance.cpu || '-' }}</p>
+      <p>{{ 'Memory' | translate }}: {{ formatter.memorySizeFormatting(instance.memory) || '-' }}</p>
+    }
+  </mat-card-content>
+</mat-card>
+

@@ -117,10 +117,13 @@ export interface VirtualizationUsb {
 }
 
 export interface VirtualizationImage {
+  architecture: string;
+  description: string;
   label: string;
   os: string;
   release: string;
-  arch: string;
+  serial: string;
+  type: string;
   variant: string;
 }
 
