@@ -2189,7 +2189,7 @@
   "Dataset Rollback From Snapshot": "从快照回滚数据集",
   "Dataset Space Management": "数据集空间管理",
   "Dataset Write": "数据集写入",
-  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-applications dataset but this is not used for application data storage.": "供应用程序使用的数据集。如果您计划部署容器应用程序，系统会自动创建 ix-applications 数据集，但这不用于应用程序数据存储。",
+  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-apps dataset but this is not used for application data storage.": "供应用程序使用的数据集。如果您计划部署容器应用程序，系统会自动创建 ix-apps 数据集，但这不用于应用程序数据存储。",
   "Dataset has no mountpoint": "数据集没有挂载点",
   "Dataset locked": "数据集已锁定",
   "Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create anymore nested datasets under this path.": "数据集名称是通过在父路径后面加上您输入的名称来设置的。数据集名称的最大允许长度为 200。此数据集的父路径已超过该限制。无法再在此路径下创建嵌套数据集。",

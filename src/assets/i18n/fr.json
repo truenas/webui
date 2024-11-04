@@ -1928,7 +1928,7 @@
   "Dataset Quota": "Quota dataset",
   "Dataset Rollback From Snapshot": "Restauration du dataset à partir d'un instantané",
   "Dataset Space Management": "Gestion de l'espace du dataset",
-  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-applications dataset but this is not used for application data storage.": "Dataset destiné à être utilisé par une application. Si vous envisagez de déployer des applications conteneurisées, le système crée automatiquement le dataset ix-applications, mais celui-ci n'est pas utilisé pour le stockage des données d'application.",
+  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-apps dataset but this is not used for application data storage.": "Dataset destiné à être utilisé par une application. Si vous envisagez de déployer des applications conteneurisées, le système crée automatiquement le dataset ix-apps, mais celui-ci n'est pas utilisé pour le stockage des données d'application.",
   "Dataset has no mountpoint": "Le dataset n'a pas de point de montage",
   "Dataset is shared via NFS": "Le dataset est partagé via NFS",
   "Dataset is shared via SMB": "Le dataset est partagé via SMB",
