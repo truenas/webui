@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  filter, Observable, Subscription, switchMap, take, tap,
+  filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -92,6 +92,7 @@ export class TopbarComponent implements OnInit {
   protected searchableElements = toolBarElements;
 
   readonly hasRebootRequiredReasons = signal(false);
+  readonly shownDialog = signal(false);
 
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
@@ -193,7 +194,9 @@ export class TopbarComponent implements OnInit {
   }
 
   showRebootInfoDialog(): void {
-    this.checkRebootInfo().pipe(untilDestroyed(this)).subscribe();
+    this.checkRebootInfo().pipe(untilDestroyed(this)).subscribe(() => {
+      this.shownDialog.set(false);
+    });
   }
 
   onFeedbackIndicatorPressed(): void {
@@ -202,13 +205,14 @@ export class TopbarComponent implements OnInit {
 
   private checkRebootInfo(): Observable<unknown> {
     return this.appStore$.select(selectRebootInfo).pipe(
-      take(1),
       tap(() => this.hasRebootRequiredReasons.set(false)),
       filter(({ thisNodeRebootInfo, otherNodeRebootInfo }) => {
         return !!thisNodeRebootInfo?.reboot_required_reasons?.length
           || !!otherNodeRebootInfo?.reboot_required_reasons?.length;
       }),
       tap(() => this.hasRebootRequiredReasons.set(true)),
+      filter(() => !this.shownDialog()),
+      tap(() => this.shownDialog.set(true)),
       switchMap(() => this.matDialog.open(RebootRequiredDialogComponent, { minWidth: '400px' }).afterClosed()),
     );
   }
