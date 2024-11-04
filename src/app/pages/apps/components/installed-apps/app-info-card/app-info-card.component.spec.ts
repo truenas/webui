@@ -264,6 +264,28 @@ describe('AppInfoCardComponent', () => {
     expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');
   });
 
+  it('opens the correct URL when using an IPv6 address', async () => {
+    setupTest({
+      ...fakeApp,
+      portals: {
+        'Web UI': 'http://[2600:1700:1234::224]:8000/ui',
+        'Admin Panel': 'http://[2600:1700:1234::224]:8000/admin',
+      },
+    });
+
+    const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ ancestor: '.portals' }));
+
+    expect(buttons).toHaveLength(2);
+    expect(await buttons[0].getText()).toBe('Admin Panel');
+    expect(await buttons[1].getText()).toBe('Web UI');
+
+    await buttons[0].click();
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://[2600:1700:1234::224]:8000/admin');
+
+    await buttons[1].click();
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('http://[2600:1700:1234::224]:8000/ui');
+  });
+
   it('opens rollback app dialog when Roll Back button is pressed', async () => {
     setupTest(fakeApp);
 

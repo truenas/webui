@@ -106,13 +106,18 @@ export class AppInfoCardComponent {
   ) {}
 
   openPortalLink(app: App, name = 'web_portal'): void {
-    const portalUrl = new URL(app.portals[name]);
+    try {
+      const formattedUrlString = this.formatIpV6Url(app.portals[name]);
+      const portalUrl = new URL(formattedUrlString);
 
-    if (portalUrl.hostname === '0.0.0.0') {
-      portalUrl.hostname = this.window.location.hostname;
+      if (portalUrl.hostname === '0.0.0.0') {
+        portalUrl.hostname = this.window.location.hostname;
+      }
+
+      this.redirect.openWindow(portalUrl.href);
+    } catch (error) {
+      console.error('Failed to construct URL', error);
     }
-
-    this.redirect.openWindow(portalUrl.href);
   }
 
   updateButtonPressed(): void {
@@ -206,5 +211,23 @@ export class AppInfoCardComponent {
       tap((versions) => this.isRollbackPossible.set(versions.length > 0)),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  private formatIpV6Url(urlString: string): string {
+    try {
+      const url = new URL(urlString);
+
+      // hostname is an IPv6 address without brackets
+      if (/^[\dA-Fa-f:]+:[\dA-Fa-f:]+$/.test(url.hostname)) {
+        return urlString.replace(/(http:\/\/|https:\/\/)([0-9a-fA-F:]+)(:\d+)?/, (_, protocol, address, port) => {
+          return `${protocol}[${address}]${port || ''}`;
+        });
+      }
+
+      return urlString;
+    } catch {
+      console.error(`Invalid URL format: ${urlString}`);
+      return urlString;
+    }
   }
 }
