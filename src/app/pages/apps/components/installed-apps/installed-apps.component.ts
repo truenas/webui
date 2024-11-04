@@ -329,6 +329,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.FirstUse);
           this.cdr.markForCheck();
+          this.redirectToInstalledAppsWithoutDetails();
         }
         return !!pool;
       }),
@@ -337,6 +338,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.Errors);
           this.cdr.markForCheck();
+          this.redirectToInstalledAppsWithoutDetails();
         }
         return !!dockerStarted;
       }),
@@ -345,6 +347,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.NoPageData);
           this.cdr.markForCheck();
+          this.redirectToInstalledAppsWithoutDetails();
         }
         return !!apps.length;
       }),
@@ -491,7 +494,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   private handleDeletionResult(job: Job<CoreBulkResponse[]>): void {
     if (!this.dataSource.length) {
-      this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+      this.redirectToInstalledAppsWithoutDetails();
     }
 
     this.dialogService.closeAllDialogs();
@@ -539,6 +542,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   private resetSearch(): void {
     this.onSearch('');
+  }
+
+  private redirectToInstalledAppsWithoutDetails(): void {
+    this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
   }
 
   private redirectToAvailableApps(): void {

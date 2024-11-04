@@ -350,10 +350,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       return;
     }
     this.ws
-      .call('filesystem.acl_is_trivial', [path])
+      .call('filesystem.stat', [path])
       .pipe(untilDestroyed(this))
-      .subscribe((aclIsTrivial) => {
-        if (!aclIsTrivial) {
+      .subscribe((stat) => {
+        if (stat.acl) {
           this.wasStripAclWarningShown = true;
           this.showStripAclWarning();
         }
