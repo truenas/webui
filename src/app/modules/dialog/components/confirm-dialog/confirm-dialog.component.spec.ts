@@ -165,4 +165,36 @@ describe('ConfirmDialogComponent', () => {
       });
     });
   });
+
+  describe('secondary checkbox present, but false', () => {
+    const secondaryCheckboxOptions = {
+      ...options,
+      secondaryCheckbox: false,
+      secondaryCheckboxText: 'Secondary checkbox',
+    } as ConfirmOptionsWithSecondaryCheckbox;
+
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: secondaryCheckboxOptions,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('closes dialog with an object even when `secondaryCheckbox` is false, but present in options', async () => {
+      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: options.confirmationCheckboxText }));
+      await checkbox.check();
+
+      const button = await loader.getHarness(MatButtonHarness.with({ text: options.buttonText }));
+      await button.click();
+      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+        confirmed: true,
+        secondaryCheckbox: false,
+      });
+    });
+  });
 });

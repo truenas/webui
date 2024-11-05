@@ -171,7 +171,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   applyFilters(): void {
     this.appsFilterStore.applyFilters({
       sort: this.form.value.sort || null,
-      categories: (this.form.value.categories || this.appsCategories),
+      categories: this.form.value.categories || this.appsCategories,
     });
   }
 
