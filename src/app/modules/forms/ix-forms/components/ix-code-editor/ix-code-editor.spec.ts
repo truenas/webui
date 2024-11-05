@@ -81,7 +81,7 @@ describe('IxCodeEditor', () => {
       formControl.setValue('new value');
       spectator.detectComponentChanges();
 
-      expect((spectator.component.editorView).state.doc.toString()).toBe('new value');
+      expect(spectator.component.editorView.state.doc.toString()).toBe('new value');
     });
   });
 });

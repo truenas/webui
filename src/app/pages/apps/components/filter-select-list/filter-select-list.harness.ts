@@ -26,7 +26,7 @@ export class FilterSelectListHarness extends ComponentHarness implements IxFormC
     const checkedValues: string[] = [];
 
     for (const [idx, item] of items.entries()) {
-      if ((await icons[idx].getName()) === 'check_circle') {
+      if (await icons[idx].getName() === 'check_circle') {
         checkedValues.push(await item.text());
       }
     }

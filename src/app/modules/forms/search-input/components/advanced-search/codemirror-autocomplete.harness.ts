@@ -15,7 +15,7 @@ export class CodemirrorAutocompleteHarness extends ComponentHarness {
     let selectedItem = null;
 
     for (const item of items) {
-      if ((await item.text()) === text) {
+      if (await item.text() === text) {
         selectedItem = item;
         break;
       }

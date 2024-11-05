@@ -61,7 +61,7 @@ export class SmbOpenFilesComponent implements OnChanges {
     }),
     textColumn({ title: this.translate.instant('Opened at'), propertyName: 'opened_at' }),
   ], {
-    uniqueRowTag: (row) => 'smb-open-file-' + row.username + '-' + row.uid,
+    uniqueRowTag: (row) => `smb-open-file-${row.username}-${row.uid}`,
     ariaLabels: (row) => [row.username, this.translate.instant('SMB Open File')],
   });
 

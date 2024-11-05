@@ -37,7 +37,7 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
 
   async selectSuggestionValue(value: string): Promise<void> {
     await this.setValue([value]);
-    const harness = (await this.getAutoCompleteHarness());
+    const harness = await this.getAutoCompleteHarness();
 
     await harness.focus();
     await harness.selectOption({ text: value });
