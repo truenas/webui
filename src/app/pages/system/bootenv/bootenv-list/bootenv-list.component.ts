@@ -122,7 +122,7 @@ export class BootEnvironmentListComponent implements OnInit {
             return this.translate.instant('Now');
           case BootEnvironmentActive.Restart:
             return this.translate.instant('Restart');
-          case BootEnvironmentActive.NowReboot:
+          case BootEnvironmentActive.NowRestart:
             return this.translate.instant('Now/Restart');
           default:
             return row.active;
@@ -149,7 +149,9 @@ export class BootEnvironmentListComponent implements OnInit {
           iconName: iconMarker('mdi-check-decagram'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Activate'),
-          hidden: (row) => of(row.active.includes('R')),
+          hidden: (row) => {
+            return of([BootEnvironmentActive.NowRestart, BootEnvironmentActive.Restart].includes(row.active));
+          },
           onClick: (row) => this.doActivate(row),
         },
         {
