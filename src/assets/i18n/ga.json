@@ -54,6 +54,7 @@
   "For performance reasons SHA512 is recommended over SHA256 for datasets with deduplication enabled.": "",
   "General Settings": "",
   "Go to Jobs Page": "",
+  "Host ports are listed on the left and associated container ports are on the right.    0.0.0.0 on the host side represents binding to any IP address on the host.": "",
   "If URL above fails to open, it may be due to the unavailability of Basic HTTP authentication in your browser.": "",
   "Incoming / Outgoing network traffic": "",
   "Increase logging verbosity related to the active directory service in /var/log/middlewared.log": "",
