@@ -11,6 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { App, AppContainerState } from 'app/interfaces/app.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
 import {
   VolumeMountsDialogComponent,
@@ -18,7 +19,7 @@ import {
 import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
 import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 
-describe('AppContainersCardComponent', () => {
+describe('AppWorkloadsCardComponent', () => {
   let spectator: Spectator<AppWorkloadsCardComponent>;
   let loader: HarnessLoader;
 
@@ -74,6 +75,7 @@ describe('AppContainersCardComponent', () => {
     ],
     imports: [
       MapValuePipe,
+      TooltipComponent,
     ],
     providers: [
       mockProvider(MatDialog, {
