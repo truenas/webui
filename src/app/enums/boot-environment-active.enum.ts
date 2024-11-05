@@ -1,7 +1,7 @@
 export enum BootEnvironmentActive {
   Now = 'N',
-  Restart = 'R',
-  NowRestart = 'NR',
+  Reboot = 'R',
+  NowReboot = 'NR',
   Dash = '-',
   Empty = '',
 }
