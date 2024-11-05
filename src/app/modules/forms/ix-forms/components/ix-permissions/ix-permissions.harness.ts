@@ -32,45 +32,45 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
   }
 
   async getValue(): Promise<string> {
-    const permissions = (await this.getMatCheckboxHarnesses());
+    const permissions = await this.getMatCheckboxHarnesses();
     let owner = 0;
     let grp = 0;
     let other = 0;
 
-    if ((await permissions[0].isChecked())) {
+    if (await permissions[0].isChecked()) {
       owner += 4;
     }
 
-    if ((await permissions[1].isChecked())) {
+    if (await permissions[1].isChecked()) {
       owner += 2;
     }
 
-    if ((await permissions[2].isChecked())) {
+    if (await permissions[2].isChecked()) {
       owner += 1;
     }
 
-    if ((await permissions[3].isChecked())) {
+    if (await permissions[3].isChecked()) {
       grp += 4;
     }
 
-    if ((await permissions[4].isChecked())) {
+    if (await permissions[4].isChecked()) {
       grp += 2;
     }
 
-    if ((await permissions[5].isChecked())) {
+    if (await permissions[5].isChecked()) {
       grp += 1;
     }
 
     if (permissions.length > 6) {
-      if ((await permissions[6].isChecked())) {
+      if (await permissions[6].isChecked()) {
         other += 4;
       }
 
-      if ((await permissions[7].isChecked())) {
+      if (await permissions[7].isChecked()) {
         other += 2;
       }
 
-      if ((await permissions[8].isChecked())) {
+      if (await permissions[8].isChecked()) {
         other += 1;
       }
     }
@@ -79,7 +79,7 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
   }
 
   async setValue(value: string): Promise<void> {
-    const checkboxes = (await this.getMatCheckboxHarnesses());
+    const checkboxes = await this.getMatCheckboxHarnesses();
 
     const permissions = parseMode(value);
     return Promise.all([

@@ -6,6 +6,7 @@
 
   .details-item .label {
     align-self: flex-start;
+    margin-right: 10px;
   }
 
   .details-item .value {
@@ -17,10 +18,11 @@
 
 .with-tooltip {
   cursor: help;
-  text-decoration: underline;
-  text-decoration-color: var(--alt-fg1);
-  text-decoration-style: dotted;
-  text-underline-offset: 2px;
+}
+
+.ports-tooltip {
+  margin-left: -2px;
+  vertical-align: -3px;
 }
 
 .separator {

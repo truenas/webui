@@ -123,7 +123,7 @@ export class NfsSessionListComponent implements OnInit {
       hidden: true,
     }),
   ], {
-    uniqueRowTag: (row) => 'nfs4-session-' + row.address + '-' + row.clientid,
+    uniqueRowTag: (row) => `nfs4-session-${row.address}-${row.clientid}`,
     ariaLabels: (row) => [row.name, this.translate.instant('NFS4 Session')],
   });
 

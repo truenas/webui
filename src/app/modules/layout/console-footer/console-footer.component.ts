@@ -39,7 +39,6 @@ export class ConsoleFooterComponent implements OnInit {
     this.lastThreeLogLines$.pipe(untilDestroyed(this)).subscribe(() => {
       try {
         this.messageContainer.nativeElement.scroll({ top: this.messageContainer.nativeElement.scrollHeight });
-        // eslint-disable-next-line sonarjs/no-ignored-exceptions,unused-imports/no-unused-vars
       } catch (err: unknown) {}
     });
   }
