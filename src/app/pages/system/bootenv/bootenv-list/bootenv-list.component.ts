@@ -116,7 +116,9 @@ export class BootEnvironmentListComponent implements OnInit {
           iconName: 'mdi-check-decagram',
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Activate'),
-          hidden: (row) => of(row.active.includes('R')),
+          hidden: (row) => {
+            return of([BootEnvironmentActive.NowReboot, BootEnvironmentActive.Reboot].includes(row.active));
+          },
           onClick: (row) => this.doActivate(row),
         },
         {
