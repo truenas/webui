@@ -10,7 +10,7 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('ConsoleCardComponent', () => {
@@ -20,7 +20,7 @@ describe('ConsoleCardComponent', () => {
     component: ConsoleCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(AdvancedSettingsService, {
@@ -66,7 +66,7 @@ describe('ConsoleCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       ConsoleFormComponent,
       false,
       {

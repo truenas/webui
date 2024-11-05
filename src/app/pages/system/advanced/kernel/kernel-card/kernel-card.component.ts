@@ -19,7 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { kernelCardElements } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.elements';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -64,7 +64,7 @@ export class KernelCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private chainedSlideIns: IxChainedSlideInService,
+    private chainedSlideIns: ChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 

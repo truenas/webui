@@ -1,0 +1,92 @@
+<div class="header">
+  <h1 mat-dialog-title>{{ 'Select Image' | translate }}</h1>
+  <button
+    mat-icon-button
+    id="ix-close-icon"
+    [ixTest]="['close-instance-form']"
+    [attr.aria-label]="'Close Instance Form' | translate"
+    (click)="onClose()"
+    (keydown.enter)="onClose()"
+  >
+    <ix-icon name="cancel"></ix-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <form [formGroup]="filterForm">
+    <ix-fieldset [title]="'Filters' | translate">
+      <ix-input
+        formControlName="searchQuery"
+        [label]="'Search Images' | translate"
+      ></ix-input>
+
+      <ix-select
+        formControlName="os"
+        [label]="'OS' | translate"
+        [options]="osOptions$"
+      ></ix-select>
+
+      <ix-select
+        formControlName="variant"
+        [label]="'Variant' | translate"
+        [options]="variantOptions$"
+      ></ix-select>
+
+      <ix-select
+        formControlName="release"
+        [label]="'Release' | translate"
+        [options]="releaseOptions$"
+      ></ix-select>
+    </ix-fieldset>
+
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="filteredImages()" [ixTest]="['images-table']">
+        <ng-container matColumnDef="label">
+          <th *matHeaderCellDef mat-header-cell>{{ 'Label' | translate }}</th>
+          <td *matCellDef="let image" mat-cell>{{ image.label }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="os">
+          <th *matHeaderCellDef mat-header-cell>{{ 'OS' | translate }}</th>
+          <td *matCellDef="let image" mat-cell>{{ image.os }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="release">
+          <th *matHeaderCellDef mat-header-cell>{{ 'Release' | translate }}</th>
+          <td *matCellDef="let image" mat-cell>{{ image.release }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="arch">
+          <th *matHeaderCellDef mat-header-cell>{{ 'Arch' | translate }}</th>
+          <td *matCellDef="let image" mat-cell>{{ image.arch }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="variant">
+          <th *matHeaderCellDef mat-header-cell>{{ 'Variant' | translate }}</th>
+          <td *matCellDef="let image" mat-cell>{{ image.variant }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th *matHeaderCellDef mat-header-cell></th>
+          <td *matCellDef="let image" mat-cell>
+            <button
+              mat-button
+              type="button"
+              [ixTest]="['select-image', image.label]"
+              (click)="selectImage(image)"
+            >
+              {{ 'Select' | translate }}
+            </button>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['image-table-header']"></tr>
+        <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['image-table-row', row]"></tr>
+      </table>
+
+      @if (!filteredImages().length) {
+        <ix-empty [conf]="entityEmptyConf()"></ix-empty>
+      }
+    </div>
+  </form>
+</mat-dialog-content>

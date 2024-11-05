@@ -12,9 +12,9 @@ import {
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -48,7 +48,7 @@ describe('CertificateAcmeAddComponent', () => {
         mockJob('certificate.create', fakeSuccessfulJob()),
         mockCall('webui.crypto.get_certificate_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
@@ -105,7 +105,7 @@ describe('CertificateAcmeAddComponent', () => {
         tos: true,
       }],
     );
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('allows custom ACME Server Directory URI', async () => {
@@ -139,6 +139,6 @@ describe('CertificateAcmeAddComponent', () => {
         tos: true,
       }],
     );
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 });

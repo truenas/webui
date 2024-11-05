@@ -3,6 +3,7 @@ export enum DefaultValidationError {
   Max = 'max',
   Required = 'required',
   Email = 'email',
+  Cpu = 'cpu',
   MaxLength = 'maxlength',
   Range = 'range',
   MinLength = 'minlength',

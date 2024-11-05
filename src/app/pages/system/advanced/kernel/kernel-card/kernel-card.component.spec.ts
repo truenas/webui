@@ -9,7 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { KernelCardComponent } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.component';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('KernelCardComponent', () => {
@@ -19,7 +19,7 @@ describe('KernelCardComponent', () => {
     component: KernelCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(AdvancedSettingsService, {
@@ -57,7 +57,7 @@ describe('KernelCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       KernelFormComponent,
       false,
       true,

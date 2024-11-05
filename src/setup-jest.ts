@@ -63,16 +63,10 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
-  IxModalHeaderComponent,
-} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import {
-  IxModalHeader2Component,
-} from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
-import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -84,6 +78,12 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import {
+  ModalHeaderComponent,
+} from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import {
+  ModalHeader2Component,
+} from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -120,8 +120,8 @@ defineGlobalsInjections({
     IxRadioGroupComponent,
     IxSelectComponent,
     IxFieldsetComponent,
-    IxModalHeaderComponent,
-    IxModalHeader2Component,
+    ModalHeaderComponent,
+    ModalHeader2Component,
     IxButtonGroupComponent,
     IxExplorerComponent,
     IxFileInputComponent,
@@ -134,7 +134,7 @@ defineGlobalsInjections({
     IxListItemComponent,
     IxErrorsComponent,
     IxLabelComponent,
-    IxWarningComponent,
+    WarningComponent,
     IxCheckboxListComponent,
     FormActionsComponent,
     RouterModule.forRoot([]),

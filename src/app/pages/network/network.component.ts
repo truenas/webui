@@ -23,8 +23,8 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
@@ -32,7 +32,7 @@ import { networkElements } from 'app/pages/network/network.elements';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -101,7 +101,7 @@ export class NetworkComponent implements OnInit {
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
@@ -140,7 +140,7 @@ export class NetworkComponent implements OnInit {
     this.openInterfaceForEditFromRoute();
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
+  handleSlideInClosed(slideInRef: SlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.interfacesStore.loadInterfaces();
       this.loadCheckinStatusAfterChange();

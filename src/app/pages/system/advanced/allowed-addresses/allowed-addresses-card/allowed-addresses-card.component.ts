@@ -31,8 +31,8 @@ import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-
 import {
   AllowedAddressesFormComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -93,7 +93,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private dialog: DialogService,
-    private chainedSlideIns: IxChainedSlideInService,
+    private chainedSlideIns: ChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private advancedSettings: AdvancedSettingsService,

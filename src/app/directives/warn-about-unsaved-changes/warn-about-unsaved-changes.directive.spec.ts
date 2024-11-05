@@ -4,7 +4,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { WarnAboutUnsavedChangesDirective } from './warn-about-unsaved-changes.directive';
 
 describe('WarnAboutUnsavedChangesDirective', () => {
@@ -18,7 +18,7 @@ describe('WarnAboutUnsavedChangesDirective', () => {
         confirm: jest.fn(() => of(true)),
       }),
       {
-        provide: IxSlideInRef,
+        provide: SlideInRef,
         useFactory: () => ({
           close: jest.fn(),
           slideInClosed$: new Subject<void>(),

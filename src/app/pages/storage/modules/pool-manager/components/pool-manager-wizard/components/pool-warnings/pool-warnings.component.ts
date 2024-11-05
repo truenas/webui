@@ -15,7 +15,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
@@ -31,7 +31,7 @@ import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/p
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    IxWarningComponent,
+    WarningComponent,
     IxRadioGroupComponent,
     IxLabelComponent,
     MatCheckbox,

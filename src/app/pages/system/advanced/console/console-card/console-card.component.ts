@@ -19,7 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { consoleCardElements } from 'app/pages/system/advanced/console/console-card/console-card.elements';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -97,7 +97,7 @@ export class ConsoleCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private chainedSlideIns: IxChainedSlideInService,
+    private chainedSlideIns: ChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 

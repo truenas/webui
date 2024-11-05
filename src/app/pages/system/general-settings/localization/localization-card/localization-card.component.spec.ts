@@ -10,8 +10,8 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { LocalizationCardComponent } from 'app/pages/system/general-settings/localization/localization-card/localization-card.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -51,7 +51,7 @@ describe('LocalizationCardComponent', () => {
           return ['2023-03-31', '05:17:49'];
         },
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
     ],
   });
 
@@ -77,7 +77,7 @@ describe('LocalizationCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(LocalizationFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(LocalizationFormComponent, {
       data: {
         dateFormat: undefined, kbdMap: 'us', language: 'en', timeFormat: undefined, timezone: 'America/New_York',
       },

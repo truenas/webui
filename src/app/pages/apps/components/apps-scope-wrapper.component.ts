@@ -30,9 +30,8 @@ export class AppsScopeWrapperComponent implements OnDestroy {
     private dockerService: DockerStore,
   ) {
     this.dockerService.initialize();
-    this.dockerService.dockerStatusEventUpdates().pipe(
-      untilDestroyed(this),
-    ).subscribe();
+    this.dockerService.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
+    this.dockerService.dockerConfigEventUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 
   ngOnDestroy(): void {

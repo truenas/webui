@@ -15,9 +15,9 @@ import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.in
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ActiveDirectoryComponent,
@@ -25,7 +25,7 @@ import {
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -87,8 +87,8 @@ describe('ActiveDirectoryComponent', () => {
         })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(IxSlideInService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInService),
+      mockProvider(SlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -203,7 +203,7 @@ describe('ActiveDirectoryComponent', () => {
         netbiosalias: ['alias1', 'alias2'],
       }],
     );
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   describe('leave domain button', () => {

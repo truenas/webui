@@ -71,7 +71,7 @@ export class WidgetCpuComponent {
       if (cpuParams.usageMaxThreads.length === 1) {
         return this.translate.instant('{usage}% (Thread #{thread})', {
           usage: cpuParams.usageMax,
-          thread: cpuParams.usageMaxThreads.toString(),
+          thread: cpuParams.usageMaxThreads[0] + 1,
         });
       }
       return this.translate.instant('{usage}% ({threadCount} threads at {usage}%)', {
@@ -85,18 +85,18 @@ export class WidgetCpuComponent {
   protected hottest = computed(() => {
     const cpuParams = this.getCpuParams();
     if (cpuParams.tempMax) {
-      if (cpuParams.tempMaxThreads.length === 0) {
-        return this.translate.instant('{temp}°C (All Threads)', { temp: cpuParams.tempMax });
+      if (cpuParams.tempMaxCores.length === 0) {
+        return this.translate.instant('{temp}°C (All Cores)', { temp: cpuParams.tempMax });
       }
-      if (cpuParams.tempMaxThreads.length === 1) {
+      if (cpuParams.tempMaxCores.length === 1) {
         return this.translate.instant('{temp}°C (Core #{core})', {
           temp: cpuParams.tempMax,
-          thread: cpuParams.tempMaxThreads.toString(),
+          core: cpuParams.tempMaxCores[0] + 1,
         });
       }
       return this.translate.instant('{temp}°C ({coreCount} cores at {temp}°C)', {
         temp: cpuParams.tempMax,
-        coreCount: cpuParams.tempMaxThreads.length,
+        coreCount: cpuParams.tempMaxCores.length,
       });
     }
     return this.translate.instant('N/A');
@@ -110,25 +110,17 @@ export class WidgetCpuComponent {
 
   protected parseCpuData(cpuData: AllCpusUpdate): GaugeData[] {
     const usageColumn: GaugeData = ['Usage'];
-    let temperatureColumn: GaugeData = ['Temperature'];
-    const temperatureValues = [];
-
-    // Filter out stats per thread
-    const keys = Object.keys(cpuData);
-    const threads = keys.filter((cpuUpdateAttribute) => !Number.isNaN(parseFloat(cpuUpdateAttribute)));
+    const temperatureColumn: GaugeData = ['Temperature'];
 
     for (let i = 0; i < this.threadCount(); i++) {
       usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));
+    }
 
-      if (cpuData.temperature_celsius) {
-        const mod = threads.length % 2;
-        const temperatureIndex = this.hyperthread ? Math.floor(i / 2 - mod) : i;
-        if (cpuData.temperature_celsius?.[temperatureIndex]) {
-          temperatureValues.push(parseInt(cpuData.temperature_celsius[temperatureIndex].toFixed(0)));
-        }
+    if (cpuData.temperature_celsius) {
+      for (let i = 0; i < this.coreCount(); i++) {
+        temperatureColumn.push(parseInt(cpuData.temperature_celsius[i].toFixed(0)));
       }
     }
-    temperatureColumn = temperatureColumn.concat(temperatureValues);
 
     return [usageColumn, temperatureColumn];
   }
@@ -156,23 +148,23 @@ export class WidgetCpuComponent {
     const tempMin = temps?.length ? Number(Math.min(...temps).toFixed(0)) : 0;
     const tempMax = temps?.length ? Number(Math.max(...temps).toFixed(0)) : 0;
 
-    const tempMinThreads = [];
-    const tempMaxThreads = [];
+    const tempMinCores = [];
+    const tempMaxCores = [];
     for (let i = 0; i < temps.length; i++) {
       if (temps[i] === tempMin) {
-        tempMinThreads.push(Number(i.toFixed(0)));
+        tempMinCores.push(Number(i.toFixed(0)));
       }
 
       if (temps[i] === tempMax) {
-        tempMaxThreads.push(Number(i.toFixed(0)));
+        tempMaxCores.push(Number(i.toFixed(0)));
       }
     }
 
     return {
       tempMin,
       tempMax,
-      tempMinThreads,
-      tempMaxThreads,
+      tempMinCores,
+      tempMaxCores,
       usageMin,
       usageMax,
       usageMinThreads,

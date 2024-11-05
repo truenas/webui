@@ -10,7 +10,7 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
@@ -21,7 +21,7 @@ export class DatasetFormService {
     private dialog: DialogService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
   ) {}
 
   checkAndWarnForLengthAndDepth(path: string): Observable<boolean> {

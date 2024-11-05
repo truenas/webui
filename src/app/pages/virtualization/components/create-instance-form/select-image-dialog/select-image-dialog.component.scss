@@ -1,0 +1,62 @@
+@import 'scss-imports/variables';
+
+:host ::ng-deep {
+  .table-wrapper {
+    @media(max-width: $breakpoint-sm) {
+      overflow: auto;
+    }
+
+    table thead {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+  }
+
+  ix-fieldset fieldset {
+    padding: 0;
+
+    @media(min-width: $breakpoint-sm) {
+      padding: 0 15px 0 0;
+      position: sticky;
+      top: 0;
+    }
+  }
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  h1 {
+    margin-bottom: 0;
+    padding-top: 20px;
+  }
+
+  button {
+    margin-right: 20px;
+  }
+}
+
+form {
+  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: 60vh;
+  margin-bottom: 20px;
+  overflow: auto;
+
+  @media(max-width: $breakpoint-sm) {
+    display: block;
+  }
+
+  ix-fieldset {
+    border-right: 1px solid var(--lines);
+    height: 100%;
+  }
+}
+
+tr td:last-child {
+  text-align: right;
+}

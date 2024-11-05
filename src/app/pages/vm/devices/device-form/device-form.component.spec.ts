@@ -23,12 +23,12 @@ import {
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -94,9 +94,9 @@ describe('DeviceFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(FilesystemService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(VmService, {
         hasVirtualizationSupport$: of(true),
       }),
@@ -148,7 +148,7 @@ describe('DeviceFormComponent', () => {
           order: 1002,
           vm: 45,
         }]);
-        expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+        expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       });
     });
 

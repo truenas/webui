@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import {
+  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
+} from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,7 +17,7 @@ import {
 import {
   VirtualizationConfigStore,
 } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +56,7 @@ export class AllInstancesHeaderComponent {
   });
 
   constructor(
-    private slideIn: IxChainedSlideInService,
+    private slideIn: ChainedSlideInService,
     private configStore: VirtualizationConfigStore,
   ) {}
 

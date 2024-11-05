@@ -1,0 +1,8 @@
+.demo-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  .demo-table {
+    height: 100%;
+  }
+}
