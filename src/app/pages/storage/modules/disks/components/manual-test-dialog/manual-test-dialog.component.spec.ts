@@ -14,7 +14,7 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { IxTestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
+import { TestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
 import { WebSocketService } from 'app/services/ws.service';
 import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
 
@@ -92,7 +92,7 @@ describe('ManualTestDialogComponent', () => {
       ]],
     );
 
-    const progressComponents = spectator.queryAll(IxTestProgressRowComponent);
+    const progressComponents = spectator.queryAll(TestProgressRowComponent);
     expect(progressComponents).toHaveLength(2);
   });
 });

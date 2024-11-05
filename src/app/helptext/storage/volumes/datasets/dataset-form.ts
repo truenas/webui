@@ -113,7 +113,7 @@ export const helptextDatasetForm = {
     smb: T('SMB preset sets most optimal settings for SMB sharing.'),
     multiprotocol: T('Configured for simultaneous use with SMB and NFS on the same dataset.'),
     apps: T('Dataset for use by an application. If you plan to deploy container applications,\
- the system automatically creates the ix-applications dataset but this is not used for application data storage.'),
+ the system automatically creates the ix-apps dataset but this is not used for application data storage.'),
     smb_description: T('By clicking the share creation checkbox below, a new share will be created on form submission with the default\
  share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.'),
   },

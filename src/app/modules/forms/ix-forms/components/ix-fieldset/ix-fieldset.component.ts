@@ -20,6 +20,5 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 export class IxFieldsetComponent {
   readonly disable = input<boolean>();
   readonly title = input<string>();
-  readonly divider = input<boolean>();
   readonly tooltip = input<string>();
 }

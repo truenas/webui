@@ -1,0 +1,125 @@
+@import 'scss-imports/variables';
+
+:host {
+  display: block;
+
+  &::ng-deep {
+    mat-list mat-list-item:focus .mdc-list-item__primary-text {
+      color: var(--fg2);
+    }
+  }
+}
+
+.record-picker {
+  border: 1px solid var(--lines);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+
+  mat-list {
+    margin: 0;
+    padding: 0 0 1px;
+
+    &.over {
+      background-color: var(--bg2);
+    }
+
+    mat-list-item {
+      align-items: center;
+      background-color: var(--bg2);
+      border-bottom: 1px solid var(--lines);
+      border-top: thin solid var(--lines);
+      color: var(--fg2);
+      cursor: pointer;
+      display: flex;
+      margin-bottom: -1px;
+      min-height: 23px;
+      padding: 12px 16px;
+      text-align: left;
+      white-space: nowrap;
+
+      &:first-child {
+        border-top: none;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
+        outline: none;
+      }
+
+      &:hover {
+        background-color: var(--bg1);
+      }
+
+      &.selected {
+        background-color: var(--primary);
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      ix-icon {
+        margin-right: 5px;
+      }
+
+      label {
+        cursor: pointer;
+        margin-bottom: -1px;
+        padding: 0;
+        user-select: none;
+        white-space: normal;
+        word-break: break-word;
+      }
+    }
+  }
+}
+
+.dual-list {
+  align-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+
+  @media(max-width: $breakpoint-sm) {
+    display: grid;
+    grid-template-columns: 44% 12% 44%;
+  }
+
+  .listbox {
+    flex-grow: 2;
+    margin: 0;
+    width: 100%;
+
+    p {
+      background-color: var(--lines);
+      border-bottom: 1px solid var(--lines);
+      color: var(--fg2);
+      display: flex;
+      margin: 0;
+      padding: 12px 16px;
+    }
+  }
+}
+
+.button-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  margin: 0 10px;
+
+  button {
+    background-color: var(--bg2);
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+}

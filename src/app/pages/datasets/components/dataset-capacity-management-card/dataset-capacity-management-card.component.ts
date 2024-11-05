@@ -28,7 +28,7 @@ import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -95,7 +95,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private datasetStore: DatasetTreeStore,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private dialogService: DialogService,
   ) {}
 

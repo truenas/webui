@@ -25,6 +25,7 @@ export interface User {
   local: boolean;
   id_type_both: boolean;
   roles: Role[];
+  api_keys: number[];
 }
 
 export interface UserGroup {
