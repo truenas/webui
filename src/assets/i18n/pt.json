@@ -5168,7 +5168,7 @@
   "{cpuPercentage}% Avg. Usage": "{cpuPercentage}% Média de Utilização",
   "{days, plural, =1 {# day} other {# days}}": "{days, plural, =1 {# dia} other {# dias}}",
   "{duration} remaining": "{duration} restante",
-  "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "{eligible} de {total} instantâneos existentes do conjunto de dados {targetDataset} seriam replicados com esta tarefa.",
+  "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "{eligible} de {total} instantâneos existentes do conjunto de dados {dataset} seriam replicados com esta tarefa.",
   "{field} is required": "{field} é obrigatório",
   "{hours, plural, =1 {# hour} other {# hours}}": "{hours, plural, =1 {# hora} other {# horas}}",
   "{interfaceName} must start with \"{prefix}\" followed by an unique number": "{interfaceName} deve começar com \"{prefix}\" seguido por um número exclusivo",
