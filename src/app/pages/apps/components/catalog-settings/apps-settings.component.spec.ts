@@ -23,9 +23,10 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('CatalogEditFormComponent', () => {
+describe('AppsSettingsComponent', () => {
   let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
+
   const dockerConfig = {
     address_pools: [
       { base: '172.17.0.0/12', size: 12 },
@@ -175,7 +176,7 @@ describe('CatalogEditFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('shows Install NVIDIA Drivers checkbox when docker.lacks_nvidia_drivers is true OR when it is checked (so the user can uncheck it)', async () => {
+      it('shows Install NVIDIA Drivers checkbox when docker.nvidia_status is NotInstalled OR when it is checked (so the user can uncheck it)', async () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 

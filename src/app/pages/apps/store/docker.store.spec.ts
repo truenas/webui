@@ -2,6 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
+import { DockerNvidiaStatus } from 'app/enums/docker-nvidia-status.enum';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { WebSocketService } from 'app/services/ws.service';
@@ -17,7 +18,7 @@ describe('DockerStore', () => {
           pool: 'pewl',
           nvidia: true,
         } as DockerConfig),
-        mockCall('docker.lacks_nvidia_drivers', true),
+        mockCall('docker.nvidia_status', DockerNvidiaStatus.NotInstalled),
         mockCall('docker.status', {
           status: DockerStatus.Running,
           description: 'Docker is running',
@@ -35,7 +36,7 @@ describe('DockerStore', () => {
       spectator.service.initialize();
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.config');
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.lacks_nvidia_drivers');
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.nvidia_status');
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.status');
 
       expect(spectator.service.state()).toEqual({
@@ -67,6 +68,7 @@ describe('DockerStore', () => {
       mockWebsocket.mockCall('docker.config', newDockerConfig);
 
       spectator.service.reloadDockerConfig().subscribe();
+      spectator.service.reloadDockerNvidiaStatus().subscribe();
 
       expect(mockWebsocket.call).toHaveBeenCalledWith('docker.config');
       expect(spectator.service.state().dockerConfig).toEqual(newDockerConfig);
