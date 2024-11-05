@@ -87,6 +87,7 @@
   "Group Members": "",
   "Hardware Change": "",
   "High usage necessitating a system reset.": "",
+  "Host ports are listed on the left and associated container ports are on the right.    0.0.0.0 on the host side represents binding to any IP address on the host.": "",
   "IPv4 Network": "",
   "IPv6 Network": "",
   "If URL above fails to open, it may be due to the unavailability of Basic HTTP authentication in your browser.": "",
