@@ -259,7 +259,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     const filterValue = (customFilterValue ?? this.value) || '';
     if (this.autocompleteOptions) {
       this.filteredOptions = this.autocompleteOptions.filter((option) => {
-        return option.label.toString().toLowerCase().includes((filterValue).toString().toLowerCase());
+        return option.label.toString().toLowerCase().includes(filterValue.toString().toLowerCase());
       }).slice(0, 50);
     }
   }

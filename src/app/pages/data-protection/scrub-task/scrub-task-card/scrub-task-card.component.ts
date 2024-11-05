@@ -105,7 +105,7 @@ export class ScrubTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row) => 'card-scrub-task-' + row.pool + '-' + row.description,
+    uniqueRowTag: (row) => `card-scrub-task-${row.pool}-${row.description}`,
     ariaLabels: (row) => [row.pool.toString(), row.description, this.translate.instant('Scrub Task')],
   });
 

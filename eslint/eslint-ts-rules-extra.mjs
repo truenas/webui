@@ -52,7 +52,6 @@ export const extraRules = {
 
   // Stylistic
   "@stylistic/ts/function-call-spacing": ["error", "never"],
-  "@stylistic/ts/no-extra-parens": ["error"],
   "@stylistic/ts/no-extra-semi": ["error"],
   "@stylistic/js/generator-star-spacing": ["error", {before: false, after: true}],
   "@stylistic/js/no-confusing-arrow": ["error", {
@@ -248,6 +247,7 @@ export const extraRules = {
       "message": "Use the injected window service instead. Search for @Inject(WINDOW)."
     }
   ],
+  "func-name-matching": "error",
 
   // Typescript eslint
   "@typescript-eslint/array-type": "error",

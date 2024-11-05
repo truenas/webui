@@ -108,7 +108,7 @@ export class JobsListComponent implements OnInit {
       sortBy: (job) => +job.time_finished,
     }),
   ], {
-    uniqueRowTag: (row) => 'job-' + row.id,
+    uniqueRowTag: (row) => `job-${row.id}`,
     ariaLabels: (row) => [row.description, this.translate.instant('Job')],
   });
 
