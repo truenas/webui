@@ -6,7 +6,14 @@
   </mat-card-header>
   <mat-card-content>
     <div class="details-item">
-      <div class="label">{{ 'Ports' | translate }}:</div>
+      <div class="label">
+        {{ 'Ports' | translate }}
+        <ix-tooltip
+          class="ports-tooltip"
+          placement="left"
+          [message]="helptext.ports"
+        ></ix-tooltip>
+      </div>
       <div class="value">
         @for (port of hostPorts(); track port.hostPort) {
           <div>

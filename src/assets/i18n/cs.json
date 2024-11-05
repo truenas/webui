@@ -1863,6 +1863,7 @@
   "Host Sync": "",
   "Host name of second TrueNAS controller.": "",
   "Host name or IP address of the central key server.": "",
+  "Host ports are listed on the left and associated container ports are on the right.    0.0.0.0 on the host side represents binding to any IP address on the host.": "",
   "Host: {host}": "",
   "Hostname (TrueNAS Controller 2)": "",
   "Hostname Database": "",
