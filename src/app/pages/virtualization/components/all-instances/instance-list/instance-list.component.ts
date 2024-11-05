@@ -64,11 +64,21 @@ export class InstanceListComponent implements AfterViewInit {
       });
   });
 
-  protected readonly emptyConfig = signal<EmptyConfig>({
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No instances'),
-    message: this.translate.instant('Instances you created will automatically appear here.'),
-    large: true,
+  protected readonly emptyConfig = computed<EmptyConfig>(() => {
+    if (this.searchQuery()?.length && !this.filteredInstances()?.length) {
+      return {
+        type: EmptyType.NoSearchResults,
+        title: this.translate.instant('No Search Results.'),
+        message: this.translate.instant('No matching results found'),
+        large: true,
+      };
+    }
+    return {
+      type: EmptyType.NoPageData,
+      title: this.translate.instant('No instances'),
+      message: this.translate.instant('Instances you created will automatically appear here.'),
+      large: true,
+    };
   });
 
   constructor(

@@ -5,5 +5,11 @@
 
 :host {
   box-sizing: border-box;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  .table-container {
+    background: var(--bg2);
+  }
 }
