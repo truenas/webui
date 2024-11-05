@@ -278,7 +278,7 @@ export class QueryParserService<T> {
     const [property, comparator, value] = condition;
 
     const currentProperty = properties.find((prop) => prop.property === property);
-    const mappedConditionProperty = (currentProperty?.label || property);
+    const mappedConditionProperty = currentProperty?.label || property;
     const mappedConditionValue = this.mapValueByPropertyType(currentProperty, value as LiteralValue) as string;
 
     if (comparator.toUpperCase() === 'IN' || comparator.toUpperCase() === 'NIN') {

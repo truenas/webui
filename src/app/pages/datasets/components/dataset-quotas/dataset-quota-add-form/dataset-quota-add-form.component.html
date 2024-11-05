@@ -28,8 +28,8 @@
             formControlName="users"
             [label]="'Apply To Users' | translate"
             [tooltip]="tooltips.users"
-            [required]="true"
             [autocompleteProvider]="usersProvider"
+            [allowNewEntries]="false"
           ></ix-chips>
         </ix-fieldset>
       }

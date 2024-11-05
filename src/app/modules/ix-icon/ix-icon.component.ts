@@ -28,7 +28,6 @@ import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 @Component({
   selector: 'ix-icon',
   exportAs: 'ixIcon',
-  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     class: 'ix-icon',
     '[attr.data-mat-icon-name]': '(_svgIcon && _svgName) || fontIcon',

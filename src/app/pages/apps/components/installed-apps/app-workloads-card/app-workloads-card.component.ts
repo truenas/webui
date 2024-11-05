@@ -14,6 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextApps } from 'app/helptext/apps/apps';
 import {
   App, AppContainerDetails, appContainerStateLabels,
 } from 'app/interfaces/app.interface';
@@ -21,6 +22,7 @@ import { ShellDetailsDialogFormValue } from 'app/interfaces/shell-details-dialog
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import {
   VolumeMountsDialogComponent,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
@@ -47,6 +49,7 @@ import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
     MatIconButton,
     MatCardContent,
     DecimalPipe,
+    TooltipComponent,
   ],
 })
 export class AppWorkloadsCardComponent {
@@ -56,6 +59,7 @@ export class AppWorkloadsCardComponent {
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly appContainerStateLabels = appContainerStateLabels;
+  protected readonly helptext = helptextApps;
 
   constructor(
     private matDialog: MatDialog,
