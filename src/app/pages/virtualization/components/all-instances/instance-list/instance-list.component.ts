@@ -124,10 +124,10 @@ export class InstanceListComponent implements AfterViewInit {
       return;
     }
 
-    this.selectFirstApp();
+    this.selectFirstInstance();
   }
 
-  private selectFirstApp(): void {
+  private selectFirstInstance(): void {
     const [first] = this.instances();
 
     if (first) {
