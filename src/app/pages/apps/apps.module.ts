@@ -40,6 +40,7 @@ import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
 import {
   AppDetailsHeaderComponent,
@@ -181,6 +182,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     FileSizePipe,
     NetworkSpeedPipe,
     OrNotAvailablePipe,
+    TooltipComponent,
   ],
 })
 export class AppsModule { }
