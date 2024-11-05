@@ -64,6 +64,10 @@ export class ElementsPageComponent {
   protected readonly columns = createTable<EnclosureElement>(
     [
       textColumn({
+        title: this.translate.instant('Descriptor'),
+        propertyName: 'descriptor',
+      }),
+      textColumn({
         title: this.translate.instant('Status'),
         propertyName: 'status',
       }),

@@ -360,6 +360,7 @@
   "Delete zvol device": "",
   "Delete zvol {name}": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
+  "Descriptor": "",
   "Desired – encrypt transport if supported by client during session negotiation": "",
   "Destroy the ZFS filesystem for pool data. This is a permanent operation. You will be       unable to re-mount data from the exported pool.": "",
   "Device removed": "",

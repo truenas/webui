@@ -952,6 +952,7 @@
   "Descriptive identifier for this certificate authority.": "",
   "Descriptive identifier for this certificate.": "",
   "Descriptive name for the replication.": "",
+  "Descriptor": "",
   "Desired – encrypt transport if supported by client during session negotiation": "",
   "Destination Dataset Read-only Policy": "",
   "Destination Location": "",

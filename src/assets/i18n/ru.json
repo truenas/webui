@@ -809,6 +809,7 @@
   "Deny": "",
   "Deny All": "",
   "Deploying": "",
+  "Descriptor": "",
   "Desired – encrypt transport if supported by client during session negotiation": "",
   "Destroy the ZFS filesystem for pool data. This is a permanent operation. You will be       unable to re-mount data from the exported pool.": "",
   "Detach disk {name}?": "",
