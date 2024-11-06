@@ -1,7 +1,6 @@
 {
   "": "",
   "...": "",
-  "Descriptor": "",
   "Host ports are listed on the left and associated container ports are on the right.    0.0.0.0 on the host side represents binding to any IP address on the host.": "",
   "Service Announcement:": "",
   "Slot: {slot}": "",
@@ -1304,6 +1303,7 @@
   "Descriptive identifier for this certificate authority.": "此证书颁发机构的描述性标识符。",
   "Descriptive identifier for this certificate.": "此证书的描述性标识符。",
   "Descriptive name for the replication.": "复制的描述性名称。",
+  "Descriptor": "描述符",
   "Desired – encrypt transport if supported by client during session negotiation": "期望 - 在会话协商期间，如果客户端支持，则加密传输。",
   "Destination": "目标",
   "Destination Dataset Read-only Policy": "目标数据集只读策略",
