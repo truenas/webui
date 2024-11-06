@@ -14,7 +14,7 @@ import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -46,6 +46,24 @@ describe('InstanceFormComponent', () => {
           cpu: 'Intel Xeon',
           memory: 2 * GiB,
         } as VirtualizationInstance]),
+        mockCall('virt.device.gpu_choices', {
+          pci_0000_01_00_0: {
+            bus: 1,
+            slot: 1,
+            description: 'NVIDIA GeForce GTX 1080',
+            vendor: 'NVIDIA Corporation',
+          },
+        }),
+        mockCall('virt.device.usb_choices', {
+          xhci: {
+            vendor_id: '1d6b',
+            product_id: '0003',
+            bus: 2,
+            dev: 1,
+            product: 'xHCI Host Controller',
+            manufacturer: 'Linux 6.6.44-production+truenas xhci-hcd',
+          },
+        }),
         mockJob('virt.instance.create', fakeSuccessfulJob({ id: 'new' } as VirtualizationInstance)),
         mockJob('virt.instance.update', fakeSuccessfulJob({ id: 'test' } as VirtualizationInstance)),
       ]),
@@ -89,6 +107,8 @@ describe('InstanceFormComponent', () => {
       Name: 'new',
       Autostart: true,
       'CPU Configuration': '1-2',
+      'USB Devices': ['xHCI Host Controller'],
+      'GPU Devices': ['NVIDIA GeForce GTX 1080'],
       'Memory Size': '1 GiB',
     });
 
@@ -102,6 +122,10 @@ describe('InstanceFormComponent', () => {
       name: 'new',
       autostart: true,
       cpu: '1-2',
+      devices: [
+        { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
+        { dev_type: VirtualizationDeviceType.Gpu, gpu_type: 'NVIDIA Corporation' },
+      ],
       image: 'almalinux/8/cloud',
       memory: GiB,
     }]);
