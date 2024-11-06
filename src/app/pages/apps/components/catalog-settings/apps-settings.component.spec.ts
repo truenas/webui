@@ -8,6 +8,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
+import { DockerNvidiaStatus } from 'app/enums/docker-nvidia-status.enum';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
@@ -72,7 +73,9 @@ describe('AppsSettingsComponent', () => {
             nvidiaDriversInstalled$: of(false),
             lacksNvidiaDrivers$: of(false),
             dockerConfig$: of(dockerConfig),
+            dockerNvidiaStatus$: of(DockerNvidiaStatus.NotInstalled),
             reloadDockerConfig: jest.fn(() => of({})),
+            reloadDockerNvidiaStatus: jest.fn(() => of({})),
           }),
         ],
       });
@@ -123,9 +126,11 @@ describe('AppsSettingsComponent', () => {
             mockProvider(DockerStore, {
               nvidiaDriversInstalled$: of(false),
               lacksNvidiaDrivers$: of(true),
-              setDockerNvidia: jest.fn(() => of(null)),
               dockerConfig$: of(dockerConfig),
+              dockerNvidiaStatus$: of(DockerNvidiaStatus.NotInstalled),
+              setDockerNvidia: jest.fn(() => of(null)),
               reloadDockerConfig: jest.fn(() => of({})),
+              reloadDockerNvidiaStatus: jest.fn(() => of({})),
             }),
           ],
         });
@@ -169,14 +174,16 @@ describe('AppsSettingsComponent', () => {
               nvidiaDriversInstalled$: of(true),
               lacksNvidiaDrivers$: of(false),
               dockerConfig$: of(dockerConfig),
+              dockerNvidiaStatus$: of(DockerNvidiaStatus.Installed),
               reloadDockerConfig: jest.fn(() => of({})),
+              reloadDockerNvidiaStatus: jest.fn(() => of({})),
             }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('shows Install NVIDIA Drivers checkbox when docker.nvidia_status is NotInstalled OR when it is checked (so the user can uncheck it)', async () => {
+      it('shows Install NVIDIA Drivers checkbox when docker.nvidia_status is not Absent OR when it is checked (so the user can uncheck it)', async () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
@@ -195,7 +202,9 @@ describe('AppsSettingsComponent', () => {
               nvidiaDriversInstalled$: of(true),
               lacksNvidiaDrivers$: of(false),
               dockerConfig$: of(dockerConfig),
+              dockerNvidiaStatus$: of(DockerNvidiaStatus.Installed),
               reloadDockerConfig: jest.fn(() => of({})),
+              reloadDockerNvidiaStatus: jest.fn(() => of({})),
               setDockerNvidia: jest.fn(() => of(null)),
             }),
           ],

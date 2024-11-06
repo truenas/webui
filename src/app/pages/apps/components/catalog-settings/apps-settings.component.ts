@@ -86,9 +86,7 @@ export class AppsSettingsComponent implements OnInit {
     singleArrayToOptions(),
   );
 
-  protected showNvidiaCheckbox = computed(() => {
-    return !this.lacksNvidiaDrivers();
-  });
+  protected showNvidiaCheckbox = computed(() => this.nvidiaDriversInstalled() || this.lacksNvidiaDrivers());
 
   readonly tooltips = {
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
