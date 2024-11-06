@@ -2115,7 +2115,7 @@
   "Dataset Rollback From Snapshot": "Dataset wordt teruggedraaid vanuit een momentopname",
   "Dataset Space Management": "Datasetruimte",
   "Dataset Write": "Dataset Schrijven",
-  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-applications dataset but this is not used for application data storage.": "Dataset voor gebruik door een applicatie. Als u van plan bent containerapplicaties te implementeren, maakt het systeem automatisch de ix-applications-dataset, maar deze wordt niet gebruikt voor de opslag van applicatiegegevens.",
+  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-apps dataset but this is not used for application data storage.": "Dataset voor gebruik door een applicatie. Als u van plan bent containerapplicaties te implementeren, maakt het systeem automatisch de ix-apps-dataset, maar deze wordt niet gebruikt voor de opslag van applicatiegegevens.",
   "Dataset has no mountpoint": "Dataset heeft géén koppelpunt",
   "Dataset locked": "Dataset is vergrendeld",
   "Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create anymore nested datasets under this path.": "De naam van de dataset wordt ingesteld door het bovenliggende pad toe te voegen met de door jou ingevoerde naam. De maximaal toegestane lengte voor de datasetnaam is 200. Het bovenliggende pad voor deze dataset overschrijdt die limiet al. Het is niet mogelijk om geneste datasets meer aan te maken onder dit pad.",

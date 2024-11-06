@@ -1178,7 +1178,7 @@
   "Dataset Space Management": "数据集空间管理",
   "Dataset Write": "数据集写入",
   "Dataset ZFS Encryption": "数据集 ZFS 加密",
-  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-applications dataset but this is not used for application data storage.": "供应用程序使用的数据集。如果您计划部署容器应用程序，系统会自动创建 ix-applications 数据集，但这不用于应用程序数据存储。",
+  "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-apps dataset but this is not used for application data storage.": "供应用程序使用的数据集。如果您计划部署容器应用程序，系统会自动创建 ix-apps 数据集，但这不用于应用程序数据存储。",
   "Dataset has no mountpoint": "数据集没有挂载点",
   "Dataset is shared via NFS": "数据集通过 NFS 共享。",
   "Dataset is shared via SMB": "数据集通过 SMB 共享。",
