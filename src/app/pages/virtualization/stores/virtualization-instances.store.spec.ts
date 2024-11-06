@@ -30,7 +30,7 @@ describe('VirtualizationInstancesStore', () => {
   it('should load instances when initialize is called', () => {
     spectator.service.initialize();
 
-    expect(spectator.inject(WebSocketService).callAndSubscribe).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalled();
     expect(spectator.service.stateAsSignal()).toEqual({
       isLoading: false,
       instances: [],
@@ -45,7 +45,7 @@ describe('VirtualizationInstancesStore', () => {
       expect(spectator.service.isLoading()).toBe(false);
     });
 
-    it('config - returns config part of the state', () => {
+    it('instances - returns instances part of the state', () => {
       expect(spectator.service.instances()).toEqual([]);
     });
 

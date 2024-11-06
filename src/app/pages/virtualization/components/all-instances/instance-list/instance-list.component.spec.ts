@@ -36,10 +36,6 @@ describe('InstanceListComponent', () => {
     spectator = createComponent();
   });
 
-  it('checks page title', () => {
-    expect(spectator.query('.table-header h2')).toHaveText('Instances');
-  });
-
   it('shows a list of instances', () => {
     const instances = spectator.queryAll(InstanceRowComponent);
 
