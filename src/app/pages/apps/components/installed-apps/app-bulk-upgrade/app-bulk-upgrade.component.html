@@ -19,10 +19,10 @@
               <div class="version">
                 <span>{{ bulkItem.value.item.human_version.split('_')[1] }}</span>
                 <ix-icon name="mdi-arrow-right-thin"></ix-icon>
-                @if(isItemExpanded(bulkItem)){
+                @if (isItemExpanded(bulkItem)){
                   <span>{{ form.get(bulkItem.key)?.value }}</span>
                 } @else {
-                  <span>{{ 'Latest version' | translate }}</span>
+                  <span>{{ bulkItem.value.item.latest_version }}</span>
                 }
               </div>
 
@@ -45,7 +45,7 @@
               [options]="optionsMap.get(bulkItem.key)"
             ></ix-select>
           }
-          
+
           @if (hasErrors(bulkItem.key)) {
             <span>{{ bulkItem.value.message | translate }}</span>
           }

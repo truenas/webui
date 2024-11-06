@@ -577,7 +577,7 @@ export class CloudSyncFormComponent implements OnInit {
 
       if (this.editingTask.include?.length) {
         this.form.controls.folder_source.setValue(
-          this.editingTask.include.map((path: string) => (`${this.editingTask.attributes.folder as string}/${path.split('/')[1]}`)),
+          this.editingTask.include.map((path: string) => `${this.editingTask.attributes.folder as string}/${path.split('/')[1]}`),
         );
       } else {
         this.form.controls.folder_source.setValue([this.editingTask.attributes.folder as string]);
@@ -587,7 +587,7 @@ export class CloudSyncFormComponent implements OnInit {
 
       if (this.editingTask.include?.length) {
         this.form.controls.path_source.setValue(
-          this.editingTask.include.map((path: string) => (`${this.editingTask.path}/${path.split('/')[1]}`)),
+          this.editingTask.include.map((path: string) => `${this.editingTask.path}/${path.split('/')[1]}`),
         );
       } else {
         this.form.controls.path_source.setValue([this.editingTask.path]);

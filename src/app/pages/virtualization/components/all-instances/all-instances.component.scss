@@ -1,8 +1,15 @@
-.demo-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+@import 'scss-imports/variables';
+@import 'mixins/layout';
 
-  .demo-table {
-    height: 100%;
+@include tree-node-with-details-container;
+
+:host {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  .table-container {
+    background: var(--bg2);
   }
 }

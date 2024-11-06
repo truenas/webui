@@ -59,7 +59,7 @@ export class QueryToApiService<T> {
       }
     } else {
       // Right AND
-      // eslint-disable-next-line no-lonely-if,sonarjs/no-lonely-if
+      // eslint-disable-next-line sonarjs/no-lonely-if
       if (isConditionGroup(conditionGroup.right)) {
         paramsGroup.andGroup((rightGroup) => {
           this.buildGroup(rightGroup, conditionGroup.right as ConditionGroup);
@@ -74,7 +74,7 @@ export class QueryToApiService<T> {
     const currentProperty = this.searchProperties.find((value) => {
       return value.label?.toLowerCase() === condition.property?.toLowerCase();
     });
-    const mappedConditionProperty = (currentProperty?.property || condition.property);
+    const mappedConditionProperty = currentProperty?.property || condition.property;
     const mappedConditionValue = this.mapValueByPropertyType(currentProperty, condition.value);
 
     return [mappedConditionProperty, condition.comparator.toLowerCase(), mappedConditionValue] as QueryFilter<T>;
