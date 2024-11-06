@@ -10,7 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
@@ -46,8 +46,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -69,7 +69,7 @@ import { WebSocketService } from 'app/services/ws.service';
     IxTableEmptyDirective,
     IxTableBodyComponent,
     IxTablePagerComponent,
-    IxDetailsHeightDirective,
+    DetailsHeightDirective,
     CloudBackupDetailsComponent,
     IxTableHeadComponent,
     TranslateModule,
@@ -142,7 +142,7 @@ export class CloudBackupListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private chainedSlideInService: IxChainedSlideInService,
+    private chainedSlideInService: ChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,

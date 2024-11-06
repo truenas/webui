@@ -8,8 +8,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, debounceTime, distinctUntilChanged, map, of,
-  switchMap,
+  debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
@@ -30,14 +29,14 @@ import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explo
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -54,7 +53,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeader2Component,
+    ModalHeader2Component,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -268,7 +267,7 @@ export class CloudBackupFormComponent implements OnInit {
       ...this.editingTask,
       schedule: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
       path: this.editingTask.path,
-      credentials: (this.editingTask.credentials).id,
+      credentials: this.editingTask.credentials.id,
       folder: this.editingTask.attributes.folder as string,
       bucket: this.editingTask.attributes.bucket === newOption ? '' : this.editingTask.attributes.bucket as string || '',
       bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
@@ -281,23 +280,15 @@ export class CloudBackupFormComponent implements OnInit {
 
   onSubmit(): void {
     const payload = this.prepareData(this.form.value);
+    let request$ = this.ws.call('cloud_backup.create', [payload]);
 
     this.isLoading = true;
 
-    let createBucket$: Observable<unknown> = of(null);
-    if (!!this.form.value.bucket_input && this.isNewBucketOptionSelected) {
-      createBucket$ = this.ws.call('cloudsync.create_bucket', [this.form.value.credentials, this.form.value.bucket_input]);
+    if (!this.isNew) {
+      request$ = this.ws.call('cloud_backup.update', [this.editingTask.id, payload]);
     }
 
-    createBucket$.pipe(
-      switchMap(() => {
-        if (this.isNew) {
-          return this.ws.call('cloud_backup.create', [payload]);
-        }
-        return this.ws.call('cloud_backup.update', [this.editingTask.id, payload]);
-      }),
-      untilDestroyed(this),
-    ).subscribe({
+    request$.pipe(untilDestroyed(this)).subscribe({
       next: (response: CloudBackup) => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));

@@ -79,11 +79,6 @@ export const adminRoutes: Routes = [
         data: { title: T('Shell'), breadcrumb: T('Shell') },
       },
       {
-        path: 'apikeys',
-        loadComponent: () => import('./pages/api-keys/api-keys.component').then((module) => module.ApiKeysComponent),
-        data: { title: T('API Keys'), breadcrumb: T('API Keys') },
-      },
-      {
         path: 'two-factor-auth',
         loadComponent: () => import('./pages/two-factor-auth/two-factor.component').then((module) => module.TwoFactorComponent),
         data: { title: T('Two-Factor Authentication'), breadcrumb: T('Two-Factor Authentication') },
@@ -106,6 +101,10 @@ export const adminRoutes: Routes = [
       {
         path: 'system/audit',
         loadChildren: () => import('./pages/audit/audit.routes').then((module) => module.auditRoutes),
+      },
+      {
+        path: 'virtualization',
+        loadChildren: () => import('app/pages/virtualization/virtualization.routes').then((module) => module.virtualizationRoutes),
       },
     ],
   },

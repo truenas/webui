@@ -37,7 +37,7 @@ import {
   map,
   switchMap,
 } from 'rxjs/operators';
-import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -86,7 +86,7 @@ import { WebSocketService } from 'app/services/ws.service';
     MatIconButton,
     CdkTreeNodePadding,
     TestDirective,
-    IxDetailsHeightDirective,
+    DetailsHeightDirective,
     DatasetDetailsPanelComponent,
     AsyncPipe,
     TranslateModule,
@@ -163,7 +163,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     (dataset) => dataset,
     this.getLevel,
     this.isExpandable,
-    () => ([]),
+    () => [],
   );
 
   dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);

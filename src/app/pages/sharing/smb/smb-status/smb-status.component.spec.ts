@@ -33,7 +33,8 @@ describe('SmbStatusComponent', () => {
       {
         label: 'Locks',
         path: '/sharing/smb/status/locks',
-      }, {
+      },
+      {
         label: 'Shares',
         path: '/sharing/smb/status/shares',
       },

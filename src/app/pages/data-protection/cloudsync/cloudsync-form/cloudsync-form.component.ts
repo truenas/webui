@@ -41,8 +41,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -50,6 +48,8 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
@@ -73,7 +73,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   providers: [CloudCredentialService],
   standalone: true,
   imports: [
-    IxModalHeader2Component,
+    ModalHeader2Component,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -577,7 +577,7 @@ export class CloudSyncFormComponent implements OnInit {
 
       if (this.editingTask.include?.length) {
         this.form.controls.folder_source.setValue(
-          this.editingTask.include.map((path: string) => (`${this.editingTask.attributes.folder as string}/${path.split('/')[1]}`)),
+          this.editingTask.include.map((path: string) => `${this.editingTask.attributes.folder as string}/${path.split('/')[1]}`),
         );
       } else {
         this.form.controls.folder_source.setValue([this.editingTask.attributes.folder as string]);
@@ -587,7 +587,7 @@ export class CloudSyncFormComponent implements OnInit {
 
       if (this.editingTask.include?.length) {
         this.form.controls.path_source.setValue(
-          this.editingTask.include.map((path: string) => (`${this.editingTask.path}/${path.split('/')[1]}`)),
+          this.editingTask.include.map((path: string) => `${this.editingTask.path}/${path.split('/')[1]}`),
         );
       } else {
         this.form.controls.path_source.setValue([this.editingTask.path]);

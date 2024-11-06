@@ -20,7 +20,7 @@ import {
   DeleteUserDialogComponent,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserDetailsRowComponent } from './user-details-row.component';
 
@@ -58,7 +58,7 @@ describe('UserDetailsRowComponent', () => {
       UserFormComponent,
     ],
     providers: [
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockWebSocket([
         mockCall('user.delete'),
         mockCall('group.query', []),
@@ -97,7 +97,7 @@ describe('UserDetailsRowComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
       UserFormComponent,
       { wide: true, data: dummyUser },
     );

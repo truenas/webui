@@ -10,7 +10,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, forkJoin, of, switchMap,
+  combineLatest, filter, forkJoin, of, switchMap,
+  take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -25,10 +26,10 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -43,7 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCardContent,
     MatCard,
     IxFieldsetComponent,
@@ -92,7 +93,7 @@ export class AppsSettingsComponent implements OnInit {
   constructor(
     private dockerStore: DockerStore,
     private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<AppsSettingsComponent>,
+    private slideInRef: SlideInRef<AppsSettingsComponent>,
     private errorHandler: FormErrorHandlerService,
     private fb: FormBuilder,
     private appsStore: AppsStore,
@@ -105,7 +106,7 @@ export class AppsSettingsComponent implements OnInit {
   setupForm(): void {
     combineLatest([
       this.ws.call('catalog.config'),
-      this.dockerStore.dockerConfig$,
+      this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([catalogConfig, dockerConfig]) => {

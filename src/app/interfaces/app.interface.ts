@@ -29,12 +29,16 @@ export enum AppContainerState {
   Running = 'running',
   Starting = 'starting',
   Exited = 'exited',
+  Crashed = 'crashed',
+  Created = 'created',
 }
 
 export const appContainerStateLabels = new Map<AppContainerState, string>([
   [AppContainerState.Running, T('Running')],
   [AppContainerState.Starting, T('Starting')],
   [AppContainerState.Exited, T('Exited')],
+  [AppContainerState.Crashed, T('Crashed')],
+  [AppContainerState.Created, T('Created')],
 ]);
 
 export interface AppContainerDetails {
@@ -67,6 +71,7 @@ export interface App {
   active_workloads: AppActiveWorkloads;
   state: AppState;
   upgrade_available: boolean;
+  latest_version: string;
   human_version: string;
   metadata: AppMetadata;
   notes: string;

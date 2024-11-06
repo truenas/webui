@@ -47,7 +47,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import {
@@ -72,7 +72,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     TranslateModule,
     ReactiveFormsModule,
     IxSelectComponent,
-    IxWarningComponent,
+    WarningComponent,
   ],
 })
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
@@ -235,7 +235,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      // eslint-disable-next-line sonarjs/sonar-prefer-optional-chain,@typescript-eslint/prefer-optional-chain
+      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (!systemInfo.license || !systemInfo.license.features.includes(LicenseFeature.Dedup)) {
         return;
       }

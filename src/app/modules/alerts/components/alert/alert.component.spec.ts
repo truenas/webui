@@ -5,6 +5,7 @@ import { ngMocks } from 'ng-mocks';
 import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -55,6 +56,7 @@ describe('AlertComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),

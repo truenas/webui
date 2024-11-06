@@ -22,6 +22,7 @@
         type="button"
         ixTest="reset"
         [disabled]="isLoading()"
+        [matTooltip]="'Restore default set of widgets' | translate"
         (click)="onReset()"
       >
         {{ 'Reset' | translate }}

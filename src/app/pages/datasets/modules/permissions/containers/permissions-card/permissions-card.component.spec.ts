@@ -3,9 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
-import {
-  byTitle, createComponentFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -136,19 +134,40 @@ describe('PermissionsCardComponent', () => {
     expect(permissionsComponent.acl).toBe(acl);
   }));
 
-  it('shows a button to edit permissions when dataset is not root', async () => {
-    const editLink = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
-    await editLink.click();
+  it('shows a button to edit permissions when dataset can be edited', async () => {
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    await editButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'testpool/dataset', 'permissions', 'edit']);
   });
 
-  it('does not show edit icon when dataset is root', () => {
+  it('disables Edit button when the dataset is root', async () => {
     spectator.setInput('dataset', {
       ...dataset,
-      mountpoint: '/mnt/root',
+      name: 'testpool',
     } as DatasetDetails);
 
-    expect(spectator.query(byTitle('Edit permissions'))).not.toExist();
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    expect(await editButton.isDisabled()).toBe(true);
+  });
+
+  it('does not show edit button when dataset is locked', async () => {
+    spectator.setInput('dataset', {
+      ...dataset,
+      locked: true,
+    } as DatasetDetails);
+
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    expect(await editButton.isDisabled()).toBe(true);
+  });
+
+  it('does not show edit button when dataset is readonly', async () => {
+    spectator.setInput('dataset', {
+      ...dataset,
+      readonly: true,
+    } as DatasetDetails);
+
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    expect(await editButton.isDisabled()).toBe(true);
   });
 });

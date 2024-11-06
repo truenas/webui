@@ -33,7 +33,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -147,7 +147,7 @@ export class AssociatedTargetListComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row) => 'iscsi-associated-target-' + row.target + '-' + row.extent,
+    uniqueRowTag: (row) => `iscsi-associated-target-${row.target}-${row.extent}`,
     ariaLabels: (row) => [row.target.toString(), this.translate.instant('ISCSI Associated Target')],
   });
 
@@ -159,7 +159,7 @@ export class AssociatedTargetListComponent implements OnInit {
     private dialogService: DialogService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
   ) {}
 

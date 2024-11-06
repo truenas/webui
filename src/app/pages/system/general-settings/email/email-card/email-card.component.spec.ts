@@ -9,7 +9,7 @@ import { MailSecurity } from 'app/enums/mail-security.enum';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 const fakeEmailConfig: MailConfig = {
   id: 1,
@@ -33,7 +33,7 @@ describe('EmailCardComponent', () => {
       mockWebSocket([
         mockCall('mail.config', fakeEmailConfig),
       ]),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
     ],
@@ -58,6 +58,6 @@ describe('EmailCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(EmailFormComponent, { data: fakeEmailConfig });
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(EmailFormComponent, { data: fakeEmailConfig });
   });
 });

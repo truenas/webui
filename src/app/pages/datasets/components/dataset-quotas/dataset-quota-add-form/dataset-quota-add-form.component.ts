@@ -7,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs/operators';
+import { combineLatest, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -19,13 +19,14 @@ import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/ch
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AuthService } from 'app/services/auth/auth.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -36,7 +37,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     RequiresRolesDirective,
     MatCardContent,
@@ -106,8 +107,15 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   };
 
   usersProvider: ChipsProvider = (query) => {
-    return this.userService.userQueryDsCache(query).pipe(
-      map((users) => users.map((user) => user.username)),
+    return combineLatest([
+      this.userService.userQueryDsCache(query),
+      this.authService.user$.pipe(map((user) => user?.privilege?.roles?.$set || [])),
+    ]).pipe(
+      map(([users, currentRoles]) => {
+        return users
+          .filter((user) => user.roles.every((role) => currentRoles.includes(role)))
+          .map((user) => user.username);
+      }),
     );
   };
 
@@ -120,6 +128,7 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   private datasetId: string;
 
   constructor(
+    private authService: AuthService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private snackbar: SnackbarService,
@@ -128,7 +137,7 @@ export class DatasetQuotaAddFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private userService: UserService,
-    private slideInRef: IxSlideInRef<DatasetQuotaAddFormComponent>,
+    private slideInRef: SlideInRef<DatasetQuotaAddFormComponent>,
     @Inject(SLIDE_IN_DATA) private slideInData: { quotaType: DatasetQuotaType; datasetId: string },
   ) {}
 

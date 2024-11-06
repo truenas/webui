@@ -1,0 +1,32 @@
+<ix-virtualization-state class="state-indicator" [state]="state()"></ix-virtualization-state>
+
+<button
+  mat-button
+  ixTest="edit-global-settings"
+  [color]="needToSetupPool() ? 'primary' : 'default'"
+  (click)="onEdit()"
+>
+  @if (needToSetupPool()) {
+    {{ 'Select Pool' | translate }}
+  } @else {
+    {{ 'Global Settings' | translate }}
+  }
+</button>
+
+@if (isLocked() && config()?.dataset) {
+  <a
+    mat-button
+    ixTest="go-to-dataset"
+    [routerLink]="['/storage/datasets/' + config().dataset]"
+  >{{ 'Go To Dataset' | translate }}</a>
+}
+
+@if (hasCreateNewButton()) {
+  <a
+    mat-button
+    ixTest="create-new-instance"
+    [color]="canAddNewInstances() ? 'primary' : 'default'"
+    [disabled]="!canAddNewInstances()"
+    [routerLink]="['/virtualization/new']"
+  >{{ 'Create New Instance' | translate }}</a>
+}

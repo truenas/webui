@@ -41,7 +41,7 @@ import { supportCardElements } from 'app/pages/system/general-settings/support/s
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -95,7 +95,7 @@ export class SupportCardComponent implements OnInit {
     private loader: AppLoaderService,
     private dialog: DialogService,
     private matDialog: MatDialog,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -151,7 +151,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   daysTillExpiration(now: Date, then: Date): number {
-    return Math.round((then.getTime() - now.getTime()) / (oneDayMillis));
+    return Math.round((then.getTime() - now.getTime()) / oneDayMillis);
   }
 
   updateLicense(): void {

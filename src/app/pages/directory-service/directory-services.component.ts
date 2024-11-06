@@ -31,7 +31,7 @@ import { KerberosKeytabsListComponent } from 'app/pages/directory-service/compon
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { LdapComponent } from './components/ldap/ldap.component';
 
@@ -91,7 +91,7 @@ export class DirectoryServicesComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,

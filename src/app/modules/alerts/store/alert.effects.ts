@@ -9,6 +9,7 @@ import {
   catchError, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { Alert } from 'app/interfaces/alert.interface';
 import {
   dismissAlertPressed, dismissAllAlertsPressed,
   reopenAlertPressed,
@@ -19,10 +20,12 @@ import {
   alertAdded,
   alertsLoaded,
   alertChanged,
+  alertsDismissedChanged,
 } from 'app/modules/alerts/store/alert.actions';
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -77,14 +80,26 @@ export class AlertEffects {
   dismissAlert$ = createEffect(() => this.actions$.pipe(
     ofType(dismissAlertPressed),
     mergeMap(({ id }) => {
-      return this.ws.call('alert.dismiss', [id]);
+      return this.ws.call('alert.dismiss', [id]).pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(alertChanged({ alert: { id, dismissed: false } as Alert }));
+          return of(EMPTY);
+        }),
+      );
     }),
   ), { dispatch: false });
 
   reopenAlert$ = createEffect(() => this.actions$.pipe(
     ofType(reopenAlertPressed),
     mergeMap(({ id }) => {
-      return this.ws.call('alert.restore', [id]);
+      return this.ws.call('alert.restore', [id]).pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(alertChanged({ alert: { id, dismissed: true } as Alert }));
+          return of(EMPTY);
+        }),
+      );
     }),
   ), { dispatch: false });
 
@@ -93,8 +108,15 @@ export class AlertEffects {
     withLatestFrom(this.store$.select(selectUnreadAlerts).pipe(pairwise())),
     mergeMap(([, [unreadAlerts]]) => {
       const requests = unreadAlerts.map((alert) => this.ws.call('alert.dismiss', [alert.id]));
-      return forkJoin(requests);
+      return forkJoin(requests).pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(alertsDismissedChanged({ dismissed: false }));
+          return of(EMPTY);
+        }),
+      );
     }),
+    this.errorHandler.catchError(),
   ), { dispatch: false });
 
   reopenAllAlerts$ = createEffect(() => this.actions$.pipe(
@@ -102,7 +124,13 @@ export class AlertEffects {
     withLatestFrom(this.store$.select(selectDismissedAlerts).pipe(pairwise())),
     mergeMap(([, [dismissedAlerts]]) => {
       const requests = dismissedAlerts.map((alert) => this.ws.call('alert.restore', [alert.id]));
-      return forkJoin(requests);
+      return forkJoin(requests).pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(alertsDismissedChanged({ dismissed: true }));
+          return of(EMPTY);
+        }),
+      );
     }),
   ), { dispatch: false });
 
@@ -111,5 +139,6 @@ export class AlertEffects {
     private ws: WebSocketService,
     private store$: Store<AlertSlice>,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 }

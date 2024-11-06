@@ -34,7 +34,7 @@ export class AppNetworkInfoComponent {
 
   isLoading = computed(() => this.stats().isLoading);
 
-  protected readonly initialNetworkStats = Array.from({ length: 60 }, () => ([0, 0]));
+  protected readonly initialNetworkStats = Array.from({ length: 60 }, () => [0, 0]);
   cachedNetworkStats = signal<number[][]>([]);
 
   networkStats = computed(() => {

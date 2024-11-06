@@ -16,6 +16,7 @@ import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.inte
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VirtualizationGlobalConfig, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export interface ApiEventDirectory {
@@ -31,11 +32,14 @@ export interface ApiEventDirectory {
   'failover.status': { response: { status: FailoverStatus } };
   'group.query': { response: Group };
   'pool.query': { response: Pool };
+  'virt.global.config': { response: VirtualizationGlobalConfig };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'service.query': { response: Service };
   'smart.test.progress': { response: SmartTestProgressUpdate };
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
+  'virt.instance.query': { response: VirtualizationInstance };
+  'virt.instance.agent_running': { response: unknown }; // TODO: Fix type
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'zfs.snapshot.query': { response: ZfsSnapshot };

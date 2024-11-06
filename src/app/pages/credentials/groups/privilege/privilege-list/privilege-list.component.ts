@@ -38,7 +38,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/groups/privilege/privilege-list/privilege-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -135,13 +135,15 @@ export class PrivilegeListComponent implements OnInit {
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
 
-  private rolesSuggestions$ = of(Object.values(Role).map((key) => ({
-    label: this.translate.instant(roleNames.get(key)),
-    value: `"${this.translate.instant(roleNames.get(key))}"`,
-  })));
+  private readonly rolesSuggestions$ = of(Object.values(Role)).pipe(
+    map((roles) => roles.map((key) => ({
+      label: this.translate.instant(roleNames.get(key)),
+      value: `"${this.translate.instant(roleNames.get(key))}"`,
+    }))),
+  );
 
   constructor(
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private ws: WebSocketService,
     private translate: TranslateService,
     private dialogService: DialogService,

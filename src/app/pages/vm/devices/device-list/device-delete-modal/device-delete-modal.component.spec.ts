@@ -76,7 +76,6 @@ describe('DeviceDeleteModalComponent', () => {
       { filledValues: { zvol: false, force: true }, expectedValues: { zvol: false, raw_file: false, force: true } },
     ].forEach(({ filledValues, expectedValues }) => {
       describe(
-        // eslint-disable-next-line jest/valid-title
         `when zvol = '${String(filledValues.zvol)}' and force = '${String(filledValues.force)}' filled and submitted`,
         () => {
           it(`sends ${JSON.stringify(expectedValues)} to websocket`, async () => {

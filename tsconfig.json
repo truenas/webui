@@ -12,6 +12,7 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noImplicitOverride": true,
+    "noImplicitReturns": true,
     "strictBindCallApply": true,
     "useUnknownInCatchVariables": true,
     "module": "es2020",

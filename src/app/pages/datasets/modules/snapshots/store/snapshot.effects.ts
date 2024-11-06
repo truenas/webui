@@ -29,7 +29,7 @@ export class SnapshotEffects {
       return this.ws.call('zfs.snapshot.query', [
         snapshotExcludeBootQueryFilter as QueryFilters<ZfsSnapshot>,
         {
-          select: ['snapshot_name', 'dataset', 'name', ...(extraColumns)],
+          select: ['snapshot_name', 'dataset', 'name', ...extraColumns],
           order_by: ['name'],
         },
       ]).pipe(

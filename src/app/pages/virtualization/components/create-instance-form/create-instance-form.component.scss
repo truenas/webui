@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  gap: 15px;
+
+  .form {
+    flex: 1;
+  }
+}
+
+.actions {
+  margin: 9px;
+}
+
+ix-fieldset {
+  display: block;
+  width: 40%;
+}
+
+.image-field {
+  align-items: flex-start;
+  display: flex;
+  gap: 10px;
+
+  .input {
+    flex: 1;
+  }
+
+  button {
+    margin-top: 43px;
+  }
+}

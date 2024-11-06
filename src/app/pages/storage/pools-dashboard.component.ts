@@ -26,7 +26,7 @@ import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/im
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
 import { storageElements } from 'app/pages/storage/pools-dashboard.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -86,7 +86,7 @@ export class PoolsDashboardComponent implements OnInit {
 
   constructor(
     protected router: Router,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
     private store: PoolsDashboardStore,
     protected translate: TranslateService,

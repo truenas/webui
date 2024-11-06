@@ -12,8 +12,8 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
@@ -54,7 +54,7 @@ describe('DiskBulkEditComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       mockWebSocket([
@@ -124,7 +124,7 @@ describe('DiskBulkEditComponent', () => {
     ];
 
     expect(ws.job).toHaveBeenCalledWith('core.bulk', req);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

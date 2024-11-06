@@ -1,0 +1,54 @@
+<div class="cell checkbox">
+  <mat-checkbox
+    color="primary"
+    [ixTest]="instance().name"
+    [checked]="selected()"
+    (click)="$event.stopPropagation()"
+    (change)="selectionChange.emit()"
+  ></mat-checkbox>
+</div>
+
+<div class="cell cell-name">
+  <span class="name">{{ instance().name }}</span>
+</div>
+
+<div class="cell">{{ instance().type | mapValue: virtualizationTypeMap }}</div>
+
+<div class="cell">{{ instance().status | mapValue: virtualizationStatusMap }}</div>
+
+<div class="cell actions">
+  @if (isStopped()) {
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[instance().name, 'start']"
+      [matTooltip]="'Start' | translate"
+      (click)="$event.stopPropagation(); onStart.emit();"
+    >
+      <ix-icon name="mdi-play-circle"></ix-icon>
+    </button>
+  } @else {
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[instance().name, 'restart']"
+      [matTooltip]="'Restart' | translate"
+      (click)="$event.stopPropagation(); onRestart.emit();"
+    >
+      <ix-icon name="mdi-restart"></ix-icon>
+    </button>
+
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[instance().name, 'stop']"
+      [matTooltip]="'Stop' | translate"
+      (click)="$event.stopPropagation(); onStop.emit();"
+    >
+      <ix-icon name="mdi-stop-circle"></ix-icon>
+    </button>
+  }
+</div>

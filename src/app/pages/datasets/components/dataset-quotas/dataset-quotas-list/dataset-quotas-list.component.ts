@@ -49,7 +49,7 @@ import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface QuotaData {
@@ -169,7 +169,7 @@ export class DatasetQuotasListComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row: DatasetQuota) => `${this.helpTextKey}-quota-` + row.name + this.emptyValue + row.obj_quota,
+    uniqueRowTag: (row: DatasetQuota) => `${this.helpTextKey}-quota-${row.name}${this.emptyValue}${row.obj_quota}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Dataset Quota')],
   });
 
@@ -201,7 +201,7 @@ export class DatasetQuotasListComponent implements OnInit {
     protected loader: AppLoaderService,
     protected route: ActivatedRoute,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
     private emptyService: EmptyService,
   ) { }

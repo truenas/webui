@@ -5,7 +5,7 @@ import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-f
 import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 
-export class IxFilterSelectListHarness extends ComponentHarness implements IxFormControlHarness {
+export class FilterSelectListHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-filter-select-list';
 
   getItems = this.locatorForAll('.item');
@@ -26,7 +26,7 @@ export class IxFilterSelectListHarness extends ComponentHarness implements IxFor
     const checkedValues: string[] = [];
 
     for (const [idx, item] of items.entries()) {
-      if ((await icons[idx].getName()) === 'check_circle') {
+      if (await icons[idx].getName() === 'check_circle') {
         checkedValues.push(await item.text());
       }
     }

@@ -25,8 +25,8 @@ import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-a
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('AppInfoCardComponent', () => {
@@ -87,6 +87,7 @@ describe('AppInfoCardComponent', () => {
     providers: [
       mockProvider(ApplicationsService, {
         getAppUpgradeSummary: jest.fn(() => of(upgradeSummary)),
+        checkIfAppIxVolumeExists: jest.fn(() => of(true)),
       }),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([]),
@@ -196,7 +197,7 @@ describe('AppInfoCardComponent', () => {
   it('opens slide-in form to edit custom app when Edit button is pressed', async () => {
     setupTest({ ...fakeApp, custom_app: true });
 
-    const slideIn = spectator.inject(IxSlideInService);
+    const slideIn = spectator.inject(SlideInService);
     jest.spyOn(slideIn, 'open').mockImplementation();
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));

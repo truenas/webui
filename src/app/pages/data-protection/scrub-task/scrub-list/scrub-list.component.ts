@@ -40,7 +40,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { scrubListElements } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.elements';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -121,7 +121,7 @@ export class ScrubListComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row) => 'scrub-task-' + row.pool + '-' + row.description,
+    uniqueRowTag: (row) => `scrub-task-${row.pool}-${row.description}`,
     ariaLabels: (row) => [row.pool_name, row.description, this.translate.instant('Scrub Task')],
   });
 
@@ -130,7 +130,7 @@ export class ScrubListComponent implements OnInit {
     private crontabExplanation: CrontabExplanationPipe,
     private taskService: TaskService,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private slideIn: SlideInService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,

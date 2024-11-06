@@ -1,0 +1,121 @@
+<div class="dual-list">
+	<div class="listbox">
+    <p>{{ sourceName() }}</p>
+
+		<div class="record-picker">
+      <mat-list
+        [attr.aria-label]="sourceName()"
+        [ngStyle]="{ 'max-height': height, 'min-height': height }"
+        [ngClass]="{ over:available.dragOver }"
+        (drop)="drop($event, confirmed)"
+        (dragover)="allowDrop($event, available)"
+        (dragleave)="dragLeave()"
+      >
+        @for (item of available.sift; track item._id; let idx = $index) {
+          <mat-list-item
+            tabindex="0"
+            [draggable]="true"
+            [ngClass]="{selected: isItemSelected(available.pick, item)}"
+            (click)="selectItem(available.pick, item); shiftClick($event, idx, available, item)"
+            (keydown.enter)="selectItem(available.pick, item);"
+            (dragstart)="drag($event, item, available)"
+            (dragend)="dragEnd(available)"
+          >
+            @if (listItemIcon(); as icon) {
+              <ix-icon [name]="icon"></ix-icon>
+            }
+
+            <label>{{ item._name }}</label>
+          </mat-list-item>
+        }
+      </mat-list>
+    </div>
+	</div>
+
+	<div class="button-box">
+		<button
+      mat-icon-button
+      type="button"
+      color="primary"
+      ixTest="move-selected-right"
+      [attr.aria-label]="'Move selected items to the right side list' | translate"
+      [matTooltip]="'Move selected items to the right side list' | translate"
+      [disabled]="available.pick.length === 0"
+			(click)="moveItem(available, confirmed)"
+    >
+      <ix-icon name="mdi-chevron-right"></ix-icon>
+    </button>
+
+		<button
+      mat-icon-button
+      type="button"
+      color="primary"
+      ixTest="move-all-right"
+      [disabled]="isAllSelected(available)"
+      [attr.aria-label]="'Move all items to the right side list' | translate"
+      [matTooltip]="'Move all items to the right side list' | translate"
+      (click)="moveAll()"
+    >
+      <ix-icon name="mdi-chevron-double-right"></ix-icon>
+    </button>
+
+		<button
+      mat-icon-button
+      type="button"
+      color="primary"
+      ixTest="move-selected-left"
+      [attr.aria-label]="'Move selected items to the left side list' | translate"
+      [matTooltip]="'Move selected items to the left side list' | translate"
+      [disabled]="confirmed.pick.length === 0"
+			(click)="moveItem(confirmed, available)"
+    >
+      <ix-icon name="mdi-chevron-left"></ix-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      type="button"
+      color="primary"
+      ixTest="move-all-left"
+      [attr.aria-label]="'Move all items to the left side list' | translate"
+      [matTooltip]="'Move all items to the left side list' | translate"
+      [disabled]="isAllSelected(confirmed)"
+      (click)="removeAll()"
+    >
+      <ix-icon name="mdi-chevron-double-left"></ix-icon>
+    </button>
+	</div>
+
+	<div class="listbox">
+    <p>{{ targetName() }}</p>
+
+		<div class="record-picker">
+      <mat-list
+        [attr.aria-label]="targetName()"
+        [ngStyle]="{ 'max-height': height, 'min-height': height }"
+        [ngClass]="{ over:confirmed.dragOver }"
+        (drop)="drop($event, available)"
+        (dragover)="allowDrop($event, confirmed)"
+        (dragleave)="dragLeave()"
+      >
+        @for (item of confirmed.sift; track item._id; let idx = $index) {
+          <mat-list-item
+            tabindex="0"
+            [draggable]="true"
+            [ngClass]="{ selected: isItemSelected(confirmed.pick, item) }"
+            (click)="selectItem(confirmed.pick, item); shiftClick($event, idx, confirmed, item)"
+            (keydown.enter)="selectItem(confirmed.pick, item)"
+            (dragstart)="drag($event, item, confirmed)"
+            (dragend)="dragEnd(confirmed)"
+          >
+            @if (listItemIcon(); as icon) {
+              <ix-icon [name]="icon"></ix-icon>
+            }
+
+            <label>{{ item._name }}</label>
+          </mat-list-item>
+        }
+      </mat-list>
+		</div>
+	</div>
+</div>

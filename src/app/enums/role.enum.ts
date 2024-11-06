@@ -1,6 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum Role {
+  ApiKeyWrite = 'API_KEY_WRITE',
+  ApiKeyRead = 'API_KEY_READ',
   TrueCommandRead = 'TRUECOMMAND_READ',
   TrueCommandWrite = 'TRUECOMMAND_WRITE',
   AccountRead = 'ACCOUNT_READ',
@@ -96,6 +98,9 @@ export enum Role {
   JbofWrite = 'JBOF_WRITE',
   PoolScrubRead = 'POOL_SCRUB_READ',
   PoolScrubWrite = 'POOL_SCRUB_WRITE',
+  VirtInstanceWrite = 'VIRT_INSTANCE_WRITE',
+  VirtGlobalRead = 'VIRT_GLOBAL_READ',
+  VirtGlobalWrite = 'VIRT_GLOBAL_WRITE',
   VmDeviceRead = 'VM_DEVICE_READ',
   VmDeviceWrite = 'VM_DEVICE_WRITE',
   VmRead = 'VM_READ',
@@ -204,6 +209,9 @@ export const roleNames = new Map<Role, string>([
   [Role.JbofWrite, T('JBOF Write')],
   [Role.PoolScrubRead, T('Pool Scrub Read')],
   [Role.PoolScrubWrite, T('Pool Scrub Write')],
+  [Role.VirtInstanceWrite, T('Virtualization Instance Write')],
+  [Role.VirtGlobalWrite, T('Virtualization Global Write')],
+  [Role.VirtGlobalRead, T('Virtualization Global Read')],
   [Role.VmDeviceRead, T('VM Device Read')],
   [Role.VmDeviceWrite, T('VM Device Write')],
   [Role.VmRead, T('VM Read')],
