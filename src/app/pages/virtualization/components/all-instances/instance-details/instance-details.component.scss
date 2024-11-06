@@ -2,7 +2,46 @@
 @import 'scss-imports/variables';
 
 :host {
+
+  display: block;
   width: 100%;
+  width: 100%;
+
+  .header {
+    color: var(--fg1);
+
+    @media (max-width: calc($breakpoint-hidden - 1px)) {
+      border-bottom: solid 1px var(--lines);
+      margin: 0 16px 16px 0;
+    }
+  }
+
+  .title {
+    margin-bottom: 12px;
+    margin-top: 20px;
+    min-height: 36px;
+
+    @media (max-width: calc($breakpoint-hidden - 1px)) {
+      margin-top: 0;
+    }
+
+    .mobile-prefix {
+      display: none;
+
+      @media (max-width: $breakpoint-hidden) {
+        align-items: center;
+        display: flex;
+      }
+    }
+
+    .prefix {
+      display: flex;
+
+      @media (max-width: $breakpoint-hidden) {
+        display: none;
+      }
+    }
+  }
 
   &::ng-deep {
     .cards .card {
