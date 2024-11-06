@@ -1383,6 +1383,7 @@
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "",
   "Skip automatic detection of the Endpoint URL region. Set this only if AWS provider does not support regions.": "",
   "Slot {n}": "",
+  "Slot: {slot}": "",
   "Snapdev": "",
   "Snapshot Read": "",
   "Snapshot Task Read": "",

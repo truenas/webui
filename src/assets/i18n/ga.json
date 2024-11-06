@@ -86,6 +86,7 @@
   "Running Jobs": "",
   "SAVE": "",
   "Select the level of severity. Alert notifications send for all warnings matching and above the selected level. For example, a warning level set to Critical triggers notifications for Critical, Alert, and Emergency level warnings.": "",
+  "Slot: {slot}": "",
   "Specifies level of authentication and cryptographic protection. SYS or none should be used if no KDC is available. If a KDC is available, e.g. Active Directory, KRB5 is recommended. If desired KRB5I (integrity protection) and/or KRB5P (privacy protection) may be included with KRB5.": "",
   "StorJ is an S3 compatible, fault tolerant, globally distributed cloud storage platform with a security first approach to backup and recovery - delivering extreme resilience and performance both sustainably and economically. <a href=\"https://truenas.com/storj\" target=\"_blank\">TrueNAS and Storj</a> have partnered to streamline delivery of Hybrid Cloud solutions globally.": "",
   "String of additional smb4.conf parameters not covered by the system's API.": "",

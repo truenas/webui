@@ -2375,6 +2375,7 @@
   "Skip automatic detection of the Endpoint URL region. Set this only if AWS provider does not support regions.": "",
   "Slot {number} is empty.": "",
   "Slot {n}": "",
+  "Slot: {slot}": "",
   "Smart": "",
   "Smart Task": "",
   "Smart Test Result": "",
