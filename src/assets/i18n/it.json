@@ -3615,6 +3615,7 @@
   "Set to to enable support for <a href=\"https://tools.ietf.org/html/rfc3410\" target=\"_blank\">SNMP version 3</a>. See <a href=\"http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html\" target=\"_blank\">snmpd.conf(5)</a> for configuration details.": "",
   "Set to use encryption when replicating data. Additional encryption options will appear.": "",
   "Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific Snapshots</i> time frame. The Schedule values are  read over the <i>Replicate Specific Snapshots</i> time frame.": "",
+  "Slot: {slot}": "",
   "Software Installation": "",
   "Specify this certificate's valid Key Usages. Web certificates           typically need at least Digital Signature and possibly Key Encipherment           or Key Agreement, while other applications may need other usages.": "",
   "Specify whether the issued certificate should include Authority Key Identifier information,          and whether the extension is critical. Critical extensions must be recognized by the client or be rejected.": "",

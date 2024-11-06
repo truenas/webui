@@ -176,6 +176,7 @@
   "Set to boot a debug kernel after the next system  restart.": "",
   "Set to enable Samba to do DNS updates when joining a domain.": "",
   "Set to restrict SSH access in certain circumstances to only members of  BUILTIN\\Administrators": "",
+  "Slot: {slot}": "",
   "Software Installation": "",
   "Specifies level of authentication and cryptographic protection. SYS or none should be used if no KDC is available. If a KDC is available, e.g. Active Directory, KRB5 is recommended. If desired KRB5I (integrity protection) and/or KRB5P (privacy protection) may be included with KRB5.": "",
   "Start service": "",
