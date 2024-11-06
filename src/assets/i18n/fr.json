@@ -6,7 +6,7 @@
   "1m Average": "",
   "2FA": "",
   "2FA Settings": "",
-  "<p>The system will restart to perform this operation!</p> <p><font color=\"red\">All passwords are reset when the  uploaded configuration database file was saved  without the Password Secret Seed. </font></p>": "<p>Le système redémarrera pour effectuer cette opération !</p> <p><font color=\"red\">Tous les mots de passe sont réinitialisés lorsque le fichier de base de données de configuration téléchargé a été enregistré sans le Secret Seed Password. </font></p>"",
+  "<p>The system will restart to perform this operation!</p> <p><font color=\"red\">All passwords are reset when the  uploaded configuration database file was saved  without the Password Secret Seed. </font></p>": "<p>Le système redémarrera pour effectuer cette opération !</p> <p><font color=\"red\">Tous les mots de passe sont réinitialisés lorsque le fichier de base de données de configuration téléchargé a été enregistré sans le Secret Seed Password. </font></p>",
   "ACL": "",
   "ACL Mode": "",
   "ACL Types & ACL Modes": "",
