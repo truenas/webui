@@ -37,7 +37,7 @@ export class DiskTemperatureService {
     return this.websocket
       .call('webui.enclosure.dashboard')
       .pipe(
-        repeat(({ delay: () => this.disksChanged$ })),
+        repeat({ delay: () => this.disksChanged$ }),
         map((enclosures) => {
           return enclosures.map((enclosure) => {
             return Object.values(enclosure.elements[EnclosureElementType.ArrayDeviceSlot])

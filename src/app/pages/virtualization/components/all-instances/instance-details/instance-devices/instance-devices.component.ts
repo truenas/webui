@@ -4,13 +4,13 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
+  MatCardContent, MatCardModule,
 } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -23,9 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    MatCardModule,
     TranslateModule,
     MatCardContent,
     MatProgressSpinner,
@@ -35,8 +33,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export class InstanceDevicesComponent implements OnChanges {
   instance = input.required<VirtualizationInstance>();
 
-  devices = signal([]);
-  isLoading = signal(false);
+  devices = signal<VirtualizationDevice[]>([]);
+  isLoading = signal<boolean>(false);
 
   constructor(
     private ws: WebSocketService,

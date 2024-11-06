@@ -1,0 +1,111 @@
+@import 'scss-imports/variables';
+@import 'mixins/layout';
+
+:host {
+  .item-search {
+    background-color: var(--bg2);
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .loader-bar {
+    height: 2px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    z-index: 3;
+  }
+
+  .table-header {
+    align-items: flex-end;
+    color: var(--fg1);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    min-height: 56px;
+
+    h2 {
+      align-items: center;
+      display: flex;
+      margin-top: 20px;
+      min-height: 36px;
+    }
+  }
+  
+  .instances {
+    color: var(--fg1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .instances-header-row {
+    align-items: center;
+    background: var(--bg1);
+    border-bottom: 1px solid var(--lines);
+    color: var(--fg2);
+    display: grid;
+    grid-gap: 8px;
+    min-height: 48px;
+    min-width: fit-content;
+
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+
+    .cell {
+      align-items: center;
+      display: flex;
+      font-weight: bold;
+      height: 100%;
+      justify-content: flex-start;
+      padding: 4px 0;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: none !important;
+      }
+
+      &:first-child {
+        left: 0;
+        position: sticky;
+
+        @media (max-width: $breakpoint-tablet) {
+          display: block !important;
+        }
+      }
+
+      &:nth-child(2) {
+        @media (max-width: $breakpoint-tablet) {
+          display: flex !important;
+        }
+      }
+    }
+
+    .cell.checkbox {
+      mat-checkbox {
+        margin: 0;
+      }
+    }
+
+    .cell.actions {
+      justify-content: flex-end;
+      padding-right: 12px;
+    }
+  }
+
+  .instances-header-row,
+  ix-instance-row {
+    display: grid;
+    grid-template-columns: 45px minmax(160px, auto) minmax(100px, 120px) 100px 88px;
+
+    @media (max-width: $breakpoint-tablet) {
+      grid-template-columns: 45px auto 0 0 0;
+    }
+  }
+
+  ix-instance-row {
+    cursor: pointer;
+  }
+}

@@ -25,6 +25,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -54,7 +55,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateInstanceFormComponent {
-  protected readonly isLoading = signal(false);
+  protected readonly isLoading = signal<boolean>(false);
 
   usbDevices$ = this.ws.call('virt.device.usb_choices').pipe(
     map((choices: Record<string, AvailableUsb>) => Object.values(choices).map((choice) => ({
@@ -78,7 +79,7 @@ export class CreateInstanceFormComponent {
 
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
-    cpu: ['', Validators.required],
+    cpu: ['', [Validators.required, cpuValidator()]],
     usb_devices: [null as string[]],
     gpu_devices: [null as string[]],
     autostart: [false],

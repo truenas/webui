@@ -28,7 +28,6 @@ describe('SigninComponent', () => {
   let spectator: Spectator<SigninComponent>;
   const wasAdminSet$ = new BehaviorSubject<boolean>(undefined);
   const failover$ = new BehaviorSubject<{
-    // eslint-disable-next-line no-restricted-globals
     status: FailoverStatus;
     ips?: string[];
     disabledReasons?: FailoverDisabledReason[];

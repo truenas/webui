@@ -7,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs/operators';
+import { combineLatest, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -26,6 +26,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AuthService } from 'app/services/auth/auth.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -106,8 +107,15 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   };
 
   usersProvider: ChipsProvider = (query) => {
-    return this.userService.userQueryDsCache(query).pipe(
-      map((users) => users.map((user) => user.username)),
+    return combineLatest([
+      this.userService.userQueryDsCache(query),
+      this.authService.user$.pipe(map((user) => user?.privilege?.roles?.$set || [])),
+    ]).pipe(
+      map(([users, currentRoles]) => {
+        return users
+          .filter((user) => user.roles.every((role) => currentRoles.includes(role)))
+          .map((user) => user.username);
+      }),
     );
   };
 
@@ -120,6 +128,7 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   private datasetId: string;
 
   constructor(
+    private authService: AuthService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private snackbar: SnackbarService,

@@ -2,8 +2,18 @@
   <ix-all-instances-header></ix-all-instances-header>
 </ix-page-header>
 
-<div class="demo-layout">
-  <div class="demo-table"></div>
+<div class="container">
+  <div class="table-container">
+    <ix-instance-list></ix-instance-list>
+  </div>
 
-  <ix-instance-details [instance]="demoInstance"></ix-instance-details>
+  <div
+    ixDetailsHeight="rightside-content-hold"
+    class="details-container"
+    [class.details-container-mobile]="showMobileDetails()"
+  >
+    @if (selectedInstance()) {
+      <ix-instance-details [instance]="selectedInstance()"></ix-instance-details>
+    }
+  </div>
 </div>

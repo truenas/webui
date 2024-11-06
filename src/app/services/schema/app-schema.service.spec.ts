@@ -510,7 +510,7 @@ describe('AppSchemaService', () => {
     it('creates form for hidden field', () => {
       expect(dynamicForm.controls.hidden_field.value).toBe('hidden_field');
       expect(dynamicForm.controls.hidden_field.disabled).toBe(true);
-      expect((dynamicForm.controls.if_field)).toBeUndefined();
+      expect(dynamicForm.controls.if_field).toBeUndefined();
     });
   });
   describe('serializeFormValue()', () => {

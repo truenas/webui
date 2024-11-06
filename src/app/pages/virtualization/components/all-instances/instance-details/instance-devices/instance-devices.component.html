@@ -9,7 +9,7 @@
     @if (isLoading()) {
       <mat-spinner [diameter]="40"></mat-spinner>
     } @else {
-      @for (device of devices(); track device.id) {
+      @for (device of devices(); track device) {
         <div>
           <p>{{ 'Device Type' | translate }}: {{ device.dev_type | titlecase }}</p>
         </div>

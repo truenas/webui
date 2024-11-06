@@ -57,7 +57,7 @@ export class ConfirmDialogComponent {
       this.dialogRef.disableClose = options.hideCancel;
     }
 
-    if (options.secondaryCheckbox) {
+    if (this.withSecondaryCheckbox) {
       // Don't allow user to close via backdrop to ensure that object is returned.
       this.dialogRef.disableClose = true;
     }
@@ -75,7 +75,7 @@ export class ConfirmDialogComponent {
   }
 
   onCancel(): void {
-    const result = this.options.secondaryCheckbox
+    const result = this.withSecondaryCheckbox
       ? {
           confirmed: false,
           secondaryCheckbox: this.isSecondaryCheckboxChecked,
@@ -86,7 +86,7 @@ export class ConfirmDialogComponent {
   }
 
   onSubmit(): void {
-    const result = this.options.secondaryCheckbox
+    const result = this.withSecondaryCheckbox
       ? {
           confirmed: true,
           secondaryCheckbox: this.isSecondaryCheckboxChecked,
@@ -94,5 +94,9 @@ export class ConfirmDialogComponent {
       : true;
 
     this.dialogRef.close(result);
+  }
+
+  private get withSecondaryCheckbox(): boolean {
+    return 'secondaryCheckbox' in this.options;
   }
 }

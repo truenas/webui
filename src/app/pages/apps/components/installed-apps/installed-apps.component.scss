@@ -59,7 +59,7 @@
 
 ix-app-row,
 .app-header-row {
-  grid-template-columns: 45px minmax(160px, auto) minmax(100px, 120px) 50px 55px 85px 85px 85px 88px;
+  grid-template-columns: 5% minmax(18%, auto) 11% 4% 7% 11% 11% 13% 10%;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: 45px auto 0 0 0 0 0 0;

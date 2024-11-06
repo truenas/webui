@@ -26,8 +26,7 @@ const compat = new FlatCompat({
 export default tsEslint.config(
   {
     linterOptions: {
-      // TODO: Change to error
-      reportUnusedDisableDirectives: "warn"
+      reportUnusedDisableDirectives: "error"
     },
   },
   {

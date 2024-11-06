@@ -5,10 +5,20 @@ export enum VirtualizationType {
   Vm = 'VM',
 }
 
+export const virtualizationTypeMap = new Map<VirtualizationType, string>([
+  [VirtualizationType.Container, T('Container')],
+  [VirtualizationType.Vm, T('VM')],
+]);
+
 export enum VirtualizationStatus {
   Running = 'RUNNING',
   Stopped = 'STOPPED',
 }
+
+export const virtualizationStatusMap = new Map<VirtualizationStatus, string>([
+  [VirtualizationStatus.Running, T('Running')],
+  [VirtualizationStatus.Stopped, T('Stopped')],
+]);
 
 export enum VirtualizationRemote {
   LinuxContainers = 'LINUX_CONTAINERS',
