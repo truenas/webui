@@ -1,21 +1,18 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, signal,
+  ChangeDetectionStrategy, Component, Inject, signal,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, ReactiveFormsModule, Validators,
+  FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import {
-  CreateVirtualizationInstance,
+  UpdateVirtualizationInstance,
+  VirtualizationInstance,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -25,21 +22,19 @@ import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonl
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
-import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import {
-  SelectImageDialogComponent, VirtualizationImageWithId,
-} from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-wizard',
+  selector: 'ix-instance-edit-form',
   standalone: true,
   imports: [
-    PageHeaderComponent,
+    ModalHeaderComponent,
     IxInputComponent,
     ReactiveFormsModule,
     TranslateModule,
@@ -51,77 +46,70 @@ import { WebSocketService } from 'app/services/ws.service';
     ReadOnlyComponent,
     AsyncPipe,
   ],
-  templateUrl: './instance-wizard.component.html',
-  styleUrls: ['./instance-wizard.component.scss'],
+  templateUrl: './instance-edit-form.component.html',
+  styleUrls: ['./instance-edit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstanceWizardComponent {
+export class InstanceEditFormComponent {
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
 
+  title = this.translate.instant('Edit Instance: {name}', { name: this.instance.name });
+  editingInstanceId = this.instance.id;
+
   protected readonly form = this.formBuilder.nonNullable.group({
-    name: ['', Validators.required],
     cpu: ['', [Validators.required, cpuValidator()]],
     autostart: [false],
     memory: [null as number, Validators.required],
-    image: ['', Validators.required],
   });
-
-  protected readonly visibleImageName = new FormControl('');
-
-  get hasRequiredRoles(): Observable<boolean> {
-    return this.authService.hasRole(this.requiredRoles);
-  }
 
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
-    private matDialog: MatDialog,
-    private router: Router,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
-    private authService: AuthService,
-  ) {}
-
-  protected onBrowseImages(): void {
-    this.matDialog
-      .open(SelectImageDialogComponent, {
-        minWidth: '80vw',
-        data: {
-          remote: VirtualizationRemote.LinuxContainers,
-        },
-      })
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe((image: VirtualizationImageWithId) => {
-        if (!image) {
-          return;
-        }
-
-        this.form.controls.image.setValue(image.id);
-        this.visibleImageName.setValue(image.label);
-      });
+    private slideInRef: SlideInRef<InstanceEditFormComponent>,
+    @Inject(SLIDE_IN_DATA) private instance: VirtualizationInstance,
+  ) {
+    this.form.patchValue({
+      cpu: instance.cpu,
+      autostart: instance.autostart,
+      memory: instance.memory,
+    });
   }
 
   protected onSubmit(): void {
-    const job$ = this.ws.job('virt.instance.create', [this.form.value as CreateVirtualizationInstance]);
+    const payload = this.getSubmissionPayload();
+
+    const job$ = this.ws.job('virt.instance.update', [this.editingInstanceId, payload]);
 
     this.dialogService.jobDialog(job$, {
-      title: this.translate.instant('Saving Instance'),
+      title: this.translate.instant('Updating Instance'),
     })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: ({ result }) => {
-          this.snackbar.success(this.translate.instant('Instance saved'));
-          this.router.navigate(['/virtualization/view', result?.id]);
+        next: () => {
+          this.snackbar.success(this.translate.instant('Instance updated'));
+          this.slideInRef.close(true);
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
+  }
+
+  private getSubmissionPayload(): UpdateVirtualizationInstance {
+    const values = this.form.value;
+
+    return {
+      environment: null,
+      autostart: values.autostart,
+      cpu: values.cpu,
+      memory: values.memory,
+    } as UpdateVirtualizationInstance;
   }
 }

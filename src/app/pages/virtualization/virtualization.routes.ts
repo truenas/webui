@@ -31,15 +31,5 @@ export const virtualizationRoutes: Routes = [{
         },
       ],
     },
-    {
-      path: 'edit/:id',
-      children: [
-        {
-          path: '',
-          pathMatch: 'full',
-          component: InstanceWizardComponent,
-        },
-      ],
-    },
   ],
 }];

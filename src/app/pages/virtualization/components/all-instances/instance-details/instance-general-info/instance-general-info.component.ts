@@ -15,8 +15,10 @@ import { VirtualizationInstance } from 'app/interfaces/virtualization.interface'
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -52,11 +54,12 @@ export class InstanceGeneralInfoComponent {
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
+    private slideInService: SlideInService,
     private instancesStore: VirtualizationInstancesStore,
   ) {}
 
   editInstance(): void {
-    this.router.navigate(['/virtualization', 'edit', this.instance().id]);
+    this.slideInService.open(InstanceEditFormComponent, { data: this.instance() });
   }
 
   deleteInstance(): void {
