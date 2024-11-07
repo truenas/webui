@@ -30,8 +30,7 @@ import { IncomingApiMessage, ResultMessage } from 'app/interfaces/api-message.in
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { ApiEventService } from 'app/services/websocket/api-event.service';
-import { ApiMethodService } from 'app/services/websocket/api-method.service';
+import { Api2Service } from 'app/services/websocket/api2.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -92,8 +91,7 @@ export class AuthService {
   constructor(
     private wsManager: WebSocketConnectionService,
     private store$: Store<AppState>,
-    private apiMethodService: ApiMethodService,
-    private apiEventService: ApiEventService,
+    private api2: Api2Service,
     private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -107,7 +105,7 @@ export class AuthService {
       return of(this.cachedGlobalTwoFactorConfig);
     }
 
-    return this.apiMethodService.call('auth.twofactor.config').pipe(
+    return this.api2.call('auth.twofactor.config').pipe(
       tap((config) => {
         this.cachedGlobalTwoFactorConfig = config;
       }),
@@ -191,7 +189,7 @@ export class AuthService {
     return this.makeRequest('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
-        this.apiEventService.endAllEvents();
+        this.api2.clearSubscriptions();
         this.isLoggedIn$.next(false);
       }),
     );
@@ -284,7 +282,7 @@ export class AuthService {
   }
 
   private getLoggedInUserInformation(): Observable<LoggedInUser> {
-    return this.apiMethodService.call('auth.me').pipe(
+    return this.api2.call('auth.me').pipe(
       tap((loggedInUser) => {
         this.loggedInUser$.next(loggedInUser);
       }),
