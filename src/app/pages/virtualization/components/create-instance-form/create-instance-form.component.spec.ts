@@ -18,6 +18,7 @@ import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtuali
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -31,6 +32,7 @@ describe('InstanceFormComponent', () => {
   let spectator: SpectatorRouting<CreateInstanceFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
   const createComponent = createRoutingFactory({
     component: CreateInstanceFormComponent,
     declarations: [
@@ -102,18 +104,22 @@ describe('InstanceFormComponent', () => {
     });
   });
 
-  it('creates new instance when form is submitted', async () => {
+  it('creates new instance when form is submitted with selected USB and GPU devices', async () => {
     await form.fillForm({
       Name: 'new',
       Autostart: true,
       'CPU Configuration': '1-2',
-      'USB Devices': ['xHCI Host Controller'],
-      'GPU Devices': ['NVIDIA GeForce GTX 1080'],
       'Memory Size': '1 GiB',
     });
 
     const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse' }));
     await browseButton.click();
+
+    const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller' }));
+    await usbDeviceCheckbox.setValue(true);
+
+    const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
+    await gpuDeviceCheckbox.setValue(true);
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Instance' }));
     await saveButton.click();
