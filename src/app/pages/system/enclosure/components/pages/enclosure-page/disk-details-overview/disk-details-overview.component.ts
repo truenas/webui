@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 @UntilDestroy()
@@ -13,11 +14,13 @@ export class DiskDetailsOverviewComponent {
   readonly selectedSlot = this.store.selectedSlot;
 
   readonly diskName = computed(() => {
-    return this.selectedSlot().dev || this.selectedSlot().descriptor;
+    return this.selectedSlot().dev
+      || this.translate.instant('Slot: {slot}', { slot: this.selectedSlot().drive_bay_number });
   });
 
   constructor(
     private store: EnclosureStore,
+    private translate: TranslateService,
   ) {}
 
   protected closeDetails(): void {
