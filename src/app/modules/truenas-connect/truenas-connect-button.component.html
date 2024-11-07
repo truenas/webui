@@ -1,0 +1,10 @@
+@if (status === 'connecting') {
+    <button mat-icon-button matBadge="1" matBadgeSize="small" (click)="stop()">
+        <ix-icon name="ix-truenas-connect"></ix-icon>
+    </button>
+} 
+@else {
+    <button mat-icon-button (click)="openSignupDialog()">
+        <ix-icon name="ix-truenas-connect"></ix-icon>
+    </button>
+}

@@ -46,6 +46,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
+import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 
 @UntilDestroy()
 @Component({
@@ -76,6 +77,7 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     UiSearchDirective,
     TestDirective,
     TruecommandButtonComponent,
+    TruenasConnectButtonComponent
   ],
 })
 export class TopbarComponent implements OnInit {

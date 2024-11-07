@@ -47,6 +47,11 @@ Login or signup is required.'),
     enabled_tooltip: T('Immediately connect to TrueCommand.'),
   },
 
+  tncDialog: {
+    content: T('This allows your TrueNAS system to be monitored and administrated by\
+      Truenas Connect. Click <b>SIGNUP</b> to create a new Truenas Connect instance or <b>CONNECT</b> to join an existing instance.'),
+  },
+
   tcDialog: {
     title: T('Open TrueCommand User Interface'),
     message: T('<em>Warning:</em> The WireGuard service must be active on the client system to access the TrueCommand UI.'),
