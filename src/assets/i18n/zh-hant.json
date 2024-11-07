@@ -1226,6 +1226,7 @@
   "Edit Global Configuration": "",
   "Edit ISCSI Target": "",
   "Edit Init/Shutdown Script": "",
+  "Edit Instance: {name}": "",
   "Edit Kerberos Keytab": "",
   "Edit Kerberos Realm": "",
   "Edit Label": "",

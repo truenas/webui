@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
+  AfterViewInit,
+  ChangeDetectionStrategy, Component, signal,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
@@ -29,7 +30,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     DetailsHeightDirective,
   ],
 })
-export class AllInstancesComponent implements OnInit {
+export class AllInstancesComponent implements AfterViewInit {
   readonly selectedInstance = this.instancesStore.selectedInstance;
   readonly showMobileDetails = signal(false);
 
@@ -38,7 +39,7 @@ export class AllInstancesComponent implements OnInit {
     private instancesStore: VirtualizationInstancesStore,
   ) {}
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.configStore.initialize();
     this.instancesStore.initialize();
   }

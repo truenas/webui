@@ -689,6 +689,7 @@
   "EXPIRES TODAY": "",
   "Edit Custom App": "",
   "Edit Disk(s)": "",
+  "Edit Instance: {name}": "",
   "Edit Trim": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:": "",
   "Editing interfaces while HA is enabled is not allowed.": "",

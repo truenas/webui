@@ -1275,6 +1275,7 @@
   "Edit ISCSI Target": "",
   "Edit Idmap": "",
   "Edit Init/Shutdown Script": "",
+  "Edit Instance: {name}": "",
   "Edit Interface": "",
   "Edit Kerberos Keytab": "",
   "Edit Kerberos Realm": "",

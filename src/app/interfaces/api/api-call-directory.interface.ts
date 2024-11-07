@@ -832,6 +832,7 @@ export interface ApiCallDirectory {
 
   // Virt
   'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'virt.instance.get_instance': { params: [instanceId: string]; response: VirtualizationInstance };
   'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: void }; // TODO
   'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: unknown }; // TODO:
   'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };

@@ -70,6 +70,7 @@
   "Device «{name}» was successfully attached.": "",
   "Docker Write": "",
   "Edit Custom App": "",
+  "Edit Instance: {name}": "",
   "Enable NFS over RDMA": "",
   "Enable server support for NFSv3 or NFSv4 or both NFSv3 and NFSv4 clients.": "",
   "Enclosure Unavailable": "",
