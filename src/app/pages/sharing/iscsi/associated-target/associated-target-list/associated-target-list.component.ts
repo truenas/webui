@@ -147,7 +147,7 @@ export class AssociatedTargetListComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row) => 'iscsi-associated-target-' + row.target + '-' + row.extent,
+    uniqueRowTag: (row) => `iscsi-associated-target-${row.target}-${row.extent}`,
     ariaLabels: (row) => [row.target.toString(), this.translate.instant('ISCSI Associated Target')],
   });
 

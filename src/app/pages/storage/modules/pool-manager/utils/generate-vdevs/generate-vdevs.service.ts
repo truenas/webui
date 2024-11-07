@@ -145,7 +145,6 @@ export class GenerateVdevsService {
       let pickedDisk: DetailsDisk;
 
       do {
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
         pickedDisk = remainingDisks.find((disk) => disk.enclosure?.id === nextEnclosure);
         if (!pickedDisk) nextEnclosure = this.enclosureList.next();
       } while (!pickedDisk);

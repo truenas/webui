@@ -6,6 +6,6 @@ import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 export const languageFunctionsMap: Record<CodeEditorLanguage, () => Extension> = {
   [CodeEditorLanguage.Json]: json,
   [CodeEditorLanguage.Yaml]: yaml,
-  [CodeEditorLanguage.Text]: () => ([]),
-  [CodeEditorLanguage.Toml]: () => ([]),
+  [CodeEditorLanguage.Text]: () => [],
+  [CodeEditorLanguage.Toml]: () => [],
 };

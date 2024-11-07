@@ -267,7 +267,7 @@ export class CloudBackupFormComponent implements OnInit {
       ...this.editingTask,
       schedule: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
       path: this.editingTask.path,
-      credentials: (this.editingTask.credentials).id,
+      credentials: this.editingTask.credentials.id,
       folder: this.editingTask.attributes.folder as string,
       bucket: this.editingTask.attributes.bucket === newOption ? '' : this.editingTask.attributes.bucket as string || '',
       bwlimit: this.editingTask.bwlimit.map((bwlimit) => {

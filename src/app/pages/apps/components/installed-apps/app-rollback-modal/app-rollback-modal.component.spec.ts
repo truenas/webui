@@ -47,7 +47,7 @@ describe('AppRollbackModalComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  // TODO
   it.skip('shows a list of previous versions for an installed app to roll back to', async () => {
     const versionSelect = await loader.getHarness(IxSelectHarness);
     const options = await versionSelect.getOptionLabels();
@@ -55,7 +55,7 @@ describe('AppRollbackModalComponent', () => {
     expect(options).toEqual(['0.9.9', '0.9.8']);
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  // TODO
   it.skip('rolls back app when form is submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({

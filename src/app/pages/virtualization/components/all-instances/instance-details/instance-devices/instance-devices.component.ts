@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 
 @Component({
   selector: 'ix-instance-devices',
@@ -13,12 +12,10 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    MatCardModule,
     TranslateModule,
-    MatCardContent,
   ],
 })
 export class InstanceDevicesComponent {
+  instance = input.required<VirtualizationInstance>();
 }

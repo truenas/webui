@@ -151,7 +151,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   daysTillExpiration(now: Date, then: Date): number {
-    return Math.round((then.getTime() - now.getTime()) / (oneDayMillis));
+    return Math.round((then.getTime() - now.getTime()) / oneDayMillis);
   }
 
   updateLicense(): void {
