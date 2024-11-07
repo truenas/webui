@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { filter, map, merge, Observable, of, share, startWith, Subject, Subscriber, switchMap, take, takeUntil, tap, throwError } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api-error-name.enum';
-import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -36,7 +36,7 @@ export class Api2Service {
   }
 
   private get ws$(): Observable<unknown> {
-    return this.wsHandler.wsConnection.stream$;
+    return this.wsHandler.responseStream$;
   }
 
   call<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
@@ -93,7 +93,7 @@ export class Api2Service {
       return this.eventSubscribers.get(method as K);
     }
     const observable$ = new Observable((trigger: Subscriber<ApiEventTyped<K>>) => {
-      const subscription = this.getEventSubscriber<K, ApiEventTyped<K>>(method as K).subscribe(trigger);
+      const subscription = this.wsHandler.buildSubscriber<K, ApiEventTyped<K>>(method as K).subscribe(trigger);
       return () => {
         subscription.unsubscribe();
         this.eventSubscribers.delete(method as K);
@@ -135,7 +135,7 @@ export class Api2Service {
     return of(uuid).pipe(
       tap(() => {
         performance.mark(`${method} - ${uuid} - start`);
-        this.wsHandler.wsConnection.send({
+        this.wsHandler.scheduleCall({
           id: uuid, msg: IncomingApiMessageType.Method, method, params,
         });
       }),
@@ -188,16 +188,6 @@ export class Api2Service {
         reason: this.translate.instant('Access denied to {method}', { method: context.method }),
       };
     }
-
     return error;
-  }
-
-  private getEventSubscriber<K extends ApiEventMethod, R extends ApiEventTyped<K>>(name: K): Observable<R> {
-    const id = UUID.UUID();
-    return this.wsHandler.wsConnection.event(
-      () => ({ id, name, msg: OutgoingApiMessageType.Sub }),
-      () => ({ id, msg: OutgoingApiMessageType.UnSub }),
-      (message: R) => (message.collection === name && message.msg !== IncomingApiMessageType.NoSub),
-    );
   }
 }
