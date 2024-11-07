@@ -2026,6 +2026,8 @@
   "Preferred Trains": "",
   "Preserve Extended Attributes": "",
   "Preserve Permissions": "",
+  "Preserve Power Management and S.M.A.R.T. settings": "",
+  "Preserve disk description": "",
   "Preset": "",
   "Preset Name": "",
   "Prevent the user from logging in or  using password-based services until this option is unset. Locking an  account is only possible when <b>Disable Password</b> is <i>No</i> and  a <b>Password</b> has been created for the account.": "",
