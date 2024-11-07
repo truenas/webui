@@ -51,7 +51,7 @@ export class InstanceDevicesComponent implements OnChanges {
 
   loadDevices(): void {
     this.isLoading.set(true);
-    this.ws.call('virt.instance.device_list', [this.instance()?.id])
+    this.ws.call('virt.instance.device_list', [this.instance().id])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (devices) => {
