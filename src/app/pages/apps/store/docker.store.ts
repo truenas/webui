@@ -39,7 +39,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   readonly dockerConfig$ = this.select((state) => state.dockerConfig);
   readonly selectedPool$ = this.select((state) => state.dockerConfig?.pool || null);
   readonly nvidiaDriversInstalled$ = this.select((state) => state.nvidiaDriversInstalled);
-  readonly lacksNvidiaDrivers$ = this.select((state) => state.nvidiaStatus !== DockerNvidiaStatus.Absent);
+  readonly hasNvidiaCard$ = this.select((state) => state.nvidiaStatus !== DockerNvidiaStatus.Absent);
   readonly dockerNvidiaStatus$ = this.select((state) => state.nvidiaStatus);
   readonly isDockerStarted$ = this.select((state) => {
     return state.statusData.status == null ? null : DockerStatus.Running === state.statusData.status;

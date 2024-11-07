@@ -65,13 +65,13 @@ describe('AppsSettingsComponent', () => {
     ],
   });
 
-  describe('no docker lacks nvidia drivers', () => {
+  describe('system has no nvidia card', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
           mockProvider(DockerStore, {
             nvidiaDriversInstalled$: of(false),
-            lacksNvidiaDrivers$: of(false),
+            hasNvidiaCard$: of(false),
             dockerConfig$: of(dockerConfig),
             dockerNvidiaStatus$: of(DockerNvidiaStatus.NotInstalled),
             reloadDockerConfig: jest.fn(() => of({})),
@@ -118,14 +118,14 @@ describe('AppsSettingsComponent', () => {
     });
   });
 
-  describe('has docker lacks nvidia drivers', () => {
-    describe('lacksNvidiaDrivers is true', () => {
+  describe('has docker no nvidia drivers', () => {
+    describe('hasNvidiaCard is true', () => {
       beforeEach(() => {
         spectator = createComponent({
           providers: [
             mockProvider(DockerStore, {
               nvidiaDriversInstalled$: of(false),
-              lacksNvidiaDrivers$: of(true),
+              hasNvidiaCard$: of(true),
               dockerConfig$: of(dockerConfig),
               dockerNvidiaStatus$: of(DockerNvidiaStatus.NotInstalled),
               setDockerNvidia: jest.fn(() => of(null)),
@@ -137,7 +137,7 @@ describe('AppsSettingsComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('shows Install NVIDIA Drivers checkbox when lacksNvidiaDrivers is true', async () => {
+      it('shows Install NVIDIA Drivers checkbox when hasNvidiaCard is true', async () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
@@ -166,13 +166,13 @@ describe('AppsSettingsComponent', () => {
       });
     });
 
-    describe('lacksNvidiaDrivers is false and nvidiaDriversInstalled is true', () => {
+    describe('hasNvidiaCard is false and nvidiaDriversInstalled is true', () => {
       beforeEach(() => {
         spectator = createComponent({
           providers: [
             mockProvider(DockerStore, {
               nvidiaDriversInstalled$: of(true),
-              lacksNvidiaDrivers$: of(false),
+              hasNvidiaCard$: of(false),
               dockerConfig$: of(dockerConfig),
               dockerNvidiaStatus$: of(DockerNvidiaStatus.Installed),
               reloadDockerConfig: jest.fn(() => of({})),
@@ -200,7 +200,7 @@ describe('AppsSettingsComponent', () => {
           providers: [
             mockProvider(DockerStore, {
               nvidiaDriversInstalled$: of(true),
-              lacksNvidiaDrivers$: of(false),
+              hasNvidiaCard$: of(true),
               dockerConfig$: of(dockerConfig),
               dockerNvidiaStatus$: of(DockerNvidiaStatus.Installed),
               reloadDockerConfig: jest.fn(() => of({})),

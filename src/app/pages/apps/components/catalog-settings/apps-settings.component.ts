@@ -65,8 +65,8 @@ import { WebSocketService } from 'app/services/ws.service';
   ],
 })
 export class AppsSettingsComponent implements OnInit {
+  protected hasNvidiaCard = toSignal(this.dockerStore.hasNvidiaCard$);
   protected nvidiaDriversInstalled = toSignal(this.dockerStore.nvidiaDriversInstalled$);
-  protected lacksNvidiaDrivers = toSignal(this.dockerStore.lacksNvidiaDrivers$);
   protected dockerNvidiaStatus = toSignal(this.dockerStore.dockerNvidiaStatus$);
   protected isFormLoading = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
@@ -86,7 +86,7 @@ export class AppsSettingsComponent implements OnInit {
     singleArrayToOptions(),
   );
 
-  protected showNvidiaCheckbox = computed(() => this.nvidiaDriversInstalled() || this.lacksNvidiaDrivers());
+  protected showNvidiaCheckbox = computed(() => this.hasNvidiaCard() || this.nvidiaDriversInstalled());
 
   readonly tooltips = {
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
