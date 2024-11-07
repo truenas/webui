@@ -1,19 +1,14 @@
-<h1
-  mat-dialog-title
-  class="title"
->
-<ix-icon name="ix-truenas-connect"></ix-icon>
-<span class="truenas">TrueNAS &nbsp;</span>
-<span>CONNECT</span>
+<h1 mat-dialog-title class="title">
+  <ix-icon name="ix-truenas-connect"></ix-icon>
+  <span class="truenas">TrueNAS &nbsp;</span>
+  <span>CONNECT</span>
 </h1>
-<h4 class="text-center">Add this system to your account in two easy steps</h4>
-
+<h4 class="text-center">{{ 'Add this system to your account' | translate}}</h4>
 
 <mat-dialog-content>
-<h5 class="text-center">Create a registration token on Truenas CONNECT</h5>
-<br>
+  <h5 class="text-center">{{'Connect to Truenas CONNECT' | translate}}</h5>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button color="primary" (click)="connect()">Go to TrueNAS CONNECT</button>
+  <button mat-button color="primary" (click)="connect()">{{ 'Go to TrueNAS CONNECT' | translate}}</button>
 </mat-dialog-actions>

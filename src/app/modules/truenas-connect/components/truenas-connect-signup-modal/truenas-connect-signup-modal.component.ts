@@ -5,7 +5,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './truenas-connect-signup-modal.component.html',
-  styleUrl: './truenas-connect-signup-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TruenasConnectSignupModalComponent {

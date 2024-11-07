@@ -1,1 +1,44 @@
-<p>truenas-connect-status-modal works!</p>
+<div mat-dialog-title>{{ 'Truenas Connect Service' | translate }}</div>
+<mat-divider></mat-divider>
+<mat-dialog-content>
+    <div>
+        @if (status === TruenasConnectStatus.Connected) {
+            <ix-icon
+              class="status-connected"
+              name="check_circle"
+            ></ix-icon>
+          }
+          @if (status === TruenasConnectStatus.Failed) {
+            <ix-icon
+              class="status-failed"
+              name="cancel"
+            ></ix-icon>
+          }
+          @if (status === TruenasConnectStatus.Disabled) {
+            <ix-icon
+              class="status-disabled"
+              name="pause_circle_filled"
+            ></ix-icon>
+          }
+          <span>{{ status | translate }}</span>
+    </div>
+
+      <div id="error">
+      {{ reason | translate }}
+    </div>
+</mat-dialog-content>
+<div mat-dialog-actions>
+    <button
+    mat-button
+    color="primary"
+    class="tc-action-button"
+  >
+    {{ 'Settings' | translate }}
+  </button>
+  <button
+    mat-button
+    color="primary"
+  >
+  Truenas Connect
+  </button>
+</div>

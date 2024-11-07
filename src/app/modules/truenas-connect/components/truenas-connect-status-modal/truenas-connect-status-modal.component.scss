@@ -1,0 +1,18 @@
+.ix-icon {
+  margin-right: 10px;
+  position: relative;
+  top: 5px;
+  height: 21px;
+  padding: 2px 0 2px 2px;
+  width: 21px;
+
+  &.status-connected {
+    color: var(--blue);
+  }
+  &.status-failed {
+    color: var(--red);
+  }
+  &.status-disabled {
+    color: var(--grey);
+  }
+}
