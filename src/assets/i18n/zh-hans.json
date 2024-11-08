@@ -1,6 +1,7 @@
 {
   "": "",
   "...": "",
+  "Also unlock any encrypted dataset stored within this dataset. Child datasets that inherit encryption from this encryption root will be unlocked in either case.": "",
   "Host ports are listed on the left and associated container ports are on the right.    0.0.0.0 on the host side represents binding to any IP address on the host.": "",
   "Instances you created will automatically appear here.": "",
   "No instances": "",
@@ -399,7 +400,6 @@
   "Alphanumeric <a href=\"https://www.backblaze.com/docs/cloud-storage-application-keys?highlight=application%20key\" target=\"_blank\">Backblaze B2</a> Application Key ID. To generate a new application key, log in to the Backblaze account, go to the <i>App Keys</i> page, and add a new application key. Copy the application <i>keyID</i> string to this field.": "字母数字的<a href=\"https://www.backblaze.com/docs/cloud-storage-application-keys?highlight=application%20key\" target=\"_blank\"> Backblaze B2 </a>应用程序密钥 ID。要生成新的应用程序密钥，请登录 Backblaze 帐户，进入<i> App Keys </i>页面，然后创建一个新的应用程序密钥。将应用程序<i> keyID </i>字符串复制到此字段。",
   "Also Include Naming Schema": "还包括命名方案",
   "Also include snapshots with the name": "还包括带有名称的快照",
-  "Also unlock any encrypted dataset stored within this dataset.": "同时解锁该数据集中存储的所有加密数据集。",
   "Alternative names that SMB clients can use when connecting to this NAS. Can be no greater than 15 characters.": "SMB 客户端连接到此 NAS 时可以使用的备用名称。不得超过 15 个字符。",
   "Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.": "或者，您可以先在向导中配置 VDEVs，然后打开手动选择进行调整。",
   "Always": "总是",

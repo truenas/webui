@@ -116,7 +116,7 @@
   "Alphanumeric <a href=\"https://www.backblaze.com/docs/cloud-storage-application-keys?highlight=application%20key\" target=\"_blank\">Backblaze B2</a> Application Key ID. To generate a new application key, log in to the Backblaze account, go to the <i>App Keys</i> page, and add a new application key. Copy the application <i>keyID</i> string to this field.": "",
   "Also Include Naming Schema": "",
   "Also include snapshots with the name": "",
-  "Also unlock any encrypted dataset stored within this dataset.": "",
+  "Also unlock any encrypted dataset stored within this dataset. Child datasets that inherit encryption from this encryption root will be unlocked in either case.": "",
   "Alternative names that SMB clients can use when connecting to this NAS. Can be no greater than 15 characters.": "",
   "Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.": "",
   "Always": "",
