@@ -234,7 +234,7 @@ export class EnclosureSvgComponent implements OnDestroy {
       'aria-label',
       this.translate.instant('Disk Details for {disk} ({descriptor})', {
         disk: slot.dev || this.translate.instant('Empty drive cage'),
-        descriptor: slot.descriptor,
+        descriptor: this.translate.instant('Slot: {slot}', { slot: slot.drive_bay_number }),
       }),
     );
   }
