@@ -12,6 +12,7 @@ import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-we
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -86,9 +87,42 @@ describe('ReplaceDiskDialogComponent', () => {
         disk: '{serial_lunid}BBBBB1',
         force: true,
         label: '9804554747743380831',
+        preserve_description: true,
+        preserve_settings: true,
       },
     ]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('shows additional settings to preserve disk settings and description', async () => {
+    const preserveSettings = await loader.getHarness(
+      IxCheckboxHarness.with({ label: 'Preserve Power Management and S.M.A.R.T. settings' }),
+    );
+    await preserveSettings.setValue(false);
+
+    const preserveDescription = await loader.getHarness(
+      IxCheckboxHarness.with({ label: 'Preserve disk description' }),
+    );
+    await preserveDescription.setValue(false);
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Member Disk': 'sdb (10 GiB)',
+    });
+
+    const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Replace Disk' }));
+    await replaceButton.click();
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.replace', [
+      1,
+      {
+        disk: '{serial_lunid}BBBBB1',
+        force: false,
+        label: '9804554747743380831',
+        preserve_description: false,
+        preserve_settings: false,
+      },
+    ]);
   });
 });
