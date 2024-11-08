@@ -77,8 +77,8 @@ export class ElementsPageComponent {
       }),
     ],
     {
-      uniqueRowTag: (element) => element.descriptor,
-      ariaLabels: (row) => [row.descriptor, this.translate.instant('Element')],
+      uniqueRowTag: (element: EnclosureElement) => element.descriptor,
+      ariaLabels: (row: EnclosureElement) => [row.descriptor, this.translate.instant('Element')],
     },
   );
 

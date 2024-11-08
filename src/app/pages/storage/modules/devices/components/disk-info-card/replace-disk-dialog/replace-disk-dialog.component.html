@@ -11,6 +11,16 @@
   ></ix-unused-disk-select>
 
   <ix-checkbox
+    formControlName="preserve_settings"
+    [label]="'Preserve Power Management and S.M.A.R.T. settings' | translate"
+  ></ix-checkbox>
+
+  <ix-checkbox
+    formControlName="preserve_description"
+    [label]="'Preserve disk description' | translate"
+  ></ix-checkbox>
+
+  <ix-checkbox
     formControlName="force"
     [label]="'Force' | translate"
     [tooltip]="helptext.dialogFormFields.force.tooltip | translate"

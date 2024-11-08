@@ -2,6 +2,7 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
+import { DockerNvidiaStatusResponse } from 'app/enums/docker-nvidia-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -33,7 +34,7 @@ import {
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { LoginQuery } from 'app/interfaces/auth.interface';
+import { LoginExOtpTokenQuery, LoginExQuery, LoginExResponse } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
@@ -332,15 +333,14 @@ export interface ApiCallDirectory {
 
   // Auth
   'auth.generate_token': { params: void; response: string };
-  'auth.login': { params: LoginQuery; response: boolean };
-  'auth.login_with_token': { params: [token: string]; response: boolean };
+  'auth.login_ex': { params: [LoginExQuery]; response: LoginExResponse };
+  'auth.login_ex_continue': { params: [LoginExOtpTokenQuery]; response: LoginExResponse };
   'auth.logout': { params: void; response: void };
   'auth.me': { params: void; response: LoggedInUser };
   'auth.sessions': { params: QueryParams<AuthSession>; response: AuthSession[] };
   'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
   'auth.terminate_other_sessions': { params: void; response: void };
   'auth.terminate_session': { params: [id: string]; response: void };
-  'auth.two_factor_auth': { params: [string, string]; response: boolean };
   'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
 
@@ -583,7 +583,7 @@ export interface ApiCallDirectory {
   // Docker
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusData };
-  'docker.lacks_nvidia_drivers': { params: void; response: boolean };
+  'docker.nvidia_status': { params: void; response: DockerNvidiaStatusResponse };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };
