@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import { filter, map, merge, Observable, of, share, startWith, Subject, Subscriber, switchMap, take, takeUntil, tap, throwError } from 'rxjs';
+import { filter, map, merge, Observable, of, share, startWith, Subject, Subscriber, switchMap, take, takeUntil, throwError } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
@@ -33,10 +33,6 @@ export class Api2Service {
         this.clearSubscriptions();
       }
     });
-  }
-
-  private get ws$(): Observable<unknown> {
-    return this.wsHandler.responseStream$;
   }
 
   call<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
@@ -124,23 +120,20 @@ export class Api2Service {
     this.eventSubscribers.clear();
   }
 
-  getWebSocketStream$(): Observable<unknown> {
-    return this.ws$;
-  }
-
   private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;
   private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number>;
   private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown): Observable<unknown> {
     const uuid = UUID.UUID();
     return of(uuid).pipe(
-      tap(() => {
+      switchMap(() => {
         performance.mark(`${method} - ${uuid} - start`);
         this.wsHandler.scheduleCall({
           id: uuid, msg: IncomingApiMessageType.Method, method, params,
         });
+        return this.wsHandler.responses$.pipe(
+          filter((data: IncomingApiMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+        );
       }),
-      switchMap(() => this.ws$),
-      filter((data: IncomingApiMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
       switchMap((data: IncomingApiMessage) => {
         if ('error' in data && data.error) {
           this.printError(data.error, { method, params });
