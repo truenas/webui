@@ -7,7 +7,8 @@ import {
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  combineLatest, forkJoin, of, switchMap,
+  combineLatest, filter, forkJoin, of, switchMap,
+  take,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -72,7 +73,7 @@ export class AppsSettingsComponent implements OnInit {
   setupForm(): void {
     combineLatest([
       this.ws.call('catalog.config'),
-      this.dockerStore.dockerConfig$,
+      this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([catalogConfig, dockerConfig]) => {

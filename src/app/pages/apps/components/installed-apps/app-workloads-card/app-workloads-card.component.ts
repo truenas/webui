@@ -7,6 +7,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextApps } from 'app/helptext/apps/apps';
 import {
   App, AppContainerDetails, AppContainerState, appContainerStateLabels,
 } from 'app/interfaces/app.interface';
@@ -32,6 +33,7 @@ export class AppWorkloadsCardComponent {
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly appContainerStateLabels = appContainerStateLabels;
+  protected readonly helptext = helptextApps;
 
   constructor(
     private matDialog: MatDialog,
