@@ -69,22 +69,7 @@ export class WebSocketHandlerService {
         if (this.activeCalls + 1 < this.maxConcurrentCalls) {
           return;
         }
-        console.error(
-          'Max concurrent calls',
-          JSON.stringify(
-            [
-              ...this.queuedCalls,
-              ...(this.pendingCalls.values()),
-            ].map((call: { id: string; method: string }) => call.method),
-          ),
-        );
-        if (!environment.production) {
-          throw new Error(
-            `Max concurrent calls limit reached.
-            There are more than 20 calls queued. 
-            See queued calls in the browser's console logs`,
-          );
-        }
+        this.raiseConcurrentCallsError();
       }),
       mergeMap(() => {
         return this.queuedCalls.length > 0 ? this.processCall(this.queuedCalls.shift()) : of(null);
@@ -106,6 +91,25 @@ export class WebSocketHandlerService {
         this.triggerNextCall$.next();
       }),
     );
+  }
+
+  private raiseConcurrentCallsError(): void {
+    console.error(
+      'Max concurrent calls',
+      JSON.stringify(
+        [
+          ...this.queuedCalls,
+          ...(this.pendingCalls.values()),
+        ].map((call: { id: string; method: string }) => call.method),
+      ),
+    );
+    if (!environment.production) {
+      throw new Error(
+        `Max concurrent calls limit reached.
+        There are more than 20 calls queued. 
+        See queued calls in the browser's console logs`,
+      );
+    }
   }
 
   private connectWebSocket(): void {
