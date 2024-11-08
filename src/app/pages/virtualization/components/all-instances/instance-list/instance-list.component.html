@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="table-container">
+    <div class="item-search">
+      @if (!showMobileDetails()) {
+        <ix-fake-progress-bar
+          class="loader-bar"
+          [loading]="isLoading()"
+        ></ix-fake-progress-bar>
+      }
+
+      <ix-search-input1
+        [maxLength]="100"
+        [disabled]="!instances().length"
+        [value]="searchQuery()"
+        (search)="onSearch($event)"
+      ></ix-search-input1>
+    </div>
+
+    <div class="instances">
+      @if (filteredInstances()?.length) {
+        <div class="instances-header-row">
+          <div class="cell checkbox">
+            <mat-checkbox
+              color="primary"
+              ixTest="select-all-app"
+              [checked]="isAllSelected()"
+              [indeterminate]="!isAllSelected() && !!selection.selected.length"
+              (change)="toggleAllChecked($event.checked)"
+            ></mat-checkbox>
+          </div>
+          <div class="cell">{{ 'Name' | translate }}</div>
+          <div class="cell">{{ 'Type' | translate }}</div>
+          <div class="cell">{{ 'Status' | translate }}</div>
+          <div class="cell actions">{{ 'Controls' | translate }}</div>
+        </div>
+      } @else {
+        <ix-empty [conf]="emptyConfig()"></ix-empty>
+      }
+      
+      @for (instance of filteredInstances(); track instance.id) {
+        <ix-instance-row
+          [instance]="instance"
+          [class.selected]="selectedInstance()?.id === instance.id"
+          [selected]="selection.isSelected(instance.id)"
+          (click)="viewDetails(instance)"
+          (keydown.enter)="viewDetails(instance)"
+          (onStart)="start(instance.id)"
+          (onStop)="stop(instance.id)"
+          (onRestart)="restart(instance.id)"
+        ></ix-instance-row>
+      }
+    </div>
+  </div>
+</div>

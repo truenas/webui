@@ -163,7 +163,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     (dataset) => dataset,
     this.getLevel,
     this.isExpandable,
-    () => ([]),
+    () => [],
   );
 
   dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);

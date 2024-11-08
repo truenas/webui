@@ -125,7 +125,7 @@ describe('EncryptionSectionComponent', () => {
         'Inherit (encrypted)': false,
       });
 
-      const encryptionFc = (await form.getControl('Encryption'));
+      const encryptionFc = await form.getControl('Encryption');
       const isEncryptionDisabled = await encryptionFc.isDisabled();
       expect(isEncryptionDisabled).toBe(true);
     });

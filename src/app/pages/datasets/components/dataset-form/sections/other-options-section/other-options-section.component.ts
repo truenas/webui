@@ -235,7 +235,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      // eslint-disable-next-line sonarjs/sonar-prefer-optional-chain,@typescript-eslint/prefer-optional-chain
+      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (!systemInfo.license || !systemInfo.license.features.includes(LicenseFeature.Dedup)) {
         return;
       }

@@ -66,7 +66,7 @@ export class ExtentFormComponent implements OnInit {
   }
 
   get isDevice(): boolean {
-    return (this.form.controls.type.value !== IscsiExtentType.File);
+    return this.form.controls.type.value !== IscsiExtentType.File;
   }
 
   get isAvailableThreshold(): boolean {

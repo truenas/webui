@@ -507,7 +507,7 @@ export class ZvolFormComponent implements OnInit {
     this.form.controls.encryption_type.valueChanges
       .pipe(untilDestroyed(this)).subscribe((type: 'key' | 'passphrase') => {
         this.encryptionType = type;
-        const key = (type === 'key');
+        const key = type === 'key';
         this.setPassphraseFieldsDisabled(key);
         if (key) {
           this.form.controls.generate_key.enable();
@@ -576,16 +576,16 @@ export class ZvolFormComponent implements OnInit {
     const data: ZvolFormData = this.sendAsBasicOrAdvanced(this.form.value);
 
     if (data.sync === inherit) {
-      delete (data.sync);
+      delete data.sync;
     }
     if (data.compression === inherit) {
-      delete (data.compression);
+      delete data.compression;
     }
     if (data.deduplication === inherit) {
-      delete (data.deduplication);
+      delete data.deduplication;
     }
     if (data.readonly === inherit) {
-      delete (data.readonly);
+      delete data.readonly;
     }
     if (data.volblocksize !== inherit) {
       let volblocksizeIntegerValue = parseInt(data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0]);
@@ -599,7 +599,7 @@ export class ZvolFormComponent implements OnInit {
       data.volsize = data.volsize as number;
       data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
     } else {
-      delete (data.volblocksize);
+      delete data.volblocksize;
     }
 
     // encryption values

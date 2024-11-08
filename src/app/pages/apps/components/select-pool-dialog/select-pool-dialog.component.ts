@@ -83,10 +83,10 @@ export class SelectPoolDialogComponent implements OnInit {
   }
 
   private loadPools(): void {
-    forkJoin(([
+    forkJoin([
       this.dockerStore.selectedPool$.pipe(take(1)),
       this.appService.getPoolList(),
-    ]))
+    ])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([selectedPool, pools]) => {

@@ -79,7 +79,7 @@ export class SmbLockListComponent implements OnInit {
       propertyName: 'num_pending_deletes',
     }),
   ], {
-    uniqueRowTag: (row) => 'smb-lock-' + row.filename + '-' + row.fileid.devid + '-' + row.fileid.extid,
+    uniqueRowTag: (row) => `smb-lock-${row.filename}-${row.fileid.devid}-${row.fileid.extid}`,
     ariaLabels: (row) => [row.filename, this.translate.instant('SMB Lock')],
   });
 

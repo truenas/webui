@@ -86,7 +86,6 @@ export class GaugeChartComponent {
   private conversionColor(color: string): string {
     const colorType = (new ThemeUtils()).getValueType(color);
     let resultColor = color;
-    // eslint-disable-next-line default-case
     switch (colorType) {
       case 'cssVar': {
         const cssVar = color.replace('var(--', '').replace(')', '') as keyof Theme;
