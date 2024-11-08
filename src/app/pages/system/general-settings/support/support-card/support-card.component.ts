@@ -169,41 +169,41 @@ export class SupportCardComponent implements OnInit {
   }
 
   updateProductionStatus(newStatus: boolean): void {
-    let request$: Observable<boolean | SetProductionStatusDialogResult> = of(false);
+    let request$: Observable<boolean | SetProductionStatusDialogResult>;
     if (newStatus) {
-      request$ = request$.pipe(
-        switchMap(() => this.matDialog.open(SetProductionStatusDialogComponent).afterClosed().pipe(
-          tap((confirmed) => {
-            if (confirmed) {
-              return true;
-            }
-            this.isProductionControl.setValue(false);
-            this.cdr.markForCheck();
-            return false;
-          }),
-        )),
-        filter(Boolean),
-      ) as Observable<boolean>;
+      request$ = this.matDialog.open(SetProductionStatusDialogComponent).afterClosed().pipe(
+        filter((result: SetProductionStatusDialogResult | false) => {
+          if (result) {
+            return true;
+          }
+          this.isProductionControl.setValue(false, { emitEvent: false });
+          this.cdr.markForCheck();
+          return false;
+        }),
+      );
+    } else {
+      request$ = of(false);
     }
 
     request$.pipe(
       switchMap((result) => {
         const attachDebug = (isObject(result) && result.sendInitialDebug) || false;
 
-        return this.ws.job('truenas.set_production', [newStatus, attachDebug]).pipe(this.loader.withLoader());
+        return this.ws.job('truenas.set_production', [newStatus, attachDebug]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+          tap({
+            complete: () => {
+              this.snackbar.success(
+                this.translate.instant(helptext.is_production_dialog.message),
+              );
+            },
+          }),
+        );
       }),
       untilDestroyed(this),
     )
-      .subscribe({
-        complete: () => {
-          this.snackbar.success(
-            this.translate.instant(helptext.is_production_dialog.message),
-          );
-        },
-        error: (error: unknown) => {
-          this.dialog.error(this.errorHandler.parseError(error));
-        },
-      });
+      .subscribe();
   }
 
   private loadProductionStatus(): void {

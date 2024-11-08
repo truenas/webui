@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
@@ -17,7 +18,6 @@ import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   SetProductionStatusDialogComponent,
   SetProductionStatusDialogResult,
@@ -46,10 +46,9 @@ describe('SupportCardComponent', () => {
       mockProvider(MatDialog),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
-      mockProvider(AppLoaderService),
       mockWebSocket([
         mockCall('truenas.is_production', true),
-        mockJob('truenas.set_production'),
+        mockJob('truenas.set_production', fakeSuccessfulJob()),
         mockCall('system.product_type', ProductType.Scale),
       ]),
       provideMockStore({
@@ -112,7 +111,7 @@ describe('SupportCardComponent', () => {
         expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [true, true]);
       });
 
-      it('sets production status to false when checkbox is unticked', async () => {
+      it('sets production status to false when toggle is unset', async () => {
         await isProductionSystemToggle.setValue(false);
 
         expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
