@@ -45,7 +45,7 @@
   "was successfully attached.": "",
   "{serviceName} service failed to start.": "",
   "{serviceName} service failed to stop.": "",
-  "{temp}°C (All Threads)": "",
+  "{temp}°C (All Cores)": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n您的会话似乎已超过 {lifetime} 秒处于非活动状态。<br>\n 出于安全原因，我们将在 {time} 后注销您的会话。\n",
   " Est. Usable Raw Capacity": "估计可用原始容量",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "当 <b>UPS 模式</b> 设置为 <i>附属</i> 时。输入 UPS <i>主</i> 系统的开放端口号。默认端口为 <i>3493</i>。",
