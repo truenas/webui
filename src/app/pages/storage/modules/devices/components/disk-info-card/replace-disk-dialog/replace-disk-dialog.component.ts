@@ -49,6 +49,8 @@ export interface ReplaceDiskDialogData {
 export class ReplaceDiskDialogComponent {
   form = this.formBuilder.group({
     replacement: ['', Validators.required],
+    preserve_settings: [true],
+    preserve_description: [true],
     force: [false],
   });
 
@@ -73,6 +75,8 @@ export class ReplaceDiskDialogComponent {
         label: this.data.guid,
         disk: this.form.value.replacement,
         force: this.form.value.force,
+        preserve_settings: this.form.value.preserve_settings,
+        preserve_description: this.form.value.preserve_description,
       }]),
       { title: helptextVolumeStatus.replace_disk.title },
     )

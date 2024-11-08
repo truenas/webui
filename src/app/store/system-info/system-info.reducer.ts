@@ -16,7 +16,7 @@ export interface SystemInfoState {
 
 const initialState: SystemInfoState = {
   systemInfo: null,
-  productType: null,
+  productType: ProductType.Scale,
   isIxHardware: false,
   buildYear: environment.buildYear,
 };
