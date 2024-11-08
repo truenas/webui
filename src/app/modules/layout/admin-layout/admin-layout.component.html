@@ -9,7 +9,7 @@
     (closedStart)="onMenuClosed()"
   >
     <div id="scroll-area" class="navigation-hold">
-      <div [ngClass]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]">
+      <div class="branding topbar" [class.truenas-scale]="!isEnterprise()">
         <a routerLink="/dashboard" class="logo" ixTest="main-logo">
           <ix-icon
             class="app-logo"
@@ -44,7 +44,7 @@
         <div
           class="sidenav-copyright-icon"
           matTooltipPosition="right"
-          [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + copyrightYear() + ' by iXsystems, Inc.'"
+          [matTooltip]="copyrightTooltip()"
         >
           <ix-icon name="copyright"></ix-icon>
         </div>

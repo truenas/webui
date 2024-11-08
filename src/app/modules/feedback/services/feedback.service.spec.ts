@@ -22,7 +22,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
-import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
+import { selectProductType, selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackService', () => {
   let spectator: SpectatorService<FeedbackService>;
@@ -49,6 +49,10 @@ describe('FeedbackService', () => {
       provideMockStore({
         selectors: [
           {
+            selector: selectProductType,
+            value: ProductType.ScaleEnterprise,
+          },
+          {
             selector: selectSystemInfoState,
             value: {
               systemInfo: {
@@ -60,7 +64,6 @@ describe('FeedbackService', () => {
           },
         ],
       }),
-      mockProvider(SystemGeneralService),
       mockProvider(HttpClient, {
         post: jest.fn(() => of(newReview)),
       }),
