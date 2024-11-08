@@ -100,11 +100,9 @@ export class WebSocketHandlerService {
     return this.responses$.pipe(
       filter((data: IncomingApiMessage) => data.msg === IncomingApiMessageType.Result && data.id === call.id),
       take(1),
-      tap((data: IncomingApiMessage) => {
+      tap(() => {
         this.activeCalls--;
-        if (data.msg === IncomingApiMessageType.Result) {
-          this.pendingCalls.delete(call.id);
-        }
+        this.pendingCalls.delete(call.id);
         this.triggerNextCall$.next();
       }),
     );
