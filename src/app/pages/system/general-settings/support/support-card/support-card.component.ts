@@ -2,10 +2,10 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
   signal,
 } from '@angular/core';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -25,6 +25,9 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -70,13 +73,13 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     MatMenu,
     MatMenuItem,
     TranslateModule,
+    IxSlideToggleComponent,
   ],
 })
 export class SupportCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = supportCardElements;
 
-  isProduction: boolean;
   extraMargin = true;
   systemInfo: SystemInfoInSupport;
   hasLicense = false;
@@ -85,6 +88,8 @@ export class SupportCardComponent implements OnInit {
   links = [helptext.docHub, helptext.forums, helptext.licensing];
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
+
+  protected readonly isProductionControl = new FormControl(false);
 
   get licenseButtonText(): string {
     return this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
@@ -117,12 +122,9 @@ export class SupportCardComponent implements OnInit {
       }
       this.cdr.markForCheck();
     });
-    this.ws.call('truenas.is_production')
-      .pipe(untilDestroyed(this))
-      .subscribe((isProduction) => {
-        this.isProduction = isProduction;
-        this.cdr.markForCheck();
-      });
+
+    this.loadProductionStatus();
+    this.saveProductionStatusOnChange();
   }
 
   private setupProductImage(systemInfo: SystemInfo): void {
@@ -166,16 +168,16 @@ export class SupportCardComponent implements OnInit {
     this.slideInService.open(ProactiveComponent, { wide: true });
   }
 
-  updateProductionStatus(event: MatCheckboxChange): void {
+  updateProductionStatus(newStatus: boolean): void {
     let request$: Observable<boolean | SetProductionStatusDialogResult> = of(false);
-    if (event.checked) {
+    if (newStatus) {
       request$ = request$.pipe(
         switchMap(() => this.matDialog.open(SetProductionStatusDialogComponent).afterClosed().pipe(
           tap((confirmed) => {
             if (confirmed) {
               return true;
             }
-            this.isProduction = false;
+            this.isProductionControl.setValue(false);
             this.cdr.markForCheck();
             return false;
           }),
@@ -188,7 +190,7 @@ export class SupportCardComponent implements OnInit {
       switchMap((result) => {
         const attachDebug = (isObject(result) && result.sendInitialDebug) || false;
 
-        return this.ws.job('truenas.set_production', [event.checked, attachDebug]).pipe(this.loader.withLoader());
+        return this.ws.job('truenas.set_production', [newStatus, attachDebug]).pipe(this.loader.withLoader());
       }),
       untilDestroyed(this),
     )
@@ -202,5 +204,20 @@ export class SupportCardComponent implements OnInit {
           this.dialog.error(this.errorHandler.parseError(error));
         },
       });
+  }
+
+  private loadProductionStatus(): void {
+    this.ws.call('truenas.is_production')
+      .pipe(untilDestroyed(this))
+      .subscribe((isProduction) => {
+        this.isProductionControl.setValue(isProduction, { emitEvent: false });
+        this.cdr.markForCheck();
+      });
+  }
+
+  private saveProductionStatusOnChange(): void {
+    this.isProductionControl.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((newStatus) => this.updateProductionStatus(newStatus));
   }
 }
