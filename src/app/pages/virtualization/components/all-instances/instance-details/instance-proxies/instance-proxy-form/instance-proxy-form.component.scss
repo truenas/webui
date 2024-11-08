@@ -1,0 +1,12 @@
+.port-and-protocol {
+  display: flex;
+  gap: 12px;
+
+  .port {
+    flex: 2;
+  }
+
+  > * {
+    flex: 1;
+  }
+}

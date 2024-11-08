@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, inject, input,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -10,6 +10,9 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
+import {
+  InstanceProxiesComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxies.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 @Component({
@@ -23,12 +26,17 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     InstanceDevicesComponent,
     InstanceGeneralInfoComponent,
     MobileBackButtonComponent,
+    InstanceProxiesComponent,
   ],
 })
 export class InstanceDetailsComponent {
   instance = input.required<VirtualizationInstance>();
 
+  constructor(
+    private instancesStore: VirtualizationInstancesStore,
+  ) {}
+
   onCloseMobileDetails(): void {
-    inject(VirtualizationInstancesStore).selectInstance(null);
+    this.instancesStore.selectInstance(null);
   }
 }

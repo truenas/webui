@@ -4,7 +4,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
 import { catchError, filter, repeat } from 'rxjs/operators';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -12,12 +12,18 @@ export interface VirtualizationInstancesState {
   isLoading: boolean;
   instances: VirtualizationInstance[];
   selectedInstance: VirtualizationInstance;
+
+  isLoadingDevices: boolean;
+  selectedInstanceDevices: VirtualizationDevice[];
 }
 
 const initialState: VirtualizationInstancesState = {
   isLoading: false,
   instances: [],
   selectedInstance: null,
+
+  isLoadingDevices: false,
+  selectedInstanceDevices: [],
 };
 
 @UntilDestroy()
@@ -67,8 +73,13 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
 
   selectInstance(instanceId: string): void {
     const selectedInstance = this.instances()?.find((instance) => instance.id === instanceId);
-    if (selectedInstance) {
-      this.patchState({ selectedInstance });
+    const oldSelectedInstance = this.selectedInstance();
+    if (!selectedInstance || selectedInstance === oldSelectedInstance) {
+      return;
     }
+
+    this.patchState({
+      selectedInstance,
+    });
   }
 }

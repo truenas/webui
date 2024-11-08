@@ -1,0 +1,58 @@
+<ix-modal-header2
+  [title]="'Add Proxy' | translate"
+  [loading]="isLoading()"
+></ix-modal-header2>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <div class="port-and-protocol">
+          <ix-input
+            class="port"
+            type="number"
+            formControlName="source_port"
+            [label]="'Host Port' | translate"
+            [required]="true"
+          ></ix-input>
+
+          <ix-select
+            formControlName="source_proto"
+            [label]="'Host Protocol' | translate"
+            [required]="true"
+            [options]="protocolOptions$"
+          ></ix-select>
+        </div>
+
+        <div class="port-and-protocol">
+          <ix-input
+            class="port"
+            type="number"
+            formControlName="dest_port"
+            [label]="'Instance Port' | translate"
+            [required]="true"
+          ></ix-input>
+
+          <ix-select
+            formControlName="dest_proto"
+            [label]="'Instance Protocol' | translate"
+            [required]="true"
+            [options]="protocolOptions$"
+          ></ix-select>
+        </div>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="add"
+          [disabled]="form.invalid || isLoading()"
+        >
+          {{ 'Add' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>
