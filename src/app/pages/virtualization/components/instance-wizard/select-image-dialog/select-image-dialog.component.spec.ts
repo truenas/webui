@@ -23,14 +23,14 @@ const imageChoices: Record<string, VirtualizationImage> = {
     label: 'Almalinux 8 (arm64, cloud)',
     os: 'Almalinux',
     release: '8',
-    arch: 'arm64',
+    archs: ['arm64'],
     variant: 'cloud',
   },
   'alpine/3.18/default': {
     label: 'Alpine 3.18 (armhf, default)',
     os: 'Alpine',
     release: '3.18',
-    arch: 'armhf',
+    archs: ['armhf'],
     variant: 'default',
   },
 } as unknown as Record<string, VirtualizationImage>;
@@ -74,7 +74,7 @@ describe('SelectImageDialogComponent', () => {
         'Label',
         'OS',
         'Release',
-        'Arch',
+        'Archs',
         'Variant',
         '',
       ]);
