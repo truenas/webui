@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
+  ChangeDetectionStrategy, Component, signal, OnInit,
 } from '@angular/core';
 import {
   FormBuilder, FormControl, ReactiveFormsModule, Validators,
@@ -12,6 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Role } from 'app/enums/role.enum';
 import {
   VirtualizationDeviceType,
   VirtualizationGpuType, VirtualizationRemote, VirtualizationType,
@@ -27,6 +28,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
@@ -35,12 +37,13 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
-} from 'app/pages/virtualization/components/create-instance-form/select-image-dialog/select-image-dialog.component';
+} from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-create-instance-form',
+  selector: 'ix-instance-wizard',
   standalone: true,
   imports: [
     PageHeaderComponent,
@@ -52,14 +55,16 @@ import { WebSocketService } from 'app/services/ws.service';
     RequiresRolesDirective,
     TestDirective,
     IxFieldsetComponent,
+    ReadOnlyComponent,
     AsyncPipe,
   ],
-  templateUrl: './create-instance-form.component.html',
-  styleUrls: ['./create-instance-form.component.scss'],
+  templateUrl: './instance-wizard.component.html',
+  styleUrls: ['./instance-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreateInstanceFormComponent implements OnInit {
+export class InstanceWizardComponent implements OnInit {
   protected readonly isLoading = signal<boolean>(false);
+  protected readonly requiredRoles = [Role.VirtGlobalWrite];
 
   usbDevices$ = this.ws.call('virt.device.usb_choices').pipe(
     map((choices: Record<string, AvailableUsb>) => Object.values(choices).map((choice) => ({
@@ -93,6 +98,10 @@ export class CreateInstanceFormComponent implements OnInit {
 
   protected readonly visibleImageName = new FormControl('');
 
+  get hasRequiredRoles(): Observable<boolean> {
+    return this.authService.hasRole(this.requiredRoles);
+  }
+
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
@@ -103,6 +112,7 @@ export class CreateInstanceFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -139,9 +149,9 @@ export class CreateInstanceFormComponent implements OnInit {
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (newInstance) => {
+        next: ({ result }) => {
           this.snackbar.success(this.translate.instant('Instance saved'));
-          this.router.navigate(['/virtualization/view', newInstance.id]);
+          this.router.navigate(['/virtualization/view', result?.id]);
         },
         error: (error) => {
           this.formErrorHandler.handleWsFormError(error, this.form);

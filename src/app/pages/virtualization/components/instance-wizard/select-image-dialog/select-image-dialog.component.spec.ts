@@ -15,7 +15,7 @@ import {
 import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SelectImageDialogComponent } from 'app/pages/virtualization/components/create-instance-form/select-image-dialog/select-image-dialog.component';
+import { SelectImageDialogComponent } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 const imageChoices: Record<string, VirtualizationImage> = {
