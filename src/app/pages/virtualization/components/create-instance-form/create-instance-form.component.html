@@ -51,8 +51,35 @@
     <ix-fieldset [title]="'Network' | translate">
     </ix-fieldset>
 
-    <ix-fieldset [title]="'Other Devices' | translate">
-    </ix-fieldset>
+    @if ((usbDevices$ | async); as usbDevices) {
+      @if (usbDevices.length > 0) {
+        <ix-fieldset [title]="'USB Devices' | translate">
+          <div formGroupName="usb_devices">
+            @for (device of usbDevices; track device) {
+              <ix-checkbox
+                [formControlName]="device.value"
+                [label]="device.label"
+              ></ix-checkbox>
+            }
+          </div>
+        </ix-fieldset>
+      }
+    }
+
+    @if ((gpuDevices$ | async); as gpuDevices) {
+      @if (gpuDevices.length > 0) {
+        <ix-fieldset [title]="'GPU Devices' | translate">
+          <div formGroupName="gpu_devices">
+            @for (device of gpuDevices; track device) {
+              <ix-checkbox
+                [formControlName]="device.value"
+                [label]="device.label"
+              ></ix-checkbox>
+            }
+          </div>
+        </ix-fieldset>
+      }
+    }
 
     <div class="actions">
       <button
@@ -66,8 +93,4 @@
       </button>
     </div>
   </form>
-
-  <div class="glossary">
-
-  </div>
 </div>
