@@ -2,6 +2,7 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
+import { DockerNvidiaStatusResponse } from 'app/enums/docker-nvidia-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -582,7 +583,7 @@ export interface ApiCallDirectory {
   // Docker
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusData };
-  'docker.lacks_nvidia_drivers': { params: void; response: boolean };
+  'docker.nvidia_status': { params: void; response: DockerNvidiaStatusResponse };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };
@@ -832,7 +833,6 @@ export interface ApiCallDirectory {
 
   // Virt
   'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
-  'virt.instance.get_instance': { params: [instanceId: string]; response: VirtualizationInstance };
   'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: void }; // TODO
   'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: unknown }; // TODO:
   'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };

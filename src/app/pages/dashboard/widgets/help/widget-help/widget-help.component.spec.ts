@@ -3,14 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { ProductType } from 'app/enums/product-type.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetHelpComponent } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.component';
 import { AppState } from 'app/store';
-import { selectProductType, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetHelpComponent', () => {
   let spectator: Spectator<WidgetHelpComponent>;
@@ -25,9 +24,6 @@ describe('WidgetHelpComponent', () => {
     providers: [
       provideMockStore({
         selectors: [{
-          selector: selectProductType,
-          value: ProductType.Scale,
-        }, {
           selector: selectIsEnterprise,
           value: false,
         }],
@@ -142,7 +138,7 @@ describe('WidgetHelpComponent', () => {
     });
 
     it('checks open source row', () => {
-      expect(spectator.query('.open-source')).toHaveText('TrueNAS SCALE is Free');
+      expect(spectator.query('.open-source')).toHaveText('TrueNAS is Free');
 
       store$.overrideSelector(selectIsEnterprise, true);
       store$.refreshState();

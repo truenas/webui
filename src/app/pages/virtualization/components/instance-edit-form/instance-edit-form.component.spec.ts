@@ -81,7 +81,7 @@ describe('InstanceEditFormComponent', () => {
       'Memory Size': '1 GiB',
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Instance' }));
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.update', ['test', {

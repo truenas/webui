@@ -21,7 +21,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -75,7 +74,7 @@ export class SelectImageDialogComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private dialogRef: MatDialogRef<InstanceWizardComponent>,
+    private dialogRef: MatDialogRef<SelectImageDialogComponent>,
     private fb: FormBuilder,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

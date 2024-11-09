@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, signal,
+  ChangeDetectionStrategy, Component, signal, OnInit,
 } from '@angular/core';
 import {
   FormBuilder, FormControl, ReactiveFormsModule, Validators,
@@ -10,12 +10,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import {
+  VirtualizationDeviceType,
+  VirtualizationGpuType, VirtualizationRemote, VirtualizationType,
+} from 'app/enums/virtualization.enum';
+import { Option } from 'app/interfaces/option.interface';
+import {
+  AvailableGpu,
+  AvailableUsb,
   CreateVirtualizationInstance,
+  VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -55,13 +62,35 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./instance-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstanceWizardComponent {
-  protected readonly isLoading = signal(false);
+export class InstanceWizardComponent implements OnInit {
+  protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
+
+  usbDevices$ = this.ws.call('virt.device.usb_choices').pipe(
+    map((choices: Record<string, AvailableUsb>) => Object.values(choices).map((choice) => ({
+      label: choice.product,
+      value: choice.product_id,
+    }))),
+    untilDestroyed(this),
+  );
+
+  // TODO: MV supports only [Container, Physical] for now (based on the response)
+  gpuDevices$ = this.ws.call(
+    'virt.device.gpu_choices',
+    [VirtualizationType.Container, VirtualizationGpuType.Physical],
+  ).pipe(
+    map((choices: Record<string, AvailableGpu>) => Object.values(choices).map((choice) => ({
+      label: choice.description,
+      value: choice.vendor,
+    }))),
+    untilDestroyed(this),
+  );
 
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     cpu: ['', [Validators.required, cpuValidator()]],
+    usb_devices: this.formBuilder.group({}),
+    gpu_devices: this.formBuilder.group({}),
     autostart: [false],
     memory: [null as number, Validators.required],
     image: ['', Validators.required],
@@ -86,6 +115,11 @@ export class InstanceWizardComponent {
     private authService: AuthService,
   ) {}
 
+  ngOnInit(): void {
+    this.setupDeviceControls(this.usbDevices$, 'usb_devices');
+    this.setupDeviceControls(this.gpuDevices$, 'gpu_devices');
+  }
+
   protected onBrowseImages(): void {
     this.matDialog
       .open(SelectImageDialogComponent, {
@@ -107,11 +141,11 @@ export class InstanceWizardComponent {
   }
 
   protected onSubmit(): void {
-    const job$ = this.ws.job('virt.instance.create', [this.form.value as CreateVirtualizationInstance]);
+    const payload = this.getPayload();
+    const job$ = this.ws.job('virt.instance.create', [payload]);
 
-    this.dialogService.jobDialog(job$, {
-      title: this.translate.instant('Saving Instance'),
-    })
+    this.dialogService
+      .jobDialog(job$, { title: this.translate.instant('Saving Instance') })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -123,5 +157,38 @@ export class InstanceWizardComponent {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
+  }
+
+  private getPayload(): CreateVirtualizationInstance {
+    return {
+      name: this.form.controls.name.value,
+      cpu: this.form.controls.cpu.value,
+      autostart: this.form.controls.autostart.value,
+      memory: this.form.controls.memory.value,
+      image: this.form.controls.image.value,
+      devices: [
+        ...Object.entries(this.form.controls.usb_devices.value || {})
+          .filter(([_, isSelected]) => isSelected)
+          .map(([productId]) => ({
+            dev_type: VirtualizationDeviceType.Usb,
+            product_id: productId,
+          })),
+        ...Object.entries(this.form.controls.gpu_devices.value || {})
+          .filter(([_, isSelected]) => isSelected)
+          .map(([gpuType]) => ({
+            dev_type: VirtualizationDeviceType.Gpu,
+            gpu_type: gpuType,
+          })),
+      ] as VirtualizationDevice[],
+    } as CreateVirtualizationInstance;
+  }
+
+  private setupDeviceControls(devices$: Observable<Option[]>, controlName: 'usb_devices' | 'gpu_devices'): void {
+    devices$.pipe(untilDestroyed(this)).subscribe((devices) => {
+      const deviceGroup = this.form.controls[controlName];
+      devices.forEach((device) => {
+        deviceGroup.addControl(device.value as string, this.formBuilder.control(false));
+      });
+    });
   }
 }

@@ -82,6 +82,20 @@ export class InstanceListComponent {
     };
   });
 
+  protected selectInstanceDetails = effect(() => {
+    const instanceId = this.activatedRoute.snapshot.paramMap.get('id');
+
+    if (this.isLoading() || !this.instances()?.length) {
+      return;
+    }
+
+    if (instanceId) {
+      this.selectForDetails(instanceId);
+    } else {
+      this.navigateToDetails(this.instances()[0]);
+    }
+  }, { allowSignalWrites: true });
+
   constructor(
     private store: VirtualizationInstancesStore,
     private router: Router,
@@ -90,21 +104,7 @@ export class InstanceListComponent {
     private dialog: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-  ) {
-    effect(() => {
-      const instanceId = this.activatedRoute.snapshot.paramMap.get('id');
-
-      if (this.isLoading() || !this.instances()?.length) {
-        return;
-      }
-
-      if (instanceId) {
-        this.selectForDetails(instanceId);
-      } else {
-        this.navigateToDetails(this.instances()[0]);
-      }
-    }, { allowSignalWrites: true });
-  }
+  ) {}
 
   onSearch(query: string): void {
     this.searchQuery.set(query);

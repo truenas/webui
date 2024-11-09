@@ -6,11 +6,9 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { MockComponent } from 'ng-mocks';
-import { ProductType } from 'app/enums/product-type.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
@@ -38,9 +36,6 @@ describe('AboutDialogComponent', () => {
             } as SystemInfoState,
           },
         ],
-      }),
-      mockProvider(SystemGeneralService, {
-        getProductType: jest.fn(() => ProductType.Scale),
       }),
       mockProvider(WebSocketService),
       mockProvider(MatDialogRef),
@@ -81,6 +76,6 @@ describe('AboutDialogComponent', () => {
 
   it('should display product-specific open source text', () => {
     const openSourceElement = spectator.query('#open-source');
-    expect(openSourceElement).toHaveText('TrueNAS {product} is Free and  Open Source software, which is provided as-is with no warranty.');
+    expect(openSourceElement).toHaveText('TrueNAS is Free and  Open Source software, which is provided as-is with no warranty.');
   });
 });
