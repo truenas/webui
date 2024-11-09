@@ -54,7 +54,7 @@ export type VirtualizationImageWithId = VirtualizationImage & {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectImageDialogComponent implements OnInit {
-  protected readonly columns = ['label', 'os', 'release', 'arch', 'variant', 'actions'];
+  protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
   protected filterForm = this.fb.group({
     os: [''],
     variant: [''],
