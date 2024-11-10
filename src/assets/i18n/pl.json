@@ -5039,7 +5039,7 @@
   "{cpuPercentage}% Avg. Usage": "",
   "{days, plural, =1 {# day} other {# days}}": "",
   "{duration} remaining": "",
-  "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "",
+  "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "",
   "{email} via {server}": "",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "",
   "{field} is required": "",

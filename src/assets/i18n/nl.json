@@ -5181,7 +5181,7 @@
   "{cpuPercentage}% Avg. Usage": "{cpu}% gemiddeld gebruik ",
   "{days, plural, =1 {# day} other {# days}}": "{days, plural, =1 {# dag} other {# dagen}}",
   "{duration} remaining": "{duration} resterend",
-  "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "{eligible} van {total} bestaande momentopnamen van dataset {targetDataset} zouden met deze taak worden gerepliceerd.",
+  "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "{eligible} van {total} bestaande momentopnamen van dataset {dataset} zouden met deze taak worden gerepliceerd.",
   "{field} is required": "{field} is vereist",
   "{hours, plural, =1 {# hour} other {# hours}}": "{uren, plural, =1 {# uur} other {# uren}}",
   "{interfaceName} must start with \"{prefix}\" followed by an unique number": "{interfaceName} moet beginnen met \"{prefix}\" gevolgd door een uniek nummer",

@@ -5150,7 +5150,7 @@
   "{cpuPercentage}% Avg. Usage": "{cpuPercentage}% 平均使用率",
   "{days, plural, =1 {# day} other {# days}}": "{days} 天",
   "{duration} remaining": "{duration} 其它的",
-  "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "此任务将复制数据集 {targetDataset} 的 {total} 个现有快照中的 {eligible}。",
+  "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "此任务将复制数据集 {dataset} 的 {total} 个现有快照中的 {eligible}。",
   "{email} via {server}": "{email} 通过 {server}",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "{allCount} 中的 {failedCount} 个任务失败",
   "{field} is required": "{field} 是必需的",

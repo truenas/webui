@@ -5189,7 +5189,7 @@
   "{comparator} (Not Starts With)": "{comparator} (Не починається з)",
   "{comparator} (Starts With)": "{comparator} (Починається з)",
   "{duration} remaining": "Залишилося {duration}",
-  "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "{eligible} із {total} наявних знімків набору даних {targetDataset} буде відтворено з цим завданням.",
+  "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "{eligible} із {total} наявних знімків набору даних {dataset} буде відтворено з цим завданням.",
   "{field} is required": "{field} обовʼязкове",
   "{interfaceName} must start with \"{prefix}\" followed by an unique number": "{interfaceName} має починатися з \"{prefix}\" за яким слідує унікальний номер",
   "{key} Key": "{key} ключ",
