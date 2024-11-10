@@ -11,7 +11,9 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import {
+  combineLatest, Observable, of,
+} from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
@@ -20,6 +22,7 @@ import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/
 import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -68,7 +71,7 @@ export interface CloudCredentialFormInput {
     TranslateModule,
   ],
 })
-export class CloudCredentialsFormComponent implements OnInit {
+export class CloudCredentialsFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   commonForm = this.formBuilder.group({
@@ -106,6 +109,10 @@ export class CloudCredentialsFormComponent implements OnInit {
     this.limitProviders = data?.providers;
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.providerForm.form.dirty || this.commonForm.dirty);
   }
 
   get showProviderDescription(): boolean {

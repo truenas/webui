@@ -1,4 +1,3 @@
-import { ComponentType } from '@angular/cdk/portal';
 import { Injectable, Type } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
@@ -9,7 +8,7 @@ import {
 import { FocusService } from 'app/services/focus.service';
 
 export interface IncomingChainedComponent {
-  component: ComponentType<unknown>;
+  component: Type<unknown>;
   wide: boolean;
   data: unknown;
   swapComponentId?: string;

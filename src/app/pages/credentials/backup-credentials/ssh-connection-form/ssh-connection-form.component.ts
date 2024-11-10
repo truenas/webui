@@ -24,6 +24,7 @@ import {
   KeychainCredentialUpdate,
   KeychainSshCredentials,
 } from 'app/interfaces/keychain-credential.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
@@ -74,7 +75,7 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
     AsyncPipe,
   ],
 })
-export class SshConnectionFormComponent implements OnInit {
+export class SshConnectionFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
   form = this.formBuilder.group({
@@ -175,6 +176,10 @@ export class SshConnectionFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private chainedRef: ChainedRef<KeychainSshCredentials>,
   ) { }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
+  }
 
   ngOnInit(): void {
     this.existingConnection = this.chainedRef.getData();
