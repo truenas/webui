@@ -8,8 +8,9 @@ import { MockComponent } from 'ng-mocks';
 import {
   Subject, of,
 } from 'rxjs';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn2Component } from 'app/modules/slide-ins/components/slide-in2/slide-in2.component';
-import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('IxSlideIn2Component', () => {
@@ -21,9 +22,10 @@ describe('IxSlideIn2Component', () => {
       A11yModule,
     ],
     declarations: [
-      MockComponent(CloudSyncFormComponent),
+      MockComponent(SshConnectionFormComponent),
     ],
     providers: [
+
       mockProvider(ElementRef),
       mockProvider(Renderer2),
       mockProvider(ChainedSlideInService, {
@@ -43,12 +45,17 @@ describe('IxSlideIn2Component', () => {
     });
   });
 
-  function setupComponent(): void {
+  function setupComponent(confirm: boolean): void {
     spectator = createComponent({
+      providers: [
+        mockProvider(DialogService, {
+          confirm: jest.fn(() => of(confirm)),
+        }),
+      ],
       props: {
         componentInfo: {
           close$,
-          component: CloudSyncFormComponent,
+          component: SshConnectionFormComponent,
           id: 'id',
           data: undefined,
           isComponentAlive: true,
@@ -58,14 +65,48 @@ describe('IxSlideIn2Component', () => {
         lastIndex: 0,
       },
     });
+    jest.spyOn(console, 'error').mockImplementation();
     tick(10);
   }
 
   it('close slide-in when backdrop is clicked', fakeAsync(() => {
-    setupComponent();
+    setupComponent(true);
+    const form = spectator.query(SshConnectionFormComponent);
+    Object.defineProperty(form, 'requiresConfirmationOnClose', {
+      value: undefined,
+    });
     const backdrop = spectator.query('.ix-slide-in2-background');
     backdrop.dispatchEvent(new Event('click'));
     spectator.detectChanges();
+    expect(close$.next).toHaveBeenCalledWith({ response: false, error: null });
+    expect(close$.complete).toHaveBeenCalled();
+    tick(305);
+    expect(console.error).toHaveBeenCalledWith('Confirmation before closing form not defined');
+    expect(spectator.inject(ChainedSlideInService).popComponent).toHaveBeenCalledWith('id');
+    discardPeriodicTasks();
+  }));
+
+  it('opens the slide in component', fakeAsync(() => {
+    setupComponent(true);
+    const form = spectator.query(SshConnectionFormComponent);
+    expect(form).toExist();
+  }));
+
+  it('shows confirmation when required', fakeAsync(() => {
+    setupComponent(true);
+    const form = spectator.query(SshConnectionFormComponent);
+    jest.spyOn(form, 'requiresConfirmationOnClose').mockImplementation(() => of(true));
+    const backdrop = spectator.query('.ix-slide-in2-background');
+    backdrop.dispatchEvent(new Event('click'));
+    spectator.detectChanges();
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Unsaved Changes',
+      message: 'You have unsaved changes. Are you sure you want to close?',
+      cancelText: 'No',
+      buttonText: 'Yes',
+      buttonColor: 'red',
+      hideCheckbox: true,
+    });
     expect(close$.next).toHaveBeenCalledWith({ response: false, error: null });
     expect(close$.complete).toHaveBeenCalled();
     tick(305);
@@ -73,9 +114,25 @@ describe('IxSlideIn2Component', () => {
     discardPeriodicTasks();
   }));
 
-  it('opens the slide in component', fakeAsync(() => {
-    setupComponent();
-    const form = spectator.query(CloudSyncFormComponent);
-    expect(form).toExist();
+  it('doesnt close slidein if confirmation is false', fakeAsync(() => {
+    setupComponent(false);
+    const form = spectator.query(SshConnectionFormComponent);
+    jest.spyOn(form, 'requiresConfirmationOnClose').mockImplementation(() => of(true));
+    const backdrop = spectator.query('.ix-slide-in2-background');
+    backdrop.dispatchEvent(new Event('click'));
+    spectator.detectChanges();
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Unsaved Changes',
+      message: 'You have unsaved changes. Are you sure you want to close?',
+      cancelText: 'No',
+      buttonText: 'Yes',
+      buttonColor: 'red',
+      hideCheckbox: true,
+    });
+    expect(close$.next).not.toHaveBeenCalled();
+    expect(close$.complete).not.toHaveBeenCalled();
+    tick(305);
+    expect(spectator.inject(ChainedSlideInService).popComponent).not.toHaveBeenNthCalledWith(2);
+    discardPeriodicTasks();
   }));
 });
