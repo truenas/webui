@@ -66,6 +66,7 @@ export class InstanceDevicesComponent {
       ? virtualizationDeviceTypeLabels.get(device.dev_type)
       : device.dev_type;
 
+    // TODO: Get better names.
     const description = device.name;
 
     return `${type}: ${description}`;
