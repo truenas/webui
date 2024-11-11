@@ -14,6 +14,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
@@ -123,11 +124,17 @@ export class ApiKeyFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading.set(true);
     const {
-      name, username, reset, expiresAt,
+      name, username, reset,
     } = this.form.value;
+
+    // TODO: Implement DateTime selector and correctly send expires_at prop
+    const expiresAtTimestamp = {
+      $date: Date.now(),
+    } as ApiTimestamp;
+
     const request$ = this.isNew()
-      ? this.ws.call('api_key.create', [{ name, username, expires_at: expiresAt }])
-      : this.ws.call('api_key.update', [this.editingRow().id, { name, reset, expires_at: expiresAt }]);
+      ? this.ws.call('api_key.create', [{ name, username, expires_at: expiresAtTimestamp }])
+      : this.ws.call('api_key.update', [this.editingRow().id, { name, reset, expires_at: expiresAtTimestamp }]);
 
     request$
       .pipe(this.loader.withLoader(), untilDestroyed(this))

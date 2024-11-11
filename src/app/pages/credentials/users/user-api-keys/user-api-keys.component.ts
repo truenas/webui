@@ -101,10 +101,9 @@ export class UserApiKeysComponent implements OnInit {
       title: this.translate.instant('Created date'),
       propertyName: 'created_at',
     }),
-    textColumn({
+    dateColumn({
       title: this.translate.instant('Expires date'),
       propertyName: 'expires_at',
-      getValue: (row) => row.expires_at || this.translate.instant('Never'),
     }),
     actionsColumn({
       actions: [
