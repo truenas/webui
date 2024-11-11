@@ -200,7 +200,7 @@ export interface ApiJobDirectory {
 
   // Virt
   'virt.instance.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
-  'virt.instance.delete ': { params: [instanceId: string]; response: boolean };
+  'virt.instance.delete': { params: [instanceId: string]; response: boolean };
   'virt.instance.restart': { params: VirtualizationStopParams; response: boolean };
   'virt.instance.start': { params: [instanceId: string]; response: boolean };
   'virt.instance.stop': { params: VirtualizationStopParams; response: boolean };

@@ -30,12 +30,13 @@
         [innerHtml]="helptext.forums | translate"
       ></div>
     </div>
-
+    
+    @if (!isEnterprise()) {
     <div
-      *appLet="systemType | mapValue: productTypeLabels as product"
       id="open-source"
-      [innerHtml]="helptext.opensource | translate: { product }"
-    ></div>
+      [innerHtml]="helptext.opensource | translate"
+      ></div>
+    }
 
     <div id="system-version">
       {{ ('System Version' | translate) + ': ' +  (systemVersion$ | async) }}
