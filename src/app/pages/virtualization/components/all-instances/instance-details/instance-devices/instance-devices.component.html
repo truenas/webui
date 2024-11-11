@@ -11,7 +11,16 @@
     } @else {
       @for (device of shownDevices(); track device) {
         <div class="device">
-          {{ getDeviceDescription(device) }}
+          <span>{{ getDeviceDescription(device) }}</span>
+          <button
+            mat-icon-button
+            class="delete-button"
+            [attr.aria-label]="'Delete device' | translate"
+            [ixTest]="['delete-device', $index]"
+            (click)="deleteProxyPressed(device)"
+          >
+            <ix-icon name="mdi-close"></ix-icon>
+          </button>
         </div>
       } @empty {
          {{ 'No devices added.' | translate }}

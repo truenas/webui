@@ -47,7 +47,10 @@ describe('InstanceProxyFormComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(ChainedRef).close).toHaveBeenCalled();
+    expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+      response: true,
+      error: false,
+    });
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
       source_port: 2000,
