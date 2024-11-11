@@ -54,7 +54,7 @@
       </div>
 
       @if (!isEnterprise()) {
-        <div class="open-source" [innerHtml]="helptext.opensource | translate: { product: product() }"></div>
+        <div class="open-source" [innerHtml]="helptext.opensource | translate"></div>
       }
 
       <div class="copyright">

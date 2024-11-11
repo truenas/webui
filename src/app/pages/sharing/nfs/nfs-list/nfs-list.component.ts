@@ -106,20 +106,7 @@ export class NfsListComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      onRowToggle: (row) => {
-        this.ws.call('sharing.nfs.update', [row.id, { enabled: row.enabled }]).pipe(
-          this.appLoader.withLoader(),
-          untilDestroyed(this),
-        ).subscribe({
-          next: (share) => {
-            row.enabled = share.enabled;
-          },
-          error: (error: unknown) => {
-            row.enabled = !row.enabled;
-            this.dialog.error(this.errorHandler.parseError(error));
-          },
-        });
-      },
+      onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),
     actionsColumn({
@@ -223,5 +210,19 @@ export class NfsListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
+  }
+
+  private onChangeEnabledState(row: NfsShare): void {
+    this.ws.call('sharing.nfs.update', [row.id, { enabled: !row.enabled }]).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.dataProvider.load();
+      },
+      error: (error: unknown) => {
+        this.dataProvider.load();
+        this.errorHandler.showErrorModal(this.errorHandler.parseError(error));
+      },
+    });
   }
 }

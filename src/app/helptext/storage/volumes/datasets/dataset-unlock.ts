@@ -6,7 +6,8 @@ export const helptextUnlock = {
   unlock_key_file_placeholder: T('Unlock with Key file'),
   unlock_key_file_tooltip: T('Use an exported encryption key file to unlock datasets.'),
   unlock_children_placeholder: T('Unlock Child Encrypted Roots'),
-  unlock_children_tooltip: T('Also unlock any encrypted dataset stored within this dataset.'),
+  unlock_children_tooltip: T('Also unlock any separate encryption roots that are children of this dataset. \
+Child datasets that inherit encryption from this encryption root will be unlocked in either case.'),
   upload_key_file_placeholder: T('Upload Key file'),
   upload_key_file_tooltip: T('Browse to the exported key file that can be used to unlock this \
      dataset.'),
