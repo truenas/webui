@@ -5081,7 +5081,7 @@
   "{count} snapshots found.": "{count} instantanés trouvés.",
   "{days, plural, =1 {# day} other {# days}}": "{days, plural, =1 {# jour} other {# jours}}",
   "{duration} remaining": "{duration} restante",
-  "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "{eligible} de {total} instantanés existants du dataset {targetDataset} seraient répliqués avec cette tâche.",
+  "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "{eligible} de {total} instantanés existants du dataset {dataset} seraient répliqués avec cette tâche.",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "{failedCount} sur {allCount, plural, =1 {# tâche a échouée} other {# tâches ont échouées}}",
   "{field} is required": "{field} est requis",
   "{hours, plural, =1 {# hour} other {# hours}}": "{hours, plural, =1 {# heure} other {# heures}}",

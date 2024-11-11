@@ -191,7 +191,7 @@ export class ReplicationFormComponent implements OnInit {
       this.generalSection.form.controls.direction.valueChanges,
       this.sourceSection.form.controls.name_regex.valueChanges,
       this.sourceSection.form.controls.also_include_naming_schema.valueChanges,
-      this.targetSection.form.controls.target_dataset.valueChanges,
+      this.sourceSection.form.controls.source_datasets.valueChanges,
     )
       .pipe(
         // Workaround for https://github.com/angular/angular/issues/13129
@@ -206,9 +206,7 @@ export class ReplicationFormComponent implements OnInit {
   private get canCountSnapshots(): boolean {
     const formValues = this.getPayload();
     return this.isPush
-      && !this.isLocal
-      && formValues.target_dataset
-      && formValues.ssh_credentials
+      && formValues.source_datasets.length
       && (Boolean(formValues.name_regex) || formValues.also_include_naming_schema?.length > 0);
   }
 
@@ -220,9 +218,9 @@ export class ReplicationFormComponent implements OnInit {
 
     const formValues = this.getPayload();
     const payload: CountManualSnapshotsParams = {
-      datasets: [formValues.target_dataset],
+      datasets: formValues.source_datasets || [],
       transport: formValues.transport,
-      ssh_credentials: formValues.ssh_credentials,
+      ssh_credentials: formValues.transport === TransportMode.Local ? null : formValues.ssh_credentials,
     };
 
     if (formValues.name_regex) {
@@ -246,11 +244,11 @@ export class ReplicationFormComponent implements OnInit {
       next: (eligibleSnapshots) => {
         this.isEligibleSnapshotsMessageRed = eligibleSnapshots.eligible === 0;
         this.eligibleSnapshotsMessage = this.translate.instant(
-          '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
+          '{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.',
           {
             eligible: eligibleSnapshots.eligible,
             total: eligibleSnapshots.total,
-            targetDataset: formValues.target_dataset,
+            dataset: formValues.source_datasets.toString(),
           },
         );
         this.isLoading = false;
