@@ -64,7 +64,7 @@
   "Allow this replication to send large data blocks. The  destination system must also support large blocks. This setting cannot be changed  after it has been enabled and the replication task is created. For more details, see  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",
   "Allowed IP address or hostname. One entry per field. Leave empty to allow everybody.": "",
   "Allowed network in network/mask CIDR notation (example <i>1.2.3.4/24<i>).     One entry per field. Leave empty to allow everybody.": "",
-  "Also unlock any encrypted dataset stored within this dataset. Child datasets that inherit encryption from this encryption root will be unlocked in either case.": "",
+  "Also unlock any separate encryption roots that are children of this dataset. Child datasets that inherit encryption from this encryption root will be unlocked in either case.": "",
   "Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.": "",
   "Always Chroot": "",
   "Amazon S3": "",

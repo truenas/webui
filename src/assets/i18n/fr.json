@@ -25,7 +25,7 @@
   "Admins": "",
   "Aliases": "",
   "All Users": "",
-  "Also unlock any encrypted dataset stored within this dataset. Child datasets that inherit encryption from this encryption root will be unlocked in either case.": "",
+  "Also unlock any separate encryption roots that are children of this dataset. Child datasets that inherit encryption from this encryption root will be unlocked in either case.": "",
   "Always Chroot": "",
   "App": "",
   "App Info": "",
