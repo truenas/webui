@@ -75,12 +75,14 @@ export class ApiKeyFormComponent implements OnInit {
     expires: helptextApiKeys.expires.tooltip,
     username: helptextApiKeys.username.tooltip,
     reset: helptextApiKeys.reset.tooltip,
+    nonExpiring: helptextApiKeys.nonExpiring.tooltip,
   };
 
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     username: ['', [Validators.required]],
     expiresAt: [null as string],
+    nonExpiring: [true],
     reset: [false],
   });
 
@@ -113,24 +115,26 @@ export class ApiKeyFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.addForbiddenNamesValidator();
-    this.setCurrentUsername();
-
-    if (!this.isNew()) {
-      this.form.patchValue(this.editingRow());
+    if (this.isNew()) {
+      this.addForbiddenNamesValidator();
+      this.setCurrentUsername();
+    } else {
+      this.form.patchValue({
+        ...this.editingRow(),
+        expiresAt: this.editingRow().expires_at?.$date?.toString() || null,
+        nonExpiring: !this.editingRow().expires_at,
+      });
     }
   }
 
   onSubmit(): void {
     this.isLoading.set(true);
     const {
-      name, username, reset,
+      name, username, reset, nonExpiring, expiresAt,
     } = this.form.value;
 
-    // TODO: Implement DateTime selector and correctly send expires_at prop
-    const expiresAtTimestamp = {
-      $date: Date.now(),
-    } as ApiTimestamp;
+    // TODO: Implement IxDatePickerComponent https://ixsystems.atlassian.net/browse/NAS-132423 and correctly send expires_at prop
+    const expiresAtTimestamp = nonExpiring ? null : { $date: +expiresAt } as ApiTimestamp;
 
     const request$ = this.isNew()
       ? this.ws.call('api_key.create', [{ name, username, expires_at: expiresAtTimestamp }])

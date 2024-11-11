@@ -35,6 +35,9 @@ describe('UserApiKeysComponent', () => {
       created_at: {
         $date: 1010101010101,
       },
+      expires_at: {
+        $date: 1013001010101,
+      },
     }, {
       id: 2,
       name: 'second-api-key',
@@ -94,8 +97,8 @@ describe('UserApiKeysComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Username', 'Local', 'Revoked', 'Created date', 'Expires date', ''],
-      ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 15:36:50', 'Never', ''],
-      ['second-api-key', 'root', 'No', 'Yes', '2002-01-15 05:23:30', 'Never', ''],
+      ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 15:36:50', '2002-02-06 05:10:10', ''],
+      ['second-api-key', 'root', 'No', 'Yes', '2002-01-15 05:23:30', 'N/A', ''],
     ];
 
     const cells = await table.getCellTexts();

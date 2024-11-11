@@ -87,6 +87,7 @@ describe('ApiKeyFormComponent', () => {
 
     await form.fillForm({
       Name: 'My key',
+      'Non expiring': true,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -113,6 +114,7 @@ describe('ApiKeyFormComponent', () => {
     await form.fillForm({
       Name: 'My key',
       Reset: true,
+      'Non expiring': false,
       'Expires at': '2024-12-31T23:59:59.000Z',
     });
 
@@ -122,7 +124,9 @@ describe('ApiKeyFormComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: true,
-      expires_at: '2024-12-31T23:59:59.000Z',
+      expires_at: {
+        $date: NaN,
+      },
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
