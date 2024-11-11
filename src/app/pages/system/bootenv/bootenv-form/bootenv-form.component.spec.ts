@@ -26,8 +26,7 @@ describe('BootEnvironmentFormComponent', () => {
     ],
     providers: [
       mockWebSocket([
-        mockCall('bootenv.create'),
-        mockCall('bootenv.update'),
+        mockCall('boot.environment.clone'),
       ]),
       mockProvider(SlideInService),
       mockProvider(FormErrorHandlerService),
@@ -35,40 +34,6 @@ describe('BootEnvironmentFormComponent', () => {
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],
-  });
-
-  /*
-  * Create
-  */
-  describe('creating a boot environment', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              operation: BootEnvironmentAction.Create,
-            },
-          },
-        ],
-      });
-      ws = spectator.inject(WebSocketService);
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('sends a create payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const fields = { name: 'myBootEnv' };
-
-      await form.fillForm({
-        Name: fields.name,
-      });
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(ws.call).toHaveBeenCalledWith('bootenv.create', [fields]);
-    });
   });
 
   /*
@@ -112,44 +77,7 @@ describe('BootEnvironmentFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('bootenv.create', [
-        fields,
-      ]);
-    });
-  });
-
-  /*
-  * Rename
-  */
-  describe('renaming a boot environment', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              operation: BootEnvironmentAction.Rename,
-              name: 'myBootEnv',
-            },
-          },
-        ],
-      });
-      ws = spectator.inject(WebSocketService);
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const fields = { name: 'updated' };
-      await form.fillForm({
-        Name: fields.name,
-      });
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(ws.call).toHaveBeenCalledWith('bootenv.update', [
-        spectator.component.currentName,
+      expect(ws.call).toHaveBeenCalledWith('boot.environment.clone', [
         fields,
       ]);
     });

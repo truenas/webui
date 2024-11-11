@@ -37,7 +37,7 @@ describe('BootEnvironmentListComponent', () => {
         timezone: 'America/Los_Angeles',
       }),
       mockWebSocket([
-        mockCall('bootenv.query', fakeBootEnvironmentsDataSource),
+        mockCall('boot.environment.query', fakeBootEnvironmentsDataSource),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -75,7 +75,7 @@ describe('BootEnvironmentListComponent', () => {
       ],
     ];
 
-    expect(websocket.call).toHaveBeenCalledWith('bootenv.query');
+    expect(websocket.call).toHaveBeenCalledWith('boot.environment.query');
     expect(cells).toEqual(expectedRows);
   });
 });

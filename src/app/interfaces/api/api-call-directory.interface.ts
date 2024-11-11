@@ -36,12 +36,7 @@ import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { LoginExOtpTokenQuery, LoginExQuery, LoginExResponse } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import {
-  Bootenv,
-  CreateBootenvParams,
-  SetBootenvAttributeParams,
-  UpdateBootenvParams,
-} from 'app/interfaces/bootenv.interface';
+import { BootenvCloneParams, BootEnvironment, BootenvKeepParams } from 'app/interfaces/boot-environment.interface';
 import {
   CatalogConfig, CatalogApp,
   CatalogUpdate, GetItemDetailsParams,
@@ -349,12 +344,12 @@ export interface ApiCallDirectory {
   'boot.get_state': { params: void; response: PoolInstance };
   'boot.set_scrub_interval': { params: [number]; response: number };
 
-  // Bootenv
-  'bootenv.activate': { params: [string]; response: boolean };
-  'bootenv.create': { params: CreateBootenvParams; response: string };
-  'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
-  'bootenv.set_attribute': { params: SetBootenvAttributeParams; response: boolean };
-  'bootenv.update': { params: UpdateBootenvParams; response: string };
+  // Boot Environment
+  'boot.environment.query': { params: QueryParams<BootEnvironment>; response: BootEnvironment[] };
+  'boot.environment.activate': { params: [{ id: string }]; response: unknown };
+  'boot.environment.destroy': { params: [{ id: string }]; response: unknown };
+  'boot.environment.clone': { params: BootenvCloneParams; response: unknown };
+  'boot.environment.keep': { params: BootenvKeepParams; response: unknown };
 
   // Catalog
   'catalog.get_app_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };

@@ -1,5 +1,8 @@
 <ix-page-header>
-  <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+  <ix-search-input1
+    [value]="filterString()"
+    (search)="onListFiltered($event)"
+  ></ix-search-input1>
 
   <button
     *ixRequiresRoles="requiredRoles"
@@ -11,7 +14,11 @@
     {{ 'Stats/Settings' | translate }}
   </button>
 
-  <button mat-button ixTest="bootenv-status" [routerLink]="['/', 'system', 'boot', 'status']">
+  <button
+    mat-button
+    ixTest="bootenv-status"
+    [routerLink]="['/', 'system', 'boot', 'status']"
+  >
     {{ 'Boot Pool Status' | translate }}
   </button>
 

@@ -65,7 +65,7 @@ describe('BootPoolDeleteDialogComponent', () => {
 
   it('deletes selected boot environments when form is submitted', async () => {
     const jobArguments = [
-      'bootenv.do_delete',
+      'boot.environment.destroy',
       [
         ['CLONE'],
         ['22.12-MASTER-20220808-020013'],
@@ -92,7 +92,7 @@ describe('BootPoolDeleteDialogComponent', () => {
 
   it('checks deleting failures of boot environments when form is submitted', async () => {
     const jobArguments: CoreBulkQuery = [
-      'bootenv.do_delete',
+      'boot.environment.destroy',
       [
         ['CLONE'],
         ['22.12-MASTER-20220808-020013'],
