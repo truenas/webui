@@ -241,6 +241,33 @@ describe('ReplicationFormComponent', () => {
       }]);
       expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
+
+    it('shows eligible snapshots message', fakeAsync(() => {
+      generalForm.controls.direction.setValue(Direction.Push);
+      generalForm.controls.transport.setValue(TransportMode.Ssh);
+      tick();
+      spectator.detectChanges();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+        'replication.count_eligible_manual_snapshots',
+        [
+          {
+            datasets: ['/tank/source'],
+            name_regex: 'test-.*',
+            ssh_credentials: 5,
+            transport: 'SSH',
+          },
+        ],
+      );
+
+      expect(spectator.query('.eligible-snapshots')).toHaveText(
+        '3 of 5 existing snapshots of dataset /tank/source would be replicated with this task.',
+      );
+
+      generalForm.controls.direction.setValue(Direction.Pull);
+      tick();
+      spectator.detectChanges();
+    }));
   });
 
   describe('updates task', () => {

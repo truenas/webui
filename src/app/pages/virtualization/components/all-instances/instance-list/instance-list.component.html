@@ -36,14 +36,14 @@
       } @else {
         <ix-empty [conf]="emptyConfig()"></ix-empty>
       }
-      
+
       @for (instance of filteredInstances(); track instance.id) {
         <ix-instance-row
           [instance]="instance"
           [class.selected]="selectedInstance()?.id === instance.id"
           [selected]="selection.isSelected(instance.id)"
-          (click)="viewDetails(instance)"
-          (keydown.enter)="viewDetails(instance)"
+          (click)="navigateToDetails(instance)"
+          (keydown.enter)="navigateToDetails(instance)"
           (onStart)="start(instance.id)"
           (onStop)="stop(instance.id)"
           (onRestart)="restart(instance.id)"

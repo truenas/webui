@@ -22,23 +22,24 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CreateInstanceFormComponent } from 'app/pages/virtualization/components/create-instance-form/create-instance-form.component';
-import {
-  VirtualizationImageWithId,
-} from 'app/pages/virtualization/components/create-instance-form/select-image-dialog/select-image-dialog.component';
+import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
+import { VirtualizationImageWithId } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('InstanceFormComponent', () => {
-  let spectator: SpectatorRouting<CreateInstanceFormComponent>;
+describe('InstanceWizardComponent', () => {
+  let spectator: SpectatorRouting<InstanceWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
   const createComponent = createRoutingFactory({
-    component: CreateInstanceFormComponent,
+    component: InstanceWizardComponent,
     declarations: [
       MockComponent(PageHeaderComponent),
     ],
     providers: [
+      mockProvider(AuthService, { hasRole: () => of(true) }),
+      mockProvider(Router),
       mockWebSocket([
         mockCall('virt.instance.query', [{
           id: 'test',
@@ -67,7 +68,6 @@ describe('InstanceFormComponent', () => {
           },
         }),
         mockJob('virt.instance.create', fakeSuccessfulJob({ id: 'new' } as VirtualizationInstance)),
-        mockJob('virt.instance.update', fakeSuccessfulJob({ id: 'test' } as VirtualizationInstance)),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -121,7 +121,7 @@ describe('InstanceFormComponent', () => {
     const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
     await gpuDeviceCheckbox.setValue(true);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Instance' }));
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.create', [{
@@ -137,6 +137,5 @@ describe('InstanceFormComponent', () => {
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/virtualization/view', 'new']);
   });
 });

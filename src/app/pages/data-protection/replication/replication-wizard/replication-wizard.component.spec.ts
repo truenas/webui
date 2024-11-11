@@ -184,6 +184,7 @@ describe('ReplicationWizardComponent', () => {
       lifetime_unit: LifetimeUnit.Week,
       lifetime_value: 2,
       name: 'pool1/,pool2/ - pool3/',
+      naming_schema: ['auto-%Y-%m-%d_%H-%M'],
       periodic_snapshot_tasks: [33, 33],
       readonly: ReadOnlyMode.Set,
       recursive: false,

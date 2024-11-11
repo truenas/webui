@@ -55,6 +55,8 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
               filter((event) => [
                 'virt.instance.start',
                 'virt.instance.stop',
+                'virt.instance.delete',
+                'virt.instance.update',
               ].includes(event.fields.method) && !!event.fields.result),
               tap(() => this.patchState({ isLoading: true })),
             ),
@@ -102,7 +104,11 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     );
   });
 
-  selectInstance(instanceId: string): void {
+  selectInstance(instanceId?: string): void {
+    if (!instanceId) {
+      this.patchState({ selectedInstance: null });
+      return;
+    }
     const selectedInstance = this.instances()?.find((instance) => instance.id === instanceId);
     const oldSelectedInstance = this.selectedInstance();
     if (!selectedInstance || selectedInstance === oldSelectedInstance) {

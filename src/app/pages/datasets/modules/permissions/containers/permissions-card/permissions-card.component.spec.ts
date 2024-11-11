@@ -114,6 +114,18 @@ describe('PermissionsCardComponent', () => {
     expect(permissionsComponent.acl).toBe(acl);
   });
 
+  it('does not load permissions for locked datasets', () => {
+    jest.resetAllMocks();
+
+    spectator.setInput('dataset', {
+      ...dataset,
+      locked: true,
+    });
+
+    expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
+    expect(spectator.fixture.nativeElement).toHaveText('Dataset is locked');
+  });
+
   it('shows nfs permissions when acltype is NFS', fakeAsync(() => {
     const acl = {
       trivial: false,
@@ -134,40 +146,42 @@ describe('PermissionsCardComponent', () => {
     expect(permissionsComponent.acl).toBe(acl);
   }));
 
-  it('shows a button to edit permissions when dataset can be edited', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
-    await editButton.click();
+  describe('edit button', () => {
+    it('shows a button to edit permissions when dataset can be edited', async () => {
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      await editButton.click();
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'testpool/dataset', 'permissions', 'edit']);
-  });
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'testpool/dataset', 'permissions', 'edit']);
+    });
 
-  it('disables Edit button when the dataset is root', async () => {
-    spectator.setInput('dataset', {
-      ...dataset,
-      name: 'testpool',
-    } as DatasetDetails);
+    it('disables Edit button when the dataset is root', async () => {
+      spectator.setInput('dataset', {
+        ...dataset,
+        name: 'testpool',
+      } as DatasetDetails);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
-    expect(await editButton.isDisabled()).toBe(true);
-  });
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      expect(await editButton.isDisabled()).toBe(true);
+    });
 
-  it('does not show edit button when dataset is locked', async () => {
-    spectator.setInput('dataset', {
-      ...dataset,
-      locked: true,
-    } as DatasetDetails);
+    it('does not show edit button when dataset is locked', async () => {
+      spectator.setInput('dataset', {
+        ...dataset,
+        locked: true,
+      } as DatasetDetails);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
-    expect(await editButton.isDisabled()).toBe(true);
-  });
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      expect(await editButton.isDisabled()).toBe(true);
+    });
 
-  it('does not show edit button when dataset is readonly', async () => {
-    spectator.setInput('dataset', {
-      ...dataset,
-      readonly: true,
-    } as DatasetDetails);
+    it('does not show edit button when dataset is readonly', async () => {
+      spectator.setInput('dataset', {
+        ...dataset,
+        readonly: true,
+      } as DatasetDetails);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
-    expect(await editButton.isDisabled()).toBe(true);
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      expect(await editButton.isDisabled()).toBe(true);
+    });
   });
 });

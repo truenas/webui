@@ -15,7 +15,7 @@ import {
 import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SelectImageDialogComponent } from 'app/pages/virtualization/components/create-instance-form/select-image-dialog/select-image-dialog.component';
+import { SelectImageDialogComponent } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 const imageChoices: Record<string, VirtualizationImage> = {
@@ -23,14 +23,14 @@ const imageChoices: Record<string, VirtualizationImage> = {
     label: 'Almalinux 8 (arm64, cloud)',
     os: 'Almalinux',
     release: '8',
-    arch: 'arm64',
+    archs: ['arm64'],
     variant: 'cloud',
   },
   'alpine/3.18/default': {
     label: 'Alpine 3.18 (armhf, default)',
     os: 'Alpine',
     release: '3.18',
-    arch: 'armhf',
+    archs: ['armhf'],
     variant: 'default',
   },
 } as unknown as Record<string, VirtualizationImage>;
@@ -74,7 +74,7 @@ describe('SelectImageDialogComponent', () => {
         'Label',
         'OS',
         'Release',
-        'Arch',
+        'Archs',
         'Variant',
         '',
       ]);
