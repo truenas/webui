@@ -49,6 +49,7 @@ export class IxErrorsComponent implements OnChanges {
       return this.translate.instant('Field is required');
     },
     email: () => this.translate.instant('Value must be a valid email address'),
+    cpu: () => this.translate.instant('Invalid CPU configuration.'),
     minlength: (minLength: number) => this.translate.instant(
       this.label
         ? 'The length of {field} should be at least {minLength}'
@@ -127,6 +128,8 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.required();
       case DefaultValidationError.Email:
         return this.defaultErrMessages.email();
+      case DefaultValidationError.Cpu:
+        return this.defaultErrMessages.cpu();
       case DefaultValidationError.MinLength:
         return this.defaultErrMessages.minlength((errors.minlength as SomeError).requiredLength as number);
       case DefaultValidationError.MaxLength:

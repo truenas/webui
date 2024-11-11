@@ -283,7 +283,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     }
 
     const parentPath = `/mnt/${this.parentDataset.id}`;
-    return this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(map((isTrivial) => !isTrivial));
+    return this.ws.call('filesystem.stat', [parentPath]).pipe(map((stat) => stat.acl));
   }
 
   private aclDialog(): Observable<boolean> {

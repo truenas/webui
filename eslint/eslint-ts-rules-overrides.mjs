@@ -27,4 +27,5 @@ export const ruleOverrides = {
   "sonarjs/no-hardcoded-ip": ["off"],
   "sonarjs/no-hardcoded-credentials": ["off"],
   "sonarjs/pseudo-random": ["off"],
+  "sonarjs/new-cap": ["off"],
 };

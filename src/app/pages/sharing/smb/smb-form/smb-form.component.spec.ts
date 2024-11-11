@@ -55,7 +55,7 @@ describe('SmbFormComponent', () => {
     hostsdeny: ['host2'],
     aapl_name_mangling: false,
     abe: true,
-    acl: true,
+    acl: false,
     durablehandle: true,
     streams: true,
     timemachine: true,
@@ -153,11 +153,10 @@ describe('SmbFormComponent', () => {
           { ...existingShare },
         ]),
         mockCall('filesystem.stat', {
-          acl: false,
+          acl: true,
         } as FileSystemStat),
         mockCall('service.restart'),
         mockCall('sharing.smb.presets', { ...presets }),
-        mockCall('filesystem.acl_is_trivial', false),
       ]),
       mockProvider(SlideInService),
       mockProvider(Router),
@@ -232,7 +231,7 @@ describe('SmbFormComponent', () => {
       } else {
         await aaplNameManglingCheckbox.setValue(true);
       }
-      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(1, {
+      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(2, {
         title: helptextSharingSmb.manglingDialog.title,
         message: helptextSharingSmb.manglingDialog.message,
         hideCheckbox: true,
@@ -418,7 +417,7 @@ describe('SmbFormComponent', () => {
         purpose: SmbPresetType.MultiUserTimeMachine,
         comment: '',
         enabled: true,
-        acl: true,
+        acl: false,
         ro: false,
         browsable: true,
         guestok: true,
@@ -516,7 +515,7 @@ describe('SmbFormComponent', () => {
         purpose: SmbPresetType.MultiUserTimeMachine,
         comment: '',
         enabled: true,
-        acl: true,
+        acl: false,
         ro: false,
         browsable: true,
         guestok: true,
@@ -596,11 +595,9 @@ describe('SmbFormComponent', () => {
           case 'sharing.smb.query':
             return of({ ...existingShare });
           case 'filesystem.stat':
-            return of({ acl: false } as FileSystemStat);
+            return of({ acl: true } as FileSystemStat);
           case 'sharing.smb.presets':
             return of({ ...presets });
-          case 'filesystem.acl_is_trivial':
-            return of(false);
           case 'sharing.smb.create':
             return throwError({ reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.' });
           default:

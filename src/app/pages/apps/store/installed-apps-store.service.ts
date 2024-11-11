@@ -2,9 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
-  EMPTY,
-  Observable, Subscription, catchError, delay, filter, of, repeat, switchMap, tap,
-  withLatestFrom,
+  EMPTY, Observable, Subscription, catchError,
+  combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -83,29 +82,20 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   }
 
   private loadInstalledApps(): Observable<App[]> {
-    return this.dockerStore.isLoading$.pipe(
-      withLatestFrom(this.dockerStore.isDockerStarted$),
+    return combineLatest([
+      this.dockerStore.isLoading$,
+      this.dockerStore.isDockerStarted$,
+    ]).pipe(
       filter(([isLoading, isDockerStarted]) => !isLoading && isDockerStarted !== null),
+      tap(() => this.patchState({ isLoading: true })),
       switchMap(([, isDockerStarted]) => {
-        this.subscribeToInstalledAppsUpdates();
-
         if (!isDockerStarted) {
           return of([]);
         }
 
         return this.appsService.getAllApps().pipe(
           tap((installedApps) => this.patchState({ installedApps })),
-          repeat({
-            // TODO: NAS-131676. Remove this workaround after the bug is fixed.
-            delay: () => this.appsService.getInstalledAppsUpdates().pipe(
-              filter((event) => {
-                return (event.msg === IncomingApiMessageType.Added && !('fields' in event))
-                  || (event.msg === IncomingApiMessageType.Changed && event.fields.custom_app);
-              }),
-              tap(() => this.patchState({ isLoading: true })),
-              delay(2000),
-            ),
-          }),
+          tap(() => this.subscribeToInstalledAppsUpdates()),
         );
       }),
       tap(() => this.patchState({ isLoading: false })),

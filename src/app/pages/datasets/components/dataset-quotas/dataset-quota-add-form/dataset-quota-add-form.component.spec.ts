@@ -8,6 +8,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
@@ -31,7 +32,10 @@ describe('DatasetQuotaAddFormComponent', () => {
         mockCall('pool.dataset.set_quota'),
       ]),
       mockProvider(UserService, {
-        userQueryDsCache: () => of(),
+        userQueryDsCache: () => of([
+          { username: 'john', roles: [] },
+          { username: 'jill', roles: [] },
+        ]),
         groupQueryDsCache: () => of(),
       }),
       mockProvider(SlideInService),
@@ -65,8 +69,10 @@ describe('DatasetQuotaAddFormComponent', () => {
       await form.fillForm({
         'User Data Quota (Examples: 500 KiB, 500M, 2 TB)': '500M',
         'User Object Quota': 2000,
-        'Apply To Users': ['jill', 'john'],
       });
+
+      const usersInput = await form.getControl('Apply To Users') as IxChipsHarness;
+      await usersInput.selectSuggestionValue('john');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -74,8 +80,6 @@ describe('DatasetQuotaAddFormComponent', () => {
       expect(ws.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
         [
-          { id: 'jill', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
-          { id: 'jill', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
           { id: 'john', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
           { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
         ],

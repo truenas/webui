@@ -118,6 +118,7 @@
     "@vendure/ngx-translate-extract": "~9.2.1",
     "@xterm/addon-fit": "~0.10.0",
     "@xterm/xterm": "~5.5.0",
+    "angular-dual-listbox": "~7.0.0",
     "angular-eslint": "~18.4.0",
     "angular-resize-event": "^3.2.0",
     "angular2-uuid": "~1.1.1",

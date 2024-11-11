@@ -124,7 +124,7 @@ export class PoolUsageGaugeComponent implements OnInit {
     const type = vdevs[0]?.type;
     const size = vdevs[0]?.children.length
       ? disks?.find((disk) => disk.name === vdevs[0]?.children[0]?.disk)?.size
-      : disks?.find((disk) => disk.name === (vdevs[0])?.disk)?.size;
+      : disks?.find((disk) => disk.name === vdevs[0]?.disk)?.size;
 
     let outputString = `${vdevs.length} x `;
     if (vdevWidth) {

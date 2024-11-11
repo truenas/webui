@@ -42,7 +42,7 @@ export class AppCardComponent {
   navigateToAllInstalledPage(): void {
     this.installedAppsStore.installedApps$.pipe(
       map((apps) => {
-        return apps.filter((app) => (app.metadata.name === this.app().name && app.metadata.train === this.app().train));
+        return apps.filter((app) => app.metadata.name === this.app().name && app.metadata.train === this.app().train);
       }),
       untilDestroyed(this),
     ).subscribe((apps) => {

@@ -19,8 +19,9 @@ import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
+import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -34,12 +35,13 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    DualListBoxComponent,
     MatCard,
     MatProgressBar,
     MatCardTitle,
     ReadOnlyComponent,
     MatCardContent,
-    DualListboxComponent,
+    DualListBoxComponent,
     IxIconComponent,
     MatListItemIcon,
     MatListItemLine,
@@ -53,8 +55,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class GroupMembersComponent implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
+  protected readonly iconMarker = iconMarker;
 
-  members: User[] = [];
   selectedMembers: User[] = [];
   users: User[] = [];
 
@@ -89,9 +91,7 @@ export class GroupMembersComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((users) => {
       this.users = users;
-      const members = users.filter((user) => this.group.users.includes(user.id));
-      this.members = members;
-      this.selectedMembers = members;
+      this.selectedMembers = users.filter((user) => this.group.users.includes(user.id));
       this.isFormLoading = false;
       this.cdr.markForCheck();
     });

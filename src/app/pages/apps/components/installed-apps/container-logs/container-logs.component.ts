@@ -132,7 +132,6 @@ export class ContainerLogsComponent implements OnInit {
   scrollToBottom(): void {
     try {
       this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
-      // eslint-disable-next-line sonarjs/no-ignored-exceptions,unused-imports/no-unused-vars
     } catch (_: unknown) {
       // Ignore error
     }

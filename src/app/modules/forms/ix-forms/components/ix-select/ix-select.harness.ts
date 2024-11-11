@@ -62,7 +62,7 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
 
       const labelsToClick = Array.isArray(newLabels) ? newLabels : [newLabels];
       await parallel(() => {
-        return (labelsToClick).map((label) => select.clickOptions({ text: label }));
+        return labelsToClick.map((label) => select.clickOptions({ text: label }));
       });
       return;
     }

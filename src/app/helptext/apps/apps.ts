@@ -258,4 +258,8 @@ export const helptextApps = {
      process may stall as images cannot be pulled. The current limit will be renewed in {seconds}. The application\
       can still be staged for installation.'),
   },
+
+  ports: T('Host ports are listed on the left and associated container ports are on the right.\
+  \
+  0.0.0.0 on the host side represents binding to any IP address on the host.'),
 };
