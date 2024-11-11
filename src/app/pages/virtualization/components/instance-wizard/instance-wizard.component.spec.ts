@@ -14,29 +14,32 @@ import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CreateInstanceFormComponent } from 'app/pages/virtualization/components/create-instance-form/create-instance-form.component';
-import {
-  VirtualizationImageWithId,
-} from 'app/pages/virtualization/components/create-instance-form/select-image-dialog/select-image-dialog.component';
+import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
+import { VirtualizationImageWithId } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('InstanceFormComponent', () => {
-  let spectator: SpectatorRouting<CreateInstanceFormComponent>;
+describe('InstanceWizardComponent', () => {
+  let spectator: SpectatorRouting<InstanceWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
   const createComponent = createRoutingFactory({
-    component: CreateInstanceFormComponent,
+    component: InstanceWizardComponent,
     declarations: [
       MockComponent(PageHeaderComponent),
     ],
     providers: [
+      mockProvider(AuthService, { hasRole: () => of(true) }),
+      mockProvider(Router),
       mockWebSocket([
         mockCall('virt.instance.query', [{
           id: 'test',
@@ -46,8 +49,25 @@ describe('InstanceFormComponent', () => {
           cpu: 'Intel Xeon',
           memory: 2 * GiB,
         } as VirtualizationInstance]),
+        mockCall('virt.device.gpu_choices', {
+          pci_0000_01_00_0: {
+            bus: 1,
+            slot: 1,
+            description: 'NVIDIA GeForce GTX 1080',
+            vendor: 'NVIDIA Corporation',
+          },
+        }),
+        mockCall('virt.device.usb_choices', {
+          xhci: {
+            vendor_id: '1d6b',
+            product_id: '0003',
+            bus: 2,
+            dev: 1,
+            product: 'xHCI Host Controller',
+            manufacturer: 'Linux 6.6.44-production+truenas xhci-hcd',
+          },
+        }),
         mockJob('virt.instance.create', fakeSuccessfulJob({ id: 'new' } as VirtualizationInstance)),
-        mockJob('virt.instance.update', fakeSuccessfulJob({ id: 'test' } as VirtualizationInstance)),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -84,7 +104,7 @@ describe('InstanceFormComponent', () => {
     });
   });
 
-  it('creates new instance when form is submitted', async () => {
+  it('creates new instance when form is submitted with selected USB and GPU devices', async () => {
     await form.fillForm({
       Name: 'new',
       Autostart: true,
@@ -95,18 +115,27 @@ describe('InstanceFormComponent', () => {
     const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse' }));
     await browseButton.click();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Instance' }));
+    const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller' }));
+    await usbDeviceCheckbox.setValue(true);
+
+    const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
+    await gpuDeviceCheckbox.setValue(true);
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.create', [{
       name: 'new',
       autostart: true,
       cpu: '1-2',
+      devices: [
+        { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
+        { dev_type: VirtualizationDeviceType.Gpu, gpu_type: 'NVIDIA Corporation' },
+      ],
       image: 'almalinux/8/cloud',
       memory: GiB,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/virtualization/view', 'new']);
   });
 });

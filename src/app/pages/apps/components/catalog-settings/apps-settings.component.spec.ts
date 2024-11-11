@@ -8,6 +8,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
+import { DockerNvidiaStatus } from 'app/enums/docker-nvidia-status.enum';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
@@ -23,9 +24,10 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('CatalogEditFormComponent', () => {
+describe('AppsSettingsComponent', () => {
   let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
+
   const dockerConfig = {
     address_pools: [
       { base: '172.17.0.0/12', size: 12 },
@@ -63,15 +65,17 @@ describe('CatalogEditFormComponent', () => {
     ],
   });
 
-  describe('no docker lacks nvidia drivers', () => {
+  describe('system has no nvidia card', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
           mockProvider(DockerStore, {
             nvidiaDriversInstalled$: of(false),
-            lacksNvidiaDrivers$: of(false),
+            hasNvidiaCard$: of(false),
             dockerConfig$: of(dockerConfig),
+            dockerNvidiaStatus$: of(DockerNvidiaStatus.NotInstalled),
             reloadDockerConfig: jest.fn(() => of({})),
+            reloadDockerNvidiaStatus: jest.fn(() => of({})),
           }),
         ],
       });
@@ -114,24 +118,26 @@ describe('CatalogEditFormComponent', () => {
     });
   });
 
-  describe('has docker lacks nvidia drivers', () => {
-    describe('lacksNvidiaDrivers is true', () => {
+  describe('has docker no nvidia drivers', () => {
+    describe('hasNvidiaCard is true', () => {
       beforeEach(() => {
         spectator = createComponent({
           providers: [
             mockProvider(DockerStore, {
               nvidiaDriversInstalled$: of(false),
-              lacksNvidiaDrivers$: of(true),
-              setDockerNvidia: jest.fn(() => of(null)),
+              hasNvidiaCard$: of(true),
               dockerConfig$: of(dockerConfig),
+              dockerNvidiaStatus$: of(DockerNvidiaStatus.NotInstalled),
+              setDockerNvidia: jest.fn(() => of(null)),
               reloadDockerConfig: jest.fn(() => of({})),
+              reloadDockerNvidiaStatus: jest.fn(() => of({})),
             }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('shows Install NVIDIA Drivers checkbox when lacksNvidiaDrivers is true', async () => {
+      it('shows Install NVIDIA Drivers checkbox when hasNvidiaCard is true', async () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
@@ -160,22 +166,24 @@ describe('CatalogEditFormComponent', () => {
       });
     });
 
-    describe('lacksNvidiaDrivers is false and nvidiaDriversInstalled is true', () => {
+    describe('hasNvidiaCard is false and nvidiaDriversInstalled is true', () => {
       beforeEach(() => {
         spectator = createComponent({
           providers: [
             mockProvider(DockerStore, {
               nvidiaDriversInstalled$: of(true),
-              lacksNvidiaDrivers$: of(false),
+              hasNvidiaCard$: of(false),
               dockerConfig$: of(dockerConfig),
+              dockerNvidiaStatus$: of(DockerNvidiaStatus.Installed),
               reloadDockerConfig: jest.fn(() => of({})),
+              reloadDockerNvidiaStatus: jest.fn(() => of({})),
             }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 
-      it('shows Install NVIDIA Drivers checkbox when docker.lacks_nvidia_drivers is true OR when it is checked (so the user can uncheck it)', async () => {
+      it('shows Install NVIDIA Drivers checkbox when docker.nvidia_status is not Absent OR when it is checked (so the user can uncheck it)', async () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
@@ -192,9 +200,11 @@ describe('CatalogEditFormComponent', () => {
           providers: [
             mockProvider(DockerStore, {
               nvidiaDriversInstalled$: of(true),
-              lacksNvidiaDrivers$: of(false),
+              hasNvidiaCard$: of(true),
               dockerConfig$: of(dockerConfig),
+              dockerNvidiaStatus$: of(DockerNvidiaStatus.Installed),
               reloadDockerConfig: jest.fn(() => of({})),
+              reloadDockerNvidiaStatus: jest.fn(() => of({})),
               setDockerNvidia: jest.fn(() => of(null)),
             }),
           ],

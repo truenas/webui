@@ -1,15 +1,3 @@
-@import 'mixins/cards';
-@import 'scss-imports/variables';
-
-:host {
-  .card {
-    @include details-card();
-    margin: 0;
-
-    mat-card-header {
-      button {
-        margin-left: 8px;
-      }
-    }
-  }
+mat-card-content p {
+  margin: 0 0 6px;
 }

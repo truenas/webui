@@ -6,6 +6,14 @@
   </mat-card-header>
 
   <mat-card-content>
-    <p>{{ 'Name' | translate }}: -</p>
+    @if (isLoading()) {
+      <mat-spinner [diameter]="40"></mat-spinner>
+    } @else {
+      @for (device of devices(); track device) {
+        <div>
+          <p>{{ 'Device Type' | translate }}: {{ device.dev_type | titlecase }}</p>
+        </div>
+      }
+    }
   </mat-card-content>
 </mat-card>

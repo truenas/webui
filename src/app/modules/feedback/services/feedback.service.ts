@@ -32,7 +32,7 @@ import { UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
-import { selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectProductType, selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 type ReviewData = FileReviewComponent['form']['value'];
 type TicketData = FileTicketComponent['form']['value'];
@@ -132,7 +132,7 @@ export class FeedbackService {
     }
     return combineLatest([
       this.store$.pipe(waitForSystemInfo),
-      this.systemGeneralService.getProductType$,
+      this.store$.select(selectProductType),
     ]).pipe(
       first(),
       switchMap(([systemInfo, productType]) => {

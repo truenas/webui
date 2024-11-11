@@ -21,7 +21,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { CreateInstanceFormComponent } from 'app/pages/virtualization/components/create-instance-form/create-instance-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -54,7 +53,7 @@ export type VirtualizationImageWithId = VirtualizationImage & {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectImageDialogComponent implements OnInit {
-  protected readonly columns = ['label', 'os', 'release', 'arch', 'variant', 'actions'];
+  protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
   protected filterForm = this.fb.group({
     os: [''],
     variant: [''],
@@ -75,7 +74,7 @@ export class SelectImageDialogComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private dialogRef: MatDialogRef<CreateInstanceFormComponent>,
+    private dialogRef: MatDialogRef<SelectImageDialogComponent>,
     private fb: FormBuilder,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

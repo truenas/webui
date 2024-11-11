@@ -1,7 +1,8 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, ChangeDetectionStrategy,
-  signal, computed, inject, AfterViewInit,
+  signal, computed, inject,
+  effect,
 } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -40,7 +41,7 @@ import { WebSocketService } from 'app/services/ws.service';
   ],
 })
 
-export class InstanceListComponent implements AfterViewInit {
+export class InstanceListComponent {
   protected readonly requireRoles = [Role.VirtInstanceWrite];
   protected readonly searchQuery = signal<string>('');
   protected readonly showMobileDetails = signal<boolean>(false);
@@ -81,6 +82,20 @@ export class InstanceListComponent implements AfterViewInit {
     };
   });
 
+  protected selectInstanceDetails = effect(() => {
+    const instanceId = this.activatedRoute.snapshot.paramMap.get('id');
+
+    if (this.isLoading() || !this.instances()?.length) {
+      return;
+    }
+
+    if (instanceId) {
+      this.selectForDetails(instanceId);
+    } else {
+      this.navigateToDetails(this.instances()[0]);
+    }
+  }, { allowSignalWrites: true });
+
   constructor(
     private store: VirtualizationInstancesStore,
     private router: Router,
@@ -90,14 +105,6 @@ export class InstanceListComponent implements AfterViewInit {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
   ) {}
-
-  ngAfterViewInit(): void {
-    this.activatedRoute.paramMap.pipe(
-      untilDestroyed(this),
-    ).subscribe((params) => {
-      this.selectForDetails(params.get('id'));
-    });
-  }
 
   onSearch(query: string): void {
     this.searchQuery.set(query);
@@ -111,7 +118,7 @@ export class InstanceListComponent implements AfterViewInit {
     }
   }
 
-  viewDetails(instance: VirtualizationInstance): void {
+  navigateToDetails(instance: VirtualizationInstance): void {
     this.selectForDetails(instance.id);
 
     this.router.navigate(['/virtualization', 'view', instance.id]);
@@ -120,28 +127,6 @@ export class InstanceListComponent implements AfterViewInit {
       this.showMobileDetails.set(true);
 
       setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
-    }
-  }
-
-  private selectForDetails(instanceId: string): void {
-    if (!this.instances()?.length) {
-      return;
-    }
-
-    const selected = instanceId && this.instances().find((instance) => instance.id === instanceId);
-    if (selected) {
-      this.store.selectInstance(selected.id);
-      return;
-    }
-
-    this.selectFirstInstance();
-  }
-
-  private selectFirstInstance(): void {
-    const [first] = this.instances();
-
-    if (first) {
-      this.store.selectInstance(first.id);
     }
   }
 
@@ -177,5 +162,16 @@ export class InstanceListComponent implements AfterViewInit {
       .afterClosed()
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe();
+  }
+
+  private selectForDetails(instanceId: string): void {
+    if (!this.instances()?.length) {
+      return;
+    }
+
+    const selected = instanceId && this.instances().find((instance) => instance.id === instanceId);
+    if (selected) {
+      this.store.selectInstance(selected.id);
+    }
   }
 }
