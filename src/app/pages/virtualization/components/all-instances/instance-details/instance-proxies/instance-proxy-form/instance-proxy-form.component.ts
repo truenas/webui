@@ -85,7 +85,7 @@ export class InstanceProxyFormComponent {
           this.snackbar.success(this.translate.instant('Proxy added'));
           this.slideInRef.close({
             error: false,
-            response: null,
+            response: true,
           });
           this.isLoading.set(false);
         },

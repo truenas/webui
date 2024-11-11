@@ -11,8 +11,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export interface VirtualizationInstancesState {
   isLoading: boolean;
   instances: VirtualizationInstance[];
-  selectedInstance: VirtualizationInstance;
 
+  selectedInstance: VirtualizationInstance;
   isLoadingDevices: boolean;
   selectedInstanceDevices: VirtualizationDevice[];
 }
@@ -20,8 +20,9 @@ export interface VirtualizationInstancesState {
 const initialState: VirtualizationInstancesState = {
   isLoading: false,
   instances: [],
-  selectedInstance: null,
 
+  // TODO: May belong to its own store.
+  selectedInstance: null,
   isLoadingDevices: false,
   selectedInstanceDevices: [],
 };
@@ -32,7 +33,10 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
   readonly instances = computed(() => this.stateAsSignal().instances);
+
   readonly selectedInstance = computed(() => this.stateAsSignal().selectedInstance);
+  readonly isLoadingDevices = computed(() => this.stateAsSignal().isLoadingDevices);
+  readonly selectedInstanceDevices = computed(() => this.stateAsSignal().selectedInstanceDevices);
 
   constructor(
     private ws: WebSocketService,
@@ -71,6 +75,33 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     );
   });
 
+  readonly loadDevices = this.effect((trigger$) => {
+    return trigger$.pipe(
+      switchMap(() => {
+        const selectedInstance = this.selectedInstance();
+        if (!selectedInstance) {
+          return [];
+        }
+
+        this.patchState({ isLoadingDevices: true });
+
+        return this.ws.call('virt.instance.device_list', [selectedInstance.id]).pipe(
+          tap((devices) => {
+            this.patchState({
+              selectedInstanceDevices: devices,
+              isLoadingDevices: false,
+            });
+          }),
+          catchError((error) => {
+            this.patchState({ isLoadingDevices: false });
+            this.errorHandler.showErrorModal(error);
+            return [];
+          }),
+        );
+      }),
+    );
+  });
+
   selectInstance(instanceId: string): void {
     const selectedInstance = this.instances()?.find((instance) => instance.id === instanceId);
     const oldSelectedInstance = this.selectedInstance();
@@ -81,5 +112,6 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     this.patchState({
       selectedInstance,
     });
+    this.loadDevices();
   }
 }

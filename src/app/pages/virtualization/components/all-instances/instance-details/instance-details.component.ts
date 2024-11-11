@@ -32,6 +32,9 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
 export class InstanceDetailsComponent {
   instance = input.required<VirtualizationInstance>();
 
+  protected readonly devices = this.instancesStore.selectedInstanceDevices;
+  protected readonly isLoadingDevices = this.instancesStore.isLoadingDevices;
+
   constructor(
     private instancesStore: VirtualizationInstancesStore,
   ) {}

@@ -6,13 +6,15 @@
   </mat-card-header>
 
   <mat-card-content>
-    @if (isLoading()) {
-      <mat-spinner [diameter]="40"></mat-spinner>
+    @if (isLoadingDevices()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @for (device of devices(); track device) {
-        <div>
-          <p>{{ 'Device Type' | translate }}: {{ device.dev_type | titlecase }}</p>
+      @for (device of shownDevices(); track device) {
+        <div class="device">
+          {{ getDeviceDescription(device) }}
         </div>
+      } @empty {
+         {{ 'No devices added.' | translate }}
       }
     }
   </mat-card-content>

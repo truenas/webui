@@ -3,19 +3,26 @@ import {
   ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, ReactiveFormsModule, Validators,
+  FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map, Observable } from 'rxjs';
+import {
+  map, Observable, of,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   VirtualizationDeviceType,
-  VirtualizationGpuType, VirtualizationRemote, VirtualizationType,
+  VirtualizationGpuType,
+  VirtualizationProxyProtocol,
+  virtualizationProxyProtocolLabels,
+  VirtualizationRemote,
+  VirtualizationType,
 } from 'app/enums/virtualization.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { Option } from 'app/interfaces/option.interface';
 import {
   AvailableGpu,
@@ -27,6 +34,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
@@ -53,6 +63,9 @@ import { WebSocketService } from 'app/services/ws.service';
     TestDirective,
     IxFieldsetComponent,
     AsyncPipe,
+    IxListComponent,
+    IxListItemComponent,
+    IxSelectComponent,
   ],
   templateUrl: './create-instance-form.component.html',
   styleUrls: ['./create-instance-form.component.scss'],
@@ -86,12 +99,19 @@ export class CreateInstanceFormComponent implements OnInit {
     cpu: ['', [Validators.required, cpuValidator()]],
     usb_devices: this.formBuilder.group({}),
     gpu_devices: this.formBuilder.group({}),
+    proxies: this.formBuilder.array<FormGroup<{
+      source_proto: FormControl<VirtualizationProxyProtocol>;
+      source_port: FormControl<number>;
+      dest_proto: FormControl<VirtualizationProxyProtocol>;
+      dest_port: FormControl<number>;
+    }>>([]),
     autostart: [false],
     memory: [null as number, Validators.required],
     image: ['', Validators.required],
   });
 
   protected readonly visibleImageName = new FormControl('');
+  protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
 
   constructor(
     private ws: WebSocketService,
@@ -130,6 +150,21 @@ export class CreateInstanceFormComponent implements OnInit {
       });
   }
 
+  protected addProxy(): void {
+    const control = this.formBuilder.group({
+      source_proto: [VirtualizationProxyProtocol.Tcp],
+      source_port: [null as number, Validators.required],
+      dest_proto: [VirtualizationProxyProtocol.Tcp],
+      dest_port: [null as number, Validators.required],
+    });
+
+    this.form.controls.proxies.push(control);
+  }
+
+  protected removeProxy(index: number): void {
+    this.form.controls.proxies.removeAt(index);
+  }
+
   protected onSubmit(): void {
     const payload = this.getPayload();
     const job$ = this.ws.job('virt.instance.create', [payload]);
@@ -150,27 +185,46 @@ export class CreateInstanceFormComponent implements OnInit {
   }
 
   private getPayload(): CreateVirtualizationInstance {
+    const devices = this.getPayloadDevices();
+
     return {
+      devices,
       name: this.form.controls.name.value,
       cpu: this.form.controls.cpu.value,
       autostart: this.form.controls.autostart.value,
       memory: this.form.controls.memory.value,
       image: this.form.controls.image.value,
-      devices: [
-        ...Object.entries(this.form.controls.usb_devices.value || {})
-          .filter(([_, isSelected]) => isSelected)
-          .map(([productId]) => ({
-            dev_type: VirtualizationDeviceType.Usb,
-            product_id: productId,
-          })),
-        ...Object.entries(this.form.controls.gpu_devices.value || {})
-          .filter(([_, isSelected]) => isSelected)
-          .map(([gpuType]) => ({
-            dev_type: VirtualizationDeviceType.Gpu,
-            gpu_type: gpuType,
-          })),
-      ] as VirtualizationDevice[],
     } as CreateVirtualizationInstance;
+  }
+
+  private getPayloadDevices(): VirtualizationDevice[] {
+    const usbDevices = Object.entries(this.form.controls.usb_devices.value || {})
+      .filter(([_, isSelected]) => isSelected)
+      .map(([productId]) => ({
+        dev_type: VirtualizationDeviceType.Usb,
+        product_id: productId,
+      }));
+
+    const gpuDevices = Object.entries(this.form.controls.gpu_devices.value || {})
+      .filter(([_, isSelected]) => isSelected)
+      .map(([gpuType]) => ({
+        dev_type: VirtualizationDeviceType.Gpu,
+        gpu_type: gpuType,
+      }));
+
+    const proxies = this.form.controls.proxies.value.map((proxy) => ({
+      dev_type: VirtualizationDeviceType.Proxy,
+      source_proto: proxy.source_proto,
+      source_port: proxy.source_port,
+      dest_proto: proxy.dest_proto,
+      dest_port: proxy.dest_port,
+    }));
+
+    return [
+      ...usbDevices,
+      ...gpuDevices,
+      ...proxies,
+    ] as VirtualizationDevice[];
   }
 
   private setupDeviceControls(devices$: Observable<Option[]>, controlName: 'usb_devices' | 'gpu_devices'): void {
