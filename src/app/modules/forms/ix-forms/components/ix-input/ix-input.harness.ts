@@ -32,7 +32,7 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
   }
 
   async setValue(value: string | number): Promise<void> {
-    const harness = (await this.getMatInputHarness());
+    const harness = await this.getMatInputHarness();
 
     // MatInputHarness does not properly work with numeric values
     // (for example for <input type="number">).
@@ -45,7 +45,7 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
   }
 
   async setValueAndTriggerBlur(value: string | number): Promise<void> {
-    const harness = (await this.getMatInputHarness());
+    const harness = await this.getMatInputHarness();
 
     const nativeInput = await harness.host();
     await nativeInput.setInputValue(value as unknown as string);

@@ -300,7 +300,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     merge(
       this.form.controls.naming_schema.valueChanges,
       this.form.controls.name_regex.valueChanges,
-    ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => (this.getSnapshots()));
+    ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => this.getSnapshots());
 
     merge(
       this.form.controls.ssh_credentials_source.valueChanges,

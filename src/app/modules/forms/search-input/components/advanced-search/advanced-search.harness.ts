@@ -12,7 +12,7 @@ export class AdvancedSearchHarness extends ComponentHarness {
   getAutocomplete = this.documentRootLocatorFactory().locatorFor(CodemirrorAutocompleteHarness);
 
   async getValue(): Promise<string> {
-    return (await (this.getInputArea())).text();
+    return (await this.getInputArea()).text();
   }
 
   async setValue(value: string): Promise<void> {

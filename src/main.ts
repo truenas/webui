@@ -52,7 +52,7 @@ bootstrapApplication(AppComponent, {
         defaultLanguage: 'en',
         loader: {
           provide: TranslateLoader,
-          useFactory: (createTranslateLoader),
+          useFactory: createTranslateLoader,
           deps: [HttpClient],
         },
         compiler: {

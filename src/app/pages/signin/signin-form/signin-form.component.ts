@@ -11,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  distinctUntilChanged, EMPTY, firstValueFrom, switchMap,
+  distinctUntilChanged, firstValueFrom,
 } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { AutofocusDirective } from 'app/directives/autofocus/autofocus.directive';
@@ -120,21 +120,7 @@ export class SigninFormComponent implements OnInit {
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;
     this.cdr.markForCheck();
-    this.ws.call('auth.two_factor_auth', [formValues.username, formValues.password]).pipe(
-      switchMap((isTwoFactorEnabled) => {
-        this.hasTwoFactor = isTwoFactorEnabled;
-        if (isTwoFactorEnabled) {
-          this.signinStore.setLoadingState(false);
-          this.hasTwoFactor = true;
-
-          const message = this.translate.instant('2FA has been configured for this account. Enter the OTP to continue.');
-          this.signinStore.showSnackbar(message);
-
-          this.cdr.markForCheck();
-          return EMPTY;
-        }
-        return this.authService.login(formValues.username, formValues.password);
-      }),
+    this.authService.login(formValues.username, formValues.password).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (loginResult) => {
@@ -155,10 +141,21 @@ export class SigninFormComponent implements OnInit {
 
   private handleFailedLogin(loginResult: LoginResult): void {
     this.isLastLoginAttemptFailed = true;
+
+    switch (loginResult) {
+      case LoginResult.NoAccess:
+        this.lastLoginError = this.translate.instant('User is lacking permissions to access WebUI.');
+        break;
+      case LoginResult.NoOtp:
+        this.hasTwoFactor = true;
+        this.lastLoginError = this.translate.instant('2FA has been configured for this account. Enter the OTP to continue.');
+        break;
+      default:
+        this.lastLoginError = this.translate.instant('Wrong username or password. Please try again.');
+        break;
+    }
+
     this.cdr.markForCheck();
-    this.lastLoginError = loginResult === LoginResult.NoAccess
-      ? this.translate.instant('User is lacking permissions to access WebUI.')
-      : this.translate.instant('Wrong username or password. Please try again.');
     this.signinStore.showSnackbar(this.lastLoginError);
   }
 

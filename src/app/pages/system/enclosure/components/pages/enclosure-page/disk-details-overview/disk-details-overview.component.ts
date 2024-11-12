@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatMiniFabButton } from '@angular/material/button';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -32,11 +32,13 @@ export class DiskDetailsOverviewComponent {
   readonly selectedSlot = this.store.selectedSlot;
 
   readonly diskName = computed(() => {
-    return this.selectedSlot().dev || this.selectedSlot().descriptor;
+    return this.selectedSlot().dev
+      || this.translate.instant('Slot: {slot}', { slot: this.selectedSlot().drive_bay_number });
   });
 
   constructor(
     private store: EnclosureStore,
+    private translate: TranslateService,
   ) {}
 
   protected closeDetails(): void {

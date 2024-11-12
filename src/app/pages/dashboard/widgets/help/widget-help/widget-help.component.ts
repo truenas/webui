@@ -5,15 +5,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { map } from 'rxjs';
-import { productTypeLabels } from 'app/enums/product-type.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { AppState } from 'app/store';
-import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-widget-help',
@@ -31,12 +29,9 @@ import { selectIsEnterprise, selectProductType } from 'app/store/system-info/sys
   ],
 })
 export class WidgetHelpComponent {
-  size = input.required<SlotSize>();
-  fullSize = computed(() => this.size() === SlotSize.Full);
-
-  product = toSignal(this.store$.select(selectProductType).pipe(map((type) => productTypeLabels.get(type))));
-  isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-
+  readonly size = input.required<SlotSize>();
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly fullSize = computed(() => this.size() === SlotSize.Full);
   protected readonly helptext = helptextAbout;
 
   constructor(private store$: Store<AppState>) {}
