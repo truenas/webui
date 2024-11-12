@@ -55,9 +55,9 @@ export const helptextCloudBackup = {
  target="_blank">rclone --bwlimit</a>.'),
 
   exclude_placeholder: T('Exclude'),
-  exclude_tooltip: T('List of files and directories to exclude from sync.<br> \
+  exclude_tooltip: T('List of files and directories to exclude from backup.<br> \
  Separate entries by pressing <code>Enter</code>. See \
- <a href="https://rclone.org/filtering/" target="_blank">rclone filtering</a> \
+ <a href="https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files" target="_blank">restic exclude patterns</a> \
  for more details about the <code>--exclude</code> option.'),
 
   keep_last_placeholder: T('Keep Last'),
