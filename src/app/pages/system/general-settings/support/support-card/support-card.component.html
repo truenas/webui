@@ -32,15 +32,12 @@
           </div>
           @if (hasLicense) {
             <div>
-              <mat-checkbox
+              <ix-slide-toggle
                 *ixRequiresRoles="requiredRoles"
                 color="primary"
-                ixTest="production-system"
-                [(ngModel)]="isProduction"
-                (change)="updateProductionStatus($event)"
-              >
-                {{ 'This is a production system' | translate }}
-              </mat-checkbox>
+                [formControl]="isProductionControl"
+                [label]="'This is a production system' | translate"
+              ></ix-slide-toggle>
             </div>
           }
 
