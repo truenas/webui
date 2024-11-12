@@ -2,9 +2,14 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { InstanceDevicesComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';
+import { VirtualizationDeviceType, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import {
+  VirtualizationDevice,
+  VirtualizationInstance,
+} from 'app/interfaces/virtualization.interface';
+import {
+  InstanceDevicesComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';
 
 describe('InstanceDevicesComponent', () => {
   let spectator: Spectator<InstanceDevicesComponent>;
@@ -12,18 +17,18 @@ describe('InstanceDevicesComponent', () => {
   const demoInstance = {
     id: 'demo',
     name: 'Demo',
-    type: 'CONTAINER',
-    status: 'RUNNING',
+    type: VirtualizationType.Container,
+    status: VirtualizationStatus.Running,
     cpu: '525',
     autostart: true,
     image: {
-      architecture: 'amd64',
+      archs: ['amd64'],
       description: 'Almalinux 8 amd64 (20241030_23:38)',
       os: 'Almalinux',
       release: '8',
     },
     memory: 131072000,
-  } as unknown as VirtualizationInstance;
+  } as VirtualizationInstance;
 
   const devices = [
     { dev_type: VirtualizationDeviceType.Gpu },

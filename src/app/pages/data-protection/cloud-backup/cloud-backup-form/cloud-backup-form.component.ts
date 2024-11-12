@@ -315,17 +315,18 @@ export class CloudBackupFormComponent implements OnInit {
         : formValue.bucket,
     };
 
+    const {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      folder, bucket, bucket_input, ...restOfValues
+    } = formValue;
+
     const value: CloudBackupUpdate = {
-      ...formValue,
+      ...restOfValues,
       attributes,
       include: [],
       bwlimit: prepareBwlimit(formValue.bwlimit),
       schedule: crontabToSchedule(formValue.schedule),
     };
-
-    (['folder', 'bucket', 'bucket_input'] as const).forEach((key) => {
-      delete (value as unknown as FormValue)[key];
-    });
 
     return value;
   }

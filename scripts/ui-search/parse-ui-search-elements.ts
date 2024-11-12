@@ -6,6 +6,10 @@ import { GlobalSearchSection } from 'app/modules/global-search/enums/global-sear
 import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
+// TODO: This should be just cheerio.Element, but the type is not available in commonjs
+// https://github.com/cheeriojs/cheerio/issues/4067
+type CheerioElement = Parameters<typeof cheerio.contains>[0];
+
 export function parseUiSearchElements(
   htmlComponentFilePath: string,
   elementConfig: Record<string, UiSearchableElement>,
@@ -33,13 +37,13 @@ export function parseUiSearchElements(
     });
   }
 
-  cheerioRoot$('[\\[ixUiSearch\\]]').each((_, elementIdentifier) => {
-    const configKeysSplit = cheerioRoot$(elementIdentifier).attr('[ixuisearch]').split('.');
+  cheerioRoot$('[\\[ixUiSearch\\]]').each((_, element) => {
+    const configKeysSplit = cheerioRoot$(element).attr('[ixuisearch]').split('.');
     const childKey = configKeysSplit[configKeysSplit.length - 1] as keyof UiSearchableElement;
 
     const mergedElement = createUiSearchElement(
       cheerioRoot$,
-      elementIdentifier as unknown as string,
+      element,
       elementConfig,
       parentKey,
       childKey,
@@ -55,8 +59,8 @@ export function parseUiSearchElements(
 }
 
 function createUiSearchElement(
-  cheerioRoot$: (selector: string) => { attr: (attr: string) => string },
-  elementIdentifier: string,
+  cheerioRoot$: (selector: CheerioElement | string) => { attr: (attr: string) => string },
+  element: CheerioElement,
   elementConfig: UiSearchableElement,
   parentKey: keyof UiSearchableElement,
   childKey: keyof UiSearchableElement,
@@ -77,10 +81,10 @@ function createUiSearchElement(
 
     const anchorRouterLink = child?.anchorRouterLink || parent?.anchorRouterLink;
     const triggerAnchor = child?.triggerAnchor || parent?.triggerAnchor || null;
-    const routerLink = parseRouterLink(cheerioRoot$(elementIdentifier).attr('[routerlink]')) ?? null;
+    const routerLink = parseRouterLink(cheerioRoot$(element).attr('[routerlink]')) ?? null;
     let requiredRoles = child.requiredRoles || parent.requiredRoles || [];
 
-    const rolesAttrName = cheerioRoot$(elementIdentifier).attr('*ixrequiresroles') || '';
+    const rolesAttrName = cheerioRoot$(element).attr('*ixrequiresroles') || '';
 
     if (rolesAttrName) {
       requiredRoles = parseRoles(rolesAttrName);
