@@ -89,8 +89,8 @@ describe('InstanceGeneralInfoComponent', () => {
   it('renders environment variables', () => {
     const envContainer = spectator.query('mat-card-content').querySelectorAll('ul li');
     expect(envContainer).toHaveLength(2);
-    expect(envContainer[0]).toHaveText('TEST_ENV: value1');
-    expect(envContainer[1]).toHaveText('SAMPLE_ENV: value2');
+    expect(envContainer[0]).toHaveText('SAMPLE_ENV: value2');
+    expect(envContainer[1]).toHaveText('TEST_ENV: value1');
   });
 
   it('deletes instance when "Delete" button is pressed', async () => {

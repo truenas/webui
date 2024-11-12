@@ -1,4 +1,4 @@
-import { TitleCasePipe } from '@angular/common';
+import { KeyValuePipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -39,13 +39,13 @@ import { WebSocketService } from 'app/services/ws.service';
     YesNoPipe,
     TitleCasePipe,
     RequiresRolesDirective,
+    KeyValuePipe,
   ],
 })
 export class InstanceGeneralInfoComponent {
   instance = input.required<VirtualizationInstance>();
 
   protected readonly Role = Role;
-  protected objectKeys = Object.keys;
 
   constructor(
     protected formatter: IxFormatterService,
