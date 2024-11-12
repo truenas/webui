@@ -81,8 +81,8 @@ describe('IxExplorerComponent', () => {
       },
     );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    (mockTreeMock.setState as unknown as jest.SpiedFunction<TreeModel['setState']>).mockClear();
-    (mockTreeMock.getState as unknown as jest.SpiedFunction<TreeModel['getState']>).mockClear();
+    (mockTreeMock.setState as jest.Mock).mockClear();
+    (mockTreeMock.getState as jest.Mock).mockClear();
   });
 
   describe('rendering – tree', () => {

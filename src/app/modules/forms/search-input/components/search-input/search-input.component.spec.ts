@@ -93,11 +93,12 @@ describe('SearchInputComponent', () => {
       filters: [],
     });
 
-    const filters = [['username', '=', 'Bob']] as unknown as QueryFilters<unknown>;
+    const filters = [['username', '=', 'Bob']] as QueryFilters<{ username: string }>;
 
-    expect(spectator.queryAll(AdvancedSearchComponent)).toHaveLength(1);
-    spectator.query(AdvancedSearchComponent).paramsChange.emit(filters);
-    spectator.query(AdvancedSearchComponent).runSearch.emit();
+    const advanced = spectator.queryAll(AdvancedSearchComponent) as AdvancedSearchComponent<{ username: string }>[];
+    expect(advanced).toHaveLength(1);
+    advanced[0].paramsChange.emit(filters);
+    advanced[0].runSearch.emit();
 
     expect(spectator.component.queryChange.emit).toHaveBeenCalledWith({
       isBasicQuery: false,

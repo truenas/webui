@@ -40,7 +40,7 @@ describe('IpAddressesCellComponent', () => {
           { address: '56.23.45.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
         ],
       },
-    } as unknown as NetworkInterface);
+    } as NetworkInterface);
     spectator.detectComponentChanges();
 
     const addresses = spectator.queryAll('ul li');
@@ -56,7 +56,7 @@ describe('IpAddressesCellComponent', () => {
         { address: '33.12.44.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
         { address: '33.12.45.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
       ],
-    } as unknown as NetworkInterface);
+    } as NetworkInterface);
     spectator.detectComponentChanges();
 
     const addresses = spectator.queryAll('ul li');
@@ -72,7 +72,7 @@ describe('IpAddressesCellComponent', () => {
         { address: '33.10.44.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
         { address: '33.10.45.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
       ],
-    } as unknown as NetworkInterface);
+    } as NetworkInterface);
     spectator.detectComponentChanges();
 
     const addresses = spectator.queryAll('ul li');
