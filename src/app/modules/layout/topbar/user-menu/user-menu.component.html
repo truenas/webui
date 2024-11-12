@@ -45,10 +45,17 @@
         {{ 'Two-Factor Authentication' | translate }}
       </button>
 
-      <a name="settings-api" ixTest="api-keys" mat-menu-item [routerLink]="['/credentials/user-api-keys']">
-        <ix-icon name="laptop"></ix-icon>
-        {{ 'API Keys' | translate }}
-      </a>
+      @if (loggedInUser$ | async; as user) {
+        <a
+          name="settings-api"
+          ixTest="api-keys"
+          mat-menu-item
+          [routerLink]="['/credentials/user-api-keys']"
+          [queryParams]="{ userName: user.pw_name }">
+          <ix-icon name="laptop"></ix-icon>
+          {{ 'My API Keys' | translate }}
+        </a>
+      }
 
       <a
         name="settings-guide"

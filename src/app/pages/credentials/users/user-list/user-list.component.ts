@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -135,6 +136,7 @@ export class UserListComponent implements OnInit {
     private store$: Store<AppState>,
     private translate: TranslateService,
     private emptyService: EmptyService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -176,6 +178,10 @@ export class UserListComponent implements OnInit {
 
   doAdd(): void {
     this.slideInService.open(UserFormComponent, { wide: true });
+  }
+
+  navigateToApiKeys(): void {
+    this.router.navigate(['/credentials/user-api-keys']);
   }
 
   onListFiltered(query: string): void {
