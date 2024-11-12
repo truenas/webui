@@ -5,7 +5,7 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
@@ -38,7 +38,6 @@ import { WebSocketService } from 'app/services/ws.service';
     MatCardContent,
     YesNoPipe,
     TitleCasePipe,
-    RouterLink,
     RequiresRolesDirective,
   ],
 })
@@ -46,6 +45,7 @@ export class InstanceGeneralInfoComponent {
   instance = input.required<VirtualizationInstance>();
 
   protected readonly Role = Role;
+  protected objectKeys = Object.keys;
 
   constructor(
     protected formatter: IxFormatterService,

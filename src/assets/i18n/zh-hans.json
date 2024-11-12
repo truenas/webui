@@ -7,6 +7,7 @@
   "Current status: {status}": "",
   "Device Type": "",
   "Edit Instance: {name}": "",
+  "Environment Variables": "",
   "Error Installing": "",
   "GPU Devices": "",
   "Host ports are listed on the left and associated container ports are on the right.    0.0.0.0 on the host side represents binding to any IP address on the host.": "",

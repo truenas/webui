@@ -656,6 +656,7 @@
   "Enter the name of the new bucket. Only lowercase letters, numbers, and hyphens are allowed.": "",
   "Enter the number of last kept backups.": "",
   "Enter zvol name to continue.": "",
+  "Environment Variables": "",
   "Error ({code})": "",
   "Error In Apps Service": "",
   "Error Installing": "",

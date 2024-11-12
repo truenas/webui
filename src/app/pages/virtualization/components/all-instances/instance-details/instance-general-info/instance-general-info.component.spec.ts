@@ -27,6 +27,10 @@ const demoInstance = {
     release: '8',
   },
   memory: 131072000,
+  environment: {
+    TEST_ENV: 'value1',
+    SAMPLE_ENV: 'value2',
+  },
 } as unknown as VirtualizationInstance;
 
 describe('InstanceGeneralInfoComponent', () => {
@@ -73,14 +77,20 @@ describe('InstanceGeneralInfoComponent', () => {
   });
 
   it('renders details in card', () => {
-    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
-    expect(chartExtra).toHaveLength(6);
-    expect(chartExtra[0]).toHaveText('Name: Demo');
-    expect(chartExtra[1]).toHaveText('Status: Running');
-    expect(chartExtra[2]).toHaveText('Autostart: Yes');
-    expect(chartExtra[3]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
-    expect(chartExtra[4]).toHaveText('CPU: 525');
-    expect(chartExtra[5]).toHaveText('Memory: 125 MiB');
+    const cardContent = spectator.query('mat-card-content').querySelectorAll('p');
+    expect(cardContent[0]).toHaveText('Name: Demo');
+    expect(cardContent[1]).toHaveText('Status: Running');
+    expect(cardContent[2]).toHaveText('Autostart: Yes');
+    expect(cardContent[3]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
+    expect(cardContent[4]).toHaveText('CPU: 525');
+    expect(cardContent[5]).toHaveText('Memory: 125 MiB');
+  });
+
+  it('renders environment variables', () => {
+    const envContainer = spectator.query('mat-card-content').querySelectorAll('ul li');
+    expect(envContainer).toHaveLength(2);
+    expect(envContainer[0]).toHaveText('TEST_ENV: value1');
+    expect(envContainer[1]).toHaveText('SAMPLE_ENV: value2');
   });
 
   it('deletes instance when "Delete" button is pressed', async () => {

@@ -1331,6 +1331,7 @@
   "Enter {value} below to confirm.": "",
   "Entering <i>0</i> uses the actual file size and requires that the file already exists. Otherwise, specify the file size for the new file.": "",
   "Environment": "",
+  "Environment Variables": "",
   "Error": "",
   "Error ({code})": "",
   "Error In Apps Service": "",

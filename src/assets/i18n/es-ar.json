@@ -407,6 +407,7 @@
   "Enter the number of last kept backups.": "",
   "Enter vm name to continue.": "",
   "Enter zvol name to continue.": "",
+  "Environment Variables": "",
   "Error Installing": "",
   "Error counting eligible snapshots.": "",
   "Error deleting dataset {datasetName}.": "",

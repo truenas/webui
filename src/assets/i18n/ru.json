@@ -1051,6 +1051,7 @@
   "Enter the version to roll back to.": "",
   "Enter vm name to continue.": "",
   "Enter zvol name to continue.": "",
+  "Environment Variables": "",
   "Error ({code})": "",
   "Error In Apps Service": "",
   "Error Installing": "",
