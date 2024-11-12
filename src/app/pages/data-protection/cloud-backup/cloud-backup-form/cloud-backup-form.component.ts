@@ -10,10 +10,10 @@ import {
   switchMap,
 } from 'rxjs';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudsyncTransferSetting, cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
-import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudBackup } from 'app/helptext/data-protection/cloud-backup/cloud-backup';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
@@ -59,7 +59,7 @@ export class CloudBackupFormComponent implements OnInit {
     disabled: false,
   };
 
-  form = this.fb.group({
+  protected form = this.fb.group({
     path: ['', [Validators.required]],
     credentials: [null as number, [Validators.required]],
     schedule: [CronPresetValue.Daily, [Validators.required]],
@@ -68,8 +68,7 @@ export class CloudBackupFormComponent implements OnInit {
     post_script: [''],
     description: ['', [Validators.required]],
     snapshot: [false],
-    bwlimit: [[] as string[]],
-    transfers: [null as number],
+    transfer_setting: [CloudsyncTransferSetting.Default],
     args: [''],
     enabled: [true],
     password: ['', [Validators.required]],
@@ -84,6 +83,12 @@ export class CloudBackupFormComponent implements OnInit {
   editingTask: CloudBackup;
 
   bucketOptions$ = of<SelectOption[]>([]);
+  transferSettings$ = this.ws.call('cloud_backup.transfer_setting_choices').pipe(
+    map((availableSettings) => {
+      const allOptions = mapToOptions(cloudsyncTransferSettingLabels, this.translate);
+      return allOptions.filter((option) => availableSettings.includes(option.value as CloudsyncTransferSetting));
+    }),
+  );
 
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
@@ -235,11 +240,6 @@ export class CloudBackupFormComponent implements OnInit {
       credentials: (this.editingTask.credentials).id,
       folder: this.editingTask.attributes.folder as string,
       bucket: this.editingTask.attributes.bucket === newOption ? '' : this.editingTask.attributes.bucket as string || '',
-      bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
-        return bwlimit.bandwidth
-          ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'B', 2)}/s`
-          : `${bwlimit.time}, off`;
-      }),
     });
   }
 
@@ -292,7 +292,6 @@ export class CloudBackupFormComponent implements OnInit {
       ...formValue,
       attributes,
       include: [],
-      bwlimit: prepareBwlimit(formValue.bwlimit),
       schedule: crontabToSchedule(formValue.schedule),
     };
 
