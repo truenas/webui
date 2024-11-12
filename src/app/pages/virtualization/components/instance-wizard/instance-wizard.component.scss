@@ -31,11 +31,11 @@ ix-fieldset {
   }
 }
 
-.port-and-protocol {
+.protocol-and-port {
   display: flex;
   gap: 12px;
-  
-  .port {
-    width: 150px;
+
+  .protocol {
+    width: 100px;
   }
 }

@@ -1,4 +1,4 @@
-.port-and-protocol {
+.protocol-and-port {
   display: flex;
   gap: 12px;
 
@@ -6,7 +6,7 @@
     flex: 2;
   }
 
-  > * {
-    flex: 1;
+  .protocol {
+    flex: 0.8;
   }
 }

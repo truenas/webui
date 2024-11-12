@@ -7,24 +7,33 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        <div class="port-and-protocol">
-          <ix-input
-            class="port"
-            type="number"
-            formControlName="source_port"
-            [label]="'Host Port' | translate"
-            [required]="true"
-          ></ix-input>
-
+        <div class="protocol-and-port">
           <ix-select
             formControlName="source_proto"
+            class="protocol"
             [label]="'Host Protocol' | translate"
             [required]="true"
             [options]="protocolOptions$"
           ></ix-select>
+
+          <ix-input
+            type="number"
+            class="port"
+            formControlName="source_port"
+            [label]="'Host Port' | translate"
+            [required]="true"
+          ></ix-input>
         </div>
 
-        <div class="port-and-protocol">
+        <div class="protocol-and-port">
+          <ix-select
+            formControlName="dest_proto"
+            class="protocol"
+            [label]="'Instance Protocol' | translate"
+            [required]="true"
+            [options]="protocolOptions$"
+          ></ix-select>
+
           <ix-input
             class="port"
             type="number"
@@ -32,13 +41,6 @@
             [label]="'Instance Port' | translate"
             [required]="true"
           ></ix-input>
-
-          <ix-select
-            formControlName="dest_proto"
-            [label]="'Instance Protocol' | translate"
-            [required]="true"
-            [options]="protocolOptions$"
-          ></ix-select>
         </div>
       </ix-fieldset>
 

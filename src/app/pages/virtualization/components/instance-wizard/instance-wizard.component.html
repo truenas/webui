@@ -70,7 +70,15 @@
             [label]="'Proxy' | translate"
             (delete)="removeProxy(i)"
           >
-            <div class="port-and-protocol">
+            <div class="protocol-and-port">
+              <ix-select
+                class="protocol"
+                formControlName="source_proto"
+                [label]="'Host Protocol' | translate"
+                [required]="true"
+                [options]="proxyProtocols$"
+              ></ix-select>
+
               <ix-input
                 class="port"
                 type="number"
@@ -78,16 +86,17 @@
                 [label]="'Host Port' | translate"
                 [required]="true"
               ></ix-input>
+            </div>
 
+            <div class="protocol-and-port">
               <ix-select
-                formControlName="source_proto"
-                [label]="'Host Protocol' | translate"
+                class="protocol"
+                formControlName="dest_proto"
+                [label]="'Instance Protocol' | translate"
                 [required]="true"
                 [options]="proxyProtocols$"
               ></ix-select>
-            </div>
 
-            <div class="port-and-protocol">
               <ix-input
                 class="port"
                 type="number"
@@ -95,13 +104,6 @@
                 [label]="'Instance Port' | translate"
                 [required]="true"
               ></ix-input>
-
-              <ix-select
-                formControlName="dest_proto"
-                [label]="'Instance Protocol' | translate"
-                [required]="true"
-                [options]="proxyProtocols$"
-              ></ix-select>
             </div>
           </ix-list-item>
         }
