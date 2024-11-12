@@ -23,7 +23,6 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
@@ -127,7 +126,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     CloudSyncProviderDescriptionComponent,
     SearchInput1Component,
     MatProgressSpinnerModule,
-    MapValuePipe,
   ],
   declarations: [
     SnapshotTaskListComponent,

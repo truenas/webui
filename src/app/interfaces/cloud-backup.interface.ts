@@ -1,8 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { CloudCredential } from './cloud-sync-task.interface';
+import { BwLimit, BwLimitUpdate, CloudCredential } from './cloud-sync-task.interface';
 import { Schedule } from './schedule.interface';
 
 export interface CloudBackup {
@@ -16,18 +15,20 @@ export interface CloudBackup {
   snapshot: boolean;
   include: string[];
   exclude: string[];
+  transfers: number | null;
   args: string;
   enabled: boolean;
   password: string;
   credentials: CloudCredential;
   job: Job | null;
   locked: boolean;
+  bwlimit?: BwLimit[];
   keep_last?: number;
-  transfer_setting: CloudsyncTransferSetting;
 }
 
-export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'credentials'> {
+export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'bwlimit' | 'credentials'> {
   credentials: number;
+  bwlimit: BwLimitUpdate[];
 }
 
 export interface CloudBackupSnapshot {

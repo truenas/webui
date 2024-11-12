@@ -11,10 +11,7 @@
     <p>{{ 'Bucket' | translate }}: {{ backup.attributes.bucket || '-' }}</p>
     <p>{{ 'Folder' | translate }}: {{ backup.attributes.folder || '-' }}</p>
     <p>{{ 'Keep Last' | translate }}: {{ backup.keep_last || '-' }}</p>
-    <p>
-      {{ 'Transfer Setting' | translate }}:
-      {{ (backup.transfer_setting | mapValue: cloudsyncTransferSettingLabels) || '-' }}
-    </p>
+    <p>{{ 'Transfers' | translate }}: {{ backup.transfers || '-' }}</p>
     <p>{{ 'Post Script' | translate }}: {{ backup.post_script || '-' }}</p>
     <p>{{ 'Pre Script' | translate }}: {{ backup.pre_script || '-' }}</p>
   </mat-card-content>
