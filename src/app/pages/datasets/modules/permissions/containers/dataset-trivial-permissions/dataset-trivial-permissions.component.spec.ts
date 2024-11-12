@@ -46,18 +46,18 @@ describe('DatasetTrivialPermissionsComponent', () => {
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({
           mode: 16877,
-          uid: 0,
-          gid: 1001,
+          user: 'root',
+          group: 'kmem',
         })),
       }),
       mockProvider(UserService, {
         groupQueryDsCache: () => of([
-          { group: 'kmem', gid: 1001 },
-          { group: 'wheel', gid: 1002 },
+          { group: 'kmem' },
+          { group: 'wheel' },
         ]),
         userQueryDsCache: () => of([
-          { username: 'root', uid: 0 },
-          { username: 'games', uid: 103 },
+          { username: 'root' },
+          { username: 'games' },
         ]),
       }),
       mockProvider(DialogService, {
@@ -100,7 +100,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
   it('saves new user and group when form is saved', async () => {
     await form.fillForm({
       User: 'games',
-      Group: 'kmem',
+      Group: 'wheel',
       'Apply User': true,
       'Apply Group': true,
     });
@@ -109,8 +109,9 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
       path: '/mnt/pool/trivial',
-      uid: 103,
-      gid: 1001,
+      mode: '755',
+      user: 'games',
+      group: 'wheel',
       options: {
         recursive: false,
         stripacl: false,
@@ -131,7 +132,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       mode: '777',
       options: {
         recursive: false,
-        stripacl: true,
+        stripacl: false,
         traverse: false,
       },
     }]);

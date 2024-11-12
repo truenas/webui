@@ -70,10 +70,10 @@ describe('UserMenuComponent', () => {
     });
 
     it('has an API Keys menu item that takes user to list of API Keys', async () => {
-      const apiKeys = await menu.getItems({ text: /API Keys$/ });
+      const apiKeys = await menu.getItems({ text: /My API Keys$/ });
       const apiKeysElement = await apiKeys[0].host();
 
-      expect(await apiKeysElement.getAttribute('href')).toBe('/credentials/user-api-keys');
+      expect(await apiKeysElement.getAttribute('href')).toBe('/credentials/user-api-keys?userName=root');
     });
 
     it('has a Guide menu item that opens user guide', async () => {

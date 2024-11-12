@@ -1,11 +1,13 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import {
   filter, map, of, shareReplay, switchMap, tap,
+  withLatestFrom,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -26,6 +28,7 @@ import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-ta
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
@@ -39,6 +42,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
+import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -85,18 +89,21 @@ export class UserApiKeysComponent implements OnInit {
       title: this.translate.instant('Username'),
       propertyName: 'username',
     }),
-    textColumn({
-      title: this.translate.instant('Keyhash'),
-      propertyName: 'keyhash',
+    yesNoColumn({
+      title: this.translate.instant('Local'),
+      propertyName: 'local',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Revoked'),
+      propertyName: 'revoked',
     }),
     dateColumn({
       title: this.translate.instant('Created date'),
       propertyName: 'created_at',
     }),
-    textColumn({
+    dateColumn({
       title: this.translate.instant('Expires date'),
       propertyName: 'expires_at',
-      getValue: (row) => row.expires_at || this.translate.instant('Never'),
     }),
     actionsColumn({
       actions: [
@@ -106,11 +113,19 @@ export class UserApiKeysComponent implements OnInit {
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.openForm(row),
+          disabled: (row) => this.authService.hasRole([Role.FullAdmin]).pipe(
+            withLatestFrom(this.authService.user$.pipe(map((user) => user.pw_name))),
+            map(([isFullAdmin, username]) => !isFullAdmin && row.username !== username),
+          ),
         },
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          disabled: (row) => this.authService.hasRole([Role.FullAdmin]).pipe(
+            withLatestFrom(this.authService.user$.pipe(map((user) => user.pw_name))),
+            map(([isFullAdmin, username]) => !isFullAdmin && row.username !== username),
+          ),
           requiredRoles: this.requiredRoles,
         },
       ],
@@ -142,7 +157,9 @@ export class UserApiKeysComponent implements OnInit {
     private dialog: DialogService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
+    private authService: AuthService,
     private slideIn: SlideInService,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
@@ -152,6 +169,7 @@ export class UserApiKeysComponent implements OnInit {
     this.setDefaultSort();
     this.dataProvider.load();
 
+    this.handleUsernameQueryParams();
     this.setSearchProperties();
   }
 
@@ -221,5 +239,17 @@ export class UserApiKeysComponent implements OnInit {
     }
 
     this.dataProvider.load();
+  }
+
+  private handleUsernameQueryParams(): void {
+    this.route.queryParams.pipe(
+      filter((params) => params.userName),
+      untilDestroyed(this),
+    ).subscribe((params) => {
+      this.onSearch({
+        isBasicQuery: true,
+        query: params.userName as string,
+      });
+    });
   }
 }

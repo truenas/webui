@@ -25,15 +25,15 @@ const imageChoices: Record<string, VirtualizationImage> = {
     release: '8',
     archs: ['arm64'],
     variant: 'cloud',
-  },
+  } as VirtualizationImage,
   'alpine/3.18/default': {
     label: 'Alpine 3.18 (armhf, default)',
     os: 'Alpine',
     release: '3.18',
     archs: ['armhf'],
     variant: 'default',
-  },
-} as unknown as Record<string, VirtualizationImage>;
+  } as VirtualizationImage,
+} as Record<string, VirtualizationImage>;
 
 describe('SelectImageDialogComponent', () => {
   let spectator: Spectator<SelectImageDialogComponent>;

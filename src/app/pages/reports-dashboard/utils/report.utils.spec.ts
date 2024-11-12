@@ -107,11 +107,11 @@ describe('convertAggregations', () => {
       legend: ['time', 'value'],
       data: [],
       aggregations: {
-        min: { 0: 1024 },
-        max: { 0: 2048 },
-        mean: { 0: 1536 },
+        min: [1024],
+        max: [2048],
+        mean: [1536],
       },
-    } as unknown as ReportingData;
+    } as ReportingData;
 
     const result = convertAggregations(data, 'Data Transfer (bytes)/s');
 

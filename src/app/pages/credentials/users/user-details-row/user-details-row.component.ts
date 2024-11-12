@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { Option } from 'app/interfaces/option.interface';
+import { ActionOption } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
@@ -52,13 +52,14 @@ export class UserDetailsRowComponent {
     private router: Router,
   ) {}
 
-  getDetails(user: User): Option[] {
+  getDetails(user: User): ActionOption[] {
     const details = [
       {
         label: this.translate.instant('API Keys'),
         value: this.translate.instant('{n, plural, =0 {No keys} =1 {# key} other {# keys}}', {
-          n: user?.api_keys?.length,
+          n: user.api_keys?.length,
         }),
+        action: user.api_keys?.length > 0 ? () => this.viewUserApiKeys(user) : null,
       },
       { label: this.translate.instant('GID'), value: user?.group?.bsdgrp_gid },
       { label: this.translate.instant('Home Directory'), value: user.home },
@@ -126,6 +127,12 @@ export class UserDetailsRowComponent {
       },
     });
     this.router.navigateByUrl(url);
+  }
+
+  viewUserApiKeys(user: User): void {
+    this.router.navigate(['/credentials/user-api-keys'], {
+      queryParams: { userName: user.username },
+    });
   }
 
   private getSshStatus(user: User): string {

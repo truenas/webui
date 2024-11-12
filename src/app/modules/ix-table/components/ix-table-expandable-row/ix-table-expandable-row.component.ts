@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { Option } from 'app/interfaces/option.interface';
+import { ActionOption } from 'app/interfaces/option.interface';
 
 @Component({
   selector: 'ix-table-expandable-row',
@@ -14,5 +14,5 @@ import { Option } from 'app/interfaces/option.interface';
   imports: [MatDivider, TranslateModule],
 })
 export class IxTableExpandableRowComponent {
-  readonly data = input<Option[]>();
+  readonly data = input<ActionOption[]>();
 }

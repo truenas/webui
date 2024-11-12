@@ -15,7 +15,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 const fakeLegendData = {
   chartId: 'chart-uuid-selected-report',
   x: Date.now(),
-} as unknown as LegendDataWithStackedTotalHtml;
+} as LegendDataWithStackedTotalHtml;
 
 describe('ReportComponent', () => {
   let spectator: Spectator<ReportComponent>;

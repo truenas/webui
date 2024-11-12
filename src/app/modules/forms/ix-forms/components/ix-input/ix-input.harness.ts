@@ -48,7 +48,7 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
     const harness = await this.getMatInputHarness();
 
     const nativeInput = await harness.host();
-    await nativeInput.setInputValue(value as unknown as string);
+    await nativeInput.setInputValue(value as string);
     await nativeInput.dispatchEvent('input');
     return nativeInput.blur();
   }
