@@ -104,7 +104,7 @@ describe('InstanceWizardComponent', () => {
     });
   });
 
-  it('creates new instance when form is submitted with selected USB, GPU devices, and environment variables', async () => {
+  it('creates new instance when form is submitted', async () => {
     await form.fillForm({
       Name: 'new',
       Autostart: true,
