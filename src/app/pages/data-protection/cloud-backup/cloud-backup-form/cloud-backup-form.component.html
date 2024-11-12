@@ -138,17 +138,12 @@
           class="fieldset"
           [title]="helptext.fieldset_advanced_remote_options | translate"
         >
-          <ix-input
-            formControlName="transfers"
-            type="number"
-            [label]="helptext.transfers_placeholder | translate"
-            [tooltip]="helptext.transfers_tooltip | translate"
-          ></ix-input>
-          <ix-chips
-            formControlName="bwlimit"
-            [label]="helptext.bwlimit_placeholder | translate"
-            [tooltip]="helptext.bwlimit_tooltip | translate"
-          ></ix-chips>
+          <ix-select
+            formControlName="transfer_setting"
+            [required]="true"
+            [options]="transferSettings$"
+            [label]="'Transfer Setting' | translate"
+          ></ix-select>
         </ix-fieldset>
       </div>
 
