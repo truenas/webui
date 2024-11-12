@@ -1,7 +1,11 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { CloudBackupStatsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-stats/cloud-backup-stats.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import {
+  CloudBackupStatsComponent,
+} from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-stats/cloud-backup-stats.component';
 
 const testBackup = {
   path: '/mnt/test',
@@ -10,13 +14,13 @@ const testBackup = {
   attributes: {
     folder: '/ix',
     bucket: 'ixsystems',
-  },
-  transfers: 22,
+  } as Record<string, string>,
   keep_last: 5,
   credentials: {
     name: 'Storj',
   },
-} as unknown as CloudBackup;
+  transfer_setting: CloudsyncTransferSetting.FastStorage,
+} as CloudBackup;
 
 describe('CloudBackupStatsComponent', () => {
   let spectator: Spectator<CloudBackupStatsComponent>;
@@ -25,6 +29,7 @@ describe('CloudBackupStatsComponent', () => {
     component: CloudBackupStatsComponent,
     imports: [
       IxTableModule,
+      MapValuePipe,
     ],
     providers: [],
   });
@@ -50,7 +55,7 @@ describe('CloudBackupStatsComponent', () => {
     expect(chartExtra[2]).toHaveText('Bucket: ixsystems');
     expect(chartExtra[3]).toHaveText('Folder: /ix');
     expect(chartExtra[4]).toHaveText('Keep Last: 5');
-    expect(chartExtra[5]).toHaveText('Transfers: 22');
+    expect(chartExtra[5]).toHaveText('Transfer Setting: Fast Storage');
     expect(chartExtra[6]).toHaveText('Post Script: test');
     expect(chartExtra[7]).toHaveText('Pre Script: test');
   });
