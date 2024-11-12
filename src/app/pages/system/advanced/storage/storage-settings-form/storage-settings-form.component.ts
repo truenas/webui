@@ -18,6 +18,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -58,7 +59,7 @@ export interface StorageSettings {
     AsyncPipe,
   ],
 })
-export class StorageSettingsFormComponent implements OnInit {
+export class StorageSettingsFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
@@ -84,6 +85,10 @@ export class StorageSettingsFormComponent implements OnInit {
     private chainedRef: ChainedRef<StorageSettings>,
   ) {
     this.storageSettings = this.chainedRef.getData();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
   }
 
   ngOnInit(): void {

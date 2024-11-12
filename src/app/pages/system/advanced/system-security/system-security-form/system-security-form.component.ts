@@ -7,10 +7,11 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
@@ -43,7 +44,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TranslateModule,
   ],
 })
-export class SystemSecurityFormComponent implements OnInit {
+export class SystemSecurityFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   form = this.formBuilder.group({
@@ -67,6 +68,10 @@ export class SystemSecurityFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
   ) {
     this.systemSecurityConfig = this.chainedRef.getData();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
   }
 
   ngOnInit(): void {

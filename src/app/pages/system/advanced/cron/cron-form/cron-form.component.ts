@@ -6,11 +6,12 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextCron } from 'app/helptext/system/cron-form';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -52,7 +53,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
   ],
 })
-export class CronFormComponent implements OnInit {
+export class CronFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   get isNew(): boolean {
@@ -102,6 +103,10 @@ export class CronFormComponent implements OnInit {
     private chainedRef: ChainedRef<Cronjob>,
   ) {
     this.editingCron = this.chainedRef.getData();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
   }
 
   ngOnInit(): void {

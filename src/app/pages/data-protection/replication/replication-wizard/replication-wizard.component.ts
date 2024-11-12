@@ -30,6 +30,7 @@ import { CountManualSnapshotsParams, EligibleManualSnapshotsCount, TargetUnmatch
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -69,7 +70,7 @@ import { WebSocketService } from 'app/services/ws.service';
     UseIxIconsInStepperComponent,
   ],
 })
-export class ReplicationWizardComponent {
+export class ReplicationWizardComponent implements SlideIn2CloseConfirmation {
   @ViewChild(ReplicationWhatAndWhereComponent) whatAndWhere: ReplicationWhatAndWhereComponent;
   @ViewChild(ReplicationWhenComponent) when: ReplicationWhenComponent;
 
@@ -97,6 +98,11 @@ export class ReplicationWizardComponent {
     private chainedSlideInRef: ChainedRef<unknown>,
     private authService: AuthService,
   ) {}
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    const steps = this.getSteps();
+    return of(steps.some((step) => step.form.dirty));
+  }
 
   getSteps(): [
     ReplicationWhatAndWhereComponent,

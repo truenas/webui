@@ -9,11 +9,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  EMPTY, catchError, filter, of, switchMap, tap,
+  EMPTY, Observable, catchError, filter, of, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -49,7 +50,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
   ],
 })
-export class GlobalTwoFactorAuthFormComponent implements OnInit {
+export class GlobalTwoFactorAuthFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
@@ -77,6 +78,10 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     @Inject(WINDOW) private window: Window,
   ) {
     this.twoFactorConfig = this.chainedRef.getData();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
   }
 
   ngOnInit(): void {

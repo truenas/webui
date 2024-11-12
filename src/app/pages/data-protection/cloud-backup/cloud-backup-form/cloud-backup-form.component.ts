@@ -8,7 +8,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  debounceTime, distinctUntilChanged, map, of,
+  debounceTime, distinctUntilChanged, map, Observable, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
@@ -19,6 +19,7 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextCloudBackup } from 'app/helptext/data-protection/cloud-backup/cloud-backup';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -73,7 +74,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
     TranslateModule,
   ],
 })
-export class CloudBackupFormComponent implements OnInit {
+export class CloudBackupFormComponent implements OnInit, SlideIn2CloseConfirmation {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -141,6 +142,10 @@ export class CloudBackupFormComponent implements OnInit {
     private chainedRef: ChainedRef<CloudBackup>,
   ) {
     this.editingTask = chainedRef.getData();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
   }
 
   ngOnInit(): void {

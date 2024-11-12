@@ -8,11 +8,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, merge,
+  of,
 } from 'rxjs';
 import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UseIxIconsInStepperComponent,
@@ -43,7 +45,7 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
     UseIxIconsInStepperComponent,
   ],
 })
-export class CloudSyncWizardComponent {
+export class CloudSyncWizardComponent implements SlideIn2CloseConfirmation {
   @ViewChild(forwardRef(() => CloudSyncWhatAndWhenComponent)) whatAndWhen: CloudSyncWhatAndWhenComponent;
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
@@ -62,6 +64,10 @@ export class CloudSyncWizardComponent {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {}
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.whatAndWhen.form.dirty);
+  }
 
   createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
     return this.ws.call('cloudsync.create', [payload]);

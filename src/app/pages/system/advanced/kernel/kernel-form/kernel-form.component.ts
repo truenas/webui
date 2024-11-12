@@ -7,9 +7,11 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -43,7 +45,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
     TranslateModule,
   ],
 })
-export class KernelFormComponent implements OnInit {
+export class KernelFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
@@ -71,6 +73,10 @@ export class KernelFormComponent implements OnInit {
     if (chainedRef.getData()) {
       this.debugkernel = true;
     }
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
   }
 
   ngOnInit(): void {

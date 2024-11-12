@@ -118,7 +118,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
   }
 
   private openSlideIn<T, D>(
-    componentType: Type<unknown>,
+    componentType: Type<SlideIn2CloseConfirmation>,
     params?: { wide?: boolean; data?: D },
   ): void {
     if (this.isSlideInOpen) {
@@ -143,7 +143,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
   }
 
   private createInjector<T, D>(
-    componentType: Type<unknown>,
+    componentType: Type<SlideIn2CloseConfirmation>,
     data?: D,
   ): void {
     const injector = Injector.create({
@@ -152,7 +152,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
           provide: ChainedRef<D>,
           useValue: {
             close: (response: ChainedComponentResponse) => {
-              this.getConfirmation().pipe(
+              (response.cancelled ? this.getConfirmation() : of(true)).pipe(
                 filter(Boolean),
                 untilDestroyed(this),
               ).subscribe({
@@ -163,7 +163,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
                 },
               });
             },
-            swap: (component: Type<unknown>, wide = false, incomingComponentData?: unknown) => {
+            swap: (component: Type<SlideIn2CloseConfirmation>, wide = false, incomingComponentData?: unknown) => {
               this.getConfirmation().pipe(
                 filter(Boolean),
                 untilDestroyed(this),
@@ -186,7 +186,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
         },
       ],
     });
-    this.componentRef = this.slideInBody.createComponent<T>(componentType as Type<T>, { injector });
+    this.componentRef = this.slideInBody.createComponent<T>(componentType as unknown as Type<T>, { injector });
   }
 
   protected onBackdropClicked(): void {

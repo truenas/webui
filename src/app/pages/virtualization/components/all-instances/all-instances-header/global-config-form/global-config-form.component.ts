@@ -4,10 +4,11 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize } from 'rxjs';
+import { finalize, Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { VirtualizationGlobalConfig, VirtualizationGlobalConfigUpdate } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -46,7 +47,7 @@ import { WebSocketService } from 'app/services/ws.service';
     IxIpInputWithNetmaskComponent,
   ],
 })
-export class GlobalConfigFormComponent {
+export class GlobalConfigFormComponent implements SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected isLoading = signal(false);
   protected readonly autoBridge = '[AUTO]';
@@ -82,6 +83,10 @@ export class GlobalConfigFormComponent {
       v4_network: currentConfig.v4_network,
       v6_network: currentConfig.v6_network,
     });
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
   }
 
   onSubmit(): void {

@@ -1,4 +1,5 @@
 import { Type } from '@angular/core';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { ChainedComponentResponse as ChainedResponse } from 'app/services/chained-slide-in.service';
 
 export class ChainedRef<T> {
@@ -10,6 +11,6 @@ export class ChainedRef<T> {
    * have the same purpose and return the same response type e.g, form to wizard and
    * wizard to form.
    */
-  swap?: (component: Type<unknown>, wide: boolean, data?: unknown) => void;
+  swap?: (component: Type<SlideIn2CloseConfirmation>, wide: boolean, data?: unknown) => void;
   getData: () => T;
 }

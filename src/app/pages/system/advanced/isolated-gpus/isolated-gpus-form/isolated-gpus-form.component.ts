@@ -7,9 +7,12 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { map, take } from 'rxjs';
+import {
+  map, Observable, of, take,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -44,7 +47,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
     TranslateModule,
   ],
 })
-export class IsolatedGpusFormComponent implements OnInit {
+export class IsolatedGpusFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
@@ -71,6 +74,10 @@ export class IsolatedGpusFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private chainedRef: ChainedRef<unknown>,
   ) { }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.formGroup.dirty);
+  }
 
   ngOnInit(): void {
     this.store$.pipe(

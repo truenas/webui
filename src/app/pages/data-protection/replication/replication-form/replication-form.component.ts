@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { merge, of } from 'rxjs';
+import { merge, Observable, of } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Direction } from 'app/enums/direction.enum';
@@ -17,6 +17,7 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -74,7 +75,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
   ],
 })
-export class ReplicationFormComponent implements OnInit {
+export class ReplicationFormComponent implements OnInit, SlideIn2CloseConfirmation {
   @ViewChild(GeneralSectionComponent, { static: true }) generalSection: GeneralSectionComponent;
   @ViewChild(TransportSectionComponent, { static: true }) transportSection: TransportSectionComponent;
   @ViewChild(SourceSectionComponent, { static: true }) sourceSection: SourceSectionComponent;
@@ -110,6 +111,16 @@ export class ReplicationFormComponent implements OnInit {
     private chainedRef: ChainedRef<ReplicationTask>,
   ) {
     this.existingReplication = this.chainedRef.getData();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(
+      this.generalSection.form.dirty
+      || this.transportSection.form.dirty
+      || this.sourceSection.form.dirty
+      || this.targetSection.form.dirty
+      || this.scheduleSection.form.dirty,
+    );
   }
 
   ngOnInit(): void {

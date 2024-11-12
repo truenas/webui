@@ -1,6 +1,5 @@
-import { ComponentType } from '@angular/cdk/portal';
 import {
-  AfterViewInit, Directive, Input, OnInit, ViewChild, inject,
+  AfterViewInit, Directive, Input, OnInit, Type, ViewChild, inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,6 +8,7 @@ import {
   Observable, distinctUntilChanged, filter, map, switchMap, take, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
@@ -47,7 +47,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   abstract getValueFromChainedResponse(
     result: ChainedComponentResponse,
   ): IxSelectValue;
-  abstract getFormComponentType(): ComponentType<unknown>;
+  abstract getFormComponentType(): Type<SlideIn2CloseConfirmation>;
   abstract fetchOptions(): Observable<Option[]>;
   getFormInputData(): Record<string, unknown> {
     return undefined;

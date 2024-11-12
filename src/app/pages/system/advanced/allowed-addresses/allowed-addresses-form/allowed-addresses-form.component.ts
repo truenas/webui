@@ -15,6 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -53,7 +54,7 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
     TranslateModule,
   ],
 })
-export class AllowedAddressesFormComponent implements OnInit {
+export class AllowedAddressesFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly helpText = helptextSystemAdvanced;
 
@@ -73,6 +74,10 @@ export class AllowedAddressesFormComponent implements OnInit {
     private translate: TranslateService,
     private slideInRef: ChainedRef<unknown>,
   ) {}
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
+  }
 
   ngOnInit(): void {
     this.ws.call('system.general.config').pipe(untilDestroyed(this)).subscribe({

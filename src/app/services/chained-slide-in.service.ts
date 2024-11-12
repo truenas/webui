@@ -5,10 +5,11 @@ import { UUID } from 'angular2-uuid';
 import {
   Observable, Subject, take, tap, timer,
 } from 'rxjs';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { FocusService } from 'app/services/focus.service';
 
 export interface IncomingChainedComponent {
-  component: Type<unknown>;
+  component: Type<SlideIn2CloseConfirmation>;
   wide: boolean;
   data: unknown;
   swapComponentId?: string;
@@ -19,7 +20,7 @@ export interface ChainedSlideInState {
 }
 
 export interface ChainedComponent {
-  component: Type<unknown>;
+  component: Type<SlideIn2CloseConfirmation>;
   close$: Subject<ChainedComponentResponse>;
   wide: boolean;
   data: unknown;
@@ -29,11 +30,12 @@ export interface ChainedComponent {
 export interface ChainedComponentResponse<T = unknown> {
   response: T;
   error: unknown;
+  cancelled?: boolean;
 }
 
 export interface ChainedComponentSerialized {
   id: string;
-  component: Type<unknown>;
+  component: Type<SlideIn2CloseConfirmation>;
   close$: Subject<ChainedComponentResponse>;
   data?: unknown;
   wide?: boolean;
@@ -83,7 +85,7 @@ export class ChainedSlideInService extends ComponentStore<ChainedSlideInState> {
 
   // TODO: Update second argument to options
   open(
-    component: Type<unknown>,
+    component: Type<SlideIn2CloseConfirmation>,
     wide = false,
     data?: unknown,
   ): Observable<ChainedComponentResponse> {

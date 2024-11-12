@@ -16,6 +16,7 @@ import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
 import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -68,7 +69,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
   ],
 })
-export class RsyncTaskFormComponent implements OnInit {
+export class RsyncTaskFormComponent implements OnInit, SlideIn2CloseConfirmation {
   readonly requiredRoles = [Role.FullAdmin];
 
   get isNew(): boolean {
@@ -152,6 +153,10 @@ export class RsyncTaskFormComponent implements OnInit {
     private chainedSlideInRef: ChainedRef<RsyncTask>,
   ) {
     this.editingTask = this.chainedSlideInRef.getData();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
   }
 
   get isModuleMode(): boolean {

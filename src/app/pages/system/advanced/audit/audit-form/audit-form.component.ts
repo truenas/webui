@@ -10,6 +10,8 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY,
+  Observable,
+  of,
 } from 'rxjs';
 import {
   catchError, tap,
@@ -18,6 +20,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -52,7 +55,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
     TranslateModule,
   ],
 })
-export class AuditFormComponent implements OnInit {
+export class AuditFormComponent implements OnInit, SlideIn2CloseConfirmation {
   protected readonly requiredRoles = [Role.SystemAuditWrite];
 
   isFormLoading = false;
@@ -85,6 +88,10 @@ export class AuditFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private chainedRef: ChainedRef<unknown>,
   ) {}
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
+  }
 
   ngOnInit(): void {
     this.loadForm();

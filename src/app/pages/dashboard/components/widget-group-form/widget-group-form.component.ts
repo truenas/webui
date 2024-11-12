@@ -7,7 +7,8 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
@@ -47,7 +48,7 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
     TranslateModule,
   ],
 })
-export class WidgetGroupFormComponent {
+export class WidgetGroupFormComponent implements SlideIn2CloseConfirmation {
   protected group = signal<WidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
   );
@@ -80,6 +81,10 @@ export class WidgetGroupFormComponent {
   ) {
     this.setupLayoutUpdates();
     this.setInitialFormValues();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.layoutControl.dirty);
   }
 
   private setInitialFormValues(): void {

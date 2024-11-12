@@ -8,10 +8,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, finalize, forkJoin, Observable, take,
+  filter, finalize, forkJoin, Observable, of, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -55,7 +56,7 @@ import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-conf
     TranslateModule,
   ],
 })
-export class AccessFormComponent implements OnInit {
+export class AccessFormComponent implements OnInit, SlideIn2CloseConfirmation {
   readonly requiredRoles = [Role.AuthSessionsWrite];
 
   isLoading = false;
@@ -86,6 +87,10 @@ export class AccessFormComponent implements OnInit {
     private authService: AuthService,
     private chainedSlideInRef: ChainedRef<unknown>,
   ) {}
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
+  }
 
   ngOnInit(): void {
     this.store$.select(selectPreferences).pipe(untilDestroyed(this)).subscribe((preferences) => {

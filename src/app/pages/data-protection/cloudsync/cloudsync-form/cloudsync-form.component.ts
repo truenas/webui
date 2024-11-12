@@ -29,6 +29,7 @@ import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfa
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, SelectOption } from 'app/interfaces/option.interface';
+import { SlideIn2CloseConfirmation } from 'app/interfaces/slide-in-close-confirmation.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -94,7 +95,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     TranslateModule,
   ],
 })
-export class CloudSyncFormComponent implements OnInit {
+export class CloudSyncFormComponent implements OnInit, SlideIn2CloseConfirmation {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -225,6 +226,10 @@ export class CloudSyncFormComponent implements OnInit {
     private chainedRef: ChainedRef<CloudSyncTaskUi>,
   ) {
     this.editingTask = this.chainedRef.getData();
+  }
+
+  requiresConfirmationOnClose(): Observable<boolean> {
+    return of(this.form.dirty);
   }
 
   getCredentialsList(): Observable<CloudSyncCredential[]> {
