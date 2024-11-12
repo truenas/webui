@@ -291,6 +291,10 @@ export class ReplicationWizardComponent {
       } else {
         const createdIds = this.createdSnapshotTasks.map((task) => task.id);
         payload.periodic_snapshot_tasks = this.existSnapshotTasks.concat(createdIds);
+
+        if (data.custom_snapshots) {
+          payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
+        }
       }
     } else {
       payload.auto = false;

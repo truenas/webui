@@ -5072,7 +5072,7 @@
   "{cpuPercentage}% Avg. Usage": "{ cpuPercentage} % Meán Fómhair. Úsáid",
   "{days, plural, =1 {# day} other {# days}}": "{days, plural, =1 {# lá} other {# lá}}",
   "{duration} remaining": "{fad} fágtha",
-  "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "Dhéanfaí {incháilithe} de {total} a mhacasamhlú de phictiúir de thacar sonraí {targetDataset} leis an tasc seo.",
+  "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "Dhéanfaí {incháilithe} de {total} a mhacasamhlú de phictiúir de thacar sonraí {dataset} leis an tasc seo.",
   "{email} via {server}": "{ríomhphost} trí {server}",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "{failedCount} de {allCount, plural, =1 {# tasc} other {# tascanna}}",
   "{field} is required": "Tá {field} ag teastáil",
