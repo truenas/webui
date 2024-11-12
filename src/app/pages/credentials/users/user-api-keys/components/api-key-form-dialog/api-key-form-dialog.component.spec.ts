@@ -83,6 +83,7 @@ describe('ApiKeyFormComponent', () => {
     await setupTest({
       id: 1,
       name: 'existing key',
+      username: 'root',
     });
 
     await form.fillForm({
@@ -93,7 +94,7 @@ describe('ApiKeyFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.update', [1, {
+    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: false,
       expires_at: null,
@@ -108,6 +109,7 @@ describe('ApiKeyFormComponent', () => {
     await setupTest({
       id: 1,
       name: 'existing key',
+      username: 'root',
     });
     spectator.inject(MockWebSocketService).mockCallOnce('api_key.update', { key: 'generated-key' } as ApiKey);
 
