@@ -8,6 +8,7 @@ import { TruenasConnectModalComponent } from 'app/modules/truenas-connect/compon
 import { Role } from 'app/enums/role.enum';
 import { TruecommandSignupModalComponent } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
+import { TruenasConnectSignupModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-signup-modal/truenas-connect-signup-modal.component';
 
 @UntilDestroy()
 @Component({
@@ -25,18 +26,18 @@ export class TruenasConnectButtonComponent {
   }
 
   openSignupDialog() {
-    this.matDialog.open(TruecommandSignupModalComponent, {
-      width: '350px'
-    })
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe((shouldConnect) => {
-        if (!shouldConnect) {
-          return;
-        }
-
-        this.connect();
-      });
+      // this.matDialog.open(TruecommandSignupModalComponent, {
+      //   width: '350px'
+      // })
+      //   .afterClosed()
+      //   .pipe(untilDestroyed(this))
+      //   .subscribe((shouldConnect) => {
+      //     if (!shouldConnect) {
+      //       return;
+      //     }
+  
+          this.connect();
+        // });
   }
 
   connect() {
