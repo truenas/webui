@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, signal,
+} from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -27,6 +29,7 @@ import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-co
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -58,18 +61,19 @@ import { WebSocketService } from 'app/services/ws.service';
     RouterLink,
     TranslateModule,
     AsyncPipe,
+    FakeProgressBarComponent,
   ],
 })
 export class DatasetTrivialPermissionsComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   form = this.formBuilder.group({
-    uid: [null as number, [this.validatorService.validateOnCondition(
+    owner: [null as string, [this.validatorService.validateOnCondition(
       () => this.isToApplyUser,
       Validators.required,
     )]],
     applyUser: [false],
-    gid: [null as number, [this.validatorService.validateOnCondition(
+    ownerGroup: [null as string, [this.validatorService.validateOnCondition(
       () => this.isToApplyGroup,
       Validators.required,
     )]],
@@ -80,13 +84,14 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     traverse: [false],
   });
 
-  isLoading = false;
+  protected readonly isLoading = signal(false);
+
   aclType: AclType;
   datasetPath: string;
   datasetId: string;
 
-  readonly userProvider = new UserComboboxProvider(this.userService, 'uid');
-  readonly groupProvider = new GroupComboboxProvider(this.userService, 'gid');
+  readonly userProvider = new UserComboboxProvider(this.userService);
+  readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   readonly tooltips = {
     user: helptextPermissions.dataset_permissions_user_tooltip,
@@ -165,7 +170,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   }
 
   private loadPermissionsInformation(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     forkJoin([
       this.ws.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
       this.storageService.filesystemStat(this.datasetPath),
@@ -173,18 +178,18 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: ([datasets, stat]) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           // TODO: DatasetAclType and AclType may represent the same thing
           this.aclType = datasets[0].acltype.value as unknown as AclType;
-          this.oldDatasetMode = stat.mode.toString(8).substring(2, 5);
+          const mode = stat.mode.toString(8).substring(2, 5);
           this.form.patchValue({
-            mode: this.oldDatasetMode,
-            uid: stat.uid,
-            gid: stat.gid,
+            mode,
+            owner: stat.user,
+            ownerGroup: stat.group,
           });
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.dialog.error(this.errorHandler.parseError(error));
         },
       });
@@ -195,23 +200,20 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
 
     const update = {
       path: this.datasetPath,
+      mode: values.mode,
       options: {
-        stripacl: false,
+        stripacl: values.recursive,
         recursive: values.recursive,
         traverse: values.traverse,
       },
     } as FilesystemSetPermParams;
+
     if (values.applyUser) {
-      update.uid = values.uid;
+      update.user = values.owner;
     }
 
     if (values.applyGroup) {
-      update.gid = values.gid;
-    }
-
-    if (this.oldDatasetMode !== values.mode) {
-      update.mode = values.mode;
-      update.options.stripacl = true;
+      update.group = values.ownerGroup;
     }
 
     return update;
