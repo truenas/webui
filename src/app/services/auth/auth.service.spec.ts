@@ -12,7 +12,6 @@ import { TestScheduler } from 'rxjs/testing';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
@@ -51,6 +50,7 @@ describe('AuthService', () => {
       mockApi([
         mockCall('auth.me', authMeUser),
         mockCall('auth.generate_token', 'DUMMY_TOKEN'),
+        mockCall('auth.logout'),
         mockCall('auth.login_ex', {
           response_type: LoginExResponseType.Success,
           user_info: {
@@ -119,16 +119,12 @@ describe('AuthService', () => {
           { d: 'DUMMY_TOKEN' },
         );
       });
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
-        msg: IncomingApiMessageType.Method,
-        method: 'auth.login_ex',
-        params: [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
-      }));
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'auth.login_ex',
+        [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
+      );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
-        msg: IncomingApiMessageType.Method,
-        method: 'auth.generate_token',
-      }));
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.generate_token');
     });
 
     it('initializes auth session with triggers and token with token login', () => {
@@ -150,16 +146,12 @@ describe('AuthService', () => {
           { d: 'DUMMY_TOKEN' },
         );
       });
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
-        msg: IncomingApiMessageType.Method,
-        method: 'auth.login_ex',
-        params: [{ mechanism: 'TOKEN_PLAIN', token: 'DUMMY_TOKEN' }],
-      }));
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'auth.login_ex',
+        [{ mechanism: 'TOKEN_PLAIN', token: 'DUMMY_TOKEN' }],
+      );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
-        msg: IncomingApiMessageType.Method,
-        method: 'auth.generate_token',
-      }));
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.generate_token');
     });
   });
 
@@ -170,7 +162,7 @@ describe('AuthService', () => {
         expectObservable(obs$).toBe(
           '(a|)',
           {
-            a: null,
+            a: undefined,
           },
         );
         expectObservable(spectator.service.isAuthenticated$).toBe(
@@ -182,10 +174,7 @@ describe('AuthService', () => {
           {},
         );
       });
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
-        msg: IncomingApiMessageType.Method,
-        method: 'auth.logout',
-      }));
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.logout');
     });
   });
 
