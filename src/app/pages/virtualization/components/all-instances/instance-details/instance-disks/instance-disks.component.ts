@@ -3,20 +3,21 @@ import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
-  InstanceProxyFormComponent,
-} from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxy-form/instance-proxy-form.component';
+  InstanceDiskFormComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-instance-disks',
   templateUrl: './instance-disks.component.html',
@@ -44,13 +45,14 @@ export class InstanceDisksComponent {
   ) {}
 
   protected readonly visibleDisks = computed(() => {
-    return this.instanceStore.selectedInstanceDevices().filter((device) => {
-      return device.dev_type === VirtualizationDeviceType.Disk;
-    });
+    return this.instanceStore.selectedInstanceDevices()
+      .filter((device) => device.dev_type === VirtualizationDeviceType.Disk)
+      // TODO: Second filter is due to Typescript issues.
+      .filter((disk) => disk.source);
   });
 
   protected addDisk(): void {
-    this.slideIn.open(InstanceProxyFormComponent, false, this.instanceStore.selectedInstance().id)
+    this.slideIn.open(InstanceDiskFormComponent, false, this.instanceStore.selectedInstance().id)
       .pipe(untilDestroyed(this))
       .subscribe((result) => {
         if (!result.response) {

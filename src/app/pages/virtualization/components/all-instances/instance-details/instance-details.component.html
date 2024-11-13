@@ -1,3 +1,22 @@
+<div class="header">
+  <h3 class="title">
+    <div class="mobile-prefix">
+      <ix-mobile-back-button
+        (onClose)="onCloseMobileDetails()"
+      ></ix-mobile-back-button>
+      {{ 'Details for' | translate }}
+    </div>
+
+    <span class="prefix">
+      {{ 'Details for' | translate }}
+    </span>
+
+    <span class="name">
+      {{ instance().name }}
+    </span>
+  </h3>
+</div>
+
 <div class="cards">
   <div class="scroll-window">
     <ix-instance-general-info [instance]="instance()"></ix-instance-general-info>

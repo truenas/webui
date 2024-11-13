@@ -125,7 +125,7 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly visibleImageName = new FormControl('');
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
 
-  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider({ directoriesOnly: true });
+  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
 
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
@@ -203,12 +203,12 @@ export class InstanceWizardComponent implements OnInit {
     const job$ = this.ws.job('virt.instance.create', [payload]);
 
     this.dialogService
-      .jobDialog(job$, { title: this.translate.instant('Saving Instance') })
+      .jobDialog(job$, { title: this.translate.instant('Creating Instance') })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({
         next: ({ result }) => {
-          this.snackbar.success(this.translate.instant('Instance saved'));
+          this.snackbar.success(this.translate.instant('Instance created'));
           this.router.navigate(['/virtualization/view', result?.id]);
         },
         error: (error) => {
@@ -261,9 +261,9 @@ export class InstanceWizardComponent implements OnInit {
 
     return [
       ...disks,
+      ...proxies,
       ...usbDevices,
       ...gpuDevices,
-      ...proxies,
     ] as VirtualizationDevice[];
   }
 

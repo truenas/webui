@@ -4,6 +4,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
+import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 import {
   InstanceDevicesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';
@@ -31,13 +32,11 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     MobileBackButtonComponent,
     InstanceProxiesComponent,
     InstanceDisksComponent,
+    DatasetIconComponent,
   ],
 })
 export class InstanceDetailsComponent {
   instance = input.required<VirtualizationInstance>();
-
-  protected readonly devices = this.instancesStore.selectedInstanceDevices;
-  protected readonly isLoadingDevices = this.instancesStore.isLoadingDevices;
 
   constructor(
     private instancesStore: VirtualizationInstancesStore,
