@@ -11,7 +11,7 @@ export const WEBSOCKET = new InjectionToken<typeof rxjsWebSocket>(
   },
 );
 
-export function isWebSocketError(error: unknown): error is ApiError {
+export function isApiError(error: unknown): error is ApiError {
   if (error === null) return false;
 
   return typeof error === 'object'

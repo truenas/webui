@@ -6,7 +6,7 @@ import {
   catchError, EMPTY, MonoTypeOperatorFunction, Observable,
 } from 'rxjs';
 import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
-import { isWebSocketError } from 'app/helpers/websocket.helper';
+import { isApiError } from 'app/helpers/websocket.helper';
 import { ApiError } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -73,7 +73,7 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   isWebSocketError(error: unknown): error is ApiError {
-    return isWebSocketError(error);
+    return isApiError(error);
   }
 
   isJobError(obj: unknown): obj is Job {
