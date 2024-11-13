@@ -29,7 +29,7 @@ import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
 import { rootRoutes } from 'app/app.routes';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
-import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
+import { MockEnclosureApiService } from 'app/core/testing/mock-enclosure/mock-enclosure-api.service';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { ApiService } from 'app/services/api.service';
@@ -114,7 +114,7 @@ bootstrapApplication(AppComponent, {
       deps: [Router, WebSocketConnectionService, TranslateService],
       useFactory: (router: Router, connection: WebSocketConnectionService, translate: TranslateService) => {
         if (environment.mockConfig.enabled) {
-          return new MockEnclosureWebsocketService(router, connection, translate);
+          return new MockEnclosureApiService(router, connection, translate);
         }
         return new ApiService(router, connection, translate);
       },

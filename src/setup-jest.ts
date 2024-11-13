@@ -36,8 +36,8 @@ import {
   Observable,
 } from 'rxjs';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
+import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
-import { EmptyWebsocketService } from 'app/core/testing/utils/empty-ws.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -194,7 +194,7 @@ defineGlobalsInjections({
     },
     {
       provide: ApiService,
-      useClass: EmptyWebsocketService,
+      useClass: EmptyApiService,
     },
     { provide: IxIconRegistry, useClass: FakeMatIconRegistry },
     { provide: MatIconRegistry, useClass: FakeMatIconRegistry },
