@@ -44,9 +44,6 @@
           [selected]="selection.isSelected(instance.id)"
           (click)="navigateToDetails(instance)"
           (keydown.enter)="navigateToDetails(instance)"
-          (onStart)="start(instance.id)"
-          (onStop)="stop(instance.id)"
-          (onRestart)="restart(instance.id)"
         ></ix-instance-row>
       }
     </div>

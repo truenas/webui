@@ -1,15 +1,27 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MatDialog } from '@angular/material/dialog';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
+import {
+  StopOptionsDialogComponent,
+  StopOptionsOperation,
+} from 'app/pages/virtualization/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
+import { WebSocketService } from 'app/services/ws.service';
 
 const instance = {
-  id: '1',
+  id: 'my-instance',
   name: 'agi_instance',
   status: VirtualizationStatus.Running,
   type: VirtualizationType.Container,
@@ -24,8 +36,30 @@ describe('InstanceRowComponent', () => {
     imports: [
       MapValuePipe,
     ],
+    declarations: [
+      MockComponent(StopOptionsDialogComponent),
+    ],
     providers: [
       mockAuth(),
+      mockWebSocket([
+        mockJob('virt.instance.restart', fakeSuccessfulJob()),
+        mockJob('virt.instance.start', fakeSuccessfulJob()),
+        mockJob('virt.instance.stop', fakeSuccessfulJob()),
+      ]),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of({
+            force: true,
+            timeout: -1,
+          }),
+        })),
+      }),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({}),
+        })),
+      }),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -37,8 +71,22 @@ describe('InstanceRowComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  describe('actions', () => {
-    it('shows Stop button when instance is Running', async () => {
+  describe('cell rendering', () => {
+    it('shows instance name', () => {
+      expect(spectator.query('.cell-name')).toHaveText('agi_instance');
+    });
+
+    it('shows instance type', () => {
+      const cells = spectator.queryAll('.cell');
+      expect(cells[2]).toHaveText('Container');
+    });
+
+    it('shows instance status', () => {
+      const cells = spectator.queryAll('.cell');
+      expect(cells[3]).toHaveText('Running');
+    });
+
+    it('shows Stop and Restart button when instance is Running', async () => {
       spectator.setInput('instance', {
         ...instance,
         status: VirtualizationStatus.Running,
@@ -66,6 +114,52 @@ describe('InstanceRowComponent', () => {
       expect(restartIcon).not.toExist();
       expect(stopIcon).not.toExist();
       expect(startIcon).toExist();
+    });
+  });
+
+  describe('actions', () => {
+    it('shows stop options dialog and stops instance when Stop icon is pressed', async () => {
+      const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
+      await stopIcon.click();
+
+      expect(spectator.inject(MatDialog).open)
+        .toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Stop });
+
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+        'virt.instance.stop',
+        ['my-instance', { force: true, timeout: -1 }],
+      );
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance stopped');
+    });
+
+    it('shows restart options dialog and restarts instance when Restart icon is pressed', async () => {
+      const restartIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-restart' }));
+      await restartIcon.click();
+
+      expect(spectator.inject(MatDialog).open)
+        .toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Restart });
+
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+        'virt.instance.restart',
+        ['my-instance', { force: true, timeout: -1 }],
+      );
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance restarted');
+    });
+
+    it('starts an instance when Start icon is pressed', async () => {
+      spectator.setInput('instance', {
+        ...instance,
+        status: VirtualizationStatus.Stopped,
+      });
+
+      const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
+      await startIcon.click();
+
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.start', ['my-instance']);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance started');
     });
   });
 });
