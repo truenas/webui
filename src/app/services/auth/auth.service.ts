@@ -27,7 +27,7 @@ import {
   ApiCallParams,
   ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
-import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import { IncomingApiMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -258,8 +258,8 @@ export class AuthService {
 
   private getFilteredWebSocketResponse<T>(uuid: string): Observable<T> {
     return this.wsManager.websocket$.pipe(
-      filter((data: IncomingWebSocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      switchMap((data: IncomingWebSocketMessage) => {
+      filter((data: IncomingApiMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+      switchMap((data: IncomingApiMessage) => {
         if ('error' in data && data.error) {
           return throwError(() => data.error);
         }
