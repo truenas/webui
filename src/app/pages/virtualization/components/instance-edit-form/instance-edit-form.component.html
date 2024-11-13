@@ -25,6 +25,37 @@
       ></ix-input>
     </ix-fieldset>
 
+    <ix-fieldset [title]="'Environment' | translate">
+      <ix-list
+        formArrayName="environmentVariables"
+        [empty]="form.controls.environmentVariables.controls.length === 0"
+        [label]="'Environment Variables' | translate"
+        (add)="addEnvironmentVariable()"
+      >
+        @for (envControl of form.controls.environmentVariables.controls; track envControl; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Environment Variable ' + (i + 1)"
+            (delete)="removeEnvironmentVariable(i)"
+          >
+            <div class="environment-variable">
+              <ix-input
+                formControlName="name"
+                [label]="'Name' | translate"
+                [required]="true"
+              ></ix-input>
+
+              <ix-input
+                formControlName="value"
+                [label]="'Value' | translate"
+                [required]="true"
+              ></ix-input>
+            </div>
+          </ix-list-item>
+        }
+      </ix-list>
+    </ix-fieldset>
+
     <div class="actions">
       <button
         mat-button

@@ -29,6 +29,7 @@ import {
   AvailableGpu,
   AvailableUsb,
   CreateVirtualizationInstance,
+  InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -110,10 +111,7 @@ export class InstanceWizardComponent implements OnInit {
       dest_port: FormControl<number>;
     }>>([]),
     autostart: [false],
-    environmentVariables: new FormArray<FormGroup<{
-      name: FormControl<string>;
-      value: FormControl<string>;
-    }>>([]),
+    environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
     memory: [null as number, Validators.required],
     image: ['', Validators.required],
   });
