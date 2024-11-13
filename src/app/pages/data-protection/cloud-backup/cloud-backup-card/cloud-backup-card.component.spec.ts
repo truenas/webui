@@ -45,7 +45,7 @@ describe('CloudBackupCardComponent', () => {
           $date: new Date().getTime() - 50000,
         },
       },
-    } as unknown as CloudBackup,
+    } as CloudBackup,
   ];
 
   const createComponent = createComponentFactory({

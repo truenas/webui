@@ -44,7 +44,9 @@ export interface FilesystemSetPermParams {
   path: string;
   mode: string;
   uid?: number;
+  user?: string;
   gid?: number;
+  group?: string;
   options: {
     stripacl?: boolean;
     recursive?: boolean;

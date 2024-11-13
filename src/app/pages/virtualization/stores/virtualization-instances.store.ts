@@ -4,20 +4,27 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
 import { catchError, filter, repeat } from 'rxjs/operators';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface VirtualizationInstancesState {
   isLoading: boolean;
   instances: VirtualizationInstance[];
+
   selectedInstance: VirtualizationInstance;
+  isLoadingDevices: boolean;
+  selectedInstanceDevices: VirtualizationDevice[];
 }
 
 const initialState: VirtualizationInstancesState = {
   isLoading: false,
   instances: [],
+
+  // TODO: May belong to its own store.
   selectedInstance: null,
+  isLoadingDevices: false,
+  selectedInstanceDevices: [],
 };
 
 @UntilDestroy()
@@ -26,7 +33,10 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
   readonly instances = computed(() => this.stateAsSignal().instances);
+
   readonly selectedInstance = computed(() => this.stateAsSignal().selectedInstance);
+  readonly isLoadingDevices = computed(() => this.stateAsSignal().isLoadingDevices);
+  readonly selectedInstanceDevices = computed(() => this.stateAsSignal().selectedInstanceDevices);
 
   constructor(
     private ws: WebSocketService,
@@ -67,15 +77,47 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     );
   });
 
+  readonly loadDevices = this.effect((trigger$) => {
+    return trigger$.pipe(
+      switchMap(() => {
+        const selectedInstance = this.selectedInstance();
+        if (!selectedInstance) {
+          return [];
+        }
+
+        this.patchState({ isLoadingDevices: true });
+
+        return this.ws.call('virt.instance.device_list', [selectedInstance.id]).pipe(
+          tap((devices) => {
+            this.patchState({
+              selectedInstanceDevices: devices,
+              isLoadingDevices: false,
+            });
+          }),
+          catchError((error) => {
+            this.patchState({ isLoadingDevices: false });
+            this.errorHandler.showErrorModal(error);
+            return [];
+          }),
+        );
+      }),
+    );
+  });
+
   selectInstance(instanceId?: string): void {
     if (!instanceId) {
       this.patchState({ selectedInstance: null });
       return;
     }
-
     const selectedInstance = this.instances()?.find((instance) => instance.id === instanceId);
-    if (selectedInstance) {
-      this.patchState({ selectedInstance });
+    const oldSelectedInstance = this.selectedInstance();
+    if (!selectedInstance || selectedInstance === oldSelectedInstance) {
+      return;
     }
+
+    this.patchState({
+      selectedInstance,
+    });
+    this.loadDevices();
   }
 }

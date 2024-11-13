@@ -14,6 +14,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
@@ -29,7 +30,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import {
+  KeyCreatedDialogComponent,
+} from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -61,17 +64,25 @@ export class ApiKeyFormComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
   protected readonly isFullAdmin = toSignal(this.authService.hasRole([Role.FullAdmin]));
+  protected readonly isAllowedToReset = computed(
+    () => this.username() === this.form.value.username || this.isFullAdmin(),
+  );
+
   protected readonly currentUsername$ = this.authService.user$.pipe(map((user) => user.pw_name));
   protected readonly username = toSignal(this.currentUsername$);
   protected readonly tooltips = {
     name: helptextApiKeys.name.tooltip,
+    expires: helptextApiKeys.expires.tooltip,
     username: helptextApiKeys.username.tooltip,
     reset: helptextApiKeys.reset.tooltip,
+    nonExpiring: helptextApiKeys.nonExpiring.tooltip,
   };
 
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     username: ['', [Validators.required]],
+    expiresAt: [null as string],
+    nonExpiring: [true],
     reset: [false],
   });
 
@@ -104,20 +115,30 @@ export class ApiKeyFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.addForbiddenNamesValidator();
-    this.setCurrentUsername();
-
-    if (!this.isNew()) {
-      this.form.patchValue(this.editingRow());
+    if (this.isNew()) {
+      this.addForbiddenNamesValidator();
+      this.setCurrentUsername();
+    } else {
+      this.form.patchValue({
+        ...this.editingRow(),
+        expiresAt: this.editingRow().expires_at?.$date?.toString() || null,
+        nonExpiring: !this.editingRow().expires_at,
+      });
     }
   }
 
   onSubmit(): void {
     this.isLoading.set(true);
-    const { name, username, reset } = this.form.value;
+    const {
+      name, username, reset, nonExpiring, expiresAt,
+    } = this.form.value;
+
+    // TODO: Implement IxDatePickerComponent https://ixsystems.atlassian.net/browse/NAS-132423 and correctly send expires_at prop
+    const expiresAtTimestamp = nonExpiring ? null : { $date: +expiresAt } as ApiTimestamp;
+
     const request$ = this.isNew()
-      ? this.ws.call('api_key.create', [{ name, username }])
-      : this.ws.call('api_key.update', [this.editingRow().id, { name, reset }]);
+      ? this.ws.call('api_key.create', [{ name, username, expires_at: expiresAtTimestamp }])
+      : this.ws.call('api_key.update', [this.editingRow().id, { name, reset, expires_at: expiresAtTimestamp }]);
 
     request$
       .pipe(this.loader.withLoader(), untilDestroyed(this))

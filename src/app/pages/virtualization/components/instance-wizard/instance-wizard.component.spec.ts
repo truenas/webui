@@ -14,11 +14,16 @@ import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import {
+  VirtualizationDeviceType,
+  VirtualizationProxyProtocol,
+  VirtualizationType,
+} from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -121,6 +126,16 @@ describe('InstanceWizardComponent', () => {
     const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
     await gpuDeviceCheckbox.setValue(true);
 
+    const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
+    await proxiesList.pressAddButton();
+    const proxyForm = await proxiesList.getLastListItem();
+    await proxyForm.fillForm({
+      'Host Port': 3000,
+      'Host Protocol': 'TCP',
+      'Instance Port': 2000,
+      'Instance Protocol': 'UDP',
+    });
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
@@ -131,6 +146,13 @@ describe('InstanceWizardComponent', () => {
       devices: [
         { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
         { dev_type: VirtualizationDeviceType.Gpu, gpu_type: 'NVIDIA Corporation' },
+        {
+          dev_type: VirtualizationDeviceType.Proxy,
+          source_port: 3000,
+          source_proto: VirtualizationProxyProtocol.Tcp,
+          dest_port: 2000,
+          dest_proto: VirtualizationProxyProtocol.Udp,
+        },
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,

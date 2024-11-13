@@ -44,7 +44,7 @@ describe('WidgetSystemUptimeComponent', () => {
                 datetime: {
                   $date: 1710491651000,
                 },
-              } as unknown as SystemInfo,
+              } as SystemInfo,
               isLoading: false,
               error: null,
             } as LoadingState<SystemInfo>),
