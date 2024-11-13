@@ -622,6 +622,7 @@
   "Legacy feature. <br><br>Privileges are the same as the guest account.  Guest access is disabled by default in Windows 10 version 1709 and  Windows Server version 1903. Additional client-side configuration is  required to provide guest access to these clients.<br><br>  <i>MacOS clients:</i> Attempting to connect as a user that does not  exist in TrueNAS <i>does not</i> automatically connect as the guest  account. The <b>Connect As:</b> <i>Guest</i> option must be  specifically chosen in MacOS to log in as the guest account. See the  <a href=\"https://support.apple.com/guide/mac-help/connect-mac-shared-computers-servers-mchlp1140/\" target=\"_blank\">Apple documentation</a>  for more details.": "",
   "Licensed Serials": "",
   "Light status is unknown.": "",
+  "List of files and directories to exclude from backup.<br>  Separate entries by pressing <code>Enter</code>. See  <a href=\"https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files\" target=\"_blank\">restic exclude patterns</a>  for more details about the <code>--exclude</code> option.": "",
   "List of groups for which to generate audit messages. Keep this list empty to Watch All.": "",
   "List of groups to ignore when auditing. If conflict arises between Watch List and Ignore List  (based on user group membership), then Watch List will take precedence and ops will be audited.": "",
   "Load an existing provider configuration.": "",
