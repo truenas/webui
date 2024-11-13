@@ -8,6 +8,9 @@ import {
   InstanceDevicesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';
 import {
+  InstanceDisksComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disks.component';
+import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
 import {
@@ -27,6 +30,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     InstanceGeneralInfoComponent,
     MobileBackButtonComponent,
     InstanceProxiesComponent,
+    InstanceDisksComponent,
   ],
 })
 export class InstanceDetailsComponent {
