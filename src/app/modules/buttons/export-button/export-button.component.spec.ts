@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ControllerType } from 'app/enums/controller-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';

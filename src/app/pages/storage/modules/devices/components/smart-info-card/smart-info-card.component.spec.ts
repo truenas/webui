@@ -6,8 +6,8 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.interface';

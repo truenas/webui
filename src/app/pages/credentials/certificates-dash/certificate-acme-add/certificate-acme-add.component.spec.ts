@@ -5,10 +5,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   mockCall, mockJob, mockApi,
-} from 'app/core/testing/utils/mock-websocket.utils';
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';

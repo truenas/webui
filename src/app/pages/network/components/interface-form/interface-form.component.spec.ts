@@ -8,8 +8,8 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,

@@ -5,10 +5,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   mockCall, mockJob, mockApi,
-} from 'app/core/testing/utils/mock-websocket.utils';
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';

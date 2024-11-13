@@ -5,7 +5,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';

@@ -7,8 +7,8 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';

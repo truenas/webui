@@ -11,8 +11,8 @@ import {
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';

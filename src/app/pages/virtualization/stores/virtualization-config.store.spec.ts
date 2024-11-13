@@ -1,5 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
 import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';

@@ -9,7 +9,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { TicketCategory, TicketCriticality, TicketEnvironment } from 'app/enums/file-ticket.enum';
 import { WINDOW } from 'app/helpers/window.helper';

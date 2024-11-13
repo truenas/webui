@@ -4,7 +4,7 @@ import {
   BehaviorSubject, firstValueFrom, of,
 } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';

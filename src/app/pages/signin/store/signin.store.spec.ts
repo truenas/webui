@@ -4,7 +4,7 @@ import { mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { LoginResult } from 'app/enums/login-result.enum';

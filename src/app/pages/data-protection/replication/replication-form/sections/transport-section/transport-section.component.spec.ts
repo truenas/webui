@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';

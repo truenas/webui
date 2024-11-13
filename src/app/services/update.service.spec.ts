@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { UpdateService } from 'app/services/update.service';
 

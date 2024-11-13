@@ -5,8 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';

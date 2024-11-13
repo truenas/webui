@@ -6,8 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';

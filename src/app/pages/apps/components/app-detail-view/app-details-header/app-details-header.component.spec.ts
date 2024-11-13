@@ -9,8 +9,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';

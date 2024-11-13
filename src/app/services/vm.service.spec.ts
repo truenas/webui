@@ -3,7 +3,7 @@ import { SpectatorService } from '@ngneat/spectator';
 import { createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';

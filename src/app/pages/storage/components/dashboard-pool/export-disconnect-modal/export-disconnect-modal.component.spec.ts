@@ -7,10 +7,10 @@ import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   mockCall, mockJob, mockApi,
-} from 'app/core/testing/utils/mock-websocket.utils';
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';

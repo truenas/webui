@@ -1,5 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import {
   TrueCommandStatusComponent,
 } from 'app/pages/signin/true-command-status/true-command-status.component';

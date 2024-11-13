@@ -7,8 +7,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';

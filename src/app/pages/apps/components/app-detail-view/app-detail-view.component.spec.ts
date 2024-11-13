@@ -6,7 +6,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';

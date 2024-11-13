@@ -11,7 +11,7 @@ import {
 import {
   mockCall,
   mockApi,
-} from 'app/core/testing/utils/mock-websocket.utils';
+} from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';

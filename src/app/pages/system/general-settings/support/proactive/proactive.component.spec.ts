@@ -7,8 +7,8 @@ import {
   Spectator,
 } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SupportConfig } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';

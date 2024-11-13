@@ -10,8 +10,8 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';

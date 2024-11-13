@@ -1,7 +1,7 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
-import { mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';

@@ -6,7 +6,7 @@ import { MatIconHarness } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';

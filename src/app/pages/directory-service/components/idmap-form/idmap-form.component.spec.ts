@@ -7,10 +7,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   mockCall, mockJob, mockApi,
-} from 'app/core/testing/utils/mock-websocket.utils';
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IdmapBackend, IdmapName, IdmapSslEncryptionMode } from 'app/enums/idmap.enum';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOptions, IdmapBackendParameter } from 'app/interfaces/idmap-backend-options.interface';

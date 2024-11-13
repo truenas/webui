@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
