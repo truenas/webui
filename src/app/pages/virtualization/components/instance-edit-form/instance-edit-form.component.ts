@@ -81,7 +81,7 @@ export class InstanceEditFormComponent {
       memory: instance.memory,
     });
 
-    Object.keys(instance.environment).forEach((key) => {
+    Object.keys(instance.environment || {}).forEach((key) => {
       this.addEnvironmentVariable(key, instance.environment[key]);
     });
   }
