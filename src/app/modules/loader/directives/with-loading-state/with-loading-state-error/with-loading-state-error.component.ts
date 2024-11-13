@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { isApiError } from 'app/helpers/websocket.helper';
+import { isApiError } from 'app/helpers/api.helper';
 import { ApiError } from 'app/interfaces/api-error.interface';
 
 @Component({

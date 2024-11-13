@@ -5,8 +5,8 @@ import * as Sentry from '@sentry/angular';
 import {
   catchError, EMPTY, MonoTypeOperatorFunction, Observable,
 } from 'rxjs';
+import { isApiError } from 'app/helpers/api.helper';
 import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
-import { isApiError } from 'app/helpers/websocket.helper';
 import { ApiError } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';

@@ -177,6 +177,7 @@
     "./src/app/helpers/time.helpers.ts",
     "./src/app/helpers/translate.helper.ts",
     "./src/app/helpers/websocket.helper.ts",
+    "./src/app/helpers/api.helper.ts",
     "./src/app/helpers/window.helper.ts",
     "./src/app/helptext/about.ts",
     "./src/app/helptext/account/groups.ts",
