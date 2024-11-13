@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -47,7 +47,7 @@ describe('NfsListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
-      mockWebSocket([
+      mockApi([
         mockCall('sharing.nfs.query', shares as NfsShare[]),
         mockCall('sharing.nfs.delete'),
         mockCall('sharing.nfs.update'),

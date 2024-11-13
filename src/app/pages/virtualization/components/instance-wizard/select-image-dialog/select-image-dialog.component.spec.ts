@@ -10,7 +10,7 @@ import {
 } from '@ngneat/spectator/jest';
 import {
   mockCall,
-  mockWebSocket,
+  mockApi,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
@@ -43,7 +43,7 @@ describe('SelectImageDialogComponent', () => {
     component: SelectImageDialogComponent,
     imports: [ReactiveFormsModule],
     providers: [
-      mockWebSocket([mockCall('virt.instance.image_choices', imageChoices)]),
+      mockApi([mockCall('virt.instance.image_choices', imageChoices)]),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,

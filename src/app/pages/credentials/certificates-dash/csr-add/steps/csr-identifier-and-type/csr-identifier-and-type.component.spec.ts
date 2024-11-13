@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,7 +27,7 @@ describe('CsrIdentifierAndTypeComponent', () => {
     ],
     providers: [
       CdkStepper,
-      mockWebSocket([
+      mockApi([
         mockCall('webui.crypto.csr_profiles', {
           'HTTPS ECC Certificate': httpsProfile,
           'Openvpn Client Certificate': openvpnProfile,

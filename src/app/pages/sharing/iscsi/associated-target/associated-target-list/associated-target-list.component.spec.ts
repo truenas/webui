@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtent, IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -53,7 +53,7 @@ describe('AssociatedTargetListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.targetextent.query', targetExtents),
         mockCall('iscsi.targetextent.delete'),
         mockCall('iscsi.target.query', targets),

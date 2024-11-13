@@ -5,7 +5,7 @@ import {
   SpectatorService,
 } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import {
@@ -52,7 +52,7 @@ describe('EnclosureStore', () => {
   const createService = createServiceFactory({
     service: EnclosureStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('webui.enclosure.dashboard', enclosures),
       ]),
       mockProvider(ThemeService),

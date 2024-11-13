@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebSocket,
+  mockCall, mockJob, mockApi,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
@@ -30,7 +30,7 @@ describe('CertificateAcmeAddComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('certificate.acme_server_choices', {
           'https://acme-staging-v02.api.letsencrypt.org/directory': "Let's Encrypt Staging Directory",
           'https://acme-v02.api.letsencrypt.org/directory': "Let's Encrypt Production Directory",

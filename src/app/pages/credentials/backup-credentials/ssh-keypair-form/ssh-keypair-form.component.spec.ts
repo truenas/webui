@@ -7,7 +7,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshKeyPair, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import {
@@ -40,7 +40,7 @@ describe('SshKeypairFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('keychaincredential.generate_ssh_key_pair', {
           private_key: 'Generated private key',
           public_key: 'Generated public key',

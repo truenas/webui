@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
@@ -18,7 +18,7 @@ describe('InstanceProxyFormComponent', () => {
   const createComponent = createComponentFactory({
     component: InstanceProxyFormComponent,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('virt.instance.device_add'),
       ]),
       mockProvider(ChainedRef, {

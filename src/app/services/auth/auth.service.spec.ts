@@ -11,7 +11,7 @@ import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
@@ -49,7 +49,7 @@ describe('AuthService', () => {
     providers: [
       mockAuth(),
       mockProvider(LocalStorageService),
-      mockWebSocket([
+      mockApi([
         mockCall('auth.me', authMeUser),
       ]),
       mockProvider(WebSocketConnectionService, {

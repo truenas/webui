@@ -9,7 +9,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -43,7 +43,7 @@ describe('SnapshotListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('zfs.snapshot.query', fakeZfsSnapshotDataSource),
         mockCall('zfs.snapshot.delete'),
       ]),

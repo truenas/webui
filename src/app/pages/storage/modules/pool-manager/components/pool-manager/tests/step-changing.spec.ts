@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -33,7 +33,7 @@ describe('PoolManagerComponent – step changing', () => {
     ],
     componentProviders: [
       ...commonProviders,
-      mockWebSocket([
+      mockApi([
         mockCall('pool.validate_name', true),
         mockCall('disk.details', {
           used: [

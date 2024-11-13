@@ -1,7 +1,7 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -15,7 +15,7 @@ describe('ReplicationService', () => {
     service: ReplicationService,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.list_datasets', [
           'parent',
           'parent/child1',

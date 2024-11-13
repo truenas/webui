@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { throwError } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -21,7 +21,7 @@ describe('IdentifyLightComponent', () => {
   const createComponent = createComponentFactory({
     component: IdentifyLightComponent,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('enclosure2.set_slot_status'),
       ]),
       mockProvider(EnclosureStore, {

@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerNvidiaStatus } from 'app/enums/docker-nvidia-status.enum';
 import { DockerStatus } from 'app/enums/docker-status.enum';
@@ -12,7 +12,7 @@ describe('DockerStore', () => {
   const createComponent = createServiceFactory({
     service: DockerStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('docker.config', {
           enable_image_updates: true,
           pool: 'pewl',

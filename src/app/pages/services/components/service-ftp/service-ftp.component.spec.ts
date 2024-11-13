@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
@@ -74,7 +74,7 @@ describe('ServiceFtpComponent', () => {
       WithManageCertificatesLinkComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('ftp.config', {
           ...existingFtpConfig,
           id: 1,

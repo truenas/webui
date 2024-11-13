@@ -3,7 +3,7 @@ import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
@@ -28,7 +28,7 @@ describe('ServiceStateColumnComponent', () => {
       mockProvider(IscsiService, {
         getGlobalSessions: jest.fn(() => of([])),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('service.start', true),
         mockCall('service.stop', true),
       ]),

@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -35,7 +35,7 @@ describe('EncryptionOptionsDialogComponent', () => {
           afterClosed: () => of(undefined),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('pool.dataset.change_key'),
         mockCall('pool.dataset.inherit_parent_encryption_properties'),
         mockCall('pool.dataset.query', [{

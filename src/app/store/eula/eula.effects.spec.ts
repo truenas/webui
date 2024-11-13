@@ -4,7 +4,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of, ReplaySubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -20,7 +20,7 @@ describe('EulaEffects', () => {
     service: EulaEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockWebSocket([
+      mockApi([
         mockCall('truenas.get_eula', 'Please do not sue us.'),
         mockCall('truenas.accept_eula'),
         mockCall('truenas.is_eula_accepted', false),

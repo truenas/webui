@@ -4,7 +4,7 @@ import { mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -32,7 +32,7 @@ describe('SigninStore', () => {
   const createService = createServiceFactory({
     service: SigninStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),

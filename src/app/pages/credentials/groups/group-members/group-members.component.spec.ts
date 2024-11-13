@@ -6,7 +6,7 @@ import { MatListHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { suppressJsDomCssErrors } from 'app/core/testing/utils/suppress-jsdom-css-errors.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -35,7 +35,7 @@ describe('GroupMembersComponent', () => {
       DualListBoxComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('group.query', fakeGroupDataSource),
         mockCall('user.query', [{ id: 41, username: 'dummy-user' }, { id: 42, username: 'second-user' }] as User[]),
         mockCall('group.update'),

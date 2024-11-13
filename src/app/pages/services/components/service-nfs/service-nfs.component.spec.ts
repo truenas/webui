@@ -7,7 +7,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
@@ -37,7 +37,7 @@ describe('ServiceNfsComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('nfs.config', {
           allow_nonroot: false,
           servers: 3,

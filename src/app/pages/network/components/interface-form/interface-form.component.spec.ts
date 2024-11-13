@@ -9,7 +9,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,
@@ -87,7 +87,7 @@ describe('InterfaceFormComponent', () => {
           dispatch: jest.fn(),
         },
       },
-      mockWebSocket([
+      mockApi([
         mockCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
           [XmitHashPolicy.Layer2Plus3]: XmitHashPolicy.Layer2Plus3,

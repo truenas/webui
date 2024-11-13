@@ -9,7 +9,7 @@ import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -90,7 +90,7 @@ describe('DatasetFormComponent', () => {
       ),
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('sharing.smb.create'),
         mockCall('sharing.nfs.create'),
         mockCall('pool.dataset.create', { id: 'saved-id' } as Dataset),

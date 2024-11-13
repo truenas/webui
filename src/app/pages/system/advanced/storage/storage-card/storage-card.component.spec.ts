@@ -5,7 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
@@ -21,7 +21,7 @@ describe('StorageCardComponent', () => {
     component: StorageCardComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('systemdataset.config', {
           pool: 'tank',
         } as SystemDatasetConfig),

@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerNvidiaStatus } from 'app/enums/docker-nvidia-status.enum';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
@@ -42,7 +42,7 @@ describe('AppsSettingsComponent', () => {
       IxIpInputWithNetmaskComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('catalog.update'),
         mockCall('catalog.trains', ['stable', 'community', 'test']),
         mockCall('catalog.config', {

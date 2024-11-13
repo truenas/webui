@@ -9,7 +9,7 @@ import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -73,7 +73,7 @@ describe('DatasetDetailsCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.promote'),
       ]),
       mockProvider(Router),

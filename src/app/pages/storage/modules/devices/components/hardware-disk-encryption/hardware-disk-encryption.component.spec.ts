@@ -4,7 +4,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
@@ -22,7 +22,7 @@ describe('HardwareDiskEncryptionComponent', () => {
       HasRoleDirective,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('disk.query', [{ passwd: '' } as Disk]),
         mockCall('system.advanced.sed_global_password_is_set', true),
       ]),

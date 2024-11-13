@@ -6,7 +6,7 @@ import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import {
@@ -24,7 +24,7 @@ describe('JobProgressDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: JobProgressDialogComponent<unknown>,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('core.job_abort', null),
       ]),
       mockProvider(MatDialogRef),

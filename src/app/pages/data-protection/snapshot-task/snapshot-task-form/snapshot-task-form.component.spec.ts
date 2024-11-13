@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -60,7 +60,7 @@ describe('SnapshotTaskComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.snapshottask.create'),
         mockCall('pool.snapshottask.update'),
       ]),

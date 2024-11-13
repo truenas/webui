@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, throwError } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
@@ -36,7 +36,7 @@ describe('DeleteDatasetDialogComponent', () => {
         } as VolumesListDataset,
       },
       mockProvider(MatDialogRef),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.delete'),
         mockCall('pool.dataset.attachments', [
           {

@@ -8,7 +8,7 @@ import { ImgFallbackModule } from 'ngx-img-fallback';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
@@ -95,7 +95,7 @@ describe('AppBulkUpgradeComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockWebSocket([
+      mockApi([
         mockJob('core.bulk'),
         mockCall('app.upgrade_summary', fakeUpgradeSummary),
         mockJob('app.upgrade', fakeSuccessfulJob(fakeAppOne)),

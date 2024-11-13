@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
@@ -85,7 +85,7 @@ describe('SmartTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('smart.test.query', smartTasks),
         mockCall('disk.query', disks),
         mockCall('smart.test.delete'),

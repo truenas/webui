@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -39,7 +39,7 @@ describe('AccessFormComponent', () => {
           setItem: jest.fn,
         },
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('system.general.update'),
         mockCall('system.advanced.update'),
       ]),

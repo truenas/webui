@@ -7,7 +7,7 @@ import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/step
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -85,7 +85,7 @@ describe('ReplicationWizardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.query', []),
         mockCall('keychaincredential.query', []),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),

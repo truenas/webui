@@ -7,7 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -60,7 +60,7 @@ describe('AccessCardComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('auth.sessions', sessions),
         mockCall('auth.terminate_session'),
         mockCall('auth.terminate_other_sessions'),

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -45,7 +45,7 @@ describe('PrivilegeListComponent', () => {
       PageHeaderComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('privilege.query', fakePrivilegeDataSource),
         mockCall('privilege.delete', true),
         mockCall('group.query', []),

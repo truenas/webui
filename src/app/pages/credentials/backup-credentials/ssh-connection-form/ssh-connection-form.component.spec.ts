@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -47,7 +47,7 @@ describe('SshConnectionFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('keychaincredential.remote_ssh_host_key_scan', 'ssh-rsaAREMOTE'),
         mockCall('keychaincredential.setup_ssh_connection', existingConnection),
         mockCall('keychaincredential.update', existingConnection),

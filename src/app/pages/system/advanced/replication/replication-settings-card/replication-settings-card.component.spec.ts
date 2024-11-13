@@ -5,7 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
@@ -23,7 +23,7 @@ describe('ReplicationSettingsCardComponent', () => {
     component: ReplicationSettingsCardComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.config.config', {
           max_parallel_replication_tasks: 5,
         }),

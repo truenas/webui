@@ -6,7 +6,7 @@ import { MatListHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { suppressJsDomCssErrors } from 'app/core/testing/utils/suppress-jsdom-css-errors.utils';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -28,7 +28,7 @@ describe('InitiatorFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.global.sessions', [{
           initiator: 'inr1',
           initiator_addr: '10.0.0.1',

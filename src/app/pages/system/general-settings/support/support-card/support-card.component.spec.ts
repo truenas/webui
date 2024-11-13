@@ -9,7 +9,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
@@ -46,7 +46,7 @@ describe('SupportCardComponent', () => {
       mockProvider(MatDialog),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
-      mockWebSocket([
+      mockApi([
         mockCall('truenas.is_production', true),
         mockJob('truenas.set_production', fakeSuccessfulJob()),
         mockCall('system.product_type', ProductType.Scale),

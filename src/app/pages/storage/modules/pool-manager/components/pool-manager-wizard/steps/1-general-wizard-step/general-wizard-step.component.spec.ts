@@ -4,7 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -32,7 +32,7 @@ describe('GeneralWizardStepComponent', () => {
     ],
     providers: [
       CdkStepper,
-      mockWebSocket([
+      mockApi([
         mockCall('pool.query', []),
         mockCall('pool.validate_name', true),
         mockCall('pool.dataset.encryption_algorithm_choices', {

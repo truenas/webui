@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDiskMode } from 'app/enums/vm.enum';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -24,7 +24,7 @@ describe('DiskStepComponent', () => {
     ],
     providers: [
       CdkStepper,
-      mockWebSocket([
+      mockApi([
         mockCall('pool.filesystem_choices', [
           'poolio',
           'poolio/files',

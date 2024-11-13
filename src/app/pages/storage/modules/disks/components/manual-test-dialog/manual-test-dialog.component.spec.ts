@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
@@ -31,7 +31,7 @@ describe('ManualTestDialogComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('smart.test.manual_test', [
           { disk: 'sda', expected_result_time: { $date: 1647438105 } },
           { disk: 'sdb', error: 'Disk is on fire.' },

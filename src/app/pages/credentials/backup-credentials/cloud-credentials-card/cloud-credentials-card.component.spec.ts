@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -63,7 +63,7 @@ describe('CloudCredentialsCardComponent', () => {
       IxTablePagerShowMoreComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.providers', providers),
         mockCall('cloudsync.credentials.query', credentials),
         mockCall('cloudsync.credentials.delete'),

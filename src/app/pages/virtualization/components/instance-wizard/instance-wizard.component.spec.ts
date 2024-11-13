@@ -13,7 +13,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VirtualizationDeviceType,
   VirtualizationProxyProtocol,
@@ -45,7 +45,7 @@ describe('InstanceWizardComponent', () => {
     providers: [
       mockProvider(AuthService, { hasRole: () => of(true) }),
       mockProvider(Router),
-      mockWebSocket([
+      mockApi([
         mockCall('virt.instance.query', [{
           id: 'test',
           name: 'test',

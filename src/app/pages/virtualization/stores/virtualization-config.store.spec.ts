@@ -1,5 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
 import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
@@ -20,7 +20,7 @@ describe('VirtualizationConfigStore', () => {
   const createService = createServiceFactory({
     service: VirtualizationConfigStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('virt.global.config', config),
       ]),
     ],

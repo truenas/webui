@@ -9,7 +9,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { lastValueFrom, of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import {
   TicketCategory, TicketCriticality, TicketEnvironment, TicketType,
@@ -42,7 +42,7 @@ describe('FeedbackService', () => {
   const createService = createServiceFactory({
     service: FeedbackService,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockJob('support.new_ticket', fakeSuccessfulJob(newTicket)),
         mockCall('system.host_id', 'testHostId'),
       ]),

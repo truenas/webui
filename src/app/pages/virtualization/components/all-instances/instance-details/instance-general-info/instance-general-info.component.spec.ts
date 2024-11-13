@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { InstanceGeneralInfoComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
@@ -48,7 +48,7 @@ describe('InstanceGeneralInfoComponent', () => {
       mockProvider(SlideInService, {
         open: jest.fn(),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('virt.instance.delete'),
       ]),
       mockProvider(VirtualizationInstancesStore, {

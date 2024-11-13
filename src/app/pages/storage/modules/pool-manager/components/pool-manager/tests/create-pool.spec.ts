@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -32,7 +32,7 @@ describe('PoolManagerComponent – create pool', () => {
     ],
     providers: [
       ...commonProviders,
-      mockWebSocket([
+      mockApi([
         mockCall('pool.validate_name', true),
         mockCall('disk.details', {
           used: [

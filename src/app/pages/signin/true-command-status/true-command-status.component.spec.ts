@@ -1,5 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   TrueCommandStatusComponent,
 } from 'app/pages/signin/true-command-status/true-command-status.component';
@@ -10,7 +10,7 @@ describe('TrueCommandStatusComponent', () => {
   const createComponent = createComponentFactory({
     component: TrueCommandStatusComponent,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('truenas.managed_by_truecommand', true),
       ]),
     ],

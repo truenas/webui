@@ -6,7 +6,7 @@ import {
   BehaviorSubject, firstValueFrom, of, ReplaySubject, throwError,
 } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -43,7 +43,7 @@ describe('ServicesEffects', () => {
     service: ServicesEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockWebSocket([
+      mockApi([
         mockCall('service.query', [cifsService]),
       ]),
       mockProvider(MatDialog, {

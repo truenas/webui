@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -46,7 +46,7 @@ describe('InstanceEditFormComponent', () => {
       { provide: SLIDE_IN_DATA, useValue: mockInstance },
       mockAuth(),
       mockProvider(SlideInRef),
-      mockWebSocket([
+      mockApi([
         mockJob('virt.instance.update', fakeSuccessfulJob({ id: 'test' } as VirtualizationInstance)),
       ]),
       mockProvider(SnackbarService),

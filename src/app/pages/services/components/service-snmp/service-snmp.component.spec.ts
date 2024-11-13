@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -25,7 +25,7 @@ describe('ServiceSnmpComponent', () => {
     routes: [],
     providers: [
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('snmp.update'),
         mockCall('snmp.config', {
           location: 'My location',

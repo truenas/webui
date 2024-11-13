@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -48,7 +48,7 @@ describe('ScrubTaskFormComponent', () => {
       }),
       mockAuth(),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.scrub.create'),
         mockCall('pool.scrub.update'),
         mockCall('pool.query', [

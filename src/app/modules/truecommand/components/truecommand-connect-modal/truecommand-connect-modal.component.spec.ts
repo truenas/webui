@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -45,7 +45,7 @@ describe('TruecommandConnectModalComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockWebSocket([
+        mockApi([
           mockCall('truecommand.update'),
         ]),
         mockProvider(AppLoaderService),

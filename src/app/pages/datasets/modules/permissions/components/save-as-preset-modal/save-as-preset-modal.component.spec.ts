@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -29,7 +29,7 @@ describe('SaveAsPresetModalComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockProvider(UserService),
-      mockWebSocket([
+      mockApi([
         mockCall('filesystem.acltemplate.by_path', [
           {
             id: 1, name: 'e', acltype: AclType.Nfs4, acl: [],

@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -33,7 +33,7 @@ describe('ServiceSmbComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('smb.config', {
           id: 1,
           netbiosname: 'truenas',

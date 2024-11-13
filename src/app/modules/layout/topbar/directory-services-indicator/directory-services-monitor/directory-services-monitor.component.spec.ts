@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import {
@@ -19,7 +19,7 @@ describe('DirectoryServicesMonitorComponent', () => {
       MapValuePipe,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Disabled,
           ldap: DirectoryServiceState.Healthy,

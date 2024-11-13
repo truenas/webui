@@ -7,7 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockComponents, MockDirective } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
@@ -65,7 +65,7 @@ describe('CloudBackupListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('cloud_backup.query', cloudBackups),
         mockCall('cloud_backup.delete'),
         mockCall('cloud_backup.update'),

@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapBackend, IdmapName } from 'app/enums/idmap.enum';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
@@ -61,7 +61,7 @@ describe('IdmapListComponent', () => {
       SearchInput1Component,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('idmap.query', idmapRecords),
         mockCall('idmap.delete'),
         mockCall('directoryservices.get_state', () => servicesState),

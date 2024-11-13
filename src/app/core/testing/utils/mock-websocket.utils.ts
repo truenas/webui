@@ -16,10 +16,10 @@ import { ApiService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 /**
- * This is a sugar syntax for creating simple websocket mocks.
+ * This is a sugar syntax for creating simple api mocks.
  * @example
  * providers: [
- *   mockWebSocket([
+ *   mockApi([
  *     mockCall('filesystem.stat': { gid: 0 } as FileSystemStat),
  *     mockCall('filesystem.stat', () => ({ gid: 0 } as FileSystemStat)),
  *     mockJob('filesystem.setacl', fakeSuccessfulJob()),
@@ -27,12 +27,12 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
  *   }),
  * ]
  *
- * It also makes available MockWebSocketService, which allows customizing calls on the fly.
+ * It also makes available MockApiService, which allows customizing calls on the fly.
  *
  * If you need more customization, use ordinary mockProvider().
  * @example
  * providers: [
- *   mockProvider(WebSocketService, {
+ *   mockProvider(ApiService, {
  *     call: jest.fn((method) => {
  *       if (method === 'filesystem.stat') {
  *         return of({ user: 'john' } as FileSystemStat);
@@ -42,25 +42,25 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
  * ]
  */
 
-export function mockWebSocket(
+export function mockApi(
   mockResponses?: (MockApiCallResponse | MockApiJobResponse)[],
 ): (FactoryProvider | ExistingProvider | ValueProvider)[] {
   return [
     {
       provide: ApiService,
       useFactory: (router: Router, wsManager: WebSocketConnectionService, translate: TranslateService) => {
-        const mockWebSocketService = new MockWebSocketService(router, wsManager, translate);
+        const mockApiService = new MockWebSocketService(router, wsManager, translate);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockApiResponseType.Call) {
-            mockWebSocketService.mockCall(mockResponse.method, mockResponse.response);
+            mockApiService.mockCall(mockResponse.method, mockResponse.response);
           } else if (mockResponse.type === MockApiResponseType.Job) {
-            mockWebSocketService.mockJob(
+            mockApiService.mockJob(
               mockResponse.method,
               mockResponse.response as Job<ApiJobDirectory[ApiJobMethod]['response']>,
             );
           }
         });
-        return mockWebSocketService;
+        return mockApiService;
       },
       deps: [Router, WebSocketConnectionService, TranslateService],
     },

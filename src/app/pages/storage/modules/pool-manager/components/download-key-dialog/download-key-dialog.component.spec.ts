@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -24,7 +24,7 @@ describe('DownloadKeyDialogComponent', () => {
     imports: [
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('core.download', [null, 'http://localhost:8000/key.json']),
       ]),
       mockProvider(AppLoaderService, {

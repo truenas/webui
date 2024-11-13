@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbShareInfo } from 'app/interfaces/smb-status.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -41,7 +41,7 @@ describe('SmbShareListComponent', () => {
       SearchInput1Component,
       IxTableColumnsSelectorComponent,
     ],
-    providers: [mockWebSocket([mockCall('smb.status', shares)])],
+    providers: [mockApi([mockCall('smb.status', shares)])],
   });
 
   beforeEach(async () => {

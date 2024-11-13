@@ -5,7 +5,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -37,7 +37,7 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
       IxTablePagerShowMoreComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('acme.dns.authenticator.query', authenticators),
         mockCall('acme.dns.authenticator.delete', true),
       ]),

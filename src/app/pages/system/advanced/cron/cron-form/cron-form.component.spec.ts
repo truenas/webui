@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -55,7 +55,7 @@ describe('CronFormComponent', () => {
         timezone: 'America/New_York',
       }),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('cronjob.create'),
         mockCall('cronjob.update'),
       ]),

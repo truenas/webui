@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -36,7 +36,7 @@ describe('AutotrimDialogComponent', () => {
           },
         } as Pool,
       },
-      mockWebSocket([
+      mockApi([
         mockJob('pool.update', fakeSuccessfulJob()),
       ]),
       mockProvider(SnackbarService),

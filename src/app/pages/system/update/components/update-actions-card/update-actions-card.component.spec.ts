@@ -8,7 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemUpdate } from 'app/interfaces/system-update.interface';
@@ -35,7 +35,7 @@ describe('UpdateActionsCardComponent', () => {
     component: UpdateActionsCardComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('core.get_jobs', []),
         mockCall('update.check_available', {
           status: SystemUpdateStatus.Available,
