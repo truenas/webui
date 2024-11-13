@@ -6,9 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import {
   CallResponseOrFactory, JobResponseOrFactory,
-  MockWebSocketCallResponse, MockWebSocketJobResponse,
-  MockWebSocketResponseType,
-} from 'app/core/testing/interfaces/mock-websocket-responses.interface';
+  MockApiCallResponse, MockApiJobResponse,
+  MockApiResponseType,
+} from 'app/core/testing/interfaces/mock-api-responses.interface';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -43,7 +43,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
  */
 
 export function mockWebSocket(
-  mockResponses?: (MockWebSocketCallResponse | MockWebSocketJobResponse)[],
+  mockResponses?: (MockApiCallResponse | MockApiJobResponse)[],
 ): (FactoryProvider | ExistingProvider | ValueProvider)[] {
   return [
     {
@@ -51,9 +51,9 @@ export function mockWebSocket(
       useFactory: (router: Router, wsManager: WebSocketConnectionService, translate: TranslateService) => {
         const mockWebSocketService = new MockWebSocketService(router, wsManager, translate);
         (mockResponses || []).forEach((mockResponse) => {
-          if (mockResponse.type === MockWebSocketResponseType.Call) {
+          if (mockResponse.type === MockApiResponseType.Call) {
             mockWebSocketService.mockCall(mockResponse.method, mockResponse.response);
-          } else if (mockResponse.type === MockWebSocketResponseType.Job) {
+          } else if (mockResponse.type === MockApiResponseType.Job) {
             mockWebSocketService.mockJob(
               mockResponse.method,
               mockResponse.response as Job<ApiJobDirectory[ApiJobMethod]['response']>,
@@ -78,11 +78,11 @@ export function mockWebSocket(
 export function mockCall<M extends ApiCallMethod>(
   method: M,
   response: CallResponseOrFactory<M> = undefined,
-): MockWebSocketCallResponse {
+): MockApiCallResponse {
   return {
     response,
     method,
-    type: MockWebSocketResponseType.Call,
+    type: MockApiResponseType.Call,
   };
 }
 
@@ -93,10 +93,10 @@ export function mockCall<M extends ApiCallMethod>(
 export function mockJob<M extends ApiJobMethod>(
   method: M,
   response: JobResponseOrFactory<M> = undefined,
-): MockWebSocketJobResponse {
+): MockApiJobResponse {
   return {
     response,
     method,
-    type: MockWebSocketResponseType.Job,
+    type: MockApiResponseType.Job,
   };
 }

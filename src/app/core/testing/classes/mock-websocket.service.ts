@@ -6,7 +6,7 @@ import { Observable, Subject, of } from 'rxjs';
 import {
   CallResponseOrFactory,
   JobResponseOrFactory,
-} from 'app/core/testing/interfaces/mock-websocket-responses.interface';
+} from 'app/core/testing/interfaces/mock-api-responses.interface';
 import { ApiCallAndSubscribeMethod } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
   ApiCallMethod,
