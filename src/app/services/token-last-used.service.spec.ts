@@ -5,9 +5,9 @@ import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TokenLastUsedService', () => {
   let spectator: SpectatorService<TokenLastUsedService>;

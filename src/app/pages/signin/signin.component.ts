@@ -28,7 +28,7 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { TrueCommandStatusComponent } from 'app/pages/signin/true-command-status/true-command-status.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -82,7 +82,7 @@ export class SigninComponent implements OnInit {
   );
 
   constructor(
-    private wsManager: WebSocketConnectionService,
+    private wsManager: WebSocketHandlerService,
     private signinStore: SigninStore,
     private dialog: DialogService,
     private authService: AuthService,

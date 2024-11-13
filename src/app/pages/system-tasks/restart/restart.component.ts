@@ -9,9 +9,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +31,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 export class RestartComponent implements OnInit {
   constructor(
     protected ws: ApiService,
-    private wsManager: WebSocketConnectionService,
+    private wsManager: WebSocketHandlerService,
     protected router: Router,
     private route: ActivatedRoute,
     private errorHandler: ErrorHandlerService,
@@ -59,7 +59,7 @@ export class RestartComponent implements OnInit {
       },
       complete: () => { // show restart screen
         this.wsManager.prepareShutdown();
-        this.wsManager.closeWebSocketConnection();
+        this.wsManager.closeWsConnection();
         setTimeout(() => {
           this.router.navigate(['/signin']);
         }, 5000);

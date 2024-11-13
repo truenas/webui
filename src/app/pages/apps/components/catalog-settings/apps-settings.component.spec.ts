@@ -22,7 +22,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AppsSettingsComponent', () => {
   let spectator: Spectator<AppsSettingsComponent>;

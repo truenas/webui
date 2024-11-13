@@ -3,7 +3,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
 import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('VirtualizationConfigStore', () => {
   let spectator: SpectatorService<VirtualizationConfigStore>;

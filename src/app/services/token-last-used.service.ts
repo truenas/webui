@@ -9,7 +9,7 @@ import { oneMinuteMillis } from 'app/constants/time.constant';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { ApiService } from 'app/services/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @UntilDestroy()
 @Injectable({
@@ -38,7 +38,8 @@ export class TokenLastUsedService {
   }
 
   constructor(
-    private ws: ApiService,
+    // private ws: ApiService,
+    private wsHandler: WebSocketHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
   }
@@ -47,7 +48,7 @@ export class TokenLastUsedService {
     user$.pipe(
       filter(Boolean),
       tapOnce(() => this.updateTokenLastUsed()),
-      switchMap(() => this.ws.getWebSocketStream$().pipe(debounceTime(5000))),
+      switchMap(() => this.wsHandler.responses$.pipe(debounceTime(5000))),
       tap(() => this.updateTokenLastUsed()),
       untilDestroyed(this),
     ).subscribe();

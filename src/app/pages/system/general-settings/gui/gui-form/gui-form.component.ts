@@ -30,10 +30,10 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { AppState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -96,7 +96,7 @@ export class GuiFormComponent {
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
     private ws: ApiService,
-    private wsManager: WebSocketConnectionService,
+    private wsManager: WebSocketHandlerService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -217,7 +217,7 @@ export class GuiFormComponent {
         ).subscribe({
           next: () => {
             this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
-            this.wsManager.closeWebSocketConnection();
+            this.wsManager.closeWsConnection();
             this.replaceHrefWhenWsConnected(href);
           },
           error: (error: ApiError) => {

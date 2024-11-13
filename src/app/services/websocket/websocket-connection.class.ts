@@ -29,6 +29,7 @@ export class WebSocketConnection {
 
   close(): void {
     this.ws$?.complete();
+    this.ws$ = undefined;
   }
 
   event<R>(

@@ -2,7 +2,20 @@ import { Inject, Injectable } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
-  BehaviorSubject, filter, interval, map, mergeMap, NEVER, Observable, of, Subject, switchMap, take, tap, timer,
+  BehaviorSubject,
+  filter,
+  interval,
+  map,
+  mergeMap,
+  NEVER,
+  Observable,
+  of,
+  Subject,
+  Subscription,
+  switchMap,
+  take,
+  tap,
+  timer,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -23,10 +36,13 @@ export class WebSocketHandlerService {
 
   private readonly pingTimeoutMillis = 20 * 1000;
   private readonly reconnectTimeoutMillis = 5 * 1000;
+  private reconnectTimerSubscription: Subscription;
   private readonly maxConcurrentCalls = 20;
 
-  private isReconnectScheduled = false;
   private shutDownInProgress = false;
+  get isSystemShuttingDown(): boolean {
+    return this.shutDownInProgress;
+  }
 
   private readonly hasRestrictedError$ = new BehaviorSubject(false);
   set isAccessRestricted$(value: boolean) {
@@ -115,6 +131,8 @@ export class WebSocketHandlerService {
   }
 
   private connectWebSocket(): void {
+    this.wsConnection.close();
+    performance.mark('WS Init');
     this.wsConnection.connect({
       url: this.connectionUrl,
       openObserver: {
@@ -161,12 +179,11 @@ export class WebSocketHandlerService {
   }
 
   private onClose(event: CloseEvent): void {
-    if (this.isReconnectScheduled) {
-      return;
-    }
-    this.isReconnectScheduled = true;
     this.connectMsgReceived$.next(false);
     this.isConnectionLive$.next(false);
+    if (this.reconnectTimerSubscription) {
+      return;
+    }
     if (event.code === 1008) {
       this.isAccessRestricted$ = true;
     } else {
@@ -174,18 +191,13 @@ export class WebSocketHandlerService {
     }
   }
 
-  private reconnect(): void {
-    this.isReconnectScheduled = true;
-    timer(this.reconnectTimeoutMillis).subscribe({
-      next: () => {
-        this.isReconnectScheduled = false;
-        this.setupWebSocket();
-      },
-    });
+  private unsubscribeReconnectSubscription(): void {
+    this.reconnectTimerSubscription.unsubscribe();
+    this.reconnectTimerSubscription = undefined;
   }
 
   private onOpen(): void {
-    if (this.isReconnectScheduled) {
+    if (this.reconnectTimerSubscription) {
       this.wsConnection.close();
       return;
     }
@@ -209,5 +221,26 @@ export class WebSocketHandlerService {
 
   prepareShutdown(): void {
     this.shutDownInProgress = true;
+  }
+
+  reconnect(): void {
+    if (this.reconnectTimerSubscription) {
+      this.unsubscribeReconnectSubscription();
+    }
+
+    this.reconnectTimerSubscription = timer(this.reconnectTimeoutMillis).subscribe({
+      next: () => {
+        this.unsubscribeReconnectSubscription();
+        this.setupWebSocket();
+      },
+    });
+  }
+
+  closeWsConnection(): void {
+    this.wsConnection.close();
+  }
+
+  setupConnectionUrl(protocol: string, remote: string): void {
+    this.connectionUrl = (protocol === 'https:' ? 'wss://' : 'ws://') + remote + '/websocket';
   }
 }

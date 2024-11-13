@@ -12,8 +12,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ServiceStateColumnComponent,
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
-import { ApiService } from 'app/services/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ServiceStateColumnComponent', () => {
   let spectator: Spectator<ServiceStateColumnComponent>;

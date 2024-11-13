@@ -10,7 +10,7 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('IdentifyLightComponent', () => {
   let spectator: Spectator<IdentifyLightComponent>;

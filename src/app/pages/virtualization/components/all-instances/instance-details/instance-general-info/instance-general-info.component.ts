@@ -17,9 +17,9 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

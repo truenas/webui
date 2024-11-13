@@ -6,8 +6,8 @@ import { VmDeviceType } from 'app/enums/vm.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
-import { ApiService } from 'app/services/api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('VmGpuService', () => {
   let spectator: SpectatorService<VmGpuService>;

@@ -15,14 +15,13 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
-import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 const authMeUser = {
   pw_dir: 'dir',
@@ -51,11 +50,16 @@ describe('AuthService', () => {
       mockProvider(LocalStorageService),
       mockApi([
         mockCall('auth.me', authMeUser),
+        mockCall('auth.generate_token', 'DUMMY_TOKEN'),
+        mockCall('auth.login_ex', {
+          response_type: LoginExResponseType.Success,
+          user_info: {
+            privilege: { webui_access: true },
+          },
+        } as LoginExResponse),
       ]),
-      mockProvider(WebSocketConnectionService, {
-        send: jest.fn(),
+      mockProvider(WebSocketHandlerService, {
         isConnected$: of(true),
-        websocket$: of({}),
       }),
       {
         provide: STORAGE_STRATEGIES,
@@ -71,24 +75,24 @@ describe('AuthService', () => {
   beforeEach(() => {
     spectator = createService();
 
-    const originalMakeRequest = spectator.service.makeRequest.bind(spectator.service);
-    jest.spyOn(spectator.service, 'makeRequest').mockImplementation((method: ApiCallMethod, params: never) => {
-      originalMakeRequest(method, params).subscribe();
+    // const originalMakeRequest = spectator.service.makeRequest.bind(spectator.service);
+    // jest.spyOn(spectator.service, 'makeRequest').mockImplementation((method: ApiCallMethod, params: never) => {
+    //   originalMakeRequest(method, params).subscribe();
 
-      switch (method) {
-        case 'auth.generate_token':
-          return of('DUMMY_TOKEN');
-        case 'auth.login_ex':
-          return of({
-            response_type: LoginExResponseType.Success,
-            user_info: {
-              privilege: { webui_access: true },
-            },
-          } as LoginExResponse);
-        default:
-          return of(null);
-      }
-    });
+    //   switch (method) {
+    //     case 'auth.generate_token':
+    //       return of('DUMMY_TOKEN');
+    //     case 'auth.login_ex':
+    //       return of({
+    //         response_type: LoginExResponseType.Success,
+    //         user_info: {
+    //           privilege: { webui_access: true },
+    //         },
+    //       } as LoginExResponse);
+    //     default:
+    //       return of(null);
+    //   }
+    // });
 
     testScheduler = new TestScheduler((actual, expected) => {
       expect(actual).toEqual(expected);
@@ -115,13 +119,13 @@ describe('AuthService', () => {
           { d: 'DUMMY_TOKEN' },
         );
       });
-      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.login_ex',
         params: [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
       }));
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
-      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',
       }));
@@ -146,13 +150,13 @@ describe('AuthService', () => {
           { d: 'DUMMY_TOKEN' },
         );
       });
-      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.login_ex',
         params: [{ mechanism: 'TOKEN_PLAIN', token: 'DUMMY_TOKEN' }],
       }));
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
-      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',
       }));
@@ -178,7 +182,7 @@ describe('AuthService', () => {
           {},
         );
       });
-      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.logout',
       }));
