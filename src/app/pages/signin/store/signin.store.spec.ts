@@ -2,7 +2,7 @@ import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
@@ -23,7 +23,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
-  let websocket: MockWebSocketService;
+  let websocket: MockApiService;
   let authService: AuthService;
   const testScheduler = getTestScheduler();
 
@@ -71,7 +71,7 @@ describe('SigninStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(MockWebSocketService);
+    websocket = spectator.inject(MockApiService);
     authService = spectator.inject(AuthService);
 
     Object.defineProperty(authService, 'authToken$', {

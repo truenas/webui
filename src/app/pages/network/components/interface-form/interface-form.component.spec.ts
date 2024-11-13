@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -417,7 +417,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     beforeEach(() => {
-      const websocketMock = spectator.inject(MockWebSocketService);
+      const websocketMock = spectator.inject(MockApiService);
       websocketMock.mockCall('failover.licensed', true);
       spectator.component.ngOnInit();
     });

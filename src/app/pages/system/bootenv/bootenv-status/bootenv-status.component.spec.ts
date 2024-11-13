@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -58,7 +58,7 @@ const poolInstance = {
 describe('BootStatusListComponent', () => {
   let spectator: Spectator<BootStatusListComponent>;
   let loader: HarnessLoader;
-  let websocket: MockWebSocketService;
+  let websocket: MockApiService;
 
   const createComponent = createComponentFactory({
     component: BootStatusListComponent,
@@ -85,7 +85,7 @@ describe('BootStatusListComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(MockWebSocketService);
+    websocket = spectator.inject(MockApiService);
   });
 
   it('loads boot pool state and shows it when one disk', async () => {

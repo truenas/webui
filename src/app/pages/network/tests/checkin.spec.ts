@@ -10,7 +10,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -45,7 +45,7 @@ describe('NetworkComponent', () => {
   let spectator: SpectatorHost<NetworkComponent>;
   let loader: HarnessLoader;
   let rootLoader: HarnessLoader;
-  let websocket: MockWebSocketService;
+  let websocket: MockApiService;
 
   let isTestingChanges = false;
   let wasEditMade = false;
@@ -135,7 +135,7 @@ describe('NetworkComponent', () => {
     `);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
-    websocket = spectator.inject(MockWebSocketService);
+    websocket = spectator.inject(MockApiService);
 
     isTestingChanges = false;
     wasEditMade = false;

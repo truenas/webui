@@ -1,5 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerNvidiaStatus } from 'app/enums/docker-nvidia-status.enum';
@@ -63,7 +63,7 @@ describe('DockerStore', () => {
         enable_image_updates: false,
       } as DockerConfig;
 
-      const mockWebsocket = spectator.inject(MockWebSocketService);
+      const mockWebsocket = spectator.inject(MockApiService);
       jest.resetAllMocks();
       mockWebsocket.mockCall('docker.config', newDockerConfig);
 
@@ -77,7 +77,7 @@ describe('DockerStore', () => {
 
   describe('reloadDockerNvidiaStatus', () => {
     it('reloads docker nvidia status and updates the state', () => {
-      const mockWebsocket = spectator.inject(MockWebSocketService);
+      const mockWebsocket = spectator.inject(MockApiService);
       jest.resetAllMocks();
       mockWebsocket.mockCall('docker.nvidia_status', { status: DockerNvidiaStatus.Installed });
 

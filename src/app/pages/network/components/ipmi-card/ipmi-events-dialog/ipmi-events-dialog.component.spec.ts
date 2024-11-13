@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
@@ -72,7 +72,7 @@ describe('IpmiEventsDialogComponent', () => {
 
   describe('no events', () => {
     beforeEach(() => {
-      const mockedWebSocket = spectator.inject(MockWebSocketService);
+      const mockedWebSocket = spectator.inject(MockApiService);
       mockedWebSocket.mockJob('ipmi.sel.elist', fakeSuccessfulJob([] as IpmiEvent[]));
 
       spectator.component.ngOnInit();

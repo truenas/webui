@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
   mockCall, mockJob, mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
@@ -136,7 +136,7 @@ describe('KmipComponent', () => {
 
   describe('pending sync', () => {
     beforeEach(() => {
-      spectator.inject(MockWebSocketService).mockCall('kmip.kmip_sync_pending', true);
+      spectator.inject(MockApiService).mockCall('kmip.kmip_sync_pending', true);
       spectator.component.ngOnInit();
     });
 

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
   CallResponseOrFactory, JobResponseOrFactory,
   MockApiCallResponse, MockApiJobResponse,
@@ -49,7 +49,7 @@ export function mockApi(
     {
       provide: ApiService,
       useFactory: (router: Router, wsManager: WebSocketConnectionService, translate: TranslateService) => {
-        const mockApiService = new MockWebSocketService(router, wsManager, translate);
+        const mockApiService = new MockApiService(router, wsManager, translate);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockApiResponseType.Call) {
             mockApiService.mockCall(mockResponse.method, mockResponse.response);
@@ -65,7 +65,7 @@ export function mockApi(
       deps: [Router, WebSocketConnectionService, TranslateService],
     },
     {
-      provide: MockWebSocketService,
+      provide: MockApiService,
       useExisting: forwardRef(() => ApiService),
     },
     {
@@ -88,7 +88,7 @@ export function mockCall<M extends ApiCallMethod>(
 
 /**
  * Mocks immediate call() and job() responses and core.get_jobs when id is queried.
- * @see MockWebSocketService.mockJob()
+ * @see MockApiService.mockJob()
  */
 export function mockJob<M extends ApiJobMethod>(
   method: M,

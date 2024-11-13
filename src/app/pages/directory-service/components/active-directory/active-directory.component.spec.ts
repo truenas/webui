@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -115,7 +115,7 @@ describe('ActiveDirectoryComponent', () => {
   });
 
   it('does not show Account Name and Password when Kerberos principal is set', async () => {
-    spectator.inject(MockWebSocketService).mockCall('activedirectory.config', {
+    spectator.inject(MockApiService).mockCall('activedirectory.config', {
       ...existingConfig,
       kerberos_principal: 'TRUENAS$@AD.IXSYSTEMS.NET',
     });
@@ -208,7 +208,7 @@ describe('ActiveDirectoryComponent', () => {
 
   describe('leave domain button', () => {
     beforeEach(() => {
-      spectator.inject(MockWebSocketService).mockCall('directoryservices.get_state', {
+      spectator.inject(MockApiService).mockCall('directoryservices.get_state', {
         activedirectory: DirectoryServiceState.Healthy,
       } as DirectoryServicesState);
       spectator.component.ngOnInit();

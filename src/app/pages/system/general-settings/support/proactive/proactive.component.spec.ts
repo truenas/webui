@@ -6,7 +6,7 @@ import {
   createComponentFactory, mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -105,7 +105,7 @@ describe('ProactiveComponent', () => {
   });
 
   it('shows a warning when support is not available', async () => {
-    spectator.inject(MockWebSocketService).mockCall('support.is_available', false);
+    spectator.inject(MockApiService).mockCall('support.is_available', false);
     spectator.component.ngOnInit();
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
 

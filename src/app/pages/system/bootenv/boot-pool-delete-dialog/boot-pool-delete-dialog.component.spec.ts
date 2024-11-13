@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -71,7 +71,7 @@ describe('BootPoolDeleteDialogComponent', () => {
         ['22.12-MASTER-20220808-020013'],
       ],
     ];
-    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
+    spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
 
     expect(spectator.fixture.nativeElement).toHaveText('The following 2 boot environments will be deleted. Are you sure you want to proceed?');
 
@@ -98,7 +98,7 @@ describe('BootPoolDeleteDialogComponent', () => {
         ['22.12-MASTER-20220808-020013'],
       ],
     ];
-    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
+    spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
