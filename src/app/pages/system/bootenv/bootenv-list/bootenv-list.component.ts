@@ -189,7 +189,7 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   get selectionHasItems(): boolean {
-    return this.selectedBootenvs.some((bootenv) => !bootenv.active || !bootenv.activated);
+    return this.selectedBootenvs.some((bootenv) => !bootenv.active && !bootenv.activated);
   }
 
   constructor(
@@ -261,7 +261,7 @@ export class BootEnvironmentListComponent implements OnInit {
 
   doDelete(bootenvs: BootEnvironmentUi[]): void {
     bootenvs.forEach((bootenv) => delete bootenv.selected);
-    const data = bootenvs.filter((bootenv) => !bootenv.active || !bootenv.activated);
+    const data = bootenvs.filter((bootenv) => !bootenv.active && !bootenv.activated);
     this.matDialog.open(BootPoolDeleteDialogComponent, { data })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
