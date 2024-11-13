@@ -24,7 +24,6 @@ import {
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { Option } from 'app/interfaces/option.interface';
 import {
   AvailableGpu,
@@ -276,6 +275,4 @@ export class InstanceWizardComponent implements OnInit {
       });
     });
   }
-
-  protected readonly helptext = helptextCloudSync;
 }
