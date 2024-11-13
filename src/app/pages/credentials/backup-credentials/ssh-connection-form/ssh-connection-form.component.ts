@@ -19,6 +19,7 @@ import { Role } from 'app/enums/role.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSshConnections } from 'app/helptext/system/ssh-connections';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   KeychainCredential,
   KeychainCredentialUpdate,
@@ -26,7 +27,6 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -274,7 +274,7 @@ export class SshConnectionFormComponent implements OnInit {
     }
 
     return this.ws.call('keychaincredential.setup_ssh_connection', [params]).pipe(
-      catchError((error: WebSocketError) => {
+      catchError((error: ApiError) => {
         if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
           return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
             switchMap(() => {

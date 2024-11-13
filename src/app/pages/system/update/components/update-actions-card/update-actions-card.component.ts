@@ -22,8 +22,8 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -239,7 +239,7 @@ export class UpdateActionsCardComponent implements OnInit {
           this.snackbar.success(this.translate.instant('No updates available.'));
         }
       },
-      error: (error: WebSocketError) => {
+      error: (error: ApiError) => {
         this.dialogService.error({
           title: this.translate.instant('Error checking for updates.'),
           message: error.reason,

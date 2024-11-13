@@ -4,14 +4,14 @@ import { EMPTY, Observable } from 'rxjs';
 import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { ApiService } from 'app/services/api.service';
 
 export interface DatasetTreeState {
   isLoading: boolean;
-  error: WebSocketError | null;
+  error: ApiError | null;
   datasets: DatasetDetails[];
   selectedDatasetId: string | null;
 }
@@ -71,7 +71,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
                 datasets,
               });
             }),
-            catchError((error: WebSocketError) => {
+            catchError((error: ApiError) => {
               this.patchState({
                 isLoading: false,
                 error,

@@ -3,8 +3,8 @@ import {
 } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiCallParams, ApiCallResponseType, QueryMethods } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
@@ -46,7 +46,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
           this.currentPage$.next(this.rows);
           this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           console.error(this.method, error);
           this.totalRows = 0;
           this.rows = [];

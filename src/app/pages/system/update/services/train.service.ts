@@ -5,8 +5,8 @@ import {
   BehaviorSubject, Observable, combineLatest,
 } from 'rxjs';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
@@ -186,7 +186,7 @@ export class TrainService {
         }
         this.updateService.isLoading$.next(false);
       },
-      error: (err: WebSocketError) => {
+      error: (err: ApiError) => {
         this.updateService.generalUpdateError$.next(
           `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`,
         );

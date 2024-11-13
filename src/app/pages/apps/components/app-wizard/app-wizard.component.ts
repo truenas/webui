@@ -30,6 +30,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import {
   ChartFormValue,
@@ -47,7 +48,6 @@ import {
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import {
@@ -202,7 +202,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           });
           this.afterAppLoaded();
         },
-        error: (error: WebSocketError) => this.afterAppLoadError(error),
+        error: (error: ApiError) => this.afterAppLoadError(error),
       });
   }
 
@@ -334,7 +334,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           this.setAppForEdit(releases[0]);
           this.afterAppLoaded();
         },
-        error: (error: WebSocketError) => this.afterAppLoadError(error),
+        error: (error: ApiError) => this.afterAppLoadError(error),
       });
   }
 

@@ -6,8 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -38,7 +38,7 @@ export class TargetNameValidationService {
           }
 
           return this.ws.call('iscsi.target.validate_name', [value]).pipe(
-            catchError((error: WebSocketError) => {
+            catchError((error: ApiError) => {
               const errorReports = this.errorHandler.parseError(error) as ErrorReport;
               return of({
                 customValidator: {

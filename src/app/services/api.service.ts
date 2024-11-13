@@ -8,9 +8,9 @@ import {
 import {
   filter, map, share, startWith, switchMap, take, takeUntil, tap,
 } from 'rxjs/operators';
+import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
@@ -24,11 +24,11 @@ import {
   ApiJobParams,
   ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   ApiEvent, ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage, ResultMessage,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @Injectable({
@@ -181,8 +181,8 @@ export class ApiService {
     );
   }
 
-  private printError(error: WebSocketError, context: { method: string; params: unknown }): void {
-    if (error.errname === WebSocketErrorName.NoAccess) {
+  private printError(error: ApiError, context: { method: string; params: unknown }): void {
+    if (error.errname === ApiErrorName.NoAccess) {
       console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}`);
       return;
     }
@@ -196,8 +196,8 @@ export class ApiService {
   }
 
   // TODO: Probably doesn't belong here. Consider building something similar to interceptors.
-  private enhanceError(error: WebSocketError, context: { method: string }): WebSocketError {
-    if (error.errname === WebSocketErrorName.NoAccess) {
+  private enhanceError(error: ApiError, context: { method: string }): ApiError {
+    if (error.errname === ApiErrorName.NoAccess) {
       return {
         ...error,
         reason: this.translate.instant('Access denied to {method}', { method: context.method }),

@@ -21,8 +21,8 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
@@ -129,7 +129,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       filter(Boolean),
       switchMap(() => this.renewSecretForUser()),
       tap(() => this.toggleLoading(false)),
-      catchError((error: WebSocketError) => this.handleError(error)),
+      catchError((error: ApiError) => this.handleError(error)),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -141,7 +141,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     return params.get('secret');
   }
 
-  private handleError(error: WebSocketError): Observable<boolean> {
+  private handleError(error: ApiError): Observable<boolean> {
     this.toggleLoading(false);
 
     return this.dialogService.error({
