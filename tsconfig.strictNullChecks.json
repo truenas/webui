@@ -593,7 +593,6 @@
     "./src/app/pages/directory-service/utils/required-idmap-domains.utils.ts",
     "./src/app/pages/jobs/job-tab.enum.ts",
     "./src/app/pages/network/components/interface-form/network-interface-alias-control.interface.ts",
-    "./src/app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component.spec.ts",
     "./src/app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component.ts",
     "./src/app/pages/reports-dashboard/enums/report-step-direction.enum.ts",
     "./src/app/pages/reports-dashboard/enums/report-zoom-level.enum.ts",

@@ -16,12 +16,13 @@ export interface ApiKey {
 export interface CreateApiKeyRequest {
   name: string;
   username: string;
-  expires_at?: string;
+  expires_at?: ApiTimestamp;
 }
 
 export type UpdateApiKeyRequest = [number, {
   name: string;
   reset?: boolean;
+  expires_at?: ApiTimestamp;
 }];
 
 export interface ApiKeyAllowListItem {

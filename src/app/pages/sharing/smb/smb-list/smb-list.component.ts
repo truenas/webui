@@ -107,20 +107,7 @@ export class SmbListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       requiredRoles: this.requiredRoles,
-      onRowToggle: (row) => {
-        this.ws.call('sharing.smb.update', [row.id, { enabled: row.enabled }]).pipe(
-          this.appLoader.withLoader(),
-          untilDestroyed(this),
-        ).subscribe({
-          next: (share) => {
-            row.enabled = share.enabled;
-          },
-          error: (error: unknown) => {
-            this.dataProvider.load();
-            this.dialog.error(this.errorHandler.parseError(error));
-          },
-        });
-      },
+      onRowToggle: (row) => this.onChangeEnabledState(row),
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
@@ -271,6 +258,21 @@ export class SmbListComponent implements OnInit {
     this.dialog.error({
       title: this.translate.instant('Error'),
       message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
+    });
+  }
+
+  private onChangeEnabledState(row: SmbShare): void {
+    this.ws.call('sharing.smb.update', [row.id, { enabled: !row.enabled }]).pipe(
+      this.appLoader.withLoader(),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.dataProvider.load();
+      },
+      error: (error: unknown) => {
+        this.dataProvider.load();
+        this.dialog.error(this.errorHandler.parseError(error));
+      },
     });
   }
 }
